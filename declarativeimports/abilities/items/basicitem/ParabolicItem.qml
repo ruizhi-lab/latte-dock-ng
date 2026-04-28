@@ -14,8 +14,8 @@ import org.kde.latte.core 0.2 as LatteCore
 
 Item{
     id: parabolicItem
-    width: abilityItem.isHorizontal ? length : thickness
-    height: abilityItem.isHorizontal ? thickness : length
+    width: Math.round(abilityItem.isHorizontal ? length : thickness)
+    height: Math.round(abilityItem.isHorizontal ? thickness : length)
 
     readonly property real length: (!abilityItem.visible || abilityItem.isSeparator) ? 0 : basicScalingLength
 
@@ -94,8 +94,8 @@ Item{
         anchors.leftMargin: (abilityItem.location === PlasmaCore.Types.LeftEdge) ? abilityItem.abilities.metrics.margin.screenEdge : 0
         anchors.rightMargin: (abilityItem.location === PlasmaCore.Types.RightEdge) ? abilityItem.abilities.metrics.margin.screenEdge : 0
 
-        width: abilityItem.isHorizontal ? parabolicItem.regulatorLength : parabolicItem.regulatorThickness
-        height: abilityItem.isHorizontal ? parabolicItem.regulatorThickness : parabolicItem.regulatorLength
+        width: Math.round(abilityItem.isHorizontal ? parabolicItem.regulatorLength : parabolicItem.regulatorThickness)
+        height: Math.round(abilityItem.isHorizontal ? parabolicItem.regulatorThickness : parabolicItem.regulatorLength)
 
         TitleTooltipParent{
             id: _titleTooltipVisualParent
@@ -223,7 +223,7 @@ Item{
         ShortcutBadge{
             id: shortcutBadge
             anchors.centerIn: parent
-            width: abilityItem.abilities.metrics.iconSize * (parabolicItem.hasZoomPerAxis ? parabolicItem.scaleThickness : parabolicItem.zoom)
+            width: Math.round(abilityItem.abilities.metrics.iconSize * (parabolicItem.hasZoomPerAxis ? parabolicItem.scaleThickness : parabolicItem.zoom))
             height: width
         }
 

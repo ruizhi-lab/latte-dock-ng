@@ -55,7 +55,7 @@ LatteComponents.IndicatorItem{
     readonly property bool glow3D: indicator.configuration.glow3D
     readonly property int glowApplyTo: indicator.configuration.glowApplyTo
     readonly property real glowOpacity: indicator.configuration.glowOpacity
-    readonly property int glowMargins: glowEnabled ? 12 : 0
+    readonly property int glowMargins: glowEnabled ? Math.max(1, Math.round(indicator.currentIconSize * 0.25)) : 0
 
     /*Rectangle{
         anchors.fill: parent

@@ -73,8 +73,9 @@ Loader{
             anchors.left: centerInParent? undefined : parent.left
             anchors.top: centerInParent? undefined : parent.top
             anchors.centerIn: centerInParent? parent : undefined
-            minimumWidth: 0.4 * (abilityItem.parabolicItem.zoom * abilityItem.abilities.metrics.iconSize)
-            height: Math.max(24, 0.4 * (abilityItem.parabolicItem.zoom * abilityItem.abilities.metrics.iconSize))
+            minimumWidth: Math.round(0.4 * (abilityItem.parabolicItem.zoom * abilityItem.abilities.metrics.iconSize))
+            height: Math.max(Math.round(0.4 * abilityItem.abilities.metrics.iconSize),
+                             Math.round(0.4 * (abilityItem.parabolicItem.zoom * abilityItem.abilities.metrics.iconSize)))
 
             style3d: abilityItem.abilities.myView.badgesIn3DStyle
             textValue: shorcutBadge.badgeString

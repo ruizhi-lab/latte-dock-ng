@@ -140,7 +140,7 @@ Rectangle {
 
             return "";
         }
-        font.pixelSize: 0.62 * parent.height
+        font.pixelSize: Math.round(0.62 * parent.height)
         font.bold: true
         color: textWithBackgroundColor ? parent.color : parent.textColor
         visible: showNumber || showText
