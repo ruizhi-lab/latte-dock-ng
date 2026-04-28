@@ -1,0 +1,26 @@
+#pragma once
+
+#if __has_include(<PlasmaActivities/Info>)
+#include <PlasmaActivities/Info>
+#elif __has_include(<PlasmaActivities/info.h>)
+#include <PlasmaActivities/info.h>
+#elif __has_include(<KActivities/info.h>)
+#include <KActivities/info.h>
+#elif __has_include(<kactivities/info.h>)
+#include <kactivities/info.h>
+#elif __has_include_next(<KActivities/Info>)
+#include_next <KActivities/Info>
+#else
+namespace KActivities {
+class Info
+{
+public:
+    enum State {
+        Invalid = 0,
+        Running,
+        Starting,
+        Stopping
+    };
+};
+}
+#endif

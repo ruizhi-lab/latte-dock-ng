@@ -1,0 +1,11 @@
+#pragma once
+
+#if __has_include(<KPackage/KPackage/Package>)
+#include <KPackage/KPackage/Package>
+#elif __has_include(<kpackage/package.h>)
+#include <kpackage/package.h>
+#elif __has_include_next(<KPackage/Package>)
+#include_next <KPackage/Package>
+#else
+#error "Could not find a usable KPackage::Package header"
+#endif

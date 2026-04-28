@@ -1,0 +1,32 @@
+#pragma once
+
+#if __has_include(<PlasmaActivities/Consumer>)
+#include <PlasmaActivities/Consumer>
+#elif __has_include(<PlasmaActivities/consumer.h>)
+#include <PlasmaActivities/consumer.h>
+#elif __has_include(<KActivities/consumer.h>)
+#include <KActivities/consumer.h>
+#elif __has_include(<kactivities/consumer.h>)
+#include <kactivities/consumer.h>
+#elif __has_include_next(<KActivities/Consumer>)
+#include_next <KActivities/Consumer>
+#else
+#include <QObject>
+#include <QString>
+
+namespace KActivities {
+class Consumer : public QObject
+{
+public:
+    explicit Consumer(QObject *parent = nullptr)
+        : QObject(parent)
+    {
+    }
+
+    QString currentActivity() const
+    {
+        return QString{};
+    }
+};
+}
+#endif
