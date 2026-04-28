@@ -10,29 +10,13 @@
 // Qt
 #include <QDebug>
 
-// X11
-#include <KWindowSystem>
-
 namespace Latte {
 
 QuickWindowSystem::QuickWindowSystem(QObject *parent)
     : QObject(parent)
 {
-    if (KWindowSystem::isPlatformWayland()) {
-        //! TODO: Wayland compositing active
-        m_compositing = true;
-    } else {
-        connect(KWindowSystem::self(), &KWindowSystem::compositingChanged
-        , this, [&](bool enabled) {
-            if (m_compositing == enabled)
-                return;
-
-            m_compositing = enabled;
-            emit compositingChanged();
-        });
-
-        m_compositing = KWindowSystem::compositingActive();
-    }
+    // Wayland-only build keeps compositing enabled by contract.
+    m_compositing = true;
 }
 
 QuickWindowSystem::~QuickWindowSystem()
@@ -47,12 +31,12 @@ bool QuickWindowSystem::compositingActive() const
 
 bool QuickWindowSystem::isPlatformWayland() const
 {
-    return KWindowSystem::isPlatformWayland();
+    return true;
 }
 
 bool QuickWindowSystem::isPlatformX11() const
 {
-    return KWindowSystem::isPlatformX11();
+    return false;
 }
 
 } //end of namespace

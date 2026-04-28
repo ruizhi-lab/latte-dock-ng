@@ -604,9 +604,7 @@ void SettingsDialog::dropEvent(QDropEvent *event)
 
 void SettingsDialog::updateWindowActivities()
 {
-    if (KWindowSystem::isPlatformX11()) {
-        KWindowSystem::setOnActivities(winId(), QStringList());
-    }
+    KWindowSystem::setOnActivities(winId(), QStringList());
 }
 
 void SettingsDialog::save()

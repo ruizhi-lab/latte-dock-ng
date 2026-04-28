@@ -19,20 +19,15 @@
 #include <QDebug>
 #include <QTimer>
 #include <QApplication>
-#include <QtX11Extras/QX11Info>
 #include <QQuickView>
 #include <QLatin1String>
 
 // KDE
 #include <KWindowSystem>
-#include <KWindowInfo>
 #include <KWayland/Client/surface.h>
 
 #include <KWayland/Client/plasmavirtualdesktop.h>
 
-
-// X11
-#include <NETWM>
 
 using namespace KWayland::Client;
 

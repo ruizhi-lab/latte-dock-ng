@@ -5,9 +5,9 @@
 */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.0
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -42,7 +42,6 @@ Item {
 
         GroupBox {
             title: ""
-            flat: true
             Layout.fillWidth: true
 
             ColumnLayout {
@@ -179,10 +178,9 @@ Item {
                 id: durationTime
                 enabled: true
                 Layout.fillWidth: true
-                minimumValue: 0
-                maximumValue: 3
+                from: 0
+                to: 3
                 stepSize: 1
-                tickmarksEnabled: true
             }
             Label {
                 enabled: durationTime.value > 0
@@ -223,10 +221,9 @@ Item {
                 id: zoomLevel
                 enabled: !mainItem.isInLatteDock
                 Layout.fillWidth: true
-                minimumValue: 0
-                maximumValue: 20
+                from: 0
+                to: 20
                 stepSize: 1
-                tickmarksEnabled: true
             }
 
             Label {

@@ -1,47 +1,84 @@
 Installation
 ============
 
-## Using installation script
+> This fork targets **KDE Plasma 6.5+ on Wayland only**. X11 is not supported.
+> All dependency packages below are Qt6 / KF6. Legacy Qt5/KF5 package names from upstream will not work.
 
-**Before running the installation script you have to install the dependencies needed for compiling.**
+## Kubuntu / KDE Neon (24.04+)
 
-
-### Kubuntu only
-
+```bash
+sudo apt install \
+  cmake extra-cmake-modules \
+  qt6-base-dev qt6-declarative-dev qt6-wayland-dev \
+  libkf6plasma-dev libkf6plasmaquick-dev libkf6activities-dev \
+  libkf6coreaddons-dev libkf6guiaddons-dev libkf6dbusaddons-dev \
+  libkf6declarative-dev libkf6xmlgui-dev libkf6iconthemes-dev \
+  libkf6kio-dev libkf6i18n-dev libkf6notifications-dev \
+  libkf6newstuff-dev libkf6archive-dev libkf6globalaccel-dev \
+  libkf6crash-dev libkf6windowsystem-dev \
+  plasma-wayland-protocols libwayland-dev \
+  gettext build-essential git
 ```
-sudo add-apt-repository ppa:kubuntu-ppa/backports
-sudo apt update
-sudo apt dist-upgrade
-```
 
-### Kubuntu and KDE Neon
+## Arch Linux
 
-```
-sudo apt install cmake extra-cmake-modules qtdeclarative5-dev libqt5x11extras5-dev libkf5iconthemes-dev libkf5plasma-dev libkf5windowsystem-dev libkf5declarative-dev libkf5xmlgui-dev libkf5activities-dev build-essential libxcb-util-dev libkf5wayland-dev git gettext libkf5archive-dev libkf5notifications-dev libxcb-util0-dev libsm-dev libkf5crash-dev libkf5newstuff-dev libxcb-shape0-dev libxcb-randr0-dev libx11-dev libx11-xcb-dev kirigami2-dev libwayland-dev libwayland-client0 plasma-wayland-protocols libqt5waylandclient5-dev qtwayland5-dev-tools
-```
-
-### Arch Linux
-
-```
+```bash
 sudo pacman -Syu
-sudo pacman -S cmake extra-cmake-modules python plasma-framework plasma-desktop plasma-wayland-protocols
+sudo pacman -S \
+  cmake extra-cmake-modules \
+  qt6-base qt6-declarative qt6-wayland \
+  kf6-plasma kf6-kactivities kf6-kcoreaddons kf6-kguiaddons \
+  kf6-kdbusaddons kf6-kdeclarative kf6-kxmlgui kf6-kiconthemes \
+  kf6-kio kf6-ki18n kf6-knotifications kf6-knewstuff kf6-karchive \
+  kf6-kglobalaccel kf6-kcrash kf6-kwindowsystem \
+  plasma-wayland-protocols wayland
 ```
 
-### Fedora/RHEL
-```
-sudo dnf install cmake extra-cmake-modules qt5-qtdeclarative-devel qt5-qtx11extras-devel kf5-kiconthemes-devel kf5-plasma-devel kf5-kwindowsystem-devel kf5-kdeclarative-devel kf5-kxmlgui-devel kf5-kactivities-devel gcc-c++ gcc xcb-util-devel kf5-kwayland-devel git gettext kf5-karchive-devel kf5-knotifications-devel libSM-devel kf5-kcrash-devel kf5-knewstuff-devel kf5-kdbusaddons-devel kf5-kxmlgui-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-kguiaddons-devel kf5-kirigami2-devel kf5-kirigami-devel kf5-ki18n-devel qt5-qtwayland-devel plasma-wayland-protocols-devel wayland-devel
-``` 
+## Fedora / RHEL
 
-### openSUSE
-```
-sudo zypper install cmake extra-cmake-modules gcc-c++ gcc xcb-util-devel git gettext libSM-devel wayland-devel libQt5DBus-devel libQt5Gui-devel qtdeclarative-imports-provides-qt5 libqt5-qtdeclarative-devel knotifications-devel kactivities5-devel karchive-devel kcoreaddons-devel kcoreaddons-devel kguiaddons-devel kcrash-devel kdbusaddons-devel kdeclarative-devel kglobalaccel-devel kirigami2-devel ki18n-devel kiconthemes-devel kio-devel knewstuff-devel plasma-framework-devel kwayland-devel plasma5-workspace-devel kitemmodels-devel libqt5-qtx11extras-devel plasma-wayland-protocols libqt5-qtwayland
+```bash
+sudo dnf install \
+  cmake extra-cmake-modules \
+  qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtwayland-devel \
+  kf6-plasma-devel kf6-kactivities-devel kf6-kcoreaddons-devel \
+  kf6-kguiaddons-devel kf6-kdbusaddons-devel kf6-kdeclarative-devel \
+  kf6-kxmlgui-devel kf6-kiconthemes-devel kf6-kio-devel \
+  kf6-ki18n-devel kf6-knotifications-devel kf6-knewstuff-devel \
+  kf6-karchive-devel kf6-kglobalaccel-devel kf6-kcrash-devel \
+  kf6-kwindowsystem-devel \
+  plasma-wayland-protocols-devel wayland-devel \
+  gcc-c++ gettext git
 ```
 
-### Building and Installing
+## openSUSE Tumbleweed
 
-**Now you can run the installation script.**
-
+```bash
+sudo zypper install \
+  cmake extra-cmake-modules \
+  qt6-base-devel qt6-declarative-devel qt6-wayland-devel \
+  kf6-plasma-devel kf6-kactivities-devel kf6-kcoreaddons-devel \
+  kf6-kguiaddons-devel kf6-kdbusaddons-devel kf6-kdeclarative-devel \
+  kf6-kxmlgui-devel kf6-kiconthemes-devel kf6-kio-devel \
+  kf6-ki18n-devel kf6-knotifications-devel kf6-knewstuff-devel \
+  kf6-karchive-devel kf6-kglobalaccel-devel kf6-kcrash-devel \
+  kf6-kwindowsystem-devel \
+  plasma-wayland-protocols wayland-devel \
+  gcc-c++ gettext git
 ```
+
+## Building and Installing
+
+```bash
+git clone https://github.com/ruizhi-lab/latte-dock-ng.git
+cd latte-dock-ng
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+make -j$(nproc)
+sudo make install
+```
+
+Or using the provided install script:
+
+```bash
 sh install.sh
 ```
-

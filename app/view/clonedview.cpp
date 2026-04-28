@@ -18,8 +18,8 @@ QStringList ClonedView::CONTAINMENTMANUALSYNCEDPROPERTIES = QStringList()
         << QString("lockedZoomApplets")
         << QString("userBlocksColorizingApplets");  
 
-ClonedView::ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen, bool byPassX11WM)
-    : View(corona, targetScreen, byPassX11WM),
+ClonedView::ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen, bool byPassWM)
+    : View(corona, targetScreen, byPassWM),
       m_originalView(originalView)
 {
     m_originalView->addClone(this);

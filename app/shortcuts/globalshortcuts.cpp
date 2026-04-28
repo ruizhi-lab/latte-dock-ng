@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QQuickItem>
 #include <QMetaMethod>
-#include <QX11Info>
 
 // KDE
 #include <KActionCollection>
@@ -55,14 +54,8 @@ GlobalShortcuts::GlobalShortcuts(QObject *parent)
 
     m_hideViewsTimer.setSingleShot(true);
 
-    if (QX11Info::isPlatformX11()) {
-        //in X11 the timer is a poller that checks to see if the modifier keys
-        //from user global shortcut have been released
-        m_hideViewsTimer.setInterval(300);
-    } else {
-        //on wayland in acting just as simple timer that hides the view afterwards
-        m_hideViewsTimer.setInterval(2500);
-    }
+    // Wayland-only: timer is a plain delayed hide.
+    m_hideViewsTimer.setInterval(2500);
 
     connect(&m_hideViewsTimer, &QTimer::timeout, this, &GlobalShortcuts::hideViewsTimerSlot);
 }
@@ -548,18 +541,8 @@ void GlobalShortcuts::hideViewsTimerSlot()
 
     // qDebug() << "MEMORY ::: " << m_hideViews.count() << " _ " << m_viewItemsCalled.count() << " _ " << m_showShortcutBadgesMethods.count();
 
-    if (QX11Info::isPlatformX11()) {
-        if (!m_modifierTracker->sequenceModifierPressed(m_lastInvokedAction->shortcut())) {
-            initParameters();
-
-            return;
-        } else {
-            m_hideViewsTimer.start();
-        }
-    } else {
-        // TODO: This is needs to be fixed in wayland
-        initParameters();
-    }
+    // TODO: improve modifier release tracking for Wayland.
+    initParameters();
 }
 
 }

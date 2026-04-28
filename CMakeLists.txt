@@ -1,5 +1,5 @@
-project(lattedock)
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(lattedock)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,13 +10,15 @@ set(WEBSITE "https://userbase.kde.org/LatteDock")
 set(BUG_ADDRESS "https://bugs.kde.org/enter_bug.cgi?product=lattedock")
 set(FAQS "https://userbase.kde.org/LatteDock/FAQ")
 
-set(QT_MIN_VERSION "5.15.0")
-set(KF5_MIN_VERSION "5.88.0")
-set(KDE_COMPILERSETTINGS_LEVEL "5.84.0")
+set(QT_MIN_VERSION "6.6.0")
+set(KF6_MIN_VERSION "6.0.0")
+set(PLASMA_MIN_VERSION "6.5.0")
+set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 
-set(KF5_LOCALE_PREFIX "")
+set(KF6_LOCALE_PREFIX "")
+set(QT_MAJOR_VERSION 6)
 
-find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -30,48 +32,23 @@ include(KDEPackageAppTemplates)
 include(WriteBasicConfigVersionFile)
 
 
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS DBus Gui Qml Quick)
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    Activities Archive CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel Kirigami2
+find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
+    Activities Archive CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel
     I18n IconThemes KIO NewStuff Notifications Plasma PlasmaQuick Wayland WindowSystem XmlGui)
 
-find_package(LibTaskManager REQUIRED)
+find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)
 add_definitions(-DPLASMA_WORKSPACE_VERSION="${LibTaskManager_VERSION}")
-   
-find_package(X11 REQUIRED)
-set_package_properties(X11 PROPERTIES DESCRIPTION "X11 libraries"
-    URL "http://www.x.org"
-    TYPE OPTIONAL
-    PURPOSE "Required for building the X11 based workspace")
-
-if(X11_FOUND)
-    find_package(XCB MODULE REQUIRED COMPONENTS XCB RANDR SHAPE EVENT)
-    set_package_properties(XCB PROPERTIES TYPE REQUIRED)
-    find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS X11Extras)
-
-    if(NOT X11_SM_FOUND)
-        message(FATAL_ERROR "\nThe X11 Session Management (SM) development package could not be found.
-                \nPlease install libSM.\n")
-    endif(NOT X11_SM_FOUND)
-
-endif()
-
-if(X11_FOUND AND XCB_XCB_FOUND)
-    set(HAVE_X11 ON)
-endif()
 
 
 find_package(QtWaylandScanner REQUIRED)
-find_package(Qt${QT_MAJOR_VERSION}WaylandClient)
+find_package(Qt${QT_MAJOR_VERSION}WaylandClient REQUIRED)
 find_package(PlasmaWaylandProtocols 1.6 REQUIRED)
 find_package(Wayland REQUIRED COMPONENTS Client)
 
-string(REGEX MATCH "\\.([^]]+)\\." KF5_VERSION_MINOR ${KF5_VERSION})
-string(REGEX REPLACE "\\." "" KF5_VERSION_MINOR ${KF5_VERSION_MINOR})
-
-message(STATUS "KF5 VERSION : ${KF5_VERSION}")
-message(STATUS "KF5 VERSION MINOR : ${KF5_VERSION_MINOR}")
+message(STATUS "KF6 VERSION : ${KF6_VERSION}")
+message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 
 
 include(ECMFindQmlModule)

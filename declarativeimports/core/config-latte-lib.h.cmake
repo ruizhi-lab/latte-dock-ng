@@ -3,10 +3,6 @@
 
 #cmakedefine01 ENABLE_MAKE_UNIQUE
 
-#cmakedefine01 HAVE_X11
-
-#cmakedefine KF5_VERSION_MINOR @KF5_VERSION_MINOR@
-
 #cmakedefine VERSION "@VERSION@"
 
 #cmakedefine WEBSITE "@WEBSITE@"

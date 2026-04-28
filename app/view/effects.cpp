@@ -307,21 +307,8 @@ void Effects::setInputMask(QRect area)
 
     m_inputMask = area;
 
-    if (KWindowSystem::isPlatformX11()) {
-        if (m_view->devicePixelRatio() != 1.0) {
-            //!Fix for X11 Global Scale
-            auto ratio = m_view->devicePixelRatio();
-            area = QRect(qRound(area.x() * ratio),
-                         qRound(area.y() * ratio),
-                         qRound(area.width()*ratio),
-                         qRound(area.height() * ratio));
-        }
-
-        m_corona->wm()->setInputMask(m_view, area);
-    } else {
-        //under wayland mask() is providing the Input Area
-        m_view->setMask(area);
-    }
+    // Under Wayland mask() is providing the input area.
+    m_view->setMask(area);
 
     emit inputMaskChanged();
 }
@@ -471,16 +458,7 @@ void Effects::updateBackgroundCorners()
 void Effects::updateMask()
 {
     if (KWindowSystem::compositingActive()) {
-        if (KWindowSystem::isPlatformX11()) {
-            if (m_view->behaveAsPlasmaPanel()) {
-                // set as NULL in order for plasma framrworks to identify NULL Mask properly
-                m_view->setMask(QRect(-1, -1, 0, 0));
-            } else {
-                m_view->setMask(QRect(0, 0, m_view->width(), m_view->height()));
-            }
-        } else {
-            // under wayland do nothing
-        }
+        // Under Wayland with compositing active we leave mask handling to the compositor.
     } else {
         QRegion fixedMask;
 
@@ -570,17 +548,6 @@ void Effects::updateEffects()
 
                 //! adjust mask coordinates based on local coordinates
                 int fX = m_rect.x(); int fY = m_rect.y();
-
-                //! Latte is now using GtkFrameExtents so Effects geometries must be adjusted
-                //! windows that use GtkFrameExtents and apply Effects on them they take GtkFrameExtents
-                //! as granted
-                if (KWindowSystem::isPlatformX11() && !m_view->byPassWM()) {
-                    if (m_view->location() == Plasma::Types::BottomEdge) {
-                        fY = qMax(0, fY - m_view->headThicknessGap());
-                    } else if (m_view->location() == Plasma::Types::RightEdge) {
-                        fX = qMax(0, fX - m_view->headThicknessGap());
-                    }
-                }
 
                 //! There are cases that mask is NULL even though it should not
                 //! Example: SidebarOnDemand from v0.10 that BEHAVEASPLASMAPANEL in EditMode

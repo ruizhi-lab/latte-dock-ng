@@ -5,9 +5,8 @@
 */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -179,10 +178,6 @@ PlasmaComponents.Page {
 
                 readonly property int buttonSize: (dialog.optionsWidth - (spacing * 3)) / 4
 
-                ExclusiveGroup {
-                    id: locationGroup
-                }
-
                 PlasmaComponents.Button {
                     id: bottomEdgeBtn
                     Layout.minimumWidth: parent.buttonSize
@@ -191,7 +186,6 @@ PlasmaComponents.Page {
                     iconSource: "arrow-down"
                     checked: plasmoid.location === edge
                     checkable: false
-                    exclusiveGroup: locationGroup
 
                     readonly property int edge: PlasmaCore.Types.BottomEdge
 
@@ -210,7 +204,6 @@ PlasmaComponents.Page {
                     iconSource: "arrow-left"
                     checked: plasmoid.location === edge
                     checkable: false
-                    exclusiveGroup: locationGroup
 
                     readonly property int edge: PlasmaCore.Types.LeftEdge
 
@@ -229,7 +222,6 @@ PlasmaComponents.Page {
                     iconSource: "arrow-up"
                     checked: plasmoid.location === edge
                     checkable: false
-                    exclusiveGroup: locationGroup
 
                     readonly property int edge: PlasmaCore.Types.TopEdge
 
@@ -248,7 +240,6 @@ PlasmaComponents.Page {
                     iconSource: "arrow-right"
                     checked: plasmoid.location === edge
                     checkable: false
-                    exclusiveGroup: locationGroup
 
                     readonly property int edge: PlasmaCore.Types.RightEdge
 
@@ -283,10 +274,6 @@ PlasmaComponents.Page {
                 readonly property int configAlignment: plasmoid.configuration.alignment
                 readonly property int buttonSize: (dialog.optionsWidth - (spacing * 3)) / 4
 
-                ExclusiveGroup {
-                    id: alignmentGroup
-                }
-
                 PlasmaComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
@@ -294,7 +281,6 @@ PlasmaComponents.Page {
                     iconSource: panelIsVertical ? "format-align-vertical-top" : "format-justify-left"
                     checked: parent.configAlignment === alignment
                     checkable: false
-                    exclusiveGroup: alignmentGroup
 
                     property int alignment: panelIsVertical ? LatteCore.Types.Top : LatteCore.Types.Left
 
@@ -311,7 +297,6 @@ PlasmaComponents.Page {
                     iconSource: panelIsVertical ? "format-align-vertical-center" : "format-justify-center"
                     checked: parent.configAlignment === alignment
                     checkable: false
-                    exclusiveGroup: alignmentGroup
 
                     property int alignment: LatteCore.Types.Center
 
@@ -328,7 +313,6 @@ PlasmaComponents.Page {
                     iconSource: panelIsVertical ? "format-align-vertical-bottom" : "format-justify-right"
                     checked: parent.configAlignment === alignment
                     checkable: false
-                    exclusiveGroup: alignmentGroup
 
                     property int alignment: panelIsVertical ? LatteCore.Types.Bottom : LatteCore.Types.Right
 
@@ -346,7 +330,6 @@ PlasmaComponents.Page {
                     iconSource: "format-justify-fill"
                     checked: parent.configAlignment === alignment
                     checkable: false
-                    exclusiveGroup: alignmentGroup
 
                     property int alignment: LatteCore.Types.Justify
 
@@ -381,10 +364,6 @@ PlasmaComponents.Page {
                 property int mode: latteView.visibility.mode
                 readonly property int buttonSize: (dialog.optionsWidth - (columnSpacing)) / 2
 
-                ExclusiveGroup {
-                    id: visibilityGroup
-                }
-
                 PlasmaComponents.Button {
                     id:alwaysVisibleBtn
                     Layout.minimumWidth: parent.buttonSize
@@ -392,7 +371,6 @@ PlasmaComponents.Page {
                     text: i18n("Always Visible")
                     checked: parent.mode === mode
                     checkable: false
-                    exclusiveGroup: visibilityGroup
 
                     property int mode: LatteCore.Types.AlwaysVisible
 
@@ -408,7 +386,6 @@ PlasmaComponents.Page {
                     text: i18n("Auto Hide")
                     checked: parent.mode === mode
                     checkable: false
-                    exclusiveGroup: visibilityGroup
 
                     property int mode: LatteCore.Types.AutoHide
 
@@ -424,7 +401,6 @@ PlasmaComponents.Page {
                     text: i18n("Dodge Active")
                     checked: parent.mode === mode
                     checkable: false
-                    exclusiveGroup: visibilityGroup
 
                     property int mode: LatteCore.Types.DodgeActive
 
@@ -443,7 +419,6 @@ PlasmaComponents.Page {
                     implicitHeight: alwaysVisibleBtn.implicitHeight
 
                     checked: parent.mode === mode
-                    exclusiveGroup:  visibilityGroup
 
                     mode: plasmoid.configuration.lastDodgeVisibilityMode
                     modes: [
@@ -470,7 +445,6 @@ PlasmaComponents.Page {
                     implicitHeight: alwaysVisibleBtn.implicitHeight
 
                     checked: parent.mode === mode
-                    exclusiveGroup:  visibilityGroup
 
                     mode: plasmoid.configuration.lastWindowsVisibilityMode
                     modes: [
@@ -502,7 +476,6 @@ PlasmaComponents.Page {
                     implicitHeight: alwaysVisibleBtn.implicitHeight
 
                     checked: parent.mode === mode
-                    exclusiveGroup:  visibilityGroup
 
                     mode: plasmoid.configuration.lastSidebarVisibilityMode
                     modes: [

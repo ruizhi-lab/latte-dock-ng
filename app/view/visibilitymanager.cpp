@@ -208,9 +208,6 @@ void VisibilityManager::setViewOnFrontLayer()
 {
     m_wm->setViewExtraFlags(m_latteView, true);
     setIsBelowLayer(false);
-    if (KWindowSystem::isPlatformX11()) {
-        m_latteView->raise();
-    }
 }
 
 void VisibilityManager::setMode(Latte::Types::Visibility mode)
@@ -433,54 +430,7 @@ bool VisibilityManager::canSetStrut() const
         return false;
     }
 
-    if (!KWindowSystem::isPlatformX11() || m_wm->isKWinRunning()) {
-        // we always trust wayland and kwin to provide proper struts
-        return true;
-    }
-
-    if (qGuiApp->screens().count() < 2) {
-        return true;
-    }
-
-    /*Alternative DEs*/
-
-    const QRect thisScreen = m_latteView->screen()->geometry();
-
-    // Extended struts against a screen edge near to another screen are really harmful, so windows maximized under the panel is a lesser pain
-    // TODO: force "windows can cover" in those cases?
-    for (QScreen *screen : qGuiApp->screens()) {
-        if (!screen || m_latteView->screen() == screen) {
-            continue;
-        }
-
-        const QRect otherScreen = screen->geometry();
-
-        switch (m_latteView->location()) {
-        case Plasma::Types::TopEdge:
-            if (otherScreen.bottom() <= thisScreen.top()) {
-                return false;
-            }
-            break;
-        case Plasma::Types::BottomEdge:
-            if (otherScreen.top() >= thisScreen.bottom()) {
-                return false;
-            }
-            break;
-        case Plasma::Types::RightEdge:
-            if (otherScreen.left() >= thisScreen.right()) {
-                return false;
-            }
-            break;
-        case Plasma::Types::LeftEdge:
-            if (otherScreen.right() <= thisScreen.left()) {
-                return false;
-            }
-            break;
-        default:
-            return false;
-        }
-    }
-
+    // Wayland-only build: trust compositor-provided struts behavior.
     return true;
 }
 
@@ -675,11 +625,6 @@ void VisibilityManager::publishFrameExtents(bool forceUpdate)
         m_frameExtentsLocation = m_latteView->location();
         m_frameExtentsHeadThicknessGap = m_latteView->headThicknessGap();
 
-        if (KWindowSystem::isPlatformX11() && m_latteView->devicePixelRatio()!=1.0) {
-            //!Fix for X11 Global Scale
-            m_frameExtentsHeadThicknessGap = qRound(m_frameExtentsHeadThicknessGap * m_latteView->devicePixelRatio());
-        }
-
         QMargins frameExtents(0, 0, 0, 0);
 
         if (m_latteView->location() == Plasma::Types::LeftEdge) {
@@ -692,7 +637,7 @@ void VisibilityManager::publishFrameExtents(bool forceUpdate)
             frameExtents.setTop(m_frameExtentsHeadThicknessGap);
         }
 
-        bool bypasswm{m_latteView->byPassWM() && KWindowSystem::isPlatformX11()};
+        bool bypasswm{false};
 
         qDebug() << " -> Frame Extents :: " << m_frameExtentsLocation << " __ " << " extents :: " << frameExtents << " bypasswm :: " << bypasswm;
 
@@ -776,16 +721,12 @@ void VisibilityManager::updateGhostWindowState()
 
 void VisibilityManager::hide()
 {
-    if (KWindowSystem::isPlatformX11()) {
-        m_latteView->setVisible(false);
-    }
+    // Wayland-only: visibility is managed via mustBeHidden signal + compositor, not setVisible().
 }
 
 void VisibilityManager::show()
 {
-    if (KWindowSystem::isPlatformX11()) {
-        m_latteView->setVisible(true);
-    }
+    // Wayland-only: visibility is managed via mustBeShown signal + compositor, not setVisible().
 }
 
 void VisibilityManager::toggleHiddenState()

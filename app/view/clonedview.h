@@ -21,7 +21,7 @@ class ClonedView : public View
 public:
     static const int ERRORAPPLETID = -999;
 
-    ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen = nullptr, bool byPassX11WM = false);
+    ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen = nullptr, bool byPassWM = false);
     ~ClonedView();
 
     bool isOriginal() const override;

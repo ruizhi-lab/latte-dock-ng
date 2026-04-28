@@ -21,7 +21,6 @@
 #include <KDeclarative/KDeclarative>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
-#include <KWindowSystem>
 
 namespace Latte {
 namespace ViewPart {
@@ -34,12 +33,8 @@ SubConfigView::SubConfigView(Latte::View *view, const QString &title, const bool
 
     setupWaylandIntegration();
 
-    if (KWindowSystem::isPlatformX11()) {
-        m_corona->wm()->registerIgnoredWindow(winId());
-    } else {
-        connect(this, &QWindow::windowTitleChanged, this, &SubConfigView::updateWaylandId);
-        connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &SubConfigView::updateWaylandId);
-    }
+    connect(this, &QWindow::windowTitleChanged, this, &SubConfigView::updateWaylandId);
+    connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &SubConfigView::updateWaylandId);
 
     m_validTitle = title;
     setTitle(m_validTitle);
@@ -62,13 +57,6 @@ SubConfigView::SubConfigView(Latte::View *view, const QString &title, const bool
 
         setScreen(m_latteView->screen());
 
-        if (KWindowSystem::isPlatformX11()) {
-            if (m_isNormalWindow) {
-                setFlags(wFlags());
-                m_corona->wm()->setViewExtraFlags(this, false, Latte::Types::NormalWindow);
-            }
-        }
-
         syncGeometry();
     });
 
@@ -87,7 +75,9 @@ SubConfigView::~SubConfigView()
 
     m_corona->dialogShadows()->removeWindow(this);
 
-    m_corona->wm()->unregisterIgnoredWindow(KWindowSystem::isPlatformX11() ? winId() : m_waylandWindowId);
+    if (!m_waylandWindowId.isNull()) {
+        m_corona->wm()->unregisterIgnoredWindow(m_waylandWindowId);
+    }
 
     for (const auto &var : connections) {
         QObject::disconnect(var);
@@ -134,11 +124,11 @@ QString SubConfigView::validTitle() const
 
 Latte::WindowSystem::WindowId SubConfigView::trackedWindowId()
 {
-    if (KWindowSystem::isPlatformWayland() && m_waylandWindowId.toInt() <= 0) {
+    if (m_waylandWindowId.toInt() <= 0) {
         updateWaylandId();
     }
 
-    return !KWindowSystem::isPlatformWayland() ? winId() :  m_waylandWindowId;
+    return m_waylandWindowId;
 }
 
 Latte::Corona *SubConfigView::corona() const
@@ -178,7 +168,7 @@ void SubConfigView::initParentView(Latte::View *view)
 
 void SubConfigView::requestActivate()
 {
-    if (KWindowSystem::isPlatformWayland() && m_shellSurface) {
+    if (m_shellSurface) {
         updateWaylandId();
         m_corona->wm()->requestActivate(m_waylandWindowId);
     } else {
@@ -237,7 +227,7 @@ KWayland::Client::PlasmaShellSurface *SubConfigView::surface()
 
 void SubConfigView::setupWaylandIntegration()
 {
-    if (m_shellSurface || !KWindowSystem::isPlatformWayland() || !m_latteView || !m_latteView->containment()) {
+    if (m_shellSurface || !m_latteView || !m_latteView->containment()) {
         // already setup
         return;
     }

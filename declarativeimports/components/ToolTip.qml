@@ -4,9 +4,9 @@
 */
 
 import QtQuick 2.6
-import QtQuick.Controls 1.4
 import QtQuick.Templates 2.2 as T
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
 
 T.ToolTip {
     id: control
@@ -25,7 +25,7 @@ T.ToolTip {
 
     closePolicy: T.Popup.CloseOnEscape | T.Popup.CloseOnPressOutsideParent | T.Popup.CloseOnReleaseOutsideParent
 
-    contentItem: Label {
+    contentItem: PlasmaComponents.Label {
         text: control.text
         font: control.font
         color: PlasmaCore.ColorScope.textColor

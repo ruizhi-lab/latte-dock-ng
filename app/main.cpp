@@ -37,6 +37,7 @@
 #include <KAboutData>
 #include <KDBusService>
 #include <KQuickAddons/QtQuickSettings>
+#include <KWindowSystem>
 
 //! COLORS
 #define CNORMAL  "\e[0m"
@@ -78,6 +79,11 @@ int main(int argc, char **argv)
     detectPlatform(argc, argv);
     QApplication app(argc, argv);
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
+
+    if (!KWindowSystem::isPlatformWayland()) {
+        qCritical() << "Latte-Dock Wayland-only build requires a Wayland Plasma session.";
+        return 1;
+    }
 
     if (!qpaVariable) {
         // don't leak the env variable to processes we start
@@ -539,15 +545,5 @@ inline void detectPlatform(int argc, char **argv)
         }
     }
 
-    const QByteArray sessionType = qgetenv("XDG_SESSION_TYPE");
-
-    if (sessionType.isEmpty()) {
-        return;
-    }
-
-    if (qstrcmp(sessionType, "wayland") == 0) {
-        qputenv("QT_QPA_PLATFORM", "wayland");
-    } else if (qstrcmp(sessionType, "x11") == 0) {
-        qputenv("QT_QPA_PLATFORM", "xcb");
-    }
+    qputenv("QT_QPA_PLATFORM", "wayland");
 }

@@ -41,7 +41,7 @@ add_subdirectory(wm)
 add_subdirectory(wm/tracker)
 
 set(latte_dbusXML dbus/org.kde.LatteDock.xml)
-qt5_add_dbus_adaptor(lattedock-app_SRCS ${latte_dbusXML} lattecorona.h Latte::Corona lattedockadaptor)
+qt_add_dbus_adaptor(lattedock-app_SRCS ${latte_dbusXML} lattecorona.h Latte::Corona lattedockadaptor)
 
 ki18n_wrap_ui(lattedock-app_SRCS settings/actionsdialog/actionsdialog.ui)
 ki18n_wrap_ui(lattedock-app_SRCS settings/detailsdialog/detailsdialog.ui)
@@ -60,39 +60,31 @@ add_executable(latte-dock ${lattedock-app_SRCS})
 include(FakeTarget.cmake)
 
 target_link_libraries(latte-dock
-    Qt5::DBus
-    Qt5::Quick
-    Qt5::Qml
-    KF5::Activities
-    KF5::Archive
-    KF5::CoreAddons
-    KF5::Crash
-    KF5::DBusAddons
-    KF5::Declarative
-    KF5::GuiAddons
-    KF5::GlobalAccel
-    KF5::I18n
-    KF5::IconThemes
-    KF5::KIOWidgets
-    KF5::Notifications
-    KF5::NewStuff
-    KF5::QuickAddons
-    KF5::Plasma
-    KF5::PlasmaQuick
-    KF5::WaylandClient
-    KF5::XmlGui
+    Qt6::DBus
+    Qt6::Widgets
+    Qt6::Quick
+    Qt6::Qml
+    KF6::Activities
+    KF6::Archive
+    KF6::CoreAddons
+    KF6::Crash
+    KF6::DBusAddons
+    KF6::Declarative
+    KF6::GuiAddons
+    KF6::GlobalAccel
+    KF6::I18n
+    KF6::IconThemes
+    KF6::KIOWidgets
+    KF6::Notifications
+    KF6::NewStuff
+    KF6::QuickAddons
+    KF6::Plasma
+    KF6::PlasmaQuick
+    KF6::WaylandClient
+    KF6::WindowSystem
+    KF6::XmlGui
     Wayland::Client
 )
-
-
-if(HAVE_X11)
-    target_link_libraries(latte-dock
-        Qt5::X11Extras
-        KF5::WindowSystem
-        ${X11_LIBRARIES}
-        ${XCB_LIBRARIES}
-    )
-endif()
 
 configure_file(org.kde.latte-dock.desktop.cmake org.kde.latte-dock.desktop)
 configure_file(org.kde.latte-dock.appdata.xml.cmake org.kde.latte-dock.appdata.xml)

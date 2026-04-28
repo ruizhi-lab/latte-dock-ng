@@ -16,8 +16,6 @@
 #include <QQuickItem>
 #include <QScreen>
 
-// KDE
-#include <KWindowSystem>
 #include <KWayland/Client/plasmashell.h>
 
 // Plasma
@@ -48,7 +46,7 @@ void CanvasConfigView::init()
     setSource(source);
     syncGeometry();
 
-    if (m_parent && KWindowSystem::isPlatformX11()) {
+    if (m_parent) {
         m_parent->requestActivate();
     }
 }
@@ -96,7 +94,7 @@ void CanvasConfigView::syncGeometry()
 
     //! after placement request to activate the main config window in order to avoid
     //! rare cases of closing settings window from secondaryConfigView->focusOutEvent
-    if (m_parent && KWindowSystem::isPlatformX11()) {
+    if (m_parent) {
         m_parent->requestActivate();
     }
 }
@@ -226,4 +224,3 @@ void CanvasConfigView::updateEnabledBorders()
 
 }
 }
-

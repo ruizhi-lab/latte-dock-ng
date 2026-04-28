@@ -124,7 +124,7 @@ class View : public PlasmaQuick::ContainmentView
     Q_PROPERTY(QRect screenGeometry READ screenGeometry NOTIFY screenGeometryChanged)
 
 public:
-    View(Plasma::Corona *corona, QScreen *targetScreen = nullptr, bool byPassX11WM = false);
+    View(Plasma::Corona *corona, QScreen *targetScreen = nullptr, bool byPassWM = false);
     virtual ~View();
 
     void init(Plasma::Containment *plasma_containment = nullptr);

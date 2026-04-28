@@ -48,7 +48,6 @@
 #include <KActivities/Consumer>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
-#include <KWindowSystem>
 
 // Plasma
 #include <Plasma/Containment>
@@ -61,10 +60,10 @@
 
 namespace Latte {
 
-//! both alwaysVisible and byPassWMX11 are passed through corona because
+//! both alwaysVisible and byPassWM are passed through corona because
 //! during the view window creation containment hasn't been set, but these variables
 //! are needed in order for window flags to be set correctly
-View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassX11WM)
+View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
     : PlasmaQuick::ContainmentView(corona),
       m_effects(new ViewPart::Effects(this)),
       m_interface(new ViewPart::ContainmentInterface(this)),
@@ -90,21 +89,12 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassX11WM)
             | Qt::NoDropShadowWindowHint
             | Qt::WindowDoesNotAcceptFocus;
 
-    if (byPassX11WM) {
+    if (byPassWM) {
         setFlags(flags | Qt::BypassWindowManagerHint);
         //! needs to be set early enough
-        m_byPassWM = byPassX11WM;
+        m_byPassWM = byPassWM;
     } else {
         setFlags(flags);
-    }
-
-    if (KWindowSystem::isPlatformX11()) {
-        //! Enable OnAllDesktops during creation in order to protect corner cases that is ignored
-        //! during startup. Such corner case is bug #447689.
-        //! Best guess is that this is needed because OnAllDesktops is set through visibilitymanager
-        //! after containment has been assigned. That delay might lead wm ignoring the flag
-        //! until it is reapplied.
-        KWindowSystem::setOnAllDesktops(winId(), true);
     }
 
     if (targetScreen) {
@@ -122,7 +112,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassX11WM)
 
     connect(this, &View::containmentChanged, this, &View::groupIdChanged);
     connect(this, &View::containmentChanged
-            , this, [ &, byPassX11WM]() {
+            , this, [ &, byPassWM]() {
         qDebug() << "dock view c++ containment changed 1...";
 
         if (!this->containment())
@@ -136,7 +126,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassX11WM)
         restoreConfig();
 
         //! Afterwards override that values in case during creation something different is needed
-        setByPassWM(byPassX11WM);
+        setByPassWM(byPassWM);
 
         //! Check the screen assigned to this dock
         reconsiderScreen();
@@ -576,10 +566,7 @@ void View::showConfigurationInterface(Plasma::Applet *applet)
     } else if (m_appletConfigView) {
         if (m_appletConfigView->applet() == applet) {
             m_appletConfigView->show();
-
-            if (KWindowSystem::isPlatformX11()) {
-                m_appletConfigView->requestActivate();
-            }
+            m_appletConfigView->requestActivate();
             return;
         } else {
             m_appletConfigView->hide();
@@ -682,15 +669,6 @@ void View::updateAbsoluteGeometry(bool bypassChecks)
         }
     }
 
-    if (KWindowSystem::isPlatformX11() && devicePixelRatio() != 1.0) {
-        //!Fix for X11 Global Scale, I dont think this could be pixel perfect accurate
-        auto factor = devicePixelRatio();
-        absGeometry = QRect(qRound(absGeometry.x() * factor),
-                            qRound(absGeometry.y() * factor),
-                            qRound(absGeometry.width() * factor),
-                            qRound(absGeometry.height() * factor));
-    }
-
     if (m_absoluteGeometry == absGeometry && !bypassChecks) {
         return;
     }
@@ -728,9 +706,6 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
         m_visibility->removeBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() & ~Qt::WindowDoesNotAcceptFocus);
         m_visibility->initViewFlags();
-        if (KWindowSystem::isPlatformX11()) {
-            KWindowSystem::forceActiveWindow(winId());
-        }
         if (m_shellSurface) {
             m_shellSurface->setPanelTakesFocus(true);
         }
@@ -1204,13 +1179,7 @@ void View::applyActivitiesToWindows()
         }
 
         if (m_appletConfigView) {
-            Latte::WindowSystem::WindowId appletconfigviewid;
-
-            if (KWindowSystem::isPlatformX11()) {
-                appletconfigviewid = m_appletConfigView->winId();
-            } else {
-                appletconfigviewid = m_corona->wm()->winIdFor("latte-dock", m_appletConfigView->title());
-            }
+            const Latte::WindowSystem::WindowId appletconfigviewid = m_corona->wm()->winIdFor("latte-dock", m_appletConfigView->title());
 
             m_positioner->setWindowOnActivities(appletconfigviewid, runningActivities);
         }

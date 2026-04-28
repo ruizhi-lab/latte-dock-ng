@@ -18,10 +18,6 @@
 // KDE
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
-#include <KWindowSystem>
-
-// X11
-#include <NETWM>
 
 namespace Latte {
 namespace ViewPart {
@@ -65,60 +61,10 @@ SubWindow::SubWindow(Latte::View *view, QString debugType) :
         updateGeometry();
     });
 
-    if (!KWindowSystem::isPlatformWayland()) {
-        //! IMPORTANT!!! ::: This fixes a bug when closing an Activity all views from all Activities are
-        //!  disappearing! With this code parts they reappear!!!
-        m_visibleHackTimer1.setInterval(400);
-        m_visibleHackTimer2.setInterval(2500);
-        m_visibleHackTimer1.setSingleShot(true);
-        m_visibleHackTimer2.setSingleShot(true);
-
-        connectionsHack << connect(this, &QWindow::visibleChanged, this, [&]() {
-            if (!m_inDelete && m_latteView && m_latteView->layout() && !isVisible()) {
-                m_visibleHackTimer1.start();
-                m_visibleHackTimer2.start();
-            } else if (!m_inDelete) {
-                //! For some reason when the window is hidden in the edge under X11 afterwards
-                //! is losing its window flags
-                m_corona->wm()->setViewExtraFlags(this);
-            }
-        });
-
-        connectionsHack << connect(&m_visibleHackTimer1, &QTimer::timeout, this, [&]() {
-            if (!m_inDelete && m_latteView && m_latteView->layout() && !isVisible()) {
-                show();
-                emit forcedShown();
-                //qDebug() << m_debugType + ":: Enforce reshow from timer 1...";
-            } else {
-                //qDebug() << m_debugType + ":: No needed reshow from timer 1...";
-            }
-        });
-
-        connectionsHack << connect(&m_visibleHackTimer2, &QTimer::timeout, this, [&]() {
-            if (!m_inDelete && m_latteView && m_latteView->layout() && !isVisible()) {
-                show();
-                emit forcedShown();
-                //qDebug() << m_debugType + ":: Enforce reshow from timer 2...";
-            } else {
-                //qDebug() << m_debugType + ":: No needed reshow from timer 2...";
-            }
-        });
-
-        connectionsHack << connect(this, &SubWindow::forcedShown, this, [&]() {
-            m_corona->wm()->unregisterIgnoredWindow(m_trackedWindowId);
-            m_trackedWindowId = winId();
-            m_corona->wm()->registerIgnoredWindow(m_trackedWindowId);
-        });
-    }
-
     setupWaylandIntegration();
 
-    if (KWindowSystem::isPlatformX11()) {
-        m_trackedWindowId = winId();
-        m_corona->wm()->registerIgnoredWindow(m_trackedWindowId);
-    } else {
-        connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &SubWindow::updateWaylandId);
-    }
+    connect(this, &QWindow::windowTitleChanged, this, &SubWindow::updateWaylandId);
+    connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &SubWindow::updateWaylandId);
 
     setScreen(m_latteView->screen());
     show();
@@ -129,7 +75,9 @@ SubWindow::~SubWindow()
 {
     m_inDelete = true;
 
-    m_corona->wm()->unregisterIgnoredWindow(KWindowSystem::isPlatformX11() ? winId() : m_trackedWindowId);
+    if (!m_trackedWindowId.isNull()) {
+        m_corona->wm()->unregisterIgnoredWindow(m_trackedWindowId);
+    }
 
     m_latteView = nullptr;
 
@@ -172,7 +120,7 @@ Latte::View *SubWindow::parentView()
 
 Latte::WindowSystem::WindowId SubWindow::trackedWindowId()
 {
-    if (KWindowSystem::isPlatformWayland() && m_trackedWindowId.toInt() <= 0) {
+    if (m_trackedWindowId.toInt() <= 0) {
         updateWaylandId();
     }
 
@@ -221,7 +169,7 @@ void SubWindow::startGeometryTimer()
 
 void SubWindow::setupWaylandIntegration()
 {
-    if (m_shellSurface || !KWindowSystem::isPlatformWayland() || !m_latteView || !m_latteView->containment()) {
+    if (m_shellSurface || !m_latteView || !m_latteView->containment()) {
         // already setup
         return;
     }

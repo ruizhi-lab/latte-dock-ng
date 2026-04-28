@@ -51,12 +51,8 @@ InfoView::InfoView(Latte::Corona *corona, QString message, QScreen *screen, QWin
     setScreen(screen);
     setFlags(wFlags());
 
-    if (KWindowSystem::isPlatformX11()) {
-        m_trackedWindowId = winId();
-        m_corona->wm()->registerIgnoredWindow(m_trackedWindowId);
-    } else {
-        connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &InfoView::updateWaylandId);
-    }
+    connect(this, &QWindow::windowTitleChanged, this, &InfoView::updateWaylandId);
+    connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &InfoView::updateWaylandId);
 
     init();
 }
@@ -64,6 +60,10 @@ InfoView::InfoView(Latte::Corona *corona, QString message, QScreen *screen, QWin
 InfoView::~InfoView()
 {
     PanelShadows::self()->removeWindow(this);
+
+    if (!m_trackedWindowId.isNull()) {
+        m_corona->wm()->unregisterIgnoredWindow(m_trackedWindowId);
+    }
 
     qDebug() << "InfoView deleting ...";
 

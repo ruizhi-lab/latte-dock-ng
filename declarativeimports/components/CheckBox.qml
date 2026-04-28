@@ -3,20 +3,19 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import "private" as Private
+import QtQuick.Controls 2.15 as QQC2
 
-PlasmaComponents.CheckBox {
+QQC2.CheckBox {
+    id: root
     property int value: 0
+    property alias partiallyCheckedEnabled: root.tristate
+    property alias checkedState: root.checkState
 
     onValueChanged: {
         if (partiallyCheckedEnabled) {
             checkedState = value;
         } else {
-            checked = value;
+            checked = !!value;
         }
     }
-
-    style: Private.CheckBoxStyle {}
 }
-

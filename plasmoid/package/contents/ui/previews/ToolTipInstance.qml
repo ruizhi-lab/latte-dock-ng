@@ -9,7 +9,7 @@
 
 import QtQuick 2.6
 import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 import QtQml.Models 2.2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -190,7 +190,7 @@ Column {
                 id:previewThumbLoader
                 anchors.fill: parent
                 anchors.margins: Math.max(2, previewShadow.radius)
-                active: LatteCore.WindowSystem.isPlatformX11 || (root.plasma520 && LatteCore.WindowSystem.isPlatformWayland)
+                active: root.plasma520 && LatteCore.WindowSystem.isPlatformWayland
                 visible: !albumArtImage.visible && !thumbnailSourceItem.isMinimized
                 source:  {
                     if (LatteCore.WindowSystem.isPlatformWayland) {

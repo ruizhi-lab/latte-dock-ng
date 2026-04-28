@@ -23,7 +23,7 @@ class OriginalView : public View
     Q_PROPERTY(Latte::Types::ScreensGroup screensGroup READ screensGroup NOTIFY screensGroupChanged)
 
 public:
-    OriginalView(Plasma::Corona *corona, QScreen *targetScreen = nullptr, bool byPassX11WM = false);
+    OriginalView(Plasma::Corona *corona, QScreen *targetScreen = nullptr, bool byPassWM = false);
     ~OriginalView();
 
     bool isOriginal() const override;

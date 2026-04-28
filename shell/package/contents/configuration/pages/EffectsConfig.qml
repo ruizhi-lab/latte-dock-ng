@@ -4,10 +4,9 @@
 */
 
 import QtQuick 2.7
-import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
-import QtQuick.Dialogs 1.2
+import Qt5Compat.GraphicalEffects
+import QtQuick.Dialogs as QtDialogs
 import QtQuick.Controls 2.12 as QtQuickControls212
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -167,10 +166,6 @@ PlasmaComponents.Page {
                         return strC.indexOf("#") === 0 ? strC.substr(1) : strC;
                     }
 
-                    ExclusiveGroup {
-                        id: shadowColorGroup
-                    }
-
                     PlasmaComponents.Button {
                         id: defaultShadowBtn
                         Layout.fillWidth: true
@@ -178,7 +173,6 @@ PlasmaComponents.Page {
                         text: i18nc("default shadow", "Default Color")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
-                        exclusiveGroup: shadowColorGroup
                         tooltip: i18n("Default shadow for applets")
 
                         readonly property int type: LatteContainment.Types.DefaultColorShadow
@@ -197,7 +191,6 @@ PlasmaComponents.Page {
                         text: i18nc("theme shadow", "Theme Color")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
-                        exclusiveGroup: shadowColorGroup
                         tooltip: i18n("Shadow from theme color palette")
 
                         readonly property int type: LatteContainment.Types.ThemeColorShadow
@@ -220,7 +213,6 @@ PlasmaComponents.Page {
                         checkable: false
                         checked: plasmoid.configuration.shadowColorType === type
                         tooltip: i18n("Use set shadow color")
-                        exclusiveGroup: shadowColorGroup
 
                         readonly property int type: LatteContainment.Types.UserColorShadow
 
@@ -249,7 +241,7 @@ PlasmaComponents.Page {
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked: {
-                                    shadowColorGroup.current = userShadowBtn;
+                                    plasmoid.configuration.shadowColorType = userShadowBtn.type;
                                     viewConfig.setSticker(true);
                                     colorDialogLoader.showDialog = true;
                                 }
@@ -261,13 +253,11 @@ PlasmaComponents.Page {
                             property bool showDialog: false
                             active: showDialog
 
-                            sourceComponent: ColorDialog {
+                            sourceComponent: QtDialogs.ColorDialog {
                                 title: i18n("Please choose shadow color")
-                                showAlphaChannel: false
 
                                 onAccepted: {
-                                    //console.log("You chose: " + String(color));
-                                    var strC = String(color);
+                                    var strC = String(selectedColor);
                                     if (strC.indexOf("#") === 0) {
                                         plasmoid.configuration.shadowColor = strC.substr(1);
                                     }
@@ -280,8 +270,8 @@ PlasmaComponents.Page {
                                     viewConfig.setSticker(false);
                                 }
                                 Component.onCompleted: {
-                                    color = String("#" + plasmoid.configuration.shadowColor);
-                                    visible = true;
+                                    selectedColor = String("#" + plasmoid.configuration.shadowColor);
+                                    open();
                                 }
                             }
                         }
@@ -328,16 +318,11 @@ PlasmaComponents.Page {
 
                         property int duration: plasmoid.configuration.durationTime
 
-                        ExclusiveGroup {
-                            id: animationsGroup
-                        }
-
                         PlasmaComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x1")
                             checked: parent.duration === duration
                             checkable: false
-                            exclusiveGroup: animationsGroup
 
                             readonly property int duration: 3
 
@@ -352,7 +337,6 @@ PlasmaComponents.Page {
                             text: i18n("x2")
                             checked: parent.duration === duration
                             checkable: false
-                            exclusiveGroup: animationsGroup
 
                             readonly property int duration: 2
 
@@ -367,7 +351,6 @@ PlasmaComponents.Page {
                             text: i18n("x3")
                             checked: parent.duration === duration
                             checkable: false
-                            exclusiveGroup: animationsGroup
 
                             readonly property int duration: 1
 
