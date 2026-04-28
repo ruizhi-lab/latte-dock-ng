@@ -7,4 +7,4 @@ target_link_libraries(latte_packagestructure_indicator
    KF6::Package
 )
 
-install(FILES latte-indicator.desktop DESTINATION ${KDE_INSTALL_KSERVICETYPESDIR})
+install(FILES latte-indicator.desktop DESTINATION ${LATTE_KSERVICETYPES_INSTALL_DIR})

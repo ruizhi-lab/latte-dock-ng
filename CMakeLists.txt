@@ -12,7 +12,7 @@ set(FAQS "https://userbase.kde.org/LatteDock/FAQ")
 
 set(QT_MIN_VERSION "6.6.0")
 set(KF6_MIN_VERSION "6.0.0")
-set(PLASMA_MIN_VERSION "6.5.0")
+set(PLASMA_MIN_VERSION "6.6.0")
 set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 
 set(KF6_LOCALE_PREFIX "")
@@ -30,6 +30,12 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(WriteBasicConfigVersionFile)
+
+# KDEInstallDirs6 dropped KSERVICETYPESDIR; keep a deterministic install path for Latte service types.
+set(LATTE_KSERVICETYPES_INSTALL_DIR "${KDE_INSTALL_DATADIR}/kservicetypes6")
+if(DEFINED KDE_INSTALL_KSERVICETYPESDIR AND NOT KDE_INSTALL_KSERVICETYPESDIR STREQUAL "")
+    set(LATTE_KSERVICETYPES_INSTALL_DIR "${KDE_INSTALL_KSERVICETYPESDIR}")
+endif()
 
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
@@ -59,9 +65,8 @@ message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 include(ECMFindQmlModule)
 ecm_find_qmlmodule(QtQuick 2.7)
 ecm_find_qmlmodule(QtQuick.Layouts 1.3)
-ecm_find_qmlmodule(QtQuick.Controls 1.4)
-ecm_find_qmlmodule(QtQuick.Controls.Styles.Plasma 2.0)
-ecm_find_qmlmodule(QtGraphicalEffects 1.0)
+ecm_find_qmlmodule(QtQuick.Controls 2.15)
+ecm_find_qmlmodule(Qt5Compat.GraphicalEffects 1.0)
 ecm_find_qmlmodule(org.kde.kquickcontrolsaddons 2.0)
 ecm_find_qmlmodule(org.kde.plasma.core 2.0)
 ecm_find_qmlmodule(org.kde.plasma.components 2.0)
