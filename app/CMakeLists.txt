@@ -80,7 +80,7 @@ target_link_libraries(latte-dock-ng
     ${LATTE_QUICKADDONS_TARGET}
     Plasma::Plasma
     Plasma::PlasmaQuick
-    KWayland::Client
+    ${LATTE_WAYLANDCLIENT_TARGET}
     KF6::WindowSystem
     KF6::XmlGui
     Wayland::Client

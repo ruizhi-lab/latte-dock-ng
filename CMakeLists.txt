@@ -66,6 +66,7 @@ message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 set(LATTE_DECLARATIVE_TARGET "")
 set(LATTE_QUICKADDONS_TARGET "")
 set(LATTE_NEWSTUFF_TARGET "")
+set(LATTE_WAYLANDCLIENT_TARGET "")
 
 get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
 
@@ -90,10 +91,17 @@ foreach(_candidate KF6::NewStuffWidgets KF6::KNewStuffWidgets KF6::NewStuff KF6:
     endif()
 endforeach()
 
+foreach(_candidate KWayland::Client KF6::WaylandClient KF6::KWaylandClient KF5::WaylandClient)
+    if(TARGET ${_candidate})
+        set(LATTE_WAYLANDCLIENT_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
 if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
     foreach(_target ${_latte_imported_targets})
         string(TOLOWER "${_target}" _target_lc)
-        if(_target_lc MATCHES "declarative")
+        if(_target_lc MATCHES "kdeclarative")
             set(LATTE_DECLARATIVE_TARGET ${_target})
             break()
         endif()
@@ -130,11 +138,24 @@ if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
-if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
-    foreach(_var Declarative_LIBRARIES KF6Declarative_LIBRARIES KDeclarative_LIBRARIES)
-        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
-            set(LATTE_DECLARATIVE_TARGET "${${_var}}")
+if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "waylandclient" OR _target_lc MATCHES "kwayland::client")
+            set(LATTE_WAYLANDCLIENT_TARGET ${_target})
             break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
+    foreach(_var KF6Declarative_LIBRARIES KDeclarative_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            string(TOLOWER "${${_var}}" _candidate_lc)
+            if(NOT _candidate_lc MATCHES "_location$")
+                set(LATTE_DECLARATIVE_TARGET "${${_var}}")
+                break()
+            endif()
         endif()
     endforeach()
 endif()
@@ -159,14 +180,31 @@ if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
+if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
+    foreach(_var
+            KWaylandClient_LIBRARIES KF6WaylandClient_LIBRARIES KF5WaylandClient_LIBRARIES
+            WaylandClient_LIBRARIES KWayland_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_WAYLANDCLIENT_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     set(LATTE_QUICKADDONS_TARGET ${LATTE_DECLARATIVE_TARGET})
 endif()
 
+if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
+    message(WARNING
+        "Could not resolve a KQuickAddons CMake link target. "
+        "Proceeding without explicit KQuickAddons link target.")
+endif()
+
 if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
-    message(FATAL_ERROR
+    message(WARNING
         "Could not resolve a KDEclarative CMake link target. "
-        "Imported targets in this directory: ${_latte_imported_targets}")
+        "Proceeding without explicit KDeclarative link target.")
 endif()
 
 if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
@@ -175,9 +213,16 @@ if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
         "Imported targets in this directory: ${_latte_imported_targets}")
 endif()
 
+if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
+    message(FATAL_ERROR
+        "Could not resolve a KWayland client CMake link target. "
+        "Imported targets in this directory: ${_latte_imported_targets}")
+endif()
+
 message(STATUS "Resolved KDeclarative target: ${LATTE_DECLARATIVE_TARGET}")
 message(STATUS "Resolved QuickAddons target: ${LATTE_QUICKADDONS_TARGET}")
 message(STATUS "Resolved NewStuff target: ${LATTE_NEWSTUFF_TARGET}")
+message(STATUS "Resolved KWayland client target: ${LATTE_WAYLANDCLIENT_TARGET}")
 
 
 include(ECMFindQmlModule)
