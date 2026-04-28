@@ -14,10 +14,6 @@
 #include <QQuickItem>
 #include <QTimer>
 
-namespace KDeclarative {
-class ConfigPropertyMap;
-}
-
 namespace Latte{
 namespace Containment{
 

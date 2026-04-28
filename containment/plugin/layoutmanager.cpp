@@ -11,9 +11,6 @@
 // Qt
 #include <QtMath>
 
-// KDE
-#include <KDeclarative/ConfigPropertyMap>
-
 // Plasma
 #include <Plasma/Plasma>
 #include <Plasma/Applet>
@@ -1480,7 +1477,7 @@ void LayoutManager::moveAppletsBasedOnJustifyAlignment()
         bool isparabolicspacer = appletlist[i]->property("isParabolicEdgeSpacer").toBool();
 
         if (!firstSplitterFound) {
-            insertAtLayoutIndex(m_startLayout, appletlist[i], i);
+            this->insertAtLayoutIndex(m_startLayout, appletlist[i], i);
             if (issplitter) {
                 firstSplitterFound = true;
                 splitter1 = i;
@@ -1489,12 +1486,12 @@ void LayoutManager::moveAppletsBasedOnJustifyAlignment()
             if (issplitter) {
                 secondSplitterFound = true;
                 splitter2 = i;
-                insertAtLayoutTail(m_endLayout, appletlist[i]);
+                this->insertAtLayoutTail(m_endLayout, appletlist[i]);
             } else {
-                insertAtLayoutIndex(m_mainLayout, appletlist[i], i-splitter1);
+                this->insertAtLayoutIndex(m_mainLayout, appletlist[i], i-splitter1);
             }
         } else if (firstSplitterFound && secondSplitterFound) {
-            insertAtLayoutIndex(m_endLayout, appletlist[i], i-splitter2);
+            this->insertAtLayoutIndex(m_endLayout, appletlist[i], i-splitter2);
         }
     }
 
