@@ -42,7 +42,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBu
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     Archive Config CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel
-    I18n IconThemes KIO NewStuff Notifications Svg WindowSystem XmlGui)
+    I18n IconThemes KIO NewStuff Notifications Package Svg WindowSystem XmlGui)
 
 find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
