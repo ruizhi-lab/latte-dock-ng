@@ -7,7 +7,7 @@
 #ifndef PLASMAQUICKCONTAINMENTVIEW_H
 #define PLASMAQUICKCONTAINMENTVIEW_H
 
-#include <kquickaddons/quickviewsharedengine.h>
+#include <KQuickAddons/quickviewsharedengine.h>
 
 #include "plasma/corona.h"
 #include "plasma/containment.h"
