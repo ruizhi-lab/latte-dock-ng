@@ -17,13 +17,17 @@
 #include <QObject>
 
 // KDE
-#include <KWayland/Client/registry.h>
-#include <KWayland/Client/connection_thread.h>
-#include <KWayland/Client/plasmawindowmanagement.h>
-#include <KWayland/Client/plasmashell.h>
-#include <KWayland/Client/surface.h>
 #include <KWindowInfo>
 #include <KWindowEffects>
+
+namespace KWayland {
+namespace Client {
+class PlasmaWindow;
+class PlasmaShell;
+class PlasmaWindowManagement;
+class PlasmaVirtualDesktopManagement;
+}
+}
 
 
 namespace Latte {
@@ -137,5 +141,4 @@ private:
 }
 
 #endif // WAYLANDINTERFACE_H
-
 
