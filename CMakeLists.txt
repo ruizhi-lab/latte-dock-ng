@@ -62,8 +62,12 @@ find_package(Wayland REQUIRED COMPONENTS Client)
 message(STATUS "KF6 VERSION : ${KF6_VERSION}")
 message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 
-# Distros may expose KDeclarative targets with different names.
+# Distros may expose KDEclarative targets with different names/casing.
 set(LATTE_DECLARATIVE_TARGET "")
+set(LATTE_QUICKADDONS_TARGET "")
+
+get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
+
 foreach(_candidate KF6::Declarative KF6::KDeclarative)
     if(TARGET ${_candidate})
         set(LATTE_DECLARATIVE_TARGET ${_candidate})
@@ -71,11 +75,6 @@ foreach(_candidate KF6::Declarative KF6::KDeclarative)
     endif()
 endforeach()
 
-if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
-    message(FATAL_ERROR "Could not resolve KDeclarative target (expected KF6::Declarative or KF6::KDeclarative).")
-endif()
-
-set(LATTE_QUICKADDONS_TARGET "")
 foreach(_candidate KF6::QuickAddons KF6::KQuickAddons)
     if(TARGET ${_candidate})
         set(LATTE_QUICKADDONS_TARGET ${_candidate})
@@ -83,8 +82,52 @@ foreach(_candidate KF6::QuickAddons KF6::KQuickAddons)
     endif()
 endforeach()
 
+if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "declarative")
+            set(LATTE_DECLARATIVE_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "quickaddons")
+            set(LATTE_QUICKADDONS_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
+    foreach(_var Declarative_LIBRARIES KF6Declarative_LIBRARIES KDeclarative_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_DECLARATIVE_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
+    foreach(_var QuickAddons_LIBRARIES KF6QuickAddons_LIBRARIES KQuickAddons_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_QUICKADDONS_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     set(LATTE_QUICKADDONS_TARGET ${LATTE_DECLARATIVE_TARGET})
+endif()
+
+if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
+    message(FATAL_ERROR
+        "Could not resolve a KDEclarative CMake link target. "
+        "Imported targets in this directory: ${_latte_imported_targets}")
 endif()
 
 
