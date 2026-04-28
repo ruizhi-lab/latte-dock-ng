@@ -1,11 +1,29 @@
 #pragma once
 
-#if __has_include(<KSvg/Svg>)
+// Prefer legacy Plasma Svg if available; otherwise provide a thin
+// compatibility class over KSvg::Svg.
+#if __has_include(<Plasma/plasma/svg.h>)
+#include <Plasma/plasma/svg.h>
+#elif __has_include(<plasma/svg.h>)
+#include <plasma/svg.h>
+#elif __has_include(<KSvg/Svg>)
 #include <KSvg/Svg>
-#else
-#include <ksvg/svg.h>
-#endif
 
 namespace Plasma {
-using Svg = KSvg::Svg;
+class Svg : public KSvg::Svg
+{
+public:
+    using KSvg::Svg::Svg;
+};
 }
+#else
+#include <ksvg/svg.h>
+
+namespace Plasma {
+class Svg : public KSvg::Svg
+{
+public:
+    using KSvg::Svg::Svg;
+};
+}
+#endif

@@ -23,6 +23,10 @@ namespace Latte {
 namespace Layout {
 Q_NAMESPACE
 
+#ifdef Type
+#undef Type
+#endif
+
 enum Type {
     Abstract = 0,
     Generic,

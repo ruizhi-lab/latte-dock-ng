@@ -260,7 +260,9 @@ int main(int argc, char **argv)
     //! based on spectacle solution at:
     //!   - https://bugs.kde.org/show_bug.cgi?id=430411
     //!   - https://invent.kde.org/graphics/spectacle/-/commit/8db27170d63f8a4aaff09615e51e3cc0fb115c4d
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
     QGuiApplication::setFallbackSessionManagementEnabled(false);
+    #endif
 
     auto disableSessionManagement = [](QSessionManager &sm) {
         sm.setRestartHint(QSessionManager::RestartNever);
