@@ -29,6 +29,19 @@
 #include <KIconThemes/KIconLoader>
 #include <KIconThemes/KIconEffect>
 
+namespace {
+
+inline qreal itemDevicePixelRatio(const QQuickItem *item)
+{
+    if (item && item->window()) {
+        return item->window()->effectiveDevicePixelRatio();
+    }
+
+    return qApp->devicePixelRatio();
+}
+
+}
+
 namespace Latte {
 
 IconItem::IconItem(QQuickItem *parent)
@@ -97,7 +110,7 @@ void IconItem::setSource(const QVariant &source)
                 m_svgIcon->setColorGroup(m_colorGroup);
                 m_svgIcon->setStatus(Plasma::Svg::Normal);
                 m_svgIcon->setUsingRenderingCache(false);
-                m_svgIcon->setDevicePixelRatio((window() ? window()->devicePixelRatio() : qApp->devicePixelRatio()));
+                m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
                 connect(m_svgIcon.get(), &Plasma::Svg::repaintNeeded, this, &IconItem::schedulePixmapUpdate);
             }
 
@@ -481,6 +494,7 @@ void IconItem::loadPixmap()
         update();
         return;
     } else if (m_svgIcon) {
+        m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
         m_svgIcon->resize(size, size);
 
         if (m_svgIcon->hasElement(m_svgIconName)) {
@@ -510,8 +524,8 @@ void IconItem::loadPixmap()
             result = m_svgIcon->pixmap();
         }
     } else if (!m_icon.isNull()) {
-        result = m_icon.pixmap(QSize(static_cast<int>(size), static_cast<int>(size))
-                               * (window() ? window()->devicePixelRatio() : qApp->devicePixelRatio()));
+        const qreal dpr = itemDevicePixelRatio(this);
+        result = m_icon.pixmap(QSize(static_cast<int>(size), static_cast<int>(size)) * dpr);
     } else if (!m_imageIcon.isNull()) {
         result = QPixmap::fromImage(m_imageIcon);
     } else {
@@ -554,6 +568,15 @@ void IconItem::loadPixmap()
 
 void IconItem::itemChange(ItemChange change, const ItemChangeData &value)
 {
+    if (change == QQuickItem::ItemSceneChange
+            || change == QQuickItem::ItemDevicePixelRatioHasChanged) {
+        if (m_svgIcon) {
+            m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
+        }
+
+        schedulePixmapUpdate();
+    }
+
     QQuickItem::itemChange(change, value);
 }
 

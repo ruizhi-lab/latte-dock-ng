@@ -61,7 +61,7 @@ Rectangle {
         onPositionChanged: {
             if (pressed && initialized) {
                 var scenePos = mapToGlobal(mouse.x, mouse.y);
-                if (plasmoid.location !== PlasmaCore.Types.LeftEsge) {
+                if (plasmoid.location !== PlasmaCore.Types.LeftEdge) {
                     curGlobalX = viewConfig.x + mouse.x;
                     curGlobalY = viewConfig.y + mouse.y;
                 } else {
