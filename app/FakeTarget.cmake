@@ -15,7 +15,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT DEFINED ECM_ENABLE_SANITIZERS)
 
     if(EXISTS "${QMLLINT}")
         message("-- Found qmllint: ${QMLLINT}")
-        add_custom_command(TARGET latte-dock PRE_BUILD
+        add_custom_command(TARGET latte-dock-ng PRE_BUILD
             COMMAND ${QMLLINT} ${QML_SRCS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             COMMENT "Running qmllint")

@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 
     KQuickAddons::QtQuickSettings::init();
 
-    KLocalizedString::setApplicationDomain("latte-dock");
+    KLocalizedString::setApplicationDomain("latte-dock-ng");
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral("latte-dock")));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
     if (username.isEmpty())
         username = qgetenv("USERNAME");
 
-    QLockFile lockFile {QDir::tempPath() + "/latte-dock." + username + ".lock"};
+    QLockFile lockFile {QDir::tempPath() + "/latte-dock-ng." + username + ".lock"};
 
     int timeout {100};
 
@@ -519,7 +519,7 @@ inline void configureAboutData()
 
     about.setHomepage(WEBSITE);
     about.setProgramLogo(QIcon::fromTheme(QStringLiteral("latte-dock")));
-    about.setDesktopFileName(QStringLiteral("latte-dock"));
+    about.setDesktopFileName(QStringLiteral("latte-dock-ng"));
     about.setProductName(QByteArray("lattedock"));
 
     // Authors

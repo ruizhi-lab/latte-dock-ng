@@ -55,11 +55,11 @@ ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
     BASENAME kde-primary-output-v1
 )
 
-add_executable(latte-dock ${lattedock-app_SRCS})
+add_executable(latte-dock-ng ${lattedock-app_SRCS})
 
 include(FakeTarget.cmake)
 
-target_link_libraries(latte-dock
+target_link_libraries(latte-dock-ng
     Qt6::DBus
     Qt6::Widgets
     Qt6::Quick
@@ -89,7 +89,7 @@ target_link_libraries(latte-dock
 configure_file(org.kde.latte-dock.desktop.cmake org.kde.latte-dock.desktop)
 configure_file(org.kde.latte-dock.appdata.xml.cmake org.kde.latte-dock.appdata.xml)
 
-install(TARGETS latte-dock ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS latte-dock-ng ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.latte-dock.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.latte-dock.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 install(FILES dbus/org.kde.LatteDock.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})

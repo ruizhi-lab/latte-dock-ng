@@ -95,7 +95,7 @@ See the [installation instructions](./INSTALLATION.md) for distro-specific depen
 
 Latte is now ready to be used by executing 
 ```
-latte-dock
+latte-dock-ng
 ```
 
 or activating **Latte Dock** from the applications menu.
