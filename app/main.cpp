@@ -31,7 +31,6 @@
 #include <QTextStream>
 
 // KDE
-#include <KCrash>
 #include <KLocalizedString>
 #include <KAboutData>
 #include <KDBusService>
@@ -435,9 +434,6 @@ int main(int argc, char **argv)
 
     std::signal(SIGKILL, signal_handler);
     std::signal(SIGINT, signal_handler);
-
-    KCrash::setDrKonqiEnabled(true);
-    KCrash::setFlags(KCrash::AutoRestart | KCrash::AlwaysDirectly);
 
     Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
     KDBusService service(KDBusService::Unique);
