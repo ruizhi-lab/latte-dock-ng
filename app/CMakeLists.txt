@@ -78,8 +78,8 @@ target_link_libraries(latte-dock-ng
     KF6::Notifications
     KF6::NewStuff
     KF6::QuickAddons
-    KF6::Plasma
-    KF6::PlasmaQuick
+    Plasma::Plasma
+    Plasma::PlasmaQuick
     KF6::WaylandClient
     KF6::WindowSystem
     KF6::XmlGui

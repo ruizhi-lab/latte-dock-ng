@@ -12,8 +12,8 @@ add_library(lattetasksplugin SHARED ${tasks_SRCS})
 target_link_libraries(lattetasksplugin
                       Qt6::Core
                       Qt6::Qml
-                      KF6::Plasma
-                      KF6::PlasmaQuick)
+                      Plasma::Plasma
+                      Plasma::PlasmaQuick)
                       
 install(TARGETS lattetasksplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
 install(FILES plugin/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
