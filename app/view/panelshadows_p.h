@@ -8,8 +8,8 @@
 
 #include <QSet>
 
-#include "plasma/framesvg.h"
-#include "plasma/svg.h"
+#include <Plasma/FrameSvg>
+#include <Plasma/Svg>
 
 class PanelShadows : public Plasma::Svg
 {
