@@ -28,7 +28,6 @@
 #include <QFile>
 #include <QLockFile>
 #include <QSessionManager>
-#include <QSharedMemory>
 #include <QTextStream>
 
 // KDE
