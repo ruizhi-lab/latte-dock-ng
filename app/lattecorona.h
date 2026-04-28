@@ -19,6 +19,7 @@
 #include <QTimer>
 
 // Plasma
+#include <Plasma/Plasma>
 #include <Plasma/Corona>
 
 // KDE
@@ -105,14 +106,14 @@ public:
     //! external panels should be not considered in the calculations
     QRect availableScreenRectWithCriteria(int id,
                                           QString activityid = QString(),
-                                          QList<Types::Visibility> ignoreModes = QList<Types::Visibility>(),
+                                          QList<Latte::Types::Visibility> ignoreModes = QList<Latte::Types::Visibility>(),
                                           QList<Plasma::Types::Location> ignoreEdges = QList<Plasma::Types::Location>(),
                                           bool ignoreExternalPanels = true,
                                           bool desktopUse = false) const;
 
     QRegion availableScreenRegionWithCriteria(int id,
                                               QString activityid = QString(),
-                                              QList<Types::Visibility> ignoreModes = QList<Types::Visibility>(),
+                                              QList<Latte::Types::Visibility> ignoreModes = QList<Latte::Types::Visibility>(),
                                               QList<Plasma::Types::Location> ignoreEdges = QList<Plasma::Types::Location>(),
                                               bool ignoreExternalPanels = true,
                                               bool desktopUse = false) const;
