@@ -49,7 +49,7 @@ class IconItem : public QQuickItem
      * Specifies the color group to use for this icon
      * This only applies to icons loaded from the plasma theme
      */
-    Q_PROPERTY(Plasma::Theme::ColorGroup colorGroup READ colorGroup WRITE setColorGroup NOTIFY colorGroupChanged)
+    Q_PROPERTY(int colorGroup READ colorGroup WRITE setColorGroup NOTIFY colorGroupChanged)
 
     /**
       * Specifies the overlay(s) for this icon
@@ -106,8 +106,8 @@ public:
     void setSource(const QVariant &source);
     QVariant source() const;
 
-    void setColorGroup(Plasma::Theme::ColorGroup group);
-    Plasma::Theme::ColorGroup colorGroup() const;
+    void setColorGroup(int group);
+    int colorGroup() const;
 
     void setOverlays(const QStringList &overlays);
     QStringList overlays() const;
@@ -139,7 +139,7 @@ public:
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *updatePaintNodeData) override;
 
     void itemChange(ItemChange change, const ItemChangeData &value) override;
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 
     void componentComplete() Q_DECL_OVERRIDE;
 
@@ -205,7 +205,7 @@ private:
 
     QStringList m_overlays;
 
-    Plasma::Theme::ColorGroup m_colorGroup;
+    int m_colorGroup{0};
 
     //this contains the raw variant it was passed
     QVariant m_source;

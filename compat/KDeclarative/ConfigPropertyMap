@@ -2,8 +2,24 @@
 
 #if __has_include(<KConfigPropertyMap>)
 #include <KConfigPropertyMap>
+#elif __has_include(<KConfigQml/KConfigPropertyMap>)
+#include <KConfigQml/KConfigPropertyMap>
+#elif __has_include(<KConfigQml/kconfigpropertymap.h>)
+#include <KConfigQml/kconfigpropertymap.h>
+#elif __has_include(<kconfigqml/kconfigpropertymap.h>)
+#include <kconfigqml/kconfigpropertymap.h>
 #else
-#include <kconfigpropertymap.h>
+#include <QQmlPropertyMap>
+class KCoreConfigSkeleton;
+
+class KConfigPropertyMap : public QQmlPropertyMap
+{
+public:
+    explicit KConfigPropertyMap(KCoreConfigSkeleton *, QObject *parent = nullptr)
+        : QQmlPropertyMap(parent)
+    {
+    }
+};
 #endif
 
 namespace KDeclarative {

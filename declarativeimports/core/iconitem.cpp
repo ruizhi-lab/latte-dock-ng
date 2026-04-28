@@ -40,6 +40,25 @@ inline qreal itemDevicePixelRatio(const QQuickItem *item)
     return qApp->devicePixelRatio();
 }
 
+inline KSvg::Svg::ColorSet toSvgColorSet(int group)
+{
+    switch (group) {
+    case 1:
+        return KSvg::Svg::Button;
+    case 2:
+        return KSvg::Svg::View;
+    case 3:
+        return KSvg::Svg::Complementary;
+    case 4:
+        return KSvg::Svg::Header;
+    case 5:
+        return KSvg::Svg::Tooltip;
+    case 0:
+    default:
+        return KSvg::Svg::Window;
+    }
+}
+
 }
 
 namespace Latte {
@@ -51,8 +70,7 @@ IconItem::IconItem(QQuickItem *parent)
       m_textureChanged(false),
       m_sizeChanged(false),
       m_usesPlasmaTheme(false),
-      m_lastValidSourceName(QString()),
-      m_colorGroup(Plasma::Theme::NormalColorGroup)
+      m_lastValidSourceName(QString())
 {
     setFlag(ItemHasContents, true);
     connect(KIconLoader::global(), SIGNAL(iconLoaderSettingsChanged()),
@@ -107,7 +125,7 @@ void IconItem::setSource(const QVariant &source)
         } else {
             if (!m_svgIcon) {
                 m_svgIcon = std::make_unique<Plasma::Svg>(this);
-                m_svgIcon->setColorGroup(m_colorGroup);
+                m_svgIcon->setColorSet(toSvgColorSet(m_colorGroup));
                 m_svgIcon->setStatus(Plasma::Svg::Normal);
                 m_svgIcon->setUsingRenderingCache(false);
                 m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
@@ -226,7 +244,7 @@ void IconItem::setLastValidSourceName(QString name)
     Q_EMIT lastValidSourceNameChanged();
 }
 
-void IconItem::setColorGroup(Plasma::Theme::ColorGroup group)
+void IconItem::setColorGroup(int group)
 {
     if (m_colorGroup == group) {
         return;
@@ -235,13 +253,13 @@ void IconItem::setColorGroup(Plasma::Theme::ColorGroup group)
     m_colorGroup = group;
 
     if (m_svgIcon) {
-        m_svgIcon->setColorGroup(group);
+        m_svgIcon->setColorSet(toSvgColorSet(group));
     }
 
     Q_EMIT colorGroupChanged();
 }
 
-Plasma::Theme::ColorGroup IconItem::colorGroup() const
+int IconItem::colorGroup() const
 {
     return m_colorGroup;
 }
@@ -580,7 +598,7 @@ void IconItem::itemChange(ItemChange change, const ItemChangeData &value)
     QQuickItem::itemChange(change, value);
 }
 
-void IconItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void IconItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (newGeometry.size() != oldGeometry.size()) {
         m_sizeChanged = true;
@@ -599,7 +617,7 @@ void IconItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeome
         }
     }
 
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChange(newGeometry, oldGeometry);
 }
 
 void IconItem::componentComplete()

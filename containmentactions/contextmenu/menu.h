@@ -7,6 +7,7 @@
 #define MENU_H
 
 // Qt
+#include <QHash>
 #include <QObject>
 
 // Plasma

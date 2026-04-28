@@ -16,6 +16,7 @@ target_link_libraries(lattecontainmentplugin
                       Qt6::Qml
                       Qt6::Quick
                       ${LATTE_DECLARATIVE_TARGET}
+                      ${LATTE_CONFIGQML_TARGET}
                       Plasma::Plasma
                       Plasma::PlasmaQuick)
 

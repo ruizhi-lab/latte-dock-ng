@@ -79,7 +79,8 @@ void Dialog::onVisualParentChanged()
         return;
     }
 
-    bool hassignal = (visualParent()->metaObject()->indexOfSignal(QMetaObject::normalizedSignature("anchoredTooltipPositionChanged()")) != -1);
+    const QByteArray normalizedSig = QMetaObject::normalizedSignature("anchoredTooltipPositionChanged()");
+    bool hassignal = (visualParent()->metaObject()->indexOfSignal(normalizedSig.constData()) != -1);
 
     if (hassignal) {
         m_visualParentConnections[0] = connect(visualParent(), SIGNAL(anchoredTooltipPositionChanged()) , this, SLOT(updateGeometry()));

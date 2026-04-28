@@ -1,11 +1,5 @@
 #pragma once
 
-#if defined(__has_include_next)
-#if __has_include_next(<Plasma/Plasma>)
-#include_next <Plasma/Plasma>
-#endif
-#endif
-
 #if __has_include(<plasma/plasma.h>)
 #include <plasma/plasma.h>
 #elif __has_include(<Plasma/plasma.h>)

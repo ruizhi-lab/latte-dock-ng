@@ -41,7 +41,13 @@ uint Environment::longDuration() const
 
 uint Environment::frameworksVersion() const
 {
-    return Plasma::version();
+#if defined(PLASMA_VERSION)
+    return PLASMA_VERSION;
+#elif defined(PLASMA_VERSION_MAJOR) && defined(PLASMA_VERSION_MINOR) && defined(PLASMA_VERSION_PATCH)
+    return makeVersion(PLASMA_VERSION_MAJOR, PLASMA_VERSION_MINOR, PLASMA_VERSION_PATCH);
+#else
+    return 0;
+#endif
 }
 
 uint Environment::plasmaDesktopVersion()
