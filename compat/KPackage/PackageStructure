@@ -1,0 +1,17 @@
+#pragma once
+
+#if __has_include(<KPackage/packagestructure.h>)
+#include <KPackage/packagestructure.h>
+#elif __has_include(<KF6/KPackage/kpackage/packagestructure.h>)
+#include <KF6/KPackage/kpackage/packagestructure.h>
+#elif __has_include(<KPackage/kpackage/packagestructure.h>)
+#include <KPackage/kpackage/packagestructure.h>
+#elif __has_include(<kpackage/packagestructure.h>)
+#include <kpackage/packagestructure.h>
+#elif __has_include(<KPackage/KPackage/PackageStructure>)
+#include <KPackage/KPackage/PackageStructure>
+#elif __has_include_next(<KPackage/PackageStructure>)
+#include_next <KPackage/PackageStructure>
+#else
+#error "Could not find a usable KPackage::PackageStructure header"
+#endif

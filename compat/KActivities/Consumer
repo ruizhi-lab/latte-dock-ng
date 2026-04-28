@@ -1,6 +1,10 @@
 #pragma once
 
-#if __has_include(<PlasmaActivities/Consumer>)
+#if __has_include(<PlasmaActivities/PlasmaActivities/Consumer>)
+#include <PlasmaActivities/PlasmaActivities/Consumer>
+#elif __has_include(<PlasmaActivities/plasmaactivities/consumer.h>)
+#include <PlasmaActivities/plasmaactivities/consumer.h>
+#elif __has_include(<PlasmaActivities/Consumer>)
 #include <PlasmaActivities/Consumer>
 #elif __has_include(<PlasmaActivities/consumer.h>)
 #include <PlasmaActivities/consumer.h>
@@ -13,11 +17,19 @@
 #else
 #include <QObject>
 #include <QString>
+#include <QStringList>
+#include <KActivities/Info>
 
 namespace KActivities {
 class Consumer : public QObject
 {
 public:
+    enum ServiceStatus {
+        NotRunning,
+        Unknown,
+        Running
+    };
+
     explicit Consumer(QObject *parent = nullptr)
         : QObject(parent)
     {
@@ -27,6 +39,28 @@ public:
     {
         return QString{};
     }
+
+    QStringList activities() const
+    {
+        return {};
+    }
+
+    QStringList activities(Info::State) const
+    {
+        return {};
+    }
+
+    ServiceStatus serviceStatus() const
+    {
+        return Running;
+    }
+
+    // signal-compatible stubs for pointer-to-member connects
+    void serviceStatusChanged(ServiceStatus);
+    void currentActivityChanged(const QString &);
+    void runningActivitiesChanged(const QStringList &);
+    void activityAdded(const QString &);
+    void activityRemoved(const QString &);
 };
 }
 #endif

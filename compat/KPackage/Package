@@ -1,9 +1,15 @@
 #pragma once
 
-#if __has_include(<KPackage/KPackage/Package>)
-#include <KPackage/KPackage/Package>
+#if __has_include(<KPackage/package.h>)
+#include <KPackage/package.h>
+#elif __has_include(<KF6/KPackage/kpackage/package.h>)
+#include <KF6/KPackage/kpackage/package.h>
+#elif __has_include(<KPackage/kpackage/package.h>)
+#include <KPackage/kpackage/package.h>
 #elif __has_include(<kpackage/package.h>)
 #include <kpackage/package.h>
+#elif __has_include(<KPackage/KPackage/Package>)
+#include <KPackage/KPackage/Package>
 #elif __has_include_next(<KPackage/Package>)
 #include_next <KPackage/Package>
 #else
