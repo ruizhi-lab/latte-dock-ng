@@ -76,7 +76,7 @@ target_link_libraries(latte-dock-ng
     KF6::IconThemes
     KF6::KIOWidgets
     KF6::Notifications
-    KF6::NewStuff
+    ${LATTE_NEWSTUFF_TARGET}
     ${LATTE_QUICKADDONS_TARGET}
     Plasma::Plasma
     Plasma::PlasmaQuick

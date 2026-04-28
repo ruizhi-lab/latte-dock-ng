@@ -65,6 +65,7 @@ message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 # Distros may expose KDEclarative targets with different names/casing.
 set(LATTE_DECLARATIVE_TARGET "")
 set(LATTE_QUICKADDONS_TARGET "")
+set(LATTE_NEWSTUFF_TARGET "")
 
 get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
 
@@ -78,6 +79,13 @@ endforeach()
 foreach(_candidate KF6::QuickAddons KF6::KQuickAddons)
     if(TARGET ${_candidate})
         set(LATTE_QUICKADDONS_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
+foreach(_candidate KF6::NewStuffWidgets KF6::KNewStuffWidgets KF6::NewStuff KF6::KNewStuff)
+    if(TARGET ${_candidate})
+        set(LATTE_NEWSTUFF_TARGET ${_candidate})
         break()
     endif()
 endforeach()
@@ -102,6 +110,26 @@ if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
+if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "newstuff" AND _target_lc MATCHES "widget")
+            set(LATTE_NEWSTUFF_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "newstuff")
+            set(LATTE_NEWSTUFF_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
     foreach(_var Declarative_LIBRARIES KF6Declarative_LIBRARIES KDeclarative_LIBRARIES)
         if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
@@ -120,6 +148,17 @@ if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
+if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
+    foreach(_var
+            NewStuffWidgets_LIBRARIES KF6NewStuffWidgets_LIBRARIES KNewStuffWidgets_LIBRARIES
+            NewStuff_LIBRARIES KF6NewStuff_LIBRARIES KNewStuff_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_NEWSTUFF_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     set(LATTE_QUICKADDONS_TARGET ${LATTE_DECLARATIVE_TARGET})
 endif()
@@ -129,6 +168,16 @@ if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
         "Could not resolve a KDEclarative CMake link target. "
         "Imported targets in this directory: ${_latte_imported_targets}")
 endif()
+
+if("${LATTE_NEWSTUFF_TARGET}" STREQUAL "")
+    message(FATAL_ERROR
+        "Could not resolve a KNewStuff CMake link target. "
+        "Imported targets in this directory: ${_latte_imported_targets}")
+endif()
+
+message(STATUS "Resolved KDeclarative target: ${LATTE_DECLARATIVE_TARGET}")
+message(STATUS "Resolved QuickAddons target: ${LATTE_QUICKADDONS_TARGET}")
+message(STATUS "Resolved NewStuff target: ${LATTE_NEWSTUFF_TARGET}")
 
 
 include(ECMFindQmlModule)
