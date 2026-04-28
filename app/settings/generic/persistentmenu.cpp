@@ -38,7 +38,7 @@ void PersistentMenu::setMasterIndex(const int &index)
     }
 
     m_masterIndex = index;
-    emit masterIndexChanged(index);
+    Q_EMIT masterIndexChanged(index);
 }
 
 void PersistentMenu::mouseReleaseEvent (QMouseEvent *e)

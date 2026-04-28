@@ -50,7 +50,7 @@ void EventsSink::setSink(QQuickItem *originParent, QQuickItem *destination)
     m_originParentItem = originParent;
     m_destinationItem = destination;
 
-    emit itemsChanged();
+    Q_EMIT itemsChanged();
 }
 
 bool EventsSink::isActive()

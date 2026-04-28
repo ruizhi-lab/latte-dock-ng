@@ -544,7 +544,7 @@ void ContainmentInterface::setPlasmoid(QObject *plasmoid)
         }
     }
 
-    emit plasmoidChanged();
+    Q_EMIT plasmoidChanged();
 }
 
 QObject *ContainmentInterface::layoutManager() const
@@ -596,7 +596,7 @@ void ContainmentInterface::setLayoutManager(QObject *manager)
         }
     }
 
-    emit layoutManagerChanged();
+    Q_EMIT layoutManagerChanged();
 }
 
 void ContainmentInterface::addApplet(const QString &pluginId)
@@ -643,10 +643,10 @@ void ContainmentInterface::addExpandedApplet(PlasmaQuick::AppletQuickItem * appl
     m_expandedAppletIds[appletQuickItem] = appletQuickItem->applet()->id();
 
     if (isExpanded != hasExpandedApplet()) {
-        emit hasExpandedAppletChanged();
+        Q_EMIT hasExpandedAppletChanged();
     }
 
-    emit expandedAppletStateChanged();
+    Q_EMIT expandedAppletStateChanged();
 }
 
 void ContainmentInterface::removeExpandedApplet(PlasmaQuick::AppletQuickItem *appletQuickItem)
@@ -660,10 +660,10 @@ void ContainmentInterface::removeExpandedApplet(PlasmaQuick::AppletQuickItem *ap
     m_expandedAppletIds.remove(appletQuickItem);
 
     if (isExpanded != hasExpandedApplet()) {
-        emit hasExpandedAppletChanged();
+        Q_EMIT hasExpandedAppletChanged();
     }
 
-    emit expandedAppletStateChanged();
+    Q_EMIT expandedAppletStateChanged();
 }
 
 QAbstractListModel *ContainmentInterface::latteTasksModel() const
@@ -727,7 +727,7 @@ void ContainmentInterface::updateAppletsOrder()
         }
     }
 
-    emit appletsOrderChanged();
+    Q_EMIT appletsOrderChanged();
 }
 
 void ContainmentInterface::updateAppletsInLockedZoom()
@@ -743,7 +743,7 @@ void ContainmentInterface::updateAppletsInLockedZoom()
     }
 
     m_appletsInLockedZoom = appletslockedzoom;
-    emit appletsInLockedZoomChanged(m_appletsInLockedZoom);
+    Q_EMIT appletsInLockedZoomChanged(m_appletsInLockedZoom);
 }
 
 void ContainmentInterface::updateAppletsDisabledColoring()
@@ -759,7 +759,7 @@ void ContainmentInterface::updateAppletsDisabledColoring()
     }
 
     m_appletsDisabledColoring = appletsdisabledcoloring;
-    emit appletsDisabledColoringChanged(appletsdisabledcoloring);
+    Q_EMIT appletsDisabledColoringChanged(appletsdisabledcoloring);
 }
 
 void ContainmentInterface::onLatteTasksCountChanged()
@@ -770,7 +770,7 @@ void ContainmentInterface::onLatteTasksCountChanged()
     }
 
     m_hasLatteTasks = (m_latteTasksModel->count() > 0);
-    emit hasLatteTasksChanged();
+    Q_EMIT hasLatteTasksChanged();
 }
 
 void ContainmentInterface::onPlasmaTasksCountChanged()
@@ -781,7 +781,7 @@ void ContainmentInterface::onPlasmaTasksCountChanged()
     }
 
     m_hasPlasmaTasks = (m_plasmaTasksModel->count() > 0);
-    emit hasPlasmaTasksChanged();
+    Q_EMIT hasPlasmaTasksChanged();
 }
 
 bool ContainmentInterface::appletIsExpanded(const int id) const
@@ -800,7 +800,7 @@ void ContainmentInterface::toggleAppletExpanded(const int id)
             PlasmaQuick::AppletQuickItem *ai = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
 
             if (ai) {
-                emit applet->activated();
+                Q_EMIT applet->activated();
             }
         }
     }
@@ -813,7 +813,7 @@ void ContainmentInterface::removeApplet(const int &id)
     }
 
     auto applet = m_appletData[id].applet;
-    emit applet->appletDeleted(applet); //! this signal should be part of Plasma Frameworks AppletPrivate::destroy() function...
+    Q_EMIT applet->appletDeleted(applet); //! this signal should be part of Plasma Frameworks AppletPrivate::destroy() function...
     applet->destroy();
 }
 
@@ -861,7 +861,7 @@ void ContainmentInterface::updateContainmentConfigProperty(const QString &key, c
     if (m_configuration->keys().contains(key)
             && (*m_configuration)[key] != value) {
         m_configuration->insert(key, value);
-        emit m_configuration->valueChanged(key, value);
+        Q_EMIT m_configuration->valueChanged(key, value);
     }
 }
 
@@ -874,7 +874,7 @@ void ContainmentInterface::updateAppletConfigProperty(const int &id, const QStri
     if (m_appletData[id].configuration->keys().contains(key)
             && (*m_appletData[id].configuration)[key] != value) {
         m_appletData[id].configuration->insert(key, value);
-        emit m_appletData[id].configuration->valueChanged(key, value);
+        Q_EMIT m_appletData[id].configuration->valueChanged(key, value);
     }
 }
 
@@ -888,7 +888,7 @@ void ContainmentInterface::updateAppletsTracking()
         onAppletAdded(applet);
     }
 
-    emit initializationCompleted();
+    Q_EMIT initializationCompleted();
 }
 
 void ContainmentInterface::updateAppletDelayedConfiguration()
@@ -914,7 +914,7 @@ void ContainmentInterface::initAppletConfigurationSignals(const int &id, KDeclar
     connect(configuration, &QQmlPropertyMap::valueChanged,
             this, [&, id](const QString &key, const QVariant &value) {
         //qDebug() << "org.kde.sync applet property changed : " << currentAppletId << " __ " << m_appletData[currentAppletId].plugin << " __ " << key << " __ " << value;
-        emit appletConfigPropertyChanged(id, key, value);
+        Q_EMIT appletConfigPropertyChanged(id, key, value);
     });
 }
 
@@ -1034,19 +1034,19 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         if (initializing) {
             //! track applet destroyed flag
             connect(applet, &Plasma::Applet::destroyedChanged, this, [&, currentAppletId](bool destroyed) {
-                emit appletInScheduledDestructionChanged(currentAppletId, destroyed);
+                Q_EMIT appletInScheduledDestructionChanged(currentAppletId, destroyed);
             });
 
             //! remove on applet destruction
             connect(applet, &QObject::destroyed, this, [&, data](){
-                emit appletRemoved(data.id);
+                Q_EMIT appletRemoved(data.id);
                 //qDebug() << "org.kde.sync: removing applet ::: " << data.id << " __ " << data.plugin << " remained : " << m_appletData.keys();
                 m_appletData.remove(data.id);
             });
         }
 
         m_appletData[data.id] = data;
-        emit appletDataCreated(data.id);
+        Q_EMIT appletDataCreated(data.id);
     }
 }
 

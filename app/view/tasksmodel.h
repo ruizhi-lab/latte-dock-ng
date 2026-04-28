@@ -32,10 +32,10 @@ public:
    void addTask(PlasmaQuick::AppletQuickItem *plasmoid);
    void removeTask(PlasmaQuick::AppletQuickItem *plasmoid);
 
-signals:
+Q_SIGNALS:
    void countChanged();
 
-private slots:
+private Q_SLOTS:
    void moveIntoWaitingTasks(PlasmaQuick::AppletQuickItem *plasmoid);
    void restoreFromWaitingTasks(PlasmaQuick::AppletQuickItem *plasmoid);
 

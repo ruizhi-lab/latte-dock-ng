@@ -15,7 +15,7 @@
 #include <array>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 #include <PlasmaQuick/Dialog>
 
 namespace Latte {
@@ -38,7 +38,7 @@ public:
 
     QPoint popupPosition(QQuickItem *item, const QSize &size) override;
 
-signals:
+Q_SIGNALS:
     void containsMouseChanged();
     void edgeChanged();
 
@@ -47,7 +47,7 @@ protected:
 
     bool event(QEvent *e) override;
 
-private slots:
+private Q_SLOTS:
     void setContainsMouse(bool contains);
     void updatePopUpEnabledBorders();
 

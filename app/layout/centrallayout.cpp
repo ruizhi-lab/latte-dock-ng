@@ -72,7 +72,7 @@ void CentralLayout::setDisableBordersForMaximizedWindows(bool disable)
 
     m_disableBordersForMaximizedWindows = disable;
 
-    emit disableBordersForMaximizedWindowsChanged();
+    Q_EMIT disableBordersForMaximizedWindowsChanged();
 }
 
 bool CentralLayout::showInMenu() const
@@ -87,7 +87,7 @@ void CentralLayout::setShowInMenu(bool show)
     }
 
     m_showInMenu = show;
-    emit showInMenuChanged();
+    Q_EMIT showInMenuChanged();
 }
 
 bool CentralLayout::isCurrent()
@@ -126,7 +126,7 @@ void CentralLayout::setActivities(QStringList activities)
 
     m_activities = activities;
 
-    emit activitiesChanged();
+    Q_EMIT activitiesChanged();
 }
 
 Latte::WindowSystem::SchemeColors *CentralLayout::scheme() const
@@ -141,7 +141,7 @@ void CentralLayout::setScheme(Latte::WindowSystem::SchemeColors *_scheme)
     }
 
     m_scheme = _scheme;
-    emit schemeChanged();
+    Q_EMIT schemeChanged();
 }
 
 Data::Layout CentralLayout::data() const
@@ -181,7 +181,7 @@ void CentralLayout::loadConfig()
     m_showInMenu = m_layoutGroup.readEntry("showInMenu", false);     
     m_activities = m_layoutGroup.readEntry("activities", QStringList());
 
-    emit activitiesChanged();
+    Q_EMIT activitiesChanged();
 }
 
 void CentralLayout::saveConfig()

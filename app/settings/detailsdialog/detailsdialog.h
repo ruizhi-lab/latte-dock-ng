@@ -49,7 +49,7 @@ public:
 protected:
     void accept() override;
 
-private slots:
+private Q_SLOTS:
     void loadConfig();
     void saveConfig();
 

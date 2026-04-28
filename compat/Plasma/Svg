@@ -1,0 +1,11 @@
+#pragma once
+
+#if __has_include(<KSvg/Svg>)
+#include <KSvg/Svg>
+#else
+#include <ksvg/svg.h>
+#endif
+
+namespace Plasma {
+using Svg = KSvg::Svg;
+}

@@ -53,10 +53,10 @@ public:
 
     WindowSystem::Tracker::LastActiveWindow *lastActiveWindow();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void requestMoveLastWindow(int localX, int localY);
 
-signals:
+Q_SIGNALS:
     void activeWindowMaximizedChanged();
     void existsWindowActiveChanged();
     void existsWindowMaximizedChanged();
@@ -64,7 +64,7 @@ signals:
 
     void lastActiveWindowChanged();
 
-private slots:
+private Q_SLOTS:
     void initSignalsForInformation();
 
 private:

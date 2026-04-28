@@ -17,7 +17,7 @@
 #include <QObject>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 
 namespace Plasma {
 class Applet;
@@ -46,7 +46,7 @@ public:
 
     bool menuIsShown() const;
 
-signals:
+Q_SIGNALS:
     void menuChanged();
     void viewChanged();
 
@@ -54,7 +54,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-private slots:
+private Q_SLOTS:
     void onMenuAboutToHide();
 
 private:

@@ -15,7 +15,7 @@
 #include <KDeclarative/ConfigPropertyMap>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 #include <Plasma/Applet>
 #include <PlasmaQuick/AppletQuickItem>
 
@@ -39,7 +39,7 @@ LayoutManager::LayoutManager(QObject *parent)
     m_hasRestoredAppletsTimer.setSingleShot(true);
     connect(&m_hasRestoredAppletsTimer, &QTimer::timeout, this, [&]() {
         m_hasRestoredApplets = true;
-        emit hasRestoredAppletsChanged();
+        Q_EMIT hasRestoredAppletsChanged();
     });
 }
 
@@ -60,7 +60,7 @@ void LayoutManager::setSplitterPosition(const int &position)
     }
 
     m_splitterPosition = position;
-    emit splitterPositionChanged();
+    Q_EMIT splitterPositionChanged();
 }
 
 int LayoutManager::splitterPosition2() const
@@ -75,7 +75,7 @@ void LayoutManager::setSplitterPosition2(const int &position)
     }
 
     m_splitterPosition2 = position;
-    emit splitterPosition2Changed();
+    Q_EMIT splitterPosition2Changed();
 }
 
 QList<int> LayoutManager::appletOrder() const
@@ -90,7 +90,7 @@ void LayoutManager::setAppletOrder(const QList<int> &order)
     }
 
     m_appletOrder = order;
-    emit appletOrderChanged();
+    Q_EMIT appletOrderChanged();
 }
 
 QList<int> LayoutManager::lockedZoomApplets() const
@@ -105,7 +105,7 @@ void LayoutManager::setLockedZoomApplets(const QList<int> &applets)
     }
 
     m_lockedZoomApplets = applets;
-    emit lockedZoomAppletsChanged();
+    Q_EMIT lockedZoomAppletsChanged();
 }
 
 QList<int> LayoutManager::order() const
@@ -120,7 +120,7 @@ void LayoutManager::setOrder(const QList<int> &order)
     }
 
     m_order = order;
-    emit orderChanged();
+    Q_EMIT orderChanged();
 }
 
 QList<int> LayoutManager::userBlocksColorizingApplets() const
@@ -135,7 +135,7 @@ void LayoutManager::setUserBlocksColorizingApplets(const QList<int> &applets)
     }
 
     m_userBlocksColorizingApplets = applets;
-    emit userBlocksColorizingAppletsChanged();
+    Q_EMIT userBlocksColorizingAppletsChanged();
 }
 
 QList<int> LayoutManager::appletsInScheduledDestruction() const
@@ -147,10 +147,10 @@ void LayoutManager::setAppletInScheduledDestruction(const int &id, const bool &e
 {
     if (m_appletsInScheduledDestruction.contains(id) && !enabled) {
         m_appletsInScheduledDestruction.remove(id);
-        emit appletsInScheduledDestructionChanged();
+        Q_EMIT appletsInScheduledDestructionChanged();
     } else if (!m_appletsInScheduledDestruction.contains(id) && enabled) {
         m_appletsInScheduledDestruction[id] = appletItem(id);
-        emit appletsInScheduledDestructionChanged();
+        Q_EMIT appletsInScheduledDestructionChanged();
     }
 }
 
@@ -172,7 +172,7 @@ void LayoutManager::setPlasmoid(QObject *plasmoid)
         m_configuration = qobject_cast<KDeclarative::ConfigPropertyMap *>(m_plasmoid->property("configuration").value<QObject *>());
     }
 
-    emit plasmoidChanged();
+    Q_EMIT plasmoidChanged();
 }
 
 QQuickItem *LayoutManager::rootItem() const
@@ -187,7 +187,7 @@ void LayoutManager::setRootItem(QQuickItem *root)
     }
 
     m_rootItem = root;
-    emit rootItemChanged();
+    Q_EMIT rootItemChanged();
 }
 
 QQuickItem *LayoutManager::dndSpacer() const
@@ -202,7 +202,7 @@ void LayoutManager::setDndSpacer(QQuickItem *dnd)
     }
 
     m_dndSpacer = dnd;
-    emit dndSpacerChanged();
+    Q_EMIT dndSpacerChanged();
 }
 
 QQuickItem *LayoutManager::mainLayout() const
@@ -217,7 +217,7 @@ void LayoutManager::setMainLayout(QQuickItem *main)
     }
 
     m_mainLayout = main;
-    emit mainLayoutChanged();
+    Q_EMIT mainLayoutChanged();
 }
 
 QQuickItem *LayoutManager::startLayout() const
@@ -232,7 +232,7 @@ void LayoutManager::setStartLayout(QQuickItem *start)
     }
 
     m_startLayout = start;
-    emit startLayoutChanged();
+    Q_EMIT startLayoutChanged();
 }
 
 QQuickItem *LayoutManager::endLayout() const
@@ -247,7 +247,7 @@ void LayoutManager::setEndLayout(QQuickItem *end)
     }
 
     m_endLayout = end;
-    emit endLayoutChanged();
+    Q_EMIT endLayoutChanged();
 }
 
 QQuickItem *LayoutManager::metrics() const
@@ -262,7 +262,7 @@ void LayoutManager::setMetrics(QQuickItem *metrics)
     }
 
     m_metrics = metrics;
-    emit metricsChanged();
+    Q_EMIT metricsChanged();
 }
 
 void LayoutManager::updateOrder()
@@ -575,7 +575,7 @@ void LayoutManager::save()
 
     if ((*m_configuration)["appletOrder"] != appletsserialized) {
         m_configuration->insert("appletOrder", appletsserialized);
-        emit m_configuration->valueChanged("appletOrder", appletsserialized);
+        Q_EMIT m_configuration->valueChanged("appletOrder", appletsserialized);
     }
 }
 
@@ -584,23 +584,23 @@ void LayoutManager::saveOptions()
     QString lockedserialized =  toStr(m_lockedZoomApplets);
     if ((*m_configuration)[m_option[ISAPPLETLOCKEDOPTION]] != lockedserialized) {
         m_configuration->insert(m_option[ISAPPLETLOCKEDOPTION], lockedserialized);
-        emit m_configuration->valueChanged(m_option[ISAPPLETLOCKEDOPTION], lockedserialized);
+        Q_EMIT m_configuration->valueChanged(m_option[ISAPPLETLOCKEDOPTION], lockedserialized);
     }
 
     QString colorsserialized = toStr(m_userBlocksColorizingApplets);
     if ((*m_configuration)[m_option[ISCOLORINGBLOCKEDOPTION]] != colorsserialized) {
         m_configuration->insert(m_option[ISCOLORINGBLOCKEDOPTION], colorsserialized);
-        emit m_configuration->valueChanged(m_option[ISCOLORINGBLOCKEDOPTION], colorsserialized);
+        Q_EMIT m_configuration->valueChanged(m_option[ISCOLORINGBLOCKEDOPTION], colorsserialized);
     }
 
     if ((*m_configuration)["splitterPosition"] != m_splitterPosition) {
         m_configuration->insert("splitterPosition", m_splitterPosition);
-        emit m_configuration->valueChanged(m_option["splitterPosition"], m_splitterPosition);
+        Q_EMIT m_configuration->valueChanged(m_option["splitterPosition"], m_splitterPosition);
     }
 
     if ((*m_configuration)["splitterPosition2"] != m_splitterPosition2) {
         m_configuration->insert("splitterPosition2", m_splitterPosition2);
-        emit m_configuration->valueChanged(m_option["splitterPosition2"], m_splitterPosition2);
+        Q_EMIT m_configuration->valueChanged(m_option["splitterPosition2"], m_splitterPosition2);
     }
 }
 

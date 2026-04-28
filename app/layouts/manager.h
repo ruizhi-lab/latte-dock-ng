@@ -92,7 +92,7 @@ public:
 
     void moveView(QString originLayoutName, uint originViewId, QString destinationLayoutName);
 
-public slots:
+public Q_SLOTS:
     void showAboutDialog();
 
     void hideLatteSettingsDialog();
@@ -101,7 +101,7 @@ public slots:
     Q_INVOKABLE QStringList viewTemplateNames() const;
     Q_INVOKABLE QStringList viewTemplateIds() const;
 
-signals:
+Q_SIGNALS:
     void centralLayoutsChanged();
     void syncedLaunchersChanged();
     void viewTemplatesChanged();

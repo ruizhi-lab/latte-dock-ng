@@ -10,7 +10,7 @@
 #include <QObject>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 #include <Plasma/FrameSvg>
 
 namespace Latte {
@@ -53,10 +53,10 @@ public:
 
     QColor shadowColor() const;
 
-public slots:
+public Q_SLOTS:
     void update();
 
-signals:
+Q_SIGNALS:
     void paddingsChanged();
     void roundnessChanged();
     void shadowColorChanged();

@@ -56,14 +56,14 @@ public:
 
     Latte::Data::ScreensTable screensTable();
 
-signals:
+Q_SIGNALS:
     void primaryScreenChanged(QScreen *screen);
     void screenGeometryChanged();
 
 protected:
     int firstAvailableId() const;
 
-private slots:
+private Q_SLOTS:
     void updateScreenGeometry(const QScreen *screen);
     void onPrimaryOutputNameChanged(const QString &oldOutputName, const QString &newOutputName);
     void onScreenAdded(const QScreen *screen);

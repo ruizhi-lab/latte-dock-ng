@@ -342,7 +342,7 @@ void Views::appendTemporaryView(const Latte::Data::View &view)
     m_viewsTable.appendTemporaryView(view);
     endInsertRows();
 
-    emit rowsInserted();
+    Q_EMIT rowsInserted();
 }
 
 void Views::removeView(const QString &id)
@@ -351,7 +351,7 @@ void Views::removeView(const QString &id)
 
     if (index >= 0) {
         removeRows(index, 1);
-        emit rowsRemoved();
+        Q_EMIT rowsRemoved();
     }
 }
 
@@ -411,7 +411,7 @@ void Views::updateActiveStatesBasedOn(const CentralLayout *layout)
 
         if (currentactivestate != m_viewsTable[i].isActive) {
             m_viewsTable[i].isActive = currentactivestate;
-            emit dataChanged(this->index(i, IDCOLUMN), this->index(i, SUBCONTAINMENTSCOLUMN), roles);
+            Q_EMIT dataChanged(this->index(i, IDCOLUMN), this->index(i, SUBCONTAINMENTSCOLUMN), roles);
         }
     }
 }
@@ -490,7 +490,7 @@ void Views::clearErrorsAndWarnings()
     roles << ERRORSROLE;
     roles << WARNINGSROLE;
 
-    emit dataChanged(this->index(0, IDCOLUMN), this->index(m_viewsTable.rowCount()-1, SUBCONTAINMENTSCOLUMN), roles);
+    Q_EMIT dataChanged(this->index(0, IDCOLUMN), this->index(m_viewsTable.rowCount()-1, SUBCONTAINMENTSCOLUMN), roles);
 }
 
 void Views::populateScreens()
@@ -534,7 +534,7 @@ void Views::updateCurrentView(QString currentViewId, Latte::Data::View &view)
     roles << ERRORSROLE;
     roles << WARNINGSROLE;
 
-    emit dataChanged(this->index(currentrow, IDCOLUMN), this->index(currentrow, SUBCONTAINMENTSCOLUMN), roles);
+    Q_EMIT dataChanged(this->index(currentrow, IDCOLUMN), this->index(currentrow, SUBCONTAINMENTSCOLUMN), roles);
 }
 
 void Views::setOriginalView(QString currentViewId, Latte::Data::View &view)
@@ -554,7 +554,7 @@ void Views::setOriginalView(QString currentViewId, Latte::Data::View &view)
     roles << ISACTIVEROLE;
     roles << HASCHANGEDVIEWROLE;
 
-    emit dataChanged(this->index(currentrow, IDCOLUMN), this->index(currentrow, SUBCONTAINMENTSCOLUMN), roles);
+    Q_EMIT dataChanged(this->index(currentrow, IDCOLUMN), this->index(currentrow, SUBCONTAINMENTSCOLUMN), roles);
 }
 
 void Views::setOriginalData(Latte::Data::ViewsTable &data)
@@ -566,7 +566,7 @@ void Views::setOriginalData(Latte::Data::ViewsTable &data)
     m_viewsTable = data;
     endInsertRows();
 
-    emit rowsInserted();
+    Q_EMIT rowsInserted();
 }
 
 QVariant Views::headerData(int section, Qt::Orientation orientation, int role) const
@@ -672,7 +672,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
             }
 
             m_viewsTable[row].name = value.toString();
-            emit dataChanged(index, index, roles);
+            Q_EMIT dataChanged(index, index, roles);
         }
         break;
     case SCREENCOLUMN:
@@ -705,7 +705,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
                 }
             }
 
-            emit dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
+            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
         }
         break;
     case EDGECOLUMN:
@@ -718,7 +718,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
 
             Plasma::Types::Location previousEdge = m_viewsTable[row].edge;
             m_viewsTable[row].edge = edge;
-            emit dataChanged(index, index, roles);
+            Q_EMIT dataChanged(index, index, roles);
 
             bool previousFactor = isVertical(previousEdge);
             bool currentFactor = isVertical(edge);
@@ -734,7 +734,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
                     m_viewsTable[row].alignment = Latte::Types::Right;
                 }
 
-                emit dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
+                Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
             }
 
             return true;
@@ -749,7 +749,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
             }
 
             m_viewsTable[row].alignment = static_cast<Latte::Types::Alignment>(alignment);
-            emit dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
+            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
             return true;
         }
         break;

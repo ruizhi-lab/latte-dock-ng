@@ -77,7 +77,7 @@ public:
     float minThicknessPadding() const;
     void setMinThicknessPadding(float padding);
 
-signals:
+Q_SIGNALS:
     void extraMaskThicknessChanged();
     void minLengthPaddingChanged();
     void minThicknessPaddingChanged();

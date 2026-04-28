@@ -45,7 +45,7 @@ public:
 
     Latte::Data::ScreensTable currentData() const;
 
-public slots:
+public Q_SLOTS:
     void deselectAll();
     void reset() override;
     void resetDefaults() override;
@@ -57,7 +57,7 @@ private:
 
     bool removalConfirmation(const QStringList &screens) const;
 
-private slots:
+private Q_SLOTS:
     void onRemoveNow();
     void onScreenDataChanged();
 

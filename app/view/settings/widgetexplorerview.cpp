@@ -71,7 +71,7 @@ void WidgetExplorerView::setHideOnWindowDeactivate(bool hide)
     }
 
     m_hideOnWindowDeactivate = hide;
-    emit hideOnWindowDeactivateChanged();
+    Q_EMIT hideOnWindowDeactivateChanged();
 }
 
 Qt::WindowFlags WidgetExplorerView::wFlags() const
@@ -161,7 +161,7 @@ void WidgetExplorerView::showEvent(QShowEvent *ev)
     m_screenSyncTimer.start();
     QTimer::singleShot(400, this, &WidgetExplorerView::syncGeometry);
 
-    emit showSignal();
+    Q_EMIT showSignal();
 }
 
 void WidgetExplorerView::focusOutEvent(QFocusEvent *ev)
@@ -271,7 +271,7 @@ void WidgetExplorerView::updateEnabledBorders()
         }
         m_corona->dialogShadows()->addWindow(this, m_enabledBorders);
 
-        emit enabledBordersChanged();
+        Q_EMIT enabledBordersChanged();
     }
 }
 

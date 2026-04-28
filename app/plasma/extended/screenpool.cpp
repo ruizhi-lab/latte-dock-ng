@@ -92,7 +92,7 @@ void ScreenPool::load()
         }
         qDebug() << "----------------  ---------------  ------------------";
 
-        emit idsChanged();
+        Q_EMIT idsChanged();
     }
 }
 

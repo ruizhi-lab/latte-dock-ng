@@ -34,10 +34,10 @@ public:
     QQuickItem *currentParabolicItem() const;
     void setCurrentParabolicItem(QQuickItem *item);
 
-signals:
+Q_SIGNALS:
     void currentParabolicItemChanged();
 
-private slots:
+private Q_SLOTS:
     void onCurrentParabolicItemChanged();
     void onEvent(QEvent *e);
 

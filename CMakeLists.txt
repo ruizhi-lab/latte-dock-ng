@@ -41,8 +41,8 @@ endif()
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
-    Archive CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel
-    I18n IconThemes KIO NewStuff Notifications WindowSystem XmlGui)
+    Archive Config CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel
+    I18n IconThemes KIO NewStuff Notifications Svg WindowSystem XmlGui)
 
 find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
@@ -62,11 +62,15 @@ find_package(Wayland REQUIRED COMPONENTS Client)
 message(STATUS "KF6 VERSION : ${KF6_VERSION}")
 message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+
 # Distros may expose KDEclarative targets with different names/casing.
 set(LATTE_DECLARATIVE_TARGET "")
 set(LATTE_QUICKADDONS_TARGET "")
 set(LATTE_NEWSTUFF_TARGET "")
 set(LATTE_WAYLANDCLIENT_TARGET "")
+set(LATTE_CONFIGQML_TARGET "")
+set(LATTE_SVG_TARGET "")
 
 get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
 
@@ -94,6 +98,20 @@ endforeach()
 foreach(_candidate KWayland::Client KF6::WaylandClient KF6::KWaylandClient KF5::WaylandClient)
     if(TARGET ${_candidate})
         set(LATTE_WAYLANDCLIENT_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
+foreach(_candidate KF6::ConfigQml KF6::KConfigQml)
+    if(TARGET ${_candidate})
+        set(LATTE_CONFIGQML_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
+foreach(_candidate KF6::Svg KF6::KSvg KF6::KSvgCore)
+    if(TARGET ${_candidate})
+        set(LATTE_SVG_TARGET ${_candidate})
         break()
     endif()
 endforeach()
@@ -148,6 +166,26 @@ if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
+if("${LATTE_CONFIGQML_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "configqml")
+            set(LATTE_CONFIGQML_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_SVG_TARGET}" STREQUAL "")
+    foreach(_target ${_latte_imported_targets})
+        string(TOLOWER "${_target}" _target_lc)
+        if(_target_lc MATCHES "::svg" OR _target_lc MATCHES "ksvg")
+            set(LATTE_SVG_TARGET ${_target})
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
     foreach(_var KF6Declarative_LIBRARIES KDeclarative_LIBRARIES)
         if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
@@ -191,6 +229,24 @@ if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
     endforeach()
 endif()
 
+if("${LATTE_CONFIGQML_TARGET}" STREQUAL "")
+    foreach(_var ConfigQml_LIBRARIES KF6ConfigQml_LIBRARIES KConfigQml_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_CONFIGQML_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
+if("${LATTE_SVG_TARGET}" STREQUAL "")
+    foreach(_var Svg_LIBRARIES KF6Svg_LIBRARIES KSvg_LIBRARIES)
+        if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
+            set(LATTE_SVG_TARGET "${${_var}}")
+            break()
+        endif()
+    endforeach()
+endif()
+
 if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
     set(LATTE_QUICKADDONS_TARGET ${LATTE_DECLARATIVE_TARGET})
 endif()
@@ -219,10 +275,24 @@ if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
         "Imported targets in this directory: ${_latte_imported_targets}")
 endif()
 
+if("${LATTE_CONFIGQML_TARGET}" STREQUAL "")
+    message(WARNING
+        "Could not resolve a KConfigQml CMake link target. "
+        "Proceeding without explicit KConfigQml link target.")
+endif()
+
+if("${LATTE_SVG_TARGET}" STREQUAL "")
+    message(WARNING
+        "Could not resolve a KSvg CMake link target. "
+        "Proceeding without explicit KSvg link target.")
+endif()
+
 message(STATUS "Resolved KDeclarative target: ${LATTE_DECLARATIVE_TARGET}")
 message(STATUS "Resolved QuickAddons target: ${LATTE_QUICKADDONS_TARGET}")
 message(STATUS "Resolved NewStuff target: ${LATTE_NEWSTUFF_TARGET}")
 message(STATUS "Resolved KWayland client target: ${LATTE_WAYLANDCLIENT_TARGET}")
+message(STATUS "Resolved KConfigQml target: ${LATTE_CONFIGQML_TARGET}")
+message(STATUS "Resolved KSvg target: ${LATTE_SVG_TARGET}")
 
 
 include(ECMFindQmlModule)
@@ -246,6 +316,10 @@ string(REPLACE "-Wunused-parameter" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
 #add format security check
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security")
+# KDECompilerSettings may enforce stricter Qt macros depending on distro patching.
+# Keep Latte sources buildable on Plasma 6.6+ by explicitly dropping those macros here.
+remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_RESTRICTED_CAST_FROM_ASCII -DQT_NO_KEYWORDS)
+add_compile_options(-UQT_NO_CAST_FROM_ASCII -UQT_RESTRICTED_CAST_FROM_ASCII)
 
 message(STATUS "COMPILER FLAGS : ${CMAKE_CXX_FLAGS}")
 

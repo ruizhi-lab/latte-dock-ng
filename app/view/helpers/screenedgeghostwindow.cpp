@@ -122,7 +122,7 @@ void ScreenEdgeGhostWindow::updateGeometry()
     }
 
     m_calculatedGeometry = newGeometry;
-    emit calculatedGeometryChanged();
+    Q_EMIT calculatedGeometryChanged();
 }
 
 bool ScreenEdgeGhostWindow::containsMouse() const
@@ -137,7 +137,7 @@ void ScreenEdgeGhostWindow::setContainsMouse(bool contains)
     }
 
     m_containsMouse = contains;
-    emit containsMouseChanged(contains);
+    Q_EMIT containsMouseChanged(contains);
 }
 
 bool ScreenEdgeGhostWindow::event(QEvent *e)
@@ -147,7 +147,7 @@ bool ScreenEdgeGhostWindow::event(QEvent *e)
             m_delayedContainsMouse = false;
             m_delayedMouseTimer.stop();
             setContainsMouse(true);
-            emit dragEntered();
+            Q_EMIT dragEntered();
         }
     } else if (e->type() == QEvent::Enter) {
         m_delayedContainsMouse = true;

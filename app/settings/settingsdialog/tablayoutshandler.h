@@ -63,7 +63,7 @@ public:
     Ui::SettingsDialog *ui() const;
     Controller::Layouts *layoutsController() const;
 
-public slots:
+public Q_SLOTS:
     void onDragEnterEvent(QDragEnterEvent *event);
     void onDragLeaveEvent(QDragLeaveEvent *event);
     void onDragMoveEvent(QDragMoveEvent *event);
@@ -75,10 +75,10 @@ public slots:
     void resetDefaults() override;
     void save() override;
 
-signals:
+Q_SIGNALS:
     void currentPageChanged();
 
-private slots:
+private Q_SLOTS:
     void initUi();
     void initLayoutMenu();
 

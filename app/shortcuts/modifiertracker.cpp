@@ -55,7 +55,7 @@ void ModifierTracker::init()
             cancelMetaPressed();
         }
 
-        emit modifiersChanged();
+        Q_EMIT modifiersChanged();
     });
 }
 

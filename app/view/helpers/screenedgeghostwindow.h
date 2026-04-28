@@ -57,7 +57,7 @@ public:
 
     bool containsMouse() const;
 
-signals:
+Q_SIGNALS:
     void containsMouseChanged(bool contains);
     void dragEntered();
 

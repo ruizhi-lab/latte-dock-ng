@@ -128,7 +128,7 @@ void ExportTemplateHandler::setFilepath(const QString &filepath)
     }
 
     c_filepath = filepath;
-    emit filepathChanged();
+    Q_EMIT filepathChanged();
 }
 
 void ExportTemplateHandler::loadApplets(const QString &file)
@@ -238,7 +238,7 @@ void ExportTemplateHandler::onExport()
                           false,
                           actions);
 
-        emit exportSucceeded();
+        Q_EMIT exportSucceeded();
     } else {
         showExportTemplateError(QFileInfo(c_filepath).baseName());
     }

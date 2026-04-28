@@ -41,7 +41,7 @@ public:
     SyncedLaunchers(QObject *parent);
     ~SyncedLaunchers() override;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void addAbilityClient(QQuickItem *client);
     Q_INVOKABLE void removeAbilityClient(QQuickItem *client);
 
@@ -57,7 +57,7 @@ private:
     QList<QQuickItem *> clients(QString layoutName, uint senderId, Latte::Types::LaunchersGroup launcherGroup, QString launcherGroupId);
     QQuickItem *client(const int &id);
 
-private slots:
+private Q_SLOTS:
     void removeClientObject(QObject *obj);
 
 private:

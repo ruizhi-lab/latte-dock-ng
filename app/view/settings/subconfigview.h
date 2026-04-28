@@ -57,10 +57,10 @@ public:
     Latte::WindowSystem::WindowId trackedWindowId();
     KWayland::Client::PlasmaShellSurface *surface();
 
-public slots:
+public Q_SLOTS:
     virtual void syncGeometry() = 0;
 
-signals:
+Q_SIGNALS:
     void enabledBordersChanged();
 
 protected:
@@ -89,7 +89,7 @@ protected:
     Latte::Corona *m_corona{nullptr};
     KWayland::Client::PlasmaShellSurface *m_shellSurface{nullptr};
 
-private slots:
+private Q_SLOTS:
     void updateWaylandId();
 
 private:

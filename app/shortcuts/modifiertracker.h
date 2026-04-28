@@ -39,7 +39,7 @@ public:
     void blockModifierTracking(Qt::Key key);
     void unblockModifierTracking(Qt::Key key);
 
-signals:
+Q_SIGNALS:
     void metaModifierPressed();
     void modifiersChanged();
 

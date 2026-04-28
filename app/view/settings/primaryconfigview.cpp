@@ -284,7 +284,7 @@ void PrimaryConfigView::initParentView(Latte::View *view)
     }
 
     //! inform view about the current settings level
-    emit m_latteView->inSettingsAdvancedModeChanged();
+    Q_EMIT m_latteView->inSettingsAdvancedModeChanged();
 }
 
 void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
@@ -305,7 +305,7 @@ void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
     QString activityid = m_latteView->layout()->lastUsedActivity();
 
     m_availableScreenGeometry = m_corona->availableScreenRectWithCriteria(currentScrId, activityid, ignoreModes, {}, false, true);
-    emit availableScreenGeometryChanged();
+    Q_EMIT availableScreenGeometryChanged();
 }
 
 void PrimaryConfigView::updateAvailableScreenGeometry(View *origin)
@@ -408,7 +408,7 @@ void PrimaryConfigView::syncGeometry()
     setMinimumSize(size);
     resize(size);
 
-    emit m_latteView->configWindowGeometryChanged();
+    Q_EMIT m_latteView->configWindowGeometryChanged();
 }
 
 void PrimaryConfigView::showEvent(QShowEvent *ev)
@@ -438,7 +438,7 @@ void PrimaryConfigView::showEvent(QShowEvent *ev)
 
     showCanvasWindow();
 
-    emit showSignal();
+    Q_EMIT showSignal();
 
     if (m_latteView && m_latteView->layout()) {
         m_latteView->layout()->setLastConfigViewFor(m_latteView);
@@ -515,7 +515,7 @@ void PrimaryConfigView::setIsReady(bool ready)
     }
 
     m_isReady = ready;
-    emit isReadyChanged();
+    Q_EMIT isReadyChanged();
 }
 
 
@@ -543,7 +543,7 @@ void PrimaryConfigView::setShowInlineProperties(bool show)
     }
 
     m_showInlineProperties = show;
-    emit showInlinePropertiesChanged();
+    Q_EMIT showInlinePropertiesChanged();
 }
 
 void PrimaryConfigView::updateShowInlineProperties()
@@ -622,7 +622,7 @@ void PrimaryConfigView::updateEnabledBorders()
 
         m_corona->dialogShadows()->addWindow(this, m_enabledBorders);
 
-        emit enabledBordersChanged();
+        Q_EMIT enabledBordersChanged();
     }
 }
 //!END borders

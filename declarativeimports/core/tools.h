@@ -22,7 +22,7 @@ class Tools final: public QObject
 public:
     explicit Tools(QObject *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE float colorBrightness(QColor color);
     Q_INVOKABLE float colorLumina(QColor color);
 

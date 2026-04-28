@@ -146,7 +146,7 @@ void PanelBackground::updateMaxOpacity(Plasma::Svg *svg)
     //! all the upcoming calculations where returning a fully transparent plasma svg to the user
     m_maxOpacity = qMax(0.01f, m_maxOpacity);
 
-    emit maxOpacityChanged();
+    Q_EMIT maxOpacityChanged();
 }
 
 void PanelBackground::updatePaddings(Plasma::Svg *svg)
@@ -160,7 +160,7 @@ void PanelBackground::updatePaddings(Plasma::Svg *svg)
     m_paddingBottom = svg->elementSize(element(svg, "bottom")).height();
     m_paddingRight = svg->elementSize(element(svg, "right")).width();
 
-    emit paddingsChanged();
+    Q_EMIT paddingsChanged();
 }
 
 void PanelBackground::updateRoundnessFromMask(Plasma::Svg *svg)
@@ -312,7 +312,7 @@ void PanelBackground::updateRoundnessFromMask(Plasma::Svg *svg)
     }
 
     m_roundness = roundnessLines;
-    emit roundnessChanged();
+    Q_EMIT roundnessChanged();
 }
 
 
@@ -491,7 +491,7 @@ void PanelBackground::updateRoundnessFromShadows(Plasma::Svg *svg)
     }
 
     m_roundness = roundnessLines;
-    emit roundnessChanged();
+    Q_EMIT roundnessChanged();
 }
 
 void PanelBackground::updateRoundnessFallback(Plasma::Svg *svg)
@@ -546,7 +546,7 @@ void PanelBackground::updateRoundnessFallback(Plasma::Svg *svg)
     }
 
     m_roundness = round;
-    emit roundnessChanged();
+    Q_EMIT roundnessChanged();
 }
 
 void PanelBackground::updateShadow(Plasma::Svg *svg)

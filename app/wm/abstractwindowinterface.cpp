@@ -48,7 +48,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
     connect(&m_windowWaitingTimer, &QTimer::timeout, this, [&]() {
         WindowId wid = m_windowChangedWaiting;
         m_windowChangedWaiting = QVariant();
-        emit windowChanged(wid);
+        Q_EMIT windowChanged(wid);
     });
 
     connect(this, &AbstractWindowInterface::windowRemoved, this, &AbstractWindowInterface::windowRemovedSlot);
@@ -59,7 +59,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
 
     connect(m_activities.data(), &KActivities::Consumer::currentActivityChanged, this, [&](const QString &id) {
         m_currentActivity = id;
-        emit currentActivityChanged();
+        Q_EMIT currentActivityChanged();
     });
 
     connect(KWindowSystem::self(), &KWindowSystem::showingDesktopChanged, this, &AbstractWindowInterface::setIsShowingDesktop);
@@ -102,7 +102,7 @@ void AbstractWindowInterface::setIsShowingDesktop(const bool &showing)
     }
 
     m_isShowingDesktop = showing;
-    emit isShowingDesktopChanged();
+    Q_EMIT isShowingDesktopChanged();
 }
 
 QString AbstractWindowInterface::currentDesktop()
@@ -276,7 +276,7 @@ void AbstractWindowInterface::registerIgnoredWindow(WindowId wid)
 {
     if (!wid.isNull() && !m_ignoredWindows.contains(wid)) {
         m_ignoredWindows.append(wid);
-        emit windowChanged(wid);
+        Q_EMIT windowChanged(wid);
     }
 }
 
@@ -284,7 +284,7 @@ void AbstractWindowInterface::unregisterIgnoredWindow(WindowId wid)
 {
     if (m_ignoredWindows.contains(wid)) {
         m_ignoredWindows.removeAll(wid);
-        emit windowRemoved(wid);
+        Q_EMIT windowRemoved(wid);
     }
 }
 
@@ -292,7 +292,7 @@ void AbstractWindowInterface::registerPlasmaIgnoredWindow(WindowId wid)
 {
     if (!wid.isNull() && !m_plasmaIgnoredWindows.contains(wid)) {
         m_plasmaIgnoredWindows.append(wid);
-        emit windowChanged(wid);
+        Q_EMIT windowChanged(wid);
     }
 }
 
@@ -307,7 +307,7 @@ void AbstractWindowInterface::registerWhitelistedWindow(WindowId wid)
 {
     if (!wid.isNull() && !m_whitelistedWindows.contains(wid)) {
         m_whitelistedWindows.append(wid);
-        emit windowChanged(wid);
+        Q_EMIT windowChanged(wid);
     }
 }
 
@@ -390,7 +390,7 @@ void AbstractWindowInterface::considerWindowChanged(WindowId wid)
     if (m_windowChangedWaiting != wid && m_windowWaitingTimer.isActive()) {
         m_windowWaitingTimer.stop();
         //! sent previous waiting window
-        emit windowChanged(m_windowChangedWaiting);
+        Q_EMIT windowChanged(m_windowChangedWaiting);
 
         //! retrigger waiting for the upcoming window
         m_windowChangedWaiting = wid;

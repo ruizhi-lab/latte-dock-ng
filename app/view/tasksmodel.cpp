@@ -73,7 +73,7 @@ void TasksModel::addTask(PlasmaQuick::AppletQuickItem *plasmoid)
         }
     });
 
-    emit countChanged();
+    Q_EMIT countChanged();
 }
 
 void TasksModel::moveIntoWaitingTasks(PlasmaQuick::AppletQuickItem *plasmoid)
@@ -88,7 +88,7 @@ void TasksModel::moveIntoWaitingTasks(PlasmaQuick::AppletQuickItem *plasmoid)
         beginRemoveRows(QModelIndex(), tind, tind);
         m_tasksWaiting << m_tasks.takeAt(tind);
         endRemoveRows();
-        emit countChanged();
+        Q_EMIT countChanged();
     }
 }
 
@@ -104,7 +104,7 @@ void TasksModel::restoreFromWaitingTasks(PlasmaQuick::AppletQuickItem *plasmoid)
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
         m_tasks << m_tasksWaiting.takeAt(tind);
         endInsertRows();
-        emit countChanged();
+        Q_EMIT countChanged();
     }
 }
 
@@ -121,7 +121,7 @@ void TasksModel::removeTask(PlasmaQuick::AppletQuickItem *plasmoid)
         m_tasks.removeAll(plasmoid);
         endRemoveRows();
 
-        emit countChanged();
+        Q_EMIT countChanged();
     } else if (m_tasksWaiting.contains(plasmoid)) {
         m_tasksWaiting.removeAll(plasmoid);
     }

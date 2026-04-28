@@ -118,7 +118,7 @@ public:
     //! Used mostly to show / hide Sidebars
     void toggleHiddenState();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void hide();
     Q_INVOKABLE void show();
 
@@ -130,7 +130,7 @@ public slots:
 
     void initViewFlags();
 
-signals:
+Q_SIGNALS:
     void mustBeShown();
     void mustBeHide();
 
@@ -156,7 +156,7 @@ signals:
     void enableKWinEdgesChanged();
     void supportsKWinEdgesChanged();
 
-private slots:
+private Q_SLOTS:
     void saveConfig();
     void restoreConfig();
 
@@ -198,7 +198,7 @@ private:
 
     QRect acceptableStruts();
 
-private slots:
+private Q_SLOTS:
     void dodgeAllWindows();
     void dodgeActive();
     void dodgeMaximized();

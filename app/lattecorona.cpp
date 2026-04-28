@@ -59,7 +59,7 @@
 #include <QProcess>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 #include <PlasmaQuick/ConfigView>
@@ -854,8 +854,8 @@ void Corona::onScreenAdded(QScreen *screen)
 
     connect(screen, &QScreen::geometryChanged, this, &Corona::onScreenGeometryChanged);
 
-    emit availableScreenRectChanged();
-    emit screenAdded(m_screenPool->id(screen->name()));
+    Q_EMIT availableScreenRectChanged();
+    Q_EMIT screenAdded(m_screenPool->id(screen->name()));
 
     onScreenCountChanged();
 }
@@ -884,9 +884,9 @@ void Corona::onScreenGeometryChanged(const QRect &geometry)
     const int id = m_screenPool->id(screen->name());
 
     if (id >= 0) {
-        emit screenGeometryChanged(id);
-        emit availableScreenRegionChanged();
-        emit availableScreenRectChanged();
+        Q_EMIT screenGeometryChanged(id);
+        Q_EMIT availableScreenRegionChanged();
+        Q_EMIT availableScreenRectChanged();
     }
 }
 

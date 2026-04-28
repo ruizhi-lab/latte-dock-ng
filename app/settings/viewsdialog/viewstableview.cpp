@@ -33,7 +33,7 @@ void ViewsTableView::mousePressEvent(QMouseEvent *event)
 void ViewsTableView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     QAbstractItemView::selectionChanged(selected, deselected);
-    emit selectionsChanged();
+    Q_EMIT selectionsChanged();
 }
 
 }

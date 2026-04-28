@@ -32,7 +32,7 @@ public:
     ScreenGeometries(Latte::Corona *parent);
     ~ScreenGeometries() override;
 
-private slots:
+private Q_SLOTS:
     void availableScreenGeometryChangedFrom(Latte::View *origin);
 
     void init();
@@ -41,7 +41,7 @@ private slots:
 
     void onBroadcastToPlasmaChanged();
 
-private slots:
+private Q_SLOTS:
     bool screenIsActive(const QString &screenName) const;
     void setPlasmaAvailableScreenRect(const QString &screenName, const QRect &rect);
     void setPlasmaAvailableScreenRegion(const QString &screenName, const QRegion &region);

@@ -47,7 +47,7 @@ void TemplatesKeeper::setClipboardContents(const Latte::Data::ViewsTable &views)
     m_clipboardViews.clear();
     m_clipboardViews = views;
 
-    emit clipboardContentsChanged();
+    Q_EMIT clipboardContentsChanged();
 }
 
 void TemplatesKeeper::clear()

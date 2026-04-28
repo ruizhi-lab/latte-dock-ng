@@ -111,7 +111,7 @@ public:
     void load(QString type);
     void unloadIndicators();
 
-signals:
+Q_SIGNALS:
     void customPluginsChanged();
     void enabledChanged();
     void enabledForAppletsChanged();

@@ -1,0 +1,15 @@
+#pragma once
+
+#include <QQmlEngine>
+#include <QString>
+
+namespace KDeclarative {
+class KDeclarative
+{
+public:
+    void setDeclarativeEngine(QQmlEngine *) {}
+    void setTranslationDomain(const QString &) {}
+    void setupContext() {}
+    void setupEngine(QQmlEngine *) {}
+};
+}

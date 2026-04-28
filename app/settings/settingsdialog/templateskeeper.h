@@ -43,10 +43,10 @@ public:
     Latte::Data::ViewsTable clipboardContents() const;
     void setClipboardContents(const Latte::Data::ViewsTable &views);
 
-public slots:
+public Q_SLOTS:
     void clear();
 
-signals:
+Q_SIGNALS:
     void clipboardContentsChanged();
 
 private:

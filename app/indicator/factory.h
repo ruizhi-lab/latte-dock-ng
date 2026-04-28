@@ -51,7 +51,7 @@ public:
 
     //! imports an indicator compressed file
     static Latte::ImportExport::State importIndicatorFile(QString compressedFile);
-signals:
+Q_SIGNALS:
     void indicatorChanged(const QString &indicatorId);
     void indicatorRemoved(const QString &indicatorId);
 

@@ -60,15 +60,15 @@ public:
 
     Latte::Data::Layout currentData() const;
 
-public slots:
+public Q_SLOTS:
     void reset() override;
     void resetDefaults() override;
     void save() override;
 
-signals:
+Q_SIGNALS:
     void currentLayoutChanged();
 
-private slots:
+private Q_SLOTS:
     void onCurrentLayoutIndexChanged(int row);
     void onCurrentColorIndexChanged(int row);
     void onCurrentSchemeIndexChanged(int row);

@@ -18,7 +18,7 @@
 #include <QLatin1String>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 
 // KDE
 #include <KConfigGroup>
@@ -171,7 +171,7 @@ void BackgroundCache::reload()
 
     for (const auto &activity : updates.keys()) {
         for (const auto &screen : updates[activity]) {
-            emit backgroundChanged(activity, screen);
+            Q_EMIT backgroundChanged(activity, screen);
         }
     }
 }
@@ -426,7 +426,7 @@ void BackgroundCache::setBackgroundFromBroadcast(QString activity, QString scree
     if (QFileInfo(filename).exists()) {
         setBroadcastedBackgroundsEnabled(activity, screen, true);
         m_backgrounds[activity][screen] = filename;
-        emit backgroundChanged(activity, screen);
+        Q_EMIT backgroundChanged(activity, screen);
     }
 }
 

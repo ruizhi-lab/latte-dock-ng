@@ -109,7 +109,7 @@ void Effects::setAnimationsBlocked(bool blocked)
     }
 
     m_animationsBlocked = blocked;
-    emit animationsBlockedChanged();
+    Q_EMIT animationsBlockedChanged();
 }
 
 bool Effects::backgroundAllCorners() const
@@ -124,7 +124,7 @@ void Effects::setBackgroundAllCorners(bool allcorners)
     }
 
     m_backgroundAllCorners = allcorners;
-    emit backgroundAllCornersChanged();
+    Q_EMIT backgroundAllCornersChanged();
 }
 
 bool Effects::backgroundRadiusEnabled() const
@@ -139,7 +139,7 @@ void Effects::setBackgroundRadiusEnabled(bool enabled)
     }
 
     m_backgroundRadiusEnabled = enabled;
-    emit backgroundRadiusEnabledChanged();
+    Q_EMIT backgroundRadiusEnabledChanged();
 }
 
 bool Effects::drawShadows() const
@@ -155,7 +155,7 @@ void Effects::setDrawShadows(bool draw)
 
     m_drawShadows = draw;
 
-    emit drawShadowsChanged();
+    Q_EMIT drawShadowsChanged();
 }
 
 bool Effects::drawEffects() const
@@ -171,7 +171,7 @@ void Effects::setDrawEffects(bool draw)
 
     m_drawEffects = draw;
 
-    emit drawEffectsChanged();
+    Q_EMIT drawEffectsChanged();
 }
 
 void Effects::setForceBottomBorder(bool draw)
@@ -206,7 +206,7 @@ void Effects::setBackgroundRadius(const int &radius)
     }
 
     m_backgroundRadius = radius;
-    emit backgroundRadiusChanged();
+    Q_EMIT backgroundRadiusChanged();
 }
 
 float Effects::backgroundOpacity() const
@@ -223,7 +223,7 @@ void Effects::setBackgroundOpacity(float opacity)
     m_backgroundOpacity = opacity;
 
     updateBackgroundContrastValues();
-    emit backgroundOpacityChanged();
+    Q_EMIT backgroundOpacityChanged();
 }
 
 int Effects::editShadow() const
@@ -238,7 +238,7 @@ void Effects::setEditShadow(int shadow)
     }
 
     m_editShadow = shadow;
-    emit editShadowChanged();
+    Q_EMIT editShadowChanged();
 }
 
 int Effects::innerShadow() const
@@ -253,7 +253,7 @@ void Effects::setInnerShadow(int shadow)
 
     m_innerShadow = shadow;
 
-    emit innerShadowChanged();
+    Q_EMIT innerShadowChanged();
 }
 
 int Effects::popUpMargin() const
@@ -274,7 +274,7 @@ void Effects::setRect(QRect area)
 
     m_rect = area;
 
-    emit rectChanged();
+    Q_EMIT rectChanged();
 }
 
 QRect Effects::mask() const
@@ -291,7 +291,7 @@ void Effects::setMask(QRect area)
     updateMask();
 
     // qDebug() << "dock mask set:" << m_mask;
-    emit maskChanged();
+    Q_EMIT maskChanged();
 }
 
 QRect Effects::inputMask() const
@@ -310,7 +310,7 @@ void Effects::setInputMask(QRect area)
     // Under Wayland mask() is providing the input area.
     m_view->setMask(area);
 
-    emit inputMaskChanged();
+    Q_EMIT inputMaskChanged();
 }
 
 QRect Effects::appletsLayoutGeometry() const
@@ -327,7 +327,7 @@ void Effects::setAppletsLayoutGeometry(const QRect &geom)
     m_appletsLayoutGeometry = geom;
     m_view->setProperty("_applets_layout_geometry", QVariant(m_appletsLayoutGeometry));
 
-    emit appletsLayoutGeometryChanged();
+    Q_EMIT appletsLayoutGeometryChanged();
 }
 
 QQuickItem *Effects::panelBackgroundSvg() const
@@ -342,7 +342,7 @@ void Effects::setPanelBackgroundSvg(QQuickItem *quickitem)
     }
 
     m_panelBackgroundSvg = quickitem;
-    emit panelBackgroundSvgChanged();
+    Q_EMIT panelBackgroundSvgChanged();
 }
 
 void Effects::onPopUpMarginChanged()
@@ -362,7 +362,7 @@ void Effects::setSubtractedMaskRegion(const QString &regionid, const QRegion &re
     }
 
     m_subtractedMaskRegions[regionid] = region;
-    emit subtractedMaskRegionsChanged();
+    Q_EMIT subtractedMaskRegionsChanged();
 }
 
 void Effects::removeSubtractedMaskRegion(const QString &regionid)
@@ -372,7 +372,7 @@ void Effects::removeSubtractedMaskRegion(const QString &regionid)
     }
 
     m_subtractedMaskRegions.remove(regionid);
-    emit subtractedMaskRegionsChanged();
+    Q_EMIT subtractedMaskRegionsChanged();
 }
 
 void Effects::setUnitedMaskRegion(const QString &regionid, const QRegion &region)
@@ -382,7 +382,7 @@ void Effects::setUnitedMaskRegion(const QString &regionid, const QRegion &region
     }
 
     m_unitedMaskRegions[regionid] = region;
-    emit unitedMaskRegionsChanged();
+    Q_EMIT unitedMaskRegionsChanged();
 }
 
 void Effects::removeUnitedMaskRegion(const QString &regionid)
@@ -392,7 +392,7 @@ void Effects::removeUnitedMaskRegion(const QString &regionid)
     }
 
     m_unitedMaskRegions.remove(regionid);
-    emit unitedMaskRegionsChanged();
+    Q_EMIT unitedMaskRegionsChanged();
 }
 
 QRegion Effects::customMask(const QRect &rect)
@@ -452,7 +452,7 @@ void Effects::updateBackgroundCorners()
     m_corona->themeExtended()->cornersMask(m_backgroundRadius);
 
     m_cornersMaskRegion = m_corona->themeExtended()->cornersMask(m_backgroundRadius);
-    emit backgroundCornersMaskChanged();
+    Q_EMIT backgroundCornersMaskChanged();
 }
 
 void Effects::updateMask()
@@ -712,7 +712,7 @@ void Effects::updateEnabledBorders()
 
     if (m_enabledBorders != borders) {
         m_enabledBorders = borders;
-        emit enabledBordersChanged();
+        Q_EMIT enabledBordersChanged();
     }
 
     if (!m_view->behaveAsPlasmaPanel() || !m_drawShadows) {

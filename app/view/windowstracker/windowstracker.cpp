@@ -31,13 +31,13 @@ WindowsTracker::WindowsTracker(Latte::View *parent)
 
     connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::enabledChanged, this, [&](const Latte::View *view) {
         if (m_latteView == view) {
-            emit enabledChanged();
+            Q_EMIT enabledChanged();
         }
     });
 
     m_wm->windowsTracker()->addView(m_latteView);
-    emit allScreensChanged();
-    emit currentScreenChanged();
+    Q_EMIT allScreensChanged();
+    Q_EMIT currentScreenChanged();
 }
 
 WindowsTracker::~WindowsTracker()

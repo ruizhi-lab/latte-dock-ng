@@ -39,7 +39,7 @@ public:
 
     int row(const QString &id);
 
-private slots:
+private Q_SLOTS:
     void initSchemes();
 
 private:

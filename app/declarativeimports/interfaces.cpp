@@ -33,7 +33,7 @@ void Interfaces::setGlobalShortcuts(QObject *shortcuts)
         });
     }
 
-    emit globalShortcutsChanged();
+    Q_EMIT globalShortcutsChanged();
 }
 
 QObject *Interfaces::layoutsManager() const
@@ -55,7 +55,7 @@ void Interfaces::setLayoutsManager(QObject *manager)
         });
     }
 
-    emit layoutsManagerChanged();
+    Q_EMIT layoutsManagerChanged();
 }
 
 QObject *Interfaces::themeExtended() const
@@ -77,7 +77,7 @@ void Interfaces::setThemeExtended(QObject *theme)
         });
     }
 
-    emit themeExtendedChanged();
+    Q_EMIT themeExtendedChanged();
 }
 
 QObject *Interfaces::universalSettings() const
@@ -99,7 +99,7 @@ void Interfaces::setUniversalSettings(QObject *settings)
         });
     }
 
-    emit universalSettingsChanged();
+    Q_EMIT universalSettingsChanged();
 }
 
 void Interfaces::updateView()
@@ -128,7 +128,7 @@ void Interfaces::setView(QObject *view)
         });
     }
 
-    emit viewChanged();
+    Q_EMIT viewChanged();
 }
 
 QObject *Interfaces::plasmoidInterface() const
@@ -149,7 +149,7 @@ void Interfaces::setPlasmoidInterface(QObject *interface)
         setUniversalSettings(plasmoid->property("_latte_universalSettings_object").value<QObject *>());
         setView(plasmoid->property("_latte_view_object").value<QObject *>());
 
-        emit interfaceChanged();
+        Q_EMIT interfaceChanged();
     }
 }
 

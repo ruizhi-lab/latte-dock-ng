@@ -106,7 +106,7 @@ public:
     QAbstractListModel *latteTasksModel() const;
     QAbstractListModel *plasmaTasksModel() const;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void deactivateApplets();
     Q_INVOKABLE void toggleAppletExpanded(const int id);
 
@@ -126,7 +126,7 @@ public slots:
     void updateContainmentConfigProperty(const QString &key, const QVariant &value);
     void updateAppletConfigProperty(const int &id, const QString &key, const QVariant &value);    
 
-signals:
+Q_SIGNALS:
     void expandedAppletStateChanged();
     void hasExpandedAppletChanged();
     void hasLatteTasksChanged();
@@ -152,7 +152,7 @@ signals:
 
     void appletRequestedVisualIndicator(const int &plasmoidId);
 
-private slots:
+private Q_SLOTS:
     void identifyShortcutsHost();
     void identifyMethods();
 

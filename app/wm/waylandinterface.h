@@ -96,7 +96,7 @@ public:
     void initVirtualDesktopManagement(KWayland::Client::PlasmaVirtualDesktopManagement *virtualDesktopManagement);
 
 
-private slots:
+private Q_SLOTS:
     void updateWindow();
     void windowUnmapped();
 

@@ -48,7 +48,7 @@ public:
 
     QStringList currentAlwaysData() const;
 
-public slots:
+public Q_SLOTS:
     void reset() override;
     void resetDefaults() override;
     void save() override;

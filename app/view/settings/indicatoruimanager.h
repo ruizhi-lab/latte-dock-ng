@@ -48,7 +48,7 @@ public:
     IndicatorUiManager(ViewPart::PrimaryConfigView *parent);
     ~IndicatorUiManager() override;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void addIndicator();
     Q_INVOKABLE void downloadIndicator();
     Q_INVOKABLE void removeIndicator(QString pluginId);

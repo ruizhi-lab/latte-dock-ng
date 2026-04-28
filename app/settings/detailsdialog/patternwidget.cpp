@@ -68,7 +68,7 @@ void PatternWidget::setBackground(const QString &file)
         m_background = file;
     }
 
-    emit backgroundChanged();
+    Q_EMIT backgroundChanged();
 }
 
 void PatternWidget::setText(const QString &text)
@@ -90,7 +90,7 @@ void PatternWidget::setTextColor(const QString &color)
     m_textColor = color;
     m_textColorBrightness = Latte::colorBrightness(QColor(color));
 
-    emit textColorChanged();
+    Q_EMIT textColorChanged();
 }
 
 void PatternWidget::updateUi()
@@ -132,7 +132,7 @@ void PatternWidget::mouseMoveEvent(QMouseEvent *event )
 
 void PatternWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    emit mouseReleased();
+    Q_EMIT mouseReleased();
     QWidget::mouseReleaseEvent(event);
 }
 

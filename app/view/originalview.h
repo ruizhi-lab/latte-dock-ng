@@ -44,13 +44,13 @@ public:
 
     void reconsiderScreen() override;
 
-public slots:
+public Q_SLOTS:
     void cleanClones();
 
-signals:
+Q_SIGNALS:
     void screensGroupChanged();    
 
-private slots:    
+private Q_SLOTS:
     void syncClonesToScreens();
 
     void restoreConfig();

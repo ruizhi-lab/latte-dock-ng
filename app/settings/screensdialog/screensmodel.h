@@ -73,7 +73,7 @@ public:
     void deselectAll();
     void reset();    
 
-signals:
+Q_SIGNALS:
     void screenDataChanged();
 
 private:

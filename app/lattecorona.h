@@ -151,7 +151,7 @@ public:
     QStringList contextMenuData(const uint &containmentId);
     QStringList viewTemplatesData();
 
-public slots:
+public Q_SLOTS:
     void aboutApplication();
     void activateLauncherMenu();
     void loadDefaultLayout() override;
@@ -175,7 +175,7 @@ public slots:
 
     void unload();
 
-signals:
+Q_SIGNALS:
     void configurationShown(PlasmaQuick::ConfigView *configView);
     void viewLocationChanged();
     void raiseViewsTemporaryChanged();
@@ -183,7 +183,7 @@ signals:
     void availableScreenRegionChangedFrom(Latte::View *origin);
     void verticalUnityViewHasFocus();
 
-private slots:
+private Q_SLOTS:
     void alternativesVisibilityChanged(bool visible);
     void load();
 

@@ -75,14 +75,14 @@ public:
     void reset();
     void save();
 
-public slots:
+public Q_SLOTS:
     void copySelectedViews();
     void cutSelectedViews();
     void duplicateSelectedViews();
     void pasteSelectedViews();
     void removeSelectedViews();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
 
 private:
@@ -111,7 +111,7 @@ private:
                                                         const bool &showOpenLayoutAction = true);
 
 
-private slots:
+private Q_SLOTS:
     void loadConfig();
     void saveConfig();
     void storeColumnWidths();

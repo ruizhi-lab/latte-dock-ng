@@ -118,7 +118,7 @@ public:
     static int countScreens(QQmlListProperty<QScreen> *property); //! is needed by screens()
     static QScreen *atScreens(QQmlListProperty<QScreen> *property, int index); //! is needed by screens()
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE QString splitterIconPath();
     Q_INVOKABLE QString trademarkPath();
     Q_INVOKABLE QString trademarkIconPath();
@@ -129,7 +129,7 @@ public slots:
 
     void syncSettings();
 
-signals:
+Q_SIGNALS:
     void actionsChanged();
     void autostartChanged();
     void badges3DStyleChanged();
@@ -153,7 +153,7 @@ signals:
     void thicknessMarginInfluenceChanged();
     void versionChanged();
 
-private slots:
+private Q_SLOTS:
     void loadConfig();
     void loadScalesConfig();
     void saveConfig();

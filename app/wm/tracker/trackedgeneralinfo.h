@@ -65,7 +65,7 @@ public:
     //! windows that are not tracked can be removed totally from history as they are not relevant any more
     virtual bool isTracking(const WindowInfoWrap &winfo) const;
 
-signals:
+Q_SIGNALS:
     void lastActiveWindowChanged();
 
 protected:

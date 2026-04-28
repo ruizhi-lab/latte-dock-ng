@@ -261,7 +261,7 @@ public:
     //! used from ViewSettingsFactory in order to move Configuration Windows to different View
     void releaseConfigView();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void newView(const QString &templateFile);
     Q_INVOKABLE void removeView();
     Q_INVOKABLE void duplicateView();
@@ -274,14 +274,14 @@ public slots:
     Q_INVOKABLE bool isHighestPriorityView();
     Q_INVOKABLE QAction *action(const QString &name);
 
-protected slots:
+protected Q_SLOTS:
     void showConfigurationInterface(Plasma::Applet *applet) override;
     void showWidgetExplorer(const QPointF &point);
 
 protected:
     bool event(QEvent *ev) override;
 
-signals:
+Q_SIGNALS:
     void eventTriggered(QEvent *ev);
     void mousePressed(const QPoint pos, const int button);
     void mouseReleased(const QPoint pos, const int button);
@@ -350,7 +350,7 @@ signals:
 protected:
     QPointer<Latte::Corona> m_corona;
 
-private slots:
+private Q_SLOTS:
     void applyActivitiesToWindows();
     void availableScreenRectChangedFromSlot(View *origin);
     void hideWindowsForSlidingOut();

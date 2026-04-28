@@ -32,13 +32,13 @@ public:
 
     QList<uint> appletsWithPlasmaShortcuts();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE QString appletShortcutBadge(int appletId);
 
-signals:
+Q_SIGNALS:
     void badgesForActivateChanged();
 
-private slots:
+private Q_SLOTS:
     void shortcutsFileChanged(const QString &file);
 
 private:

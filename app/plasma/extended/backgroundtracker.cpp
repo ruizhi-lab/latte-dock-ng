@@ -44,7 +44,7 @@ void BackgroundTracker::setLocation(int location)
 
     m_location = pLocation;
 
-    emit locationChanged();
+    Q_EMIT locationChanged();
 }
 
 float BackgroundTracker::currentBrightness() const
@@ -65,7 +65,7 @@ void BackgroundTracker::setActivity(QString id)
 
     m_activity = id;
 
-    emit activityChanged();
+    Q_EMIT activityChanged();
 }
 
 QString BackgroundTracker::screenName() const
@@ -81,7 +81,7 @@ void BackgroundTracker::setScreenName(QString name)
 
     m_screenName = name;
 
-    emit screenNameChanged();
+    Q_EMIT screenNameChanged();
 }
 
 void BackgroundTracker::backgroundChanged(const QString &activity, const QString &screenName)
@@ -100,8 +100,8 @@ void BackgroundTracker::update()
     m_brightness = PlasmaExtended::BackgroundCache::self()->brightnessFor(m_activity, m_screenName, m_location);
     m_busy = PlasmaExtended::BackgroundCache::self()->busyFor(m_activity, m_screenName, m_location);
 
-    emit currentBrightnessChanged();
-    emit isBusyChanged();
+    Q_EMIT currentBrightnessChanged();
+    Q_EMIT isBusyChanged();
 }
 
 }

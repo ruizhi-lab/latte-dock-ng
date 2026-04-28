@@ -44,17 +44,17 @@ public:
 
     void setOnActivities(QStringList activities = {"0"});
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void syncGeometry();
 
-signals:
+Q_SIGNALS:
     void enabledBordersChanged();
 
 protected:
     void showEvent(QShowEvent *ev) override;
     bool event(QEvent *e) override;
 
-private slots:
+private Q_SLOTS:
     void setupWaylandIntegration();
     void updateWaylandId();
 

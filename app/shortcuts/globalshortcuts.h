@@ -49,10 +49,10 @@ public:
 
     ShortcutsPart::ShortcutsTracker *shortcutsTracker() const;
 
-signals:
+Q_SIGNALS:
     void modifiersChanged();
 
-private slots:
+private Q_SLOTS:
     void hideViewsTimerSlot();
 
 private:

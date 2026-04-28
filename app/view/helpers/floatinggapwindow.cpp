@@ -44,7 +44,7 @@ FloatingGapWindow::FloatingGapWindow(Latte::View *view) :
     m_asyncMouseTimer.setInterval(200);
     connect(&m_asyncMouseTimer, &QTimer::timeout, this, [this]() {
         if (m_inAsyncContainsMouse && !m_containsMouse) {
-            emit asyncContainsMouseChanged(false);
+            Q_EMIT asyncContainsMouseChanged(false);
             hideWithMask();
             m_inAsyncContainsMouse = false;
         }
@@ -104,7 +104,7 @@ void FloatingGapWindow::updateGeometry()
 
     m_calculatedGeometry = newGeometry;
 
-    emit calculatedGeometryChanged();
+    Q_EMIT calculatedGeometryChanged();
 }
 
 bool FloatingGapWindow::event(QEvent *e)
@@ -122,7 +122,7 @@ bool FloatingGapWindow::event(QEvent *e)
         if (m_inAsyncContainsMouse) {
             m_asyncMouseTimer.stop();
             m_inAsyncContainsMouse = false;
-            emit asyncContainsMouseChanged(true);
+            Q_EMIT asyncContainsMouseChanged(true);
         }
     }
 

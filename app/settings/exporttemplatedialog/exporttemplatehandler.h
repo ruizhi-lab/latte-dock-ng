@@ -61,12 +61,12 @@ public:
 
     Latte::Data::AppletsTable currentData() const;
 
-public slots:
+public Q_SLOTS:
     void reset() override;
     void resetDefaults() override;
     void save() override;
 
-signals:
+Q_SIGNALS:
     void filepathChanged();
     void exportSucceeded();
 
@@ -81,7 +81,7 @@ private:
 
     bool overwriteConfirmation(const QString &fileName);
 
-private slots:
+private Q_SLOTS:
     void onExport();
     void onFilepathChanged();
     void onSelectAll();

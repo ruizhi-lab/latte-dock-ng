@@ -187,7 +187,7 @@ void SecondaryConfigView::showEvent(QShowEvent *ev)
     m_screenSyncTimer.start();
     QTimer::singleShot(400, this, &SecondaryConfigView::syncGeometry);
 
-    emit showSignal();
+    Q_EMIT showSignal();
 }
 
 void SecondaryConfigView::focusOutEvent(QFocusEvent *ev)
@@ -299,7 +299,7 @@ void SecondaryConfigView::updateEnabledBorders()
 
         m_corona->dialogShadows()->addWindow(this, m_enabledBorders);
 
-        emit enabledBordersChanged();
+        Q_EMIT enabledBordersChanged();
     }
 }
 

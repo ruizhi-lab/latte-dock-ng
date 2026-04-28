@@ -226,7 +226,7 @@ bool DetailsHandler::inDefaultValues() const
 void DetailsHandler::reset()
 {
     c_data = o_data;
-    emit currentLayoutChanged();
+    Q_EMIT currentLayoutChanged();
 }
 
 void DetailsHandler::resetDefaults()
@@ -284,7 +284,7 @@ void DetailsHandler::onCurrentLayoutIndexChanged(int row)
         QString layoutId = m_layoutsProxyModel->data(m_layoutsProxyModel->index(row, Model::Layouts::IDCOLUMN), Qt::UserRole).toString();
         m_dialog->layoutsController()->selectRow(layoutId);
         reload();
-        emit currentLayoutChanged();
+        Q_EMIT currentLayoutChanged();
     } else {
         //! reset combobox index
         m_ui->layoutsCmb->setCurrentText(c_data.name);
@@ -313,7 +313,7 @@ void DetailsHandler::setBackground(const QString &background)
     }
 
     c_data.background = background;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setColor(const QString &color)
@@ -323,7 +323,7 @@ void DetailsHandler::setColor(const QString &color)
     }
 
     c_data.color = color;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setCustomSchemeFile(const QString &file)
@@ -333,7 +333,7 @@ void DetailsHandler::setCustomSchemeFile(const QString &file)
     }
 
     c_data.schemeFile = file;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setIcon(const QString &icon)
@@ -343,7 +343,7 @@ void DetailsHandler::setIcon(const QString &icon)
     }
 
     c_data.icon = icon;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setTextColor(const QString &textColor)
@@ -353,7 +353,7 @@ void DetailsHandler::setTextColor(const QString &textColor)
     }
 
     c_data.textColor = textColor;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setIsShownInMenu(bool inMenu)
@@ -363,7 +363,7 @@ void DetailsHandler::setIsShownInMenu(bool inMenu)
     }
 
     c_data.isShownInMenu = inMenu;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setHasDisabledBorders(bool disabled)
@@ -373,7 +373,7 @@ void DetailsHandler::setHasDisabledBorders(bool disabled)
     }
 
     c_data.hasDisabledBorders = disabled;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setBackgroundStyle(const Latte::Layout::BackgroundStyle &style)
@@ -383,7 +383,7 @@ void DetailsHandler::setBackgroundStyle(const Latte::Layout::BackgroundStyle &st
     }
 
     c_data.backgroundStyle = style;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::setPopUpMargin(const int &margin)
@@ -393,7 +393,7 @@ void DetailsHandler::setPopUpMargin(const int &margin)
     }
 
     c_data.popUpMargin = margin;
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void DetailsHandler::selectBackground()

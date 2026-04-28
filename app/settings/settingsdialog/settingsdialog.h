@@ -81,7 +81,7 @@ protected:
 
     void reject() override;
 
-private slots:
+private Q_SLOTS:
     void importFullConfiguration();
     void exportFullConfiguration();
 

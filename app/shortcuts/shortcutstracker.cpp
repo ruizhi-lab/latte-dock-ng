@@ -145,7 +145,7 @@ void ShortcutsTracker::parseGlobalShortcuts()
         qDebug() << "badges based on position updated to :: " << m_badgesForActivate;
         qDebug() << "badges for applet shortcuts updated to :: " << m_appletShortcuts;
 
-        emit badgesForActivateChanged();
+        Q_EMIT badgesForActivateChanged();
     }
 }
 

@@ -53,7 +53,7 @@ public:
 protected:
     void accept() override;
 
-private slots:
+private Q_SLOTS:
     void onCancel();
     void onDataChanged();
     void onReset();

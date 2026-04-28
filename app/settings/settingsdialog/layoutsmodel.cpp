@@ -40,7 +40,7 @@ Layouts::Layouts(QObject *parent, Latte::Corona *corona)
         roles << Qt::UserRole;
         roles << INMULTIPLELAYOUTSROLE;
 
-        emit dataChanged(index(0, NAMECOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
+        Q_EMIT dataChanged(index(0, NAMECOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
     });
 
     connect(this, &Layouts::activitiesStatesChanged, this, &Layouts::onActivitiesStatesChanged);
@@ -91,7 +91,7 @@ void Layouts::setInMultipleMode(bool inMultiple)
     }
 
     m_inMultipleMode = inMultiple;
-    emit inMultipleModeChanged();
+    Q_EMIT inMultipleModeChanged();
 }
 
 bool Layouts::hasEnabledLayout() const
@@ -181,7 +181,7 @@ void Layouts::appendLayout(const Latte::Data::Layout &layout)
     m_layoutsTable.insert(newRow, layout);
     endInsertRows();
 
-    emit rowsInserted();
+    Q_EMIT rowsInserted();
 }
 
 void Layouts::appendOriginalLayout(const Latte::Data::Layout &layout)
@@ -201,7 +201,7 @@ void Layouts::applyData()
     o_inMultipleMode = m_inMultipleMode;
     o_layoutsTable = m_layoutsTable;
 
-    emit dataChanged(index(0, BACKGROUNDCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
+    Q_EMIT dataChanged(index(0, BACKGROUNDCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
 }
 
 void Layouts::resetData()
@@ -231,7 +231,7 @@ void Layouts::setLayoutProperties(const Latte::Data::Layout &layout)
         roles << Qt::UserRole;
         roles << ERRORSROLE;
         roles << WARNINGSROLE;
-        emit dataChanged(index(dataRow, IDCOLUMN), index(dataRow, ACTIVITYCOLUMN), roles);
+        Q_EMIT dataChanged(index(dataRow, IDCOLUMN), index(dataRow, ACTIVITYCOLUMN), roles);
     }
 }
 
@@ -284,7 +284,7 @@ void Layouts::setCurrentLayoutForFreeActivities(const QString &id)
         QVector<int> roles;
         roles << Qt::DisplayRole;
         roles << Qt::UserRole;
-        emit dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
+        Q_EMIT dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
     }
 }
 
@@ -297,7 +297,7 @@ void Layouts::setOriginalLayoutForFreeActivities(const QString &id)
         QVector<int> roles;
         roles << Qt::DisplayRole;
         roles << Qt::UserRole;
-        emit dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
+        Q_EMIT dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
     }
 }
 
@@ -634,7 +634,7 @@ void Layouts::setActivities(const int &row, const QStringList &activities)
     roles << ASSIGNEDACTIVITIESROLE;
 
     m_layoutsTable[row].activities = activities;
-    emit dataChanged(index(row, BACKGROUNDCOLUMN), index(row,ACTIVITYCOLUMN), roles);
+    Q_EMIT dataChanged(index(row, BACKGROUNDCOLUMN), index(row,ACTIVITYCOLUMN), roles);
 }
 
 void Layouts::setId(const int &row, const QString &newId)
@@ -648,7 +648,7 @@ void Layouts::setId(const int &row, const QString &newId)
 
     QString oldId = m_layoutsTable[row].id;
     m_layoutsTable[row].id = newId;
-    emit dataChanged(index(row, NAMECOLUMN), index(row,NAMECOLUMN), roles);
+    Q_EMIT dataChanged(index(row, NAMECOLUMN), index(row,NAMECOLUMN), roles);
 }
 
 bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -666,7 +666,7 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
     //! common roles for all row cells
     if (role == ISLOCKEDROLE) {
         m_layoutsTable[row].isLocked = value.toBool();
-        emit dataChanged(this->index(row,0), this->index(row, ACTIVITYCOLUMN), roles);
+        Q_EMIT dataChanged(this->index(row,0), this->index(row, ACTIVITYCOLUMN), roles);
         return true;
     }
 
@@ -675,7 +675,7 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
     case IDCOLUMN:
         if (role==Qt::UserRole) {
             setId(row, value.toString());
-            emit dataChanged(index, index, roles);
+            Q_EMIT dataChanged(index, index, roles);
             return true;
         }
         break;
@@ -692,7 +692,7 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
                 m_layoutsTable[row].background = QString();
                 m_layoutsTable[row].color = back;
             }
-            emit dataChanged(index, index, roles);
+            Q_EMIT dataChanged(index, index, roles);
             return true;
         }
         break;
@@ -702,11 +702,11 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
 
             if (!provenId.isEmpty() && provenId != m_layoutsTable[row].id /*not the same row*/ ){
                 //! duplicate name should be rejected
-                emit nameDuplicated(provenId, m_layoutsTable[row].id);
+                Q_EMIT nameDuplicated(provenId, m_layoutsTable[row].id);
                 return false;
             } else {
                 m_layoutsTable[row].name = value.toString();
-                emit dataChanged(index, index, roles);
+                Q_EMIT dataChanged(index, index, roles);
                 return true;
             }
         }
@@ -714,16 +714,16 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
     case MENUCOLUMN:
         if (role == Qt::UserRole) {
             m_layoutsTable[row].isShownInMenu = value.toBool();
-            emit dataChanged(index, index, roles);
-            emit dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
+            Q_EMIT dataChanged(index, index, roles);
+            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
             return true;
         }
         break;
     case BORDERSCOLUMN:
         if (role == Qt::UserRole) {
             m_layoutsTable[row].hasDisabledBorders = value.toBool();
-            emit dataChanged(index, index, roles);
-            emit dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
+            Q_EMIT dataChanged(index, index, roles);
+            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
             return true;
         }
         break;
@@ -731,7 +731,7 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
         if (role == Qt::UserRole)  {
             setActivities(row, value.toStringList());
             updateConsideredActiveStates();
-            emit dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
+            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
             return true;
         }
         break;
@@ -757,7 +757,7 @@ void Layouts::updateActiveStates()
 
         if (m_layoutsTable[i].isActive != iActive) {
             m_layoutsTable[i].isActive = iActive;
-            emit dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
+            Q_EMIT dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
         }
     }
 }
@@ -782,7 +782,7 @@ void Layouts::updateConsideredActiveStates()
 
             if (m_layoutsTable[i].isConsideredActive != iConsideredActive) {
                 m_layoutsTable[i].isConsideredActive = iConsideredActive;
-                emit dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
+                Q_EMIT dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
             }
         }
     } else if (m_inMultipleMode) {
@@ -806,7 +806,7 @@ void Layouts::updateConsideredActiveStates()
 
             if (m_layoutsTable[i].isConsideredActive != iConsideredActive) {
                 m_layoutsTable[i].isConsideredActive = iConsideredActive;
-                emit dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
+                Q_EMIT dataChanged(index(i, BACKGROUNDCOLUMN), index(i,ACTIVITYCOLUMN), roles);
             }
         }
     }
@@ -871,7 +871,7 @@ void Layouts::setOriginalData(Latte::Data::LayoutsTable &data)
     m_layoutsTable = data;
     endInsertRows();
 
-    emit rowsInserted();
+    Q_EMIT rowsInserted();
 
     updateActiveStates();
     updateConsideredActiveStates();
@@ -931,7 +931,7 @@ void Layouts::initActivities()
     connect(m_corona->activitiesConsumer(), &KActivities::Consumer::activityRemoved, this, &Layouts::onActivityRemoved);
     connect(m_corona->activitiesConsumer(), &KActivities::Consumer::runningActivitiesChanged, this, &Layouts::onRunningActivitiesChanged);
 
-    emit activitiesStatesChanged();
+    Q_EMIT activitiesStatesChanged();
 }
 
 void Layouts::onActivitiesStatesChanged()
@@ -942,8 +942,8 @@ void Layouts::onActivitiesStatesChanged()
     roles << ALLACTIVITIESDATAROLE;
     roles << ALLACTIVITIESSORTEDROLE;
 
-    emit dataChanged(index(0, BACKGROUNDCOLUMN), index(rowCount()-1, BACKGROUNDCOLUMN), roles);
-    emit dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
+    Q_EMIT dataChanged(index(0, BACKGROUNDCOLUMN), index(rowCount()-1, BACKGROUNDCOLUMN), roles);
+    Q_EMIT dataChanged(index(0, ACTIVITYCOLUMN), index(rowCount()-1, ACTIVITYCOLUMN), roles);
 }
 
 void Layouts::onActivityAdded(const QString &id)
@@ -987,7 +987,7 @@ void Layouts::onActivityRemoved(const QString &id)
         info->deleteLater();
     }
 
-    emit activitiesStatesChanged();
+    Q_EMIT activitiesStatesChanged();
 }
 
 void Layouts::onActivityChanged(const QString &id)
@@ -998,7 +998,7 @@ void Layouts::onActivityChanged(const QString &id)
         m_activitiesTable[id].state = m_activitiesInfo[id]->state();
         m_activitiesTable[id].isCurrent = m_activitiesInfo[id]->isCurrent();
 
-        emit activitiesStatesChanged();
+        Q_EMIT activitiesStatesChanged();
     }
 }
 
@@ -1012,7 +1012,7 @@ void Layouts::onRunningActivitiesChanged(const QStringList &runningIds)
         }
     }
 
-    emit activitiesStatesChanged();
+    Q_EMIT activitiesStatesChanged();
 }
 
 bool Layouts::containsSpecificRunningActivity(const QStringList &runningIds, const Latte::Data::Layout &layout) const

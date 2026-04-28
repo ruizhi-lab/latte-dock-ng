@@ -91,7 +91,7 @@ void Screens::clear()
         c_screens.clear();
         endRemoveRows();
 
-        emit screenDataChanged();
+        Q_EMIT screenDataChanged();
     }
 }
 
@@ -104,8 +104,8 @@ void Screens::deselectAll()
         c_screens[i].isSelected = false;
     }
 
-    emit dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
-    emit screenDataChanged();
+    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
+    Q_EMIT screenDataChanged();
 }
 
 void Screens::reset()
@@ -115,8 +115,8 @@ void Screens::reset()
     QVector<int> roles;
     roles << Qt::CheckStateRole;
 
-    emit dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
-    emit screenDataChanged();
+    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
+    Q_EMIT screenDataChanged();
 }
 
 QString Screens::sortableId(const QString &id) const
@@ -165,7 +165,7 @@ void Screens::setData(const Latte::Data::ScreensTable &screens)
         o_screens = c_screens;
         endInsertRows();
 
-        emit screenDataChanged();
+        Q_EMIT screenDataChanged();
     }
 }
 
@@ -181,13 +181,13 @@ void Screens::setSelected(const Latte::Data::ScreensTable &screens)
             roles << Qt::CheckStateRole;
 
             c_screens[pos].isSelected = screens[i].isSelected;
-            emit dataChanged(index(pos, SCREENCOLUMN), index(pos, SCREENCOLUMN), roles);
+            Q_EMIT dataChanged(index(pos, SCREENCOLUMN), index(pos, SCREENCOLUMN), roles);
             changed = true;
         }
     }
 
     if (changed) {
-        emit screenDataChanged();
+        Q_EMIT screenDataChanged();
     }
 }
 
@@ -259,7 +259,7 @@ bool Screens::setData(const QModelIndex &index, const QVariant &value, int role)
     case SCREENCOLUMN:
         if (role == Qt::CheckStateRole) {
             c_screens[row].isSelected = (value.toInt() > 0 ? true : false);
-            emit screenDataChanged();
+            Q_EMIT screenDataChanged();
             return true;
         }
         break;

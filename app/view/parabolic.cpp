@@ -52,7 +52,7 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
     }
 
     m_currentParabolicItem = item;
-    emit currentParabolicItemChanged();
+    Q_EMIT currentParabolicItemChanged();
 }
 
 void Parabolic::onEvent(QEvent *e)

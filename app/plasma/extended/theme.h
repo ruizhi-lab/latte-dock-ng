@@ -97,7 +97,7 @@ public:
 
     void load();
 
-signals:
+Q_SIGNALS:
     void backgroundsChanged();
     void compositingChanged();
     void hasShadowChanged();
@@ -105,7 +105,7 @@ signals:
     void marginsAreaChanged();
     void themeChanged();
 
-private slots:
+private Q_SLOTS:
     void loadConfig();
     void saveConfig();
     void loadThemeLightness();

@@ -34,10 +34,10 @@ public:
 
     QList<QObject *> svgs() const;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void setSvgImagePaths(QStringList paths);
 
-signals:
+Q_SIGNALS:
     void svgsChanged();
 
 private:

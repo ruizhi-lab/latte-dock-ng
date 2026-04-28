@@ -229,7 +229,7 @@ void Positioner::updateWaylandId()
         m_trackedWindowId = newId;
         m_corona->wm()->registerIgnoredWindow(m_trackedWindowId);
 
-        emit winIdChanged();
+        Q_EMIT winIdChanged();
     }
 }
 
@@ -334,7 +334,7 @@ void Positioner::onStartupFinished()
     if (m_inStartup) {
         m_inStartup = false;
         syncGeometry();
-        emit isOffScreenChanged();
+        Q_EMIT isOffScreenChanged();
     }
 }
 
@@ -401,8 +401,8 @@ void Positioner::setScreenToFollow(QScreen *scr, bool updateScreenId)
     m_view->updateAbsoluteGeometry(true);
     qDebug() << "setScreenToFollow() ended...";
 
-    emit screenGeometryChanged();
-    emit currentScreenChanged();
+    Q_EMIT screenGeometryChanged();
+    Q_EMIT currentScreenChanged();
 }
 
 //! the main function which decides if this dock is at the
@@ -618,7 +618,7 @@ void Positioner::setCanvasGeometry(const QRect &geometry)
     }
 
     m_canvasGeometry = geometry;
-    emit canvasGeometryChanged();
+    Q_EMIT canvasGeometryChanged();
 }
 
 
@@ -868,7 +868,7 @@ void Positioner::setSlideOffset(int offset)
     }
 
     m_slideOffset = offset;
-    emit slideOffsetChanged();
+    Q_EMIT slideOffsetChanged();
 }
 
 
@@ -901,7 +901,7 @@ void Positioner::resizeWindow(QRect availableScreenRect)
     m_view->resize(size);
 
     if (m_view->formFactor() == Plasma::Types::Horizontal) {
-        emit windowSizeChanged();
+        Q_EMIT windowSizeChanged();
     }
 }
 
@@ -930,8 +930,8 @@ void Positioner::onLastRepositionApplyEvent()
 {
     m_view->effects()->setAnimationsBlocked(false);
     setInRelocationShowing(true);
-    emit showingAfterRelocationFinished();
-    emit edgeChanged();
+    Q_EMIT showingAfterRelocationFinished();
+    Q_EMIT edgeChanged();
 
     if (m_repositionFromViewSettingsWindow) {
         m_repositionFromViewSettingsWindow = false;
@@ -1073,7 +1073,7 @@ void Positioner::setInSlideAnimation(bool active)
     }
 
     m_inSlideAnimation = active;
-    emit inSlideAnimationChanged();
+    Q_EMIT inSlideAnimationChanged();
 }
 
 bool Positioner::isCursorInsideView() const
@@ -1093,7 +1093,7 @@ void Positioner::setIsStickedOnTopEdge(bool sticked)
     }
 
     m_isStickedOnTopEdge = sticked;
-    emit isStickedOnTopEdgeChanged();
+    Q_EMIT isStickedOnTopEdgeChanged();
 }
 
 bool Positioner::isStickedOnBottomEdge() const
@@ -1108,7 +1108,7 @@ void Positioner::setIsStickedOnBottomEdge(bool sticked)
     }
 
     m_isStickedOnBottomEdge = sticked;
-    emit isStickedOnBottomEdgeChanged();
+    Q_EMIT isStickedOnBottomEdgeChanged();
 }
 
 void Positioner::updateInRelocationAnimation()
@@ -1120,7 +1120,7 @@ void Positioner::updateInRelocationAnimation()
     }
 
     m_inRelocationAnimation = inrelocationanimation;
-    emit inRelocationAnimationChanged();
+    Q_EMIT inRelocationAnimationChanged();
 }
 
 bool Positioner::isLastHidingRelocationEvent() const
@@ -1236,9 +1236,9 @@ void Positioner::setNextLocation(const QString layoutName, const int screensGrou
     m_repositionFromViewSettingsWindow = m_view->settingsWindowIsShown();
 
     if (isanimated) {
-        emit hidingForRelocationStarted();
+        Q_EMIT hidingForRelocationStarted();
     } else if (haschanges){
-        emit hidingForRelocationFinished();
+        Q_EMIT hidingForRelocationFinished();
     }
 }
 

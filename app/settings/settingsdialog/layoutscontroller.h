@@ -104,10 +104,10 @@ public:
     //! import layouts from Latte versions <= v0.7.x
     bool importLayoutsFromV1ConfigFile(QString file);
 
-signals:
+Q_SIGNALS:
     void dataChanged();
 
-private slots:
+private Q_SLOTS:
     void initLayouts();
     void loadConfig();
     void saveConfig();

@@ -35,7 +35,7 @@ public:
 
     KMessageBox::ButtonCode saveChangesConfirmation(const QString &text);
 
-private slots:
+private Q_SLOTS:
     KMessageWidget *initMessageWidget();
 };
 

@@ -54,7 +54,7 @@ public:
 
     KWayland::Client::PlasmaShellSurface *surface();
 
-signals:
+Q_SIGNALS:
     void forcedShown(); //[workaround] forced shown to avoid a KWin issue that hides windows when activities are stopped
     void calculatedGeometryChanged();
 
@@ -66,7 +66,7 @@ protected:
     //! it is used to update m_calculatedGeometry correctly
     virtual void updateGeometry() = 0;
 
-private slots:
+private Q_SLOTS:
     void startGeometryTimer();
     void fixGeometry();
     void updateWaylandId();

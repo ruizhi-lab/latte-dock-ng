@@ -181,7 +181,7 @@ void Factory::reload(const QString &indicatorPath)
     }
 
     if (!pluginChangedId.isEmpty()) {
-        emit indicatorChanged(pluginChangedId);
+        Q_EMIT indicatorChanged(pluginChangedId);
     }
 }
 
@@ -224,7 +224,7 @@ void Factory::removeIndicatorRecords(const QString &path)
 
         //! delay informing the removal in case it is just an update
         QTimer::singleShot(1000, [this, pluginId]() {
-            emit indicatorRemoved(pluginId);
+            Q_EMIT indicatorRemoved(pluginId);
         });
     }
 }

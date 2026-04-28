@@ -107,7 +107,7 @@ public:
     QQuickItem *panelBackgroundSvg() const;
     void setPanelBackgroundSvg(QQuickItem *quickitem);
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void forceMaskRedraw();
     Q_INVOKABLE void setSubtractedMaskRegion(const QString &regionid, const QRegion &region);
     Q_INVOKABLE void removeSubtractedMaskRegion(const QString &regionid);
@@ -120,7 +120,7 @@ public slots:
     void updateEnabledBorders();
     void updateMask();
 
-signals:
+Q_SIGNALS:
     void animationsBlockedChanged();
     void appletsLayoutGeometryChanged();
     void backgroundAllCornersChanged();
@@ -142,7 +142,7 @@ signals:
     void subtractedMaskRegionsChanged();
     void unitedMaskRegionsChanged();
 
-private slots:
+private Q_SLOTS:
     void init();
 
     void onPopUpMarginChanged();

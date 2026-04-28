@@ -1,0 +1,9 @@
+#pragma once
+
+namespace KQuickAddons {
+class QtQuickSettings
+{
+public:
+    static void init() {}
+};
+}

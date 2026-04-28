@@ -143,7 +143,7 @@ public:
 
     void componentComplete() Q_DECL_OVERRIDE;
 
-signals:
+Q_SIGNALS:
     void activeChanged();
     void backgroundColorChanged();
     void colorGroupChanged();
@@ -157,7 +157,7 @@ signals:
     void usesPlasmaThemeChanged();
     void validChanged();
 
-private slots:
+private Q_SLOTS:
     void schedulePixmapUpdate();
     void enabledChanged();
 

@@ -122,7 +122,7 @@ void ViewsHandler::init()
     reload();
     m_lastConfirmedLayoutIndex =m_ui->layoutsCmb->currentIndex();
 
-    emit currentLayoutChanged();
+    Q_EMIT currentLayoutChanged();
 
     //! connect layout combobox after the selected layout has been loaded
     connect(m_ui->layoutsCmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ViewsHandler::onCurrentLayoutIndexChanged);
@@ -489,7 +489,7 @@ void ViewsHandler::onCurrentLayoutIndexChanged(int row)
         QString layoutId = m_layoutsProxyModel->data(m_layoutsProxyModel->index(row, Model::Layouts::IDCOLUMN), Qt::UserRole).toString();
         m_dialog->layoutsController()->selectRow(layoutId);
         reload();
-        emit currentLayoutChanged();
+        Q_EMIT currentLayoutChanged();
     } else {
         //! reset combobox index
         m_ui->layoutsCmb->setCurrentText(o_data.name);

@@ -62,11 +62,11 @@ public:
     static QString possibleSchemeFile(QString scheme);
     static QString schemeName(QString originalFile);
 
-signals:
+Q_SIGNALS:
     void colorsChanged();
     void schemeFileChanged();
 
-private slots:
+private Q_SLOTS:
     void updateScheme();
 
 private:

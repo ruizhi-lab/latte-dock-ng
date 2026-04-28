@@ -16,7 +16,7 @@
 #include <QTimer>
 
 // Plasma
-#include <plasma/package.h>
+#include <Plasma/package.h>
 #include <Plasma/FrameSvg>
 
 
@@ -58,10 +58,10 @@ public:
 
     void hideConfigWindow();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void syncGeometry() override;
 
-signals:
+Q_SIGNALS:
     void showSignal();
 
 protected:

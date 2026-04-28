@@ -1,0 +1,25 @@
+#pragma once
+
+#if defined(__has_include_next)
+#if __has_include_next(<Plasma/Plasma>)
+#include_next <Plasma/Plasma>
+#endif
+#endif
+
+#if __has_include(<plasma/plasma.h>)
+#include <plasma/plasma.h>
+#elif __has_include(<Plasma/plasma.h>)
+#include <Plasma/plasma.h>
+#endif
+
+#if __has_include(<Plasma/Theme>)
+#include <Plasma/Theme>
+#elif __has_include(<plasma/theme.h>)
+#include <plasma/theme.h>
+#endif
+
+#if __has_include(<Plasma/Types>)
+#include <Plasma/Types>
+#elif __has_include(<plasma/types.h>)
+#include <plasma/types.h>
+#endif

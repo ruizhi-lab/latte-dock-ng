@@ -113,7 +113,7 @@ public:
     static Latte::MultipleLayouts::Status multipleLayoutsStatus();
     static void setMultipleLayoutsStatus(const Latte::MultipleLayouts::Status &status);
 
-signals:
+Q_SIGNALS:
     void newLayoutAdded(const QString &path);
 
 private:

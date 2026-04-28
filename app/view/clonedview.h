@@ -39,7 +39,7 @@ public:
 protected:
     void showConfigurationInterface(Plasma::Applet *applet) override;
 
-private slots:
+private Q_SLOTS:
     void initSync();
     void onOriginalAppletConfigPropertyChanged(const int &id, const QString &key, const QVariant &value);
     void onOriginalAppletInScheduledDestructionChanged(const int &id, const bool &enabled);

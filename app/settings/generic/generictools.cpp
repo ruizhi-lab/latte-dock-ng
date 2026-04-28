@@ -125,11 +125,11 @@ void drawFormattedText(QPainter *painter, const QStyleOptionMenuItem &option, co
 
 QRect remainedFromFormattedText(const QStyleOption &option, const QString &text, Qt::AlignmentFlag alignment)
 {
-    QString css = QString("body {}");
+    const QString css = QStringLiteral("body {}");
 
     QTextDocument doc;
     doc.setDefaultStyleSheet(css);
-    doc.setHtml("<body>" + text + "</body>");
+    doc.setHtml(QStringLiteral("<body>%1</body>").arg(text));
 
     //we need an offset to be in the same vertical center of TextEdit
     int textWidth = doc.size().width() + MARGIN;
@@ -161,11 +161,11 @@ void drawFormattedText(QPainter *painter, const QStyleOption &option, const QStr
     QColor brushColor = nBrush.color();
     brushColor.setAlphaF(textOpacity);
 
-    QString css = QString("body { color : %1;}").arg(brushColor.name(QColor::HexArgb));
+    const QString css = QStringLiteral("body { color : %1;}").arg(brushColor.name(QColor::HexArgb));
 
     QTextDocument doc;
     doc.setDefaultStyleSheet(css);
-    doc.setHtml("<body>" + text + "</body>");
+    doc.setHtml(QStringLiteral("<body>%1</body>").arg(text));
 
     //we need an offset to be in the same vertical center of TextEdit
     int offsetY = ((option.rect.height() - doc.size().height()) / 2);
@@ -198,7 +198,7 @@ void drawFormattedText(QPainter *painter, const QStyleOption &option, const QStr
 void drawBackground(QPainter *painter, const QStyleOptionViewItem &option)
 {
     QStyleOptionViewItem backOption = option;
-    backOption.text = "";
+    backOption.text.clear();
 
     //! Remove the focus dotted lines
     backOption.state = (option.state & ~QStyle::State_HasFocus);
@@ -209,7 +209,7 @@ void drawBackground(QPainter *painter, const QStyleOptionViewItem &option)
 void drawBackground(QPainter *painter, const QStyle *style, const QStyleOptionMenuItem &option)
 {
     QStyleOptionMenuItem backOption = option;
-    backOption.text = "";
+    backOption.text.clear();
     //! Remove the focus dotted lines
     //   iconOption.state = (option.state & ~QStyle::State_HasFocus);
 
@@ -594,4 +594,3 @@ QRect drawScreen(QPainter *painter, const QStyleOption &option, bool drawMultipl
 }
 
 }
-

@@ -31,7 +31,7 @@
 #include <KPackage/PackageLoader>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 #include <Plasma/Applet>
 #include <Plasma/Containment>
 

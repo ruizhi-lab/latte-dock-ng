@@ -18,12 +18,13 @@
 
 // Qt
 #include <QtQml>
+#include <QLatin1StringView>
 
 
 void LatteCorePlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(uri == QLatin1String("org.kde.latte.core"));
-    qmlRegisterUncreatableType<Latte::Types>(uri, 0, 2, "Types", "Latte Types uncreatable");
+    Q_ASSERT(QLatin1StringView(uri) == QLatin1StringView("org.kde.latte.core"));
+    qmlRegisterUncreatableType<Latte::Types>(uri, 0, 2, "Types", QStringLiteral("Latte Types uncreatable"));
     qmlRegisterType<Latte::IconItem>(uri, 0, 2, "IconItem");
     qmlRegisterType<Latte::Quick::Dialog>(uri, 0, 2, "Dialog");
     qmlRegisterSingletonType<Latte::Environment>(uri, 0, 2, "Environment", &Latte::environment_qobject_singletontype_provider);

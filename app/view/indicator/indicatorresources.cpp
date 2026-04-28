@@ -60,7 +60,7 @@ void Resources::setSvgImagePaths(QStringList paths)
         }
     }
 
-    emit svgsChanged();
+    Q_EMIT svgsChanged();
 }
 
 }

@@ -31,7 +31,7 @@ void Dialog::setContainsMouse(bool contains)
     }
 
     m_containsMouse = contains;
-    emit containsMouseChanged();
+    Q_EMIT containsMouseChanged();
 }
 
 Plasma::Types::Location Dialog::edge() const
@@ -46,7 +46,7 @@ void Dialog::setEdge(const Plasma::Types::Location &edge)
     }
 
     m_edge = edge;
-    emit edgeChanged();
+    Q_EMIT edgeChanged();
 }
 
 bool Dialog::isRespectingAppletsLayoutGeometry() const

@@ -54,7 +54,7 @@ public:
 
     void callAsyncContainsMouse();
 
-signals:
+Q_SIGNALS:
     void asyncContainsMouseChanged(bool contains); //called from visibility to check if mouse is in the free sensitive floating area
 
 protected:

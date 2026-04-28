@@ -50,13 +50,13 @@ public:
     Latte::View *view() const;
     WindowSystem::AbstractWindowInterface *wm() const;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void switchToNextActivity();
     Q_INVOKABLE void switchToPreviousActivity();
     Q_INVOKABLE void switchToNextVirtualDesktop();
     Q_INVOKABLE void switchToPreviousVirtualDesktop();
 
-signals:
+Q_SIGNALS:
     void enabledChanged();
     void allScreensChanged();
     void currentScreenChanged();

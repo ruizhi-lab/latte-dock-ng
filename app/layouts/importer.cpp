@@ -594,7 +594,7 @@ QString Importer::importLayout(const QString &fileName, const QString &suggested
     QString newLayoutName = importLayoutHelper(fileName, suggestedLayoutName);
 
     if (!newLayoutName.isEmpty()) {
-        emit newLayoutAdded(layoutUserFilePath(newLayoutName));
+        Q_EMIT newLayoutAdded(layoutUserFilePath(newLayoutName));
     }
 
     return newLayoutName;

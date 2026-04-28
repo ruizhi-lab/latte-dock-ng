@@ -10,11 +10,11 @@
 
 // Qt
 #include <QtQml>
+#include <QLatin1StringView>
 
 
 void LatteTasksPlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(uri == QLatin1String("org.kde.latte.private.tasks"));
-    qmlRegisterUncreatableType<Latte::Tasks::Types>(uri, 0, 1, "Types", "Latte Tasks Types uncreatable");
+    Q_ASSERT(QLatin1StringView(uri) == QLatin1StringView("org.kde.latte.private.tasks"));
+    qmlRegisterUncreatableType<Latte::Tasks::Types>(uri, 0, 1, "Types", QStringLiteral("Latte Tasks Types uncreatable"));
 }
-

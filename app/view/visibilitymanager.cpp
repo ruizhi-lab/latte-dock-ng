@@ -104,7 +104,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
         });
 
         connect(this, &VisibilityManager::modeChanged, this, [&]() {
-            emit m_latteView->availableScreenRectChangedFrom(m_latteView);
+            Q_EMIT m_latteView->availableScreenRectChangedFrom(m_latteView);
         });
 
         //! Send frame extents on startup, this is really necessary when recreating a view.
@@ -118,7 +118,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
     connect(&m_timerShow, &QTimer::timeout, this, [&]() {
         if (m_isHidden ||  m_isBelowLayer) {
             //   qDebug() << "must be shown";
-            emit mustBeShown();
+            Q_EMIT mustBeShown();
         }
     });
     connect(&m_timerHide, &QTimer::timeout, this, [&]() {
@@ -128,7 +128,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
                 checkMouseInFloatingArea();
             } else {
                 //! immediate call
-                emit mustBeHide();
+                Q_EMIT mustBeHide();
             }
         }
     });
@@ -179,7 +179,7 @@ void VisibilityManager::setStrutsThickness(int thickness)
     }
 
     m_strutsThickness = thickness;
-    emit strutsThicknessChanged();
+    Q_EMIT strutsThicknessChanged();
 }
 
 Types::Visibility VisibilityManager::mode() const
@@ -371,7 +371,7 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
         break;
     }
 
-    emit modeChanged();
+    Q_EMIT modeChanged();
 }
 
 void VisibilityManager::updateStrutsAfterTimer()
@@ -395,7 +395,7 @@ void VisibilityManager::updateSidebarState()
     }
 
     m_isSidebar == cursidebarstate;
-    emit isSidebarChanged();
+    Q_EMIT isSidebarChanged();
 
 }
 
@@ -474,7 +474,7 @@ void VisibilityManager::setRaiseOnDesktop(bool enable)
         return;
 
     m_raiseOnDesktopChange = enable;
-    emit raiseOnDesktopChanged();
+    Q_EMIT raiseOnDesktopChanged();
 }
 
 bool VisibilityManager::raiseOnActivity() const
@@ -488,7 +488,7 @@ void VisibilityManager::setRaiseOnActivity(bool enable)
         return;
 
     m_raiseOnActivityChange = enable;
-    emit raiseOnActivityChanged();
+    Q_EMIT raiseOnActivityChanged();
 }
 
 bool VisibilityManager::isBelowLayer() const
@@ -506,7 +506,7 @@ void VisibilityManager::setIsBelowLayer(bool below)
 
     updateGhostWindowState();
 
-    emit isBelowLayerChanged();
+    Q_EMIT isBelowLayerChanged();
 }
 
 bool VisibilityManager::isHidden() const
@@ -522,7 +522,7 @@ void VisibilityManager::setIsHidden(bool isHidden)
     m_isHidden = isHidden;
     updateGhostWindowState();
 
-    emit isHiddenChanged();
+    Q_EMIT isHiddenChanged();
 }
 
 bool VisibilityManager::isShownFully() const
@@ -537,7 +537,7 @@ void VisibilityManager::setIsShownFully(bool fully)
     }
 
     m_isShownFully = fully;
-    emit isShownFullyChanged();
+    Q_EMIT isShownFullyChanged();
 }
 
 bool VisibilityManager::hidingIsBlocked() const
@@ -557,7 +557,7 @@ void VisibilityManager::setIsFloatingGapWindowEnabled(bool enabled)
     }
 
     m_isFloatingGapWindowEnabled = enabled;
-    emit isFloatingGapWindowEnabledChanged();
+    Q_EMIT isFloatingGapWindowEnabledChanged();
 }
 
 bool VisibilityManager::hasBlockHidingEvent(const QString &type)
@@ -577,7 +577,7 @@ void VisibilityManager::addBlockHidingEvent(const QString &type)
     m_blockHidingEvents << type;
 
     if (prevHidingIsBlocked != hidingIsBlocked()) {
-        emit hidingIsBlockedChanged();
+        Q_EMIT hidingIsBlockedChanged();
     }
 }
 
@@ -593,7 +593,7 @@ void VisibilityManager::removeBlockHidingEvent(const QString &type)
     m_blockHidingEvents.removeAll(type);
 
     if (prevHidingIsBlocked != hidingIsBlocked()) {
-        emit hidingIsBlockedChanged();
+        Q_EMIT hidingIsBlockedChanged();
     }
 }
 
@@ -601,7 +601,7 @@ void VisibilityManager::onHidingIsBlockedChanged()
 {
     if (hidingIsBlocked()) {
         m_timerHide.stop();
-        emit mustBeShown();
+        Q_EMIT mustBeShown();
     } else {
         updateHiddenState();
     }
@@ -645,7 +645,7 @@ void VisibilityManager::publishFrameExtents(bool forceUpdate)
         } else if (m_latteView->behaveAsPlasmaPanel()) {
             QMargins panelExtents(0, 0, 0, 0);
             m_wm->setFrameExtents(m_latteView, panelExtents);
-            emit frameExtentsCleared();
+            Q_EMIT frameExtentsCleared();
         }
     }
 }
@@ -662,7 +662,7 @@ void VisibilityManager::setTimerShow(int msec)
     }
 
     m_timerShow.setInterval(msec);
-    emit timerShowChanged();
+    Q_EMIT timerShowChanged();
 }
 
 int VisibilityManager::timerHide() const
@@ -680,7 +680,7 @@ void VisibilityManager::setTimerHide(int msec)
 
     m_timerHideInterval = interval;
     m_timerHide.setInterval(interval);
-    emit timerHideChanged();
+    Q_EMIT timerHideChanged();
 }
 
 bool VisibilityManager::isSidebar() const
@@ -738,10 +738,10 @@ void VisibilityManager::toggleHiddenState()
                 updateHiddenState();
             } else if (m_mode == Latte::Types::SidebarAutoHide) {
                 if (m_isHidden) {
-                    emit mustBeShown();
+                    Q_EMIT mustBeShown();
                     startTimerHide(SIDEBARAUTOHIDEMINIMUMSHOW + m_timerHideInterval);
                 } else {
-                    emit mustBeHide();
+                    Q_EMIT mustBeHide();
                 }
             }
         } else {
@@ -794,9 +794,9 @@ void VisibilityManager::raiseView(bool raise)
 {
     if (m_mode == Latte::Types::SidebarOnDemand) {
         if (raise && m_isHidden) {
-            emit mustBeShown();
+            Q_EMIT mustBeShown();
         } else if (!raise && !m_isHidden && !m_dragEnter && !hidingIsBlocked()) {
-            emit mustBeHide();
+            Q_EMIT mustBeHide();
         }
         return;
     }
@@ -812,7 +812,7 @@ void VisibilityManager::raiseView(bool raise)
 
         if (m_hideNow) {
             m_hideNow = false;
-            emit mustBeHide();
+            Q_EMIT mustBeHide();
         } else if (!m_timerHide.isActive()) {
             startTimerHide();
         }
@@ -829,7 +829,7 @@ void VisibilityManager::raiseViewTemporarily()
     m_timerShow.stop();
 
     if (m_isHidden)
-        emit mustBeShown();
+        Q_EMIT mustBeShown();
 
     QTimer::singleShot(qBound(1800, 2 * m_timerHide.interval(), 3000), this, [&]() {
         m_raiseTemporarily = false;
@@ -955,7 +955,7 @@ void VisibilityManager::setContainsMouse(bool contains)
     }
 
     m_containsMouse = contains;
-    emit containsMouseChanged();
+    Q_EMIT containsMouseChanged();
 }
 
 bool VisibilityManager::windowContainsMouse()
@@ -990,7 +990,7 @@ void VisibilityManager::viewEventManager(QEvent *ev)
         m_dragEnter = true;
 
         if (m_isHidden && !isSidebar()) {
-            emit mustBeShown();
+            Q_EMIT mustBeShown();
         }
 
         break;
@@ -1020,7 +1020,7 @@ void VisibilityManager::setEnableKWinEdges(bool enable)
 
     m_enableKWinEdgesFromUser = enable;
 
-    emit enableKWinEdgesChanged();
+    Q_EMIT enableKWinEdgesChanged();
 }
 
 void VisibilityManager::updateKWinEdgesSupport()
@@ -1067,7 +1067,7 @@ void VisibilityManager::createEdgeGhostWindow()
 
         connect(m_edgeGhostWindow, &ScreenEdgeGhostWindow::dragEntered, this, [&]() {
             if (m_isHidden) {
-                emit mustBeShown();
+                Q_EMIT mustBeShown();
             }
         });
 
@@ -1087,7 +1087,7 @@ void VisibilityManager::createEdgeGhostWindow()
             }
         });
 
-        emit supportsKWinEdgesChanged();
+        Q_EMIT supportsKWinEdgesChanged();
     }
 }
 
@@ -1101,7 +1101,7 @@ void VisibilityManager::deleteEdgeGhostWindow()
             disconnect(c);
         }
 
-        emit supportsKWinEdgesChanged();
+        Q_EMIT supportsKWinEdgesChanged();
     }
 }
 
@@ -1119,7 +1119,7 @@ void VisibilityManager::createFloatingGapWindow()
             } else {
                 if (m_isFloatingGapWindowEnabled && !m_isHidden) {
                     //! immediate call after contains mouse checks for mouse in sensitive floating areas
-                    emit mustBeHide();
+                    Q_EMIT mustBeHide();
                 }
             }
         });

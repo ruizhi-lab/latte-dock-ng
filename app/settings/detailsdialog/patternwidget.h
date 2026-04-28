@@ -31,7 +31,7 @@ public:
     QString textColor() const;
     void setTextColor(const QString &color);
 
-signals:
+Q_SIGNALS:
     void backgroundChanged();
     void textColorChanged();
     void mouseReleased();
@@ -42,7 +42,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
-private slots:
+private Q_SLOTS:
     void updateUi();
 
 private:

@@ -80,7 +80,7 @@ public:
 
     AbstractWindowInterface *wm();
 
-signals:
+Q_SIGNALS:
     //! Views
     void enabledChanged(const Latte::View *view);
     void activeWindowMaximizedChanged(const Latte::View *view);
@@ -111,7 +111,7 @@ signals:
 
     void applicationDataChanged(const WindowId &wid);
 
-private slots:
+private Q_SLOTS:
     void updateScreenGeometries();
 
     void addRelevantLayout(Latte::View *view);

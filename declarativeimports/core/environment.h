@@ -39,10 +39,10 @@ public:
     uint frameworksVersion() const;
     uint plasmaDesktopVersion();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE uint makeVersion(uint major, uint minor, uint release) const;
 
-signals:
+Q_SIGNALS:
     void frameworksVersionChanged();
     void longDurationChanged();
     void plasmaDesktopVersionChanged();

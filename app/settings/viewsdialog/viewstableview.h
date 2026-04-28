@@ -20,7 +20,7 @@ class ViewsTableView : public QTableView
 public:
     ViewsTableView(QWidget *parent = nullptr);
 
-signals:
+Q_SIGNALS:
     void selectionsChanged();
 
 protected:

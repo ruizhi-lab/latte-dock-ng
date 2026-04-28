@@ -28,7 +28,7 @@ protected:
   void setVisible(bool visible) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
 
-signals:
+Q_SIGNALS:
   void masterIndexChanged(const int &masterRow);
 
 private:

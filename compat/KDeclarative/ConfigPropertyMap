@@ -1,0 +1,11 @@
+#pragma once
+
+#if __has_include(<KConfigPropertyMap>)
+#include <KConfigPropertyMap>
+#else
+#include <kconfigpropertymap.h>
+#endif
+
+namespace KDeclarative {
+using ConfigPropertyMap = KConfigPropertyMap;
+}

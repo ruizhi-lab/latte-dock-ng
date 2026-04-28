@@ -83,7 +83,7 @@ public:
     QQuickItem *metrics() const;
     void setMetrics(QQuickItem *metrics);
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void restore();
     Q_INVOKABLE void save();
     Q_INVOKABLE void saveOptions();
@@ -112,7 +112,7 @@ public slots:
     void setAppletInScheduledDestruction(const int &id, const bool &enabled);
 
 
-signals:
+Q_SIGNALS:
     void appletOrderChanged();
     void appletsInScheduledDestructionChanged();
     void hasRestoredAppletsChanged();
@@ -130,7 +130,7 @@ signals:
     void startLayoutChanged();
     void endLayoutChanged();
 
-private slots:
+private Q_SLOTS:
     void onRootItemChanged();
     void destroyJustifySplitters();
 

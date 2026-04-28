@@ -44,7 +44,7 @@ Indicator::Indicator(Latte::View *parent)
 
     connect(m_view, &Latte::View::indicatorPluginChanged, [this](const QString &indicatorId) {
         if (m_corona && m_corona->indicatorFactory()->isCustomType(indicatorId)) {
-            emit customPluginsChanged();
+            Q_EMIT customPluginsChanged();
         }
     });
 
@@ -54,7 +54,7 @@ Indicator::Indicator(Latte::View *parent)
         }
 
         if (m_corona && m_corona->indicatorFactory()->isCustomType(indicatorId)) {
-            emit customPluginsChanged();
+            Q_EMIT customPluginsChanged();
         }
     });
 
@@ -96,7 +96,7 @@ void Indicator::setEnabled(bool enabled)
     }
 
     m_enabled = enabled;
-    emit enabledChanged();
+    Q_EMIT enabledChanged();
 }
 
 bool Indicator::enabledForApplets() const
@@ -111,7 +111,7 @@ void Indicator::setEnabledForApplets(bool enabled)
     }
 
     m_enabledForApplets = enabled;
-    emit enabledForAppletsChanged();
+    Q_EMIT enabledForAppletsChanged();
 }
 
 bool Indicator::isCustomIndicator() const
@@ -136,7 +136,7 @@ void Indicator::setPluginIsReady(bool ready)
     }
 
     m_pluginIsReady = ready;
-    emit pluginIsReadyChanged();
+    Q_EMIT pluginIsReadyChanged();
 }
 
 int Indicator::index(const QString &type)
@@ -180,7 +180,7 @@ void Indicator::setCustomType(QString type)
     }
 
     m_customType = type;
-    emit customPluginChanged();
+    Q_EMIT customPluginChanged();
 }
 
 int Indicator::customPluginsCount() const
@@ -253,7 +253,7 @@ void Indicator::load(QString type)
         updateScheme();
         updateComponent();
 
-        emit pluginChanged();
+        Q_EMIT pluginChanged();
 
         //! create all indicators with the new type
         setPluginIsReady(true);
@@ -295,7 +295,7 @@ void Indicator::loadPlasmaComponent()
         prevComponent->deleteLater();
     }
 
-    emit plasmaComponentChanged();
+    Q_EMIT plasmaComponentChanged();
 }
 
 void Indicator::unloadIndicators()
@@ -327,7 +327,7 @@ void Indicator::updateScheme()
         prevConfiguration->deleteLater();
     }
 
-    emit configurationChanged();
+    Q_EMIT configurationChanged();
 }
 
 void Indicator::loadConfig()

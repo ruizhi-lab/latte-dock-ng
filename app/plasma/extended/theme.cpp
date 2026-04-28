@@ -96,7 +96,7 @@ void Theme::setOutlineWidth(int width)
     }
 
     m_outlineWidth = width;
-    emit outlineWidthChanged();
+    Q_EMIT outlineWidthChanged();
 }
 
 int Theme::marginsAreaTop() const
@@ -171,7 +171,7 @@ void Theme::setOriginalSchemeFile(const QString &file)
 
     loadThemeLightness();
 
-    emit themeChanged();
+    Q_EMIT themeChanged();
 }
 
 //! WM records need to be updated based on the colors that
@@ -332,7 +332,7 @@ void Theme::updateHasShadow()
     int pixels = (corner.width() * corner.height());
 
     m_hasShadow = (fullTransparentPixels != pixels );
-    emit hasShadowChanged();
+    Q_EMIT hasShadowChanged();
 
     qDebug() << "  PLASMA THEME TOPLEFT SHADOW :: pixels : " << pixels << "  transparent pixels" << fullTransparentPixels << " | HAS SHADOWS :" << m_hasShadow;
 
@@ -509,7 +509,7 @@ void Theme::updateMarginsAreaValues()
 
     svg->deleteLater();
 
-    emit marginsAreaChanged();
+    Q_EMIT marginsAreaChanged();
 }
 
 void Theme::loadConfig()

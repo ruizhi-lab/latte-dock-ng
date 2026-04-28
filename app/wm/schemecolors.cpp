@@ -141,7 +141,7 @@ void SchemeColors::setSchemeFile(QString file)
     }
 
     m_schemeFile = file;
-    emit schemeFileChanged();
+    Q_EMIT schemeFileChanged();
 }
 
 QString SchemeColors::possibleSchemeFile(QString scheme)
@@ -262,7 +262,7 @@ void SchemeColors::updateScheme()
     m_buttonHoverColor = buttonGroup.readEntry("DecorationHover", QColor());
     m_buttonFocusColor = buttonGroup.readEntry("DecorationFocus", QColor());
 
-    emit colorsChanged();
+    Q_EMIT colorsChanged();
 }
 
 }

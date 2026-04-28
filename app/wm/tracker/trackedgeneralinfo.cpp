@@ -28,7 +28,7 @@ TrackedGeneralInfo::TrackedGeneralInfo(Tracker::Windows *tracker)
         updateTrackingCurrentActivity();
     });
 
-    emit lastActiveWindowChanged();
+    Q_EMIT lastActiveWindowChanged();
 }
 
 TrackedGeneralInfo::~TrackedGeneralInfo()
@@ -36,7 +36,7 @@ TrackedGeneralInfo::~TrackedGeneralInfo()
     if (m_lastActiveWindow) {
         auto law = m_lastActiveWindow;
         m_lastActiveWindow = nullptr;
-        emit lastActiveWindowChanged();
+        Q_EMIT lastActiveWindowChanged();
 
         law->deleteLater();
     }

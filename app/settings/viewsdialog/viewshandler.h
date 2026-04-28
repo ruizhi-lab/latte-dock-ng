@@ -66,15 +66,15 @@ public:
     Latte::Corona *corona() const;
     Settings::Controller::Layouts *layoutsController() const;
 
-public slots:
+public Q_SLOTS:
     void reset() override;
     void resetDefaults() override;
     void save() override;
 
-signals:
+Q_SIGNALS:
     void currentLayoutChanged();
 
-private slots:
+private Q_SLOTS:
     void initViewTemplatesSubMenu();
     void initViewExportSubMenu();
     void removeSelectedViews();

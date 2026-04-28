@@ -555,7 +555,7 @@ QString Layouts::layoutNameForFreeActivities() const
 void Layouts::setOriginalLayoutForFreeActivities(const QString &id)
 {
     m_model->setOriginalLayoutForFreeActivities(id);
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void Layouts::initLayouts()
@@ -1053,7 +1053,7 @@ void Layouts::save()
     //! Clear any templates keeper data
     m_templatesKeeper->clear();
 
-    emit dataChanged();
+    Q_EMIT dataChanged();
 }
 
 void Layouts::storeColumnWidths(bool inMultipleMode)

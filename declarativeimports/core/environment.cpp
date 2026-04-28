@@ -10,7 +10,7 @@
 #include <QProcess>
 
 // Plasma
-#include <plasma/version.h>
+#include <Plasma/version.h>
 
 #define LONGDURATION 240
 #define SHORTDURATION 40

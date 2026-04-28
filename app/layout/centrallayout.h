@@ -66,12 +66,12 @@ public:
 public:
     Q_INVOKABLE bool isCurrent() override;
 
-signals:
+Q_SIGNALS:
     void disableBordersForMaximizedWindowsChanged();
     void schemeChanged();
     void showInMenuChanged();
 
-private slots:
+private Q_SLOTS:
     void loadConfig();
     void saveConfig();
 

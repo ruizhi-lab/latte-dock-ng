@@ -64,7 +64,7 @@ public:
     void reset();
     void selectAll();
 
-signals:
+Q_SIGNALS:
     void appletsDataChanged();
 
 private:

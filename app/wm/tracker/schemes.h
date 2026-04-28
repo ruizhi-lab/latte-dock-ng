@@ -36,11 +36,11 @@ public:
 
     SchemeColors *schemeForFile(const QString &scheme);
 
-signals:
+Q_SIGNALS:
     void colorSchemeChanged(const WindowId &wid);
     void defaultSchemeChanged();
 
-private slots:
+private Q_SLOTS:
     void updateDefaultScheme();
 
 private:

@@ -51,7 +51,7 @@ void Manager::initLayoutTemplates()
     m_layoutTemplates.clear();
     initLayoutTemplates(m_corona->kPackage().filePath("templates"));
     initLayoutTemplates(Latte::configPath() + "/latte/templates");
-    emit layoutTemplatesChanged();
+    Q_EMIT layoutTemplatesChanged();
 }
 
 void Manager::initViewTemplates()
@@ -59,7 +59,7 @@ void Manager::initViewTemplates()
     m_viewTemplates.clear();
     initViewTemplates(m_corona->kPackage().filePath("templates"));
     initViewTemplates(Latte::configPath() + "/latte/templates");
-    emit viewTemplatesChanged();
+    Q_EMIT viewTemplatesChanged();
 }
 
 void Manager::initLayoutTemplates(const QString &path)
@@ -169,7 +169,7 @@ QString Manager::newLayout(QString layoutName, QString layoutTemplate)
     QFile(dlayout.id).copy(newLayoutPath);
     qDebug() << "adding layout : " << layoutName << " based on layout template:" << layoutTemplate;
 
-    emit newLayoutAdded(newLayoutPath);
+    Q_EMIT newLayoutAdded(newLayoutPath);
 
     return newLayoutPath;
 }

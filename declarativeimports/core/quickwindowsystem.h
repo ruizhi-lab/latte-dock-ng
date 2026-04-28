@@ -32,7 +32,7 @@ public:
     bool compositingActive() const;
     bool isPlatformWayland() const;
 
-signals:
+Q_SIGNALS:
     void compositingChanged();
     void isPlatformWaylandChanged();
 

@@ -75,7 +75,7 @@ void OriginalView::setScreensGroup(const Latte::Types::ScreensGroup &group)
     }
 
     m_screensGroup = group;
-    emit screensGroupChanged();
+    Q_EMIT screensGroupChanged();
 }
 
 void OriginalView::addClone(Latte::ClonedView *view)
@@ -276,7 +276,7 @@ void OriginalView::restoreConfig()
 
     //! Send changed signals at the end in order to be sure that saveConfig
     //! wont rewrite default/invalid values
-    emit screensGroupChanged();
+    Q_EMIT screensGroupChanged();
 }
 
 }

@@ -20,7 +20,7 @@
 #include <QScreen>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 
 namespace Plasma {
 class Applet;
@@ -144,13 +144,13 @@ public:
     Data::ErrorsList errors() const;
     Data::WarningsList warnings() const;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE int viewsWithTasks() const;
     virtual Q_INVOKABLE QList<int> qmlFreeEdges(int screen) const;  //change <Plasma::Types::Location> to <int> types
 
     void toggleHiddenState(QString viewName, QString screenName, Plasma::Types::Location edge);
 
-signals:
+Q_SIGNALS:
     void activitiesChanged(); // to move at an interface
     void viewsCountChanged();
     void viewEdgeChanged();
@@ -173,7 +173,7 @@ protected:
     QHash<const Plasma::Containment *, Latte::View *> m_latteViews;
     QHash<const Plasma::Containment *, Latte::View *> m_waitingLatteViews;
 
-private slots:
+private Q_SLOTS:
     void addContainment(Plasma::Containment *containment);
     void appletCreated(Plasma::Applet *applet);
     void destroyedChanged(bool destroyed);

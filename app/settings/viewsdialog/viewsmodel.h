@@ -111,11 +111,11 @@ public:
     Latte::Data::ViewsTable alteredViews() const;
     Latte::Data::ViewsTable newViews() const;
 
-signals:
+Q_SIGNALS:
     void rowsInserted();
     void rowsRemoved();
 
-private slots:
+private Q_SLOTS:
     void clear();
 
     void initEdges();

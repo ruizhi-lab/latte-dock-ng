@@ -44,7 +44,7 @@ void Schemes::init()
 
     connect(this, &Schemes::colorSchemeChanged, this, [&](WindowId wid) {
         if (wid == m_wm->activeWindow()) {
-            emit m_wm->activeWindowChanged(wid);
+            Q_EMIT m_wm->activeWindowChanged(wid);
         }
     });
 
@@ -90,7 +90,7 @@ void Schemes::updateDefaultScheme()
         m_schemes["kdeglobals"] = dScheme;
     }
 
-    emit defaultSchemeChanged();
+    Q_EMIT defaultSchemeChanged();
 }
 
 SchemeColors *Schemes::schemeForFile(const QString &scheme)
@@ -137,7 +137,7 @@ void Schemes::setColorSchemeForWindow(WindowId wid, QString scheme)
         m_windowScheme[wid] = schemeFile;
     }
 
-    emit colorSchemeChanged(wid);
+    Q_EMIT colorSchemeChanged(wid);
 }
 
 }

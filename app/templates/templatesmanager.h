@@ -65,12 +65,12 @@ public:
     void importSystemLayouts();
     void installCustomLayoutTemplate(const QString &templateFilePath);
 
-signals:
+Q_SIGNALS:
     void newLayoutAdded(const QString &path);
     void layoutTemplatesChanged();
     void viewTemplatesChanged();
 
-private slots:
+private Q_SLOTS:
     void onCustomTemplatesCountChanged(const QString &file);
 
 private:

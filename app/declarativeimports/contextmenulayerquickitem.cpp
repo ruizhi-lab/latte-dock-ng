@@ -57,7 +57,7 @@ void ContextMenuLayerQuickItem::setView(QObject *view)
     }
 
     m_latteView = qobject_cast<Latte::View *>(view);
-    emit viewChanged();
+    Q_EMIT viewChanged();
 }
 
 void ContextMenuLayerQuickItem::onMenuAboutToHide()
@@ -68,7 +68,7 @@ void ContextMenuLayerQuickItem::onMenuAboutToHide()
 
     m_latteView->containment()->setStatus(m_lastContainmentStatus);
     m_contextMenu = nullptr;
-    emit menuChanged();
+    Q_EMIT menuChanged();
 }
 
 QPoint ContextMenuLayerQuickItem::popUpRelevantToParent(const QRect &parentItem, const QRect popUpRect)
@@ -152,7 +152,7 @@ void ContextMenuLayerQuickItem::mouseReleaseEvent(QMouseEvent *event)
     }
 
     event->setAccepted(m_latteView->containment()->containmentActions().contains(Plasma::ContainmentActions::eventToString(event)));
-    emit menuChanged();
+    Q_EMIT menuChanged();
 }
 
 void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
@@ -252,18 +252,18 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
 
     desktopMenu->setAttribute(Qt::WA_DeleteOnClose);
     m_contextMenu = desktopMenu;
-    emit menuChanged();
+    Q_EMIT menuChanged();
 
     //end workaround
     //!end of plasma official code(workaround)
 
     //qDebug() << "5 ...";
 
-    emit m_latteView->containment()->contextualActionsAboutToShow();
+    Q_EMIT m_latteView->containment()->contextualActionsAboutToShow();
 
     if (applet && applet != m_latteView->containment()) {
         //qDebug() << "5.3 ...";
-        emit applet->contextualActionsAboutToShow();
+        Q_EMIT applet->contextualActionsAboutToShow();
         addAppletActions(desktopMenu, applet, event);
     } else {
         //qDebug() << "5.6 ...";

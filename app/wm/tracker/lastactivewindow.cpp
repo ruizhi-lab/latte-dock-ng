@@ -64,7 +64,7 @@ void LastActiveWindow::setActive(bool active)
     }
 
     m_isActive = active;
-    emit isActiveChanged();
+    Q_EMIT isActiveChanged();
 }
 
 bool LastActiveWindow::isMinimized() const
@@ -79,7 +79,7 @@ void LastActiveWindow::setIsMinimized(bool minimized)
     }
 
     m_isMinimized = minimized;
-    emit isMinimizedChanged();
+    Q_EMIT isMinimizedChanged();
 }
 
 bool LastActiveWindow::isMaximized() const
@@ -94,7 +94,7 @@ void LastActiveWindow::setIsMaximized(bool maximized)
     }
 
     m_isMaximized = maximized;
-    emit isMaximizedChanged();
+    Q_EMIT isMaximizedChanged();
 }
 
 bool LastActiveWindow::isFullScreen() const
@@ -109,7 +109,7 @@ void LastActiveWindow::setIsFullScreen(bool fullscreen)
     }
 
     m_isFullScreen = fullscreen;
-    emit isFullScreenChanged();
+    Q_EMIT isFullScreenChanged();
 }
 
 bool LastActiveWindow::isKeepAbove() const
@@ -124,7 +124,7 @@ void LastActiveWindow::setIsKeepAbove(bool above)
     }
 
     m_isKeepAbove = above;
-    emit isKeepAboveChanged();
+    Q_EMIT isKeepAboveChanged();
 }
 
 bool LastActiveWindow::isOnAllDesktops() const
@@ -139,7 +139,7 @@ void LastActiveWindow::setIsOnAllDesktops(bool all)
     }
 
     m_isOnAllDesktops = all;
-    emit isOnAllDesktopsChanged();
+    Q_EMIT isOnAllDesktopsChanged();
 }
 
 bool LastActiveWindow::isShaded() const
@@ -154,7 +154,7 @@ void LastActiveWindow::setIsShaded(bool shaded)
     }
 
     m_isShaded = shaded;
-    emit isShadedChanged();
+    Q_EMIT isShadedChanged();
 }
 
 bool LastActiveWindow::isValid() const
@@ -169,7 +169,7 @@ void LastActiveWindow::setIsValid(bool valid)
     }
 
     m_isValid = valid;
-    emit isValidChanged();
+    Q_EMIT isValidChanged();
 }
 
 bool LastActiveWindow::hasSkipTaskbar() const
@@ -184,7 +184,7 @@ void LastActiveWindow::setHasSkipTaskbar(bool skip)
     }
 
     m_hasSkipTaskbar = skip;
-    emit hasSkipTaskbarChanged();
+    Q_EMIT hasSkipTaskbarChanged();
 }
 
 //! BEGIN: Window Abitilities
@@ -200,7 +200,7 @@ void LastActiveWindow::setIsClosable(bool closable)
     }
 
     m_isClosable = closable;
-    emit isClosableChanged();
+    Q_EMIT isClosableChanged();
 }
 
 bool LastActiveWindow::isFullScreenable() const
@@ -215,7 +215,7 @@ void LastActiveWindow::setIsFullScreenable(bool fullscreenable)
     }
 
     m_isFullScreenable = fullscreenable;
-    emit isFullScreenableChanged();
+    Q_EMIT isFullScreenableChanged();
 }
 
 bool LastActiveWindow::isGroupable() const
@@ -230,7 +230,7 @@ void LastActiveWindow::setIsGroupable(bool groupable)
     }
 
     m_isGroupable = groupable;
-    emit isGroupableChanged();
+    Q_EMIT isGroupableChanged();
 }
 
 
@@ -246,7 +246,7 @@ void LastActiveWindow::setIsMaximizable(bool maximizable)
     }
 
     m_isMaximizable = maximizable;
-    emit isMaximizableChanged();
+    Q_EMIT isMaximizableChanged();
 }
 
 bool LastActiveWindow::isMinimizable() const
@@ -261,7 +261,7 @@ void LastActiveWindow::setIsMinimizable(bool minimizable)
     }
 
     m_isMinimizable = minimizable;
-    emit isMinimizableChanged();
+    Q_EMIT isMinimizableChanged();
 }
 
 bool LastActiveWindow::isMovable() const
@@ -276,7 +276,7 @@ void LastActiveWindow::setIsMovable(bool movable)
     }
 
     m_isMovable = movable;
-    emit isMovableChanged();
+    Q_EMIT isMovableChanged();
 }
 
 bool LastActiveWindow::isResizable() const
@@ -291,7 +291,7 @@ void LastActiveWindow::setIsResizable(bool resizable)
     }
 
     m_isResizable = resizable;
-    emit isResizableChanged();
+    Q_EMIT isResizableChanged();
 }
 
 bool LastActiveWindow::isShadeable() const
@@ -306,7 +306,7 @@ void LastActiveWindow::setIsShadeable(bool shadeable)
     }
 
     m_isShadeable = shadeable;
-    emit isShadeableChanged();
+    Q_EMIT isShadeableChanged();
 }
 
 bool LastActiveWindow::isVirtualDesktopChangeable() const
@@ -321,7 +321,7 @@ void LastActiveWindow::setIsVirtualDesktopsChangeable(bool virtualdestkopschange
     }
 
     m_isVirtualDesktopsChangeable = virtualdestkopschangeable;
-    emit isVirtualDesktopChangeableChanged();
+    Q_EMIT isVirtualDesktopChangeableChanged();
 }
 //! END: Window Abitilities
 
@@ -338,7 +338,7 @@ void LastActiveWindow::setGeometry(QRect geometry)
     }
 
     m_geometry = geometry;
-    emit geometryChanged();
+    Q_EMIT geometryChanged();
 }
 
 QString LastActiveWindow::appName() const
@@ -353,7 +353,7 @@ void LastActiveWindow::setAppName(QString appName)
     }
 
     m_appName = appName;
-    emit appNameChanged();
+    Q_EMIT appNameChanged();
 }
 
 QString LastActiveWindow::colorScheme() const
@@ -368,7 +368,7 @@ void LastActiveWindow::setColorScheme(QString scheme)
     }
 
     m_colorScheme = scheme;
-    emit colorSchemeChanged();
+    Q_EMIT colorSchemeChanged();
 }
 
 QString LastActiveWindow::display() const
@@ -383,7 +383,7 @@ void LastActiveWindow::setDisplay(QString display)
     }
 
     m_display = display;
-    emit displayChanged();
+    Q_EMIT displayChanged();
 }
 
 QIcon LastActiveWindow::icon() const
@@ -394,7 +394,7 @@ QIcon LastActiveWindow::icon() const
 void LastActiveWindow::setIcon(QIcon icon)
 {
     m_icon = icon;
-    emit iconChanged();
+    Q_EMIT iconChanged();
 }
 
 QVariant LastActiveWindow::currentWinId() const
@@ -409,7 +409,7 @@ void LastActiveWindow::setCurrentWinId(QVariant winId)
     }
 
     m_currentWinId = winId;
-    emit currentWinIdChanged();
+    Q_EMIT currentWinIdChanged();
 }
 
 void LastActiveWindow::setInformation(const WindowInfoWrap &info)
@@ -479,7 +479,7 @@ void LastActiveWindow::setInformation(const WindowInfoWrap &info)
     }
 
     appendInHistory(info.wid());
-    emit printRequested();
+    Q_EMIT printRequested();
 }
 
 //! PRIVATE SLOTS

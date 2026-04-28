@@ -1,0 +1,11 @@
+#pragma once
+
+#if __has_include(<KSvg/FrameSvg>)
+#include <KSvg/FrameSvg>
+#else
+#include <ksvg/framesvg.h>
+#endif
+
+namespace Plasma {
+using FrameSvg = KSvg::FrameSvg;
+}

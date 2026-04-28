@@ -36,7 +36,7 @@ void Info::setNeedsIconColors(bool needs)
     }
 
     m_needsIconColors = needs;
-    emit needsIconColorsChanged();
+    Q_EMIT needsIconColorsChanged();
 }
 
 bool Info::needsMouseEventCoordinates() const
@@ -51,7 +51,7 @@ void Info::setNeedsMouseEventCoordinates(bool needs)
     }
 
     m_needsMouseEventCoordinates = needs;
-    emit needsMouseEventCoordinatesChanged();
+    Q_EMIT needsMouseEventCoordinatesChanged();
 }
 
 bool Info::providesClickedAnimation() const
@@ -66,7 +66,7 @@ void Info::setProvidesClickedAnimation(bool provides)
     }
 
     m_providesClickedAnimation = provides;
-    emit providesClickedAnimationChanged();
+    Q_EMIT providesClickedAnimationChanged();
 }
 
 bool Info::providesHoveredAnimation() const
@@ -81,7 +81,7 @@ void Info::setProvidesHoveredAnimation(bool provides)
     }
 
     m_providesHoveredAnimation = provides;
-    emit providesHoveredAnimationChanged();
+    Q_EMIT providesHoveredAnimationChanged();
 }
 
 bool Info::providesInAttentionAnimation() const
@@ -96,7 +96,7 @@ void Info::setProvidesInAttentionAnimation(bool provides)
     }
 
     m_providesInAttentionAnimation = provides;
-    emit providesInAttentionAnimationChanged();
+    Q_EMIT providesInAttentionAnimationChanged();
 }
 
 bool Info::providesTaskLauncherAnimation() const
@@ -111,7 +111,7 @@ void Info::setProvidesTaskLauncherAnimation(bool provides)
     }
 
     m_providesTaskLauncherAnimation = provides;
-    emit providesTaskLauncherAnimationChanged();
+    Q_EMIT providesTaskLauncherAnimationChanged();
 }
 
 bool Info::providesGroupedWindowAddedAnimation() const
@@ -126,7 +126,7 @@ void Info::setProvidesGroupedWindowAddedAnimation(bool provides)
     }
 
     m_providesGroupedWindowAddedAnimation = provides;
-    emit providesGroupedWindowAddedAnimationChanged();
+    Q_EMIT providesGroupedWindowAddedAnimationChanged();
 }
 
 bool Info::providesGroupedWindowRemovedAnimation() const
@@ -141,7 +141,7 @@ void Info::setProvidesGroupedWindowRemovedAnimation(bool provides)
     }
 
     m_providesGroupedWindowRemovedAnimation = provides;
-    emit providesGroupedWindowRemovedAnimationChanged();
+    Q_EMIT providesGroupedWindowRemovedAnimationChanged();
 }
 
 bool Info::providesFrontLayer() const
@@ -156,7 +156,7 @@ void Info::setProvidesFrontLayer(bool front)
     }
 
     m_providesFrontLayer = front;
-    emit providesFrontLayerChanged();
+    Q_EMIT providesFrontLayerChanged();
 }
 
 int Info::extraMaskThickness() const
@@ -171,7 +171,7 @@ void Info::setExtraMaskThickness(int thick)
     }
 
     m_extraMaskThickness = thick;
-    emit extraMaskThicknessChanged();
+    Q_EMIT extraMaskThicknessChanged();
 }
 
 float Info::minLengthPadding() const
@@ -186,7 +186,7 @@ void Info::setMinLengthPadding(float padding)
     }
 
     m_minLengthPadding = padding;
-    emit minLengthPaddingChanged();
+    Q_EMIT minLengthPaddingChanged();
 }
 
 float Info::minThicknessPadding() const
@@ -201,7 +201,7 @@ void Info::setMinThicknessPadding(float padding)
     }
 
     m_minThicknessPadding = padding;
-    emit minThicknessPaddingChanged();
+    Q_EMIT minThicknessPaddingChanged();
 }
 
 }

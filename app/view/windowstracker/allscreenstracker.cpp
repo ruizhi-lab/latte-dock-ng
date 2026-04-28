@@ -48,25 +48,25 @@ void  AllScreensTracker::init()
 
     connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowMaximizedChangedForLayout, this, [&](const Latte::Layout::GenericLayout *layout) {
         if (m_latteView->layout() == layout) {
-            emit activeWindowMaximizedChanged();
+            Q_EMIT activeWindowMaximizedChanged();
         }
     });
 
     connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowActiveChangedForLayout, this, [&](const Latte::Layout::GenericLayout *layout) {
         if (m_latteView->layout() == layout) {
-            emit existsWindowActiveChanged();
+            Q_EMIT existsWindowActiveChanged();
         }
     });
 
     connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowMaximizedChangedForLayout, this, [&](const Latte::Layout::GenericLayout *layout) {
         if (m_latteView->layout() == layout) {
-            emit existsWindowMaximizedChanged();
+            Q_EMIT existsWindowMaximizedChanged();
         }
     });
 
     connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowSchemeChangedForLayout, this, [&](const Latte::Layout::GenericLayout *layout) {
         if (m_latteView->layout() == layout) {
-            emit activeWindowSchemeChanged();
+            Q_EMIT activeWindowSchemeChanged();
         }
     });
 }
@@ -75,11 +75,11 @@ void AllScreensTracker::initSignalsForInformation()
 {
     m_currentLastActiveWindow = lastActiveWindow();
 
-    emit lastActiveWindowChanged();
-    emit activeWindowMaximizedChanged();
-    emit existsWindowActiveChanged();
-    emit existsWindowMaximizedChanged();
-    emit activeWindowSchemeChanged();
+    Q_EMIT lastActiveWindowChanged();
+    Q_EMIT activeWindowMaximizedChanged();
+    Q_EMIT existsWindowActiveChanged();
+    Q_EMIT existsWindowMaximizedChanged();
+    Q_EMIT activeWindowSchemeChanged();
 }
 
 bool AllScreensTracker::activeWindowMaximized() const

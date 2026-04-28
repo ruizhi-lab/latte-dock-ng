@@ -90,7 +90,7 @@ public:
 
     Latte::WindowSystem::WindowId trackedWindowId();
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void setNextLocation(const QString layoutName, const int screensGroup, QString screenName, int edge, int alignment);
     Q_INVOKABLE void slideInDuringStartup();
 
@@ -105,7 +105,7 @@ public slots:
     void initDelayedSignals();
     void updateWaylandId();
 
-signals:
+Q_SIGNALS:
     void canvasGeometryChanged();
     void currentScreenChanged();
     void edgeChanged();
@@ -131,7 +131,7 @@ signals:
     void isStickedOnTopEdgeChanged();
     void isStickedOnBottomEdgeChanged();
 
-private slots:
+private Q_SLOTS:
     void onScreenChanged(QScreen *screen);
     void onCurrentLayoutIsSwitching(const QString &layoutName);
     void onLastRepositionApplyEvent();

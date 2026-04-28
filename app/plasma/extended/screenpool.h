@@ -31,10 +31,10 @@ public:
     int id(const QString &connector) const;
     QString connector(int id) const;
 
-signals:
+Q_SIGNALS:
     void idsChanged();
 
-private slots:
+private Q_SLOTS:
     void load();
     void insertScreenMapping(int id, const QString &connector);
 

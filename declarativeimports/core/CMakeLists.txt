@@ -17,6 +17,7 @@ target_link_libraries(lattecoreplugin
     Qt6::Qml
     KF6::CoreAddons
     KF6::WindowSystem
+    ${LATTE_SVG_TARGET}
     Plasma::Plasma
     Plasma::PlasmaQuick
     ${LATTE_QUICKADDONS_TARGET}

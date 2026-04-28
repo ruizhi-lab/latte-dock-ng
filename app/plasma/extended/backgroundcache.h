@@ -14,7 +14,7 @@
 #include <QObject>
 
 // Plasma
-#include <Plasma>
+#include <Plasma/Plasma>
 
 // KDE
 #include <KConfigGroup>
@@ -46,10 +46,10 @@ public:
     void setBackgroundFromBroadcast(QString activity, QString screen, QString filename);
     void setBroadcastedBackgroundsEnabled(QString activity, QString screen, bool enabled);
 
-signals:
+Q_SIGNALS:
     void backgroundChanged(const QString &activity, const QString &screenName);
 
-private slots:
+private Q_SLOTS:
     void reload();
     void settingsFileChanged(const QString &file);
 

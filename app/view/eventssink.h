@@ -41,15 +41,15 @@ public:
     QQuickItem *originParentItem() const;
     QQuickItem *destinationItem() const;
 
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void setSink(QQuickItem *originParent, QQuickItem *destination);
 
     QEvent *onEvent(QEvent *e);
 
-signals:
+Q_SIGNALS:
     void itemsChanged();
 
-private slots:
+private Q_SLOTS:
     void release();
 
 private:
