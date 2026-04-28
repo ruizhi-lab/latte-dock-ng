@@ -42,3 +42,4 @@ build*/
 CMakeLists.txt.user*
 /compile_commands.json
 
+.claude/worktrees/

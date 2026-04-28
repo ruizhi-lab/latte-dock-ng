@@ -45,7 +45,7 @@ Item {
         property: "headThicknessGap"
         when: latteView && updateIsEnabled && !visibilityManager.inClientSideScreenEdgeSliding
         value: {
-            if (root.behaveAsPlasmaPanel || root.viewType === LatteCore.Types.PanelView || (latteView && latteView.byPassWM)) {
+            if (root.behaveAsPlasmaPanel || root.viewType === LatteCore.Types.PanelView) {
                 return 0;
             }
 

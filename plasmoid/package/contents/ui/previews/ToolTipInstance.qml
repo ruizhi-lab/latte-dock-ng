@@ -176,7 +176,7 @@ Column {
             anchors.bottomMargin: 2
 
             readonly property bool isMinimized: isGroup ? instance.isMinimized : mainToolTip.isMinimizedParent
-            // TODO: this causes XCB error message when being visible the first time
+            // TODO: investigate first-show backend warning when thumbnail becomes visible
             readonly property var winId: isWin && windows[flatIndex] !== undefined ? windows[flatIndex] : 0
 
             // There's no PlasmaComponents3 version
@@ -265,7 +265,7 @@ Column {
                 source: icon
                 animated: false
                 usesPlasmaTheme: false
-                visible: (thumbnailSourceItem.isMinimized && !albumArtImage.visible) //X11 case
+                visible: (thumbnailSourceItem.isMinimized && !albumArtImage.visible)
                          || (!previewThumbLoader.active && !albumArtImage.visible) //Wayland case
             }
         }

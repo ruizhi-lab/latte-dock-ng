@@ -30,7 +30,6 @@
 // KDE
 #include <KActivities/Consumer>
 #include <KActivities/Controller>
-#include <KWindowSystem>
 
 #define LAYOUTSINITINTERVAL 350
 
@@ -45,14 +44,6 @@ Synchronizer::Synchronizer(QObject *parent)
 
     connect(this, &Synchronizer::layoutsChanged, this, &Synchronizer::reloadAssignedLayouts);
 
-    //! KWin update Disabled Borders
-    connect(this, &Synchronizer::centralLayoutsChanged, this, &Synchronizer::updateBorderlessMaximizedAfterTimer);
-    connect(m_manager->corona()->universalSettings(), &UniversalSettings::canDisableBordersChanged, this, &Synchronizer::updateKWinDisabledBorders);
-
-    m_updateBorderlessMaximized.setInterval(500);
-    m_updateBorderlessMaximized.setSingleShot(true);
-    connect(&m_updateBorderlessMaximized, &QTimer::timeout, this, &Synchronizer::updateKWinDisabledBorders);
-
     //! KActivities tracking
     connect(m_manager->corona()->activitiesConsumer(), &KActivities::Consumer::activityRemoved,
             this, &Synchronizer::onActivityRemoved);
@@ -60,10 +51,7 @@ Synchronizer::Synchronizer(QObject *parent)
     connect(m_manager->corona()->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged,
             this, [&]() {
         if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
-            //! this signal is also triggered when runningactivities are changed and actually is received first
-            //! this is why we need a timer here in order to delay that execution and not activate/deactivate
-            //! maximizedborders faulty because syncMultipleLayoutsToActivities(); has not been executed yet
-            updateBorderlessMaximizedAfterTimer();
+            syncMultipleLayoutsToActivities();
         }
     });
 
@@ -489,14 +477,6 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
             emit central->activitiesChanged();
         }
     }
-}
-
-void Synchronizer::updateBorderlessMaximizedAfterTimer()
-{
-    //! this signal is also triggered when runningactivities are changed and actually is received first
-    //! this is why we need a timer here in order to delay that execution and not activate/deactivate
-    //! maximizedborders faulty because syncMultipleLayoutsToActivities(); has not been executed yet
-    m_updateBorderlessMaximized.start();
 }
 
 void Synchronizer::hideAllViews()
@@ -1069,40 +1049,6 @@ void Synchronizer::unloadLayouts(const QStringList &layoutNames, const QStringLi
     }
 
     emit centralLayoutsChanged();
-}
-
-void Synchronizer::updateKWinDisabledBorders()
-{
-    if (KWindowSystem::isPlatformWayland()) {
-        // BUG: https://bugs.kde.org/show_bug.cgi?id=428202
-        // KWin::reconfigure() function blocks/freezes Latte under wayland
-        return;
-    }
-
-    if (!m_manager->corona()->universalSettings()->canDisableBorders()) {
-        m_manager->corona()->universalSettings()->kwin_setDisabledMaximizedBorders(false);
-    } else {
-        if (m_manager->corona()->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout && m_centralLayouts.size() > 0) {
-            m_manager->corona()->universalSettings()->kwin_setDisabledMaximizedBorders(m_centralLayouts.at(0)->disableBordersForMaximizedWindows());
-        } else if (m_manager->corona()->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
-            QList<CentralLayout *> centrals = centralLayoutsForActivity(m_manager->corona()->activitiesConsumer()->currentActivity());
-
-            for (int i = 0; i < centrals.size(); ++i) {
-                CentralLayout *layout = centrals.at(i);
-
-                if (layout->disableBordersForMaximizedWindows()) {
-                    m_manager->corona()->universalSettings()->kwin_setDisabledMaximizedBorders(true);
-                    return;
-                }
-            }
-
-            //! avoid initialization step for example during startup that no layouts have been loaded yet
-            if (centrals.size() > 0) {
-                m_manager->corona()->universalSettings()->kwin_setDisabledMaximizedBorders(false);
-            }
-
-        }
-    }
 }
 
 }

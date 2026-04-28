@@ -39,10 +39,8 @@ Positioner::Positioner(Latte::View *parent)
     m_screenSyncTimer.setInterval(2000);
     connect(&m_screenSyncTimer, &QTimer::timeout, this, &Positioner::reconsiderScreen);
 
-    //! under X11 it was identified that windows many times especially under screen changes
-    //! don't end up at the correct position and size. This timer will enforce repositionings
-    //! and resizes every 500ms if the window hasn't end up to correct values and until this
-    //! is achieved
+    //! Enforce periodic geometry validation while screen changes settle.
+    //! This protects against transient mismatch between requested and applied geometry.
     m_validateGeometryTimer.setSingleShot(true);
     m_validateGeometryTimer.setInterval(500);
     connect(&m_validateGeometryTimer, &QTimer::timeout, this, &Positioner::syncGeometry);

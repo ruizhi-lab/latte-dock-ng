@@ -54,7 +54,6 @@ public:
     void save() override;
 
 signals:
-    void borderlessMaximizedChanged();
     void contextActionsChanged();
 
 private slots:

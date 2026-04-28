@@ -34,9 +34,4 @@ bool QuickWindowSystem::isPlatformWayland() const
     return true;
 }
 
-bool QuickWindowSystem::isPlatformX11() const
-{
-    return false;
-}
-
 } //end of namespace

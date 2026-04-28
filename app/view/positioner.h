@@ -175,7 +175,7 @@ private:
     int m_slideOffset{0};
 
     QRect m_canvasGeometry;
-    //! it is used in order to enforce X11 to never miss window geometry
+    //! Cached target geometry used by validation/recovery logic.
     QRect m_validGeometry;
     //! it is used to update geometry calculations without requesting no needed Corona calculations
     QRect m_lastAvailableScreenRect;

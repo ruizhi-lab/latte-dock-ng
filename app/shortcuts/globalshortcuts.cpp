@@ -404,9 +404,7 @@ void GlobalShortcuts::showViews()
         }
     }
 
-    if (m_corona->universalSettings()->kwin_metaForwardedToLatte()) {
-        viewWithMeta = highestApplicationLauncherView(sortedViews);
-    }
+    // Meta forwarding to Latte is not supported on Wayland; viewWithMeta remains null.
 
     bool viewFound{false};
 

@@ -119,7 +119,6 @@ Item {
     property bool floatingInternalGapIsForced: plasmoid.configuration.floatingInternalGapIsForced
 
     property bool hasFloatingGapInputEventsDisabled: root.screenEdgeMarginEnabled
-                                                     && !latteView.byPassWM
                                                      && !root.inConfigureAppletsMode
                                                      && !parabolic.isEnabled
                                                      && (root.behaveAsPlasmaPanel || (root.behaveAsDockWithMask && !root.floatingInternalGapIsForced))

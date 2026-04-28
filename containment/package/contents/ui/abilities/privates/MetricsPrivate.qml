@@ -6,7 +6,6 @@
 import QtQuick 2.7
 import org.kde.plasma.plasmoid 2.0
 
-import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.abilities.host 0.1 as AbilityHost
 
 import "./metrics" as MetricsPrivateTypes
@@ -60,28 +59,7 @@ AbilityHost.Metrics {
     readonly property int extraThicknessForNormal: Math.max(extraThicknessFromIndicators, extraThicknessFromShadows)
     readonly property int extraThicknessForZoomed: marginBetweenContentsAndEditRuler + extraThicknessForNormal
 
-    readonly property int extraThicknessFromShadows: {
-        if (LatteCore.WindowSystem.isPlatformWayland) {
-            return 0;
-        }
-
-        //! 45% of max shadow size in px.
-        var shadowMaxNeededMargin = 0.45 * root.myView.itemShadow.maxSize;
-        var shadowOpacity = (plasmoid.configuration.shadowOpacity) / 100;
-        //! +40% of shadow opacity in percentage
-        shadowOpacity = shadowOpacity + shadowOpacity*0.4;
-
-        //! This way we are trying to calculate how many pixels are needed in order for the shadow
-        //! to be drawn correctly without being cut of from View::mask() under X11
-        shadowMaxNeededMargin = (shadowMaxNeededMargin * shadowOpacity);
-
-        //! give some more space when items shadows are enabled and extremely big
-        if (root.myView.itemShadow.isEnabled && metrics.margin.maxHeadThickness < shadowMaxNeededMargin) {
-            return shadowMaxNeededMargin - metrics.margin.maxHeadThickness;
-        }
-
-        return 0;
-    }
+    readonly property int extraThicknessFromShadows: 0
 
     readonly property int extraThicknessFromIndicators: indicators.info.extraMaskThickness
 

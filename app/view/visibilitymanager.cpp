@@ -75,7 +75,6 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
     if (m_latteView) {
         connect(m_latteView, &Latte::View::eventTriggered, this, &VisibilityManager::viewEventManager);
         connect(m_latteView, &Latte::View::behaveAsPlasmaPanelChanged , this, &VisibilityManager::updateKWinEdgesSupport);
-        connect(m_latteView, &Latte::View::byPassWMChanged, this, &VisibilityManager::updateKWinEdgesSupport);
 
         connect(m_latteView, &Latte::View::inEditModeChanged, this, &VisibilityManager::initViewFlags);
 
@@ -109,7 +108,6 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
         });
 
         //! Send frame extents on startup, this is really necessary when recreating a view.
-        //! Such a case is when toggling byPassWM and a view is recreated after disabling editing mode
         const bool forceUpdate{true};
         publishFrameExtents(forceUpdate);
     }
@@ -276,7 +274,7 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
             }
         });
 
-        //! respect canSetStrut that must be disabled under x11 when an alwaysvisible screen edge is common between two or more screens
+        //! Recompute struts when screen geometry changes on multi-screen setups.
         m_connections[base+3] = connect(m_corona->screenPool(), &Latte::ScreenPool::screenGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
 
         m_connections[base+4] = connect(m_latteView, &Latte::View::activitiesChanged, this, [&]() {
@@ -637,16 +635,14 @@ void VisibilityManager::publishFrameExtents(bool forceUpdate)
             frameExtents.setTop(m_frameExtentsHeadThicknessGap);
         }
 
-        bool bypasswm{false};
+        qDebug() << " -> Frame Extents :: " << m_frameExtentsLocation << " __ " << " extents :: " << frameExtents;
 
-        qDebug() << " -> Frame Extents :: " << m_frameExtentsLocation << " __ " << " extents :: " << frameExtents << " bypasswm :: " << bypasswm;
-
-        if (!frameExtents.isNull() && !m_latteView->behaveAsPlasmaPanel() && !bypasswm) {
+        if (!frameExtents.isNull() && !m_latteView->behaveAsPlasmaPanel()) {
             //! When a view returns its frame extents to zero then that triggers a compositor
             //! strange behavior that moves/hides the view totally and freezes entire Latte
             //! this is why we have blocked that setting
             m_wm->setFrameExtents(m_latteView, frameExtents);
-        } else if (m_latteView->behaveAsPlasmaPanel() || bypasswm) {
+        } else if (m_latteView->behaveAsPlasmaPanel()) {
             QMargins panelExtents(0, 0, 0, 0);
             m_wm->setFrameExtents(m_latteView, panelExtents);
             emit frameExtentsCleared();
@@ -1029,11 +1025,10 @@ void VisibilityManager::setEnableKWinEdges(bool enable)
 
 void VisibilityManager::updateKWinEdgesSupport()
 {
-    if ((m_mode == Types::AutoHide
+    if (m_mode == Types::AutoHide
          || m_mode == Types::DodgeActive
          || m_mode == Types::DodgeAllWindows
-         || m_mode == Types::DodgeMaximized)
-            && !m_latteView->byPassWM()) {
+         || m_mode == Types::DodgeMaximized) {
 
         if (m_enableKWinEdgesFromUser || m_latteView->behaveAsPlasmaPanel()) {
             createEdgeGhostWindow();

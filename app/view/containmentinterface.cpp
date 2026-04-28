@@ -370,11 +370,8 @@ bool ContainmentInterface::hideShortcutBadges()
 
 bool ContainmentInterface::showOnlyMeta()
 {
-    if (!m_corona->universalSettings()->kwin_metaForwardedToLatte()) {
-        return false;
-    }
-
-    return showShortcutBadges(false, true);
+    // Meta forwarding to Latte via KWin is not supported on Wayland.
+    return false;
 }
 
 bool ContainmentInterface::showShortcutBadges(const bool showLatteShortcuts, const bool showMeta)
@@ -385,7 +382,7 @@ bool ContainmentInterface::showShortcutBadges(const bool showLatteShortcuts, con
         return false;
     }
 
-    int appLauncherId = m_corona->universalSettings()->kwin_metaForwardedToLatte() && showMeta ? applicationLauncherId() : -1;
+    int appLauncherId = -1;
 
     return m_showShortcutsMethod.invoke(m_shortcutsHost, Q_ARG(QVariant, showLatteShortcuts), Q_ARG(QVariant, true), Q_ARG(QVariant, showMeta), Q_ARG(QVariant, appLauncherId));
 }

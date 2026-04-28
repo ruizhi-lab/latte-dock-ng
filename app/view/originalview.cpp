@@ -14,8 +14,8 @@
 #include <KLocalizedString>
 
 namespace Latte {
-OriginalView::OriginalView(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
-    : View(corona, targetScreen, byPassWM)
+OriginalView::OriginalView(Plasma::Corona *corona, QScreen *targetScreen)
+    : View(corona, targetScreen)
 {
     connect(this, &View::containmentChanged, this, [&]() {
         if (!this->containment()) {

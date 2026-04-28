@@ -95,11 +95,6 @@ void TabPreferences::initUi()
         emit dataChanged();
     });
 
-    connect(m_ui->metaPressChkBox, &QCheckBox::stateChanged, this, [&]() {
-        m_preferences.metaPressForAppLauncher = m_ui->metaPressChkBox->isChecked();
-        emit dataChanged();
-    });
-
     connect(m_ui->metaPressHoldChkBox, &QCheckBox::stateChanged, this, [&]() {
         m_preferences.metaHoldForBadges = m_ui->metaPressHoldChkBox->isChecked();
         emit dataChanged();
@@ -107,11 +102,6 @@ void TabPreferences::initUi()
 
     connect(m_ui->infoWindowChkBox, &QCheckBox::stateChanged, this, [&]() {
         m_preferences.layoutsInformationWindow = m_ui->infoWindowChkBox->isChecked();
-        emit dataChanged();
-    });
-
-    connect(m_ui->noBordersForMaximizedChkBox, &QCheckBox::stateChanged, this, [&]() {
-        m_preferences.borderlessMaximized = m_ui->noBordersForMaximizedChkBox->isChecked();
         emit dataChanged();
     });
 
@@ -125,9 +115,7 @@ void TabPreferences::initSettings()
     o_preferences.contextMenuAlwaysActions = m_corona->universalSettings()->contextMenuActionsAlwaysShown();
     o_preferences.isAvailableGeometryBroadcastedToPlasma = m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma();
     o_preferences.layoutsInformationWindow = m_corona->universalSettings()->showInfoWindow();
-    o_preferences.metaPressForAppLauncher = m_corona->universalSettings()->kwin_metaForwardedToLatte();
     o_preferences.metaHoldForBadges = m_corona->universalSettings()->metaPressAndHoldEnabled();
-    o_preferences.borderlessMaximized = m_corona->universalSettings()->canDisableBorders();
     o_preferences.parabolicSpread = m_corona->universalSettings()->parabolicSpread();
     o_preferences.thicknessMarginInfluence = m_corona->universalSettings()->thicknessMarginInfluence();
     o_preferences.screensDelay = m_corona->universalSettings()->screenTrackerInterval();
@@ -159,9 +147,7 @@ void TabPreferences::updateUi()
     m_ui->badges3DStyleChkBox->setChecked(m_preferences.badgeStyle3D);
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
-    m_ui->metaPressChkBox->setChecked(m_preferences.metaPressForAppLauncher);
     m_ui->metaPressHoldChkBox->setChecked(m_preferences.metaHoldForBadges);
-    m_ui->noBordersForMaximizedChkBox->setChecked(m_preferences.borderlessMaximized);
     m_ui->screenTrackerSpinBox->setValue(m_preferences.screensDelay);
 
     if (m_preferences.parabolicSpread == Data::Preferences::PARABOLICSPREAD) {
@@ -216,11 +202,9 @@ void TabPreferences::save()
     m_corona->universalSettings()->setAutostart(m_preferences.autostart);
     m_corona->universalSettings()->setBadges3DStyle(m_preferences.badgeStyle3D);
     m_corona->universalSettings()->setContextMenuActionsAlwaysShown(m_preferences.contextMenuAlwaysActions);
-    m_corona->universalSettings()->kwin_forwardMetaToLatte(m_preferences.metaPressForAppLauncher);
     m_corona->universalSettings()->setIsAvailableGeometryBroadcastedToPlasma(m_preferences.isAvailableGeometryBroadcastedToPlasma);
     m_corona->universalSettings()->setMetaPressAndHoldEnabled(m_preferences.metaHoldForBadges);
     m_corona->universalSettings()->setShowInfoWindow(m_preferences.layoutsInformationWindow);
-    m_corona->universalSettings()->setCanDisableBorders(m_preferences.borderlessMaximized);
     m_corona->universalSettings()->setParabolicSpread(m_preferences.parabolicSpread);
     m_corona->universalSettings()->setThicknessMarginInfluence(m_preferences.thicknessMarginInfluence);
     m_corona->universalSettings()->setScreenTrackerInterval(m_preferences.screensDelay);

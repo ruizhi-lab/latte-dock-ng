@@ -60,10 +60,7 @@
 
 namespace Latte {
 
-//! both alwaysVisible and byPassWM are passed through corona because
-//! during the view window creation containment hasn't been set, but these variables
-//! are needed in order for window flags to be set correctly
-View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
+View::View(Plasma::Corona *corona, QScreen *targetScreen)
     : PlasmaQuick::ContainmentView(corona),
       m_effects(new ViewPart::Effects(this)),
       m_interface(new ViewPart::ContainmentInterface(this)),
@@ -89,13 +86,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
             | Qt::NoDropShadowWindowHint
             | Qt::WindowDoesNotAcceptFocus;
 
-    if (byPassWM) {
-        setFlags(flags | Qt::BypassWindowManagerHint);
-        //! needs to be set early enough
-        m_byPassWM = byPassWM;
-    } else {
-        setFlags(flags);
-    }
+    setFlags(flags);
 
     if (targetScreen) {
         m_positioner->setScreenToFollow(targetScreen);
@@ -112,7 +103,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
 
     connect(this, &View::containmentChanged, this, &View::groupIdChanged);
     connect(this, &View::containmentChanged
-            , this, [ &, byPassWM]() {
+            , this, [&]() {
         qDebug() << "dock view c++ containment changed 1...";
 
         if (!this->containment())
@@ -124,9 +115,6 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen, bool byPassWM)
 
         //! First load default values from file
         restoreConfig();
-
-        //! Afterwards override that values in case during creation something different is needed
-        setByPassWM(byPassWM);
 
         //! Check the screen assigned to this dock
         reconsiderScreen();
@@ -327,7 +315,6 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(m_corona, &Latte::Corona::availableScreenRectChangedFrom, this, &View::availableScreenRectChangedFromSlot);
     connect(m_corona, &Latte::Corona::verticalUnityViewHasFocus, this, &View::topViewAlwaysOnTop);
 
-    connect(this, &View::byPassWMChanged, this, &View::saveConfig);
     connect(this, &View::isPreferredForShortcutsChanged, this, &View::saveConfig);
     connect(this, &View::nameChanged, this, &View::saveConfig);
     connect(this, &View::onPrimaryChanged, this, &View::saveConfig);
@@ -694,7 +681,7 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
 
     //! Fix for #443236, following setFlags(...) need to be added at all three cases
     //! but initViewFlags() should be called afterwards because setFlags(...) breaks
-    //! the Dock window default behavior under x11
+    //! the dock window default behavior during status transitions.
     if (status == Plasma::Types::NeedsAttentionStatus || status == Plasma::Types::RequiresAttentionStatus) {
         m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
@@ -866,21 +853,6 @@ void View::setHeadThicknessGap(int thickness)
 
     m_headThicknessGap = thickness;
     emit headThicknessGapChanged();
-}
-
-bool View::byPassWM() const
-{
-    return m_byPassWM;
-}
-
-void View::setByPassWM(bool bypass)
-{
-    if (m_byPassWM == bypass) {
-        return;
-    }
-
-    m_byPassWM = bypass;
-    emit byPassWMChanged();
 }
 
 bool View::behaveAsPlasmaPanel() const
@@ -1696,7 +1668,6 @@ void View::saveConfig()
 
     auto config = this->containment()->config();
     config.writeEntry("onPrimary", onPrimary());
-    config.writeEntry("byPassWM", byPassWM());
     config.writeEntry("isPreferredForShortcuts", isPreferredForShortcuts());
     config.writeEntry("name", m_name);
     config.writeEntry("viewType", (int)m_type);
@@ -1711,7 +1682,6 @@ void View::restoreConfig()
     auto config = this->containment()->config();
     m_onPrimary = config.readEntry("onPrimary", true);
     m_alignment = static_cast<Latte::Types::Alignment>(config.group("General").readEntry("alignment", (int)Latte::Types::Center));
-    m_byPassWM = config.readEntry("byPassWM", false);
     m_isPreferredForShortcuts = config.readEntry("isPreferredForShortcuts", false);
     m_name = config.readEntry("name", QString());
 
@@ -1720,7 +1690,6 @@ void View::restoreConfig()
     emit alignmentChanged();
     emit nameChanged();
     emit onPrimaryChanged();
-    emit byPassWMChanged();
 }
 //!END configuration functions
 

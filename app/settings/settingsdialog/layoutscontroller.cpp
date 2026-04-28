@@ -79,9 +79,6 @@ Layouts::Layouts(Settings::Handler::TabLayouts *parent)
         applyColumnWidths(true);
     });
 
-    connect(m_handler->corona()->universalSettings(), &UniversalSettings::canDisableBordersChanged, this, [&]() {
-        applyColumnWidths(false);
-    });
 }
 
 Layouts::~Layouts()
@@ -395,14 +392,9 @@ void Layouts::applyColumnWidths(bool storeValues)
     //! this line should be commented for debugging layouts window functionality
     m_view->setColumnHidden(Model::Layouts::IDCOLUMN, true);
     m_view->setColumnHidden(Model::Layouts::HIDDENTEXTCOLUMN, true);
+    m_view->setColumnHidden(Model::Layouts::BORDERSCOLUMN, true);
 
     int maxColumns = Model::Layouts::ACTIVITYCOLUMN - Model::Layouts::BACKGROUNDCOLUMN; //4 - multiple
-
-    if (m_handler->corona()->universalSettings()->canDisableBorders()) {
-        m_view->setColumnHidden(Model::Layouts::BORDERSCOLUMN, false);
-    } else {
-        m_view->setColumnHidden(Model::Layouts::BORDERSCOLUMN, true);
-    }
 
     if (m_model->inMultipleMode()) {
         m_view->setColumnHidden(Model::Layouts::MENUCOLUMN, true);
@@ -416,7 +408,7 @@ void Layouts::applyColumnWidths(bool storeValues)
         for (int i=0; i<qMin(m_viewColumnWidths.count(), maxColumns); ++i) {
             int currentColumn = Model::Layouts::BACKGROUNDCOLUMN+i;
 
-            if ((currentColumn == Model::Layouts::BORDERSCOLUMN && !m_handler->corona()->universalSettings()->canDisableBorders())
+            if ((currentColumn == Model::Layouts::BORDERSCOLUMN)
                     || (currentColumn == Model::Layouts::NAMECOLUMN && isLastModeMultiple)
                     || (currentColumn == Model::Layouts::MENUCOLUMN && !isLastModeMultiple)
                     || (currentColumn == Model::Layouts::ACTIVITYCOLUMN)) {
@@ -1080,9 +1072,6 @@ void Layouts::storeColumnWidths(bool inMultipleMode)
         m_viewColumnWidths[2] = QString::number(m_view->columnWidth(Model::Layouts::MENUCOLUMN));
     }
 
-    if (m_handler->corona()->universalSettings()->canDisableBorders()) {
-        m_viewColumnWidths[3] = QString::number(m_view->columnWidth(Model::Layouts::BORDERSCOLUMN));
-    }
 }
 
 void Layouts::onNameDuplicatedFrom(const QString &provenId, const QString &trialId)

@@ -267,7 +267,6 @@ void PrimaryConfigView::initParentView(Latte::View *view)
     viewconnections << connect(m_corona->universalSettings(), &Latte::UniversalSettings::inAdvancedModeForEditSettingsChanged, m_latteView, &Latte::View::inSettingsAdvancedModeChanged);
     viewconnections << connect(m_latteView->containment(), &Plasma::Containment::immutabilityChanged, this, &PrimaryConfigView::immutabilityChanged);   
 
-    m_originalByPassWM = m_latteView->byPassWM();
     m_originalMode = m_latteView->visibility()->mode();
 
     updateEnabledBorders();
@@ -461,11 +460,6 @@ void PrimaryConfigView::hideEvent(QHideEvent *ev)
     if ((mode == Types::AlwaysVisible || mode == Types::WindowsGoBelow)
             && !(m_originalMode == Types::AlwaysVisible || m_originalMode == Types::WindowsGoBelow)) {
         //! mode changed to AlwaysVisible OR WindowsGoBelow FROM Dodge mode
-        if (m_originalByPassWM) {
-            //! if original by pass is active
-            m_latteView->layout()->recreateView(m_latteView->containment());
-        }
-    } else if (m_latteView->byPassWM() != m_originalByPassWM) {
         m_latteView->layout()->recreateView(m_latteView->containment());
     }
 

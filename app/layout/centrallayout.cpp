@@ -51,9 +51,6 @@ bool CentralLayout::initCorona()
     if (GenericLayout::initCorona()) {
         onSchemeFileChanged();
 
-        connect(this, &CentralLayout::disableBordersForMaximizedWindowsChanged,
-                m_corona->layoutsManager()->synchronizer(), &Layouts::Synchronizer::updateKWinDisabledBorders);
-
         connect(this, &Layout::AbstractLayout::schemeFileChanged, this, &CentralLayout::onSchemeFileChanged);
         connect(m_corona->wm()->schemesTracker(), &WindowSystem::Tracker::Schemes::defaultSchemeChanged, this, &CentralLayout::onSchemeFileChanged);
         return true;

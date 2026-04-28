@@ -73,9 +73,6 @@ public:
     bool badges3DStyle() const;
     void setBadges3DStyle(bool enable);
 
-    bool canDisableBorders() const;
-    void setCanDisableBorders(bool enable);
-
     bool colorsScriptIsPresent() const;
 
     bool inAdvancedModeForEditSettings() const;
@@ -86,12 +83,6 @@ public:
 
     bool isAvailableGeometryBroadcastedToPlasma() const;
     void setIsAvailableGeometryBroadcastedToPlasma(const bool &isBroadcasted);
-
-    bool kwin_metaForwardedToLatte() const;
-    void kwin_forwardMetaToLatte(bool forward);
-
-    bool kwin_borderlessMaximizedWindowsEnabled() const;
-    void kwin_setDisabledMaximizedBorders(bool disable);
 
     bool metaPressAndHoldEnabled() const;
     void setMetaPressAndHoldEnabled(bool enabled);
@@ -142,7 +133,6 @@ signals:
     void actionsChanged();
     void autostartChanged();
     void badges3DStyleChanged();
-    void canDisableBordersChanged();
     void colorsScriptIsPresentChanged();
     void downloadWindowSizeChanged();
     void inAdvancedModeForEditSettingsChanged();
@@ -169,7 +159,6 @@ private slots:
     void saveConfig();
     void saveScalesConfig();
 
-    void recoverKWinOptions();
     void updateColorsScriptIsPresent();
     void trackedFileChanged(const QString &file);
 
@@ -184,17 +173,12 @@ private:
 
 private:
     bool m_badges3DStyle{false};
-    bool m_canDisableBorders{false};
     bool m_colorsScriptIsPresent{false};
     bool m_inAdvancedModeForEditSettings{false};
     bool m_inConfigureAppletsMode{false};
     bool m_isAvailableGeometryBroadcastedToPlasma{true};
     bool m_metaPressAndHoldEnabled{true};
     bool m_showInfoWindow{true};
-
-    //!kwinrc tracking
-    bool m_kwinMetaForwardedToLatte{false};
-    bool m_kwinBorderlessMaximizedWindows{false};
 
     //when there isnt a version it is an old universal file
     int m_version{1};
@@ -222,11 +206,6 @@ private:
 
     //! reading kwinrc values is costly; a tracker protects from
     //! reading too many times with no real reason
-    QTimer m_kwinrcTrackerTimer;
-    KSharedConfigPtr m_kwinrcPtr;
-    KConfigGroup m_kwinrcModifierOnlyShortcutsGroup;
-    KConfigGroup m_kwinrcWindowsGroup;
-
     friend class Layouts::Manager;
     friend class Latte::Corona;
 };

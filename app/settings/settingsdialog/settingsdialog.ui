@@ -1101,16 +1101,6 @@ This tracker is used in order to not lose any screen related update.</string>
                </item>
               </layout>
              </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="noBordersForMaximizedChkBox">
-               <property name="toolTip">
-                <string>Activate support for borderless maximized windows between different layouts</string>
-               </property>
-               <property name="text">
-                <string>Support borderless maximized windows in different layouts</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="0">
               <layout class="QHBoxLayout" name="apperanceHeaderRowLayout">
                <item>
@@ -1172,16 +1162,6 @@ This tracker is used in order to not lose any screen related update.</string>
                 </size>
                </property>
               </spacer>
-             </item>
-             <item row="7" column="1">
-              <widget class="QCheckBox" name="metaPressChkBox">
-               <property name="toolTip">
-                <string>Forward ⌘ press from KWin to Latte in order to activate Application Launcher. It is suggested to disable that option if you remove Latte.</string>
-               </property>
-               <property name="text">
-                <string>Press ⌘ to activate Application Launcher</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </item>

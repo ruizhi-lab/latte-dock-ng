@@ -19,6 +19,9 @@ This branch is a **Wayland-only** fork of [KDE Latte Dock](https://github.com/KD
 - Added explanatory comments to `VisibilityManager::hide()` / `show()` no-op stubs.
 - Updated package install path to `KDE_INSTALL_KSERVICETYPESDIR`.
 - Updated README/INSTALLATION baseline requirements to Qt6/KF6 and Wayland-only.
+- Removed `QuickWindowSystem::isPlatformX11` QML API surface.
+- Converted legacy KWin reconfigure helpers (`kwin_forwardMetaToLatte`, `kwin_setDisabledMaximizedBorders`, synchronizer border updates) to explicit Wayland no-op paths.
+- Disabled unsupported KWin-dependent preferences in Settings UI for Wayland sessions.
 - QML controls migration:
   - Removed all `QtQuick.Controls 1.x` and `QtQuick.Controls.Styles*` imports.
   - Removed `QtQuick.Dialogs 1.x` usage.
@@ -29,6 +32,7 @@ This branch is a **Wayland-only** fork of [KDE Latte Dock](https://github.com/KD
 ## Remaining work
 
 - Visual parity audit: controls migrated from QQC1 to QQC2 defaults may need styling adjustments to match prior Plasma 5 appearance.
+- Runtime QA on real Plasma 6.5+ session: window previews, context menu interactions, indicator behaviors, and settings pages.
 - Build verification on a live Plasma 6.5+ environment with full KF6/Qt6 dev packages.
 
 ## Note on X11

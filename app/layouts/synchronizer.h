@@ -114,7 +114,6 @@ public:
 
 public slots:
     void initLayouts();
-    void updateKWinDisabledBorders();
 
     void updateLayoutsTable();
 
@@ -135,7 +134,6 @@ private slots:
 
     void unloadPreloadedLayouts();
     void reloadAssignedLayouts();
-    void updateBorderlessMaximizedAfterTimer();
 
 private:
     void addLayout(CentralLayout *layout);
@@ -158,8 +156,6 @@ private:
     bool m_multipleModeInitialized{false};
     bool m_isLoaded{false};
     bool m_isSingleLayoutInDeprecatedRenaming{false};
-
-    QTimer m_updateBorderlessMaximized;
 
     Data::LayoutsTable m_layouts;
     QList<CentralLayout *> m_centralLayouts;

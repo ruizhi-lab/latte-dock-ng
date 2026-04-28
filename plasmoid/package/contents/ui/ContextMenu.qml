@@ -73,13 +73,8 @@ PlasmaComponents.ContextMenu {
         loadMyViewActions();
         // backend.ungrabMouse(visualParent);
         openRelative();
-
-        if (LatteCore.WindowSystem.isPlatformWayland){
-            //!Hiding previews under wayland it needs a delay otherwise it creates crashes
-            windowsPreviewCheckerToNotShowTimer.start();
-        } else {
-            windowsPreviewDlg.hide("9.4");
-        }
+        //! Hiding previews needs a delay to avoid race conditions while opening context menus.
+        windowsPreviewCheckerToNotShowTimer.start();
     }
 
     function newMenuItem(parent) {

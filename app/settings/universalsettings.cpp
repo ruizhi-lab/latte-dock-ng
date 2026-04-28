@@ -18,20 +18,12 @@
 // Qt
 #include <QDebug>
 #include <QDir>
-#include <QtDBus>
 
 // KDE
 #include <KActivities/Consumer>
 #include <KDirWatch>
-#include <KWindowSystem>
-
-#define KWINMETAFORWARDTOLATTESTRING "org.kde.lattedock,/Latte,org.kde.LatteDock,activateLauncherMenu"
-#define KWINMETAFORWARDTOPLASMASTRING "org.kde.plasmashell,/PlasmaShell,org.kde.PlasmaShell,activateLauncherMenu"
 
 #define KWINCOLORSSCRIPT "kwin/scripts/lattewindowcolors"
-#define KWINRC "kwinrc"
-
-#define KWINRCTRACKERINTERVAL 2500
 
 namespace Latte {
 
@@ -44,7 +36,6 @@ UniversalSettings::UniversalSettings(KSharedConfig::Ptr config, QObject *parent)
 
     connect(this, &UniversalSettings::actionsChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::badges3DStyleChanged, this, &UniversalSettings::saveConfig);
-    connect(this, &UniversalSettings::canDisableBordersChanged, this, &UniversalSettings::saveConfig);  
     connect(this, &UniversalSettings::inAdvancedModeForEditSettingsChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::inConfigureAppletsModeChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::isAvailableGeometryBroadcastedToPlasmaChanged, this, &UniversalSettings::saveConfig);
@@ -64,9 +55,6 @@ UniversalSettings::UniversalSettings(KSharedConfig::Ptr config, QObject *parent)
     connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensCountChanged);
     connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensCountChanged);
 
-    m_kwinrcPtr = KSharedConfig::openConfig(Latte::configPath() + "/" + KWINRC);
-    m_kwinrcModifierOnlyShortcutsGroup = KConfigGroup(m_kwinrcPtr, QStringLiteral("ModifierOnlyShortcuts"));
-    m_kwinrcWindowsGroup = KConfigGroup(m_kwinrcPtr, QStringLiteral("Windows"));
 }
 
 UniversalSettings::~UniversalSettings()
@@ -101,15 +89,6 @@ void UniversalSettings::load()
     for(auto path: colorsScriptPaths) {
         KDirWatch::self()->addDir(path);
     }
-
-    //! Track KWin rc options
-    const QString kwinrcFilePath = Latte::configPath() + "/" + KWINRC;
-    KDirWatch::self()->addFile(kwinrcFilePath);
-    recoverKWinOptions();
-
-    m_kwinrcTrackerTimer.setSingleShot(true);
-    m_kwinrcTrackerTimer.setInterval(KWINRCTRACKERINTERVAL);
-    connect(&m_kwinrcTrackerTimer, &QTimer::timeout, this, &UniversalSettings::recoverKWinOptions);
 
     connect(KDirWatch::self(), &KDirWatch::created, this, &UniversalSettings::trackedFileChanged);
     connect(KDirWatch::self(), &KDirWatch::deleted, this, &UniversalSettings::trackedFileChanged);
@@ -323,21 +302,6 @@ void UniversalSettings::setBadges3DStyle(bool enable)
 }
 
 
-bool UniversalSettings::canDisableBorders() const
-{
-    return m_canDisableBorders;
-}
-
-void UniversalSettings::setCanDisableBorders(bool enable)
-{
-    if (m_canDisableBorders == enable) {
-        return;
-    }
-
-    m_canDisableBorders = enable;
-    emit canDisableBordersChanged();
-}
-
 bool UniversalSettings::colorsScriptIsPresent() const
 {
     return m_colorsScriptIsPresent;
@@ -361,92 +325,10 @@ void UniversalSettings::updateColorsScriptIsPresent()
 }
 
 void UniversalSettings::trackedFileChanged(const QString &file)
-{    
+{
     if (file.endsWith(KWINCOLORSSCRIPT)) {
         updateColorsScriptIsPresent();
     }
-
-    if (file.endsWith(KWINRC)) {
-        m_kwinrcTrackerTimer.start();
-    }
-}
-
-bool UniversalSettings::kwin_metaForwardedToLatte() const
-{
-    return m_kwinMetaForwardedToLatte;
-}
-
-bool UniversalSettings::kwin_borderlessMaximizedWindowsEnabled() const
-{
-    return m_kwinBorderlessMaximizedWindows;
-}
-
-void UniversalSettings::kwin_forwardMetaToLatte(bool forward)
-{
-    if (m_kwinMetaForwardedToLatte == forward) {
-        return;
-    }
-
-    if (KWindowSystem::isPlatformWayland()) {
-        // BUG: https://bugs.kde.org/show_bug.cgi?id=428202
-        // KWin::reconfigure() function blocks/freezes Latte under wayland
-        return;
-    }
-
-    QString forwardStr = (forward ? KWINMETAFORWARDTOLATTESTRING : KWINMETAFORWARDTOPLASMASTRING);
-    m_kwinrcModifierOnlyShortcutsGroup.writeEntry("Meta", forwardStr);
-    m_kwinrcModifierOnlyShortcutsGroup.sync();
-
-    QDBusMessage message = QDBusMessage::createMethodCall(QStringLiteral("org.kde.KWin"),
-                                                          QStringLiteral("/KWin"),
-                                                          QStringLiteral("org.kde.KWin"),
-                                                          QStringLiteral("reconfigure"));
-
-    QDBusConnection::sessionBus().call(message, QDBus::NoBlock);
-}
-
-void UniversalSettings::kwin_setDisabledMaximizedBorders(bool disable)
-{
-    if (m_kwinBorderlessMaximizedWindows == disable) {
-        return;
-    }
-
-    if (KWindowSystem::isPlatformWayland()) {
-        // BUG: https://bugs.kde.org/show_bug.cgi?id=428202
-        // KWin::reconfigure() function blocks/freezes Latte under wayland
-        return;
-    }
-
-    bool serviceavailable{false};
-
-    if (QDBusConnection::sessionBus().interface()) {
-        serviceavailable = QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.KWin").value();
-    }
-
-    if (serviceavailable) {
-        m_kwinrcWindowsGroup.writeEntry("BorderlessMaximizedWindows", disable);
-        m_kwinrcWindowsGroup.sync();
-
-        QDBusMessage message = QDBusMessage::createMethodCall(QStringLiteral("org.kde.KWin"),
-                                                              QStringLiteral("/KWin"),
-                                                              QStringLiteral("org.kde.KWin"),
-                                                              QStringLiteral("reconfigure"));
-
-        QDBusConnection::sessionBus().call(message, QDBus::NoBlock);
-        m_kwinBorderlessMaximizedWindows = disable;
-    }
-}
-
-void UniversalSettings::recoverKWinOptions()
-{
-    qDebug() << "kwinrc: recovering values...";
-
-    //! Meta forwarded to Latte option
-    QString metaforwardedstr = m_kwinrcModifierOnlyShortcutsGroup.readEntry("Meta", KWINMETAFORWARDTOPLASMASTRING);
-    m_kwinMetaForwardedToLatte = (metaforwardedstr == KWINMETAFORWARDTOLATTESTRING);
-
-    //! BorderlessMaximizedWindows option
-    m_kwinBorderlessMaximizedWindows = m_kwinrcWindowsGroup.readEntry("BorderlessMaximizedWindows", false);
 }
 
 bool UniversalSettings::metaPressAndHoldEnabled() const
@@ -568,7 +450,6 @@ void UniversalSettings::loadConfig()
 {
     m_version = m_universalGroup.readEntry("version", 1);
     m_badges3DStyle = m_universalGroup.readEntry("badges3DStyle", false);
-    m_canDisableBorders = m_universalGroup.readEntry("canDisableBorders", false);
     m_contextMenuActionsAlwaysShown = m_universalGroup.readEntry("contextMenuActionsAlwaysShown", Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
     m_inAdvancedModeForEditSettings = m_universalGroup.readEntry("inAdvancedModeForEditSettings", false);
     m_inConfigureAppletsMode = m_universalGroup.readEntry("inConfigureAppletsMode", false);
@@ -594,7 +475,6 @@ void UniversalSettings::saveConfig()
 {
     m_universalGroup.writeEntry("version", m_version);
     m_universalGroup.writeEntry("badges3DStyle", m_badges3DStyle);
-    m_universalGroup.writeEntry("canDisableBorders", m_canDisableBorders);
     m_universalGroup.writeEntry("contextMenuActionsAlwaysShown", m_contextMenuActionsAlwaysShown);
     m_universalGroup.writeEntry("inAdvancedModeForEditSettings", m_inAdvancedModeForEditSettings);
     m_universalGroup.writeEntry("inConfigureAppletsMode", m_inConfigureAppletsMode);

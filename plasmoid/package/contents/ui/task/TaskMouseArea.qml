@@ -107,13 +107,6 @@ MouseArea {
 
     onPressed: {
         //console.log("Pressed Task Delegate..");
-        if (LatteCore.WindowSystem.compositingActive && !LatteCore.WindowSystem.isPlatformWayland) {
-            if(root.leftClickAction !== LatteTasks.Types.PreviewWindows) {
-                isAbleToShowPreview = false;
-                windowsPreviewDlg.hide(2);
-            }
-        }
-
         slotPublishGeometries();
 
         var modAccepted = modifierAccepted(mouse);

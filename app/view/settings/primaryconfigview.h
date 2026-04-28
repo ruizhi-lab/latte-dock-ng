@@ -146,7 +146,6 @@ private:
 private:
     bool m_blockFocusLost{false};
     bool m_blockFocusLostOnStartup{true};
-    bool m_originalByPassWM{false};
     bool m_inReverse{false};    //! it is used by the borders
     bool m_isReady{false};
     bool m_showInlineProperties{false};

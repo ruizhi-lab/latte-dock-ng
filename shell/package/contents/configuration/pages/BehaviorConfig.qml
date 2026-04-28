@@ -886,24 +886,12 @@ PlasmaComponents.Page {
                     text: i18n("Activate KWin edge after hiding")
                     tooltip: i18n("After the view becomes hidden, KWin is informed to track user feedback. For example an edge visual hint is shown whenever the mouse approaches the hidden view")
                     enabled: !dialog.viewIsPanel
-                             && !latteView.byPassWM
                              && latteView.visibility.mode !== LatteCore.Types.SidebarOnDemand
                              && latteView.visibility.mode !== LatteCore.Types.SidebarAutoHide
                     value: latteView.visibility.enableKWinEdges
 
                     onClicked: {
                         latteView.visibility.enableKWinEdges = !latteView.visibility.enableKWinEdges;
-                    }
-                }
-
-                LatteComponents.CheckBox {
-                    Layout.maximumWidth: dialog.optionsWidth
-                    text: i18n("Can be above fullscreen windows")
-                    tooltip: i18n("BypassWindowManagerHint flag for the window. The view will be above all windows even those set as 'Always On Top'")
-                    value: latteView.byPassWM
-
-                    onClicked: {
-                        latteView.byPassWM = !latteView.byPassWM;
                     }
                 }
 

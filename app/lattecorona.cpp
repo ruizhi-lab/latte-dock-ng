@@ -74,7 +74,6 @@
 #include <KAboutData>
 #include <KActivities/Consumer>
 #include <KDeclarative/QmlObjectSharedEngine>
-#include <KWindowSystem>
 #include <KWayland/Client/connection_thread.h>
 #include <KWayland/Client/registry.h>
 #include <KWayland/Client/plasmashell.h>
@@ -297,10 +296,6 @@ void Corona::unload()
 
 void Corona::setupWaylandIntegration()
 {
-    if (!KWindowSystem::isPlatformWayland()) {
-        return;
-    }
-
     using namespace KWayland::Client;
 
     auto connection = ConnectionThread::fromApplication(this);
@@ -1080,21 +1075,20 @@ void Corona::activateLauncherMenu()
 
 void Corona::windowColorScheme(QString windowIdAndScheme)
 {
-    int firstSlash = windowIdAndScheme.indexOf("-");
-    QString windowIdStr = windowIdAndScheme.mid(0, firstSlash);
-    QString schemeStr = windowIdAndScheme.mid(firstSlash + 1);
+    const int firstSlash = windowIdAndScheme.indexOf("-");
 
-    if (KWindowSystem::isPlatformWayland()) {
-        QTimer::singleShot(200, [this, schemeStr]() {
-            //! [Wayland Case] - give the time to be informed correctly for the active window id
-            //! otherwise the active window id may not be the same with the one triggered
-            //! the color scheme dbus signal
-            QString windowIdStr = m_wm->activeWindow().toString();
-            m_wm->schemesTracker()->setColorSchemeForWindow(windowIdStr.toUInt(), schemeStr);
-        });
-    } else {
-        m_wm->schemesTracker()->setColorSchemeForWindow(windowIdStr.toUInt(), schemeStr);
+    if (firstSlash < 0 || firstSlash + 1 >= windowIdAndScheme.length()) {
+        qWarning() << "Invalid windowColorScheme payload:" << windowIdAndScheme;
+        return;
     }
+
+    const QString schemeStr = windowIdAndScheme.mid(firstSlash + 1);
+
+    QTimer::singleShot(200, [this, schemeStr]() {
+        //! Give the compositor enough time to update the active window id.
+        const QString windowIdStr = m_wm->activeWindow().toString();
+        m_wm->schemesTracker()->setColorSchemeForWindow(windowIdStr.toUInt(), schemeStr);
+    });
 }
 
 //! update badge for specific view item

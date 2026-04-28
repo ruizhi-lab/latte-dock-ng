@@ -71,7 +71,6 @@ class View : public PlasmaQuick::ContainmentView
 
     Q_PROPERTY(bool alternativesIsShown READ alternativesIsShown NOTIFY alternativesIsShownChanged)
     Q_PROPERTY(bool behaveAsPlasmaPanel READ behaveAsPlasmaPanel WRITE setBehaveAsPlasmaPanel NOTIFY behaveAsPlasmaPanelChanged)
-    Q_PROPERTY(bool byPassWM READ byPassWM WRITE setByPassWM NOTIFY byPassWMChanged)
     Q_PROPERTY(bool containsDrag READ containsDrag NOTIFY containsDragChanged)
     Q_PROPERTY(bool inSettingsAdvancedMode READ inSettingsAdvancedMode NOTIFY inSettingsAdvancedModeChanged)
 
@@ -124,7 +123,7 @@ class View : public PlasmaQuick::ContainmentView
     Q_PROPERTY(QRect screenGeometry READ screenGeometry NOTIFY screenGeometryChanged)
 
 public:
-    View(Plasma::Corona *corona, QScreen *targetScreen = nullptr, bool byPassWM = false);
+    View(Plasma::Corona *corona, QScreen *targetScreen = nullptr);
     virtual ~View();
 
     void init(Plasma::Containment *plasma_containment = nullptr);
@@ -146,9 +145,6 @@ public:
 
     bool containsDrag() const;
     bool containsMouse() const;
-
-    bool byPassWM() const;
-    void setByPassWM(bool bypass);
 
     bool inEditMode() const;
 
@@ -295,7 +291,6 @@ signals:
     void alternativesIsShownChanged();
     void alignmentChanged();
     void behaveAsPlasmaPanelChanged();
-    void byPassWMChanged();
     void colorizerChanged();
     void configWindowGeometryChanged(); // is called from config windows
     void containmentActionsChanged();
@@ -390,7 +385,6 @@ private:
 
     bool m_alternativesIsShown{false};
     bool m_behaveAsPlasmaPanel{false};
-    bool m_byPassWM{true};
     bool m_containsDrag{false};
     bool m_containsMouse{false};
     bool m_inDelete{false};

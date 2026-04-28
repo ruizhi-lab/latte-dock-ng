@@ -900,25 +900,10 @@ void GenericLayout::addView(Plasma::Containment *containment)
         }
     }
 
-    //! it is used to set the correct flag during the creation
-    //! of the window... This of course is also used during
-    //! recreations of the window between different visibility modes
-    auto mode = static_cast<Types::Visibility>(containment->config().readEntry("visibility", static_cast<int>(Types::DodgeActive)));
-    bool byPassWM{false};
-
-    if (mode == Types::AlwaysVisible
-            || mode == Types::WindowsGoBelow
-            || mode == Types::WindowsCanCover
-            || mode == Types::WindowsAlwaysCover) {
-        byPassWM = false;
-    } else {
-        byPassWM = containment->config().readEntry("byPassWM", false);
-    }
-
     Latte::View *latteView;
 
     if (!viewdata.isCloned()) {
-        latteView = new Latte::OriginalView(m_corona, nextScreen, byPassWM);
+        latteView = new Latte::OriginalView(m_corona, nextScreen);
     } else {
         auto view = viewForContainment((uint)viewdata.isClonedFrom);
 
@@ -928,7 +913,7 @@ void GenericLayout::addView(Plasma::Containment *containment)
         }
 
         auto originalview = qobject_cast<Latte::OriginalView *>(view);
-        latteView = new Latte::ClonedView(m_corona, originalview, nextScreen, byPassWM);
+        latteView = new Latte::ClonedView(m_corona, originalview, nextScreen);
     }
 
     qDebug().noquote() << "Adding View:" << viewdata.id << "- Passed ALL checks !!!";
@@ -938,12 +923,8 @@ void GenericLayout::addView(Plasma::Containment *containment)
     latteView->setContainment(containment);
     latteView->setLayout(this);
 
-    //! Qt 5.9 creates a crash for this in wayland, that is why the check is used
-    //! but on the other hand we need this for copy to work correctly and show
-    //! the copied dock under X11
-    //if (!KWindowSystem::isPlatformWayland()) {
+    //! Keep explicit show call so copied docks/panels become visible after cloning.
     latteView->show();
-    //}
 
     emit viewsCountChanged();
 }

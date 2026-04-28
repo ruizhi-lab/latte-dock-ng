@@ -83,15 +83,6 @@ SettingsDialog::SettingsDialog(QWidget *parent, Latte::Corona *corona)
     connect(m_tabLayoutsHandler, &Settings::Handler::TabLayouts::dataChanged, this, &SettingsDialog::updateApplyButtonsState);
 
     connect(m_tabPreferencesHandler, &Settings::Handler::TabPreferences::dataChanged, this, &SettingsDialog::updateApplyButtonsState);
-    connect(m_tabPreferencesHandler, &Settings::Handler::TabPreferences::borderlessMaximizedChanged,  this, [&]() {
-        bool noBordersForMaximized = m_ui->noBordersForMaximizedChkBox->isChecked();
-
-        if (noBordersForMaximized) {
-            m_ui->layoutsView->setColumnHidden(Settings::Model::Layouts::BORDERSCOLUMN, false);
-        } else {
-            m_ui->layoutsView->setColumnHidden(Settings::Model::Layouts::BORDERSCOLUMN, true);
-        }
-    });
 
     //! timers
     m_activitiesTimer.setSingleShot(true);
