@@ -33,6 +33,26 @@ using namespace KWayland::Client;
 
 namespace Latte {
 
+namespace {
+
+inline bool isLatteDockAppId(const QString &appId)
+{
+    return appId == QLatin1String("latte-dock")
+            || appId == QLatin1String("latte-dock-ng")
+            || appId == QLatin1String("org.kde.latte-dock");
+}
+
+inline bool appIdMatches(const QString &windowAppId, const QString &requestedAppId)
+{
+    if (isLatteDockAppId(requestedAppId)) {
+        return isLatteDockAppId(windowAppId);
+    }
+
+    return windowAppId == requestedAppId;
+}
+
+}
+
 class Private::GhostWindow : public QQuickView
 {
     Q_OBJECT
@@ -600,7 +620,7 @@ QIcon WaylandInterface::iconFor(WindowId wid)
 WindowId WaylandInterface::winIdFor(QString appId, QString title)
 {
     auto it = std::find_if(m_windowManagement->windows().constBegin(), m_windowManagement->windows().constEnd(), [&appId, &title](PlasmaWindow * w) noexcept {
-        return w->isValid() && w->appId() == appId && w->title().startsWith(title);
+        return w->isValid() && appIdMatches(w->appId(), appId) && w->title().startsWith(title);
     });
 
     if (it == m_windowManagement->windows().constEnd()) {
@@ -613,7 +633,7 @@ WindowId WaylandInterface::winIdFor(QString appId, QString title)
 WindowId WaylandInterface::winIdFor(QString appId, QRect geometry)
 {
     auto it = std::find_if(m_windowManagement->windows().constBegin(), m_windowManagement->windows().constEnd(), [&appId, &geometry](PlasmaWindow * w) noexcept {
-        return w->isValid() && w->appId() == appId && w->geometry() == geometry;
+        return w->isValid() && appIdMatches(w->appId(), appId) && w->geometry() == geometry;
     });
 
     if (it == m_windowManagement->windows().constEnd()) {
@@ -845,7 +865,7 @@ bool WaylandInterface::isAcceptableWindow(const KWayland::Client::PlasmaWindow *
             registerPlasmaIgnoredWindow(w->internalId());
             return false;
         }
-    } else if ((w->appId() == QLatin1String("latte-dock"))
+    } else if ((isLatteDockAppId(w->appId()))
                || (w->appId().startsWith(QLatin1String("ksmserver")))) {
         if (isFullScreenWindow(w)) {
             registerIgnoredWindow(w->internalId());
@@ -931,7 +951,7 @@ void WaylandInterface::windowCreatedProxy(KWayland::Client::PlasmaWindow *w)
     trackWindow(w);
     emit windowAdded(w->internalId());
 
-    if (w->appId() == QLatin1String("latte-dock")) {
+    if (isLatteDockAppId(w->appId())) {
         emit latteWindowAdded();
     }
 }

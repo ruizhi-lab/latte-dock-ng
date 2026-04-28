@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 
     KQuickAddons::QtQuickSettings::init();
 
-    KLocalizedString::setApplicationDomain("latte-dock-ng");
+    KLocalizedString::setApplicationDomain("latte-dock");
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral("latte-dock")));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);
@@ -519,7 +519,7 @@ inline void configureAboutData()
 
     about.setHomepage(WEBSITE);
     about.setProgramLogo(QIcon::fromTheme(QStringLiteral("latte-dock")));
-    about.setDesktopFileName(QStringLiteral("latte-dock-ng"));
+    about.setDesktopFileName(QStringLiteral("org.kde.latte-dock"));
     about.setProductName(QByteArray("lattedock"));
 
     // Authors
