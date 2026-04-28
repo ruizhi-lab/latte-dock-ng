@@ -19,7 +19,7 @@ target_link_libraries(lattecoreplugin
     KF6::WindowSystem
     Plasma::Plasma
     Plasma::PlasmaQuick
-    KF6::QuickAddons
+    ${LATTE_QUICKADDONS_TARGET}
     KF6::IconThemes
 )
 

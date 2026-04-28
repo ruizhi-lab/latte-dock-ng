@@ -48,6 +48,7 @@ find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaActivities ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(KWayland ${PLASMA_MIN_VERSION} REQUIRED)
+find_package(KF6Declarative ${KF6_MIN_VERSION} REQUIRED CONFIG)
 
 find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)
 add_definitions(-DPLASMA_WORKSPACE_VERSION="${LibTaskManager_VERSION}")
@@ -60,6 +61,31 @@ find_package(Wayland REQUIRED COMPONENTS Client)
 
 message(STATUS "KF6 VERSION : ${KF6_VERSION}")
 message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
+
+# Distros may expose KDeclarative targets with different names.
+set(LATTE_DECLARATIVE_TARGET "")
+foreach(_candidate KF6::Declarative KF6::KDeclarative)
+    if(TARGET ${_candidate})
+        set(LATTE_DECLARATIVE_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
+if("${LATTE_DECLARATIVE_TARGET}" STREQUAL "")
+    message(FATAL_ERROR "Could not resolve KDeclarative target (expected KF6::Declarative or KF6::KDeclarative).")
+endif()
+
+set(LATTE_QUICKADDONS_TARGET "")
+foreach(_candidate KF6::QuickAddons KF6::KQuickAddons)
+    if(TARGET ${_candidate})
+        set(LATTE_QUICKADDONS_TARGET ${_candidate})
+        break()
+    endif()
+endforeach()
+
+if("${LATTE_QUICKADDONS_TARGET}" STREQUAL "")
+    set(LATTE_QUICKADDONS_TARGET ${LATTE_DECLARATIVE_TARGET})
+endif()
 
 
 include(ECMFindQmlModule)

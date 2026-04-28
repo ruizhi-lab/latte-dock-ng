@@ -69,7 +69,7 @@ target_link_libraries(latte-dock-ng
     KF6::CoreAddons
     KF6::Crash
     KF6::DBusAddons
-    KF6::Declarative
+    ${LATTE_DECLARATIVE_TARGET}
     KF6::GuiAddons
     KF6::GlobalAccel
     KF6::I18n
@@ -77,7 +77,7 @@ target_link_libraries(latte-dock-ng
     KF6::KIOWidgets
     KF6::Notifications
     KF6::NewStuff
-    KF6::QuickAddons
+    ${LATTE_QUICKADDONS_TARGET}
     Plasma::Plasma
     Plasma::PlasmaQuick
     KWayland::Client
