@@ -7,6 +7,7 @@
 
 //local
 #include <config-latte.h>
+#include "../../apptypes.h"
 #include "../view.h"
 #include "../../lattecorona.h"
 #include "../../layouts/manager.h"
@@ -106,7 +107,7 @@ void SubConfigView::init()
 
     KDeclarative::KDeclarative kdeclarative;
     kdeclarative.setDeclarativeEngine(engine());
-    kdeclarative.setTranslationDomain(QStringLiteral("latte-dock"));
+    kdeclarative.setTranslationDomain(QString::fromLatin1(App::TRANSLATIONDOMAIN));
     kdeclarative.setupContext();
     kdeclarative.setupEngine(engine());
 
@@ -302,7 +303,7 @@ bool SubConfigView::event(QEvent *e)
 
 void SubConfigView::updateWaylandId()
 {
-    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor("latte-dock", validTitle());
+    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor(App::preferredWaylandAppId(), validTitle());
 
     if (m_waylandWindowId != newId) {
         if (!m_waylandWindowId.isNull()) {

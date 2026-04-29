@@ -181,7 +181,7 @@ Corona::~Corona()
 
     if (!m_importFullConfigurationFile.isEmpty()) {
         //!NOTE: Restart latte to import the new configuration
-        const QString program = QStringLiteral("latte-dock-ng");
+        const QString program = QString::fromLatin1(App::BINARYNAME);
         const QStringList arguments{QStringLiteral("--import-full"), m_importFullConfigurationFile};
         qDebug() << "Executing Import Full Configuration command :" << program << arguments;
 
@@ -1322,22 +1322,22 @@ void Corona::importFullConfiguration(const QString &file)
 inline void Corona::qmlRegisterTypes() const
 {   
     qmlRegisterUncreatableMetaObject(Latte::Settings::staticMetaObject,
-                                     "org.kde.latte.private.app",          // import statement
+                                     App::PRIVATEQMLURI,                   // import statement
                                      0, 1,                                 // major and minor version of the import
                                      "Settings",                           // name in QML
                                      "Error: only enums of latte app settings");
 
-    qmlRegisterType<Latte::BackgroundTracker>("org.kde.latte.private.app", 0, 1, "BackgroundTracker");
-    qmlRegisterType<Latte::Interfaces>("org.kde.latte.private.app", 0, 1, "Interfaces");
-    qmlRegisterType<Latte::ContextMenuLayerQuickItem>("org.kde.latte.private.app", 0, 1, "ContextMenuLayer");
-    qmlRegisterAnonymousType<QScreen>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::View>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::ViewPart::WindowsTracker>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::ViewPart::TrackerPart::CurrentScreenTracker>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::ViewPart::TrackerPart::AllScreensTracker>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::WindowSystem::SchemeColors>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::WindowSystem::Tracker::LastActiveWindow>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::Types>("latte-dock", 1);
+    qmlRegisterType<Latte::BackgroundTracker>(App::PRIVATEQMLURI, 0, 1, "BackgroundTracker");
+    qmlRegisterType<Latte::Interfaces>(App::PRIVATEQMLURI, 0, 1, "Interfaces");
+    qmlRegisterType<Latte::ContextMenuLayerQuickItem>(App::PRIVATEQMLURI, 0, 1, "ContextMenuLayer");
+    qmlRegisterAnonymousType<QScreen>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::View>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::ViewPart::WindowsTracker>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::ViewPart::TrackerPart::CurrentScreenTracker>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::ViewPart::TrackerPart::AllScreensTracker>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::WindowSystem::SchemeColors>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::WindowSystem::Tracker::LastActiveWindow>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::Types>(App::QMLURI, 1);
 
 }
 

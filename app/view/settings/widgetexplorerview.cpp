@@ -223,7 +223,7 @@ void WidgetExplorerView::hideConfigWindow()
         //! avoid crashes under wayland because some mouse events are sended after the surface is destroyed
 
         if (m_shellSurface) {
-            //!NOTE: Avoid crash in wayland environment with qt5.9
+            //! Avoid races where input events arrive after the surface starts teardown.
             close();
         } else {
             hide();
@@ -279,4 +279,3 @@ void WidgetExplorerView::updateEnabledBorders()
 
 }
 }
-

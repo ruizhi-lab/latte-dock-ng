@@ -23,6 +23,7 @@ float colorLumina(float r, float g, float b);
 
 QString rectToString(const QRect &rect);
 QRect stringToRect(const QString &str);
+QString stripUniqueNameSuffix(const QString &name);
 
 //! returns the standard path found that contains the subPath
 //! local paths have higher priority by default

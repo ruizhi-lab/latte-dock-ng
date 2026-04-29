@@ -9,6 +9,7 @@
 // Qt
 #include <QDir>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QStandardPaths>
 #include <QStringList>
 #include <QtMath>
@@ -77,6 +78,18 @@ QRect stringToRect(const QString &str)
     QStringList pos = parts[0].split(",");
     QStringList size = parts[1].split("x");
     return QRect(pos[0].toInt(), pos[1].toInt(), size[0].toInt(), size[1].toInt());
+}
+
+QString stripUniqueNameSuffix(const QString &name)
+{
+    static const QRegularExpression suffixPattern(QStringLiteral(" - [0-9]+$"));
+    const int pos = name.lastIndexOf(suffixPattern);
+
+    if (pos > 0) {
+        return name.left(pos);
+    }
+
+    return name;
 }
 
 QString standardPath(QString subPath, bool localfirst)

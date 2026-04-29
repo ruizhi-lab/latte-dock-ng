@@ -273,10 +273,8 @@ void Manager::installCustomLayoutTemplate(const QString &templateFilePath)
 
 QString Manager::uniqueLayoutTemplateName(QString name) const
 {
-    int pos_ = name.lastIndexOf(QRegExp(QString(" - [0-9]+")));
-
-    if (hasLayoutTemplate(name) && pos_ > 0) {
-        name = name.left(pos_);
+    if (hasLayoutTemplate(name)) {
+        name = Latte::stripUniqueNameSuffix(name);
     }
 
     int i = 2;
@@ -293,10 +291,8 @@ QString Manager::uniqueLayoutTemplateName(QString name) const
 
 QString Manager::uniqueViewTemplateName(QString name) const
 {
-    int pos_ = name.lastIndexOf(QRegExp(QString(" - [0-9]+")));
-
-    if (hasViewTemplate(name) && pos_ > 0) {
-        name = name.left(pos_);
+    if (hasViewTemplate(name)) {
+        name = Latte::stripUniqueNameSuffix(name);
     }
 
     int i = 2;

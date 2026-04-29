@@ -6,6 +6,7 @@
 #include "subwindow.h"
 
 // local
+#include "../../apptypes.h"
 #include "../view.h"
 #include "../visibilitymanager.h"
 
@@ -150,7 +151,7 @@ void SubWindow::fixGeometry()
 
 void SubWindow::updateWaylandId()
 {
-    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor("latte-dock", validTitle());
+    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor(App::preferredWaylandAppId(), validTitle());
 
     if (m_trackedWindowId != newId) {
         if (!m_trackedWindowId.isNull()) {

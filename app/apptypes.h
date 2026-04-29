@@ -8,6 +8,7 @@
 
 // Qt
 #include <QObject>
+#include <QString>
 
 //! These are LatteApp::Types that will be used ONLY from Latte App c++ implementation.
 //! Such types are irrelevant and not used from plasma applets.
@@ -67,6 +68,40 @@ enum MouseSensitivity
     HighMouseSensitivity
 };
 Q_ENUM_NS(MouseSensitivity);
+
+}
+}
+
+namespace Latte {
+namespace App {
+
+inline constexpr const char TRANSLATIONDOMAIN[] = "latte-dock";
+inline constexpr const char ICONNAME[] = "latte-dock";
+inline constexpr const char DESKTOPFILENAME[] = "org.kde.latte-dock";
+inline constexpr const char QMLURI[] = "latte-dock";
+inline constexpr const char PRIVATEQMLURI[] = "org.kde.latte.private.app";
+inline constexpr const char BINARYNAME[] = "latte-dock-ng";
+
+inline constexpr const char WAYLANDPRIMARYAPPID[] = "latte-dock-ng";
+inline constexpr const char WAYLANDLEGACYAPPID[] = "latte-dock";
+inline constexpr const char WAYLANDDESKTOPAPPID[] = "org.kde.latte-dock";
+
+inline const QString &preferredWaylandAppId()
+{
+    static const QString appId = QString::fromLatin1(WAYLANDPRIMARYAPPID);
+    return appId;
+}
+
+inline bool matchesSelfAppId(const QString &appId)
+{
+    static const QString primaryAppId = QString::fromLatin1(WAYLANDPRIMARYAPPID);
+    static const QString legacyAppId = QString::fromLatin1(WAYLANDLEGACYAPPID);
+    static const QString desktopAppId = QString::fromLatin1(WAYLANDDESKTOPAPPID);
+
+    return appId == primaryAppId
+            || appId == legacyAppId
+            || appId == desktopAppId;
+}
 
 }
 }

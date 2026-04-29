@@ -215,7 +215,7 @@ void SecondaryConfigView::focusOutEvent(QFocusEvent *ev)
 void SecondaryConfigView::hideConfigWindow()
 {
     if (m_shellSurface) {
-        //!NOTE: Avoid crash in wayland environment with qt5.9
+        //! Avoid races where input events arrive after the surface starts teardown.
         close();
     } else {
         hide();
@@ -224,12 +224,6 @@ void SecondaryConfigView::hideConfigWindow()
 
 void SecondaryConfigView::updateEffects()
 {
-    //! Don't apply any effect before the wayland surface is created under wayland
-    //! https://bugs.kde.org/show_bug.cgi?id=392890
-    if (KWindowSystem::isPlatformWayland() && !m_shellSurface) {
-        return;
-    }
-
     //! Don't apply any effect before the wayland surface is created under wayland
     //! https://bugs.kde.org/show_bug.cgi?id=392890
     if (KWindowSystem::isPlatformWayland() && !m_shellSurface) {

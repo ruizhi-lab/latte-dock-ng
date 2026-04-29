@@ -175,7 +175,7 @@ void CanvasConfigView::focusOutEvent(QFocusEvent *ev)
 void CanvasConfigView::hideConfigWindow()
 {
     if (m_shellSurface) {
-        //!NOTE: Avoid crash in wayland environment with qt5.9
+        //! Avoid races where input events arrive after the surface starts teardown.
         close();
     } else {
         hide();

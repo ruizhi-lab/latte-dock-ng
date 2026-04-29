@@ -1004,10 +1004,8 @@ QString Views::uniqueViewName(QString name)
         return name;
     }
 
-    int pos_ = name.lastIndexOf(QRegExp(QString(" - [0-9]+")));
-
-    if (m_model->containsCurrentName(name) && pos_ > 0) {
-        name = name.left(pos_);
+    if (m_model->containsCurrentName(name)) {
+        name = Latte::stripUniqueNameSuffix(name);
     }
 
     int i = 2;
@@ -1089,4 +1087,3 @@ void Views::saveConfig()
 }
 }
 }
-

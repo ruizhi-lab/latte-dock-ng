@@ -740,10 +740,8 @@ QString Importer::layoutTemplateSystemFilePath(const QString &name)
 
 QString Importer::uniqueLayoutName(QString name)
 {
-    int pos_ = name.lastIndexOf(QRegExp(QString(" - [0-9]+")));
-
-    if (layoutExists(name) && pos_ > 0) {
-        name = name.left(pos_);
+    if (layoutExists(name)) {
+        name = Latte::stripUniqueNameSuffix(name);
     }
 
     int i = 2;

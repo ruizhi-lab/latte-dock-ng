@@ -1,6 +1,6 @@
-# Plasma 6.5+ Wayland Port Status
+# Plasma 6.6+ Wayland Port Status
 
-This branch is a **Wayland-only** fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) targeting **KDE Plasma 6.5+**.
+This branch is a **Wayland-only** fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) targeting **KDE Plasma 6.6+**.
 
 ## Completed
 
@@ -25,15 +25,15 @@ This branch is a **Wayland-only** fork of [KDE Latte Dock](https://github.com/KD
 - QML controls migration:
   - Removed all `QtQuick.Controls 1.x` and `QtQuick.Controls.Styles*` imports.
   - Removed `QtQuick.Dialogs 1.x` usage.
-  - Replaced `QtGraphicalEffects` with `Qt5Compat.GraphicalEffects`.
+  - Removed `QtGraphicalEffects` dependencies from active code paths.
   - Dropped legacy `ExclusiveGroup`-based button grouping.
   - Ported shared controls (`CheckBox`, `Switch`, `SpinBox`) to `QtQuick.Controls 2`.
 
 ## Remaining work
 
 - Visual parity audit: controls migrated from QQC1 to QQC2 defaults may need styling adjustments to match prior Plasma 5 appearance.
-- Runtime QA on real Plasma 6.5+ session: window previews, context menu interactions, indicator behaviors, and settings pages.
-- Build verification on a live Plasma 6.5+ environment with full KF6/Qt6 dev packages.
+- Runtime QA on real Plasma 6.6+ session: window previews, context menu interactions, indicator behaviors, and settings pages.
+- Build verification on a live Plasma 6.6+ environment with full KF6/Qt6 dev packages.
 
 ## Note on X11
 

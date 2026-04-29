@@ -1,6 +1,6 @@
 # <img src="logo.png" width="48"/> Latte Dock NG
 
-> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.5+ on Wayland only**. X11 support has been intentionally removed.
+> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.6+ on Wayland only**. X11 support has been intentionally removed.
 
 Latte is a dock based on plasma frameworks that provides an elegant and intuitive experience for your tasks and plasmoids. It animates its contents by using parabolic zoom effect and tries to be there only when it is needed.
 
@@ -29,11 +29,10 @@ Installation
 
 We need to use at least:
 
-- **Plasma >= 6.5.0**
+- **Plasma >= 6.6.0**
 - **PlasmaWaylandProtocols >= 1.6.0**
 - **Qt >= 6.6**
 - **Wayland session (X11 is not supported in this fork)**
-- **Qt5Compat GraphicalEffects QML module installed (for `Qt5Compat.GraphicalEffects` imports)**
 
 Minimum requirements:
  
@@ -54,14 +53,16 @@ Minimum requirements:
  Qt6Widgets >= 6.6.0
  Qt6WaylandClient >= 6.6.0
 
- KF6Plasma >= 6.0.0
- KF6PlasmaQuick >= 6.0.0
- KF6Activities >= 6.0.0
+ Plasma >= 6.6.0
+ PlasmaQuick >= 6.6.0
+ PlasmaActivities >= 6.6.0
+ KWayland >= 6.6.0
+ LibTaskManager >= 6.6.0
+
  KF6CoreAddons >= 6.0.0
  KF6GuiAddons >= 6.0.0
  KF6DBusAddons >= 6.0.0
  KF6Declarative >= 6.0.0
- KF6Wayland >= 6.0.0
  KF6Package >= 6.0.0
  KF6XmlGui >= 6.0.0
  KF6IconThemes >= 6.0.0
@@ -113,7 +114,7 @@ License & Copyright
 Copyright (C) KDE Contributors — [https://github.com/KDE/latte-dock](https://github.com/KDE/latte-dock)
 Licensed under the GNU General Public License v2.0 or later (GPL-2.0-or-later).
 
-**Modifications in this fork (Plasma 6.5 Wayland port):**
+**Modifications in this fork (Plasma 6.6 Wayland port):**
 Copyright (C) 2024-2026 Ruizhi Zhong
 Licensed under the GNU General Public License v3.0 (GPL-3.0).
 

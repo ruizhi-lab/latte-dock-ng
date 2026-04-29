@@ -95,7 +95,7 @@ foreach(_candidate KF6::NewStuffWidgets KF6::KNewStuffWidgets KF6::NewStuff KF6:
     endif()
 endforeach()
 
-foreach(_candidate KWayland::Client KF6::WaylandClient KF6::KWaylandClient KF5::WaylandClient)
+foreach(_candidate KWayland::Client KF6::WaylandClient KF6::KWaylandClient)
     if(TARGET ${_candidate})
         set(LATTE_WAYLANDCLIENT_TARGET ${_candidate})
         break()
@@ -220,7 +220,7 @@ endif()
 
 if("${LATTE_WAYLANDCLIENT_TARGET}" STREQUAL "")
     foreach(_var
-            KWaylandClient_LIBRARIES KF6WaylandClient_LIBRARIES KF5WaylandClient_LIBRARIES
+            KWaylandClient_LIBRARIES KF6WaylandClient_LIBRARIES
             WaylandClient_LIBRARIES KWayland_LIBRARIES)
         if(DEFINED ${_var} AND NOT "${${_var}}" STREQUAL "")
             set(LATTE_WAYLANDCLIENT_TARGET "${${_var}}")
@@ -299,7 +299,6 @@ include(ECMFindQmlModule)
 ecm_find_qmlmodule(QtQuick 2.7)
 ecm_find_qmlmodule(QtQuick.Layouts 1.3)
 ecm_find_qmlmodule(QtQuick.Controls 2.15)
-ecm_find_qmlmodule(Qt5Compat.GraphicalEffects 1.0)
 ecm_find_qmlmodule(org.kde.kquickcontrolsaddons 2.0)
 ecm_find_qmlmodule(org.kde.plasma.core 2.0)
 ecm_find_qmlmodule(org.kde.plasma.components 2.0)

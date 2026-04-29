@@ -8,6 +8,7 @@
 #include "waylandinterface.h"
 
 // local
+#include "../apptypes.h"
 #include <coretypes.h>
 #include "../view/positioner.h"
 #include "../view/view.h"
@@ -20,8 +21,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QQuickView>
-#include <QLatin1String>
-
 // KDE
 #include <KWindowSystem>
 #include <KWayland/Client/plasmawindowmanagement.h>
@@ -36,17 +35,10 @@ namespace Latte {
 
 namespace {
 
-inline bool isLatteDockAppId(const QString &appId)
-{
-    return appId == QLatin1String("latte-dock")
-            || appId == QLatin1String("latte-dock-ng")
-            || appId == QLatin1String("org.kde.latte-dock");
-}
-
 inline bool appIdMatches(const QString &windowAppId, const QString &requestedAppId)
 {
-    if (isLatteDockAppId(requestedAppId)) {
-        return isLatteDockAppId(windowAppId);
+    if (App::matchesSelfAppId(requestedAppId)) {
+        return App::matchesSelfAppId(windowAppId);
     }
 
     return windowAppId == requestedAppId;
@@ -125,7 +117,7 @@ public:
 public Q_SLOTS:
     void identifyWinId() {
         if (m_winId.isNull()) {
-            m_winId = m_waylandInterface->winIdFor("latte-dock", m_validGeometry);
+            m_winId = m_waylandInterface->winIdFor(App::preferredWaylandAppId(), m_validGeometry);
             m_waylandInterface->registerIgnoredWindow(m_winId);
         }
     }

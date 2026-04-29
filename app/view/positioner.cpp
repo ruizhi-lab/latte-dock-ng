@@ -7,6 +7,7 @@
 
 // local
 #include <coretypes.h>
+#include "../apptypes.h"
 #include "effects.h"
 #include "originalview.h"
 #include "view.h"
@@ -219,7 +220,7 @@ void Positioner::updateWaylandId()
         return;
     }
 
-    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor("latte-dock", validTitle);
+    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor(App::preferredWaylandAppId(), validTitle);
 
     if (m_trackedWindowId != newId) {
         if (!m_trackedWindowId.isNull()) {

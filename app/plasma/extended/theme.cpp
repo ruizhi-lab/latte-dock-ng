@@ -8,6 +8,7 @@
 // local
 #include "lattecorona.h"
 #include "panelbackground.h"
+#include "../../apptypes.h"
 #include "../../layouts/importer.h"
 #include "../../view/panelshadows_p.h"
 #include "../../wm/schemecolors.h"
@@ -524,8 +525,8 @@ void Theme::saveConfig()
 
 void Theme::qmlRegisterTypes()
 {
-    qmlRegisterAnonymousType<Latte::PlasmaExtended::Theme>("latte-dock", 1);
-    qmlRegisterAnonymousType<Latte::PlasmaExtended::PanelBackground>("latte-dock", 1);
+    qmlRegisterAnonymousType<Latte::PlasmaExtended::Theme>(App::QMLURI, 1);
+    qmlRegisterAnonymousType<Latte::PlasmaExtended::PanelBackground>(App::QMLURI, 1);
 }
 
 }

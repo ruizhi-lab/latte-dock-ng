@@ -9,6 +9,7 @@
 #include "primaryconfigview.h"
 #include "../view.h"
 #include "../indicator/indicator.h"
+#include "../../apptypes.h"
 #include "../../lattecorona.h"
 #include "../../indicator/factory.h"
 
@@ -30,7 +31,7 @@ IndicatorUiManager::IndicatorUiManager(ViewPart::PrimaryConfigView *parent)
     : QObject(parent),
       m_primary(parent)
 {
-    qmlRegisterAnonymousType<Latte::ViewPart::Config::IndicatorUiManager>("latte-dock", 1);
+    qmlRegisterAnonymousType<Latte::ViewPart::Config::IndicatorUiManager>(App::QMLURI, 1);
 }
 
 IndicatorUiManager::~IndicatorUiManager()

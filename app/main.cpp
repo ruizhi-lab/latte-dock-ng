@@ -57,19 +57,10 @@ int main(int argc, char **argv)
 {
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
-    //Plasma scales itself to font DPI
-    //on X, where we don't have compositor scaling, this generally works fine.
-    //also there are bugs on older Qt, especially when it comes to fractional scaling
-    //there's advantages to disabling, and (other than small context menu icons) few advantages in enabling
-
-    //On wayland, it's different. Everything is simpler as all coordinates are in the same coordinate system
-    //we don't have fractional scaling on the client so don't hit most the remaining bugs and
-    //even if we don't use Qt scaling the compositor will try to scale us anyway so we have no choice
+    // Keep fractional scale behavior deterministic under Wayland.
+    // Qt6 enables High DPI by default, so we only sanitize legacy env overrides.
     if (!qEnvironmentVariableIsSet("PLASMA_USE_QT_SCALING")) {
         qunsetenv("QT_DEVICE_PIXEL_RATIO");
-        QCoreApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
-    } else {
-        QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     }
 
     QQuickWindow::setDefaultAlphaBuffer(true);
@@ -92,8 +83,8 @@ int main(int argc, char **argv)
 
     KQuickAddons::QtQuickSettings::init();
 
-    KLocalizedString::setApplicationDomain("latte-dock");
-    app.setWindowIcon(QIcon::fromTheme(QStringLiteral("latte-dock")));
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+    app.setWindowIcon(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);
 
@@ -291,7 +282,7 @@ int main(int argc, char **argv)
     if (username.isEmpty())
         username = qgetenv("USERNAME");
 
-    QLockFile lockFile {QDir::tempPath() + "/latte-dock-ng." + username + ".lock"};
+    QLockFile lockFile {QDir::tempPath() + "/" + QString::fromLatin1(Latte::App::BINARYNAME) + "." + username + ".lock"};
 
     int timeout {100};
 
@@ -445,8 +436,8 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n")
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
         || msg.endsWith("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }")) {
-        //! block warnings because they will be needed only after qt6.0 support. Currently Binding.restoreMode can not be supported because
-        //! qt5.9 is the minimum supported version.
+        //! block warnings from dependencies that still ship legacy QML snippets.
+        //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
         return;
     }
 
@@ -513,8 +504,8 @@ inline void configureAboutData()
                      , QStringLiteral("\251 2016-2017 Michail Vourlakos, Smith AR"));
 
     about.setHomepage(WEBSITE);
-    about.setProgramLogo(QIcon::fromTheme(QStringLiteral("latte-dock")));
-    about.setDesktopFileName(QStringLiteral("org.kde.latte-dock"));
+    about.setProgramLogo(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
+    about.setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
     about.setProductName(QByteArray("lattedock"));
 
     // Authors

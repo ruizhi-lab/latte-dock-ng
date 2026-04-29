@@ -9,6 +9,7 @@
 
 // local
 #include <config-latte.h>
+#include "apptypes.h"
 #include "wm/abstractwindowinterface.h"
 #include "view/panelshadows_p.h"
 
@@ -79,7 +80,7 @@ void InfoView::init()
 
     KDeclarative::KDeclarative kdeclarative;
     kdeclarative.setDeclarativeEngine(engine());
-    kdeclarative.setTranslationDomain(QStringLiteral("latte-dock"));
+    kdeclarative.setTranslationDomain(QString::fromLatin1(App::TRANSLATIONDOMAIN));
     kdeclarative.setupContext();
     kdeclarative.setupEngine(engine());
 
@@ -144,7 +145,7 @@ void InfoView::showEvent(QShowEvent *ev)
 
 void InfoView::updateWaylandId()
 {
-    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor("latte-dock", validTitle());
+    Latte::WindowSystem::WindowId newId = m_corona->wm()->winIdFor(App::preferredWaylandAppId(), validTitle());
 
     if (m_trackedWindowId != newId) {
         if (!m_trackedWindowId.isNull()) {
