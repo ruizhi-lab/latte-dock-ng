@@ -381,7 +381,7 @@ void Factory::removeIndicator(QString id)
                                        i18n("Do you want to remove completely <b>%1</b> indicator from your system?", pluginName),
                                        QStringList(),
                                        QString(),
-                                       0,
+                                       nullptr,
                                        KMessageBox::Options{KMessageBox::NoExec},
                                        QString());
 

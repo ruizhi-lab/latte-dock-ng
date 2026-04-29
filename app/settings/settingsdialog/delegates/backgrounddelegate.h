@@ -24,7 +24,7 @@ class BackgroundDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    BackgroundDelegate(QObject *parent = 0);
+    BackgroundDelegate(QObject *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 

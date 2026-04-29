@@ -93,11 +93,11 @@ void DetailsHandler::init()
         setPopUpMargin(i);
     });
 
-    connect(m_ui->inMenuChk, &QCheckBox::stateChanged, this, [&]() {
+    connect(m_ui->inMenuChk, &QCheckBox::toggled, this, [&]() {
         setIsShownInMenu(m_ui->inMenuChk->isChecked());
     });
 
-    connect(m_ui->borderlessChk, &QCheckBox::stateChanged, this, [&]() {
+    connect(m_ui->borderlessChk, &QCheckBox::toggled, this, [&]() {
         setHasDisabledBorders(m_ui->borderlessChk->isChecked());
     });
 

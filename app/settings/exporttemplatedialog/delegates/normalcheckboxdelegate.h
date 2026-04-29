@@ -18,7 +18,7 @@ namespace Delegate {
 class NormalCheckBox : public QStyledItemDelegate
 {
 public:
-    NormalCheckBox(QObject *parent = 0);
+    NormalCheckBox(QObject *parent = nullptr);
 
     virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 };

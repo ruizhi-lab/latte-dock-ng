@@ -206,7 +206,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
             return;
         }*/
     //FIXME: very inefficient appletAt() implementation
-    Plasma::Applet *applet = 0;
+    Plasma::Applet *applet = nullptr;
 
     //! initialize the appletContainsMethod on the first right click
     if (!m_appletContainsMethod.isValid()) {
@@ -292,7 +292,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     //in .exec before oxygen can polish it and set the following attribute
     desktopMenu->setAttribute(Qt::WA_TranslucentBackground);
     //end workaround
-    QPoint globalPos = event->globalPos();
+    QPoint globalPos = event->globalPosition().toPoint();
     desktopMenu->adjustSize();
 
     QRect popUpRect(globalPos.x(), globalPos.y(), desktopMenu->width(), desktopMenu->height());

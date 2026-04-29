@@ -17,7 +17,7 @@ namespace Delegate {
 class LayoutName : public QStyledItemDelegate
 {
 public:
-    LayoutName(QObject *parent = 0);
+    LayoutName(QObject *parent = nullptr);
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;

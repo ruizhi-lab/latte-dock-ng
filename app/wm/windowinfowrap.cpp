@@ -386,12 +386,12 @@ void WindowInfoWrap::setIsVirtualDesktopsChangeable(bool virtualdesktopchangeabl
 
 bool WindowInfoWrap::isMainWindow() const
 {
-    return (m_parentId.toInt() <= 0);
+    return m_parentId.isEmpty();
 }
 
 bool WindowInfoWrap::isChildWindow() const
 {
-    return (m_parentId.toInt() > 0);
+    return !m_parentId.isEmpty();
 }
 
 

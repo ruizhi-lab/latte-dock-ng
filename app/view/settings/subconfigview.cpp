@@ -125,7 +125,7 @@ QString SubConfigView::validTitle() const
 
 Latte::WindowSystem::WindowId SubConfigView::trackedWindowId()
 {
-    if (m_waylandWindowId.toInt() <= 0) {
+    if (m_waylandWindowId.isEmpty()) {
         updateWaylandId();
     }
 

@@ -110,7 +110,7 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
     for(int i=0; i<rowCount(); ++i) {
         if ((*this)[i].id.startsWith(TEMPIDPREFIX)) {
             QString tid = (*this)[i].id;
-            tid.remove(0, QString(TEMPIDPREFIX).count());
+            tid.remove(0, QString(TEMPIDPREFIX).size());
             if (tid.toInt() > maxTempId) {
                 maxTempId = tid.toInt();
             }

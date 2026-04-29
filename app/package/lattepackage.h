@@ -20,7 +20,7 @@ class Package : public KPackage::PackageStructure
     Q_OBJECT
 
 public:
-    explicit Package(QObject *parent = 0, const QVariantList &args = QVariantList());
+    explicit Package(QObject *parent = nullptr, const QVariantList &args = QVariantList());
 
     ~Package() override;
     void initPackage(KPackage::Package *package) override;

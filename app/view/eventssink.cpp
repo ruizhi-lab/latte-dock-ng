@@ -81,13 +81,13 @@ QEvent *EventsSink::onEvent(QEvent *e)
         break;
     case QEvent::DragEnter:
         if (auto de = static_cast<QDragEnterEvent *>(e)) {
-            QPointF point = de->posF();
+            const QPointF point = de->position();
             if (originSinksContain(point)) {
                 auto de2 = new QDragEnterEvent(positionAdjustedForDestination(point).toPoint(),
                                                de->possibleActions(),
                                                de->mimeData(),
-                                               de->mouseButtons(),
-                                               de->keyboardModifiers());
+                                               de->buttons(),
+                                               de->modifiers());
                 sunkevent = de2;
             } else if (!destinationContains(point)) {
                 release();
@@ -97,13 +97,13 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
     case QEvent::DragMove:
         if (auto de = static_cast<QDragMoveEvent *>(e)) {
-            QPointF point = de->posF();
+            const QPointF point = de->position();
             if (originSinksContain(point)) {
                 auto de2 = new QDragMoveEvent(positionAdjustedForDestination(point).toPoint(),
                                               de->possibleActions(),
                                               de->mimeData(),
-                                              de->mouseButtons(),
-                                              de->keyboardModifiers());
+                                              de->buttons(),
+                                              de->modifiers());
 
                 sunkevent = de2;
             } else if (!destinationContains(point)) {
@@ -114,13 +114,13 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
     case QEvent::Drop:
         if (auto de = static_cast<QDropEvent *>(e)) {
-            QPointF point = de->posF();
+            const QPointF point = de->position();
             if (originSinksContain(point)) {
                 auto de2 = new QDropEvent(positionAdjustedForDestination(point).toPoint(),
                                           de->possibleActions(),
                                           de->mimeData(),
-                                          de->mouseButtons(),
-                                          de->keyboardModifiers());
+                                          de->buttons(),
+                                          de->modifiers());
 
                 sunkevent = de2;
             } else if (!destinationContains(point)) {
@@ -132,8 +132,10 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
     case QEvent::MouseMove:
         if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            if (m_view->positioner() && m_view->positioner()->isCursorInsideView() && originSinksContain(me->windowPos())) {
-                auto positionadjusted = positionAdjustedForDestination(me->windowPos());
+            const QPointF scenePos = me->scenePosition();
+
+            if (m_view->positioner() && m_view->positioner()->isCursorInsideView() && originSinksContain(scenePos)) {
+                auto positionadjusted = positionAdjustedForDestination(scenePos);
                 auto me2 = new QMouseEvent(me->type(),
                                            positionadjusted,
                                            positionadjusted,
@@ -141,7 +143,7 @@ QEvent *EventsSink::onEvent(QEvent *e)
                                            me->button(), me->buttons(), me->modifiers());
 
                 sunkevent = me2;
-            } else if (!destinationContains(me->windowPos())) {
+            } else if (!destinationContains(scenePos)) {
                 release();
             }
         }
@@ -149,8 +151,10 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
     case QEvent::MouseButtonPress:
         if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            if (originSinksContain(me->windowPos())) {
-                auto positionadjusted = positionAdjustedForDestination(me->windowPos());
+            const QPointF scenePos = me->scenePosition();
+
+            if (originSinksContain(scenePos)) {
+                auto positionadjusted = positionAdjustedForDestination(scenePos);
                 auto me2 = new QMouseEvent(me->type(),
                                            positionadjusted,
                                            positionadjusted,
@@ -159,7 +163,7 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
                 qDebug() << "Sunk Event:: sunk event pressed...";
                 sunkevent = me2;
-            } else if (!destinationContains(me->windowPos())) {
+            } else if (!destinationContains(scenePos)) {
                 release();
             }
         }
@@ -167,8 +171,10 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
     case QEvent::MouseButtonRelease:
         if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            if (originSinksContain(me->windowPos())) {
-                auto positionadjusted = positionAdjustedForDestination(me->windowPos());
+            const QPointF scenePos = me->scenePosition();
+
+            if (originSinksContain(scenePos)) {
+                auto positionadjusted = positionAdjustedForDestination(scenePos);
                 auto me2 = new QMouseEvent(me->type(),
                                            positionadjusted,
                                            positionadjusted,
@@ -176,7 +182,7 @@ QEvent *EventsSink::onEvent(QEvent *e)
                                            me->button(), me->buttons(), me->modifiers());
 
                 sunkevent = me2;
-            } else if (!destinationContains(me->windowPos())) {
+            } else if (!destinationContains(scenePos)) {
                 release();
             }
         }
@@ -234,4 +240,3 @@ bool EventsSink::originSinksContain(const QPointF &point) const
 
 }
 }
-

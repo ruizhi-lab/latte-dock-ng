@@ -25,6 +25,7 @@
 #include <QLatin1String>
 
 // KDE
+#include <KGuiAddons/KIconUtils>
 #include <KIconTheme>
 #include <KIconThemes/KIconLoader>
 #include <KIconThemes/KIconEffect>
@@ -561,15 +562,18 @@ void IconItem::loadPixmap()
         if (!overlay.isEmpty()) {
             // There is at least one overlay, draw all overlays above m_pixmap
             // and cancel the check
-            KIconLoader::global()->drawOverlays(m_overlays, result, KIconLoader::Desktop);
+            const qreal dpr = result.devicePixelRatio();
+            const QSize overlaySize = QSize(qRound(result.width() / dpr), qRound(result.height() / dpr));
+            result = KIconUtils::addOverlays(QIcon(result), m_overlays).pixmap(overlaySize * dpr);
+            result.setDevicePixelRatio(dpr);
             break;
         }
     }
 
     if (!isEnabled()) {
-        result = KIconLoader::global()->iconEffect()->apply(result, KIconLoader::Desktop, KIconLoader::DisabledState);
+        KIconEffect::toDisabled(result);
     } else if (m_active) {
-        result = KIconLoader::global()->iconEffect()->apply(result, KIconLoader::Desktop, KIconLoader::ActiveState);
+        KIconEffect::toActive(result);
     }
 
     m_iconPixmap = result;

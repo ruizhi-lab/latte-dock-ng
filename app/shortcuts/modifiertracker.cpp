@@ -100,12 +100,12 @@ bool ModifierTracker::sequenceModifierPressed(const QKeySequence &seq)
         return false;
     }
 
-    int mod = seq[seq.count() - 1] & Qt::KeyboardModifierMask;
+    const Qt::KeyboardModifiers modifiers = seq[seq.count() - 1].keyboardModifiers();
 
-    if ( ((mod & Qt::SHIFT) && m_pressed[Qt::Key_Shift])
-         || ((mod & Qt::CTRL) && m_pressed[Qt::Key_Control])
-         || ((mod & Qt::ALT) && m_pressed[Qt::Key_Alt])
-         || ((mod & Qt::META) && m_pressed[Qt::Key_Super_L])) {
+    if ((modifiers.testFlag(Qt::ShiftModifier) && m_pressed[Qt::Key_Shift])
+        || (modifiers.testFlag(Qt::ControlModifier) && m_pressed[Qt::Key_Control])
+        || (modifiers.testFlag(Qt::AltModifier) && m_pressed[Qt::Key_Alt])
+        || (modifiers.testFlag(Qt::MetaModifier) && m_pressed[Qt::Key_Super_L])) {
         return true;
     }
 

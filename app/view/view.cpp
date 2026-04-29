@@ -1578,7 +1578,10 @@ void View::releaseGrab()
     setMouseGrabEnabled(false);
 
     //! Send a fake QEvent::Leave to inform applets for mouse leaving the view
-    QHoverEvent e(QEvent::Leave, QPoint(-5,-5),  QPoint(m_releaseGrab_x, m_releaseGrab_y));
+    const QPointF scenePos(-5, -5);
+    const QPointF globalPos = mapToGlobal(scenePos.toPoint());
+    const QPointF oldPos(m_releaseGrab_x, m_releaseGrab_y);
+    QHoverEvent e(QEvent::Leave, scenePos, globalPos, oldPos);
     QCoreApplication::instance()->sendEvent(this, &e);
 }
 

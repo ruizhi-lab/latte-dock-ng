@@ -121,7 +121,7 @@ Latte::View *SubWindow::parentView()
 
 Latte::WindowSystem::WindowId SubWindow::trackedWindowId()
 {
-    if (m_trackedWindowId.toInt() <= 0) {
+    if (m_trackedWindowId.isEmpty()) {
         updateWaylandId();
     }
 

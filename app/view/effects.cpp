@@ -473,7 +473,7 @@ void Effects::updateMask()
             }
 
             const QVariant maskProperty = m_panelBackgroundSvg->property("mask");
-            if (static_cast<QMetaType::Type>(maskProperty.type()) == QMetaType::QRegion) {
+            if (maskProperty.metaType().id() == QMetaType::QRegion) {
                 fixedMask = maskProperty.value<QRegion>();
             }
         }
@@ -534,7 +534,7 @@ void Effects::updateEffects()
                         clearEffects = true;
                     } else {
                         const QVariant maskProperty = m_panelBackgroundSvg->property("mask");
-                        if (static_cast<QMetaType::Type>(maskProperty.type()) == QMetaType::QRegion) {
+                        if (maskProperty.metaType().id() == QMetaType::QRegion) {
                             backMask = maskProperty.value<QRegion>();
                         }
                     }

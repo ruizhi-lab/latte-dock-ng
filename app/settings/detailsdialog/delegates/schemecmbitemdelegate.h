@@ -21,7 +21,7 @@ class SchemeCmbItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    SchemeCmbItemDelegate(QObject *parent = 0);
+    SchemeCmbItemDelegate(QObject *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };

@@ -176,7 +176,7 @@ void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid)
 
     // add applet in clones and exclude the one that probably produced this triggering
     for(const auto clone: m_clones) {
-        if (clone->containment()->id() == excludecloneid) {
+        if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;
         }
@@ -196,7 +196,7 @@ void OriginalView::addApplet(QObject *mimedata, const int &x, const int &y, cons
 
     // add applet in clones and exclude the one that probably produced this triggering
     for(const auto clone: m_clones) {
-        if (clone->containment()->id() == excludecloneid) {
+        if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;
         }

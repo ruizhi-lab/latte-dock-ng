@@ -20,7 +20,7 @@ class ColorCmbBoxItem : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    ColorCmbBoxItem(QObject *parent = 0);
+    ColorCmbBoxItem(QObject *parent = nullptr);
     ~ColorCmbBoxItem();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;

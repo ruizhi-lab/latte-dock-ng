@@ -18,7 +18,7 @@ namespace Delegate {
 class CheckBox : public QStyledItemDelegate
 {
 public:
-    CheckBox(QObject *parent = 0);
+    CheckBox(QObject *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;

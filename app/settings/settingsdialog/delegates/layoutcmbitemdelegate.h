@@ -24,7 +24,7 @@ class LayoutCmbItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    LayoutCmbItemDelegate(QObject *parent = 0);
+    LayoutCmbItemDelegate(QObject *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };

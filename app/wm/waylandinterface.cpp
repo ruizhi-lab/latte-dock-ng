@@ -423,7 +423,7 @@ void WaylandInterface::removeViewStruts(QWindow &view)
 WindowId WaylandInterface::activeWindow()
 {
     if (!m_windowManagement) {
-        return 0;
+        return WindowId();
     }
 
     auto wid = m_windowManagement->activeWindow();

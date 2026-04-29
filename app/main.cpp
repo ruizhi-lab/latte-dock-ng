@@ -38,13 +38,13 @@
 #include <KWindowSystem>
 
 //! COLORS
-#define CNORMAL  "\e[0m"
-#define CIGREEN  "\e[1;32m"
-#define CGREEN   "\e[0;32m"
-#define CICYAN   "\e[1;36m"
-#define CCYAN    "\e[0;36m"
-#define CIRED    "\e[1;31m"
-#define CRED     "\e[0;31m"
+#define CNORMAL  "\x1b[0m"
+#define CIGREEN  "\x1b[1;32m"
+#define CGREEN   "\x1b[0;32m"
+#define CICYAN   "\x1b[1;36m"
+#define CCYAN    "\x1b[0;36m"
+#define CIRED    "\x1b[1;31m"
+#define CRED     "\x1b[0;31m"
 
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
@@ -484,7 +484,9 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
                            << CICYAN << " - " << CNORMAL << msg;
     } else {
         QFile logfile(filterDebugLogFile);
-        logfile.open(QIODevice::WriteOnly | QIODevice::Append);
+        if (!logfile.open(QIODevice::WriteOnly | QIODevice::Append)) {
+            return;
+        }
         QTextStream logts(&logfile);
         logts << "[" << typeStr.toStdString().c_str() << " : " << QTime::currentTime().toString("h:mm:ss.zz").toStdString().c_str() << "]"
               <<  " - " << msg << Qt::endl;

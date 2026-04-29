@@ -109,11 +109,12 @@ void GlobalShortcuts::init()
     for (int i = 1; i < 10; ++i) {
         const int entryNumber = i;
         const Qt::Key key = static_cast<Qt::Key>(Qt::Key_0 + i);
+        const QKeySequence metaShortcut(QKeyCombination(Qt::MetaModifier, key));
 
         QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(QString::number(entryNumber)));
         action->setText(i18n("Activate Entry %1", entryNumber));
-        action->setShortcut(QKeySequence(Qt::META + key));
-        KGlobalAccel::setGlobalShortcut(action, QKeySequence(Qt::META + key));
+        action->setShortcut(metaShortcut);
+        KGlobalAccel::setGlobalShortcut(action, metaShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
             // qDebug() << "meta action...";
             m_modifierTracker->cancelMetaPressed();
@@ -126,10 +127,11 @@ void GlobalShortcuts::init()
 
     //activate actions [10-19]
     for (int i = 10; i < 20; ++i) {
+        const QKeySequence metaShortcut(QKeyCombination(Qt::MetaModifier, keysAboveTen[i - 10]));
         QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(QString::number(i)));
         action->setText(i18n("Activate Entry %1", i));
-        action->setShortcut(QKeySequence(Qt::META + keysAboveTen[i - 10]));
-        KGlobalAccel::setGlobalShortcut(action, QKeySequence(Qt::META + keysAboveTen[i - 10]));
+        action->setShortcut(metaShortcut);
+        KGlobalAccel::setGlobalShortcut(action, metaShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::META));
@@ -140,10 +142,11 @@ void GlobalShortcuts::init()
     for (int i = 1; i < 10; ++i) {
         const int entryNumber = i;
         const Qt::Key key = static_cast<Qt::Key>(Qt::Key_0 + i);
+        const QKeySequence newInstanceShortcut(QKeyCombination(Qt::MetaModifier | Qt::ControlModifier, key));
 
         QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(QString::number(entryNumber)));
         action->setText(i18n("New Instance for Entry %1", entryNumber));
-        KGlobalAccel::setGlobalShortcut(action, QKeySequence(Qt::META | Qt::CTRL + key));
+        KGlobalAccel::setGlobalShortcut(action, newInstanceShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
             // qDebug() << "meta + ctrl + action...";
             m_modifierTracker->cancelMetaPressed();
@@ -153,9 +156,10 @@ void GlobalShortcuts::init()
 
     //new instance actions [10-19]
     for (int i = 10; i < 20; ++i) {
+        const QKeySequence newInstanceShortcut(QKeyCombination(Qt::MetaModifier | Qt::ControlModifier, keysAboveTen[i - 10]));
         QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(QString::number(i)));
         action->setText(i18n("New Instance for Entry %1", i));
-        KGlobalAccel::setGlobalShortcut(action, QKeySequence(Qt::META | Qt::CTRL + keysAboveTen[i - 10]));
+        KGlobalAccel::setGlobalShortcut(action, newInstanceShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::CTRL));

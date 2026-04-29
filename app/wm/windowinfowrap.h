@@ -134,8 +134,8 @@ public:
     bool isOnActivity(const QString &activity) const;
 
 private:
-    WindowId m_wid{0};
-    WindowId m_parentId{0};
+    WindowId m_wid;
+    WindowId m_parentId;
 
     QRect m_geometry;
 

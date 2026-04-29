@@ -824,11 +824,13 @@ const Latte::Data::Layout &Layouts::at(const int &row)
 
 const Latte::Data::Layout &Layouts::currentData(const QString &id)
 {
+    static const Latte::Data::Layout emptyLayout{};
+
     if (m_layoutsTable.containsId(id)){
         return m_layoutsTable[id];
     }
 
-    return Latte::Data::Layout();
+    return emptyLayout;
 }
 
 

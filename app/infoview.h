@@ -42,7 +42,7 @@ public:
     void init();
     Qt::WindowFlags wFlags() const;
 
-    void setOnActivities(QStringList activities = {"0"});
+    void setOnActivities(QStringList activities = {"{0}"});
 
 public Q_SLOTS:
     Q_INVOKABLE void syncGeometry();
@@ -62,6 +62,7 @@ private:
     QString m_id;
 
     QString m_message;
+    QStringList m_activities;
 
     QScreen *m_screen{nullptr};
 

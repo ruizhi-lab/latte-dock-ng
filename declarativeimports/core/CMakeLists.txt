@@ -22,6 +22,7 @@ target_link_libraries(lattecoreplugin
     Plasma::PlasmaQuick
     ${LATTE_QUICKADDONS_TARGET}
     KF6::IconThemes
+    KF6::GuiAddons
 )
 
 install(TARGETS lattecoreplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)

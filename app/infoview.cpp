@@ -10,6 +10,7 @@
 // local
 #include <config-latte.h>
 #include "apptypes.h"
+#include "data/layoutdata.h"
 #include "wm/abstractwindowinterface.h"
 #include "view/panelshadows_p.h"
 
@@ -153,6 +154,10 @@ void InfoView::updateWaylandId()
 
         m_trackedWindowId = newId;
         m_corona->wm()->registerIgnoredWindow(m_trackedWindowId);
+
+        if (!m_trackedWindowId.isNull()) {
+            m_corona->wm()->setWindowOnActivities(m_trackedWindowId, m_activities);
+        }
     }
 }
 
@@ -215,7 +220,17 @@ bool InfoView::event(QEvent *e)
 
 void InfoView::setOnActivities(QStringList activities)
 {
-    Q_UNUSED(activities)
+    const QString allActivitiesId = QString::fromLatin1(Latte::Data::Layout::ALLACTIVITIESID);
+
+    if (activities.isEmpty() || activities.contains(allActivitiesId) || activities.contains(QStringLiteral("0"))) {
+        m_activities.clear();
+    } else {
+        m_activities = activities;
+    }
+
+    if (!m_trackedWindowId.isNull()) {
+        m_corona->wm()->setWindowOnActivities(m_trackedWindowId, m_activities);
+    }
 }
 
 }

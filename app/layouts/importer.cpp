@@ -299,9 +299,7 @@ bool Importer::importOldConfiguration(QString oldConfigPath, QString newName)
     }
 
     KTar archive(oldConfigPath, QStringLiteral("application/x-tar"));
-    archive.open(QIODevice::ReadOnly);
-
-    if (!archive.isOpen()) {
+    if (!archive.open(QIODevice::ReadOnly)) {
         return false;
     }
 
@@ -441,10 +439,8 @@ Importer::LatteFileVersion Importer::fileVersion(QString file)
     }
 
     KTar archive(file, QStringLiteral("application/x-tar"));
-    archive.open(QIODevice::ReadOnly);
-
     //! if the file isnt a tar archive
-    if (!archive.isOpen()) {
+    if (!archive.open(QIODevice::ReadOnly)) {
         return Importer::UnknownFileType;
     }
 
@@ -515,9 +511,7 @@ bool Importer::importHelper(QString fileName)
     }
 
     KTar archive(fileName, QStringLiteral("application/x-tar"));
-    archive.open(QIODevice::ReadOnly);
-
-    if (!archive.isOpen()) {
+    if (!archive.open(QIODevice::ReadOnly)) {
         return false;
     }
 
