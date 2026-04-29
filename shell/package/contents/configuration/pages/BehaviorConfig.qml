@@ -64,7 +64,7 @@ PlasmaComponents.Page {
 
             Connections {
                 target: universalSettings
-                onScreensCountChanged: screenRow.updateScreens()
+                function onScreensCountChanged() { screenRow.updateScreens() }
             }
 
             RowLayout {
@@ -125,7 +125,7 @@ PlasmaComponents.Page {
 
                 Connections{
                     target: viewConfig
-                    onShowSignal: screenRow.updateScreens();
+                    function onShowSignal() { screenRow.updateScreens(); }
                 }
 
                 ListModel {

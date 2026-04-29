@@ -236,13 +236,13 @@ MouseArea {
 
     Connections {
         target: currentApplet
-        onWidthChanged: {
+        function onWidthChanged() {
             if (configurationArea.pressed && root.isHorizontal) {
                 currentApplet.x = configurationArea.lastX - currentApplet.width/2;
             }
         }
 
-        onHeightChanged: {
+        function onHeightChanged() {
             if (configurationArea.pressed && root.isVertical) {
                 currentApplet.y = configurationArea.lastY - currentApplet.height/2;
             }

@@ -225,7 +225,7 @@ Item {
 
     Connections {
         target: plasmoid
-        onLocationChanged: {
+        function onLocationChanged() {
             iconGeometryTimer.start();
         }
     }
@@ -234,20 +234,20 @@ Item {
         target: plasmoid.configuration
 
         // onLaunchersChanged: tasksModel.launcherList = plasmoid.configuration.launchers
-        onGroupingAppIdBlacklistChanged: tasksModel.groupingAppIdBlacklist = plasmoid.configuration.groupingAppIdBlacklist;
-        onGroupingLauncherUrlBlacklistChanged: tasksModel.groupingLauncherUrlBlacklist = plasmoid.configuration.groupingLauncherUrlBlacklist;
+        function onGroupingAppIdBlacklistChanged() { tasksModel.groupingAppIdBlacklist = plasmoid.configuration.groupingAppIdBlacklist; }
+        function onGroupingLauncherUrlBlacklistChanged() { tasksModel.groupingLauncherUrlBlacklist = plasmoid.configuration.groupingLauncherUrlBlacklist; }
     }
 
 
     Connections {
         target: appletAbilities.myView
-        onIsHiddenChanged: {
+        function onIsHiddenChanged() {
             if (appletAbilities.myView.isHidden) {
                 windowsPreviewDlg.hide("3.3");
             }
         }
 
-        onIsReadyChanged: {
+        function onIsReadyChanged() {
             if (appletAbilities.myView.isReady) {
                 plasmoid.action("configure").visible = false;
                 plasmoid.configuration.isInLatteDock = true;

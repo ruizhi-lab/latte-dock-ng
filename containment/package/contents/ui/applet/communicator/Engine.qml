@@ -65,7 +65,7 @@ Item{
     //! BEGIN OF CONNECTIONS
     Connections{
         target: appletItem
-        onAppletChanged: {
+        function onAppletChanged() {
             if (applet) {
                 AppletIdentifier.checkAndUpdateAppletRootItem();
                 AppletIdentifier.reconsiderAppletIconItem();

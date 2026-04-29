@@ -442,7 +442,7 @@ Item {
     //! It is used only when the user chooses different alignment types and not during startup
     Connections {
         target: latteView ? latteView : null
-        onAlignmentChanged: {
+        function onAlignmentChanged() {
             if (latteView.alignment === LatteCore.Types.NoneAlignment) {
                 return;
             }
@@ -485,14 +485,14 @@ Item {
 
     Connections {
         target: latteView
-        onPositionerChanged: {
+        function onPositionerChanged() {
             if (latteView.positioner) {
                 latteView.positioner.hidingForRelocationStarted.connect(visibilityManager.slotHideDockDuringLocationChange);
                 latteView.positioner.showingAfterRelocationFinished.connect(visibilityManager.slotShowDockAfterLocationChange);
             }
         }
 
-        onVisibilityChanged: {
+        function onVisibilityChanged() {
             if (latteView.visibility) {
                 latteView.visibility.onContainsMouseChanged.connect(visibilityManager.slotContainsMouseChanged);
                 latteView.visibility.onMustBeHide.connect(visibilityManager.slotMustBeHide);
@@ -1069,7 +1069,7 @@ Item {
 
     Connections {
         target:fastLayoutManager
-        onHasRestoredAppletsChanged: {
+        function onHasRestoredAppletsChanged() {
             if (fastLayoutManager.hasRestoredApplets) {
                 startupDelayer.start();
             }

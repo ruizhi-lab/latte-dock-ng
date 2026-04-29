@@ -29,7 +29,7 @@ DragDrop.DropArea {
     Connections{
         target: root.dragInfo
 
-        onEnteredChanged: {
+        function onEnteredChanged() {
             if(!root.dragInfo.entered) {
                 dragArea.clearInfo();
             }
@@ -39,7 +39,7 @@ DragDrop.DropArea {
     Connections{
         target: latteView
 
-        onContainsDragChanged: {
+        function onContainsDragChanged() {
             if(!latteView.containsDrag) {
                 dragArea.clearInfo();
             }

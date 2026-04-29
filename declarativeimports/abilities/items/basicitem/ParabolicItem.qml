@@ -106,7 +106,7 @@ Item{
         //correctly, in such case we make a fast reinitialization for the sizes
         Connections {
             target: plasmoid
-            onFormFactorChanged:{
+            function onFormFactorChanged() {
                 parabolicItem.zoom = 1.01;
                 parabolicItem.zoomLength = 1.01;
                 parabolicItem.zoomThickness = 1.01;
@@ -198,7 +198,7 @@ Item{
 
             Connections {
                 target: abilityItem
-                onContentItemChanged: {
+                function onContentItemChanged() {
                     if (abilityItem.contentItem && abilityItem.contentItem.parent !== _contentItemContainer) {
                         abilityItem.contentItem.parent = _contentItemContainer;
                     }
@@ -262,7 +262,7 @@ Item{
 
     Connections {
         target: abilityItem
-        onVisibleChanged: {
+        function onVisibleChanged() {
             if (!abilityItem.visible) {
                 //! is mostly used when the user destroys tasks applet from the context menu and both
                 //! axis animations should be released in that case

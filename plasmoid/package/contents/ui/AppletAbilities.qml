@@ -33,21 +33,21 @@ AbilityClient.AppletAbilities {
     //! Connections
     Connections {
         target: _abilityContainer.shortcuts
-        onDisabledIsStealingGlobalPositionShortcuts: {
+        function onDisabledIsStealingGlobalPositionShortcuts() {
             plasmoid.configuration.isPreferredForPositionShortcuts = false;
         }
     }
 
     Connections {
         target: _abilityContainer.launchers
-        onDisabledIsStealingDroppedLaunchers: {
+        function onDisabledIsStealingDroppedLaunchers() {
             plasmoid.configuration.isPreferredForDroppedLaunchers = false;
         }
     }
 
     Connections {
         target: _abilityContainer.userRequests
-        onSglViewType: {
+        function onSglViewType() {
             if (viewType === LatteCore.Types.DockView) {
                 plasmoid.configuration.animationLauncherBouncing = true;
                 plasmoid.configuration.animationWindowInAttention = true;

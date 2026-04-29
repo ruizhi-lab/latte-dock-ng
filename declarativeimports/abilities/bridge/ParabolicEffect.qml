@@ -24,7 +24,7 @@ BridgeItem {
 
     Connections {
         target: client ? client : null
-        onSglClearZoom: {
+        function onSglClearZoom() {
             if (parabolicBridge.host) {
                 parabolicBridge.host.sglClearZoom();
             }
@@ -33,7 +33,7 @@ BridgeItem {
 
     Connections {
         target: host ? host : null
-        onSglClearZoom: {
+        function onSglClearZoom() {
             if (parabolicBridge.client) {
                 parabolicBridge.client.sglClearZoom();
             }

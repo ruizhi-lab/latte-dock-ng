@@ -9,6 +9,8 @@
 build*/
 /cmake-build*
 
+.DS_Store
+
 # backup files
 *.autosave
 *.desktop~

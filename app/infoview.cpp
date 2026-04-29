@@ -17,6 +17,7 @@
 #include <QQuickItem>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QRandomGenerator>
 #include <QScreen>
 
 // KDE
@@ -37,7 +38,7 @@ InfoView::InfoView(Latte::Corona *corona, QString message, QScreen *screen, QWin
       m_message(message),
       m_screen(screen)
 {
-    m_id = QString::number(qrand() % 1000);
+    m_id = QString::number(QRandomGenerator::global()->bounded(1000));
 
     setTitle(validTitle());
 

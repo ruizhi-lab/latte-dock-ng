@@ -817,14 +817,14 @@ AbilityItem.BasicItem {
     Connections {
         target: pulseAudio.item
         ignoreUnknownSignals: true // Plasma-PA might not be available
-        onStreamsChanged: taskItem.updateAudioStreams()
+        function onStreamsChanged() { taskItem.updateAudioStreams() }
     }
 
     //fix bug #478, when changing form factor sometimes the tasks are not positioned
     //correctly, in such case we make a fast reinitialization for the sizes
     Connections {
         target: plasmoid
-        onFormFactorChanged:{
+        function onFormFactorChanged() {
             taskItem.inAddRemoveAnimation = false;
         }
     }
@@ -833,10 +833,10 @@ AbilityItem.BasicItem {
         target: root
         //trying to fix #440, showing the audio icon indicator to irrelevant tasks
         //after dragging an existent task with audio
-        onDragSourceChanged: taskItem.updateAudioStreams()
-        onShowAudioBadgeChanged: taskItem.updateAudioStreams()
+        function onDragSourceChanged() { taskItem.updateAudioStreams() }
+        function onShowAudioBadgeChanged() { taskItem.updateAudioStreams() }
 
-        onDisableAllWindowsFunctionalityChanged: {
+        function onDisableAllWindowsFunctionalityChanged() {
             if (!root.inEditMode) {
                 return;
             }
@@ -844,7 +844,7 @@ AbilityItem.BasicItem {
             taskItem.updateVisibilityBasedOnLaunchers();
         }
 
-        onShowWindowsOnlyFromLaunchersChanged: {
+        function onShowWindowsOnlyFromLaunchersChanged() {
             if (!root.inEditMode) {
                 return;
             }
@@ -852,7 +852,7 @@ AbilityItem.BasicItem {
             taskItem.updateVisibilityBasedOnLaunchers();
         }
 
-        onInActivityChangeChanged: {
+        function onInActivityChangeChanged() {
             if ((root.showWindowsOnlyFromLaunchers || root.disableAllWindowsFunctionality) && !root.inActivityChange) {
                 taskItem.updateVisibilityBasedOnLaunchers();
             }
@@ -861,7 +861,7 @@ AbilityItem.BasicItem {
 
     Connections {
         target: scrollableList
-        onAnimationsFinishedChanged: {
+        function onAnimationsFinishedChanged() {
             if (scrollableList.animationsFinished) {
                 taskItem.slotPublishGeometries();
             }
@@ -870,13 +870,13 @@ AbilityItem.BasicItem {
 
     Connections {
         target: taskItem.abilities.myView
-        onIsHiddenChanged: {
+        function onIsHiddenChanged() {
             if (taskItem.abilities.myView.isHidden) {
                 taskItem.slotPublishGeometries();
             }
         }
 
-        onIsShownFullyChanged: {
+        function onIsShownFullyChanged() {
             if (taskItem.abilities.myView.isShownFully) {
                 taskItem.slotPublishGeometries();
             }

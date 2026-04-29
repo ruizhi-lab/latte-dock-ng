@@ -13,7 +13,7 @@ AbilityHost.Indicators {
 
     Connections {
         target: _indicators.info
-        onSvgPathsChanged: {
+        function onSvgPathsChanged() {
             if (_indicators.isEnabled) {
                 view.indicator.resources.setSvgImagePaths(_indicators.info.svgPaths);
             }
@@ -22,7 +22,7 @@ AbilityHost.Indicators {
 
     Connections {
         target:_indicators
-        onIsEnabledChanged: {
+        function onIsEnabledChanged() {
             if (_indicators.isEnabled) {
                 view.indicator.resources.setSvgImagePaths(_indicators.info.svgPaths);
             }

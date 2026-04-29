@@ -35,11 +35,11 @@ AbilityItem.IndicatorLevel {
     Connections {
         target: abilityItem
         enabled: indicatorLevel.level.indicator.host ? indicatorLevel.level.indicator.host.info.needsMouseEventCoordinates : false
-        onMousePressed: {
+        function onMousePressed() {
             var fixedPos = indicatorLevel.mapFromItem(abilityItem, x, y);
             level.mousePressed(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }
-        onMouseReleased: {
+        function onMouseReleased() {
             var fixedPos = indicatorLevel.mapFromItem(abilityItem, x, y);
             level.mouseReleased(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }
@@ -47,8 +47,8 @@ AbilityItem.IndicatorLevel {
 
     Connections {
         target: abilityItem
-        onTaskLauncherActivated: level.taskLauncherActivated();
-        onTaskGroupedWindowAdded: level.taskGroupedWindowAdded();
-        onTaskGroupedWindowRemoved: level.taskGroupedWindowRemoved();
+        function onTaskLauncherActivated() { level.taskLauncherActivated(); }
+        function onTaskGroupedWindowAdded() { level.taskGroupedWindowAdded(); }
+        function onTaskGroupedWindowRemoved() { level.taskGroupedWindowRemoved(); }
     }
 }

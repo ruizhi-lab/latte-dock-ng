@@ -59,8 +59,8 @@ Item {
 
     Connections {
         target: root
-        onContainsOnlyPlasmaTasksChanged: sizer.updateIconSize();
-        onMaxLengthChanged: {
+        function onContainsOnlyPlasmaTasksChanged() { sizer.updateIconSize(); }
+        function onMaxLengthChanged() {
             if (latteView && latteView.positioner && !latteView.positioner.isOffScreen) {
                 sizer.updateIconSize();
             }
@@ -70,7 +70,7 @@ Item {
     Connections {
         target: metrics
 
-        onPortionIconSizeChanged: {
+        function onPortionIconSizeChanged() {
             if (metrics.portionIconSize!==-1) {
                 sizer.updateIconSize();
             }
@@ -79,13 +79,13 @@ Item {
 
     Connections {
         target: latteView
-        onWidthChanged:{
+        function onWidthChanged() {
             if (root.isHorizontal && metrics.portionIconSize!==-1) {
                 sizer.updateIconSize();
             }
         }
 
-        onHeightChanged:{
+        function onHeightChanged() {
             if (root.isVertical && metrics.portionIconSize!==-1) {
                 sizer.updateIconSize();
             }
@@ -94,7 +94,7 @@ Item {
 
     Connections {
         target: latteView && latteView.positioner ? latteView.positioner : null
-        onIsOffScreenChanged: {
+        function onIsOffScreenChanged() {
             if (!latteView.positioner.isOffScreen) {
                 sizer.updateIconSize();
             }
@@ -103,7 +103,7 @@ Item {
 
     Connections {
         target: visibilityManager
-        onInNormalStateChanged: {
+        function onInNormalStateChanged() {
             if (visibilityManager.inNormalState) {
                 sizer.updateIconSize();
             }

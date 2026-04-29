@@ -63,41 +63,41 @@ Item{
 
     Connections{
         target: background.totals
-        onVisualLengthChanged: updateMaskArea();
-        onVisualThicknessChanged: updateMaskArea();
+        function onVisualLengthChanged() { updateMaskArea(); }
+        function onVisualThicknessChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: background.shadows
-        onHeadThicknessChanged: updateMaskArea();
+        function onHeadThicknessChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: latteView ? latteView : null
-        onXChanged: updateMaskArea();
-        onYChanged: updateMaskArea()
-        onWidthChanged: updateMaskArea();
-        onHeightChanged: updateMaskArea();
+        function onXChanged() { updateMaskArea(); }
+        function onYChanged() { updateMaskArea() }
+        function onWidthChanged() { updateMaskArea(); }
+        function onHeightChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: animations.needBothAxis
-        onCountChanged: updateMaskArea();
+        function onCountChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: animations.needLength
-        onCountChanged: updateMaskArea();
+        function onCountChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: animations.needThickness
-        onCountChanged: updateMaskArea();
+        function onCountChanged() { updateMaskArea(); }
     }
 
     Connections{
         target: layoutsManager
-        onCurrentLayoutIsSwitching: {
+        function onCurrentLayoutIsSwitching() {
             if (LatteCore.WindowSystem.compositingActive && latteView && latteView.layout && latteView.layout.name === layoutName) {
                 parabolic.sglClearZoom();
             }
@@ -106,12 +106,12 @@ Item{
 
     Connections {
         target: metrics.mask.thickness
-        onMaxZoomedChanged: updateMaskArea()
+        function onMaxZoomedChanged() { updateMaskArea() }
     }
 
     Connections {
         target: root.myView
-        onInRelocationAnimationChanged: {
+        function onInRelocationAnimationChanged() {
             if (!root.myView.inRelocationAnimation) {
                 manager.updateMaskArea();
             }
@@ -120,17 +120,17 @@ Item{
 
     Connections {
         target: latteView ? latteView.effects : null
-        onRectChanged: manager.updateMaskArea()
+        function onRectChanged() { manager.updateMaskArea() }
     }
 
     Connections{
         target: themeExtended ? themeExtended : null
-        onThemeChanged: latteView.effects.forceMaskRedraw();
+        function onThemeChanged() { latteView.effects.forceMaskRedraw(); }
     }
 
     Connections {
         target: LatteCore.WindowSystem
-        onCompositingActiveChanged: {
+        function onCompositingActiveChanged() {
             manager.updateMaskArea();
         }
     }
@@ -613,7 +613,7 @@ Item{
 
     Connections {
         target: root
-        onHideThickScreenGapChanged: {
+        function onHideThickScreenGapChanged() {
             if (!latteView || !root.viewIsAvailable) {
                 return;
             }
@@ -623,7 +623,7 @@ Item{
             }
         }
 
-        onInStartupChanged: {
+        function onInStartupChanged() {
             //! used for positioning properly real floating panels when there is a maximized window
             if (root.hideThickScreenGap && !inStartup && latteView.positioner.slideOffset===0) {
                 if (root.behaveAsPlasmaPanel && !latteView.visibility.isHidden) {

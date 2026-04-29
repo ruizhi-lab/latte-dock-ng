@@ -40,22 +40,22 @@ Ability.LayouterPrivate {
 
     Connections {
         target: layouts
-        onContentsLengthChanged: _layouter.updateSizeForAppletsInFill();
+        function onContentsLengthChanged() { _layouter.updateSizeForAppletsInFill(); }
     }
 
     Connections {
         target: metrics
-        onIconSizeChanged: _layouter.updateSizeForAppletsInFill();
+        function onIconSizeChanged() { _layouter.updateSizeForAppletsInFill(); }
     }
 
     Connections {
         target: plasmoid
-        onFormFactorChanged: _layouter.updateSizeForAppletsInFill();
+        function onFormFactorChanged() { _layouter.updateSizeForAppletsInFill(); }
     }
 
     Connections {
         target: visibilityManager
-        onInNormalStateChanged: {
+        function onInNormalStateChanged() {
             if (visibilityManager.inNormalState) {
                 _layouter.updateSizeForAppletsInFill();
             }

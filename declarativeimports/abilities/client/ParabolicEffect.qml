@@ -72,7 +72,7 @@ AbilityDefinition.ParabolicEffect {
 
     Connections {
         target: parabolic
-        onRestoreZoomIsBlockedChanged: {
+        function onRestoreZoomIsBlockedChanged() {
             if (!(bridge || bridge.host)) {
                 if (!parabolic.restoreZoomIsBlocked) {
                     parabolic.startRestoreZoomTimer();
@@ -82,7 +82,7 @@ AbilityDefinition.ParabolicEffect {
             }
         }
 
-        onCurrentParabolicItemChanged: {
+        function onCurrentParabolicItemChanged() {
             if (!parabolic.bridge || !parabolic.bridge.host) {
                 if (!parabolic.currentParabolicItem) {
                     parabolic.startRestoreZoomTimer();

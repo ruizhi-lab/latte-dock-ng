@@ -63,12 +63,12 @@ AbilityItem.IndicatorLevel {
     Connections {
         target: appletItem
         enabled: indicatorLevel.level.indicator.host.isEnabled && indicatorLevel.level.indicator.host.info.needsMouseEventCoordinates
-        onMousePressed: {
+        function onMousePressed() {
             var fixedPos = indicatorLevel.mapFromItem(appletItem, x, y);
             indicatorLevel.level.mousePressed(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }
 
-        onMouseReleased: {
+        function onMouseReleased() {
             var fixedPos = indicatorLevel.mapFromItem(appletItem, x, y);
             indicatorLevel.level.mouseReleased(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }

@@ -47,7 +47,7 @@ Item{
 
     Connections{
         target: abilityItem
-        onContainsMouseChanged: {
+        function onContainsMouseChanged() {
             if (!abilityItem.containsMouse && !abilityItem.isHiddenSpacerForcedShow) {
                 hiddenSpacer.nScale = 0;
             }

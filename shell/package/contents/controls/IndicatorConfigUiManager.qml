@@ -80,7 +80,7 @@ Item {
 
         Connections {
             target: latteView.indicator
-            onPluginChanged: {
+            function onPluginChanged() {
                 if (viewConfig.isReady) {
                     tabBar.selectTab(latteView.indicator.type);
                     viewConfig.indicatorUiManager.ui(latteView.indicator.type, latteView);
@@ -90,7 +90,7 @@ Item {
 
         Connections {
             target: viewConfig
-            onIsReadyChanged: {
+            function onIsReadyChanged() {
                 if (viewConfig.isReady) {
                     tabBar.selectTab(latteView.indicator.type);
                     viewConfig.indicatorUiManager.ui(latteView.indicator.type, latteView);

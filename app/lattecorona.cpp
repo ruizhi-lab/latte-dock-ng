@@ -52,11 +52,10 @@
 #include <QScreen>
 #include <QDBusConnection>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QFontDatabase>
-#include <QQmlContext>
 #include <QProcess>
+#include <QQmlContext>
 
 // Plasma
 #include <Plasma/Plasma>

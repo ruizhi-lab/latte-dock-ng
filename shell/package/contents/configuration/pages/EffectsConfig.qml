@@ -464,7 +464,7 @@ PlasmaComponents.Page {
 
                         Connections {
                             target: indicatorsStackView
-                            onCurrentItemChanged: {
+                            function onCurrentItemChanged() {
                                 if (!indicatorsStackView.currentItem || !viewConfig.isReady) {
                                     return;
                                 }

@@ -24,8 +24,8 @@ MouseArea {
 
     Connections {
         target: taskMouseArea
-        onPressed: taskItem.mousePressed(mouse.x, mouse.y, mouse.button)
-        onReleased: taskItem.mouseReleased(mouse.x, mouse.y, mouse.button)
+        function onPressed() { taskItem.mousePressed(mouse.x, mouse.y, mouse.button) }
+        function onReleased() { taskItem.mouseReleased(mouse.x, mouse.y, mouse.button) }
     }
 
     onEntered: {

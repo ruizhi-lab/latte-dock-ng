@@ -48,7 +48,7 @@ Item {
 
     Connections {
         target: parabolicItem
-        onIsParabolicEventBlockedChanged: {
+        function onIsParabolicEventBlockedChanged() {
             if (!parabolicItem.isParabolicEventBlocked && _parabolicArea.containsMouse) {
                 _parabolicArea.parabolicEntered(lastMouseX, lastMouseY);
             }
@@ -62,7 +62,7 @@ Item {
         //! immediately but we wait first the dock to go to its final normal
         //! place we might miss the activation of the parabolic effect.
         //! By catching that signal we are trying to solve this.
-        onIsShownFullyChanged: {
+        function onIsShownFullyChanged() {
             if (abilityItem.abilities.myView.isShownFully && _parabolicArea.containsMouse) {
                 _parabolicArea.parabolicMove(lastMouseX, lastMouseY);
             }

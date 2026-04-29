@@ -19,7 +19,7 @@ BridgeItem {
 
     Connections {
         target: client
-        onIsStealingDroppedLaunchersChanged: {
+        function onIsStealingDroppedLaunchersChanged() {
             if (isConnected && client.isStealingDroppedLaunchers) {
                 host.currentAppletStealingDroppedLaunchers(appletIndex);
             }
@@ -28,7 +28,7 @@ BridgeItem {
 
     Connections {
         target: host
-        onCurrentAppletStealingDroppedLaunchers: {
+        function onCurrentAppletStealingDroppedLaunchers() {
             if (appletIndex !== id && client) {
                 client.disabledIsStealingDroppedLaunchers();
             }

@@ -624,7 +624,7 @@ Item {
     Connections{
         target: appletItem.shortcuts
 
-        onSglActivateEntryAtIndex: {
+        function onSglActivateEntryAtIndex() {
             if (!appletItem.shortcuts.unifiedGlobalShortcuts) {
                 return;
             }
@@ -636,7 +636,7 @@ Item {
             }
         }
 
-        onSglNewInstanceForEntryAtIndex: {
+        function onSglNewInstanceForEntryAtIndex() {
             if (!appletItem.shortcuts.unifiedGlobalShortcuts) {
                 return;
             }
@@ -657,7 +657,7 @@ Item {
         property bool pressed: false
         property bool blockWheel: false
 
-        onMousePressed: {
+        function onMousePressed() {
             if (appletItem.containsPos(pos)) {
                 viewSignalsConnector.pressed = true;
                 var local = appletItem.mapFromItem(root, pos.x, pos.y);
@@ -666,7 +666,7 @@ Item {
             }
         }
 
-        onMouseReleased: {
+        function onMouseReleased() {
             if (appletItem.containsPos(pos)) {
                 viewSignalsConnector.pressed = false;
                 var local = appletItem.mapFromItem(root, pos.x, pos.y);
@@ -674,7 +674,7 @@ Item {
             }
         }
 
-        onWheelScrolled: {
+        function onWheelScrolled() {
             if (!appletItem.applet || !root.mouseWheelActions || viewSignalsConnector.blockWheel || !appletItem.myView.isShownFully) {
                 return;
             }
@@ -700,7 +700,7 @@ Item {
         target: root.latteView ? root.latteView.extendedInterface : null
         enabled: !appletItem.indexerIsSupported && !appletItem.isSeparator && !appletItem.isSpacer && !appletItem.isHidden
 
-        onExpandedAppletStateChanged: {
+        function onExpandedAppletStateChanged() {
             if (latteView.extendedInterface.hasExpandedApplet && appletItem.applet) {
                 appletItem.isExpanded = latteView.extendedInterface.appletIsExpandable(appletItem.applet.id)
                         && latteView.extendedInterface.appletIsExpanded(appletItem.applet.id);

@@ -28,7 +28,7 @@ AbilityHost.ParabolicEffect {
 
     Connections {
         target: parabolic
-        onRestoreZoomIsBlockedChanged: {
+        function onRestoreZoomIsBlockedChanged() {
             if (!parabolic.restoreZoomIsBlocked) {
                 parabolic.startRestoreZoomTimer();
             } else {
@@ -37,7 +37,7 @@ AbilityHost.ParabolicEffect {
 
         }
 
-        onCurrentParabolicItemChanged: {
+        function onCurrentParabolicItemChanged() {
             if (!currentParabolicItem) {
                 parabolic.startRestoreZoomTimer();
             } else {
@@ -49,7 +49,7 @@ AbilityHost.ParabolicEffect {
     Connections{
         target: parabolic.view && parabolic.view.visibility ? parabolic.view.visibility : root
         ignoreUnknownSignals : true
-        onContainsMouseChanged: {
+        function onContainsMouseChanged() {
             if (!parabolic.view.visibility.containsMouse && !restoreZoomTimer.running) {
                 parabolic.startRestoreZoomTimer()
             }
@@ -58,7 +58,7 @@ AbilityHost.ParabolicEffect {
 
     Connections {
         target: parabolic.layouts
-        onContextMenuIsShownChanged: {
+        function onContextMenuIsShownChanged() {
             if (!parabolic.layouts.contextMenuIsShown && !restoreZoomTimer.running) {
                 parabolic.startRestoreZoomTimer();
             }

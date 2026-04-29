@@ -116,7 +116,7 @@ Item {
     Connections {
         target: level
         enabled: root.clickedAnimationEnabled
-        onMousePressed: {
+        function onMousePressed() {
             var fixedX = 0;
             var fixedY = 0;
 

@@ -358,7 +358,7 @@ Item {
 
     Connections {
         target: appletAbilities.myView
-        onIsReadyChanged: {
+        function onIsReadyChanged() {
             if(appletAbilities.myView.isReady) {
                 if (!_launchers.inUniqueGroup()) {
                     _launchers.importLauncherListInModel();
@@ -369,7 +369,7 @@ Item {
 
     Connections {
         target: bridge ? bridge.launchers.host : null
-        onIsReadyChanged: {
+        function onIsReadyChanged() {
             if (bridge && bridge.launchers.host.isReady && !_launchers.__isLoadedDuringViewStartup) {
                 _launchers.__isLoadedDuringViewStartup = true;
                 _launchers.importLauncherListInModel();
@@ -379,7 +379,7 @@ Item {
 
     Connections {
         target: _launchers.tasksModel
-        onLauncherListChanged: {
+        function onLauncherListChanged() {
             if (bridge && bridge.launchers.host.isReady) {
                 if (!_launchers.inUniqueGroup()) {
                     if (_launchers.inLayoutGroup()) {

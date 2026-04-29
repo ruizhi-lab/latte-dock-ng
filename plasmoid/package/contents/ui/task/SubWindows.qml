@@ -67,12 +67,12 @@ Item{
 
     Connections{
         target: taskItem
-        onItemIndexChanged: windowsContainer.updateStates();
+        function onItemIndexChanged() { windowsContainer.updateStates(); }
     }
 
     Connections{
         target: root
-        onInDraggingPhaseChanged: windowsContainer.updateStates();
+        function onInDraggingPhaseChanged() { windowsContainer.updateStates(); }
     }
 
     //! try to give the time to the model to update its states in order to

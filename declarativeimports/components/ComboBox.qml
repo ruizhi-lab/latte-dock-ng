@@ -142,7 +142,7 @@ T.ComboBox {
 
         Connections {
             target: popup
-            onClosed: {
+            function onClosed() {
                 control.down = false;
                 control.pressed = false;
             }

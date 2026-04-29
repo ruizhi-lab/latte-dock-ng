@@ -129,7 +129,7 @@ Item {
         //! immediately but we wait first the dock to go to its final normal
         //! place we might miss the activation of the parabolic effect.
         //! By catching that signal we are trying to solve this.
-        onIsShownFullyChanged: {
+        function onIsShownFullyChanged() {
             if (appletItem.myView.isShownFully && _parabolicArea.containsMouse) {
                 _parabolicArea.parabolicMove(_parabolicArea.lastMousePoint.x, _parabolicArea.lastMousePoint.y);
             }

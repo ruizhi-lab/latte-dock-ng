@@ -48,7 +48,7 @@ Item{
 
     Connections{
         target: appletItem
-        onContainsMouseChanged: {
+        function onContainsMouseChanged() {
             if (!appletItem.containsMouse) {
                 hiddenSpacer.nScale = 0;
             }

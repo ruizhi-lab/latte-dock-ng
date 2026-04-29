@@ -428,7 +428,7 @@ BackgroundProperties{
         //! it is called more often than the themeChanged one.
         Connections {
             target: themeExtended
-            onThemeChanged: {
+            function onThemeChanged() {
                 solidBackground.adjustPrefix();
                 plasmoid.configuration.panelShadows = !plasmoid.configuration.panelShadows;
                 plasmoid.configuration.panelShadows = !plasmoid.configuration.panelShadows;
@@ -438,13 +438,13 @@ BackgroundProperties{
 
         Connections {
             target: latteView ? latteView.visibility : null
-            onIsHiddenChanged: solidBackground.updateEffectsArea();
+            function onIsHiddenChanged() { solidBackground.updateEffectsArea(); }
         }
 
 
         Connections{
             target: plasmoid
-            onLocationChanged: solidBackground.adjustPrefix();
+            function onLocationChanged() { solidBackground.adjustPrefix(); }
         }
 
         function updateEffectsArea() {

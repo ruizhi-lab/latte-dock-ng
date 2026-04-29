@@ -44,7 +44,7 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: latteView.indicator
-        onCustomPluginsCountChanged: {
+        function onCustomPluginsCountChanged() {
             custom.reloadModel();
             custom.updateButtonInformation();
         }
@@ -52,7 +52,7 @@ LatteComponents.ComboBoxButton{
 
     Connections {
         target: viewConfig
-        onIsReadyChanged: {
+        function onIsReadyChanged() {
             if (viewConfig.isReady) {
                 custom.updateButtonInformation();
             }
@@ -61,13 +61,13 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: custom.button
-        onClicked: onButtonIsPressed();
+        function onClicked() { onButtonIsPressed(); }
     }
 
     Connections{
         target: custom.comboBox
 
-        onActivated: {
+        function onActivated() {
             if (index>=0) {
                 var item = actionsModel.get(index);
                 if (item.pluginId === "add:") {
@@ -82,7 +82,7 @@ LatteComponents.ComboBoxButton{
             custom.updateButtonInformation();
         }
 
-        onIconClicked: {
+        function onIconClicked() {
             if (index>=0) {
                 var item = actionsModel.get(index);
                 var pluginId = item.pluginId;
@@ -96,7 +96,7 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: custom.comboBox.popup
-        onVisibleChanged: {
+        function onVisibleChanged() {
             if (visible) {
                 custom.selectChosenType();
             }

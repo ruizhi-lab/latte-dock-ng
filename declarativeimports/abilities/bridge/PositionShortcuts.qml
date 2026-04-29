@@ -28,7 +28,7 @@ BridgeItem {
     }
     Connections {
         target: client
-        onIsStealingGlobalPositionShortcutsChanged: {
+        function onIsStealingGlobalPositionShortcutsChanged() {
             if (isConnected && client.isStealingGlobalPositionShortcuts) {
                 host.currentAppletStealingPositionShortcuts(appletIndex);
             }
@@ -37,7 +37,7 @@ BridgeItem {
 
     Connections {
         target: host
-        onCurrentAppletStealingPositionShortcuts: {
+        function onCurrentAppletStealingPositionShortcuts() {
             if (appletIndex !== id && client) {
                 client.disabledIsStealingGlobalPositionShortcuts();
             }

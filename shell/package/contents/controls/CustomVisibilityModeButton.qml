@@ -53,14 +53,14 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: custom.button
-        onClicked: {
+        function onClicked() {
             latteView.visibility.mode = custom.mode;
         }
     }
 
     Connections{
         target: custom.comboBox.popup
-        onVisibleChanged: {
+        function onVisibleChanged() {
             if (visible) {
                 custom.selectChosenType();
             }
@@ -69,7 +69,7 @@ LatteComponents.ComboBoxButton{
 
     Connections {
         target: latteView.visibility
-        onModeChanged: {
+        function onModeChanged() {
             for (var i=0; i<custom.modes.length; ++i) {
                 if (custom.modes[i].pluginId === latteView.visibility.mode) {
                     custom.viewRelevantVisibilityModeChanged();
@@ -82,7 +82,7 @@ LatteComponents.ComboBoxButton{
     Connections{
         target: custom.comboBox
 
-        onActivated: {
+        function onActivated() {
             if (index>=0) {
                 var item = actionsModel.get(index);
                 latteView.visibility.mode = item.pluginId;

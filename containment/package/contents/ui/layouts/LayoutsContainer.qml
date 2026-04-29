@@ -418,7 +418,7 @@ Item{
 
     Connections {
         target: metrics
-        onIconSizeAnimationEnded: delayUpdateMaskArea.start();
+        function onIconSizeAnimationEnded() { delayUpdateMaskArea.start(); }
     }
 
     //! Debug Elements

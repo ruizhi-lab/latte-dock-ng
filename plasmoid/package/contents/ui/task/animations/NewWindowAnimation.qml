@@ -32,7 +32,7 @@ Item{
     Connections {
         target: newWindowAnimationLoader.item
 
-        onStopped: {
+        function onStopped() {
             taskItem.abilities.animations.needThickness.removeEvent(needThicknessEvent);
             newWindowAnimation.clear();
         }
@@ -41,7 +41,7 @@ Item{
     Connections{
         target: taskItem
 
-        onInAttentionChanged:{
+        function onInAttentionChanged() {
             if (!taskItem.inAttention && newWindowAnimation.running && taskItem.inAttentionBuiltinAnimation) {
                 clear();
             }

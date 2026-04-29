@@ -28,7 +28,7 @@ Item{
     Connections {
         target: launcherAnimationLoader.item
 
-        onStopped: {
+        function onStopped() {
             if (!taskItem.inRemoveStage) {
                 taskItem.inBouncingAnimation = false;
                 tasksExtendedManager.removeWaitingLauncher(taskItem.launcherUrl);

@@ -44,7 +44,7 @@ Item {
 
     Connections {
         target: root
-        onDragSourceChanged: {
+        function onDragSourceChanged() {
             if (!dragSource) {
                 ignoredItem = null;
                 ignoreItemTimer.stop();

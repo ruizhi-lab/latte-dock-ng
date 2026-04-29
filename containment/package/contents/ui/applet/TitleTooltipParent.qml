@@ -32,7 +32,7 @@ Item{
     Connections {
         target: appletItem.layouts
         enabled: parabolic.isEnabled && appletItem.containsMouse
-        onCurrentSpotChanged: visual.anchoredTooltipPositionChanged();
+        function onCurrentSpotChanged() { visual.anchoredTooltipPositionChanged(); }
     }
 
     states:[

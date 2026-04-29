@@ -27,7 +27,7 @@ Loader{
 
     Connections {
         target: abilityItem
-        onItemIndexChanged: shortcutBadge.updateShorcutIndex();
+        function onItemIndexChanged() { shortcutBadge.updateShorcutIndex(); }
     }
 
     function updateShorcutIndex() {
