@@ -1005,7 +1005,14 @@ void Layouts::onActivityChanged(const QString &id)
 void Layouts::onRunningActivitiesChanged(const QStringList &runningIds)
 {
     for (int i = 0; i < m_activitiesTable.rowCount(); ++i) {
-        if (runningIds.contains(m_activitiesTable[i].id)) {
+        const QString &id = m_activitiesTable[i].id;
+        // Skip sentinel activities — they are UI placeholders, not real KActivities IDs
+        if (id == Latte::Data::Layout::ALLACTIVITIESID
+                || id == Latte::Data::Layout::FREEACTIVITIESID
+                || id == Latte::Data::Layout::CURRENTACTIVITYID) {
+            continue;
+        }
+        if (runningIds.contains(id)) {
             m_activitiesTable[i].state = Latte::Data::Activity::Running;
         } else {
             m_activitiesTable[i].state = Latte::Data::Activity::Stopped;

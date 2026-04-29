@@ -55,13 +55,7 @@ void Effects::init()
     connect(m_view, &QQuickWindow::widthChanged, this, &Effects::updateMask);
     connect(m_view, &QQuickWindow::heightChanged, this, &Effects::updateMask);
     connect(m_view, &Latte::View::behaveAsPlasmaPanelChanged, this, &Effects::updateMask);
-    // compositingChanged removed in KF6; Wayland always has compositing
-
-    connect(this, &Effects::rectChanged, this, [&]() {
-        if (!true && !m_view->behaveAsPlasmaPanel()) {
-            setMask(m_rect);
-        }
-    });
+    // On Wayland compositing is always active; the non-compositing mask fallback is not needed.
 
     connect(this, &Effects::backgroundRadiusChanged, this, &Effects::updateBackgroundCorners);
 
@@ -451,42 +445,8 @@ void Effects::updateBackgroundCorners()
 
 void Effects::updateMask()
 {
-    if (true) {
-        // Under Wayland with compositing active we leave mask handling to the compositor.
-    } else {
-        QRegion fixedMask;
-
-        QRect maskRect = m_view->behaveAsPlasmaPanel() ? QRect(0,0, m_view->width(), m_view->height()) : m_mask;
-
-        if (m_backgroundRadiusEnabled) {
-            //! CustomBackground way
-            fixedMask = customMask(QRect(0,0,maskRect.width(), maskRect.height()));
-        } else {
-            //! Plasma::Theme way
-            //! this is used when compositing is disabled and provides
-            //! the correct way for the mask to be painted in order for
-            //! rounded corners to be shown correctly
-            //! the enabledBorders check was added because there was cases
-            //! that the mask region wasn't calculated correctly after location changes
-            if (!m_panelBackgroundSvg) {
-                return;
-            }
-
-            const QVariant maskProperty = m_panelBackgroundSvg->property("mask");
-            if (maskProperty.metaType().id() == QMetaType::QRegion) {
-                fixedMask = maskProperty.value<QRegion>();
-            }
-        }
-
-        fixedMask.translate(maskRect.x(), maskRect.y());
-
-        //! fix for KF5.32 that return empty QRegion's for the mask
-        if (fixedMask.isEmpty()) {
-            fixedMask = QRegion(maskRect);
-        }
-
-        m_view->setMask(fixedMask);
-    }
+    // Wayland-only build: compositing is always active, so the historic
+    // non-compositing QWidget mask fallback is intentionally disabled.
 }
 
 void Effects::clearShadows()

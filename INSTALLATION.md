@@ -1,7 +1,7 @@
 Installation
 ============
 
-> This fork targets **KDE Plasma 6.5+ on Wayland only**. X11 is not supported.
+> This fork targets **KDE Plasma 6.6+ on Wayland only**. X11 is not supported.
 > All dependency packages below are Qt6 / KF6. Legacy Qt5/KF5 package names from upstream will not work.
 
 ## Kubuntu / KDE Neon (24.04+)
@@ -80,5 +80,29 @@ sudo make install
 Or using the provided install script:
 
 ```bash
-sh install.sh
+bash install.sh
+```
+
+Install script options:
+
+```bash
+bash install.sh --help
+bash install.sh Debug
+bash install.sh RelWithDebInfo --enable-make-unique
+bash install.sh --translations
+bash install.sh --translations-stable
+```
+
+## Uninstall
+
+```bash
+bash uninstall.sh
+```
+
+Uninstall script options:
+
+```bash
+bash uninstall.sh --help
+bash uninstall.sh --dry-run
+bash uninstall.sh --manifest build/install_manifest.txt --dry-run
 ```

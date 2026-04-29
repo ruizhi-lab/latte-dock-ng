@@ -92,6 +92,18 @@ sudo make install
 
 See the [installation instructions](./INSTALLATION.md) for distro-specific dependency setup.
 
+### Helper scripts
+
+```bash
+# Build + install
+bash install.sh --help
+bash install.sh
+
+# Uninstall files listed by CMake install_manifest.txt
+bash uninstall.sh --help
+bash uninstall.sh --dry-run
+```
+
 ## Run Latte-Dock
 
 Latte is now ready to be used by executing 
