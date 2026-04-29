@@ -9,7 +9,7 @@
 
 import QtQuick 2.6
 import QtQuick.Layouts 1.1
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import QtQml.Models 2.2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -206,16 +206,16 @@ Column {
                     return "PlasmaCoreThumbnail.qml";
                 }
 
-                DropShadow {
+                MultiEffect {
                     id: previewShadow
-                    anchors.fill:  previewThumbLoader.item
+                    anchors.fill: previewThumbLoader.item
                     visible: previewThumbLoader.item.visible
-                    horizontalOffset: 0
-                    verticalOffset: Math.round(3 * PlasmaCore.Units.devicePixelRatio)
-                    radius: Math.round(8.0 * PlasmaCore.Units.devicePixelRatio)
-                    samples: Math.round(radius * 1.5)
-                    color: "Black"
                     source: previewThumbLoader.item
+                    shadowEnabled: true
+                    shadowColor: "Black"
+                    shadowBlur: 0.5
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: Math.round(3 * PlasmaCore.Units.devicePixelRatio)
                 }
             }
 
@@ -236,10 +236,9 @@ Column {
                 visible: albumArtImage.available
                 layer.enabled: true
                 opacity: 0.25
-                layer.effect: FastBlur {
-                    source: albumArtBackground
-                    anchors.fill: parent
-                    radius: 30
+                layer.effect: MultiEffect {
+                    blurEnabled: true
+                    blur: 0.5
                 }
             }
 
@@ -319,10 +318,11 @@ Column {
                     }
                 }
 
-                OpacityMask {
+                MultiEffect {
                     id: playerControlsOpacityMask
                     anchors.fill: parent
                     source: playerControlsFrostedGlass
+                    maskEnabled: true
                     maskSource: thumbnailSourceItem
                 }
 

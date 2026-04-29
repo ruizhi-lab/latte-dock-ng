@@ -5,8 +5,6 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
-
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
@@ -14,15 +12,13 @@ Item {
 
     readonly property int gradientLength: appletAbilities.metrics.iconSize / 3
 
-    LinearGradient {
+    Rectangle {
         id: firstGradient
         width: !root.vertical ? gradientLength : scrollableList.thickness
         height: !root.vertical ? scrollableList.thickness : gradientLength
 
-        start: Qt.point(0, 0)
-        end: !root.vertical ? Qt.point(gradientLength, 0) : Qt.point(0, gradientLength)
-
         gradient: Gradient {
+            orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: scrollableList.currentPos <= scrollableList.scrollFirstPos ? "white" : "transparent" }
             GradientStop { position: 1.0; color: "white" }
         }
@@ -39,17 +35,15 @@ Item {
         property int length: !root.vertical ? parent.width - 2*gradientLength : parent.height - 2*gradientLength
     }
 
-    LinearGradient {
+    Rectangle {
         id: lastGradient
         anchors.top: parent.top
         anchors.right: parent.right
         width: firstGradient.width
         height: firstGradient.height
 
-        start: firstGradient.start
-        end: firstGradient.end
-
         gradient: Gradient {
+            orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: "white" }
             GradientStop { position: 1.0; color: (scrollableList.currentPos >= scrollableList.scrollLastPos ? "white" : "transparent") }
         }

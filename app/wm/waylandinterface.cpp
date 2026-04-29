@@ -442,7 +442,8 @@ WindowId WaylandInterface::activeWindow()
 
 void WaylandInterface::skipTaskBar(const QDialog &dialog)
 {
-    KWindowSystem::setState(dialog.winId(), NET::SkipTaskbar);
+    // On Wayland, transient dialogs are excluded from the taskbar by the compositor.
+    Q_UNUSED(dialog)
 }
 
 void WaylandInterface::slideWindow(QWindow &view, AbstractWindowInterface::Slide location)

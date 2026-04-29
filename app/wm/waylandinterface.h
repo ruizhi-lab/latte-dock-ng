@@ -17,7 +17,6 @@
 #include <QObject>
 
 // KDE
-#include <KWindowInfo>
 #include <KWindowEffects>
 
 namespace KWayland {

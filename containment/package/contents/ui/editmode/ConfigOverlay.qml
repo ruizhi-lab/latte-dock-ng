@@ -6,7 +6,7 @@
 
 import QtQuick 2.7
 import QtQuick.Layouts 1.0
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -310,13 +310,11 @@ MouseArea {
                 anchors.centerIn: parent
                 opacity: 0.9
                 layer.enabled: root.environment.isGraphicsSystemAccelerated
-                layer.effect: DropShadow {
-                    radius: root.myView.itemShadow.size
-                    fast: true
-                    samples: 2 * radius
-                    color: root.myView.itemShadow.shadowColor
-
-                    verticalOffset: 2
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: root.myView.itemShadow.shadowColor
+                    shadowBlur: 0.5
+                    shadowVerticalOffset: 2
                 }
             }
 

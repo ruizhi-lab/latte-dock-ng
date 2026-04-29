@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.8
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -51,14 +51,13 @@ Loader {
                 NumberAnimation { duration: abilityItem.abilities.animations.speedFactor.current * abilityItem.abilities.animations.duration.large }
             }
 
-            sourceComponent: DropShadow{
-                anchors.fill: parent
-                color: abilityItem.abilities.myView.itemShadow.shadowColor
-                fast: true
-                samples: 2 * radius
+            sourceComponent: MultiEffect{
+                anchors.fill: separatorItem
+                shadowEnabled: true
+                shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
                 source: separatorItem
-                radius: abilityItem.abilities.myView.itemShadow.size
-                verticalOffset: 2
+                shadowBlur: 0.5
+                shadowVerticalOffset: 2
             }
         }
 

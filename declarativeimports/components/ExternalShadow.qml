@@ -6,7 +6,7 @@
 import QtQuick 2.1
 
 import org.kde.plasma.core 2.0 as PlasmaCore
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Item{
     id: shadowRoot
@@ -36,11 +36,10 @@ Item{
             color: "white"
 
             layer.enabled: true
-            layer.effect: DropShadow {
-                radius: shadowSize
-                fast: true
-                samples: 2 * radius
-                color: shadowRoot.shadowColor
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: shadowRoot.shadowColor
+                shadowBlur: Math.min(shadowSize / 64.0, 1.0)
             }
         }
 

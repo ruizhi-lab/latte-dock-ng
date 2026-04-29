@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -169,9 +169,10 @@ Item {
                             anchors.fill: parent
                             active: plasmoid.configuration.forceMonochromaticIcons
 
-                            sourceComponent: ColorOverlay {
+                            sourceComponent: MultiEffect {
                                 anchors.fill: parent
-                                color: latteBridge ? latteBridge.palette.textColor : "transparent"
+                                colorization: 1.0
+                                colorizationColor: latteBridge ? latteBridge.palette.textColor : "transparent"
                                 source: taskIconItem
                             }
                         }
@@ -337,7 +338,7 @@ Item {
         anchors.fill: parent
         active: badgeVisualsLoader.active
                 && taskItem.abilities.environment.isGraphicsSystemAccelerated
-        sourceComponent: Colorize{
+        sourceComponent: MultiEffect{
             source: badgeVisualsLoader.item
 
             //! HACK TO AVOID PIXELIZATION
@@ -348,27 +349,23 @@ Item {
             //cached: true
 
             opacity: stateColorizer.opacity
-            hue: stateColorizer.hue
-            saturation: stateColorizer.saturation
-            lightness: stateColorizer.lightness
+            saturation: -1.0
         }
     }
     //! END: Badges Visuals
 
     //! Effects
-    Colorize{
+    MultiEffect{
         id: stateColorizer
         anchors.fill: parent
         source: badgesLoader.active ? badgesLoader : taskIconItem
 
         opacity:0
 
-        hue:0
-        saturation:0
-        lightness:0
+        saturation: -1.0
     }
 
-    BrightnessContrast{
+    MultiEffect{
         id:hoveredImage
         anchors.fill: parent
 
@@ -390,7 +387,7 @@ Item {
         }
     }
 
-    BrightnessContrast {
+    MultiEffect {
         id: brightnessTaskEffect
         anchors.fill: parent
 

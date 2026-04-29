@@ -5,7 +5,7 @@
 */
 
 import QtQuick 2.0
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -63,14 +63,13 @@ Item{
                 active: taskItem.abilities.myView.itemShadow.isEnabled
                         && taskItem.abilities.environment.isGraphicsSystemAccelerated
 
-                sourceComponent: DropShadow{
-                    anchors.fill: parent
-                    color: "#ff080808"
-                    fast: true
-                    samples: 2 * radius
+                sourceComponent: MultiEffect{
+                    anchors.fill: tempRemoveIcon
+                    shadowEnabled: true
+                    shadowColor: "#ff080808"
                     source: tempRemoveIcon
-                    radius: taskItem.abilities.myView.itemShadow.size
-                    verticalOffset: 2
+                    shadowBlur: 0.5
+                    shadowVerticalOffset: 2
                 }
             }
 
@@ -96,13 +95,10 @@ Item{
 
 
 
-            Colorize{
+            MultiEffect{
                 source: tempRemoveIcon
                 anchors.fill: tempRemoveIcon
-
-                hue: 0
-                saturation: 0
-                lightness: 0
+                saturation: -1.0
             }
 
             ParallelAnimation{

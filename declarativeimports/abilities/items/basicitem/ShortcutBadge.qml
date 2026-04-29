@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.latte.components 1.0 as LatteComponents
@@ -54,13 +54,13 @@ Loader{
             active: abilityItem.abilities.myView.itemShadow.isEnabled
                     && abilityItem.abilities.environment.isGraphicsSystemAccelerated
 
-            sourceComponent: DropShadow{
-                color: abilityItem.abilities.myView.itemShadow.shadowColor
-                fast: true
-                samples: 2 * radius
+            sourceComponent: MultiEffect{
+                anchors.fill: taskNumber
+                shadowEnabled: true
+                shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
                 source: taskNumber
-                radius: abilityItem.abilities.myView.itemShadow.size/2
-                verticalOffset: 2
+                shadowBlur: 0.4
+                shadowVerticalOffset: 2
             }
         }
 

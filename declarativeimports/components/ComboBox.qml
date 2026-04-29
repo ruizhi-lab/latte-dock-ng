@@ -9,7 +9,7 @@ import QtQuick.Window 2.2
 import QtQuick.Templates 2.2 as T
 import QtQuick.Controls 2.2 as Controls
 import QtQuick.Layouts 1.3
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.2 as Kirigami
@@ -441,13 +441,12 @@ T.ComboBox {
             border.color: Qt.rgba(theme.textColor.r, theme.textColor.g, theme.textColor.b, 0.3)
             layer.enabled: true
 
-            layer.effect: DropShadow {
-                transparentBorder: true
-                radius: 4
-                samples: 8
-                horizontalOffset: 2
-                verticalOffset: 2
-                color: Qt.rgba(0, 0, 0, 0.3)
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: Qt.rgba(0, 0, 0, 0.3)
+                shadowBlur: 0.125
+                shadowHorizontalOffset: 2
+                shadowVerticalOffset: 2
             }
         }
     }

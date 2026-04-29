@@ -4,8 +4,6 @@
 */
 
 import QtQuick 2.2
-import Qt5Compat.GraphicalEffects
-
 import org.kde.plasma.plasmoid 2.0
 
 Rectangle {

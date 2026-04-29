@@ -5,8 +5,6 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
-
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
@@ -20,28 +18,25 @@ Item {
 
     property Item flickable
 
-    LinearGradient {
+    Rectangle {
         id: firstGradient
         width: !root.vertical ? gradientLength : shadowsContainer.thickness
         height: !root.vertical ? shadowsContainer.thickness : gradientLength
 
-        start: Qt.point(0, 0)
-        end: !root.vertical ? Qt.point(width, 0) : Qt.point(0,height)
-
         gradient: Gradient {
+            orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: (scrollableList.currentPos > scrollableList.scrollFirstPos ? appliedColor : "transparent") }
             GradientStop { position: 1.0; color: "transparent" }
         }
     }
 
-    LinearGradient {
+    Rectangle {
         id: lastGradient
         width: firstGradient.width
         height: firstGradient.height
-        start: firstGradient.start
-        end: firstGradient.end
 
         gradient: Gradient {
+            orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: "transparent" }
             GradientStop { position: 1.0; color: (scrollableList.currentPos < scrollableList.scrollLastPos ? appliedColor : "transparent") }
         }

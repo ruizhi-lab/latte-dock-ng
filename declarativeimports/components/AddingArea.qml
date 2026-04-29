@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -69,11 +69,10 @@ Rectangle{
         readonly property int lengthEdge: addingArea.radius + units.smallSpacing
 
         layer.enabled: true
-        layer.effect: DropShadow {
-            radius: 4
-            fast: true
-            samples: 2 * radius
-            color: "#020202"
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowColor: "#020202"
+            shadowBlur: 0.125
         }
 
         states: [

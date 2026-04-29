@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.0
-import Qt5Compat.GraphicalEffects
+import QtQuick.Shapes 1.0
 
 import org.kde.plasma.components 2.0 as Components
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -63,14 +63,29 @@ Item{
                 width: mainGlow.fullCorner
                 height: mainGlow.fullCorner
 
-                RadialGradient {
+                Shape {
+                    id: firstCornerShape
                     anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.07; color: glowItem.contrastColorAlpha }
-                        GradientStop { position: 0.125; color: glowItem.currentColor }
-                        GradientStop { position: 0.4; color:  "transparent" }
-                        GradientStop { position: 1; color: "transparent" }
+                    ShapePath {
+                        strokeWidth: 0
+                        strokeColor: "transparent"
+                        fillGradient: RadialGradient {
+                            centerX: firstCornerShape.width / 2
+                            centerY: firstCornerShape.height / 2
+                            centerRadius: firstCornerShape.width / 2
+                            focalX: firstCornerShape.width / 2
+                            focalY: firstCornerShape.height / 2
+                            GradientStop { position: 0.0; color: "transparent" }
+                            GradientStop { position: 0.07; color: glowItem.contrastColorAlpha }
+                            GradientStop { position: 0.125; color: glowItem.currentColor }
+                            GradientStop { position: 0.4; color: "transparent" }
+                            GradientStop { position: 1; color: "transparent" }
+                        }
+                        startX: 0; startY: 0
+                        PathLine { x: firstCornerShape.width; y: 0 }
+                        PathLine { x: firstCornerShape.width; y: firstCornerShape.height }
+                        PathLine { x: 0; y: firstCornerShape.height }
+                        PathLine { x: 0; y: 0 }
                     }
                 }
 
@@ -102,34 +117,10 @@ Item{
             width: isHorizontal ? glowItem.width - glowItem.size : mainGlow.fullCorner
             height: isHorizontal ? mainGlow.fullCorner : glowItem.height - glowItem.size
 
-            LinearGradient {
+            Rectangle {
                 anchors.fill: parent
-                start: {
-                    if (location === PlasmaCore.Types.BottomEdge || location === PlasmaCore.Types.Floating)
-                        return Qt.point(0, 0);
-                    else if (location === PlasmaCore.Types.TopEdge)
-                        return Qt.point(0, mainGlow.fullCorner);
-                    else if (location === PlasmaCore.Types.LeftEdge)
-                        return Qt.point(mainGlow.fullCorner, 0);
-                    else if (location === PlasmaCore.Types.RightEdge)
-                        return Qt.point(0, 0);
-
-                    return Qt.point(mainGlow.fullCorner, 0);
-                }
-                end: {
-                    if (location === PlasmaCore.Types.BottomEdge || location === PlasmaCore.Types.Floating)
-                        return Qt.point(0, mainGlow.fullCorner);
-                    else if (location === PlasmaCore.Types.TopEdge)
-                        return Qt.point(0, 0);
-                    else if (location === PlasmaCore.Types.LeftEdge)
-                        return Qt.point(0,0);
-                    else if (location === PlasmaCore.Types.RightEdge)
-                        return Qt.point(mainGlow.fullCorner, 0);
-
-                    return Qt.point(0,0);
-                }
-
                 gradient: Gradient {
+                    orientation: isHorizontal ? Gradient.Vertical : Gradient.Horizontal
                     GradientStop { position: 0.0; color: "transparent" }
                     GradientStop { position: 0.08; color: "transparent" }
                     GradientStop { position: 0.37; color: glowItem.currentColor }
@@ -153,14 +144,29 @@ Item{
                 width: mainGlow.fullCorner
                 height: mainGlow.fullCorner
 
-                RadialGradient {
+                Shape {
+                    id: lastCornerShape
                     anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: "transparent" }
-                        GradientStop { position: 0.07; color: glowItem.contrastColorAlpha }
-                        GradientStop { position: 0.125; color: glowItem.currentColor }
-                        GradientStop { position: 0.4; color:  "transparent"}
-                        GradientStop { position: 1; color: "transparent" }
+                    ShapePath {
+                        strokeWidth: 0
+                        strokeColor: "transparent"
+                        fillGradient: RadialGradient {
+                            centerX: lastCornerShape.width / 2
+                            centerY: lastCornerShape.height / 2
+                            centerRadius: lastCornerShape.width / 2
+                            focalX: lastCornerShape.width / 2
+                            focalY: lastCornerShape.height / 2
+                            GradientStop { position: 0.0; color: "transparent" }
+                            GradientStop { position: 0.07; color: glowItem.contrastColorAlpha }
+                            GradientStop { position: 0.125; color: glowItem.currentColor }
+                            GradientStop { position: 0.4; color: "transparent" }
+                            GradientStop { position: 1; color: "transparent" }
+                        }
+                        startX: 0; startY: 0
+                        PathLine { x: lastCornerShape.width; y: 0 }
+                        PathLine { x: lastCornerShape.width; y: lastCornerShape.height }
+                        PathLine { x: 0; y: lastCornerShape.height }
+                        PathLine { x: 0; y: 0 }
                     }
                 }
 

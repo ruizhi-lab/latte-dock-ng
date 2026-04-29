@@ -5,7 +5,7 @@
 */
 
 import QtQuick 2.0
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -124,18 +124,17 @@ Item{
                     && !abilityItem.isSeparator
                     && abilityItem.abilities.environment.isGraphicsSystemAccelerated
 
-            sourceComponent: DropShadow{
+            sourceComponent: MultiEffect{
                 anchors.fill: parent
                 transformOrigin: abilityItem.iconTransformOrigin
                 opacity: abilityItem.iconOpacity
                 rotation: abilityItem.iconRotation
                 scale: abilityItem.iconScale
-                color: abilityItem.abilities.myView.itemShadow.shadowColor
-                fast: true
-                samples: 2 * radius
+                shadowEnabled: true
+                shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
                 source: _contentItemContainer
-                radius: abilityItem.abilities.myView.itemShadow.size
-                verticalOffset: 2
+                shadowBlur: 0.5
+                shadowVerticalOffset: 2
             }
         }
 
@@ -212,9 +211,10 @@ Item{
             anchors.fill: _contentItemContainer
             active: abilityItem.isMonochromaticForcedContentItem && abilityItem.monochromizedItem
 
-            sourceComponent: ColorOverlay {
+            sourceComponent: MultiEffect {
                 anchors.fill: parent
-                color: latteBridge ? latteBridge.palette.textColor : "transparent"
+                colorization: 1.0
+                colorizationColor: latteBridge ? latteBridge.palette.textColor : "transparent"
                 source: abilityItem.monochromizedItem
             }
         }

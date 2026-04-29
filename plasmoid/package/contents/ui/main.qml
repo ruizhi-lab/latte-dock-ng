@@ -7,7 +7,7 @@
 import QtQuick 2.8
 import QtQuick.Layouts 1.1
 
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -946,7 +946,8 @@ Item {
             //onCurrentPosChanged: console.log("CP :: "+ currentPos + " icW:"+icList.width + " rw: "+root.width + " w:" +width);
 
             layer.enabled: contentsExceed && root.scrollingEnabled
-            layer.effect: OpacityMask {
+            layer.effect: MultiEffect {
+                maskEnabled: true
                 maskSource: TasksLayout.ScrollOpacityMask{
                     width: scrollableList.width
                     height: scrollableList.height

@@ -7,7 +7,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.0
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -117,18 +117,16 @@ Item {
         }
     }
 
-    DropShadow {
-        id:shadowText
+    MultiEffect {
+        id: shadowText
         anchors.fill: inNowDockLabel
         enabled: isInNowDockPanel
-        fast: true
-        radius: 3
-        samples: 5
-        color: "#cc080808"
+        shadowEnabled: true
+        shadowColor: "#cc080808"
         source: inNowDockLabel
-
-        verticalOffset: 2
-        horizontalOffset: -1
+        shadowBlur: 0.1
+        shadowVerticalOffset: 2
+        shadowHorizontalOffset: -1
         visible: isInNowDockPanel
     }
 

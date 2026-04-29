@@ -7,8 +7,6 @@
 import QtQuick 2.8
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
-import Qt5Compat.GraphicalEffects
-
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0

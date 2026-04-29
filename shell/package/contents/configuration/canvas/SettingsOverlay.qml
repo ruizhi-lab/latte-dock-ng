@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.7
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -50,11 +50,10 @@ Item{
     readonly property color textColor: bestContrastedTextColor
 
     layer.enabled: graphicsSystem.isAccelerated
-    layer.effect: DropShadow{
-        radius: settingsRoot.textShadow
-        fast: true
-        samples: 2 * radius
-        color: root.appShadowColorSolid
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: root.appShadowColorSolid
+        shadowBlur: Math.min(settingsRoot.textShadow / 64.0, 1.0)
     }
 
     HeaderSettings{

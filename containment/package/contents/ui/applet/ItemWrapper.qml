@@ -6,7 +6,7 @@
 
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -432,14 +432,13 @@ Item{
                 && !appletColorizer.mustBeShown
                 && (appletItem.myView.itemShadow.isEnabled && !appletItem.communicator.indexerIsSupported)
 
-        sourceComponent: DropShadow{
+        sourceComponent: MultiEffect{
             anchors.fill: parent
-            color: appletItem.myView.itemShadow.shadowColor
-            fast: true
-            samples: 2 * radius
+            shadowEnabled: true
+            shadowColor: appletItem.myView.itemShadow.shadowColor
             source: _wrapperContainer
-            radius: appletItem.myView.itemShadow.size
-            verticalOffset: root.forceTransparentPanel || root.forcePanelForBusyBackground ? 0 : 2
+            shadowBlur: 0.5
+            shadowVerticalOffset: root.forceTransparentPanel || root.forcePanelForBusyBackground ? 0 : 2
         }
     }
 

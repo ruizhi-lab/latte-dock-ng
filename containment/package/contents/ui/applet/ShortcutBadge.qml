@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.1
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.latte.components 1.0 as LatteComponents
 
@@ -69,13 +69,13 @@ Loader{
             active: appletItem.myView.itemShadow.isEnabled
                     && appletItem.environment.isGraphicsSystemAccelerated
 
-            sourceComponent: DropShadow{
-                color: appletItem.myView.itemShadow.shadowColor
-                fast: true
-                samples: 2 * radius
+            sourceComponent: MultiEffect{
+                anchors.fill: appletNumber
+                shadowEnabled: true
+                shadowColor: appletItem.myView.itemShadow.shadowColor
                 source: appletNumber
-                radius: appletItem.myView.itemShadow.size/2
-                verticalOffset: 2
+                shadowBlur: 0.4
+                shadowVerticalOffset: 2
             }
         }
 
