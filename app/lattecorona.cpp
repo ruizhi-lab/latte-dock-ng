@@ -220,8 +220,8 @@ void Corona::load()
         m_templatesManager->init();
         m_layoutsManager->init();
 
-        connect(this, &Corona::availableScreenRectChangedFrom, this, &Plasma::Corona::availableScreenRectChanged, Qt::UniqueConnection);
-        connect(this, &Corona::availableScreenRegionChangedFrom, this, &Plasma::Corona::availableScreenRegionChanged, Qt::UniqueConnection);
+        connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRectChanged(-1); }, Qt::UniqueConnection);
+        connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRegionChanged(-1); }, Qt::UniqueConnection);
         connect(m_screenPool, &ScreenPool::primaryScreenChanged, this, &Corona::onScreenCountChanged, Qt::UniqueConnection);
 
         QString loadLayoutName = "";
@@ -853,7 +853,7 @@ void Corona::onScreenAdded(QScreen *screen)
 
     connect(screen, &QScreen::geometryChanged, this, &Corona::onScreenGeometryChanged);
 
-    Q_EMIT availableScreenRectChanged();
+    Q_EMIT availableScreenRectChanged(-1);
     Q_EMIT screenAdded(m_screenPool->id(screen->name()));
 
     onScreenCountChanged();
@@ -884,8 +884,8 @@ void Corona::onScreenGeometryChanged(const QRect &geometry)
 
     if (id >= 0) {
         Q_EMIT screenGeometryChanged(id);
-        Q_EMIT availableScreenRegionChanged();
-        Q_EMIT availableScreenRectChanged();
+        Q_EMIT availableScreenRegionChanged(-1);
+        Q_EMIT availableScreenRectChanged(-1);
     }
 }
 
@@ -928,7 +928,7 @@ void Corona::aboutApplication()
     aboutDialog = new KAboutApplicationDialog(KAboutData::applicationData());
     connect(aboutDialog.data(), &QDialog::finished, aboutDialog.data(), &QObject::deleteLater);
     m_wm->skipTaskBar(*aboutDialog);
-    m_wm->setKeepAbove(aboutDialog->winId(), true);
+    // setKeepAbove via winId() is X11-only; Wayland handles window stacking via PlasmaShellSurface
 
     aboutDialog->show();
 }
@@ -1086,8 +1086,8 @@ void Corona::windowColorScheme(QString windowIdAndScheme)
 
     QTimer::singleShot(200, [this, schemeStr]() {
         //! Give the compositor enough time to update the active window id.
-        const QString windowIdStr = m_wm->activeWindow().toString();
-        m_wm->schemesTracker()->setColorSchemeForWindow(windowIdStr.toUInt(), schemeStr);
+        const WindowSystem::WindowId activeWid = m_wm->activeWindow();
+        m_wm->schemesTracker()->setColorSchemeForWindow(activeWid, schemeStr);
     });
 }
 

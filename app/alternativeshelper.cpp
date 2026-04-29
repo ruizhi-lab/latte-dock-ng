@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2014 Marco Martin <mart@kde.org>
+    SPDX-FileCopyrightText: 2014 Marco Hart <mart@kde.org>
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -7,12 +7,12 @@
 #include "alternativeshelper.h"
 
 // Qt
+#include <QJsonArray>
 #include <QQmlEngine>
 #include <QQmlContext>
 
 // KDE
 #include <KPackage/Package>
-#include <kconfig_version.h>
 
 // Plasma
 #include <Plasma/Containment>
@@ -30,20 +30,18 @@ AlternativesHelper::~AlternativesHelper()
 
 QStringList AlternativesHelper::appletProvides() const
 {
-#if KCONFIG_VERSION_MINOR >= 27
-    return KPluginMetaData::readStringList(m_applet->pluginMetaData().rawData(), QStringLiteral("X-Plasma-Provides"));
-#else
-    return KPluginMetaData::readStringList(m_applet->pluginInfo().toMetaData().rawData(), QStringLiteral("X-Plasma-Provides"));
-#endif
+    const auto val = m_applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides"));
+    if (val.isArray()) {
+        QStringList result;
+        for (const auto &v : val.toArray()) result << v.toString();
+        return result;
+    }
+    return val.toString().split(QLatin1Char(','), Qt::SkipEmptyParts);
 }
 
 QString AlternativesHelper::currentPlugin() const
 {
-#if KCONFIG_VERSION_MINOR >= 27
     return m_applet->pluginMetaData().pluginId();
-#else
-    return m_applet->pluginInfo().toMetaData().pluginId();
-#endif
 }
 
 QQuickItem *AlternativesHelper::applet() const
@@ -89,4 +87,3 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
 }
 
 #include "moc_alternativeshelper.cpp"
-

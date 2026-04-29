@@ -779,7 +779,7 @@ void Windows::cleanupFaultyWindows()
         auto winfo = m_windows[key];
 
         //! garbage windows removing
-        if (winfo.wid()<=0 || winfo.geometry() == QRect(0, 0, 0, 0)) {
+        if (winfo.wid().isEmpty() || winfo.geometry() == QRect(0, 0, 0, 0)) {
             //qDebug() << "Faulty Geometry ::: " << winfo.wid();
             m_windows.remove(key);
         }
@@ -895,7 +895,7 @@ void Windows::updateHints(Latte::View *view)
             break;
         }
 
-        if (!existsFaultyWindow && (winfo.wid()<=0 || winfo.geometry() == QRect(0, 0, 0, 0))) {
+        if (!existsFaultyWindow && (winfo.wid().isEmpty() || winfo.geometry() == QRect(0, 0, 0, 0))) {
             existsFaultyWindow = true;
         }
 
@@ -1065,7 +1065,7 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
             break;
         }
 
-        if (!existsFaultyWindow && (winfo.wid()<=0 || winfo.geometry() == QRect(0, 0, 0, 0))) {
+        if (!existsFaultyWindow && (winfo.wid().isEmpty() || winfo.geometry() == QRect(0, 0, 0, 0))) {
             existsFaultyWindow = true;
         }
 

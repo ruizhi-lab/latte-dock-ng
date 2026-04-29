@@ -11,12 +11,13 @@
 #include <QWindow>
 #include <QIcon>
 #include <QRect>
-#include <QVariant>
+#include <QByteArray>
 
 namespace Latte {
 namespace WindowSystem {
 
-using WindowId = QVariant;
+using WindowId = QByteArray;
+
 
 class WindowInfoWrap
 {

@@ -79,7 +79,7 @@ void Manager::initLayoutTemplates(const QString &path)
 
             if (tdata.name == DEFAULTLAYOUTTEMPLATENAME || tdata.name == EMPTYLAYOUTTEMPLATENAME) {
                 QByteArray templateNameChars = tdata.name.toUtf8();
-                tdata.name = i18n(templateNameChars);
+                tdata.name = i18n(templateNameChars.constData());
             }
 
             m_layoutTemplates << tdata;
@@ -106,7 +106,7 @@ void Manager::initViewTemplates(const QString &path)
 
             if (istranslated) {
                 QByteArray tnamechars = tname.toUtf8();
-                vdata.name = i18nc("view template name", tnamechars);
+                vdata.name = i18nc("view template name", tnamechars.constData());
             } else {
                 vdata.name = tname;
             }

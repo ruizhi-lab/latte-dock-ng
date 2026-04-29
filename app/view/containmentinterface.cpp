@@ -14,6 +14,7 @@
 #include "../settings/universalsettings.h"
 
 // Qt
+#include <QJsonArray>
 #include <QDebug>
 #include <QDir>
 #include <QLatin1String>
@@ -180,7 +181,7 @@ int ContainmentInterface::applicationLauncherId() const
     auto launcherId{-1};
 
     for (auto applet : applets) {
-        const auto provides = applet->kPackage().metadata().value(QStringLiteral("X-Plasma-Provides"));
+        const auto provides = applet->pluginMetaData().value(QStringLiteral("X-Plasma-Provides"));
 
         if (provides.contains(QLatin1String("org.kde.plasma.launchermenu"))) {
             if (!applet->globalShortcut().isEmpty()) {
@@ -203,7 +204,7 @@ bool ContainmentInterface::updateBadgeForLatteTask(const QString identifier, con
     const auto &applets = m_view->containment()->applets();
 
     for (auto *applet : applets) {
-        KPluginMetaData meta = applet->kPackage().metadata();
+        KPluginMetaData meta = applet->pluginMetaData();
 
         if (meta.pluginId() == QLatin1String("org.kde.latte.plasmoid")) {
 
@@ -252,7 +253,7 @@ bool ContainmentInterface::activatePlasmaTask(const int index)
     const auto &applets = m_view->containment()->applets();
 
     for (auto *applet : applets) {
-        const auto &provides = KPluginMetaData::readStringList(applet->pluginMetaData().rawData(), QStringLiteral("X-Plasma-Provides"));
+        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
         if (provides.contains(QLatin1String("org.kde.plasma.multitasking"))) {
             if (QQuickItem *appletInterface = applet->property("_plasma_graphicObject").value<QQuickItem *>()) {
@@ -262,7 +263,7 @@ bool ContainmentInterface::activatePlasmaTask(const int index)
                     continue;
                 }
 
-                KPluginMetaData meta = applet->kPackage().metadata();
+                KPluginMetaData meta = applet->pluginMetaData();
 
                 for (QQuickItem *item : childItems) {
                     if (auto *metaObject = item->metaObject()) {
@@ -299,7 +300,7 @@ bool ContainmentInterface::newInstanceForPlasmaTask(const int index)
     const auto &applets = m_view->containment()->applets();
 
     for (auto *applet : applets) {
-        const auto &provides = KPluginMetaData::readStringList(applet->pluginMetaData().rawData(), QStringLiteral("X-Plasma-Provides"));
+        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
         if (provides.contains(QLatin1String("org.kde.plasma.multitasking"))) {
             if (QQuickItem *appletInterface = applet->property("_plasma_graphicObject").value<QQuickItem *>()) {
@@ -309,7 +310,7 @@ bool ContainmentInterface::newInstanceForPlasmaTask(const int index)
                     continue;
                 }
 
-                KPluginMetaData meta = applet->kPackage().metadata();
+                KPluginMetaData meta = applet->pluginMetaData();
 
                 for (QQuickItem *item : childItems) {
                     if (auto *metaObject = item->metaObject()) {
@@ -990,8 +991,8 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
             }
         }
     } else if (ai) {
-        KPluginMetaData meta = applet->kPackage().metadata();
-        const auto &provides = KPluginMetaData::readStringList(meta.rawData(), QStringLiteral("X-Plasma-Provides"));
+        KPluginMetaData meta = applet->pluginMetaData();
+        const auto &provides = [&meta]() -> QStringList { const auto v = meta.rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
         if (meta.pluginId() == QLatin1String("org.kde.latte.plasmoid")) {
             //! populate latte tasks applet
@@ -1013,7 +1014,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
     if (ai) {
         bool initializing{!m_appletData.contains(currentAppletId)};
 
-        KPluginMetaData meta = applet->kPackage().metadata();
+        KPluginMetaData meta = applet->pluginMetaData();
         ViewPart::AppletInterfaceData data;
         data.id = currentAppletId;
         data.plugin = meta.pluginId();

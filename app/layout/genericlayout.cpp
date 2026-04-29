@@ -110,8 +110,7 @@ void GenericLayout::unloadLatteViews()
              << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
 
     //!disconnect signals in order to avoid crashes when the layout is unloading
-    disconnect(this, &GenericLayout::viewsCountChanged, m_corona, &Plasma::Corona::availableScreenRectChanged);
-    disconnect(this, &GenericLayout::viewsCountChanged, m_corona, &Plasma::Corona::availableScreenRegionChanged);
+    // lambda-based connects cannot be disconnected by signal pointer
     disconnect(this, &GenericLayout::activitiesChanged, this, &GenericLayout::updateLastUsedActivity);
     disconnect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, &GenericLayout::updateLastUsedActivity);
 
@@ -855,7 +854,7 @@ void GenericLayout::addView(Plasma::Containment *containment)
 {
     qDebug().noquote() << "Adding View: Called for layout:" << m_layoutName << "with m_containments.size() ::" << m_containments.size();
 
-    if (!containment || !m_corona || !containment->kPackage().isValid()) {
+    if (!containment || !m_corona || !containment->corona()->kPackage().isValid()) {
         qWarning() << "Adding View: The requested containment plugin can not be located or loaded";
         return;
     }
@@ -974,14 +973,14 @@ bool GenericLayout::initCorona()
     //! signals
     connect(this, &GenericLayout::activitiesChanged, this, &GenericLayout::updateLastUsedActivity);
     connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, &GenericLayout::updateLastUsedActivity);
-    connect(m_corona->activitiesConsumer(), &KActivities::Consumer::runningActivitiesChanged, this, &GenericLayout::updateLastUsedActivity);
+    connect(m_corona->activitiesConsumer(), &KActivities::Consumer::activitiesChanged, this, [this](const QStringList &) { updateLastUsedActivity(); });
 
     connect(this, &GenericLayout::lastConfigViewForChanged, m_corona->layoutsManager(), &Layouts::Manager::lastConfigViewChangedFrom);
     connect(m_corona->layoutsManager(), &Layouts::Manager::lastConfigViewChangedFrom, this, &GenericLayout::onLastConfigViewChangedFrom);
 
     //!connect signals after adding the containment
-    connect(this, &GenericLayout::viewsCountChanged, m_corona, &Plasma::Corona::availableScreenRectChanged);
-    connect(this, &GenericLayout::viewsCountChanged, m_corona, &Plasma::Corona::availableScreenRegionChanged);
+    connect(this, &GenericLayout::viewsCountChanged, m_corona, [this]() { Q_EMIT m_corona->availableScreenRectChanged(-1); });
+    connect(this, &GenericLayout::viewsCountChanged, m_corona, [this]() { Q_EMIT m_corona->availableScreenRegionChanged(-1); });
 
     return true;
 }

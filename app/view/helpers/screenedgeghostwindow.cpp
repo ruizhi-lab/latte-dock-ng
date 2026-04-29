@@ -74,7 +74,7 @@ void ScreenEdgeGhostWindow::updateGeometry()
 
     QRect newGeometry = m_latteView->absoluteGeometry();
 
-    if (KWindowSystem::compositingActive()) {
+    if (true) {
         m_thickness = 6;
     } else {
         m_thickness = 2;

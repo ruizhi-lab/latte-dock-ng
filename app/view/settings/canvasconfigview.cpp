@@ -19,7 +19,6 @@
 #include <KWayland/Client/plasmashell.h>
 
 // Plasma
-#include <Plasma/Package>
 
 namespace Latte {
 namespace ViewPart {

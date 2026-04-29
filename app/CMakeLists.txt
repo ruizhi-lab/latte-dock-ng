@@ -74,6 +74,7 @@ target_link_libraries(latte-dock-ng
     KF6::GlobalAccel
     KF6::I18n
     KF6::IconThemes
+    KF6::IconWidgets
     KF6::KIOWidgets
     KF6::Notifications
     KF6::Package

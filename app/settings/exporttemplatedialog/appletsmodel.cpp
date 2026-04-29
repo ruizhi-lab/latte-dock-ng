@@ -279,7 +279,7 @@ QVariant Applets::data(const QModelIndex &index, int role) const
     } else if (role == DESCRIPTIONROLE) {
         return c_applets[row].description;
     } else if (role == SORTINGROLE) {
-        return c_applets[row].isInstalled() ? QString::number(1000) + c_applets[row].name : QString::number(0000) + c_applets[row].name;
+        return QString(c_applets[row].isInstalled() ? QString::number(1000) + c_applets[row].name : QString::number(0) + c_applets[row].name);
     }
 
     return QVariant{};

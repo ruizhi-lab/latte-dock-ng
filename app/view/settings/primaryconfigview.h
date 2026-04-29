@@ -21,6 +21,7 @@
 
 // Plasma
 #include <Plasma/package.h>
+#include <Plasma/Plasma>
 #include <Plasma/FrameSvg>
 
 namespace Plasma {

@@ -293,7 +293,7 @@ void Theme::updateReversedSchemeValues()
         //! update scheme name
         QString originalSchemeName = WindowSystem::SchemeColors::schemeName(m_originalSchemePath);
         KConfigGroup generalGroup(reversedPtr, "General");
-        generalGroup.writeEntry("Name", originalSchemeName + "_reversed");
+        generalGroup.writeEntry("Name", QString(originalSchemeName + "_reversed"));
         generalGroup.sync();
     }
 }
@@ -315,7 +315,7 @@ void Theme::updateHasShadow()
     svg->resize();
 
     QString cornerId = "shadow-topleft";
-    QImage corner = svg->image(svg->elementSize(cornerId), cornerId);
+    QImage corner = svg->image(svg->elementSize(cornerId).toSize(), cornerId);
 
     int fullTransparentPixels = 0;
 

@@ -1,0 +1,13 @@
+#pragma once
+
+#if __has_include(<PlasmaActivities/PlasmaActivities/Controller>)
+#include <PlasmaActivities/PlasmaActivities/Controller>
+#elif __has_include(<PlasmaActivities/plasmaactivities/controller.h>)
+#include <PlasmaActivities/plasmaactivities/controller.h>
+#elif __has_include(<PlasmaActivities/Controller>)
+#include <PlasmaActivities/Controller>
+#elif __has_include(<KActivities/controller.h>)
+#include <KActivities/controller.h>
+#elif __has_include_next(<KActivities/Controller>)
+#include_next <KActivities/Controller>
+#endif

@@ -397,12 +397,12 @@ void LastActiveWindow::setIcon(QIcon icon)
     Q_EMIT iconChanged();
 }
 
-QVariant LastActiveWindow::currentWinId() const
+WindowId LastActiveWindow::currentWinId() const
 {
     return m_currentWinId;
 }
 
-void LastActiveWindow::setCurrentWinId(QVariant winId)
+void LastActiveWindow::setCurrentWinId(WindowId winId)
 {
     if (m_currentWinId == winId) {
         return;
@@ -547,7 +547,7 @@ void LastActiveWindow::printHistory() {
     }
 }
 
-void LastActiveWindow::appendInHistory(const QVariant &wid)
+void LastActiveWindow::appendInHistory(const WindowId &wid)
 {
     if (!m_history.contains(wid)) {
         m_history.prepend(wid);
@@ -558,7 +558,7 @@ void LastActiveWindow::appendInHistory(const QVariant &wid)
     }
 }
 
-void LastActiveWindow::removeFromHistory(const QVariant &wid)
+void LastActiveWindow::removeFromHistory(const WindowId &wid)
 {
     m_history.removeAll(wid);
 }

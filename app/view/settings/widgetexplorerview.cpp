@@ -21,7 +21,6 @@
 #include <KWayland/Client/plasmashell.h>
 
 // Plasma
-#include <Plasma/Package>
 
 namespace Latte {
 namespace ViewPart {
@@ -204,10 +203,10 @@ void WidgetExplorerView::updateEffects()
         setMask(QRegion());
     }
 
-    if (KWindowSystem::compositingActive()) {
-        KWindowEffects::enableBlurBehind(winId(), true, fixedMask);
+    if (true) {
+        KWindowEffects::enableBlurBehind(this, true, fixedMask);
     } else {
-        KWindowEffects::enableBlurBehind(winId(), false);
+        KWindowEffects::enableBlurBehind(this, false);
     }
 }
 

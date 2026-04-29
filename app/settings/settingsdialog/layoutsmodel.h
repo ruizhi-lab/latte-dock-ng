@@ -13,6 +13,9 @@
 #include "../../data/layouticondata.h"
 #include "../../data/layoutstable.h"
 
+// KActivities
+#include <KActivities/Info>
+
 // Qt
 #include <QAbstractTableModel>
 #include <QModelIndex>

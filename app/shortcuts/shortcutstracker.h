@@ -7,6 +7,7 @@
 #define SHORTCUTSTRACKER_H
 
 // Qt
+#include <QHash>
 #include <QObject>
 
 // KDE

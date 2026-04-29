@@ -80,7 +80,6 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     setIcon(qGuiApp->windowIcon());
     setResizeMode(QuickViewSharedEngine::SizeRootObjectToView);
     setColor(QColor(Qt::transparent));
-    setClearBeforeRendering(true);
 
     const auto flags = Qt::FramelessWindowHint
             | Qt::NoDropShadowWindowHint
@@ -256,17 +255,17 @@ void View::init(Plasma::Containment *plasma_containment)
 {
     connect(this, &QQuickWindow::xChanged, this, &View::geometryChanged);
     connect(this, &QQuickWindow::yChanged, this, &View::geometryChanged);
-    connect(this, &QQuickWindow::widthChanged, this, &View::geometryChanged);
-    connect(this, &QQuickWindow::heightChanged, this, &View::geometryChanged);
+    connect(this, &QQuickWindow::widthChanged, this, [this](int) { Q_EMIT geometryChanged(); });
+    connect(this, &QQuickWindow::heightChanged, this, [this](int) { Q_EMIT geometryChanged(); });
 
     connect(this, &QQuickWindow::xChanged, this, &View::xChanged);
-    connect(this, &QQuickWindow::xChanged, this, &View::updateAbsoluteGeometry);
+    connect(this, &QQuickWindow::xChanged, this, [this](int) { updateAbsoluteGeometry(); });
     connect(this, &QQuickWindow::yChanged, this, &View::yChanged);
-    connect(this, &QQuickWindow::yChanged, this, &View::updateAbsoluteGeometry);
+    connect(this, &QQuickWindow::yChanged, this, [this](int) { updateAbsoluteGeometry(); });
     connect(this, &QQuickWindow::widthChanged, this, &View::widthChanged);
-    connect(this, &QQuickWindow::widthChanged, this, &View::updateAbsoluteGeometry);
+    connect(this, &QQuickWindow::widthChanged, this, [this](int) { updateAbsoluteGeometry(); });
     connect(this, &QQuickWindow::heightChanged, this, &View::heightChanged);
-    connect(this, &QQuickWindow::heightChanged, this, &View::updateAbsoluteGeometry);
+    connect(this, &QQuickWindow::heightChanged, this, [this](int) { updateAbsoluteGeometry(); });
 
     connect(this, &View::fontPixelSizeChanged, this, &View::editThicknessChanged);
     connect(this, &View::maxNormalThicknessChanged, this, &View::editThicknessChanged);
@@ -366,7 +365,7 @@ void View::init(Plasma::Containment *plasma_containment)
         }
     }
 
-    setSource(corona()->kPackage().filePath("lattedockui"));
+    setSource(QUrl::fromLocalFile(corona()->kPackage().filePath("lattedockui")));
 
     //! immediateSyncGeometry helps avoiding binding loops from containment qml side
     m_positioner->immediateSyncGeometry();
@@ -1117,7 +1116,7 @@ QStringList View::activities() const
 {
     QStringList running;
 
-    QStringList runningAll = m_corona->activitiesConsumer()->runningActivities();
+    QStringList runningAll = m_corona->activitiesConsumer()->activities();
 
     for(int i=0; i<m_activities.count(); ++i) {
         if (runningAll.contains(m_activities[i])) {
@@ -1237,7 +1236,7 @@ void View::setLayout(Layout::GenericLayout *layout)
         });
 
         if (latteCorona->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
-            connectionsLayout << connect(latteCorona->activitiesConsumer(), &KActivities::Consumer::runningActivitiesChanged, this, [&]() {
+            connectionsLayout << connect(latteCorona->activitiesConsumer(), &KActivities::Consumer::activitiesChanged, this, [&]() {
                 if (m_layout && m_visibility) {
                     setActivities(m_layout->appliedActivities());
                     qDebug() << "DOCK VIEW FROM LAYOUT (runningActivitiesChanged) ::: " << m_layout->name()
@@ -1310,7 +1309,7 @@ bool View::mimeContainsPlasmoid(QMimeData *mimeData, QString name)
 
     if (mimeData->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
         QString data = mimeData->data(QStringLiteral("text/x-plasmoidservicename"));
-        const QStringList appletNames = data.split('\n', QString::SkipEmptyParts);
+        const QStringList appletNames = data.split('\n', Qt::SkipEmptyParts);
 
         for (const QString &appletName : appletNames) {
             if (appletName == name)
@@ -1589,7 +1588,7 @@ QAction *View::action(const QString &name)
         return nullptr;
     }
 
-    return this->containment()->actions()->action(name);
+    return this->containment()->internalAction(name);
 }
 
 QVariantList View::containmentActions() const

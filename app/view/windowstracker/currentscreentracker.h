@@ -8,6 +8,7 @@
 
 // local
 #include "../../wm/abstractwindowinterface.h"
+#include "../../wm/tracker/lastactivewindow.h"
 
 // Qt
 #include <QObject>

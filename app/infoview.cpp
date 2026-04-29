@@ -22,13 +22,11 @@
 
 // KDE
 #include <KLocalizedContext>
+#include <KPackage/Package>
 #include <KDeclarative/KDeclarative>
 #include <KWindowSystem>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
-
-// Plasma
-#include <Plasma/Package>
 
 namespace Latte {
 
@@ -217,7 +215,7 @@ bool InfoView::event(QEvent *e)
 
 void InfoView::setOnActivities(QStringList activities)
 {
-    KWindowSystem::setOnActivities(winId(), activities);
+    Q_UNUSED(activities)
 }
 
 }

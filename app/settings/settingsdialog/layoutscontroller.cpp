@@ -16,6 +16,7 @@
 #include "delegates/layoutnamedelegate.h"
 #include "../universalsettings.h"
 #include "../generic/generictools.h"
+#include "../../tools/commontools.h"
 #include "../../screenpool.h"
 #include "../../data/uniqueidinfo.h"
 #include "../../layout/centrallayout.h"
@@ -34,6 +35,7 @@
 #include <QTemporaryFile>
 
 // KDE
+#include <KPackage/Package>
 #include <KArchive/KTar>
 #include <KArchive/KArchiveEntry>
 #include <KArchive/KArchiveDirectory>

@@ -47,7 +47,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
 
     connect(&m_windowWaitingTimer, &QTimer::timeout, this, [&]() {
         WindowId wid = m_windowChangedWaiting;
-        m_windowChangedWaiting = QVariant();
+        m_windowChangedWaiting = WindowId();
         Q_EMIT windowChanged(wid);
     });
 
@@ -336,7 +336,7 @@ void AbstractWindowInterface::windowRemovedSlot(WindowId wid)
 //! Activities switching
 void AbstractWindowInterface::switchToNextActivity()
 {
-    QStringList runningActivities = m_activities->activities(KActivities::Info::State::Running);
+    QStringList runningActivities = m_activities->activities();
     if (runningActivities.count() <= 1) {
         return;
     }
@@ -354,7 +354,7 @@ void AbstractWindowInterface::switchToNextActivity()
 
 void AbstractWindowInterface::switchToPreviousActivity()
 {
-    QStringList runningActivities = m_activities->activities(KActivities::Info::State::Running);
+    QStringList runningActivities = m_activities->activities();
     if (runningActivities.count() <= 1) {
         return;
     }

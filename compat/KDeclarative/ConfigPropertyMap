@@ -22,6 +22,11 @@ public:
 };
 #endif
 
+// Define as class (not using-alias) to be compatible with forward declarations
+// of 'class KDeclarative::ConfigPropertyMap' in headers like indicator.h.
 namespace KDeclarative {
-using ConfigPropertyMap = KConfigPropertyMap;
+class ConfigPropertyMap : public KConfigPropertyMap {
+public:
+    using KConfigPropertyMap::KConfigPropertyMap;
+};
 }

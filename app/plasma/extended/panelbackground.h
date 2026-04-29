@@ -12,6 +12,7 @@
 // Plasma
 #include <Plasma/Plasma>
 #include <Plasma/FrameSvg>
+#include <Plasma/Svg>
 
 namespace Latte {
 namespace PlasmaExtended {

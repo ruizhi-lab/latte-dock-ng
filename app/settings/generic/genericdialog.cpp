@@ -68,7 +68,7 @@ KMessageBox::ButtonCode GenericDialog::saveChangesConfirmation(const QString &te
 {
     QString dialogtext = text.isEmpty() ? i18n("The settings have changed.<br/>Do you want to apply the changes or discard them?") : text;
 
-    return KMessageBox::warningYesNoCancel(this,
+    return KMessageBox::questionTwoActionsCancel(this,
                                            dialogtext,
                                            i18n("Apply Settings"),
                                            KStandardGuiItem::apply(),

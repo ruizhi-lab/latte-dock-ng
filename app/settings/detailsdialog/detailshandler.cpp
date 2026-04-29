@@ -73,7 +73,7 @@ void DetailsHandler::init()
 
     m_ui->patternClearBtn->setFixedHeight(m_ui->backgroundBtn->height()+2);
 
-    connect(m_backButtonsGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled),
+    connect(m_backButtonsGroup, &QButtonGroup::idToggled,
             [ = ](int id, bool checked) {
 
         if (checked) {
@@ -264,11 +264,11 @@ void DetailsHandler::onCurrentLayoutIndexChanged(int row)
         if (hasChangedData()) { //new layout was chosen but there are changes
             KMessageBox::ButtonCode result = saveChangesConfirmation();
 
-            if (result == KMessageBox::Yes) {
+            if (result == KMessageBox::PrimaryAction) {
                 switchtonewlayout = true;
                 m_lastConfirmedLayoutIndex = row;
                 save();
-            } else if (result == KMessageBox::No) {
+            } else if (result == KMessageBox::SecondaryAction) {
                 switchtonewlayout = true;
                 m_lastConfirmedLayoutIndex = row;
             } else if (result == KMessageBox::Cancel) {

@@ -10,6 +10,8 @@
 #include "../windowinfowrap.h"
 
 // Qt
+#include <QHash>
+#include <QMap>
 #include <QObject>
 
 

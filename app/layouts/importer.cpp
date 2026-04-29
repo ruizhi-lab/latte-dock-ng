@@ -809,7 +809,7 @@ QStringList Importer::checkRepairMultipleLayoutsLinkedFile()
 
     QStringList updatedLayouts;
 
-    for(const auto &layoutName : linkedLayoutContainmentGroups.uniqueKeys()) {
+    for(const auto &layoutName : linkedLayoutContainmentGroups.keys()) {
         if (layoutName != Layout::MULTIPLELAYOUTSHIDDENNAME && layoutExists(layoutName)) {
             updatedLayouts << layoutName;
             KSharedConfigPtr layoutFilePtr = KSharedConfig::openConfig(layoutUserFilePath(layoutName));

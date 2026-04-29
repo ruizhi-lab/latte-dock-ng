@@ -55,16 +55,10 @@ void Effects::init()
     connect(m_view, &QQuickWindow::widthChanged, this, &Effects::updateMask);
     connect(m_view, &QQuickWindow::heightChanged, this, &Effects::updateMask);
     connect(m_view, &Latte::View::behaveAsPlasmaPanelChanged, this, &Effects::updateMask);
-    connect(KWindowSystem::self(), &KWindowSystem::compositingChanged, this, [&]() {
-        if (!KWindowSystem::compositingActive() && !m_view->behaveAsPlasmaPanel()) {
-            setMask(m_rect);
-        }
-
-        updateMask();
-    });
+    // compositingChanged removed in KF6; Wayland always has compositing
 
     connect(this, &Effects::rectChanged, this, [&]() {
-        if (!KWindowSystem::compositingActive() && !m_view->behaveAsPlasmaPanel()) {
+        if (!true && !m_view->behaveAsPlasmaPanel()) {
             setMask(m_rect);
         }
     });
@@ -457,7 +451,7 @@ void Effects::updateBackgroundCorners()
 
 void Effects::updateMask()
 {
-    if (KWindowSystem::compositingActive()) {
+    if (true) {
         // Under Wayland with compositing active we leave mask handling to the compositor.
     } else {
         QRegion fixedMask;
@@ -564,8 +558,8 @@ void Effects::updateEffects()
 
                 if (!fixedMask.isEmpty()) {
                     clearEffects = false;
-                    KWindowEffects::enableBlurBehind(m_view->winId(), true, fixedMask);
-                    KWindowEffects::enableBackgroundContrast(m_view->winId(),
+                    KWindowEffects::enableBlurBehind(m_view, true, fixedMask);
+                    KWindowEffects::enableBackgroundContrast(m_view,
                                                              m_theme.backgroundContrastEnabled(),
                                                              m_backEffectContrast,
                                                              m_backEffectIntesity,
@@ -576,8 +570,8 @@ void Effects::updateEffects()
         } else {
             //!  BEHAVEASPLASMAPANEL case
             clearEffects = false;
-            KWindowEffects::enableBlurBehind(m_view->winId(), true);
-            KWindowEffects::enableBackgroundContrast(m_view->winId(),
+            KWindowEffects::enableBlurBehind(m_view, true);
+            KWindowEffects::enableBackgroundContrast(m_view,
                                                      m_theme.backgroundContrastEnabled(),
                                                      m_backEffectContrast,
                                                      m_backEffectIntesity,
@@ -586,8 +580,8 @@ void Effects::updateEffects()
     }
 
     if (clearEffects) {
-        KWindowEffects::enableBlurBehind(m_view->winId(), false);
-        KWindowEffects::enableBackgroundContrast(m_view->winId(), false);
+        KWindowEffects::enableBlurBehind(m_view, false);
+        KWindowEffects::enableBackgroundContrast(m_view, false);
     }
 }
 

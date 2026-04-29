@@ -7,5 +7,8 @@
 #endif
 
 namespace KDeclarative {
-using QmlObjectSharedEngine = PlasmaQuick::SharedQmlEngine;
+class QmlObjectSharedEngine : public PlasmaQuick::SharedQmlEngine {
+public:
+    using PlasmaQuick::SharedQmlEngine::SharedQmlEngine;
+};
 }

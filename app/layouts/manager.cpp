@@ -31,6 +31,7 @@
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <KNotification>
+#include <KPackage/Package>
 
 namespace Latte {
 namespace Layouts {
@@ -256,7 +257,7 @@ void Manager::loadLayoutOnStartup(QString layoutName)
                                        QStringList(),
                                        QString(),
                                        0,
-                                       KMessageBox::NoExec,
+                                       KMessageBox::Options{KMessageBox::NoExec},
                                        QString());
         dialog->show();
     }*/

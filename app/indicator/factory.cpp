@@ -20,6 +20,7 @@
 #include <QLatin1String>
 
 // KDE
+#include <KNSWidgets/Dialog>
 #include <KDirWatch>
 #include <KLocalizedString>
 #include <KMessageBox>
@@ -381,7 +382,7 @@ void Factory::removeIndicator(QString id)
                                        QStringList(),
                                        QString(),
                                        0,
-                                       KMessageBox::NoExec,
+                                       KMessageBox::Options{KMessageBox::NoExec},
                                        QString());
 
         connect(buttonbox, &QDialogButtonBox::accepted, [&, id, pluginName]() {
@@ -404,7 +405,7 @@ void Factory::removeIndicator(QString id)
 
 void Factory::downloadIndicator()
 {
-    KNS3::QtQuickDialogWrapper dialog(QStringLiteral("latte-indicators.knsrc"), m_parentWidget);
+    KNSWidgets::Dialog dialog(QStringLiteral("latte-indicators.knsrc"), m_parentWidget);
     dialog.exec();
 }
 

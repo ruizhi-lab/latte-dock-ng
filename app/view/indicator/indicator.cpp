@@ -271,7 +271,7 @@ void Indicator::updateComponent()
 
     if (!uiPath.isEmpty()) {
         uiPath = m_pluginPath + "/package/" + uiPath;
-        m_component = new QQmlComponent(m_view->engine(), uiPath);
+        m_component = new QQmlComponent(m_view->engine().get(), uiPath);
     }
 
     if (prevComponent) {
@@ -288,7 +288,7 @@ void Indicator::loadPlasmaComponent()
 
     if (!uiPath.isEmpty()) {
         uiPath = QFileInfo(metadata.fileName()).absolutePath() + "/package/" + uiPath;
-        m_plasmaComponent = new QQmlComponent(m_view->engine(), uiPath);
+        m_plasmaComponent = new QQmlComponent(m_view->engine().get(), uiPath);
     }
 
     if (prevComponent) {

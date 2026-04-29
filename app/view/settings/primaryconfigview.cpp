@@ -36,7 +36,6 @@
 #include <KWindowSystem>
 
 // Plasma
-#include <Plasma/Package>
 
 #define CANVASWINDOWINTERVAL 50
 #define PRIMARYWINDOWINTERVAL 250
@@ -656,10 +655,10 @@ void PrimaryConfigView::updateEffects()
         setMask(QRegion());
     }
 
-    if (KWindowSystem::compositingActive()) {
-        KWindowEffects::enableBlurBehind(winId(), true, fixedMask);
+    if (true) {
+        KWindowEffects::enableBlurBehind(this, true, fixedMask);
     } else {
-        KWindowEffects::enableBlurBehind(winId(), false);
+        KWindowEffects::enableBlurBehind(this, false);
     }
 }
 

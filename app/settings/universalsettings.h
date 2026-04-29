@@ -115,8 +115,8 @@ public:
     void setSensitivity(Settings::MouseSensitivity sense);
 
     QQmlListProperty<QScreen> screens();
-    static int countScreens(QQmlListProperty<QScreen> *property); //! is needed by screens()
-    static QScreen *atScreens(QQmlListProperty<QScreen> *property, int index); //! is needed by screens()
+    static qsizetype countScreens(QQmlListProperty<QScreen> *property); //! is needed by screens()
+    static QScreen *atScreens(QQmlListProperty<QScreen> *property, qsizetype index); //! is needed by screens()
 
 public Q_SLOTS:
     Q_INVOKABLE QString splitterIconPath();
