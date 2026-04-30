@@ -58,7 +58,8 @@ public:
         setFlags(Qt::FramelessWindowHint
                  | Qt::WindowStaysOnTopHint
                  | Qt::NoDropShadowWindowHint
-                 | Qt::WindowDoesNotAcceptFocus);
+                 | Qt::WindowDoesNotAcceptFocus
+                 | Qt::WindowTransparentForInput);
 
         setColor(QColor(Qt::transparent));
 
