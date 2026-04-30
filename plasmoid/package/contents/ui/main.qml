@@ -150,6 +150,26 @@ PlasmoidItem {
     property bool showOnlyCurrentScreen: plasmoid.configuration.showOnlyCurrentScreen
     property bool showOnlyCurrentDesktop: plasmoid.configuration.showOnlyCurrentDesktop
     property bool showOnlyCurrentActivity: plasmoid.configuration.showOnlyCurrentActivity
+    property string tasksModelActivityId: {
+        if (!root.showOnlyCurrentActivity) {
+            return "";
+        }
+
+        const layoutActivityId = appletAbilities.myView.isReady ? appletAbilities.myView.lastUsedActivity : "";
+
+        if (root.isFilterableActivityId(layoutActivityId)) {
+            return String(layoutActivityId);
+        }
+
+        const currentActivityId = activityInfo.currentActivity;
+
+        if (root.isFilterableActivityId(currentActivityId)) {
+            return String(currentActivityId);
+        }
+
+        return "";
+    }
+    property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
     property bool showPreviews:  hoverAction === LatteTasks.Types.PreviewWindows || hoverAction === LatteTasks.Types.PreviewAndHighlightWindows
     property bool showWindowActions: plasmoid.configuration.showWindowActions && !disableAllWindowsFunctionality
     property bool showWindowsOnlyFromLaunchers: plasmoid.configuration.showWindowsOnlyFromLaunchers && !disableAllWindowsFunctionality
@@ -309,6 +329,23 @@ PlasmoidItem {
             }
         }
         return false;
+    }
+
+    function isFilterableActivityId(activityId) {
+        if (activityId === undefined || activityId === null) {
+            return false;
+        }
+
+        const normalizedId = String(activityId);
+
+        if (normalizedId.length === 0) {
+            return false;
+        }
+
+        return normalizedId !== "{0}"
+                && normalizedId !== "{free-activities}"
+                && normalizedId !== "{current-activity}"
+                && normalizedId !== "00000000-0000-0000-0000-000000000000";
     }
 
 
@@ -498,11 +535,11 @@ PlasmoidItem {
         screenGeometry: appletAbilities.myView.screenGeometry
         // comment in order to support LTS Plasma 5.8
         // screen: plasmoid.screen
-        activity: appletAbilities.myView.isReady ? appletAbilities.myView.lastUsedActivity : activityInfo.currentActivity
+        activity: root.tasksModelActivityId
 
         filterByVirtualDesktop: root.showOnlyCurrentDesktop
         filterByScreen: root.showOnlyCurrentScreen
-        filterByActivity: root.showOnlyCurrentActivity
+        filterByActivity: root.shouldFilterByActivity
 
         launchInPlace: true
         separateLaunchers: true
