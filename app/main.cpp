@@ -49,6 +49,7 @@
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+inline void ensureKdeSessionEnvironment();
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -70,6 +71,7 @@ int main(int argc, char **argv)
     detectPlatform(argc, argv);
     QApplication app(argc, argv);
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
+    ensureKdeSessionEnvironment();
 
     if (!KWindowSystem::isPlatformWayland()) {
         qCritical() << "Latte-Dock Wayland-only build requires a Wayland Plasma session.";
@@ -428,6 +430,32 @@ int main(int argc, char **argv)
     KDBusService service(KDBusService::Unique);
 
     return app.exec();
+}
+
+inline void ensureKdeSessionEnvironment()
+{
+    // Latte relies on KDE session metadata for launcher -> desktop file
+    // resolution (app names/icons in task model). When started from stripped
+    // environments (e.g. remote shell), these variables may be missing.
+    if (qEnvironmentVariableIsEmpty("DESKTOP_SESSION")) {
+        qputenv("DESKTOP_SESSION", "plasma");
+    }
+
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
+        qputenv("XDG_CURRENT_DESKTOP", "KDE");
+    }
+
+    if (qEnvironmentVariableIsEmpty("XDG_MENU_PREFIX")) {
+        qputenv("XDG_MENU_PREFIX", "plasma-");
+    }
+
+    if (qEnvironmentVariableIsEmpty("KDE_FULL_SESSION")) {
+        qputenv("KDE_FULL_SESSION", "true");
+    }
+
+    if (qEnvironmentVariableIsEmpty("KDE_SESSION_VERSION")) {
+        qputenv("KDE_SESSION_VERSION", "6");
+    }
 }
 
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
