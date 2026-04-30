@@ -287,12 +287,26 @@ for user_home in "${user_homes[@]:-}"; do
         "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"
         "${user_home}/.local/share/latte/indicators"
     )
+    user_managed_files=(
+        "${user_home}/.local/share/applications/org.kde.latte-dock.desktop"
+        "${user_home}/.local/share/applications/latte-dock.desktop"
+        "${user_home}/.config/autostart/org.kde.latte-dock.desktop"
+        "${user_home}/.config/autostart/latte-dock.desktop"
+    )
 
     for dir_path in "${user_managed_dirs[@]}"; do
         if [[ "$dry_run" == "true" ]]; then
             echo "rm -rf -- $dir_path"
         else
             rm -rf -- "$dir_path"
+        fi
+    done
+
+    for file_path in "${user_managed_files[@]}"; do
+        if [[ "$dry_run" == "true" ]]; then
+            echo "rm -f -- $file_path"
+        else
+            rm -f -- "$file_path"
         fi
     done
 
