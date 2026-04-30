@@ -184,6 +184,28 @@ remove_tree_if_marked() {
     run_as_root rm -rf -- "$path"
 }
 
+remove_user_local_launcher_link() {
+    local user_home="$1"
+    local local_bin="${user_home}/.local/bin/latte-dock-ng"
+    local resolved=""
+
+    if [[ ! -L "$local_bin" ]]; then
+        return
+    fi
+
+    resolved="$(readlink -f "$local_bin" 2>/dev/null || true)"
+    if [[ "$resolved" != "/usr/bin/latte-dock-ng" ]]; then
+        return
+    fi
+
+    if [[ "$dry_run" == "true" ]]; then
+        echo "rm -f -- $local_bin"
+        return
+    fi
+
+    rm -f -- "$local_bin"
+}
+
 if [[ -f "$manifest_path" ]]; then
     while IFS= read -r file; do
         [[ -z "$file" ]] && continue
@@ -220,6 +242,8 @@ for user_home in "${user_homes[@]:-}"; do
             rm -rf -- "$dir_path"
         fi
     done
+
+    remove_user_local_launcher_link "$user_home"
 done
 
 qt_qml_dirs=("/usr/lib64/qt6/qml")

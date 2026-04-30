@@ -189,6 +189,32 @@ sync_tree_if_exists() {
     fi
 }
 
+ensure_user_local_launcher() {
+    local user_home="$1"
+    local local_bin_dir="${user_home}/.local/bin"
+    local local_bin="${local_bin_dir}/latte-dock-ng"
+    local system_bin="/usr/bin/latte-dock-ng"
+
+    if [[ ! -x "$system_bin" ]]; then
+        return
+    fi
+
+    if [[ -e "$local_bin" ]]; then
+        local resolved_local
+        resolved_local="$(readlink -f "$local_bin" 2>/dev/null || true)"
+
+        if [[ "$resolved_local" != "$system_bin" ]]; then
+            local backup_path="${local_bin}.stale.$(date +%Y%m%d-%H%M%S)"
+            echo "Info: found conflicting user-local launcher '${local_bin}', moving to '${backup_path}'."
+            mv -f "$local_bin" "$backup_path"
+        fi
+    fi
+
+    mkdir -p "$local_bin_dir"
+    ln -sfn "$system_bin" "$local_bin"
+    echo "Info: linked '${local_bin}' -> '${system_bin}'."
+}
+
 detect_user_homes
 
 run_as_root cmake --install .
@@ -207,6 +233,7 @@ for user_home in "${user_homes[@]:-}"; do
     sync_tree_if_exists "${script_dir}/plasmoid/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid"
     sync_tree_if_exists "${script_dir}/shell/package" "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"
     sync_tree_if_exists "${script_dir}/indicators" "${user_home}/.local/share/latte/indicators"
+    ensure_user_local_launcher "$user_home"
 done
 
 # Some Plasma 6 distros do not ship org.kde.plasma.private.taskmanager.
@@ -227,3 +254,10 @@ if [[ ! -d "$fallback_taskmanager_dir" ]]; then
     sync_tree "${script_dir}/compat/qml/org/kde/plasma/private/taskmanager" "$fallback_taskmanager_dir"
     run_as_root touch "${fallback_taskmanager_dir}/.latte-fallback-module"
 fi
+
+cat <<'EOF'
+Info: Installation finished.
+Info: If your terminal session has a cached command path, refresh it before launching:
+  - zsh:  rehash
+  - bash: hash -r
+EOF
