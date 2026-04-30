@@ -135,7 +135,7 @@ if [[ "$l10n_auto_translations" == "ON" ]]; then
     cmake --build . --target fetch-translations
 fi
 
-cmake --build . --parallel
+cmake --build . --parallel --clean-first
 
 if [[ "${EUID}" -eq 0 ]]; then
     sudo_cmd=()
