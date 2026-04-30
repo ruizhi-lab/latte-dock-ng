@@ -376,9 +376,10 @@ void Manager::cleanupOnStartup(QString path)
         if (pluginId == QStringLiteral("org.kde.latte.containment")) {
             KConfigGroup general = containment.group("General");
             const QString appletOrder = general.readEntry("appletOrder", QString());
+            KConfigGroup applets = containment.group("Applets");
 
             if (appletOrder.isEmpty()) {
-                QStringList appletIds = containment.group("Applets").groupList();
+                QStringList appletIds = applets.groupList();
 
                 if (!appletIds.isEmpty()) {
                     std::sort(appletIds.begin(), appletIds.end(), [](const QString &lhs, const QString &rhs) {
@@ -398,6 +399,34 @@ void Manager::cleanupOnStartup(QString path)
                     general.writeEntry("appletOrder", rebuiltOrder);
                     general.sync();
                     qWarning() << "Repaired missing appletOrder for containment" << cId << ":" << rebuiltOrder;
+                }
+            }
+
+            const QStringList orderedAppletIds = general.readEntry("appletOrder", QString()).split(';', Qt::SkipEmptyParts);
+
+            if (orderedAppletIds.size() == 2) {
+                QString tasksAppletId;
+                QString analogClockAppletId;
+
+                for (const auto &aId : orderedAppletIds) {
+                    const QString appletPluginId = applets.group(aId).readEntry("plugin", QString());
+
+                    if (appletPluginId == QStringLiteral("org.kde.latte.plasmoid")) {
+                        tasksAppletId = aId;
+                    } else if (appletPluginId == QStringLiteral("org.kde.plasma.analogclock")) {
+                        analogClockAppletId = aId;
+                    }
+                }
+
+                //! Migrate the legacy "Default Dock" template shape that bundled the analog clock in the same dock.
+                //! On Plasma 6 this applet can dominate dock sizing and interfere with hover UX.
+                if (!tasksAppletId.isEmpty() && !analogClockAppletId.isEmpty()
+                        && tasksAppletId == QStringLiteral("2") && analogClockAppletId == QStringLiteral("3")) {
+                    applets.group(analogClockAppletId).deleteGroup();
+                    applets.sync();
+                    general.writeEntry("appletOrder", tasksAppletId);
+                    general.sync();
+                    qWarning() << "Removed legacy analog clock from default dock containment" << cId;
                 }
             }
         }
