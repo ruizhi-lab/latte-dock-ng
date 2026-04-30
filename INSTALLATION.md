@@ -77,17 +77,22 @@ make -j$(nproc)
 sudo make install
 ```
 
-Or using the provided install script:
+Or using the provided install script (recommended):
 
 ```bash
 bash install.sh
 ```
+
+The install script now performs a pre-install cleanup by default (`uninstall.sh`),
+to avoid stale root/user package overrides shadowing the new build.
 
 Install script options:
 
 ```bash
 bash install.sh --help
 bash install.sh Debug
+bash install.sh --no-clean
+bash install.sh --clean --purge-user-data
 bash install.sh RelWithDebInfo --enable-make-unique
 bash install.sh --translations
 bash install.sh --translations-stable
@@ -104,5 +109,6 @@ Uninstall script options:
 ```bash
 bash uninstall.sh --help
 bash uninstall.sh --dry-run
+bash uninstall.sh --purge-user-data
 bash uninstall.sh --manifest build/install_manifest.txt --dry-run
 ```

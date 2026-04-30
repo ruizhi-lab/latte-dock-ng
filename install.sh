@@ -10,6 +10,8 @@ build_type="Release"
 enable_make_unique="OFF"
 l10n_auto_translations="OFF"
 l10n_branch=""
+preclean_install="true"
+purge_user_data="false"
 
 declare -a user_homes=()
 
@@ -46,11 +48,13 @@ detect_user_homes() {
 usage() {
     cat <<'EOF'
 Usage:
-  bash install.sh [BuildType] [--enable-make-unique] [--translations|--translations-stable]
+  bash install.sh [BuildType] [--enable-make-unique] [--translations|--translations-stable] [--clean|--no-clean] [--purge-user-data]
 
 Examples:
   bash install.sh
   bash install.sh Debug
+  bash install.sh --no-clean
+  bash install.sh --clean --purge-user-data
   bash install.sh RelWithDebInfo --enable-make-unique
   bash install.sh --translations
   bash install.sh --translations-stable
@@ -67,6 +71,15 @@ for arg in "$@"; do
             ;;
         --enable-make-unique)
             enable_make_unique="ON"
+            ;;
+        --clean)
+            preclean_install="true"
+            ;;
+        --no-clean)
+            preclean_install="false"
+            ;;
+        --purge-user-data)
+            purge_user_data="true"
             ;;
         --translations)
             l10n_auto_translations="ON"
@@ -103,6 +116,18 @@ for arg in "$@"; do
             ;;
     esac
 done
+
+if [[ "$preclean_install" == "true" ]]; then
+    uninstall_cmd=(bash "${script_dir}/uninstall.sh")
+    if [[ "$purge_user_data" == "true" ]]; then
+        uninstall_cmd+=(--purge-user-data)
+    fi
+
+    echo "Info: running pre-install cleanup: ${uninstall_cmd[*]}"
+    "${uninstall_cmd[@]}"
+elif [[ "$purge_user_data" == "true" ]]; then
+    echo "Warning: --purge-user-data is ignored when --no-clean is set."
+fi
 
 build_dir="${script_dir}/build"
 if [[ -d "$build_dir" && ! -w "$build_dir" ]]; then

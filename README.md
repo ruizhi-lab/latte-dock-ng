@@ -95,13 +95,15 @@ See the [installation instructions](./INSTALLATION.md) for distro-specific depen
 ### Helper scripts
 
 ```bash
-# Build + install
+# Build + install (pre-clean enabled by default)
 bash install.sh --help
 bash install.sh
+bash install.sh --clean --purge-user-data
 
-# Uninstall files listed by CMake install_manifest.txt
+# Uninstall (manifest + known root/user override paths)
 bash uninstall.sh --help
 bash uninstall.sh --dry-run
+bash uninstall.sh --purge-user-data
 ```
 
 ## Run Latte-Dock

@@ -8,6 +8,9 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest_path="${script_dir}/build/install_manifest.txt"
 dry_run="false"
 manifest_provided="false"
+purge_user_data="false"
+
+declare -a manifest_paths=()
 
 declare -a user_homes=()
 
@@ -44,10 +47,13 @@ detect_user_homes() {
 usage() {
     cat <<'EOF'
 Usage:
-  bash uninstall.sh [--manifest <path>] [--dry-run]
+  bash uninstall.sh [--manifest <path>] [--dry-run] [--purge-user-data]
 
 Defaults:
-  --manifest build/install_manifest.txt
+  --manifest build/install_manifest.txt (or auto-detected from build*/install_manifest.txt)
+
+Options:
+  --purge-user-data   Also remove user config/cache/state files under ~/.config and ~/.local.
 EOF
 }
 
@@ -66,6 +72,9 @@ while (($# > 0)); do
         --dry-run)
             dry_run="true"
             ;;
+        --purge-user-data)
+            purge_user_data="true"
+            ;;
         --help|-h)
             usage
             exit 0
@@ -79,50 +88,56 @@ while (($# > 0)); do
     shift
 done
 
-if [[ "$manifest_provided" != "true" ]]; then
-    # Pick the most recently generated manifest across build/ and build-* dirs.
-    # Use portable stat probes because GNU find -printf is unavailable on BSD/macOS.
-    detected_manifest=""
-    latest_mtime=0
+if [[ "$manifest_provided" == "true" ]]; then
+    manifest_paths=("$manifest_path")
+else
+    # Include all manifests from build/ and build-* so stale files from old build dirs
+    # are also removed during cleanup.
     shopt -s nullglob
 
     for candidate in "$script_dir"/build/install_manifest.txt "$script_dir"/build-*/install_manifest.txt; do
-        [[ -f "$candidate" ]] || continue
-
-        mtime=0
-        if mtime="$(stat -c %Y "$candidate" 2>/dev/null)"; then
-            :
-        elif mtime="$(stat -f %m "$candidate" 2>/dev/null)"; then
-            :
-        fi
-
-        if (( mtime >= latest_mtime )); then
-            latest_mtime="$mtime"
-            detected_manifest="$candidate"
+        if [[ -f "$candidate" ]]; then
+            manifest_paths+=("$candidate")
         fi
     done
 
     shopt -u nullglob
 
-    if [[ -n "$detected_manifest" ]]; then
-        manifest_path="$detected_manifest"
+    if [[ ${#manifest_paths[@]} -eq 0 ]]; then
+        manifest_paths=("$manifest_path")
     fi
 fi
 
 detect_user_homes
 
-if [[ ! -f "$manifest_path" ]]; then
-    echo "Warning: uninstall manifest does not exist: $manifest_path"
-    echo "Proceeding with package directory cleanup only."
-fi
+existing_manifest_count=0
+for manifest_candidate in "${manifest_paths[@]}"; do
+    if [[ -f "$manifest_candidate" ]]; then
+        existing_manifest_count=$((existing_manifest_count + 1))
+    fi
+done
 
-echo "Using uninstall manifest: $manifest_path"
+if [[ "$existing_manifest_count" -eq 0 ]]; then
+    echo "Warning: uninstall manifests do not exist."
+    printf '  - %s\n' "${manifest_paths[@]}"
+    echo "Proceeding with package directory cleanup only."
+else
+    if [[ ${#manifest_paths[@]} -eq 1 ]]; then
+        echo "Using uninstall manifest: ${manifest_paths[0]}"
+    else
+        echo "Using uninstall manifests:"
+        printf '  - %s\n' "${manifest_paths[@]}"
+    fi
+fi
 
 if [[ "$dry_run" == "true" ]]; then
     echo "Dry run mode. Files that would be removed:"
-    if [[ -f "$manifest_path" ]]; then
-        cat "$manifest_path"
-    fi
+    for manifest_candidate in "${manifest_paths[@]}"; do
+        if [[ -f "$manifest_candidate" ]]; then
+            echo "--- ${manifest_candidate} ---"
+            cat "$manifest_candidate"
+        fi
+    done
 fi
 
 if [[ "${EUID}" -eq 0 ]]; then
@@ -206,24 +221,62 @@ remove_user_local_launcher_link() {
     rm -f -- "$local_bin"
 }
 
-if [[ -f "$manifest_path" ]]; then
-    while IFS= read -r file; do
-        [[ -z "$file" ]] && continue
-        remove_file "$file"
-    done < "$manifest_path"
-fi
+remove_user_stale_launchers() {
+    local user_home="$1"
+    local stale_entry=""
+
+    shopt -s nullglob
+    for stale_entry in "${user_home}"/.local/bin/latte-dock-ng.stale.*; do
+        [[ -e "$stale_entry" ]] || continue
+        if [[ "$dry_run" == "true" ]]; then
+            echo "rm -f -- $stale_entry"
+        else
+            rm -f -- "$stale_entry"
+        fi
+    done
+    shopt -u nullglob
+}
+
+for manifest_file in "${manifest_paths[@]}"; do
+    if [[ -f "$manifest_file" ]]; then
+        while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            remove_file "$file"
+        done < "$manifest_file"
+    fi
+done
 
 # install.sh explicitly syncs these directories with rsync --delete.
 # Remove them during uninstall to guarantee no stale files remain.
-managed_dirs=(
-    "/usr/share/plasma/plasmoids/org.kde.latte.containment"
-    "/usr/share/plasma/plasmoids/org.kde.latte.plasmoid"
-    "/usr/share/plasma/shells/org.kde.latte.shell"
-    "/usr/share/latte/indicators"
-)
+managed_prefixes=("/usr" "/usr/local")
+for prefix in "${managed_prefixes[@]}"; do
+    managed_dirs=(
+        "${prefix}/share/plasma/plasmoids/org.kde.latte.containment"
+        "${prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid"
+        "${prefix}/share/plasma/shells/org.kde.latte.shell"
+        "${prefix}/share/latte/indicators"
+    )
 
-for dir_path in "${managed_dirs[@]}"; do
-    remove_tree "$dir_path"
+    managed_files=(
+        "${prefix}/bin/latte-dock-ng"
+        "${prefix}/share/applications/org.kde.latte-dock.desktop"
+        "${prefix}/share/metainfo/org.kde.latte-dock.appdata.xml"
+        "${prefix}/share/dbus-1/interfaces/org.kde.LatteDock.xml"
+        "${prefix}/share/knotifications6/lattedock.notifyrc"
+        "${prefix}/share/knsrcfiles/latte-layouts.knsrc"
+        "${prefix}/share/knsrcfiles/latte-indicators.knsrc"
+        "${prefix}/share/kservicetypes6/latte-indicator.desktop"
+        "${prefix}/share/kservices6/latte-indicator.desktop"
+        "${prefix}/share/icons/breeze/applets/256/org.kde.latte.plasmoid.svg"
+    )
+
+    for dir_path in "${managed_dirs[@]}"; do
+        remove_tree "$dir_path"
+    done
+
+    for file_path in "${managed_files[@]}"; do
+        remove_file "$file_path"
+    done
 done
 
 # Also remove user-level overrides that can shadow /usr/share content.
@@ -244,9 +297,46 @@ for user_home in "${user_homes[@]:-}"; do
     done
 
     remove_user_local_launcher_link "$user_home"
+    remove_user_stale_launchers "$user_home"
+
+    if [[ "$purge_user_data" == "true" ]]; then
+        user_purge_paths=(
+            "${user_home}/.config/latte"
+            "${user_home}/.config/lattedockrc"
+            "${user_home}/.config/autostart/org.kde.latte-dock.desktop"
+            "${user_home}/.local/share/latte-layouts"
+            "${user_home}/.local/share/latte"
+            "${user_home}/.cache/latte-dock"
+            "${user_home}/.cache/lattedock"
+            "${user_home}/.local/state/latte"
+        )
+
+        for purge_path in "${user_purge_paths[@]}"; do
+            if [[ -d "$purge_path" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    echo "rm -rf -- $purge_path"
+                else
+                    rm -rf -- "$purge_path"
+                fi
+            elif [[ -e "$purge_path" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    echo "rm -f -- $purge_path"
+                else
+                    rm -f -- "$purge_path"
+                fi
+            fi
+        done
+    fi
 done
 
-qt_qml_dirs=("/usr/lib64/qt6/qml")
+qt_qml_dirs=(
+    "/usr/lib64/qt6/qml"
+    "/usr/lib/qt6/qml"
+    "/usr/lib/x86_64-linux-gnu/qt6/qml"
+    "/usr/local/lib64/qt6/qml"
+    "/usr/local/lib/qt6/qml"
+    "/usr/local/lib/x86_64-linux-gnu/qt6/qml"
+)
 if command -v qtpaths6 >/dev/null 2>&1; then
     qt_qml_dirs+=("$(qtpaths6 --query QT_INSTALL_QML 2>/dev/null || true)")
 elif command -v qtpaths >/dev/null 2>&1; then
@@ -255,14 +345,42 @@ fi
 
 for qml_dir in "${qt_qml_dirs[@]}"; do
     [[ -z "$qml_dir" ]] && continue
+
+    latte_qml_module_dirs=(
+        "${qml_dir}/org/kde/latte/core"
+        "${qml_dir}/org/kde/latte/components"
+        "${qml_dir}/org/kde/latte/abilities"
+        "${qml_dir}/org/kde/latte/private/tasks"
+        "${qml_dir}/org/kde/latte/private/containment"
+    )
+
+    for qml_module_dir in "${latte_qml_module_dirs[@]}"; do
+        remove_tree "$qml_module_dir"
+    done
+
     fallback_dir="${qml_dir}/org/kde/plasma/private/taskmanager"
     marker_file="${fallback_dir}/.latte-fallback-module"
     remove_tree_if_marked "$fallback_dir" "$marker_file"
 done
 
+plugin_dirs=(
+    "/usr/lib/plugins/plasma/containmentactions"
+    "/usr/lib64/plugins/plasma/containmentactions"
+    "/usr/lib/x86_64-linux-gnu/plugins/plasma/containmentactions"
+    "/usr/local/lib/plugins/plasma/containmentactions"
+    "/usr/local/lib64/plugins/plasma/containmentactions"
+    "/usr/local/lib/x86_64-linux-gnu/plugins/plasma/containmentactions"
+)
+
+for plugin_dir in "${plugin_dirs[@]}"; do
+    remove_file "${plugin_dir}/plasma_containmentactions_lattecontextmenu.so"
+done
+
 # Best-effort cleanup for now-empty parent dirs created by install.sh sync.
 remove_dir_if_empty "/usr/share/latte/indicators"
 remove_dir_if_empty "/usr/share/latte"
+remove_dir_if_empty "/usr/local/share/latte/indicators"
+remove_dir_if_empty "/usr/local/share/latte"
 for user_home in "${user_homes[@]:-}"; do
     if [[ "$dry_run" == "true" ]]; then
         echo "rmdir --ignore-fail-on-non-empty -- ${user_home}/.local/share/latte/indicators"
