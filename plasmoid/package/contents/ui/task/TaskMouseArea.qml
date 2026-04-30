@@ -24,8 +24,8 @@ MouseArea {
 
     Connections {
         target: taskMouseArea
-        function onPressed() { taskItem.mousePressed(mouse.x, mouse.y, mouse.button) }
-        function onReleased() { taskItem.mouseReleased(mouse.x, mouse.y, mouse.button) }
+        function onPressed(mouse) { taskItem.mousePressed(mouse.x, mouse.y, mouse.button) }
+        function onReleased(mouse) { taskItem.mouseReleased(mouse.x, mouse.y, mouse.button) }
     }
 
     onEntered: {
@@ -72,7 +72,7 @@ MouseArea {
     }
 
     // IMPORTANT: This must be improved ! even for small milliseconds  it reduces performance
-    onPositionChanged: {
+    onPositionChanged: function(mouse) {
         if (taskItem.abilities.myView.isReady && !taskItem.abilities.myView.isShownFully) {
             return;
         }
@@ -105,7 +105,7 @@ MouseArea {
         }
     }
 
-    onPressed: {
+    onPressed: function(mouse) {
         //console.log("Pressed Task Delegate..");
         slotPublishGeometries();
 
@@ -132,7 +132,7 @@ MouseArea {
         }
     }
 
-    onReleased: {
+    onReleased: function(mouse) {
         //console.log("Released Task Delegate...");
         _resistanerTimer.stop();
 
@@ -221,7 +221,7 @@ MouseArea {
         pressed = false;
     }
 
-    onWheel: {
+    onWheel: function(wheel) {
         var wheelActionsEnabled = (root.taskScrollAction !== LatteTasks.Types.ScrollNone || root.manualScrollTasksEnabled);
 
         if (isSeparator

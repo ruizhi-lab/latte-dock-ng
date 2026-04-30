@@ -49,13 +49,13 @@ Loader {
         property int lastPressX: -1
         property int lastPressY: -1
 
-        onClicked: {
+        onClicked: function(mouse) {
             if (root.closeActiveWindowEnabled && mouse.button === Qt.MidButton) {
                 selectedWindowsTracker.lastActiveWindow.requestClose();
             }
         }
 
-        onPressed: {
+        onPressed: function(mouse) {
             if (!root.dragActiveWindowEnabled) {
                 return;
             }
@@ -72,7 +72,7 @@ Loader {
             lastPressY = -1;
         }
 
-        onPositionChanged: {
+        onPositionChanged: function(mouse) {
             if (!root.dragActiveWindowEnabled || !(mainArea.pressedButtons & Qt.LeftButton)) {
                 return;
             }
@@ -98,7 +98,7 @@ Loader {
             selectedWindowsTracker.lastActiveWindow.requestToggleMaximized();
         }
 
-        onWheel: {
+        onWheel: function(wheel) {
             if (wheelIsBlocked) {
                 return;
             }
@@ -223,8 +223,8 @@ Loader {
             Connections {
                 target: mainArea
                 enabled: root.indicators.info.needsMouseEventCoordinates
-                function onPressed() { indicatorBackLayer.level.mousePressed(mouse.x, mouse.y, mouse.button); }
-                function onReleased() { indicatorBackLayer.level.mouseReleased(mouse.x, mouse.y, mouse.button); }
+                function onPressed(mouse) { indicatorBackLayer.level.mousePressed(mouse.x, mouse.y, mouse.button); }
+                function onReleased(mouse) { indicatorBackLayer.level.mouseReleased(mouse.x, mouse.y, mouse.button); }
             }
         }
     }

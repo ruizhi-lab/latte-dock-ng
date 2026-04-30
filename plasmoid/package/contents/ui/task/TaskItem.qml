@@ -603,7 +603,11 @@ AbilityItem.BasicItem {
 
         if (!root.contextMenu) {
             contextMenu = root.createContextMenu(taskItem, modelIndex(), args);
-            contextMenu.show();
+            if (contextMenu && contextMenu.show) {
+                contextMenu.show();
+            } else {
+                root.contextMenu = null;
+            }
         } else {
             //! make sure that context menu isn't deleted multiple times and creates a crash
             //! bug case: 397635
@@ -958,4 +962,3 @@ AbilityItem.BasicItem {
         }
     }
 }// main Item
-

@@ -657,7 +657,7 @@ Item {
         property bool pressed: false
         property bool blockWheel: false
 
-        function onMousePressed() {
+        function onMousePressed(pos, button) {
             if (appletItem.containsPos(pos)) {
                 viewSignalsConnector.pressed = true;
                 var local = appletItem.mapFromItem(root, pos.x, pos.y);
@@ -666,7 +666,7 @@ Item {
             }
         }
 
-        function onMouseReleased() {
+        function onMouseReleased(pos, button) {
             if (appletItem.containsPos(pos)) {
                 viewSignalsConnector.pressed = false;
                 var local = appletItem.mapFromItem(root, pos.x, pos.y);
@@ -674,7 +674,7 @@ Item {
             }
         }
 
-        function onWheelScrolled() {
+        function onWheelScrolled(pos, angleDelta, buttons) {
             if (!appletItem.applet || !root.mouseWheelActions || viewSignalsConnector.blockWheel || !appletItem.myView.isShownFully) {
                 return;
             }
