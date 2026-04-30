@@ -11,6 +11,7 @@ import QtQuick.Controls 2.5 as QQC2
 import org.kde.plasma.components 2.0 as PC2 // for DialogStatus, ModelCOntextMenu, and Highlight
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.ksvg 1.0 as KSvg
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.kwindowsystem 1.0
@@ -110,7 +111,7 @@ PC3.Page {
         onTriggered: addCurrentApplet()
     }
 
-    PlasmaCore.FrameSvgItem{
+    KSvg.FrameSvgItem{
         id: backgroundFrameSvgItem
         anchors.top: parent.top
         anchors.topMargin: -headerMargin

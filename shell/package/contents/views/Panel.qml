@@ -8,8 +8,9 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.ksvg 1.0 as KSvg
 
-PlasmaCore.FrameSvgItem {
+KSvg.FrameSvgItem {
     id: root
 
     imagePath: containment && containment.backgroundHints === PlasmaCore.Types.NoBackground ? "" : "widgets/panel-background"

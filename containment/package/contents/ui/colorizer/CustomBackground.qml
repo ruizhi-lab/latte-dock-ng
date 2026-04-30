@@ -7,6 +7,7 @@ import QtQuick 2.7
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.ksvg 1.0 as KSvg
 
 Item{
     id: main
@@ -53,7 +54,7 @@ Item{
         return i;
     }
 
-    readonly property bool allBorders: (latteView && latteView.effects && (latteView.effects.enabledBorders === PlasmaCore.FrameSvg.AllBorders))
+    readonly property bool allBorders: (latteView && latteView.effects && (latteView.effects.enabledBorders === KSvg.FrameSvg.AllBorders))
 
     readonly property bool bothVerticals: (leftBorder && rightBorder)
     readonly property bool bothHorizontals: (bottomBorder && topBorder)
@@ -67,7 +68,7 @@ Item{
         property: "topBorder"
         when: latteView
         value: {
-            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & PlasmaCore.FrameSvg.TopBorder)) > 0) || allBorders;
+            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & KSvg.FrameSvg.TopBorder)) > 0) || allBorders;
         }
     }
 
@@ -76,7 +77,7 @@ Item{
         property: "leftBorder"
         when: latteView
         value: {
-            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & PlasmaCore.FrameSvg.LeftBorder)) > 0) || allBorders;
+            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & KSvg.FrameSvg.LeftBorder)) > 0) || allBorders;
         }
     }
 
@@ -85,7 +86,7 @@ Item{
         property: "bottomBorder"
         when: latteView
         value: {
-            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & PlasmaCore.FrameSvg.BottomBorder)) > 0) || allBorders;
+            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & KSvg.FrameSvg.BottomBorder)) > 0) || allBorders;
         }
     }
 
@@ -94,7 +95,7 @@ Item{
         property: "rightBorder"
         when: latteView
         value: {
-            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & PlasmaCore.FrameSvg.RightBorder)) > 0) || allBorders;
+            return (latteView && latteView.effects && ((latteView.effects.enabledBorders & KSvg.FrameSvg.RightBorder)) > 0) || allBorders;
         }
     }
 

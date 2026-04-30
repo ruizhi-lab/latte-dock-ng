@@ -112,6 +112,7 @@
         "Version": "0.1",
         "Website": "https://userbase.kde.org/LatteDock"
     },
+    "KPackageStructure": "Plasma/Applet",
     "X-Plasma-API": "declarativeappletscript",
     "X-Plasma-MainScript": "ui/main.qml",
     "X-Plasma-Provides": [

@@ -126,11 +126,8 @@ Corona::Corona(bool defaultLayoutOnStartup, QString layoutNameOnStartUp, QString
 
     qmlRegisterTypes();
 
-    if (m_activitiesConsumer && (m_activitiesConsumer->serviceStatus() == KActivities::Consumer::Running)) {
-        load();
-    }
-
     connect(m_activitiesConsumer, &KActivities::Consumer::serviceStatusChanged, this, &Corona::load);
+    load();
 
     m_viewsScreenSyncTimer.setSingleShot(true);
     m_viewsScreenSyncTimer.setInterval(m_universalSettings->screenTrackerInterval());
@@ -212,16 +209,22 @@ void Corona::onAboutToQuit()
 
 void Corona::load()
 {
-    if (m_activitiesConsumer && (m_activitiesConsumer->serviceStatus() == KActivities::Consumer::Running) && m_activitiesStarting) {
+    if (m_activitiesStarting) {
+        if (m_activitiesConsumer && (m_activitiesConsumer->serviceStatus() != KActivities::Consumer::Running)) {
+            qWarning() << "KActivities service is not running, continuing startup with current Activities data.";
+        }
+
         m_activitiesStarting = false;
 
-        disconnect(m_activitiesConsumer, &KActivities::Consumer::serviceStatusChanged, this, &Corona::load);
+        if (m_activitiesConsumer) {
+            disconnect(m_activitiesConsumer, &KActivities::Consumer::serviceStatusChanged, this, &Corona::load);
+        }
 
         m_templatesManager->init();
         m_layoutsManager->init();
 
-        connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRectChanged(-1); }, Qt::UniqueConnection);
-        connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRegionChanged(-1); }, Qt::UniqueConnection);
+        connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRectChanged(-1); });
+        connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRegionChanged(-1); });
         connect(m_screenPool, &ScreenPool::primaryScreenChanged, this, &Corona::onScreenCountChanged, Qt::UniqueConnection);
 
         QString loadLayoutName = "";

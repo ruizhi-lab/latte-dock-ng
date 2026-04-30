@@ -894,8 +894,23 @@ void GenericLayout::addView(Plasma::Containment *containment)
         }
 
         if (!foundNextExplicitScreen) {
-            qDebug().noquote() << "Adding View:" << viewdata.id << "- Rejected because Screen is not available :: " << nextScreenName;
-            return;
+            QScreen *primaryScreen = m_corona->screenPool()->primaryScreen();
+
+            if (!primaryScreen) {
+                qDebug().noquote() << "Adding View:" << viewdata.id << "- Rejected because Screen is not available and no primary screen exists :: " << nextScreenName;
+                return;
+            }
+
+            qWarning().noquote() << "Adding View:" << viewdata.id
+                                 << "- Assigned screen is unavailable, falling back to primary screen ::"
+                                 << nextScreenName;
+
+            containment->config().writeEntry("onPrimary", true);
+            containment->config().writeEntry("lastScreen", m_corona->screenPool()->primaryScreenId());
+
+            viewdata.onPrimary = true;
+            viewdata.screen = m_corona->screenPool()->primaryScreenId();
+            nextScreen = primaryScreen;
         }
     }
 

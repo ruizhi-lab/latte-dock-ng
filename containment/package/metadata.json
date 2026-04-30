@@ -107,6 +107,7 @@
         ],
         "Website": "https://userbase.kde.org/LatteDock"
     },
+    "KPackageStructure": "Plasma/Applet",
     "NoDisplay": true,
     "X-Plasma-API": "declarativeappletscript",
     "X-Plasma-ContainmentType": "Panel",
