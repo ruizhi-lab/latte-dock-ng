@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 build_type="Release"
 enable_make_unique="OFF"
 l10n_auto_translations="OFF"
@@ -70,8 +72,8 @@ for arg in "$@"; do
     esac
 done
 
-mkdir -p build
-cd build
+mkdir -p "${script_dir}/build"
+cd "${script_dir}/build"
 
 cmake_args=(
     -DCMAKE_INSTALL_PREFIX=/usr
@@ -97,7 +99,40 @@ fi
 cmake --build . --parallel
 
 if [[ "${EUID}" -eq 0 ]]; then
-    cmake --install .
+    sudo_cmd=()
 else
-    sudo cmake --install .
+    sudo_cmd=(sudo)
 fi
+
+run_as_root() {
+    "${sudo_cmd[@]}" "$@"
+}
+
+sync_tree() {
+    local src="$1"
+    local dst="$2"
+
+    if [[ ! -d "$src" ]]; then
+        echo "Warning: source directory not found, skipping sync: $src" >&2
+        return
+    fi
+
+    run_as_root mkdir -p "$dst"
+
+    if command -v rsync >/dev/null 2>&1; then
+        run_as_root rsync -a --delete "$src"/ "$dst"/
+    else
+        run_as_root rm -rf "$dst"
+        run_as_root mkdir -p "$dst"
+        run_as_root cp -a "$src"/. "$dst"/
+    fi
+}
+
+run_as_root cmake --install .
+
+# Gentoo/CMake setups may leave Plasma package directories without files.
+# Sync full package trees explicitly so metadata.json and QML are always present.
+sync_tree "${script_dir}/containment/package" "/usr/share/plasma/plasmoids/org.kde.latte.containment"
+sync_tree "${script_dir}/plasmoid/package" "/usr/share/plasma/plasmoids/org.kde.latte.plasmoid"
+sync_tree "${script_dir}/shell/package" "/usr/share/plasma/shells/org.kde.latte.shell"
+sync_tree "${script_dir}/indicators" "/usr/share/latte/indicators"
