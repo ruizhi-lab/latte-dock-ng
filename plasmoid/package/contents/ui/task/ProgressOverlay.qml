@@ -14,6 +14,11 @@ Item {
     id: background
 
     readonly property int contentWidth: progressCircle.width + 0.1*height
+    readonly property bool hasTheme: (typeof theme !== "undefined") && theme
+    readonly property color fallbackBackgroundColor: "#2d2d2d"
+    readonly property color fallbackTextColor: "#f3f3f3"
+    readonly property color fallbackHighlightedTextColor: "#f3f3f3"
+    readonly property color fallbackHighlightColor: "#3daee9"
 
     Item {
         id: subRectangle
@@ -68,22 +73,26 @@ Item {
             fullCircle: true
             showNumber: true
 
-            color: theme.backgroundColor
+            color: hasTheme && theme.backgroundColor !== undefined ? theme.backgroundColor : fallbackBackgroundColor
             textColor: {
                 if (showsInfoBadge) {
-                    return root.infoBadgeProminentColorEnabled ? prominentTextColor : theme.highlightedTextColor
+                    return root.infoBadgeProminentColorEnabled
+                            ? prominentTextColor
+                            : ((hasTheme && theme.highlightedTextColor !== undefined) ? theme.highlightedTextColor : fallbackHighlightedTextColor)
                 }
 
-                return theme.textColor;
+                return (hasTheme && theme.textColor !== undefined) ? theme.textColor : fallbackTextColor;
             }
             borderColor: root.lightTextColor
 
             highlightedColor: {
                 if (showsInfoBadge) {
-                    return root.infoBadgeProminentColorEnabled ? prominentBackColor : theme.highlightColor
+                    return root.infoBadgeProminentColorEnabled
+                            ? prominentBackColor
+                            : ((hasTheme && theme.highlightColor !== undefined) ? theme.highlightColor : fallbackHighlightColor)
                 }
 
-                return theme.buttonFocusColor;
+                return (hasTheme && theme.buttonFocusColor !== undefined) ? theme.buttonFocusColor : fallbackHighlightColor;
             }
 
             style3d: taskItem.abilities.myView.badgesIn3DStyle

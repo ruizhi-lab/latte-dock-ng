@@ -8,8 +8,9 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.0
 import QtQuick.Effects
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.latte.core 0.2 as LatteCore
@@ -19,12 +20,12 @@ PlasmaCore.ToolTipArea {
     objectName: "org.kde.desktop-CompactApplet"
     anchors.fill: parent
 
-    mainText: plasmoid.toolTipMainText
-    subText: plasmoid.toolTipSubText
-    location: plasmoid.location
-    active: !plasmoid.expanded
-    textFormat: plasmoid.toolTipTextFormat
-    mainItem: plasmoid.toolTipItem ? plasmoid.toolTipItem : null
+    mainText: plasmoid && plasmoid.toolTipMainText !== undefined ? plasmoid.toolTipMainText : ""
+    subText: plasmoid && plasmoid.toolTipSubText !== undefined ? plasmoid.toolTipSubText : ""
+    location: plasmoid && plasmoid.location !== undefined ? plasmoid.location : PlasmaCore.Types.BottomEdge
+    active: plasmoid && plasmoid.expanded !== undefined ? !plasmoid.expanded : false
+    textFormat: plasmoid && plasmoid.toolTipTextFormat !== undefined ? plasmoid.toolTipTextFormat : Text.PlainText
+    mainItem: plasmoid && plasmoid.toolTipItem ? plasmoid.toolTipItem : null
 
     property Item fullRepresentation: null
     property Item compactRepresentation: null
@@ -36,6 +37,18 @@ PlasmaCore.ToolTipArea {
     property Item appletItem: compactRepresentationVisualParent
                               && compactRepresentationVisualParent.parent
                               && compactRepresentationVisualParent.parent.parent ? compactRepresentationVisualParent.parent.parent.parent : null
+
+    function configureAction() {
+        if (typeof plasmoid.action === "function") {
+            return plasmoid.action("configure");
+        }
+
+        if (typeof Plasmoid !== "undefined" && typeof Plasmoid.internalAction === "function") {
+            return Plasmoid.internalAction("configure");
+        }
+
+        return null;
+    }
 
     onCompactRepresentationChanged: {
         if (compactRepresentation) {
@@ -77,7 +90,7 @@ PlasmaCore.ToolTipArea {
             })
         } else {
             popupWindow.mainItem.width = Qt.binding(function() {
-                return PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).width * 35
+                return Kirigami.Theme.defaultFont.pixelSize * 35
             })
         }
 
@@ -95,7 +108,7 @@ PlasmaCore.ToolTipArea {
             })
         } else {
             popupWindow.mainItem.height = Qt.binding(function() {
-                return PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height * 25
+                return Kirigami.Theme.defaultFont.pixelSize * 25
             })
         }
 
@@ -146,7 +159,7 @@ PlasmaCore.ToolTipArea {
     }
 
     Connections {
-        target: plasmoid.action("configure")
+        target: configureAction()
         function onTriggered() { plasmoid.expanded = false }
     }
 
@@ -159,11 +172,11 @@ PlasmaCore.ToolTipArea {
         id: popupWindow
         objectName: "popupWindow"
         flags: Qt.WindowStaysOnTopHint
-        visible: plasmoid.expanded && fullRepresentation
+        visible: !!(plasmoid.expanded && fullRepresentation)
         visualParent: compactRepresentationVisualParent ? compactRepresentationVisualParent : (compactRepresentation ? compactRepresentation : null)
        // location: PlasmaCore.Types.Floating //plasmoid.location
         edge: plasmoid.location /*this way dialog borders are not updated and it is used only for adjusting dialog position*/
-        hideOnWindowDeactivate: plasmoid.hideOnWindowDeactivate
+        hideOnWindowDeactivate: plasmoid && plasmoid.hideOnWindowDeactivate !== undefined ? plasmoid.hideOnWindowDeactivate : true
         backgroundHints: (plasmoid.containmentDisplayHints & PlasmaCore.Types.DesktopFullyCovered) ? PlasmaCore.Dialog.SolidBackground : PlasmaCore.Dialog.StandardBackground
 
         property var oldStatus: PlasmaCore.Types.UnknownStatus

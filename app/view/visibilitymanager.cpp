@@ -204,7 +204,7 @@ void VisibilityManager::setViewOnBackLayer()
 
 void VisibilityManager::setViewOnFrontLayer()
 {
-    m_wm->setViewExtraFlags(m_latteView, true);
+    m_wm->setViewExtraFlags(m_latteView, true, m_mode);
     setIsBelowLayer(false);
 }
 

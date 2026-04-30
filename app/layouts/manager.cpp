@@ -22,6 +22,7 @@
 #include "../tools/commontools.h"
 
 // Qt
+#include <algorithm>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
@@ -364,16 +365,50 @@ void Manager::cleanupOnStartup(QString path)
     QStringList removeContaimentsList;
 
     for (const auto &cId : containmentGroups.groupList()) {
-        QString pluginId = containmentGroups.group(cId).readEntry("plugin", "");
+        KConfigGroup containment = containmentGroups.group(cId);
+        QString pluginId = containment.readEntry("plugin", "");
 
         if (pluginId == QStringLiteral("org.kde.desktopcontainment")) { //!must remove ghost containments first
             removeContaimentsList << cId;
+            continue;
+        }
+
+        if (pluginId == QStringLiteral("org.kde.latte.containment")) {
+            KConfigGroup general = containment.group("General");
+            const QString appletOrder = general.readEntry("appletOrder", QString());
+
+            if (appletOrder.isEmpty()) {
+                QStringList appletIds = containment.group("Applets").groupList();
+
+                if (!appletIds.isEmpty()) {
+                    std::sort(appletIds.begin(), appletIds.end(), [](const QString &lhs, const QString &rhs) {
+                        bool lhsOk{false};
+                        bool rhsOk{false};
+                        const int lhsId = lhs.toInt(&lhsOk);
+                        const int rhsId = rhs.toInt(&rhsOk);
+
+                        if (lhsOk && rhsOk) {
+                            return lhsId < rhsId;
+                        }
+
+                        return lhs < rhs;
+                    });
+
+                    const QString rebuiltOrder = appletIds.join(";");
+                    general.writeEntry("appletOrder", rebuiltOrder);
+                    general.sync();
+                    qWarning() << "Repaired missing appletOrder for containment" << cId << ":" << rebuiltOrder;
+                }
+            }
         }
     }
 
     for (const auto &cId : removeContaimentsList) {
         containmentGroups.group(cId).deleteGroup();
     }
+
+    containmentGroups.sync();
+    filePtr->sync();
 }
 
 

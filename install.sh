@@ -11,6 +11,38 @@ enable_make_unique="OFF"
 l10n_auto_translations="OFF"
 l10n_branch=""
 
+declare -a user_homes=()
+
+add_user_home() {
+    local candidate="${1:-}"
+    [[ -n "$candidate" ]] || return
+    [[ -d "$candidate" ]] || return
+
+    local existing
+    for existing in "${user_homes[@]:-}"; do
+        if [[ "$existing" == "$candidate" ]]; then
+            return
+        fi
+    done
+
+    user_homes+=("$candidate")
+}
+
+detect_user_homes() {
+    add_user_home "${HOME:-}"
+
+    if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+        local sudo_home=""
+        if command -v getent >/dev/null 2>&1; then
+            sudo_home="$(getent passwd "${SUDO_USER}" | cut -d: -f6 2>/dev/null || true)"
+        fi
+        if [[ -z "$sudo_home" ]]; then
+            sudo_home="/home/${SUDO_USER}"
+        fi
+        add_user_home "$sudo_home"
+    fi
+}
+
 usage() {
     cat <<'EOF'
 Usage:
@@ -72,8 +104,15 @@ for arg in "$@"; do
     esac
 done
 
-mkdir -p "${script_dir}/build"
-cd "${script_dir}/build"
+build_dir="${script_dir}/build"
+if [[ -d "$build_dir" && ! -w "$build_dir" ]]; then
+    user_tag="${USER:-user}"
+    build_dir="${script_dir}/build-${user_tag}"
+    echo "Info: '${script_dir}/build' is not writable, using '${build_dir}' instead."
+fi
+
+mkdir -p "$build_dir"
+cd "$build_dir"
 
 cmake_args=(
     -DCMAKE_INSTALL_PREFIX=/usr
@@ -128,6 +167,30 @@ sync_tree() {
     fi
 }
 
+sync_tree_if_exists() {
+    local src="$1"
+    local dst="$2"
+
+    if [[ ! -d "$src" ]]; then
+        return
+    fi
+
+    if [[ ! -d "$dst" ]]; then
+        return
+    fi
+
+    echo "Info: syncing existing user override: $dst"
+    if command -v rsync >/dev/null 2>&1; then
+        rsync -a --delete "$src"/ "$dst"/
+    else
+        rm -rf "$dst"
+        mkdir -p "$dst"
+        cp -a "$src"/. "$dst"/
+    fi
+}
+
+detect_user_homes
+
 run_as_root cmake --install .
 
 # Gentoo/CMake setups may leave Plasma package directories without files.
@@ -136,3 +199,31 @@ sync_tree "${script_dir}/containment/package" "/usr/share/plasma/plasmoids/org.k
 sync_tree "${script_dir}/plasmoid/package" "/usr/share/plasma/plasmoids/org.kde.latte.plasmoid"
 sync_tree "${script_dir}/shell/package" "/usr/share/plasma/shells/org.kde.latte.shell"
 sync_tree "${script_dir}/indicators" "/usr/share/latte/indicators"
+
+# If user-level overrides already exist, keep them in sync with the installed
+# system package trees. This avoids loading stale QML from ~/.local/share.
+for user_home in "${user_homes[@]:-}"; do
+    sync_tree_if_exists "${script_dir}/containment/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment"
+    sync_tree_if_exists "${script_dir}/plasmoid/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid"
+    sync_tree_if_exists "${script_dir}/shell/package" "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"
+    sync_tree_if_exists "${script_dir}/indicators" "${user_home}/.local/share/latte/indicators"
+done
+
+# Some Plasma 6 distros do not ship org.kde.plasma.private.taskmanager.
+# Install a minimal compatibility module only when it is missing.
+qt_qml_dir="/usr/lib64/qt6/qml"
+if command -v qtpaths6 >/dev/null 2>&1; then
+    qt_qml_dir="$(qtpaths6 --query QT_INSTALL_QML 2>/dev/null || true)"
+elif command -v qtpaths >/dev/null 2>&1; then
+    qt_qml_dir="$(qtpaths --query QT_INSTALL_QML 2>/dev/null || true)"
+fi
+
+if [[ -z "$qt_qml_dir" ]]; then
+    qt_qml_dir="/usr/lib64/qt6/qml"
+fi
+
+fallback_taskmanager_dir="${qt_qml_dir}/org/kde/plasma/private/taskmanager"
+if [[ ! -d "$fallback_taskmanager_dir" ]]; then
+    sync_tree "${script_dir}/compat/qml/org/kde/plasma/private/taskmanager" "$fallback_taskmanager_dir"
+    run_as_root touch "${fallback_taskmanager_dir}/.latte-fallback-module"
+fi

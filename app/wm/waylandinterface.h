@@ -15,6 +15,7 @@
 // Qt
 #include <QHash>
 #include <QObject>
+#include <QPointer>
 
 // KDE
 #include <KWindowEffects>
@@ -110,6 +111,7 @@ private:
     bool isFullScreenWindow(const KWayland::Client::PlasmaWindow *w) const;
     bool isPlasmaPanel(const KWayland::Client::PlasmaWindow *w) const;
     bool isSidepanel(const KWayland::Client::PlasmaWindow *w) const;
+    QList<KWayland::Client::PlasmaWindow *> managedWindows() const;
     void windowCreatedProxy(KWayland::Client::PlasmaWindow *w);
     void trackWindow(KWayland::Client::PlasmaWindow *w);
     void untrackWindow(KWayland::Client::PlasmaWindow *w);
@@ -126,10 +128,10 @@ private:
     friend class Private::GhostWindow;
     mutable QMap<QWindow *, Private::GhostWindow *> m_ghostWindows;
 
-    KWayland::Client::PlasmaWindowManagement *m_windowManagement{nullptr};
+    QPointer<KWayland::Client::PlasmaWindowManagement> m_windowManagement;
 
     //! VirtualDesktopsSupport
-    KWayland::Client::PlasmaVirtualDesktopManagement *m_virtualDesktopManagement{nullptr};
+    QPointer<KWayland::Client::PlasmaVirtualDesktopManagement> m_virtualDesktopManagement;
     QStringList m_desktops;
 
 
@@ -140,4 +142,3 @@ private:
 }
 
 #endif // WAYLANDINTERFACE_H
-

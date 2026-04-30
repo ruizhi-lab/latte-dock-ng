@@ -8,6 +8,7 @@
 
 // Qt
 #include <QObject>
+#include <QTimer>
 
 
 // Plasma
@@ -50,6 +51,11 @@ Q_SIGNALS:
     void viewChanged();
 
 private:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
+    QObject *activePropertySource() const;
+    void syncPlasmoidReference();
+    void syncPlasmoidObjects();
     void setGlobalShortcuts(QObject *shortcuts);
     void setLayoutsManager(QObject *manager);
     void setThemeExtended(QObject *theme);
@@ -63,7 +69,11 @@ private:
     QObject *m_universalSettings{nullptr};
     QObject *m_view{nullptr};
 
+    QObject *m_plasmoidInterface{nullptr};
     PlasmaQuick::AppletQuickItem *m_plasmoid{nullptr};
+
+    QTimer m_viewSyncTimer;
+    int m_viewSyncAttempts{0};
 };
 
 }

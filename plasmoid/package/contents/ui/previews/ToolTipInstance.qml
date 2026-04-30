@@ -9,11 +9,13 @@
 
 import QtQuick 2.6
 import QtQuick.Layouts 1.1
+import QtQuick.Window 2.2
 import QtQuick.Effects
 import QtQml.Models 2.2
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddons
 
@@ -25,6 +27,11 @@ import org.kde.taskmanager 0.1 as TaskManager
 
 Column {
     id: instance
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
+    // org.kde.pipewire is optional on some distros. Keep disabled by default to
+    // avoid hard runtime import failures in tooltip previews.
+    property bool pipeWireModuleAvailable: false
     property var submodelIndex
     property int flatIndex: isGroup && itemIndex>=0 ? itemIndex : 0
 
@@ -89,11 +96,10 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         // launcher icon
-        PlasmaCore.IconItem {
+        LatteCore.IconItem {
             Layout.preferredWidth: units.iconSizes.medium
             Layout.preferredHeight: units.iconSizes.medium
             source: icon
-            animated: false
             usesPlasmaTheme: false
             visible: !isWin
         }
@@ -143,7 +149,7 @@ Column {
             id: closeButton
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             visible: isWin && !hideCloseButtons
-            iconSource: "window-close"
+            icon.name: "window-close"
             onClicked: {
                 if (!isGroup) {
                     //! force windowsPreviewDlg hiding when the last instance is closed
@@ -179,8 +185,7 @@ Column {
             // TODO: investigate first-show backend warning when thumbnail becomes visible
             readonly property var winId: isWin && windows[flatIndex] !== undefined ? windows[flatIndex] : 0
 
-            // There's no PlasmaComponents3 version
-            PlasmaComponents.Highlight {
+            PlasmaExtras.Highlight {
                 anchors.fill: hoverHandler
                 visible: hoverHandler.containsMouse
                 pressed: hoverHandler.containsPress
@@ -192,8 +197,13 @@ Column {
                 anchors.margins: Math.max(2, previewShadow.radius)
                 active: root.plasma520 && LatteCore.WindowSystem.isPlatformWayland
                 visible: !albumArtImage.visible && !thumbnailSourceItem.isMinimized
+                onStatusChanged: {
+                    if (status === Loader.Error && source !== "PlasmaCoreThumbnail.qml") {
+                        source = "PlasmaCoreThumbnail.qml";
+                    }
+                }
                 source:  {
-                    if (LatteCore.WindowSystem.isPlatformWayland) {
+                    if (LatteCore.WindowSystem.isPlatformWayland && pipeWireModuleAvailable) {
                         if (root.plasmaAtLeast526) {
                             return "PipeWireThumbnail.5.26.qml";
                         } else if (root.plasmaAtLeast525) {
@@ -209,13 +219,13 @@ Column {
                 MultiEffect {
                     id: previewShadow
                     anchors.fill: previewThumbLoader.item
-                    visible: previewThumbLoader.item.visible
+                    visible: previewThumbLoader.item ? previewThumbLoader.item.visible : false
                     source: previewThumbLoader.item
                     shadowEnabled: true
                     shadowColor: "Black"
                     shadowBlur: 0.5
                     shadowHorizontalOffset: 0
-                    shadowVerticalOffset: Math.round(3 * PlasmaCore.Units.devicePixelRatio)
+                    shadowVerticalOffset: Math.round(3 * Screen.devicePixelRatio)
                 }
             }
 
@@ -257,12 +267,11 @@ Column {
             }
 
             // when minimized, we don't have a preview, so show the icon
-            PlasmaCore.IconItem {
+            LatteCore.IconItem {
                 width: parent.width
                 height: thumbnail.height - playbackLoader.realHeight
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: icon
-                animated: false
                 usesPlasmaTheme: false
                 visible: (thumbnailSourceItem.isMinimized && !albumArtImage.visible)
                          || (!previewThumbLoader.active && !albumArtImage.visible) //Wayland case
@@ -364,7 +373,7 @@ Column {
                             elide: Text.ElideRight
                             text: artist || ""
                             visible: text != ""
-                            font.pointSize: theme.smallestFont.pointSize
+                            font.pointSize: theme.defaultFont.pointSize * 0.9
                         }
                     }
 
@@ -372,7 +381,7 @@ Column {
                        //! It creates issues with Valgrind and needs to be completely removed in that case
                        id: canGoBackButton
                        enabled: canGoBack
-                       iconSource: LayoutMirroring.enabled ? "media-skip-forward" : "media-skip-backward"
+                       icon.name: LayoutMirroring.enabled ? "media-skip-forward" : "media-skip-backward"
                        onClicked: mpris2Source.goPrevious(mprisSourceName)
                    }
 
@@ -380,7 +389,7 @@ Column {
                        //! It creates issues with Valgrind and needs to be completely removed in that case
                        id: playingButton
                        enabled: playing ? canPause : canPlay
-                       iconSource: playing ? "media-playback-pause" : "media-playback-start"
+                       icon.name: playing ? "media-playback-pause" : "media-playback-start"
                        onClicked: {
                            if (!playing) {
                                mpris2Source.play(mprisSourceName);
@@ -394,7 +403,7 @@ Column {
                        //! It creates issues with Valgrind and needs to be completely removed in that case
                        id: canGoNextButton
                        enabled: canGoNext
-                       iconSource: LayoutMirroring.enabled ? "media-skip-backward" : "media-skip-forward"
+                       icon.name: LayoutMirroring.enabled ? "media-skip-backward" : "media-skip-forward"
                        onClicked: mpris2Source.goNext(mprisSourceName)
                    }
 
@@ -408,7 +417,7 @@ Column {
             width: header.width
             height: 3
             opacity: isTaskActive() ? 1 : 0
-            color: theme.buttonFocusColor
+            color: theme.buttonFocusColor !== undefined ? theme.buttonFocusColor : theme.highlightColor
         }
     }
 

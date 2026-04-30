@@ -32,18 +32,22 @@ Rectangle {
     property double circleThicknessAttr: fullCircle ? 0 : stdThickness * 0.9
     property double partSize: height / 2
     property double pi2: Math.PI * 2
+    readonly property bool hasTheme: (typeof theme !== "undefined") && theme
+    readonly property color fallbackBackgroundColor: "#2d2d2d"
+    readonly property color fallbackTextColor: "#f3f3f3"
+    readonly property color fallbackHighlightColor: "#3daee9"
 
     width: Math.max(minimumWidth, valueText.width + 4*units.smallSpacing)
 
-    color: theme.backgroundColor
+    color: hasTheme && theme.backgroundColor !== undefined ? theme.backgroundColor : fallbackBackgroundColor
     radius: (radiusPerCentage / 100) * (height / 2)
     border.width: 0 //Math.max(1,width/64)
 
     property int borderWidth: 1
     property real borderOpacity: 1
-    property color borderColor: theme.textColor
-    property color textColor: theme.textColor
-    property color highlightedColor: theme.buttonFocusColor
+    property color borderColor: hasTheme && theme.textColor !== undefined ? theme.textColor : fallbackTextColor
+    property color textColor: hasTheme && theme.textColor !== undefined ? theme.textColor : fallbackTextColor
+    property color highlightedColor: hasTheme && theme.buttonFocusColor !== undefined ? theme.buttonFocusColor : fallbackHighlightColor
 
     readonly property bool singleCharacter: (showNumber && numberValue<=9 && numberValue>=0)|| (showText && textValue.length===1)
 
@@ -174,4 +178,3 @@ Rectangle {
         opacity: parent.borderOpacity
     }
 }
-

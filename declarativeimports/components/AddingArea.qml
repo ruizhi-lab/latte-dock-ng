@@ -6,6 +6,7 @@
 import QtQuick 2.7
 import QtQuick.Effects
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
@@ -13,6 +14,8 @@ import "code/ColorizerTools.js" as ColorizerTools
 
 Rectangle{
     id: addingArea
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
     color: Qt.rgba(theme.backgroundColor.r, theme.backgroundColor.g, theme.backgroundColor.b, backgroundOpacity)
     border.width: 1
     border.color: outlineColor

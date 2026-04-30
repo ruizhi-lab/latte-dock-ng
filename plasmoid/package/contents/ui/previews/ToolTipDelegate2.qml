@@ -10,18 +10,21 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.1
 import QtQml.Models 2.2
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.draganddrop 2.0
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddons
 
 import org.kde.taskmanager 0.1 as TaskManager
 
-PlasmaExtras.ScrollArea {
+PlasmaComponents.ScrollView {
     id: mainToolTip
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
     property Item parentTask: null
     property var rootIndex: []
 
@@ -56,16 +59,10 @@ PlasmaExtras.ScrollArea {
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    property int textWidth: theme.mSize(theme.defaultFont).width * 20
+    property int textWidth: theme.defaultFont.pixelSize * 20
 
-    verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
-    Component.onCompleted: {
-        flickableItem.interactive = Qt.binding(function() {
-            return isVerticalPanel ? contentItem.height > viewport.height : contentItem.width > viewport.width
-        });
-    }
+    QQC2.ScrollBar.horizontal.policy: QQC2.ScrollBar.AlwaysOff
+    QQC2.ScrollBar.vertical.policy: QQC2.ScrollBar.AlwaysOff
 
     Item{
         width: contentItem.width
@@ -151,5 +148,3 @@ PlasmaExtras.ScrollArea {
         return null;
     }
 }
-
-

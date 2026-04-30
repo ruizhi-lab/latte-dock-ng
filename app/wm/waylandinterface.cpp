@@ -144,10 +144,27 @@ void WaylandInterface::initWindowManagement(KWayland::Client::PlasmaWindowManage
         return;
     }
 
+    if (m_windowManagement) {
+        disconnect(m_windowManagement, nullptr, this, nullptr);
+    }
+
     m_windowManagement = windowManagement;
 
+    if (!m_windowManagement) {
+        return;
+    }
+
+    connect(m_windowManagement, &QObject::destroyed, this, [this]() {
+        m_windowManagement = nullptr;
+    });
+
     connect(m_windowManagement, &PlasmaWindowManagement::windowCreated, this, &WaylandInterface::windowCreatedProxy);
-    connect(m_windowManagement, &PlasmaWindowManagement::activeWindowChanged, this, [&]() noexcept {
+    connect(m_windowManagement, &PlasmaWindowManagement::activeWindowChanged, this, [this]() noexcept {
+        if (!m_windowManagement || !m_windowManagement->isValid()) {
+            Q_EMIT activeWindowChanged(QByteArray());
+            return;
+        }
+
         auto w = m_windowManagement->activeWindow();
         if (!w || (w && (!m_ignoredWindows.contains(w->uuid()))) ) {
             Q_EMIT activeWindowChanged(w ? w->uuid() : QByteArray());
@@ -162,7 +179,19 @@ void WaylandInterface::initVirtualDesktopManagement(KWayland::Client::PlasmaVirt
         return;
     }
 
+    if (m_virtualDesktopManagement) {
+        disconnect(m_virtualDesktopManagement, nullptr, this, nullptr);
+    }
+
     m_virtualDesktopManagement = virtualDesktopManagement;
+
+    if (!m_virtualDesktopManagement) {
+        return;
+    }
+
+    connect(m_virtualDesktopManagement, &QObject::destroyed, this, [this]() {
+        m_virtualDesktopManagement = nullptr;
+    });
 
     connect(m_virtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopCreated, this,
             [this](const QString &id, quint32 position) {
@@ -266,7 +295,31 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
     if (isPanelWindow) {
         surface->setRole(PlasmaShellSurface::Role::Panel);
-        surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);
+
+        // Keep compositor-side panel behavior aligned with Latte visibility mode.
+        switch (mode) {
+        case Latte::Types::AutoHide:
+        case Latte::Types::DodgeActive:
+        case Latte::Types::DodgeMaximized:
+        case Latte::Types::DodgeAllWindows:
+        case Latte::Types::SidebarOnDemand:
+        case Latte::Types::SidebarAutoHide:
+            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);
+            break;
+        case Latte::Types::WindowsCanCover:
+            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
+            break;
+        case Latte::Types::WindowsGoBelow:
+            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsGoBelow);
+            break;
+        case Latte::Types::AlwaysVisible:
+        case Latte::Types::WindowsAlwaysCover:
+        case Latte::Types::NormalWindow:
+        case Latte::Types::None:
+        default:
+            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AlwaysVisible);
+            break;
+        }
     } else {
         surface->setRole(PlasmaShellSurface::Role::Normal);
     }
@@ -422,7 +475,7 @@ void WaylandInterface::removeViewStruts(QWindow &view)
 
 WindowId WaylandInterface::activeWindow()
 {
-    if (!m_windowManagement) {
+    if (!m_windowManagement || !m_windowManagement->isValid()) {
         return WindowId();
     }
 
@@ -478,17 +531,33 @@ void WaylandInterface::setActiveEdge(QWindow *view, bool active)
         return;
     }
 
-    if (window->parentView()->surface() && window->parentView()->visibility()
-            && (window->parentView()->visibility()->mode() == Types::DodgeActive
-                || window->parentView()->visibility()->mode() == Types::DodgeMaximized
-                || window->parentView()->visibility()->mode() == Types::DodgeAllWindows
-                || window->parentView()->visibility()->mode() == Types::AutoHide)) {
+    auto parentView = window->parentView();
+
+    if (!parentView || !parentView->visibility()) {
+        return;
+    }
+
+    const auto mode = parentView->visibility()->mode();
+
+    if (parentView->surface()
+            && (mode == Types::DodgeActive
+                || mode == Types::DodgeMaximized
+                || mode == Types::DodgeAllWindows
+                || mode == Types::AutoHide
+                || mode == Types::SidebarAutoHide)) {
         if (active) {
             window->showWithMask();
-            window->surface()->requestHideAutoHidingPanel();
+
+            // This request is valid only for auto-hide panel surfaces.
+            if (mode == Types::AutoHide || mode == Types::SidebarAutoHide) {
+                parentView->surface()->requestHideAutoHidingPanel();
+            }
         } else {
             window->hideWithMask();
-            window->surface()->requestShowAutoHidingPanel();
+
+            if (mode == Types::AutoHide || mode == Types::SidebarAutoHide) {
+                parentView->surface()->requestShowAutoHidingPanel();
+            }
         }
     }
 }
@@ -505,7 +574,7 @@ void WaylandInterface::setInputMask(QWindow *window, const QRect &rect)
 
 WindowInfoWrap WaylandInterface::requestInfoActive()
 {
-    if (!m_windowManagement) {
+    if (!m_windowManagement || !m_windowManagement->isValid()) {
         return {};
     }
 
@@ -587,15 +656,26 @@ AppData WaylandInterface::appDataFor(WindowId wid)
 
 KWayland::Client::PlasmaWindow *WaylandInterface::windowFor(WindowId wid)
 {
-    auto it = std::find_if(m_windowManagement->windows().constBegin(), m_windowManagement->windows().constEnd(), [&wid](PlasmaWindow * w) noexcept {
-            return w->isValid() && w->uuid() == wid;
-});
+    const auto windows = managedWindows();
 
-    if (it == m_windowManagement->windows().constEnd()) {
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&wid](PlasmaWindow *w) noexcept {
+            return w->isValid() && w->uuid() == wid;
+        });
+
+    if (it == windows.constEnd()) {
         return nullptr;
     }
 
     return *it;
+}
+
+QList<KWayland::Client::PlasmaWindow *> WaylandInterface::managedWindows() const
+{
+    if (!m_windowManagement || !m_windowManagement->isValid()) {
+        return {};
+    }
+
+    return m_windowManagement->windows();
 }
 
 QIcon WaylandInterface::iconFor(WindowId wid)
@@ -612,11 +692,13 @@ QIcon WaylandInterface::iconFor(WindowId wid)
 
 WindowId WaylandInterface::winIdFor(QString appId, QString title)
 {
-    auto it = std::find_if(m_windowManagement->windows().constBegin(), m_windowManagement->windows().constEnd(), [&appId, &title](PlasmaWindow * w) noexcept {
+    const auto windows = managedWindows();
+
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &title](PlasmaWindow *w) noexcept {
         return w->isValid() && appIdMatches(w->appId(), appId) && w->title().startsWith(title);
     });
 
-    if (it == m_windowManagement->windows().constEnd()) {
+    if (it == windows.constEnd()) {
         return WindowId();
     }
 
@@ -625,11 +707,13 @@ WindowId WaylandInterface::winIdFor(QString appId, QString title)
 
 WindowId WaylandInterface::winIdFor(QString appId, QRect geometry)
 {
-    auto it = std::find_if(m_windowManagement->windows().constBegin(), m_windowManagement->windows().constEnd(), [&appId, &geometry](PlasmaWindow * w) noexcept {
+    const auto windows = managedWindows();
+
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &geometry](PlasmaWindow *w) noexcept {
         return w->isValid() && appIdMatches(w->appId(), appId) && w->geometry() == geometry;
     });
 
-    if (it == m_windowManagement->windows().constEnd()) {
+    if (it == windows.constEnd()) {
         return WindowId();
     }
 

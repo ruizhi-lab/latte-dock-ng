@@ -9,9 +9,11 @@ import QtQuick.Layouts 1.1
 
 import QtQuick.Effects
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.plasma5support 2.0 as Plasma5Support
 import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
 
 import org.kde.taskmanager 0.1 as TaskManager
@@ -32,8 +34,11 @@ import "../code/tools.js" as TaskTools
 import "../code/activitiesTools.js" as ActivitiesTools
 import "../code/ColorizerTools.js" as ColorizerTools
 
-Item {
+PlasmoidItem {
     id:root
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
+
     Layout.fillWidth: scrollingEnabled && !root.vertical
     Layout.fillHeight: scrollingEnabled && root.vertical
 
@@ -203,7 +208,7 @@ Item {
     readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     //END  Latte Dock Communicator
 
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
+    preferredRepresentation: fullRepresentation
     Plasmoid.backgroundHints: inPlasmaDesktop ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
     signal draggingFinished();
@@ -279,11 +284,6 @@ Item {
 
             return false;
         }
-    }
-
-    /////
-    PlasmaCore.ColorScope{
-        id: colorScopePalette
     }
 
     ///UPDATE
@@ -620,7 +620,7 @@ Item {
         Component.onCompleted: previousActivity = currentActivity;
     }
 
-    PlasmaCore.DataSource {
+    Plasma5Support.DataSource {
         id: mpris2Source
         engine: "mpris2"
         connectedSources: sources

@@ -11,7 +11,7 @@ import QtQuick.Window 2.2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
@@ -382,14 +382,12 @@ Loader {
                     border.color: dialog.borderColor
                 }
 
-                PlasmaExtras.ScrollArea {
+                PlasmaComponents.ScrollView {
                     id: scrollArea
 
                     anchors.fill: parent
-                    verticalScrollBarPolicy: Qt.ScrollBarAsNeeded
-                    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
-                    flickableItem.flickableDirection: Flickable.VerticalFlick
+                    QtQuickControls212.ScrollBar.vertical.policy: QtQuickControls212.ScrollBar.AsNeeded
+                    QtQuickControls212.ScrollBar.horizontal.policy: QtQuickControls212.ScrollBar.AlwaysOff
 
                     QtQuickControls212.StackView {
                         id: pagesStackView

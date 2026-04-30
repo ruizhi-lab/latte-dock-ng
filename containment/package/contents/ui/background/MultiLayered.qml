@@ -11,7 +11,7 @@ import org.kde.plasma.plasmoid 2.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.latte.core 0.2 as LatteCore
@@ -304,6 +304,10 @@ BackgroundProperties{
         property: "themeExtendedBackground"
         when: themeExtended
         value: {
+            if (!themeExtended) {
+                return null;
+            }
+
             switch(plasmoid.location) {
             case PlasmaCore.Types.BottomEdge: return themeExtended.backgroundBottomEdge;
             case PlasmaCore.Types.LeftEdge: return themeExtended.backgroundLeftEdge;
@@ -942,4 +946,3 @@ BackgroundProperties{
     ]
     //END states
 }
-

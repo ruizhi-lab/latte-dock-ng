@@ -8,7 +8,7 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.latte.core 0.2 as LatteCore
@@ -48,7 +48,7 @@ Item {
     readonly property bool isMarginsAreaSeparator: applet && applet.hasOwnProperty("constraintHints")
                                                    && ((applet.constraintHints & PlasmaCore.Types.MarginAreasSeparator) === PlasmaCore.Types.MarginAreasSeparator);
 
-    readonly property color highlightColor: theme.buttonFocusColor
+    readonly property color highlightColor: colorizerManager ? colorizerManager.buttonFocusColor : "transparent"
 
     //! Fill Applet(s)
     property bool inFillCalculations: false //temp record, is used in calculations for fillWidth,fillHeight applets
@@ -193,7 +193,7 @@ Item {
 
     property int previousIndex: -1
     property int spacersMaxSize: Math.max(0,Math.ceil(0.55 * metrics.iconSize) - metrics.totals.lengthEdges)
-    property int status: applet ? applet.status : -1
+    property int status: (applet && applet.status !== undefined) ? applet.status : -1
 
     //! some metrics
     readonly property int appletMinimumLength: _wrapper.appletMinimumLength
@@ -288,7 +288,7 @@ Item {
     property int internalWidthMargins: root.isVertical ? metrics.totals.thicknessEdges : 2 * lengthAppletPadding
     property int internalHeightMargins: root.isHorizontal ? root.metrics.totals.thicknessEdges : 2 * lengthAppletPadding
 
-    readonly property string pluginName: isInternalViewSplitter ? "org.kde.latte.splitter" : (applet ? applet.pluginName : "")
+    readonly property string pluginName: isInternalViewSplitter ? "org.kde.latte.splitter" : ((applet && applet.pluginName !== undefined) ? applet.pluginName : "")
 
     //! are set by the indicator
     readonly property int iconOffsetX: indicatorBackLayer.level.requested.iconOffsetX
@@ -895,7 +895,7 @@ Item {
     //Busy Indicator
     PlasmaComponents.BusyIndicator {
         z: 1000
-        visible: applet && applet.busy
+        visible: applet && applet.busy !== undefined && applet.busy
         running: visible
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)

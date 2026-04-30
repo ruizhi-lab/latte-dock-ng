@@ -13,7 +13,19 @@ import org.kde.ksvg 1.0 as KSvg
 KSvg.FrameSvgItem {
     id: root
 
-    imagePath: containment && containment.backgroundHints === PlasmaCore.Types.NoBackground ? "" : "widgets/panel-background"
+    imagePath: {
+        if (!containment) {
+            return "";
+        }
+
+        // Latte draws dock background inside the containment itself.
+        // Keep shell frame background only for true panel mode.
+        if (containment.behaveAsPlasmaPanel !== undefined) {
+            return containment.behaveAsPlasmaPanel ? "widgets/panel-background" : "";
+        }
+
+        return containment.backgroundHints === PlasmaCore.Types.NoBackground ? "" : "widgets/panel-background";
+    }
     //imagePath: "widgets/panel-background"
     //imagePath: ""
     prefix:""
@@ -62,7 +74,7 @@ KSvg.FrameSvgItem {
     Component.onDestruction: {
         console.log("latte view qml source deleting...");
 
-        if (containment && containment.locationChanged) {
+        if (containment && containment.locationChanged && typeof containment.locationChanged.disconnect === "function") {
             containment.locationChanged.disconnect(adjustPrefix);
         }
     }
@@ -77,7 +89,7 @@ KSvg.FrameSvgItem {
         containment.parent = containmentParent;
         containment.visible = true;
         containment.anchors.fill = containmentParent;
-        if (containment.locationChanged) {
+        if (containment.locationChanged && typeof containment.locationChanged.connect === "function") {
             containment.locationChanged.connect(adjustPrefix);
         }
         adjustPrefix();

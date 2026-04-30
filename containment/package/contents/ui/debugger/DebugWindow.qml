@@ -6,9 +6,10 @@
 
 import QtQuick 2.1
 import QtQuick.Window 2.2
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.components 3.0 as PlasmaComponents
 
 import org.kde.latte.core 0.2 as LatteCore
 
@@ -20,14 +21,12 @@ Window{
 
     property string space:" :   "
 
-    PlasmaExtras.ScrollArea {
+    PlasmaComponents.ScrollView {
         id: scrollArea
 
         anchors.fill: parent
-        verticalScrollBarPolicy: Qt.ScrollBarAsNeeded
-        horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
-        flickableItem.flickableDirection: Flickable.VerticalFlick
+        QQC2.ScrollBar.vertical.policy: QQC2.ScrollBar.AsNeeded
+        QQC2.ScrollBar.horizontal.policy: QQC2.ScrollBar.AlwaysOff
 
         Grid{
             id:mainGrid

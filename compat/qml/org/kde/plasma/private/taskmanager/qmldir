@@ -1,0 +1,4 @@
+module org.kde.plasma.private.taskmanager
+
+Backend 0.1 Backend.qml
+SmartLauncherItem 0.1 SmartLauncherItem.qml

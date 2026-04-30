@@ -5,6 +5,7 @@
 
 import QtQuick 2.7
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
@@ -16,6 +17,7 @@ import "../../code/ColorizerTools.js" as ColorizerTools
 
 Loader{
     id: manager
+    readonly property var theme: Kirigami.Theme
 
     //! the loader loads the backgroundTracker component
     active: root.themeColors === LatteContainment.Types.SmartThemeColors
@@ -151,10 +153,10 @@ Loader{
     readonly property color neutralTextColor: applyTheme.neutralTextColor
     readonly property color negativeTextColor: applyTheme.negativeTextColor
 
-    readonly property color buttonTextColor: applyTheme.buttonTextColor
-    readonly property color buttonBackgroundColor: applyTheme.buttonBackgroundColor
-    readonly property color buttonHoverColor: applyTheme.buttonHoverColor
-    readonly property color buttonFocusColor: applyTheme.buttonFocusColor
+    readonly property color buttonTextColor: applyTheme && applyTheme.buttonTextColor !== undefined ? applyTheme.buttonTextColor : textColor
+    readonly property color buttonBackgroundColor: applyTheme && applyTheme.buttonBackgroundColor !== undefined ? applyTheme.buttonBackgroundColor : backgroundColor
+    readonly property color buttonHoverColor: applyTheme && applyTheme.buttonHoverColor !== undefined ? applyTheme.buttonHoverColor : highlightColor
+    readonly property color buttonFocusColor: applyTheme && applyTheme.buttonFocusColor !== undefined ? applyTheme.buttonFocusColor : highlightColor
 
     readonly property string scheme: {
         if (root.inConfigureAppletsMode && (root.themeColors === LatteContainment.Types.SmartThemeColors)) {

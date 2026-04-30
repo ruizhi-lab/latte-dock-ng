@@ -156,6 +156,10 @@ Item{
     }
 
     function slotContainsMouseChanged() {
+        if (!latteView || !latteView.visibility) {
+            return;
+        }
+
         if(latteView.visibility.containsMouse && latteView.visibility.mode !== LatteCore.Types.SidebarOnDemand) {
             updateMaskArea();
 
@@ -171,12 +175,19 @@ Item{
             return;
         }
 
-        //! WindowsCanCover case
-        if (latteView && latteView.visibility.mode === LatteCore.Types.WindowsCanCover) {
-            latteView.visibility.setViewOnFrontLayer();
+        var visibility = latteView ? latteView.visibility : null;
+        if (!visibility) {
+            return;
         }
 
-        if (!latteView.visibility.isHidden && latteView.positioner.inSlideAnimation) {
+        var positioner = latteView.positioner ? latteView.positioner : null;
+
+        //! WindowsCanCover case
+        if (visibility.mode === LatteCore.Types.WindowsCanCover) {
+            visibility.setViewOnFrontLayer();
+        }
+
+        if (positioner && !visibility.isHidden && positioner.inSlideAnimation) {
             // Do not update when Positioner mid-slide animation takes place, for example:
             // 1. Latte panel is hiding its floating gap for maximized window
             // 2. the user clicks on an applet popup.
@@ -188,7 +199,7 @@ Item{
         //! Normal Dodge/AutoHide case
         if (!slidingAnimationAutoHiddenIn.running
                 && !inRelocationHiding
-                && (latteView.visibility.isHidden || slidingAnimationAutoHiddenOut.running /*it is not already shown or is trying to hide*/)){
+                && (visibility.isHidden || slidingAnimationAutoHiddenOut.running /*it is not already shown or is trying to hide*/)){
             slidingAnimationAutoHiddenIn.init();
         }
     }
@@ -199,21 +210,26 @@ Item{
             return;
         }
 
+        var visibility = latteView ? latteView.visibility : null;
+        if (!visibility) {
+            return;
+        }
+
         if (inSlidingIn && !inRelocationHiding) {
             /*consider hiding after sliding in has finished*/
             return;
         }
 
-        if (latteView && latteView.visibility.mode === LatteCore.Types.WindowsCanCover) {
-            latteView.visibility.setViewOnBackLayer();
+        if (visibility.mode === LatteCore.Types.WindowsCanCover) {
+            visibility.setViewOnBackLayer();
             return;
         }
 
         //! Normal Dodge/AutoHide case
         if (!slidingAnimationAutoHiddenOut.running
-                && !latteView.visibility.blockHiding
-                && (!latteView.visibility.containsMouse || latteView.visibility.mode === LatteCore.Types.SidebarOnDemand /*for SidebarOnDemand mouse should be ignored on hiding*/)
-                && (!latteView.visibility.isHidden || slidingAnimationAutoHiddenIn.running /*it is not already hidden or is trying to show*/)) {
+                && !visibility.blockHiding
+                && (!visibility.containsMouse || visibility.mode === LatteCore.Types.SidebarOnDemand /*for SidebarOnDemand mouse should be ignored on hiding*/)
+                && (!visibility.isHidden || slidingAnimationAutoHiddenIn.running /*it is not already hidden or is trying to show*/)) {
             slidingAnimationAutoHiddenOut.init();
         }
     }
@@ -232,10 +248,16 @@ Item{
     }
 
     function sendHideDockDuringLocationChangeFinished(){
-        latteView.positioner.hidingForRelocationFinished();
+        if (latteView && latteView.positioner) {
+            latteView.positioner.hidingForRelocationFinished();
+        }
     }
 
     function sendSlidingOutAnimationEnded() {
+        if (!latteView || !latteView.visibility) {
+            return;
+        }
+
         latteView.visibility.hide();
         latteView.visibility.isHidden = true;
 
@@ -322,6 +344,10 @@ Item{
     }
 
     function updateInputGeometry() {
+        if (!latteView || !latteView.effects || !latteView.visibility) {
+            return;
+        }
+
         // VisibilityManager.qml tries to workaround faulty onEntered() signals from ParabolicMouseArea
         // by specifying inputThickness when ParabolicEffect is applied. (inputThickness->animated scenario)
         var animated = (animations.needBothAxis.count>0);
@@ -455,6 +481,10 @@ Item{
 
         ScriptAction{
             script: {
+                if (!latteView || !latteView.visibility) {
+                    return;
+                }
+
                 latteView.visibility.isHidden = true;
 
                 if (root.behaveAsPlasmaPanel && latteView.positioner.slideOffset !== 0) {
@@ -480,7 +510,9 @@ Item{
                 }
             }
 
-            latteView.visibility.slideOutFinished();
+            if (latteView && latteView.visibility) {
+                latteView.visibility.slideOutFinished();
+            }
             manager.updateInputGeometry();
 
             if (root.inStartup) {

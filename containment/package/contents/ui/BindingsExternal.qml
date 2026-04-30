@@ -5,6 +5,7 @@
 
 import QtQuick 2.1
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
@@ -70,8 +71,8 @@ Item {
     Binding{
         target: latteView
         property: "fontPixelSize"
-        when: theme
-        value: theme.defaultFont.pixelSize
+        when: true
+        value: Kirigami.Theme.defaultFont.pixelSize
     }
 
     Binding{
@@ -236,22 +237,27 @@ Item {
         property:"appletsLayoutGeometry"
         when: latteView && latteView.effects && visibilityManager.inNormalState
         value: {
+            if (!latteView || !latteView.localGeometry) {
+                return Qt.rect(-1, -1, 0, 0);
+            }
+
             if (root.behaveAsPlasmaPanel
                     || !LatteCore.WindowSystem.compositingActive
                     || (!parabolic.isEnabled && root.userShowPanelBackground && plasmoid.configuration.panelSize===100)) {
+                var localGeom = latteView.localGeometry;
                 var paddingtail = background.tailRoundness + background.tailRoundnessMargin;
                 var paddinghead = background.headRoundness + background.headRoundnessMargin;
 
                 if (root.isHorizontal) {
-                    return Qt.rect(latteView.localGeometry.x + paddingtail,
-                                   latteView.localGeometry.y,
-                                   latteView.localGeometry.width - paddingtail - paddinghead,
-                                   latteView.localGeometry.height);
+                    return Qt.rect(localGeom.x + paddingtail,
+                                   localGeom.y,
+                                   Math.max(0, localGeom.width - paddingtail - paddinghead),
+                                   localGeom.height);
                 } else {
-                    return Qt.rect(latteView.localGeometry.x,
-                                   latteView.localGeometry.y + paddingtail,
-                                   latteView.localGeometry.width,
-                                   latteView.localGeometry.height - paddingtail - paddinghead);
+                    return Qt.rect(localGeom.x,
+                                   localGeom.y + paddingtail,
+                                   localGeom.width,
+                                   Math.max(0, localGeom.height - paddingtail - paddinghead));
                 }
             }
 

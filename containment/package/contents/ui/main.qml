@@ -8,7 +8,7 @@ import QtQuick 2.8
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.plasmoid 2.0
 
@@ -27,7 +27,7 @@ import "layouts" as Layouts
 import "./background" as Background
 import "./debugger" as Debugger
 
-Item {
+ContainmentItem {
     id: root
     objectName: "containmentViewLayout"
 
@@ -526,12 +526,40 @@ Item {
         }
     }
 
+    function configureAction() {
+        if (typeof plasmoid.action === "function") {
+            return plasmoid.action("configure");
+        }
+
+        if (typeof Plasmoid.internalAction === "function") {
+            return Plasmoid.internalAction("configure");
+        }
+
+        if (Plasmoid.contextualActions) {
+            for (var i = 0; i < Plasmoid.contextualActions.length; ++i) {
+                var candidate = Plasmoid.contextualActions[i];
+                if (!candidate) {
+                    continue;
+                }
+
+                if (candidate.objectName === "configure" || candidate.name === "configure") {
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
     Component.onCompleted: {
         upgrader_v010_alignment();
 
         fastLayoutManager.restore();
-        plasmoid.action("configure").visible = !plasmoid.immutable;
-        plasmoid.action("configure").enabled = !plasmoid.immutable;
+        var action = configureAction();
+        if (action) {
+            action.visible = !plasmoid.immutable;
+            action.enabled = !plasmoid.immutable;
+        }
     }
 
     Component.onDestruction: {
@@ -574,15 +602,21 @@ Item {
     }
 
     Plasmoid.onImmutableChanged: {
-        plasmoid.action("configure").visible = !plasmoid.immutable;
-        plasmoid.action("configure").enabled = !plasmoid.immutable;
+        var action = configureAction();
+        if (action) {
+            action.visible = !plasmoid.immutable;
+            action.enabled = !plasmoid.immutable;
+        }
     }
     //////////////END OF CONNECTIONS
 
     //////////////START OF FUNCTIONS
     function createAppletItem(applet) {
         var appletContainer = appletItemComponent.createObject(dndSpacer.parent);
-        initAppletContainer(appletContainer, applet);
+        if (!initAppletContainer(appletContainer, applet)) {
+            appletContainer.destroy();
+            return null;
+        }
 
         // don't show applet if it chooses to be hidden but still make it  accessible in the panelcontroller
         appletContainer.visible = Qt.binding(function() {
@@ -591,11 +625,52 @@ Item {
         return appletContainer;
     }
 
+    function resolveAppletItem(applet) {
+        if (!applet) {
+            return null;
+        }
+
+        if (applet.anchors !== undefined) {
+            return applet;
+        }
+
+        if (typeof Containment.itemFor === "function") {
+            var containmentApplet = Containment.itemFor(applet);
+            if (containmentApplet) {
+                return containmentApplet;
+            }
+        }
+
+        if (typeof Plasmoid.itemFor === "function") {
+            var containmentAppletItem = Plasmoid.itemFor(applet);
+            if (containmentAppletItem) {
+                return containmentAppletItem;
+            }
+        }
+
+        if (applet.hasOwnProperty("item") && applet.item) {
+            return applet.item;
+        }
+
+        if (applet.hasOwnProperty("_plasma_graphicObject") && applet._plasma_graphicObject) {
+            return applet._plasma_graphicObject;
+        }
+
+        return applet;
+    }
+
     function initAppletContainer(appletContainer, applet) {
-        appletContainer.applet = applet;
-        applet.parent = appletContainer.appletWrapper;
-        applet.anchors.fill = appletContainer.appletWrapper;
-        applet.visible = true;
+        var appletItem = resolveAppletItem(applet);
+        if (!appletItem || appletItem.anchors === undefined) {
+            console.warn("Latte: applet item is not ready for insertion", applet ? applet.id : -1);
+            return false;
+        }
+
+        appletContainer.applet = appletItem;
+        appletItem.parent = appletContainer.appletWrapper;
+        appletItem.anchors.fill = appletContainer.appletWrapper;
+        appletItem.visible = true;
+        return true;
     }
 
     function createJustifySplitter() {
@@ -741,13 +816,9 @@ Item {
 
     ///////////////END components
 
-    PlasmaCore.ColorScope{
-        id: colorScopePalette
-    }
-
     LatteContainment.LayoutManager{
         id:fastLayoutManager
-        plasmoidObj: plasmoid
+        plasmoidObj: Plasmoid
         rootItem: root
         dndSpacerItem: dndSpacer
         mainLayout: layoutsContainer.mainLayout
@@ -1038,7 +1109,9 @@ Item {
         plasmoidInterface: plasmoid
 
         Component.onCompleted: {
-            view.interfacesGraphicObj = _interfaces;
+            if (view) {
+                view.interfacesGraphicObj = _interfaces;
+            }
         }
 
         onViewChanged: {
@@ -1061,9 +1134,14 @@ Item {
     //! It is used in order to slide-in the latteView on startup
     onInStartupChanged: {
         if (!inStartup) {
-            latteView.positioner.startupFinished();
-            latteView.positioner.slideInDuringStartup();
-            visibilityManager.slotMustBeShown();
+            if (latteView && latteView.positioner) {
+                latteView.positioner.startupFinished();
+                latteView.positioner.slideInDuringStartup();
+            }
+
+            if (visibilityManager) {
+                visibilityManager.slotMustBeShown();
+            }
         }
     }
 

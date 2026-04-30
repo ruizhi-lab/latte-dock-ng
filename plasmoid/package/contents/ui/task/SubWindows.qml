@@ -53,7 +53,14 @@ Item{
                 onIsActiveChanged:  {
                     if (isActive) {
                         var winIdList = (root.plasma515 ? WinIdList : LegacyWinIdList);
-                        windowsContainer.lastActiveWinInGroup = (winIdList!==undefined ? winIdList[0] : 0);
+                        var activeWinId = 0;
+
+                        if (winIdList !== undefined && winIdList.length > 0) {
+                            var parsedWinId = Number(winIdList[0]);
+                            activeWinId = isNaN(parsedWinId) ? 0 : parsedWinId;
+                        }
+
+                        windowsContainer.lastActiveWinInGroup = activeWinId;
                     }
                     windowsContainer.updateStates();
                 }

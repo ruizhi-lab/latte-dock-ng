@@ -714,7 +714,12 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
         canvas.setHeight(thickness);
     }
 
-    switch (m_view->location()) {
+    Plasma::Types::Location location = m_view->location();
+    if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && m_view->containment()) {
+        location = m_view->containment()->location();
+    }
+
+    switch (location) {
     case Plasma::Types::TopEdge:
         canvas.moveLeft(screenGeometry.x());
         canvas.moveTop(screenGeometry.y());
@@ -736,7 +741,8 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
         break;
 
     default:
-        qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location();
+        qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location()
+                   << " containment location:" << (m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop);
     }
 
     setCanvasGeometry(canvas);
@@ -762,7 +768,12 @@ void Positioner::updatePosition(QRect availableScreenRect)
 
     int screenEdgeMargin = m_view->behaveAsPlasmaPanel() ? m_view->screenEdgeMargin() - qAbs(m_slideOffset) : 0;
 
-    switch (m_view->location()) {
+    Plasma::Types::Location location = m_view->location();
+    if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && m_view->containment()) {
+        location = m_view->containment()->location();
+    }
+
+    switch (location) {
     case Plasma::Types::TopEdge:
         if (m_view->behaveAsPlasmaPanel()) {
             int y = screenGeometry.y() + screenEdgeMargin;
@@ -833,7 +844,8 @@ void Positioner::updatePosition(QRect availableScreenRect)
 
     default:
         qWarning() << "wrong location, couldn't update the panel position"
-                   << m_view->location();
+                   << m_view->location()
+                   << " containment location:" << (m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop);
     }
 
     if (m_slideOffset == 0 || m_nextScreenEdge != Plasma::Types::Floating /*exactly after relocating and changing screen edge*/) {
@@ -911,7 +923,12 @@ void Positioner::updateFormFactor()
     if (!m_view->containment())
         return;
 
-    switch (m_view->location()) {
+    Plasma::Types::Location location = m_view->location();
+    if (location == Plasma::Types::Desktop || location == Plasma::Types::Floating) {
+        location = m_view->containment()->location();
+    }
+
+    switch (location) {
     case Plasma::Types::TopEdge:
     case Plasma::Types::BottomEdge:
         m_view->containment()->setFormFactor(Plasma::Types::Horizontal);
@@ -923,7 +940,8 @@ void Positioner::updateFormFactor()
         break;
 
     default:
-        qWarning() << "wrong location, couldn't update the panel position" << m_view->location();
+        qWarning() << "wrong location, couldn't update the panel position" << m_view->location()
+                   << " containment location:" << m_view->containment()->location();
     }
 }
 

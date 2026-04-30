@@ -7,6 +7,7 @@
 import QtQuick 2.1
 import QtQuick.Window 2.2
 import QtQuick.Templates 2.2 as T
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 T.Label {
@@ -23,7 +24,7 @@ T.Label {
     //font data is the system one by default
     //TODO: from theme singleton?
     color: PlasmaCore.ColorScope.textColor
-    linkColor: theme.linkColor
+    linkColor: Kirigami.Theme.linkColor
 
     opacity: enabled? 1 : 0.6
 

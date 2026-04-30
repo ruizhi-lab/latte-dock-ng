@@ -13,6 +13,11 @@
 #include <QQmlPropertyMap>
 #include <QQuickItem>
 #include <QTimer>
+#include <QVariant>
+
+namespace Plasma {
+class Containment;
+}
 
 namespace Latte{
 namespace Containment{
@@ -133,6 +138,11 @@ private Q_SLOTS:
     void updateOrder();
     void cleanupOptions();
     void reorderParabolicSpacers();
+    QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    void writeConfigValue(const QString &key, const QVariant &value);
+    Plasma::Containment *containmentObject() const;
+    QObject *resolveAppletQuickItemObject(QObject *applet) const;
+    QList<QObject *> plasmoidApplets() const;
 
 private:
     void restoreOptions();
@@ -161,6 +171,8 @@ private:
     bool isJustifySplitter(const QQuickItem *item) const;
     bool isValidApplet(const int &id);
     bool insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *item, int x, int y);
+    int appletId(QObject *applet) const;
+    int configuredAppletCount() const;
 
     int distanceFromTail(QQuickItem *layout, QPointF pos) const;
     int distanceFromHead(QQuickItem *layout, QPointF pos) const;
@@ -205,6 +217,7 @@ private:
     QMetaMethod m_initAppletContainerMethod;
 
     bool m_hasRestoredApplets{false};
+    int m_restoreRetryCount{0};
     QTimer m_hasRestoredAppletsTimer;
 
     //! first QString is the option in AppletItem

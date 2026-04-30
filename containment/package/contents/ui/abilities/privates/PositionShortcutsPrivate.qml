@@ -25,8 +25,14 @@ AbilityDefinition.PositionShortcuts {
     Binding {
         target: _shortcutsprivate
         property: "badges"
-        when: !updateIsBlocked && shortcutsEngine
-        value: shortcutsEngine.badgesForActivate
+        when: !updateIsBlocked && typeof shortcutsEngine !== "undefined"
+        value: {
+            if (!shortcutsEngine || shortcutsEngine.badgesForActivate === undefined) {
+                return [];
+            }
+
+            return shortcutsEngine.badgesForActivate;
+        }
     }
 
     Binding {

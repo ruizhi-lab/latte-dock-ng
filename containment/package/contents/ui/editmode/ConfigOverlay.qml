@@ -8,9 +8,10 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.0
 import QtQuick.Effects
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.latte.core 0.2 as LatteCore
@@ -18,6 +19,8 @@ import org.kde.latte.core 0.2 as LatteCore
 MouseArea {
     id: configurationArea
     z: 1000
+    readonly property var units: Kirigami.Units
+    readonly property var theme: Kirigami.Theme
 
     width: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? root.width : thickness
     height: plasmoid.formFactor === PlasmaCore.Types.Vertical ? root.height : thickness
@@ -55,6 +58,31 @@ MouseArea {
 
     readonly property int thickness: metrics.mask.thickness.maxNormal - metrics.extraThicknessForNormal
     readonly property int spacerHandleSize: units.smallSpacing
+
+    function contextualAction(appletObj, actionName) {
+        if (!appletObj || !actionName) {
+            return null;
+        }
+
+        if (typeof appletObj.action === "function") {
+            return appletObj.action(actionName);
+        }
+
+        if (appletObj.contextualActions) {
+            for (var i = 0; i < appletObj.contextualActions.length; ++i) {
+                var candidate = appletObj.contextualActions[i];
+                if (!candidate) {
+                    continue;
+                }
+
+                if (candidate.objectName === actionName || candidate.name === actionName) {
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
 
     onHeightChanged: tooltip.visible = false;
     onWidthChanged: tooltip.visible = false;
@@ -303,7 +331,7 @@ MouseArea {
                 opacity: 0.35
             }
 
-            PlasmaCore.IconItem {
+            Kirigami.Icon {
                 source: "transform-move"
                 width: Math.min(144, root.metrics.iconSize)
                 height: width
@@ -405,9 +433,11 @@ MouseArea {
 
                 configureButton.visible = !currentApplet.isInternalViewSplitter
                         && (currentApplet.applet.pluginName !== "org.kde.latte.plasmoid")
-                        && currentApplet.applet.action("configure")
-                        && currentApplet.applet.action("configure").enabled;
-                closeButton.visible = !currentApplet.isInternalViewSplitter && currentApplet.applet.action("remove") && currentApplet.applet.action("remove").enabled;
+                        && contextualAction(currentApplet.applet, "configure")
+                        && contextualAction(currentApplet.applet, "configure").enabled;
+                closeButton.visible = !currentApplet.isInternalViewSplitter
+                        && contextualAction(currentApplet.applet, "remove")
+                        && contextualAction(currentApplet.applet, "remove").enabled;
                 lockButton.visible = !currentApplet.isInternalViewSplitter
                         && !currentApplet.communicator.indexerIsSupported
                         && !currentApplet.communicator.appletBlocksParabolicEffect
@@ -441,11 +471,13 @@ MouseArea {
                     PlasmaComponents.ToolButton {
                         id: configureButton
                         anchors.verticalCenter: parent.verticalCenter
-                        iconSource: "configure"
-                        tooltip: i18n("Configure applet")
+                        icon.name: "configure"
                         onClicked: {
                             tooltip.visible = false;
-                            currentApplet.applet.action("configure").trigger();
+                            var configureAction = contextualAction(currentApplet.applet, "configure");
+                            if (configureAction) {
+                                configureAction.trigger();
+                            }
                         }
                     }
 
@@ -463,8 +495,7 @@ MouseArea {
                         PlasmaComponents.ToolButton{
                             id: colorizingButton
                             checkable: true
-                            iconSource: "color-picker"
-                            tooltip: i18n("Enable painting  for this applet")
+                            icon.name: "color-picker"
 
                             onClicked: {
                                 fastLayoutManager.setOption(currentApplet.applet.id, "userBlocksColorizing", !checked);
@@ -474,8 +505,7 @@ MouseArea {
                         PlasmaComponents.ToolButton{
                             id: lockButton
                             checkable: true
-                            iconSource: checked ? "lock" : "unlock"
-                            tooltip: i18n("Disable parabolic effect for this applet")
+                            icon.name: checked ? "lock" : "unlock"
 
                             onClicked: {
                                 fastLayoutManager.setOption(currentApplet.applet.id, "lockZoom", checked);
@@ -485,12 +515,15 @@ MouseArea {
                         PlasmaComponents.ToolButton {
                             id: closeButton
                             anchors.verticalCenter: parent.verticalCenter
-                            iconSource: "delete"
-                            tooltip: i18n("Remove applet")
+                            icon.name: "delete"
                             onClicked: {
                                 tooltip.visible = false;
-                                if(currentApplet && currentApplet.applet)
-                                    currentApplet.applet.action("remove").trigger();
+                                if (currentApplet && currentApplet.applet) {
+                                    var removeAction = contextualAction(currentApplet.applet, "remove");
+                                    if (removeAction) {
+                                        removeAction.trigger();
+                                    }
+                                }
                             }
                         }
                     }

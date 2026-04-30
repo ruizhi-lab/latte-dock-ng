@@ -92,7 +92,17 @@ bool Storage::isLatteContainment(const Plasma::Containment *containment) const
         return false;
     }
 
-    if (containment->pluginMetaData().pluginId() == QLatin1String("org.kde.latte.containment")) {
+    static const QString latteContainmentId{QStringLiteral("org.kde.latte.containment")};
+
+    const QString metaPluginId = containment->pluginMetaData().pluginId();
+    if (metaPluginId == latteContainmentId) {
+        return true;
+    }
+
+    // Plasma 6 migration path: for imported containments pluginMetaData() may be
+    // temporarily unavailable, while the config plugin id is already correct.
+    const QString configPluginId = containment->config().readEntry("plugin", QString());
+    if (configPluginId == latteContainmentId) {
         return true;
     }
 

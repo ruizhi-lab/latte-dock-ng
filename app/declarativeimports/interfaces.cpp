@@ -5,6 +5,8 @@
 
 #include "interfaces.h"
 
+#include <QDynamicPropertyChangeEvent>
+
 #include <PlasmaQuick/AppletQuickItem>
 
 namespace Latte{
@@ -12,6 +14,21 @@ namespace Latte{
 Interfaces::Interfaces(QObject *parent)
     : QObject(parent)
 {
+    m_viewSyncTimer.setInterval(100);
+    m_viewSyncTimer.setSingleShot(false);
+
+    connect(&m_viewSyncTimer, &QTimer::timeout, this, [this]() {
+        if (!m_plasmoid) {
+            m_viewSyncTimer.stop();
+            return;
+        }
+
+        updateView();
+
+        if (m_view || ++m_viewSyncAttempts >= 50) {
+            m_viewSyncTimer.stop();
+        }
+    });
 }
 
 QObject *Interfaces::globalShortcuts() const
@@ -104,8 +121,23 @@ void Interfaces::setUniversalSettings(QObject *settings)
 
 void Interfaces::updateView()
 {
-    if (m_plasmoid) {
-        setView(m_plasmoid->property("_latte_view_object").value<QObject *>());
+    QObject *source = activePropertySource();
+
+    if (!source) {
+        return;
+    }
+
+    QObject *resolvedView = source->property("_latte_view_object").value<QObject *>();
+
+    if (!resolvedView && source != m_plasmoidInterface && m_plasmoidInterface) {
+        resolvedView = m_plasmoidInterface->property("_latte_view_object").value<QObject *>();
+    }
+
+    setView(resolvedView);
+
+    if (m_view) {
+        m_viewSyncTimer.stop();
+        m_viewSyncAttempts = 0;
     }
 }
 
@@ -138,18 +170,130 @@ QObject *Interfaces::plasmoidInterface() const
 
 void Interfaces::setPlasmoidInterface(QObject *interface)
 {
-    PlasmaQuick::AppletQuickItem *plasmoid = qobject_cast<PlasmaQuick::AppletQuickItem *>(interface);
+    if (m_plasmoidInterface == interface) {
+        syncPlasmoidReference();
+        syncPlasmoidObjects();
+        return;
+    }
 
-    if (plasmoid && m_plasmoid != plasmoid) {
-        m_plasmoid = plasmoid;
+    if (m_plasmoidInterface && m_plasmoidInterface != m_plasmoid) {
+        m_plasmoidInterface->removeEventFilter(this);
+    }
+    if (m_plasmoid) {
+        m_plasmoid->removeEventFilter(this);
+    }
 
-        setGlobalShortcuts(plasmoid->property("_latte_globalShortcuts_object").value<QObject *>());
-        setLayoutsManager(plasmoid->property("_latte_layoutsManager_object").value<QObject *>());
-        setThemeExtended(plasmoid->property("_latte_themeExtended_object").value<QObject *>());
-        setUniversalSettings(plasmoid->property("_latte_universalSettings_object").value<QObject *>());
-        setView(plasmoid->property("_latte_view_object").value<QObject *>());
+    m_plasmoidInterface = interface;
 
-        Q_EMIT interfaceChanged();
+    if (m_plasmoidInterface) {
+        m_plasmoidInterface->installEventFilter(this);
+
+        connect(m_plasmoidInterface, &QObject::destroyed, this, [this]() {
+            if (m_plasmoid && m_plasmoid != m_plasmoidInterface) {
+                m_plasmoid->removeEventFilter(this);
+            }
+
+            m_plasmoidInterface = nullptr;
+            m_plasmoid = nullptr;
+            m_viewSyncTimer.stop();
+            m_viewSyncAttempts = 0;
+            setView(nullptr);
+            setGlobalShortcuts(nullptr);
+            setLayoutsManager(nullptr);
+            setThemeExtended(nullptr);
+            setUniversalSettings(nullptr);
+        });
+    }
+
+    syncPlasmoidReference();
+
+    syncPlasmoidObjects();
+    Q_EMIT interfaceChanged();
+}
+
+bool Interfaces::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() != QEvent::DynamicPropertyChange) {
+        return QObject::eventFilter(watched, event);
+    }
+
+    auto *changeEvent = static_cast<QDynamicPropertyChangeEvent *>(event);
+    const QByteArray propName = changeEvent->propertyName();
+
+    if (watched == m_plasmoidInterface && propName == "_plasma_graphicObject") {
+        syncPlasmoidReference();
+        syncPlasmoidObjects();
+    } else if (watched == m_plasmoid) {
+        if (propName == "_latte_view_object"
+                || propName == "_latte_globalShortcuts_object"
+                || propName == "_latte_layoutsManager_object"
+                || propName == "_latte_themeExtended_object"
+                || propName == "_latte_universalSettings_object") {
+            syncPlasmoidObjects();
+        }
+    } else if (watched == m_plasmoidInterface) {
+        if (propName == "_latte_view_object"
+                || propName == "_latte_globalShortcuts_object"
+                || propName == "_latte_layoutsManager_object"
+                || propName == "_latte_themeExtended_object"
+                || propName == "_latte_universalSettings_object") {
+            syncPlasmoidObjects();
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+QObject *Interfaces::activePropertySource() const
+{
+    if (m_plasmoid) {
+        return m_plasmoid;
+    }
+
+    return m_plasmoidInterface;
+}
+
+void Interfaces::syncPlasmoidReference()
+{
+    PlasmaQuick::AppletQuickItem *plasmoid = qobject_cast<PlasmaQuick::AppletQuickItem *>(m_plasmoidInterface);
+
+    if (!plasmoid && m_plasmoidInterface) {
+        QObject *graphicObject = m_plasmoidInterface->property("_plasma_graphicObject").value<QObject *>();
+        plasmoid = qobject_cast<PlasmaQuick::AppletQuickItem *>(graphicObject);
+    }
+
+    if (m_plasmoid == plasmoid) {
+        return;
+    }
+
+    if (m_plasmoid) {
+        m_plasmoid->removeEventFilter(this);
+    }
+
+    m_plasmoid = plasmoid;
+
+    if (m_plasmoid) {
+        m_plasmoid->installEventFilter(this);
+    }
+}
+
+void Interfaces::syncPlasmoidObjects()
+{
+    QObject *source = activePropertySource();
+
+    if (!source) {
+        return;
+    }
+
+    setGlobalShortcuts(source->property("_latte_globalShortcuts_object").value<QObject *>());
+    setLayoutsManager(source->property("_latte_layoutsManager_object").value<QObject *>());
+    setThemeExtended(source->property("_latte_themeExtended_object").value<QObject *>());
+    setUniversalSettings(source->property("_latte_universalSettings_object").value<QObject *>());
+    updateView();
+
+    if (!m_view && !m_viewSyncTimer.isActive()) {
+        m_viewSyncAttempts = 0;
+        m_viewSyncTimer.start();
     }
 }
 

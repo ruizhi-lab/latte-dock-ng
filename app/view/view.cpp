@@ -347,15 +347,25 @@ void View::init(Plasma::Containment *plasma_containment)
 
     connect(m_corona->indicatorFactory(), &Latte::Indicator::Factory::indicatorRemoved, this, &View::indicatorPluginRemoved);
 
-    //! Assign app interfaces in be accessible through containment graphic item
+    //! Assign app interfaces so both containment object and its graphic item can expose them.
+    auto setLatteInterfaceProperties = [this](QObject *obj) {
+        if (!obj) {
+            return;
+        }
+
+        obj->setProperty("_latte_globalShortcuts_object", QVariant::fromValue(m_corona->globalShortcuts()->shortcutsTracker()));
+        obj->setProperty("_latte_layoutsManager_object", QVariant::fromValue(m_corona->layoutsManager()));
+        obj->setProperty("_latte_themeExtended_object", QVariant::fromValue(m_corona->themeExtended()));
+        obj->setProperty("_latte_universalSettings_object", QVariant::fromValue(m_corona->universalSettings()));
+        obj->setProperty("_latte_view_object", QVariant::fromValue(this));
+    };
+
+    setLatteInterfaceProperties(plasma_containment);
+
     QQuickItem *containmentGraphicItem = qobject_cast<QQuickItem *>(plasma_containment->property("_plasma_graphicObject").value<QObject *>());
 
     if (containmentGraphicItem) {
-        containmentGraphicItem->setProperty("_latte_globalShortcuts_object", QVariant::fromValue(m_corona->globalShortcuts()->shortcutsTracker()));
-        containmentGraphicItem->setProperty("_latte_layoutsManager_object", QVariant::fromValue(m_corona->layoutsManager()));
-        containmentGraphicItem->setProperty("_latte_themeExtended_object", QVariant::fromValue(m_corona->themeExtended()));
-        containmentGraphicItem->setProperty("_latte_universalSettings_object", QVariant::fromValue(m_corona->universalSettings()));
-        containmentGraphicItem->setProperty("_latte_view_object", QVariant::fromValue(this));
+        setLatteInterfaceProperties(containmentGraphicItem);
 
         Latte::Interfaces *ifacesGraphicObject = qobject_cast<Latte::Interfaces *>(containmentGraphicItem->property("_latte_view_interfacesobject").value<QObject *>());
 

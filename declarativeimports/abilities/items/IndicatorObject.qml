@@ -4,10 +4,13 @@
 */
 
 import QtQuick 2.7
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
 Item{
     id: _indicator
+    readonly property var theme: Kirigami.Theme
     //! abilities
     property Item metrics: null
     property Item animations: null
