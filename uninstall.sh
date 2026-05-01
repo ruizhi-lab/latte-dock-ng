@@ -2,9 +2,9 @@
 # Author: Michail Vourlakos
 # Summary: Uninstallation script for Latte Dock Panel
 #
-# Run as root / sudo  → removes system install from /usr
-# Run as normal user  → removes user install from ~/.local
-# Override with --system or --user flags.
+# Run as root / sudo  → removes system install from /usr  AND all user data
+# Run as normal user  → removes user install from ~/.local only
+# Override with --system / --user and --no-purge-user-data flags.
 
 set -euo pipefail
 
@@ -49,12 +49,13 @@ Usage:
 
 Install mode (auto-detected from EUID / saved metadata when not specified):
   --user      Remove user-local install from ~/.local  (no sudo needed)
-  --system    Remove system install from /usr          (requires root/sudo)
+  --system    Remove system install from /usr AND all user data (requires root/sudo)
 
 Options:
-  --manifest <path>   Use a specific install manifest
-  --dry-run           Print what would be removed without deleting
-  --purge-user-data   Also remove ~/.config/latte, ~/.local/share/latte, etc.
+  --manifest <path>     Use a specific install manifest
+  --dry-run             Print what would be removed without deleting
+  --purge-user-data     Also remove user config/cache (default ON for --system)
+  --no-purge-user-data  Skip user data removal even in --system mode
 EOF
 }
 
@@ -68,9 +69,10 @@ while (($# > 0)); do
             manifest_paths=("$1")
             manifest_provided="true"
             ;;
-        --dry-run)       dry_run="true" ;;
-        --purge-user-data) purge_user_data="true" ;;
-        --help|-h)       usage; exit 0 ;;
+        --dry-run)            dry_run="true" ;;
+        --purge-user-data)    purge_user_data="true" ;;
+        --no-purge-user-data) purge_user_data="no" ;;
+        --help|-h)            usage; exit 0 ;;
         *)
             echo "Error: unknown option '$1'." >&2; usage; exit 2 ;;
     esac
@@ -101,7 +103,12 @@ if [[ "$install_mode" == "auto" ]]; then
     fi
 fi
 
-echo "Info: uninstall mode = ${install_mode}"
+# System mode defaults to full purge; user can override with --no-purge-user-data
+if [[ "$install_mode" == "system" && "$purge_user_data" != "no" ]]; then
+    purge_user_data="true"
+fi
+
+echo "Info: uninstall mode = ${install_mode}, purge user data = ${purge_user_data}"
 
 # ── Resolve install prefix ────────────────────────────────────────────────────
 if [[ "$install_mode" == "user" ]]; then
