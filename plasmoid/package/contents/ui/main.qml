@@ -173,15 +173,6 @@ PlasmoidItem {
 
         return "";
     }
-    // Runtime activity id passed to TasksModel should always reflect the
-    // current activity state, even when filtering is temporarily disabled.
-    property string tasksModelRuntimeActivityId: {
-        if (activityInfo.currentActivity === undefined || activityInfo.currentActivity === null) {
-            return "";
-        }
-
-        return String(activityInfo.currentActivity);
-    }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
     property bool showPreviews:  hoverAction === LatteTasks.Types.PreviewWindows || hoverAction === LatteTasks.Types.PreviewAndHighlightWindows
     property bool showWindowActions: plasmoid.configuration.showWindowActions && !disableAllWindowsFunctionality
@@ -548,14 +539,14 @@ PlasmoidItem {
         screenGeometry: appletAbilities.myView.screenGeometry
         // comment in order to support LTS Plasma 5.8
         // screen: plasmoid.screen
-        activity: root.tasksModelRuntimeActivityId
+        activity: root.tasksModelActivityId
 
         filterByVirtualDesktop: root.showOnlyCurrentDesktop
         filterByScreen: root.showOnlyCurrentScreen
         filterByActivity: root.shouldFilterByActivity
 
-        // Keep launcher/task state aligned with Plasma 6 icons-only task manager:
-        // active apps should be represented by their window task entry in place.
+        // Match Plasma Icons-Only Task Manager semantics:
+        // a running app should replace its launcher representation.
         hideActivatedLaunchers: true
         launchInPlace: true
         separateLaunchers: true

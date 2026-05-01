@@ -69,6 +69,9 @@ int main(int argc, char **argv)
     qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
     const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
     detectPlatform(argc, argv);
+    // Set desktop file id before app initialization so Wayland app_id is correct
+    // from the earliest possible point for privileged interface checks.
+    QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
     QApplication app(argc, argv);
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
     ensureKdeSessionEnvironment();
