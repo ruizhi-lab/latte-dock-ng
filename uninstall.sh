@@ -19,8 +19,8 @@ declare -a user_homes=()
 
 add_user_home() {
     local candidate="${1:-}"
-    [[ -n "$candidate" ]] || return
-    [[ -d "$candidate" ]] || return
+    [[ -n "$candidate" ]] || return 0
+    [[ -d "$candidate" ]] || return 0
 
     local existing
     for existing in "${user_homes[@]:-}"; do
@@ -218,7 +218,7 @@ remove_dir_if_empty() {
 
 remove_tree_if_marked() {
     local path="$1"; local marker="$2"
-    [[ -f "$marker" ]] || return
+    [[ -f "$marker" ]] || return 0
     [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $path"; return; }
     run_as_root rm -rf -- "$path"
 }
@@ -285,10 +285,10 @@ remove_user_local_launcher_link() {
     local user_home="$1"
     local local_bin="${user_home}/.local/bin/latte-dock-ng"
 
-    [[ -L "$local_bin" ]] || return
+    [[ -L "$local_bin" ]] || return 0
     local resolved="$(readlink -f "$local_bin" 2>/dev/null || true)"
     # Remove if pointing to any latte-dock-ng binary
-    [[ "$resolved" == */latte-dock-ng ]] || return
+    [[ "$resolved" == */latte-dock-ng ]] || return 0
 
     [[ "$dry_run" == "true" ]] && { echo "rm -f -- $local_bin"; return; }
     rm -f -- "$local_bin"
@@ -437,6 +437,76 @@ for user_home in "${user_homes[@]:-}"; do
         rmdir --ignore-fail-on-non-empty -- "${user_home}/.local/share/plasma/shells" 2>/dev/null || true
     fi
 done
+
+# ── Refresh application menu caches ──────────────────────────────────────────
+# Run kbuildsycoca6 (KDE menu cache) and update-desktop-database (XDG) so
+# latte-dock entries disappear from launchers immediately after uninstall.
+
+run_as_user() {
+    # run_as_user <username> <cmd...>
+    local target_user="$1"; shift
+
+    if [[ "${EUID}" -eq 0 && "$target_user" != "root" ]]; then
+        if command -v runuser >/dev/null 2>&1; then
+            runuser -l "$target_user" -c "$*" 2>/dev/null || true
+        else
+            su -l "$target_user" -c "$*" 2>/dev/null || true
+        fi
+    else
+        "$@" 2>/dev/null || true
+    fi
+}
+
+resolve_username() {
+    local user_home="$1"
+    # Prefer SUDO_USER when the home matches, otherwise stat the directory
+    if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+        local sudo_home=""
+        if command -v getent >/dev/null 2>&1; then
+            sudo_home="$(getent passwd "${SUDO_USER}" | cut -d: -f6 2>/dev/null || true)"
+        fi
+        [[ "$sudo_home" == "$user_home" ]] && echo "$SUDO_USER" && return
+    fi
+    stat -c '%U' "$user_home" 2>/dev/null || basename "$user_home"
+}
+
+for user_home in "${user_homes[@]:-}"; do
+    [[ -d "$user_home" ]] || continue
+    target_user="$(resolve_username "$user_home")"
+
+    # Refresh user-level KDE service cache
+    if command -v kbuildsycoca6 >/dev/null 2>&1; then
+        if [[ "$dry_run" == "true" ]]; then
+            echo "su $target_user -c 'kbuildsycoca6 --noincremental'"
+        else
+            echo "Info: refreshing KDE menu cache for user '${target_user}'..."
+            run_as_user "$target_user" kbuildsycoca6 --noincremental
+        fi
+    fi
+
+    # Refresh user-level XDG desktop database
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        user_apps_dir="${user_home}/.local/share/applications"
+        if [[ -d "$user_apps_dir" ]]; then
+            if [[ "$dry_run" == "true" ]]; then
+                echo "update-desktop-database $user_apps_dir"
+            else
+                run_as_user "$target_user" update-desktop-database "$user_apps_dir"
+            fi
+        fi
+    fi
+done
+
+# Refresh system-level XDG desktop database (system install only)
+if [[ "$install_mode" == "system" ]]; then
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        if [[ "$dry_run" == "true" ]]; then
+            echo "update-desktop-database /usr/share/applications"
+        else
+            run_as_root update-desktop-database /usr/share/applications 2>/dev/null || true
+        fi
+    fi
+fi
 
 # ── Remove build metadata ─────────────────────────────────────────────────────
 for meta_file in \

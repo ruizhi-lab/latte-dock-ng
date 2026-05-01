@@ -22,8 +22,8 @@ declare -a user_homes=()
 
 add_user_home() {
     local candidate="${1:-}"
-    [[ -n "$candidate" ]] || return
-    [[ -d "$candidate" ]] || return
+    [[ -n "$candidate" ]] || return 0
+    [[ -d "$candidate" ]] || return 0
 
     local existing
     for existing in "${user_homes[@]:-}"; do
@@ -215,8 +215,8 @@ sync_tree_if_exists() {
     local src="$1"
     local dst="$2"
 
-    [[ -d "$src" ]] || return
-    [[ -d "$dst" ]] || return
+    [[ -d "$src" ]] || return 0
+    [[ -d "$dst" ]] || return 0
 
     echo "Info: syncing existing user override: $dst"
     if command -v rsync >/dev/null 2>&1; then
@@ -254,7 +254,7 @@ if [[ "$install_mode" == "system" ]]; then
         local local_bin="${local_bin_dir}/latte-dock-ng"
         local system_bin="${install_prefix}/bin/latte-dock-ng"
 
-        [[ -x "$system_bin" ]] || return
+        [[ -x "$system_bin" ]] || return 0
 
         if [[ -e "$local_bin" ]]; then
             local resolved_local
