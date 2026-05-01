@@ -150,6 +150,9 @@ PlasmoidItem {
     property bool showOnlyCurrentScreen: plasmoid.configuration.showOnlyCurrentScreen
     property bool showOnlyCurrentDesktop: plasmoid.configuration.showOnlyCurrentDesktop
     property bool showOnlyCurrentActivity: plasmoid.configuration.showOnlyCurrentActivity
+    // Activity id used only for filter enablement.
+    // Keep this empty when runtime activities are unavailable to avoid
+    // accidental over-filtering to a stale persisted activity id.
     property string tasksModelActivityId: {
         if (!root.showOnlyCurrentActivity) {
             return "";
@@ -169,6 +172,15 @@ PlasmoidItem {
         }
 
         return "";
+    }
+    // Runtime activity id passed to TasksModel should always reflect the
+    // current activity state, even when filtering is temporarily disabled.
+    property string tasksModelRuntimeActivityId: {
+        if (activityInfo.currentActivity === undefined || activityInfo.currentActivity === null) {
+            return "";
+        }
+
+        return String(activityInfo.currentActivity);
     }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
     property bool showPreviews:  hoverAction === LatteTasks.Types.PreviewWindows || hoverAction === LatteTasks.Types.PreviewAndHighlightWindows
@@ -536,7 +548,7 @@ PlasmoidItem {
         screenGeometry: appletAbilities.myView.screenGeometry
         // comment in order to support LTS Plasma 5.8
         // screen: plasmoid.screen
-        activity: root.tasksModelActivityId
+        activity: root.tasksModelRuntimeActivityId
 
         filterByVirtualDesktop: root.showOnlyCurrentDesktop
         filterByScreen: root.showOnlyCurrentScreen
