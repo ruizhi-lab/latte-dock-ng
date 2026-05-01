@@ -316,18 +316,140 @@ Item {
     }
 
     function importLauncherListInModel() {
+        var launchersList = [];
+
         if (bridge && bridge.launchers.host.isReady && !inUniqueGroup()) {
             if (inLayoutGroup()) {
                 console.log("Tasks: Applying LAYOUT Launchers List...");
-                tasksModel.launcherList = bridge.launchers.host.layoutLaunchers;
+                launchersList = bridge.launchers.host.layoutLaunchers;
             } else if (inGlobalGroup()) {
                 console.log("Tasks: Applying GLOBAL Launchers List...");
-                tasksModel.launcherList = bridge.launchers.host.universalLaunchers;
+                launchersList = bridge.launchers.host.universalLaunchers;
             }
         } else {
             console.log("Tasks: Applying UNIQUE Launchers List...");
-            tasksModel.launcherList = plasmoid.configuration.launchers59;
+            launchersList = plasmoid.configuration.launchers59;
         }
+
+        var normalized = _launchers.normalizeLauncherList(launchersList);
+
+        if (normalized.changed) {
+            if (!bridge || !bridge.launchers.host.isReady || inUniqueGroup()) {
+                plasmoid.configuration.launchers59 = normalized.list;
+            }
+
+            console.log("Tasks: Migrated legacy launcher desktop ids to preferred urls...");
+        }
+
+        tasksModel.launcherList = normalized.list;
+    }
+
+    function normalizeLauncherUrl(url) {
+        if (url === "applications:firefox.desktop") {
+            return "preferred://browser";
+        }
+
+        if (url === "applications:org.kde.dolphin.desktop") {
+            return "preferred://filemanager";
+        }
+
+        if (url === "preferred://email") {
+            return "applications:thunderbird-esr.desktop";
+        }
+
+        if (url === "preferred://terminal") {
+            return "applications:org.kde.konsole.desktop";
+        }
+
+        if (url === "preferred://mailer") {
+            return "applications:thunderbird-esr.desktop";
+        }
+
+        if (url === "preferred://systemsettings") {
+            return "file:///usr/share/applications/systemsettings.desktop";
+        }
+
+        if (url === "applications:systemsettings.desktop"
+                || url === "applications:kdesystemsettings.desktop"
+                || url === "applications:org.kde.systemsettings.desktop"
+                || url === "systemsettings.desktop"
+                || url === "kdesystemsettings.desktop"
+                || url === "org.kde.systemsettings.desktop") {
+            return "file:///usr/share/applications/systemsettings.desktop";
+        }
+
+        return url;
+    }
+
+    function normalizeLauncherRecord(record) {
+        var end = record.indexOf("\n");
+
+        if (end === -1) {
+            return normalizeLauncherUrl(record);
+        }
+
+        var activities = record.substring(0, end + 1);
+        var launcher = record.substring(end + 1);
+        var normalizedLauncher = normalizeLauncherUrl(launcher);
+
+        return activities + normalizedLauncher;
+    }
+
+    function normalizeLauncherList(launchersList) {
+        var changed = false;
+        var normalized = [];
+        var plainRecordsOnly = true;
+
+        for (var i=0; i<launchersList.length; ++i) {
+            var current = launchersList[i];
+            var migrated = normalizeLauncherRecord(current);
+
+            if (current.indexOf("\n") !== -1) {
+                plainRecordsOnly = false;
+            }
+
+            if (migrated !== current) {
+                changed = true;
+            }
+
+            normalized.push(migrated);
+        }
+
+        // Migrate old Latte defaults to a Plasma 6 stable launcher set.
+        // NOTE: some preferred:// launcher schemes are stripped by the task model
+        // under Plasma 6, so we use concrete desktop launcher ids for stability.
+        // Apply only to plain launcher records to avoid rewriting activity-specific entries.
+        var defaultLaunchers = [
+            "preferred://browser",
+            "preferred://filemanager",
+            "applications:org.kde.konsole.desktop",
+            "applications:thunderbird-esr.desktop",
+            "file:///usr/share/applications/systemsettings.desktop"
+        ];
+
+        if (plainRecordsOnly && normalized.length >= 2 && normalized.length < defaultLaunchers.length) {
+            var isDefaultPrefix = true;
+
+            for (var p = 0; p < normalized.length; ++p) {
+                if (normalized[p] !== defaultLaunchers[p]) {
+                    isDefaultPrefix = false;
+                    break;
+                }
+            }
+
+            if (isDefaultPrefix) {
+                for (var n = normalized.length; n < defaultLaunchers.length; ++n) {
+                    normalized.push(defaultLaunchers[n]);
+                }
+
+                changed = true;
+            }
+        }
+
+        return {
+            "changed": changed,
+            "list": normalized
+        };
     }
 
 

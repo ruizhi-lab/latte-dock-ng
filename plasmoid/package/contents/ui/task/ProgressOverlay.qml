@@ -116,7 +116,10 @@ Item {
             readonly property bool showsInfoBadge: ((taskItem.badgeIndicator > 0)
                                                     || (taskIcon.smartLauncherItem && taskIcon.smartLauncherItem.countVisible && !taskIcon.smartLauncherItem.progressVisible))
 
-            readonly property bool showsAudioBadge: root.showAudioBadge && taskItem.hasAudioStream && taskItem.playingAudio && !taskItem.isSeparator
+            readonly property bool showsAudioBadge: root.showAudioBadge
+                                                    && taskItem.hasAudioStream
+                                                    && (taskItem.playingAudio || taskItem.muted)
+                                                    && !taskItem.isSeparator
         }
     }
 }

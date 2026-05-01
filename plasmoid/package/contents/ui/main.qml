@@ -155,10 +155,11 @@ PlasmoidItem {
             return "";
         }
 
-        const layoutActivityId = appletAbilities.myView.isReady ? appletAbilities.myView.lastUsedActivity : "";
-
-        if (root.isFilterableActivityId(layoutActivityId)) {
-            return String(layoutActivityId);
+        // When KActivities is not available, ActivityInfo cannot provide a valid
+        // runtime activity id. In that case filtering by a stale persisted id can
+        // hide all runtime windows, so disable activity filtering.
+        if (activityInfo.numberOfRunningActivities <= 0) {
+            return "";
         }
 
         const currentActivityId = activityInfo.currentActivity;
@@ -541,6 +542,9 @@ PlasmoidItem {
         filterByScreen: root.showOnlyCurrentScreen
         filterByActivity: root.shouldFilterByActivity
 
+        // Keep launcher/task state aligned with Plasma 6 icons-only task manager:
+        // active apps should be represented by their window task entry in place.
+        hideActivatedLaunchers: true
         launchInPlace: true
         separateLaunchers: true
         groupInline: false

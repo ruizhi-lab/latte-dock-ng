@@ -21,7 +21,7 @@ PlasmaCore.FrameSvgItem {
     states: [
         State {
             name: "launcher"
-            when: indicator.isLauncher
+            when: indicator.isLauncher && !indicator.isWindow
 
             PropertyChanges {
                 target: frame

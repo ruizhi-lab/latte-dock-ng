@@ -145,7 +145,9 @@ Item {
                                     && taskIcon.smartLauncherItem
                                     && taskIcon.smartLauncherItem.progressVisible
 
-        property bool showAudio: (root.showAudioBadge && taskItem.hasAudioStream && taskItem.playingAudio)
+        property bool showAudio: (root.showAudioBadge
+                                  && taskItem.hasAudioStream
+                                  && (taskItem.playingAudio || taskItem.muted))
 
         Behavior on activateProgress {
             NumberAnimation { duration: 2 * taskItem.abilities.animations.speedFactor.current * taskItem.abilities.animations.duration.large }
@@ -300,6 +302,7 @@ Item {
         id: badgeVisualsLoader
         anchors.fill: taskIconContainer
         active: (badgesLoader.activateProgress > 0)
+        z: 30
 
         readonly property int infoBadgeWidth: active ? publishedInfoBadgeWidth : 0
         property int publishedInfoBadgeWidth: 0
@@ -318,7 +321,6 @@ Item {
 
             AudioStream{
                 id: audioStreamBadge
-                anchors.fill: parent
                 opacity: badgesLoader.activateProgress
                 visible: badgesLoader.showAudio
             }
@@ -335,6 +337,8 @@ Item {
     //! moved out of badgeVisualsLoader in order to avoid crashes
     //! when the latte view is removed
     Loader {
+        id: badgesGreyEffectLoader
+        z: 31
         anchors.fill: parent
         active: badgeVisualsLoader.active
                 && taskItem.abilities.environment.isGraphicsSystemAccelerated
@@ -357,6 +361,7 @@ Item {
     //! Effects
     MultiEffect{
         id: stateColorizer
+        z: 10
         anchors.fill: parent
         source: badgesLoader.active ? badgesLoader : taskIconItem
 
@@ -367,6 +372,7 @@ Item {
 
     MultiEffect{
         id:hoveredImage
+        z: 11
         anchors.fill: parent
 
         //! HACK TO AVOID PIXELIZATION
@@ -389,6 +395,7 @@ Item {
 
     MultiEffect {
         id: brightnessTaskEffect
+        z: 12
         anchors.fill: parent
 
         //! HACK TO AVOID PIXELIZATION

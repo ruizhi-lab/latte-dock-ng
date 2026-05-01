@@ -16,6 +16,7 @@
 #include <KProcessList>
 
 #include <QDir>
+#include <QFileInfo>
 #include <QGuiApplication>
 #include <QRegularExpression>
 #include <QScreen>
@@ -25,6 +26,77 @@ namespace Latte
 {
 namespace WindowSystem
 {
+
+namespace
+{
+KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
+{
+    QString token = input.trimmed();
+
+    if (token.startsWith(QLatin1Char('!'))) {
+        token.remove(0, 1);
+    }
+
+    if (token.isEmpty()) {
+        return KService::Ptr();
+    }
+
+    const QStringList commandParts = token.split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts);
+    if (!commandParts.isEmpty()) {
+        token = commandParts.first();
+    }
+
+    token = QFileInfo(token).fileName();
+    if (token.isEmpty()) {
+        return KService::Ptr();
+    }
+
+    auto findById = [](const QString &id) -> KService::Ptr {
+        if (KService::Ptr service = KService::serviceByStorageId(id)) {
+            return service;
+        }
+
+        if (KService::Ptr service = KService::serviceByMenuId(id)) {
+            return service;
+        }
+
+        return KService::Ptr();
+    };
+
+    if (KService::Ptr service = findById(token)) {
+        return service;
+    }
+
+    const QString desktopId = token.endsWith(QLatin1String(".desktop"), Qt::CaseInsensitive)
+            ? token
+            : token + QLatin1String(".desktop");
+
+    if (KService::Ptr service = findById(desktopId)) {
+        return service;
+    }
+
+    const QString desktopEntryName = desktopId.left(desktopId.length() - 8);
+
+    KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr &s) {
+        const QString entryName = s->desktopEntryName();
+        return !s->noDisplay()
+                && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
+                    || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
+    });
+
+    if (candidates.isEmpty()) {
+        return KService::Ptr();
+    }
+
+    for (const KService::Ptr &candidate : candidates) {
+        if (candidate->desktopEntryName().compare(desktopEntryName, Qt::CaseInsensitive) == 0) {
+            return candidate;
+        }
+    }
+
+    return candidates.first();
+}
+}
 
 AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
 {
@@ -51,12 +123,51 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
     // applications: URLs are used to refer to applications by their KService::menuId
     // (i.e. .desktop file name) rather than the absolute path to a .desktop file.
     if (url.scheme() == QLatin1String("applications")) {
-        const KService::Ptr service = KService::serviceByMenuId(url.path());
+        KService::Ptr service = KService::serviceByMenuId(url.path());
 
-        if (service && url.path() == service->menuId()) {
+        if (!service) {
+            // Some distros expose different storage ids/menu ids for the same app
+            // (e.g. firefox.desktop vs firefox-esr.desktop). Try storage id first.
+            service = KService::serviceByStorageId(url.path());
+        }
+
+        if (!service && url.path().endsWith(QLatin1String(".desktop"), Qt::CaseInsensitive)) {
+            const QString desktopEntryName = url.path().left(url.path().length() - 8);
+
+            // Final fallback: match by desktop entry name or its distro-specific
+            // suffix variants (e.g. "foo" -> "foo-esr").
+            KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr &s) {
+                const QString entryName = s->desktopEntryName();
+                return !s->noDisplay()
+                    && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
+                        || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
+            });
+
+            if (!candidates.isEmpty()) {
+                for (const KService::Ptr &candidate : candidates) {
+                    if (candidate->desktopEntryName().compare(desktopEntryName, Qt::CaseInsensitive) == 0) {
+                        service = candidate;
+                        break;
+                    }
+                }
+
+                if (!service) {
+                    service = candidates.first();
+                }
+            }
+        }
+
+        if (service) {
             data.name = service->name();
             data.genericName = service->genericName();
             data.id = service->storageId();
+
+            const QString menuId = service->menuId();
+            if (!menuId.isEmpty()) {
+                data.url = QUrl(QLatin1String("applications:") + menuId);
+            } else if (!service->entryPath().isEmpty()) {
+                data.url = QUrl::fromLocalFile(service->entryPath());
+            }
 
             if (data.icon.isNull()) {
                 data.icon = QIcon::fromTheme(service->icon());
@@ -553,20 +664,28 @@ QString defaultApplication(const QUrl &url)
     }
 
     if (application.compare(QLatin1String("mailer"), Qt::CaseInsensitive) == 0) {
+        if (KService::Ptr service = KApplicationTrader::preferredService(QStringLiteral("x-scheme-handler/mailto"))) {
+            return service->storageId();
+        }
+
         KEMailSettings settings;
 
         // In KToolInvocation, the default is kmail; but let's be friendlier.
         QString command = settings.getSetting(KEMailSettings::ClientProgram);
 
         if (command.isEmpty()) {
-            if (KService::Ptr kontact = KService::serviceByStorageId(QStringLiteral("kontact"))) {
+            if (KService::Ptr kontact = serviceFromIdOrDesktopEntry(QStringLiteral("kontact"))) {
                 return kontact->storageId();
-            } else if (KService::Ptr kmail = KService::serviceByStorageId(QStringLiteral("kmail"))) {
+            } else if (KService::Ptr kmail = serviceFromIdOrDesktopEntry(QStringLiteral("kmail"))) {
                 return kmail->storageId();
             }
         }
 
         if (!command.isEmpty()) {
+            if (KService::Ptr service = serviceFromIdOrDesktopEntry(command)) {
+                return service->storageId();
+            }
+
             if (settings.getSetting(KEMailSettings::ClientTerminal) == QLatin1String("true")) {
                 KConfigGroup confGroup(KSharedConfig::openConfig(), "General");
                 const QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
@@ -592,13 +711,30 @@ QString defaultApplication(const QUrl &url)
         return browserApp;
     } else if (application.compare(QLatin1String("terminal"), Qt::CaseInsensitive) == 0) {
         KConfigGroup confGroup(KSharedConfig::openConfig(), "General");
+        const QString terminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
 
-        return confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
+        if (KService::Ptr service = serviceFromIdOrDesktopEntry(terminal)) {
+            return service->storageId();
+        }
+
+        return terminal;
     } else if (application.compare(QLatin1String("filemanager"), Qt::CaseInsensitive) == 0) {
         KService::Ptr service = KApplicationTrader::preferredService(QStringLiteral("inode/directory"));
 
         if (service) {
             return service->storageId();
+        }
+    } else if (application.compare(QLatin1String("systemsettings"), Qt::CaseInsensitive) == 0) {
+        static const QStringList settingsServiceIds{
+            QStringLiteral("org.kde.systemsettings.desktop"),
+            QStringLiteral("kdesystemsettings.desktop"),
+            QStringLiteral("systemsettings.desktop")
+        };
+
+        for (const QString &serviceId : settingsServiceIds) {
+            if (KService::Ptr service = serviceFromIdOrDesktopEntry(serviceId)) {
+                return service->storageId();
+            }
         }
     } else if (KService::Ptr service = KApplicationTrader::preferredService(application)) {
         return service->storageId();

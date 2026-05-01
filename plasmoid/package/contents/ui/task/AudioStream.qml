@@ -4,122 +4,95 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.0
+import QtQuick 2.15
 
 import org.kde.plasma.core 2.0 as PlasmaCore
-
-import org.kde.latte.core 0.2 as LatteCore
-import org.kde.latte.components 1.0 as LatteComponents
+import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.kirigami 2.0 as Kirigami
 
 Item {
-    id: background
+    id: audioStreamIconBox
 
-    Item {
-        id: subRectangle
-        width: parent.width/ 2
-        height: width
+    readonly property int outerMargin: Math.round(Math.max(1, Math.min(parent.width, parent.height) * 0.04))
+    readonly property bool activeAudioState: taskItem.playingAudio || taskItem.muted
 
-        states: [
-            State {
-                name: "default"
-                when: (root.location !== PlasmaCore.Types.RightEdge)
+    z: 200
+    width: Math.round(Math.max(18, Math.min(Math.min(parent.width, parent.height) * 0.42, Kirigami.Units.iconSizes.medium)))
+    height: width
 
-                AnchorChanges {
-                    target: subRectangle
-                    anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
-                }
-            },
-            State {
-                name: "right"
-                when: (root.location === PlasmaCore.Types.RightEdge)
+    anchors.top: parent.top
+    anchors.topMargin: outerMargin
+    anchors.right: parent.right
+    anchors.rightMargin: outerMargin
 
-                AnchorChanges {
-                    target: subRectangle
-                    anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
-                }
+    opacity: activeAudioState ? 1 : 0
+    visible: opacity > 0
+
+    Behavior on opacity {
+        NumberAnimation {
+            duration: Kirigami.Units.longDuration
+        }
+    }
+
+    PlasmaExtras.Highlight {
+        anchors.fill: audioStreamIcon
+        hovered: audioBadgeMouseArea.containsMouse
+        pressed: audioBadgeMouseArea.pressed
+    }
+
+    Kirigami.Icon {
+        id: audioStreamIcon
+        anchors.fill: parent
+        source: {
+            if (taskItem.muted || taskItem.volume <= 0) {
+                return "audio-volume-muted-symbolic" + (Qt.application.layoutDirection === Qt.RightToLeft ? "-rtl" : "");
             }
-        ]
 
-        LatteComponents.BadgeText {
-            anchors.centerIn: parent
-            width: 0.8 * parent.width
-            height: width
-            minimumWidth: width
-            maximumWidth: width
+            return "audio-volume-high-symbolic" + (Qt.application.layoutDirection === Qt.RightToLeft ? "-rtl" : "");
+        }
+        selected: audioBadgeMouseArea.pressed
+    }
 
-            fullCircle: true
-            showNumber: false
-            showText: true
+    MouseArea {
+        id: audioBadgeMouseArea
+        anchors.fill: parent
+        enabled: root.audioBadgeActionsEnabled
+        hoverEnabled: root.audioBadgeActionsEnabled
+        preventStealing: true
 
-            color: theme.backgroundColor
-            borderColor: root.lightTextColor
-            proportion: 0
-            radiusPerCentage: 100
+        property bool wheelIsBlocked: false
 
-            style3d: taskItem.abilities.myView.badgesIn3DStyle
+        onPressed: function(mouse) {
+            mouse.accepted = true;
+        }
 
-            LatteCore.IconItem{
-                id: audioStreamIcon
-                anchors.centerIn: parent
-                width: 0.9*parent.width
-                height: width
-                colorGroup: (PlasmaCore.Theme && PlasmaCore.Theme.ButtonColorGroup !== undefined) ? PlasmaCore.Theme.ButtonColorGroup : 0
-                usesPlasmaTheme: true
+        onClicked: {
+            taskItem.toggleMuted();
+        }
 
-                //opacity: taskItem.playingAudio && !taskItem.muted ? 1 : 0.85
-                source: {
-                    if (taskItem.volume <= 0 || taskItem.muted) {
-                        return "audio-volume-muted";
-                    } else if (taskItem.volume <= 25) {
-                        return "audio-volume-low";
-                    } else if (taskItem.volume <= 75) {
-                        return "audio-volume-medium";
-                    } else {
-                        return "audio-volume-high" ;
-                    }
-                }
-
-                MouseArea{
-                    id: audioBadgeMouseArea
-                    anchors.fill: parent
-                    enabled: root.audioBadgeActionsEnabled
-
-                    property bool wheelIsBlocked: false;
-
-                    onClicked: {
-                        taskItem.toggleMuted();
-                    }
-
-                    onWheel: {
-                        if (wheelIsBlocked) {
-                            return;
-                        }
-
-                        wheelIsBlocked = true;
-                        scrollDelayer.start();
-
-                        var angle = wheel.angleDelta.y / 8;
-
-                        if (angle > 2) {
-                            taskItem.increaseVolume();
-                        } else if (angle < -2) {
-                            taskItem.decreaseVolume();
-                        }
-                    }
-
-                    //! A timer is needed in order to handle also touchpads that probably
-                    //! send too many signals very fast. This way the signals per sec are limited.
-                    //! The user needs to have a steady normal scroll in order to not
-                    //! notice a annoying delay
-                    Timer{
-                        id: scrollDelayer
-
-                        interval: 80
-
-                        onTriggered: audioBadgeMouseArea.wheelIsBlocked = false;
-                    }
-                }
+        onWheel: {
+            if (wheelIsBlocked) {
+                return;
             }
+
+            wheelIsBlocked = true;
+            scrollDelayer.start();
+
+            var angle = wheel.angleDelta.y / 8;
+
+            if (angle > 2) {
+                taskItem.increaseVolume();
+            } else if (angle < -2) {
+                taskItem.decreaseVolume();
+            }
+        }
+
+        // Limit wheel volume events for high-frequency touchpad scrolling.
+        Timer {
+            id: scrollDelayer
+            interval: 80
+
+            onTriggered: audioBadgeMouseArea.wheelIsBlocked = false;
         }
     }
 }

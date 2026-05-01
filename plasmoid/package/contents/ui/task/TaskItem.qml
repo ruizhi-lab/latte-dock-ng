@@ -120,6 +120,7 @@ AbilityItem.BasicItem {
 
     readonly property var m: model
     readonly property int pid: model && model.AppPid ? model.AppPid : -1
+    readonly property string appId: model && model.AppId ? model.AppId : ""
     readonly property string appName: model && model.AppName ? model.AppName : ""
 
     property string modelLauncherUrl: (LauncherUrlWithoutIcon && LauncherUrlWithoutIcon !== null) ? LauncherUrlWithoutIcon : ""
@@ -213,7 +214,8 @@ AbilityItem.BasicItem {
     ////// Audio streams //////
     property Item audioStreamOverlay
     property var audioStreams: []
-    readonly property bool hasAudioStream: root.showAudioBadge && audioStreams.length > 0 && !isLauncher
+    readonly property bool hasAudioStream: audioStreams.length > 0
+                                        && !isSeparator
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(function (item) {
         return !item.corked
     })
@@ -239,6 +241,7 @@ AbilityItem.BasicItem {
     //! Content Item
     contentItem: TaskIcon{
         id:taskIcon
+        z: 1
     }
     //////
 
@@ -308,8 +311,10 @@ AbilityItem.BasicItem {
     //  }
 
     onAppNameChanged: updateAudioStreams()
+    onAppIdChanged: updateAudioStreams()
+    onLauncherNameChanged: updateAudioStreams()
     onPidChanged: updateAudioStreams()
-    onHasAudioStreamChanged: updateAudioStreams()
+    onIsWindowChanged: updateAudioStreams()
 
     onCanPublishGeometriesChanged: {
         if (canPublishGeometries) {
@@ -728,17 +733,32 @@ AbilityItem.BasicItem {
             return;
         }
 
-        var streams = pa.streamsForPid(taskItem.pid);
-        if (streams.length) {
-            pa.registerPidMatch(taskItem.appName);
-        } else {
+        // Check app id first for portal/sandboxed applications.
+        var streams = pa.streamsForAppId(taskItem.appId);
+
+        if (!streams.length) {
+            streams = pa.streamsForPid(taskItem.pid);
+        }
+
+        if (!streams.length) {
             // We only want to fall back to appName matching if we never managed to map
             // a PID to an audio stream window. Otherwise if you have two instances of
             // an application, one playing and the other not, it will look up appName
             // for the non-playing instance and erroneously show an indicator on both.
-            if (!pa.hasPidMatch(taskItem.appName)) {
+            if (taskItem.appName.length > 0 && !pa.hasPidMatch(taskItem.appName)) {
                 streams = pa.streamsForAppName(taskItem.appName);
             }
+        }
+
+        if (!streams.length) {
+            // Fallback for apps whose stream metadata does not match AppName exactly
+            // (for example Chrome/Chromium variants) or whose audio stream runs in
+            // deeper child processes.
+            streams = pa.streamsForAppIdentity(taskItem.appId, taskItem.launcherName, taskItem.appName);
+        }
+
+        if (streams.length && taskItem.appName.length > 0) {
+            pa.registerPidMatch(taskItem.appName);
         }
 
         // fix a binding loop concerning audiostreams, the audiostreams

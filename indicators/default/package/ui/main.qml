@@ -7,7 +7,6 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
 
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
@@ -28,12 +27,17 @@ LatteComponents.IndicatorItem{
 
     readonly property int thicknessMargin: screenEdgeMargin + thickLocalMargin + (glowEnabled ? 1 : 0)
 
-    property real textColorBrightness: colorBrightness(indicator.palette.textColor)
+    property color textColorSafe: (indicator && indicator.palette && indicator.palette.textColor !== undefined)
+                                 ? indicator.palette.textColor
+                                 : "#ffffff"
+    property real textColorBrightness: colorBrightness(textColorSafe)
 
-    property color isActiveColor: indicator.palette.buttonFocusColor
+    property color isActiveColor: (indicator && indicator.palette && indicator.palette.buttonFocusColor !== undefined)
+                                  ? indicator.palette.buttonFocusColor
+                                  : textColorSafe
     property color minimizedColor: {
         if (minimizedTaskColoredDifferently) {
-            return (textColorBrightness > 127.5 ? Qt.darker(indicator.palette.textColor, 1.7) : Qt.lighter(indicator.palette.textColor, 7));
+            return (textColorBrightness > 127.5 ? Qt.darker(textColorSafe, 1.7) : Qt.lighter(textColorSafe, 7));
         }
 
         return isActiveColor;
@@ -89,12 +93,15 @@ LatteComponents.IndicatorItem{
                 }
 
                 if (indicator.isTask) {
-                    return indicator.isLauncher || (indicator.inRemoving && !isAnimating) ? 0 : 1
+                    const isPureLauncher = indicator.isLauncher && !indicator.isWindow;
+                    return isPureLauncher || (indicator.inRemoving && !isAnimating) ? 0 : 1
                 }
 
                 if (indicator.isApplet) {
                     return (indicator.isActive || isAnimating) ? 1 : 0
                 }
+
+                return 0;
             }
 
             basicColor: indicator.isActive || (indicator.isGroup && indicator.hasShown) ? root.isActiveColor : root.notActiveColor
@@ -304,4 +311,3 @@ LatteComponents.IndicatorItem{
         }
     ]
 }// number of windows indicator
-

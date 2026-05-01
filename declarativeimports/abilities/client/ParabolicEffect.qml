@@ -28,8 +28,18 @@ AbilityDefinition.ParabolicEffect {
     readonly property bool directRenderingEnabled: ref.parabolic._privates.directRenderingEnabled
     readonly property bool horizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property bool isHovered: {
-        if (bridge && bridge.parabolic.host.currentParabolicItem) {
-            return bridge.parabolic.host.currentParabolicItem.parent.parent.parent === layout;
+        if (!bridge || !bridge.parabolic.host.currentParabolicItem || !layout) {
+            return false;
+        }
+
+        var current = bridge.parabolic.host.currentParabolicItem;
+
+        while (current) {
+            if (current === layout) {
+                return true;
+            }
+
+            current = current.parent;
         }
 
         return false;

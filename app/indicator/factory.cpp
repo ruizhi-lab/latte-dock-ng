@@ -35,6 +35,17 @@
 namespace Latte {
 namespace Indicator {
 
+namespace {
+KPluginMetaData readIndicatorMetaData(const QString &metadataFile)
+{
+    if (metadataFile.endsWith(QLatin1String(".json"), Qt::CaseInsensitive)) {
+        return KPluginMetaData::fromJsonFile(metadataFile);
+    }
+
+    return KPluginMetaData(metadataFile);
+}
+}
+
 Factory::Factory(QObject *parent)
     : QObject(parent)
 {
@@ -119,7 +130,7 @@ void Factory::reload(const QString &indicatorPath)
         QString metadataFile = metadataFileAbsolutePath(indicatorPath);
 
         if(QFileInfo(metadataFile).exists()) {
-            KPluginMetaData metadata = KPluginMetaData(metadataFile);
+            KPluginMetaData metadata = readIndicatorMetaData(metadataFile);
 
             if (metadataAreValid(metadata)) {
                 pluginChangedId = metadata.pluginId();
@@ -245,7 +256,7 @@ bool Factory::metadataAreValid(KPluginMetaData &metadata)
 bool Factory::metadataAreValid(QString &file)
 {
     if (QFileInfo(file).exists()) {
-        KPluginMetaData metadata(file);
+        KPluginMetaData metadata = readIndicatorMetaData(file);
         return metadata.isValid();
     }
 
@@ -338,7 +349,7 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
         }
     }
 
-    KPluginMetaData metadata = KPluginMetaData(metadataFile);
+    KPluginMetaData metadata = readIndicatorMetaData(metadataFile);
 
     if (metadataAreValid(metadata)) {
         QStringList standardPaths = Latte::Layouts::Importer::standardPaths();

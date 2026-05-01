@@ -41,6 +41,67 @@ QtObject {
         return pidMatches[appName] === true;
     }
 
+    function normalizeId(value) {
+        if (!value || value === "") {
+            return "";
+        }
+
+        var normalized = String(value).toLowerCase();
+
+        var slash = normalized.lastIndexOf("/");
+        if (slash !== -1) {
+            normalized = normalized.substring(slash + 1);
+        }
+
+        var colon = normalized.lastIndexOf(":");
+        if (colon !== -1) {
+            normalized = normalized.substring(colon + 1);
+        }
+
+        if (normalized.endsWith(".desktop")) {
+            normalized = normalized.substring(0, normalized.length - 8);
+        }
+
+        // Reverse-DNS app ids such as org.mozilla.firefox or com.google.Chrome
+        // should be comparable with launcher ids like firefox / chrome.
+        var dot = normalized.lastIndexOf(".");
+        if (dot !== -1 && dot < (normalized.length - 1)) {
+            normalized = normalized.substring(dot + 1);
+        }
+
+        return normalized;
+    }
+
+    function equivalentId(left, right) {
+        if (!left || !right) {
+            return false;
+        }
+
+        if (left === right) {
+            return true;
+        }
+
+        // Handle distro-specific suffix variants such as foo vs foo-esr.
+        return left.startsWith(right + "-") || right.startsWith(left + "-");
+    }
+
+    function hasAncestorPid(streamPid, pid) {
+        var current = streamPid;
+        var depth = 0;
+
+        while (current > 1 && depth < 16) {
+            current = backend.parentPid(current);
+
+            if (current === pid) {
+                return true;
+            }
+
+            ++depth;
+        }
+
+        return false;
+    }
+
     function findStreams(key, value) {
         var streams = []
         for (var i = 0, length = instantiator.count; i < length; ++i) {
@@ -56,7 +117,26 @@ QtObject {
         return findStreams("appName", appName);
     }
 
+    function streamsForAppId(appId) {
+        if (!appId || appId === "") {
+            return [];
+        }
+
+        // Portal app id is the most reliable match for sandboxed/portal clients.
+        var streams = findStreams("portalAppId", appId);
+
+        if (streams.length === 0) {
+            streams = findStreams("appId", appId);
+        }
+
+        return streams;
+    }
+
     function streamsForPid(pid) {
+        if (pid <= 0) {
+            return [];
+        }
+
         var streams = findStreams("pid", pid);
 
         if (streams.length === 0) {
@@ -67,9 +147,63 @@ QtObject {
                     stream.parentPid = backend.parentPid(stream.pid);
                 }
 
-                if (stream.parentPid === pid) {
+                if (stream.parentPid === pid || hasAncestorPid(stream.parentPid, pid)) {
                     streams.push(stream);
                 }
+            }
+        }
+
+        return streams;
+    }
+
+    function streamsForAppIdentity(appId, launcherName, appName) {
+        var idCandidates = [];
+        var normalizedAppId = normalizeId(appId);
+        var normalizedLauncherName = normalizeId(launcherName);
+        var normalizedAppName = normalizeId(appName);
+
+        if (normalizedAppId !== "") {
+            idCandidates.push(normalizedAppId);
+        }
+
+        if (normalizedLauncherName !== "" && idCandidates.indexOf(normalizedLauncherName) === -1) {
+            idCandidates.push(normalizedLauncherName);
+        }
+
+        if (normalizedAppName !== "" && idCandidates.indexOf(normalizedAppName) === -1) {
+            idCandidates.push(normalizedAppName);
+        }
+
+        if (idCandidates.length === 0) {
+            return [];
+        }
+
+        var streams = [];
+
+        for (var i = 0, length = instantiator.count; i < length; ++i) {
+            var stream = instantiator.objectAt(i);
+            var streamCandidates = [
+                normalizeId(stream.appId),
+                normalizeId(stream.iconName),
+                normalizeId(stream.binaryName),
+                normalizeId(stream.appName)
+            ];
+
+            var matched = false;
+
+            for (var c = 0; c < idCandidates.length && !matched; ++c) {
+                var target = idCandidates[c];
+
+                for (var s = 0; s < streamCandidates.length; ++s) {
+                    if (equivalentId(target, streamCandidates[s])) {
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+
+            if (matched) {
+                streams.push(stream);
             }
         }
 
@@ -87,7 +221,16 @@ QtObject {
             readonly property int pid: Client ? Client.properties["application.process.id"] : 0
             // Determined on demand.
             property int parentPid: -1
-            readonly property string appName: Client ? Client.properties["application.name"] : ""
+            readonly property string appName: (Client && Client.properties && Client.properties["application.name"] !== undefined)
+                                              ? String(Client.properties["application.name"]) : ""
+            readonly property string appId: (Client && Client.properties && Client.properties["application.id"] !== undefined)
+                                            ? String(Client.properties["application.id"]) : ""
+            readonly property string portalAppId: (Client && Client.properties && Client.properties["pipewire.access.portal.app_id"] !== undefined)
+                                                  ? String(Client.properties["pipewire.access.portal.app_id"]) : ""
+            readonly property string iconName: (Client && Client.properties && Client.properties["application.icon_name"] !== undefined)
+                                               ? String(Client.properties["application.icon_name"]) : ""
+            readonly property string binaryName: (Client && Client.properties && Client.properties["application.process.binary"] !== undefined)
+                                                 ? String(Client.properties["application.process.binary"]) : ""
             readonly property bool muted: Muted
             // whether there is nothing actually going on on that stream
             readonly property bool corked: Corked
