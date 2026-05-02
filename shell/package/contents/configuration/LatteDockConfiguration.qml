@@ -36,7 +36,7 @@ Loader {
 
         readonly property bool inConfigureAppletsMode: universalSettings.inConfigureAppletsMode || !LatteCore.WindowSystem.compositingActive
 
-        readonly property bool kirigamiLibraryIsFound: LatteCore.Environment.frameworksVersion >= LatteCore.Environment.makeVersion(5,69,0)
+        readonly property bool kirigamiLibraryIsFound: true
 
         //! max size based on screen resolution
         //!    TODO: if we can access availableScreenGeometry.height this can be improved, currently

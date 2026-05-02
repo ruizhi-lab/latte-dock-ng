@@ -46,7 +46,7 @@ ContainmentItem {
 
     ////BEGIN properties
     readonly property int version: LatteCore.Environment.makeVersion(0,9,75)
-    readonly property bool kirigamiLibraryIsFound: LatteCore.Environment.frameworksVersion >= LatteCore.Environment.makeVersion(5,69,0)
+    readonly property bool kirigamiLibraryIsFound: true
 
     property bool backgroundOnlyOnMaximized: plasmoid.configuration.backgroundOnlyOnMaximized
     readonly property bool behaveAsPlasmaPanel: viewType === LatteCore.Types.PanelView
@@ -193,9 +193,6 @@ ContainmentItem {
     property bool userShowPanelBackground: LatteCore.WindowSystem.compositingActive ? plasmoid.configuration.useThemePanel : true
     property bool useThemePanel: noApplets === 0 || !LatteCore.WindowSystem.compositingActive ?
                                      true : (plasmoid.configuration.useThemePanel || plasmoid.configuration.solidBackgroundForMaximized)
-
-    property bool plasma515: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,15,0)
-    property bool plasma518: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,18,0)
 
     readonly property int minAppletLengthInConfigure: 16
     readonly property int maxJustifySplitterSize: 64

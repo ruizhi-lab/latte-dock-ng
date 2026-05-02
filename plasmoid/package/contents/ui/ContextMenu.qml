@@ -301,14 +301,10 @@ PlasmaComponents.ContextMenu {
         ActivitiesTools.currentActivity = activityInfo.currentActivity;
         ActivitiesTools.plasmoid = plasmoid;
 
-        //From Plasma 5.10 and frameworks 5.34 jumpLists and
-        //places are supported
-        if (LatteCore.Environment.frameworksVersion >= 336384) {
-            // Cannot have "Connections" as child of PlasmaCoponents.ContextMenu.
-            backend.showAllPlaces.connect(function() {
-                visualParent.showContextMenu({showAllPlaces: true});
-            });
-        }
+        // Cannot have "Connections" as child of PlasmaCoponents.ContextMenu.
+        backend.showAllPlaces.connect(function() {
+            visualParent.showContextMenu({showAllPlaces: true});
+        });
         //  updateOnAllActivitiesLauncher();
     }
 

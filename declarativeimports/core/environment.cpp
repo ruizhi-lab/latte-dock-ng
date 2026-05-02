@@ -6,11 +6,6 @@
 #include "environment.h"
 
 // Qt
-#include <QDebug>
-#include <QProcess>
-
-// Plasma
-#include <Plasma/version.h>
 
 #define LONGDURATION 240
 #define SHORTDURATION 40
@@ -39,58 +34,9 @@ uint Environment::longDuration() const
     return LONGDURATION;
 }
 
-uint Environment::frameworksVersion() const
-{
-#if defined(PLASMA_VERSION)
-    return PLASMA_VERSION;
-#elif defined(PLASMA_VERSION_MAJOR) && defined(PLASMA_VERSION_MINOR) && defined(PLASMA_VERSION_PATCH)
-    return makeVersion(PLASMA_VERSION_MAJOR, PLASMA_VERSION_MINOR, PLASMA_VERSION_PATCH);
-#else
-    return 0;
-#endif
-}
-
-uint Environment::plasmaDesktopVersion()
-{
-    if (m_plasmaDesktopVersion == -1) {
-        m_plasmaDesktopVersion = identifyPlasmaDesktopVersion();
-    }
-
-    return m_plasmaDesktopVersion;
-}
-
 uint Environment::makeVersion(uint major, uint minor, uint release) const
 {
     return (((major) << 16) | ((minor) << 8) | (release));
-}
-
-uint Environment::identifyPlasmaDesktopVersion()
-{
-    //! Identify Plasma Desktop version
-    QStringList plasmaDesktopVersionParts = QString(PLASMA_WORKSPACE_VERSION).split(".");
-
-    if (plasmaDesktopVersionParts.count() == 3) {
-        qDebug() << " /////////////////////////";
-        uint maj = plasmaDesktopVersionParts[0].toUInt();
-        uint min = plasmaDesktopVersionParts[1].toUInt();
-        uint rel = plasmaDesktopVersionParts[2].toUInt();
-
-        if (maj > 0) {
-            uint desktopVersion = makeVersion(maj, min, rel);
-
-            QString message("Plasma Desktop version:  " + QString::number(maj) + "."
-                    + QString::number(min) + "." + QString::number(rel)
-                    + " (" + QString::number(desktopVersion) + ")");
-            qDebug() << message;
-            qDebug() << " /////////////////////////";
-
-            return desktopVersion;
-        }
-
-        qDebug() << " /////////////////////////";
-    }
-
-    return 0;
 }
 
 }

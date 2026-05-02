@@ -586,10 +586,7 @@ PlasmoidItem {
             groupingAppIdBlacklist = plasmoid.configuration.groupingAppIdBlacklist;
             groupingLauncherUrlBlacklist = plasmoid.configuration.groupingLauncherUrlBlacklist;
 
-            ///Plasma 5.9 enforce grouping at all cases
-            if (LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,9,0)) {
-                groupingWindowTasksThreshold = -1;
-            }
+            groupingWindowTasksThreshold = -1;
         }
     }
 

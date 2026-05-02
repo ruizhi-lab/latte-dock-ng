@@ -23,9 +23,6 @@ class Environment final: public QObject
     Q_PROPERTY(uint shortDuration READ shortDuration NOTIFY shortDurationChanged)
     Q_PROPERTY(uint longDuration READ longDuration NOTIFY longDurationChanged)
 
-    Q_PROPERTY(uint frameworksVersion READ frameworksVersion NOTIFY frameworksVersionChanged)
-    Q_PROPERTY(uint plasmaDesktopVersion READ plasmaDesktopVersion NOTIFY plasmaDesktopVersionChanged)
-
 public:
     static const int SeparatorLength = 5;
 
@@ -36,25 +33,12 @@ public:
     uint shortDuration() const;
     uint longDuration() const;
 
-    uint frameworksVersion() const;
-    uint plasmaDesktopVersion();
-
 public Q_SLOTS:
     Q_INVOKABLE uint makeVersion(uint major, uint minor, uint release) const;
 
 Q_SIGNALS:
-    void frameworksVersionChanged();
     void longDurationChanged();
-    void plasmaDesktopVersionChanged();
     void shortDurationChanged();
-
-private:
-    void loadPlasmaDesktopVersion();
-
-    uint identifyPlasmaDesktopVersion();
-
-private:
-    int m_plasmaDesktopVersion{ -1};
 
 };
 
