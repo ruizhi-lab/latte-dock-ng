@@ -19,8 +19,6 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.plasma.private.taskmanager 0.1 as TaskManagerApplet
 
-import org.kde.activities 0.1 as Activities
-
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
 
@@ -531,8 +529,6 @@ PlasmoidItem {
 
         virtualDesktop: virtualDesktopInfo.currentDesktop
         screenGeometry: appletAbilities.myView.screenGeometry
-        // comment in order to support LTS Plasma 5.8
-        // screen: plasmoid.screen
         activity: root.tasksModelActivityId
 
         filterByVirtualDesktop: root.showOnlyCurrentDesktop
@@ -1178,50 +1174,6 @@ PlasmoidItem {
     }
 
 
-    ///REMOVE
-    ////Activities List
-    ////it can be used to cleanup the launchers from garbage-deleted activities....
-    Item{
-        id: activityModelInstance
-        property int count: activityModelRepeater.count
-
-        Repeater {
-            id:activityModelRepeater
-            model: Activities.ActivityModel {
-                id: activityModel
-                //  shownStates: "Running"
-            }
-            delegate: Item {
-                visible: false
-                property string activityId: model.id
-                property string activityName: model.name
-            }
-        }
-
-        function activities(){
-            var activitiesResult = [];
-
-            for(var i=0; i<activityModelInstance.count; ++i){
-                console.log(children[i].activityId);
-                activitiesResult.push(children[i].activityId);
-            }
-
-            return activitiesResult;
-        }
-
-        ///REMOVE
-        onCountChanged: {
-            /*  if(activityInfo.currentActivity != "00000000-0000-0000-0000-000000000000"){
-                console.log("----------- Latte Plasmoid Signal: Activities number was changed ---------");
-                var allActivities = activities();
-                ActivitiesTools.cleanupRecords(allActivities);
-                console.log("----------- Latte Plasmoid Signal End ---------");
-            }*/
-        }
-    }
-
-    /////////
-
     //// functions
     function activateTaskAtIndex(index) {
         // This is called with Meta+number shortcuts by plasmashell when Tasks are in a plasma panel.
@@ -1301,15 +1253,6 @@ PlasmoidItem {
 
         return false;
     }
-
-    ///REMOVE
-    /*function createContextMenu(task) {
-        var menu = root.contextMenuComponent.createObject(task);
-        menu.visualParent = task;
-        menu.mpris2Source = mpris2Source;
-        menu.activitiesCount = activityModelInstance.count;
-        return menu;
-    }*/
 
     function createContextMenu(rootTask, modelIndex, args) {
         var initialArgs = args || {}

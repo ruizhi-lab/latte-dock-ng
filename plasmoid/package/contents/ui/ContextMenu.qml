@@ -43,10 +43,7 @@ PlasmaComponents.ContextMenu {
 
     minimumWidth: visualParent ? visualParent.width : 1
 
-    property bool isOnAllActivitiesLauncher: true
     property bool showAllPlaces: false
-
-    property int activitiesCount: 0
 
     readonly property string tailSeparatorText: plasmoid.formFactor === PlasmaCore.Types.Vertical ? i18n("Top Separator") :
                                                                                                     (!root.LayoutMirroring.enabled ? i18n("Left Separator") : i18n("Right Separator"))
@@ -291,11 +288,6 @@ PlasmaComponents.ContextMenu {
         }
     }
 
-    ///REMOVE
-    function updateOnAllActivitiesLauncher(){
-        //isOnAllActivitiesLauncher = ActivitiesTools.isOnAllActivities(visualParent.m.LauncherUrlWithoutIcon);
-    }
-
     Component.onCompleted: {
         ActivitiesTools.launchersOnActivities = root.launchersOnActivities
         ActivitiesTools.currentActivity = activityInfo.currentActivity;
@@ -305,7 +297,6 @@ PlasmaComponents.ContextMenu {
         backend.showAllPlaces.connect(function() {
             visualParent.showContextMenu({showAllPlaces: true});
         });
-        //  updateOnAllActivitiesLauncher();
     }
 
 
