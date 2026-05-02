@@ -33,7 +33,6 @@
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 #include <KWindowEffects>
-#include <KWindowSystem>
 
 // Plasma
 
@@ -628,9 +627,8 @@ void PrimaryConfigView::updateEnabledBorders()
 
 void PrimaryConfigView::updateEffects()
 {
-    //! Don't apply any effect before the wayland surface is created under wayland
-    //! https://bugs.kde.org/show_bug.cgi?id=392890
-    if (KWindowSystem::isPlatformWayland() && !m_shellSurface) {
+    // Apply effects only after the shell surface is ready.
+    if (!m_shellSurface) {
         return;
     }
 

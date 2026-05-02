@@ -17,7 +17,6 @@
 
 // KDE
 #include <KWindowEffects>
-#include <KWindowSystem>
 #include <KWayland/Client/plasmashell.h>
 
 // Plasma
@@ -176,9 +175,8 @@ void WidgetExplorerView::focusOutEvent(QFocusEvent *ev)
 
 void WidgetExplorerView::updateEffects()
 {
-    //! Don't apply any effect before the wayland surface is created under wayland
-    //! https://bugs.kde.org/show_bug.cgi?id=392890
-    if (KWindowSystem::isPlatformWayland() && !m_shellSurface) {
+    // Apply effects only after the shell surface is ready.
+    if (!m_shellSurface) {
         return;
     }
 
@@ -213,17 +211,6 @@ void WidgetExplorerView::hideConfigWindow()
     }
 
     deleteLater();
-
-    /*QTimer::singleShot(100, [this]() {
-        //! avoid crashes under wayland because some mouse events are sended after the surface is destroyed
-
-        if (m_shellSurface) {
-            //! Avoid races where input events arrive after the surface starts teardown.
-            close();
-        } else {
-            hide();
-        }
-    });*/
 }
 
 void WidgetExplorerView::syncSlideEffect()
