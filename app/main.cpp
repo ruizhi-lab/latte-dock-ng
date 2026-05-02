@@ -26,6 +26,7 @@
 #include <QDBusInterface>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QLockFile>
 #include <QSessionManager>
 #include <QTextStream>
@@ -49,6 +50,7 @@
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+inline void ensureUserLocalQmlImportPaths();
 inline void ensureKdeSessionEnvironment();
 
 QString filterDebugMessageText;
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
     }
 
     QQuickWindow::setDefaultAlphaBuffer(true);
+    ensureUserLocalQmlImportPaths();
 
     qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
     const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
@@ -72,9 +75,9 @@ int main(int argc, char **argv)
     // Set desktop file id before app initialization so Wayland app_id is correct
     // from the earliest possible point for privileged interface checks.
     QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
+    ensureKdeSessionEnvironment();
     QApplication app(argc, argv);
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
-    ensureKdeSessionEnvironment();
 
     if (!KWindowSystem::isPlatformWayland()) {
         qCritical() << "Latte-Dock Wayland-only build requires a Wayland Plasma session.";
@@ -433,6 +436,56 @@ int main(int argc, char **argv)
     KDBusService service(KDBusService::Unique);
 
     return app.exec();
+}
+
+inline void prependEnvironmentPath(const char *envName, const QString &path)
+{
+    if (path.isEmpty()) {
+        return;
+    }
+
+    const QString normalizedPath = QFileInfo(path).canonicalFilePath();
+
+    if (normalizedPath.isEmpty()) {
+        return;
+    }
+
+    const QString existing = qEnvironmentVariable(envName);
+    const QChar separator = QDir::listSeparator();
+    const QStringList existingPaths = existing.split(separator, Qt::SkipEmptyParts);
+
+    if (existingPaths.contains(normalizedPath)) {
+        return;
+    }
+
+    if (existing.isEmpty()) {
+        qputenv(envName, normalizedPath.toUtf8());
+        return;
+    }
+
+    const QString updated = normalizedPath + separator + existing;
+    qputenv(envName, updated.toUtf8());
+}
+
+inline void ensureUserLocalQmlImportPaths()
+{
+    const QString userLocalPath = QDir::homePath() + QStringLiteral("/.local");
+    const QStringList qmlCandidates{
+        userLocalPath + QStringLiteral("/lib/qt6/qml"),
+        userLocalPath + QStringLiteral("/lib64/qt6/qml")
+    };
+
+    for (const QString &candidate : qmlCandidates) {
+        const QFileInfo info(candidate);
+
+        if (!info.exists() || !info.isDir()) {
+            continue;
+        }
+
+        prependEnvironmentPath("QML2_IMPORT_PATH", candidate);
+        prependEnvironmentPath("QML_IMPORT_PATH", candidate);
+        prependEnvironmentPath("QT_QML_IMPORT_PATH", candidate);
+    }
 }
 
 inline void ensureKdeSessionEnvironment()

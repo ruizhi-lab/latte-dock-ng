@@ -312,18 +312,20 @@ export QML_IMPORT_PATH="${kde_install_qmldir}\${QML_IMPORT_PATH:+:\${QML_IMPORT_
 export QT_QML_IMPORT_PATH="${kde_install_qmldir}\${QT_QML_IMPORT_PATH:+:\${QT_QML_IMPORT_PATH}}"
 ENVEOF
 
-    # Ensure launcher/menu starts inherit the local QML import path.
-    user_desktop_file="${install_prefix}/share/applications/org.kde.latte-dock.desktop"
-    if [[ -f "$user_desktop_file" ]]; then
-        tmp_desktop_file="$(mktemp)"
-        sed \
-            "s|^Exec=.*$|Exec=env QML2_IMPORT_PATH=${kde_install_qmldir} QML_IMPORT_PATH=${kde_install_qmldir} QT_QML_IMPORT_PATH=${kde_install_qmldir} ${install_prefix}/bin/latte-dock-ng|" \
-            "$user_desktop_file" > "$tmp_desktop_file"
-        mv "$tmp_desktop_file" "$user_desktop_file"
-    fi
+    # Keep desktop Exec as direct latte binary path. KWin resolves privileged
+    # Wayland interfaces from desktop files by comparing the executable path
+    # against the first Exec token; wrapping with `env ...` breaks that lookup.
 
     if command -v update-desktop-database >/dev/null 2>&1; then
         update-desktop-database "${install_prefix}/share/applications" >/dev/null 2>&1 || true
+    fi
+
+    if command -v kbuildsycoca6 >/dev/null 2>&1; then
+        kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
+    elif command -v kbuildsycoca5 >/dev/null 2>&1; then
+        kbuildsycoca5 --noincremental >/dev/null 2>&1 || true
+    elif command -v kbuildsycoca >/dev/null 2>&1; then
+        kbuildsycoca --noincremental >/dev/null 2>&1 || true
     fi
 
     cat <<EOF
