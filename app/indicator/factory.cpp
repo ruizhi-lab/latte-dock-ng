@@ -15,6 +15,7 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QProcess>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTimer>
 #include <QLatin1String>
@@ -43,6 +44,16 @@ KPluginMetaData readIndicatorMetaData(const QString &metadataFile)
     }
 
     return KPluginMetaData(metadataFile);
+}
+
+QString kPackageToolExecutable()
+{
+    const QString kde6Tool = QStandardPaths::findExecutable(QStringLiteral("kpackagetool6"));
+    if (!kde6Tool.isEmpty()) {
+        return kde6Tool;
+    }
+
+    return QStandardPaths::findExecutable(QStringLiteral("kpackagetool5"));
 }
 }
 
@@ -402,12 +413,33 @@ void Factory::removeIndicator(QString id)
                 notification->setText(i18nc("indicator_name, removed success","<b>%1</b> indicator removed successfully", name));
                 notification->sendEvent();
             };
+            auto showRemovedError = [](QString name) {
+                auto notification = new KNotification("remove-failed", KNotification::CloseOnTimeout);
+                notification->setText(i18nc("indicator_name, removed failure","Failed to remove <b>%1</b> indicator", name));
+                notification->sendEvent();
+            };
 
             qDebug() << "Trying to remove indicator :: " << id;
+
+            const QString kpackagetool = kPackageToolExecutable();
+            if (kpackagetool.isEmpty()) {
+                qWarning() << "Could not find kpackagetool6 or kpackagetool5 executable";
+                showRemovedError(pluginName);
+                return;
+            }
+
             QProcess process;
-            process.start(QString("kpackagetool5 -r " +id + " -t Latte/Indicator"));
+            process.start(kpackagetool, QStringList{QStringLiteral("-r"), id, QStringLiteral("-t"), QStringLiteral("Latte/Indicator")});
             process.waitForFinished();
-            showRemovedSucceed(pluginName);
+
+            if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
+                showRemovedSucceed(pluginName);
+            } else {
+                qWarning() << "Failed to remove indicator" << id
+                           << "exitCode:" << process.exitCode()
+                           << "stderr:" << process.readAllStandardError();
+                showRemovedError(pluginName);
+            }
         });
 
         dialog->show();
