@@ -55,15 +55,10 @@ Item{
     }
 
     Behavior on nHiddenSize {
-        id: animatedBehavior
-        enabled: abilityItem.isHiddenSpacerAnimated || restoreAnimation.running
-        NumberAnimation{ duration: 3 * abilityItem.animationTime }
-    }
-
-    Behavior on nHiddenSize {
-        id: directBehavior
-        enabled: !animatedBehavior.enabled
-        NumberAnimation { duration: 0 }
+        NumberAnimation{
+            duration: (abilityItem.isHiddenSpacerAnimated || restoreAnimation.running)
+                      ? 3 * abilityItem.animationTime : 0
+        }
     }
 
     Loader{

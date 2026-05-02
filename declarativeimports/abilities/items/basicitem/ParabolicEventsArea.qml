@@ -27,7 +27,9 @@ Item {
         anchors.fill: parent
         enabled: visible
         hoverEnabled: true
-        visible: abilityItem.abilities.parabolic.currentParabolicItem !== _parabolicArea
+        // Keep local hover tracking active so parabolic can still update even
+        // when window-level move events are throttled/filtered on some Qt6 paths.
+        visible: true
 
         onEntered: {
             abilityItem.abilities.parabolic.setCurrentParabolicItem(_parabolicArea);
@@ -43,6 +45,27 @@ Item {
 
             // mouseX/Y can not be trusted at this point
             //_parabolicArea.parabolicEntered(mouseX, mouseY);
+        }
+
+        onPositionChanged: {
+            if (!isParabolicEnabled || parabolicItem.isParabolicEventBlocked) {
+                return;
+            }
+
+            if (abilityItem.abilities.parabolic.currentParabolicItem !== _parabolicArea) {
+                abilityItem.abilities.parabolic.setCurrentParabolicItem(_parabolicArea);
+                var vIndex = abilityItem.abilities.shortcuts.shortcutIndex(abilityItem.itemIndex);
+                abilityItem.abilities.parabolic.setCurrentParabolicItemIndex(vIndex);
+            }
+
+            _parabolicArea.parabolicMove(mouseX, mouseY);
+        }
+
+        onExited: {
+            if (abilityItem.abilities.parabolic.currentParabolicItem === _parabolicArea) {
+                abilityItem.abilities.parabolic.setCurrentParabolicItem(null);
+            }
+            _parabolicArea.parabolicExited();
         }
     }
 

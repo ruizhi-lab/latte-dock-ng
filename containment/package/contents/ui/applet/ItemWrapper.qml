@@ -704,16 +704,10 @@ Item{
     }
 
     Behavior on zoomScale {
-        id: animatedScaleBehavior
-        enabled: !appletItem.parabolic.directRenderingEnabled || restoreAnimation.running
         NumberAnimation {
-            duration: 3 * appletItem.animationTime
+            duration: (!appletItem.parabolic.directRenderingEnabled || restoreAnimation.running)
+                      ? 3 * appletItem.animationTime : 0
             easing.type: Easing.OutCubic
         }
-    }
-
-    Behavior on zoomScale {
-        enabled: !animatedScaleBehavior.enabled
-        NumberAnimation { duration: 0 }
     }
 }// Main task area // id:wrapper

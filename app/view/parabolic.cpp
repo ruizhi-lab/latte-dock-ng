@@ -9,6 +9,7 @@
 #include "view.h"
 
 // Qt
+#include <QHoverEvent>
 #include <QMetaObject>
 
 namespace Latte {
@@ -61,6 +62,28 @@ void Parabolic::onEvent(QEvent *e)
         return;
     }
 
+    auto handlePointerMove = [&](const QPointF &windowPos) {
+        if (m_currentParabolicItem) {
+            QPointF internal = m_currentParabolicItem->mapFromItem(m_view->contentItem(), windowPos);
+
+            if (m_currentParabolicItem->contains(internal)) {
+                m_parabolicItemNullifier.stop();
+                //! sending move event to parabolic item
+                QMetaObject::invokeMethod(m_currentParabolicItem,
+                                          "parabolicMove",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(qreal, internal.x()),
+                                          Q_ARG(qreal, internal.y()));
+            } else {
+                m_lastOrphanParabolicMove = windowPos;
+                //! clearing parabolic item
+                m_parabolicItemNullifier.start();
+            }
+        } else {
+            m_lastOrphanParabolicMove = windowPos;
+        }
+    };
+
     switch (e->type()) {
 
     case QEvent::Leave:
@@ -68,28 +91,14 @@ void Parabolic::onEvent(QEvent *e)
         break;
     case QEvent::MouseMove:
         if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            const QPointF scenePos = me->scenePosition();
-
-            if (m_currentParabolicItem) {
-                QPointF internal = m_currentParabolicItem->mapFromScene(scenePos);
-
-                if (m_currentParabolicItem->contains(internal)) {
-                    m_parabolicItemNullifier.stop();
-                    //! sending move event to parabolic item
-                    QMetaObject::invokeMethod(m_currentParabolicItem,
-                                              "parabolicMove",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(qreal, internal.x()),
-                                              Q_ARG(qreal, internal.y()));
-                } else {
-                    m_lastOrphanParabolicMove = scenePos;
-                    //! clearing parabolic item
-                    m_parabolicItemNullifier.start();
-                }
-            } else {
-                m_lastOrphanParabolicMove = scenePos;
-            }
+            handlePointerMove(me->position());
         }
+        break;
+    case QEvent::HoverMove:
+        if (auto he = dynamic_cast<QHoverEvent *>(e)) {
+            handlePointerMove(he->position());
+        }
+        break;
     default:
         break;
     }
@@ -101,7 +110,7 @@ void Parabolic::onCurrentParabolicItemChanged()
     m_parabolicItemNullifier.stop();
 
     if (m_currentParabolicItem) {
-        QPointF internal = m_currentParabolicItem->mapFromScene(m_lastOrphanParabolicMove);
+        QPointF internal = m_currentParabolicItem->mapFromItem(m_view->contentItem(), m_lastOrphanParabolicMove);
 
         if (m_currentParabolicItem->contains(internal)) {
             //! sending enter event to parabolic item
