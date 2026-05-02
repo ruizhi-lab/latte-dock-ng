@@ -20,7 +20,11 @@ Item{
     // NAME: latteBridge
     //   USAGE: property QtObject latteBridge: null
     //   EXPLANATION: The main shared object that Latte is using to communicate with the applet
-    property bool appletContainsLatteBridge: appletRootItem && appletRootItem.hasOwnProperty("latteBridge") ? true : false
+    function hasLatteBridgeProperty(item) {
+        return !!item && (typeof item.latteBridge !== "undefined");
+    }
+
+    property bool appletContainsLatteBridge: hasLatteBridgeProperty(appletRootItem)
     //!              END OF INTERNAL APPLET PROPERTIES
     //             -------------------------------------
 

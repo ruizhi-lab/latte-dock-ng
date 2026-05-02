@@ -223,7 +223,10 @@ PlasmoidItem {
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
 
-    readonly property bool inPlasma: latteBridge === null
+    // Bridge attachment can be transient during startup in Qt6. When this plasmoid
+    // is persisted as part of a Latte layout, isInLatteDock keeps behavior stable.
+    readonly property bool inLatteDockEnvironment: (latteBridge !== null) || plasmoid.configuration.isInLatteDock
+    readonly property bool inPlasma: !inLatteDockEnvironment
     readonly property bool inPlasmaDesktop: inPlasma && !inPlasmaPanel
     readonly property bool inPlasmaPanel: inPlasma && (plasmoid.location === PlasmaCore.Types.LeftEdge
                                                        || plasmoid.location === PlasmaCore.Types.RightEdge
