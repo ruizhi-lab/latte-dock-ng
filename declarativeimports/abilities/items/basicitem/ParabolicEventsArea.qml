@@ -26,6 +26,9 @@ Item {
         id: parabolicMouseArea
         anchors.fill: parent
         enabled: visible
+        // This area exists only for hover/parabolic tracking. It must not grab
+        // button presses, otherwise task click actions are swallowed.
+        acceptedButtons: Qt.NoButton
         hoverEnabled: true
         // Keep local hover tracking active so parabolic can still update even
         // when window-level move events are throttled/filtered on some Qt6 paths.

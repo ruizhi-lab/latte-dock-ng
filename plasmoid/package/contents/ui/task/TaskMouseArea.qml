@@ -15,10 +15,16 @@ MouseArea {
     id: taskMouseArea
     anchors.fill: parent
     acceptedButtons: Qt.LeftButton | Qt.MidButton | Qt.RightButton
+    // Qt6 can let parent flickables steal mouse sequences during small motion,
+    // resulting in press without release and missed task activation.
+    preventStealing: true
     hoverEnabled: taskItem.visible && (!inAnimation) && (!isStartup) && (!root.taskInAnimation)
                   &&(!inBouncingAnimation) && !isSeparator
 
     property bool pressed: false
+    // Drag should start only after resistance delay expires and pointer
+    // moved enough. This avoids getting stuck in drag state on canceled clicks.
+    property bool dragReady: false
 
     readonly property alias hoveredTimer: _hoveredTimer
 
@@ -80,16 +86,12 @@ MouseArea {
         if((inAnimation == false)&&(!root.taskInAnimation)&&(!root.disableRestoreZoom) && hoverEnabled){
             // mouse.button is always 0 here, hence checking with mouse.buttons
             if (pressX != -1 && mouse.buttons == Qt.LeftButton
-                    && isDragged
+                    && dragReady
+                    && !taskItem.isDragged
                     && (Math.abs(pressX - mouse.x) + Math.abs(pressY - mouse.y) >= Qt.styleHints.startDragDistance) ) {
-                taskItem.contentItem.monochromizedItem.grabToImage((result) => {
-                    pressX = -1;
-                    pressY = -1;
-                    root.dragSource = taskItem;
-                    dragHelper.Drag.imageSource = result.url;
-                    dragHelper.Drag.mimeData = backend.generateMimeData(model.MimeType, model.MimeData, model.LauncherUrlWithoutIcon);
-                    dragHelper.Drag.active = true;
-                });
+                // Mark real drag start; TaskItem handles async drag image setup.
+                taskItem.isDragged = true;
+                dragReady = false;
             }
         }
     }
@@ -114,6 +116,7 @@ MouseArea {
         if ((mouse.button == Qt.LeftButton)||(mouse.button == Qt.MidButton) || modAccepted) {
             lastButtonClicked = mouse.button;
             pressed = true;
+            dragReady = false;
             pressX = mouse.x;
             pressY = mouse.y;
 
@@ -135,8 +138,11 @@ MouseArea {
     onReleased: function(mouse) {
         //console.log("Released Task Delegate...");
         _resistanerTimer.stop();
+        dragReady = false;
 
-        if(pressed && (!inBlockingAnimation || inAttentionBuiltinAnimation) && !isSeparator){
+        if (pressed
+                && !isSeparator
+                && !(taskItem.isDragged || dragHelper.Drag.active || root.dragSource === taskItem)) {
 
             if (modifierAccepted(mouse) && !root.disableAllWindowsFunctionality){
                 if( !taskItem.isLauncher ){
@@ -219,6 +225,20 @@ MouseArea {
         }
 
         pressed = false;
+    }
+
+    onCanceled: {
+        // Keep internal press/drag state sane when event ownership changes.
+        _resistanerTimer.stop();
+        dragReady = false;
+        pressed = false;
+        pressX = -1;
+        pressY = -1;
+        taskItem.isDragged = false;
+
+        if (root.dragSource === taskItem) {
+            root.dragSource = null;
+        }
     }
 
     onWheel: function(wheel) {
@@ -348,7 +368,7 @@ MouseArea {
 
         onTriggered: {
             if (!taskItem.inBlockingAnimation){
-                taskItem.isDragged = true;
+                dragReady = true;
             }
 
             if (taskItem.abilities.debug.timersEnabled) {

@@ -113,6 +113,7 @@ AbilityItem.BasicItem {
     property int pressX: -1
     property int pressY: -1
     property int resistanceDelay: 450
+    property int dragRequestToken: 0
     property int windowsCount: subWindows.windowsCount
     property int windowsMinimizedCount: subWindows.windowsMinimized
 
@@ -331,13 +332,20 @@ AbilityItem.BasicItem {
 
     onIsDraggedChanged: {
         if (isDragged){
+            const requestToken = ++dragRequestToken;
             taskItem.contentItem.monochromizedItem.grabToImage((result) => {
+                // grabToImage is async; ignore stale callbacks after drag ended.
+                if (!taskItem.isDragged || requestToken !== dragRequestToken) {
+                    return;
+                }
+
                 root.dragSource = taskItem;
                 dragHelper.Drag.imageSource = result.url;
                 dragHelper.Drag.mimeData = backend.generateMimeData(model.MimeType, model.MimeData, model.LauncherUrlWithoutIcon);
                 dragHelper.Drag.active = true;
             });
         } else {
+            dragRequestToken++;
             dragHelper.Drag.active = false;
             dragHelper.Drag.imageSource = "";
             pressX = -1;

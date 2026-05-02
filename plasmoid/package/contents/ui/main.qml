@@ -764,7 +764,10 @@ PlasmoidItem {
 
         indexer.updateIsBlocked: root.inDraggingPhase || root.inActivityChange || tasksExtendedManager.launchersInPausedStateCount>0
 
-        indicators.local.isEnabled: !plasmoid.configuration.isInLatteDock
+        // Keep a temporary fallback when latteBridge attachment is delayed.
+        // Once bridge is ready in Latte, use bridge indicators only to avoid
+        // duplicate indicator layers that can interfere with task interaction.
+        indicators.local.isEnabled: !plasmoid.configuration.isInLatteDock || latteBridge === null
 
         launchers.group: plasmoid.configuration.launchersGroup
         launchers.isStealingDroppedLaunchers: plasmoid.configuration.isPreferredForDroppedLaunchers
