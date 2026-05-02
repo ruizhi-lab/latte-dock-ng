@@ -52,14 +52,6 @@ PlasmoidItem {
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft && !root.vertical
     LayoutMirroring.childrenInherit: true
 
-    property bool plasma515: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,15,0)
-    property bool plasma518: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,18,0)
-    property bool plasma520: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,20,0)
-    property bool plasmaGreaterThan522: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,21,75)
-    property bool plasmaAtLeast524: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,24,0)
-    property bool plasmaAtLeast525: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,24,75)
-    property bool plasmaAtLeast526: LatteCore.Environment.plasmaDesktopVersion >= LatteCore.Environment.makeVersion(5,25,75)
-
     property bool disableRestoreZoom: false //blocks restore animation in rightClick
     property bool disableAllWindowsFunctionality: plasmoid.configuration.hideAllTasks
     property bool inActivityChange: false
@@ -240,7 +232,6 @@ PlasmoidItem {
 
     signal draggingFinished();
     signal hiddenTasksUpdated();
-    signal presentWindows(variant winIds);
     signal activateWindowView(variant winIds);
     signal requestLayout;
     signal signalPreviewsShown();
@@ -626,20 +617,7 @@ PlasmoidItem {
         }
 
         Component.onCompleted: {
-            //! In Plasma 5.9 TaskManagerBackend required a groupDialog setting
-            //! otherwise it crashes.
-            //! frameworks 5.29.0 provide id 335104
-            //! work only after Plasma 5.9 and frameworks 5.29
-            //! + added a check for groupDialog also when it is present
-            //!   in plasma 5.8 (that was introduced after 5.8.5)
-            if (LatteCore.Environment.frameworksVersion >= 335104 || (groupDialog !== undefined)) {
-                groupDialog = groupDialogGhost;
-            }
-
-            //! In Plasma 5.22 toolTipItem was dropped
-            if (!root.plasmaGreaterThan522) {
-                toolTipItem = toolTipDelegate;
-            }
+            groupDialog = groupDialogGhost;
         }
     }
 
@@ -1349,23 +1327,13 @@ PlasmoidItem {
     }
 
     Component.onCompleted:  {
-        if (root.plasmaAtLeast525) {
-            root.activateWindowView.connect(backend.activateWindowView);
-        } else {
-            root.presentWindows.connect(backend.presentWindows);
-        }
-
+        root.activateWindowView.connect(backend.activateWindowView);
         root.windowsHovered.connect(backend.windowsHovered);
         updateListViewParent();
     }
 
     Component.onDestruction: {
-        if (root.plasmaAtLeast525) {
-            root.activateWindowView.disconnect(backend.activateWindowView);
-        } else {
-            root.presentWindows.disconnect(backend.presentWindows);
-        }
-
+        root.activateWindowView.disconnect(backend.activateWindowView);
         root.windowsHovered.disconnect(backend.windowsHovered);
     }
 
