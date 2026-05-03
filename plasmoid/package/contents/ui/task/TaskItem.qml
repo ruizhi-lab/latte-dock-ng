@@ -6,6 +6,7 @@
 
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.15 as QtControls
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
@@ -40,12 +41,56 @@ AbilityItem.BasicItem {
 
     containsMouse: taskMouseArea.containsMouse || parabolicAreaContainsMouse
     thinTooltipText: {
-        if (root.showPreviews && !isLauncher) {
-            return "";
+        // Keep tooltips focused on application identity (app name), not window title.
+        // This matches dock-style behavior and avoids noisy dynamic titles.
+        if (model && model.AppName) {
+            const appNameText = String(model.AppName).trim();
+            if (appNameText.length > 0) {
+                return appNameText;
+            }
         }
 
-        return isWindow ? model.display : model.AppName;
+        if (!isWindow && model && model.display) {
+            const displayText = String(model.display).trim();
+            if (displayText.length > 0) {
+                return displayText;
+            }
+        }
+
+        if (launcherName && launcherName.length > 0) {
+            return launcherName;
+        }
+
+        return "";
     }
+
+    readonly property bool thinTooltipActive: abilities && abilities.thinTooltip && abilities.thinTooltip.isEnabled
+
+    readonly property string fallbackTooltipText: {
+        if (thinTooltipText && thinTooltipText.length > 0) {
+            return thinTooltipText;
+        }
+
+        if (model && model.GenericName) {
+            const genericNameText = String(model.GenericName).trim();
+            if (genericNameText.length > 0) {
+                return genericNameText;
+            }
+        }
+
+        return "";
+    }
+
+    // Fallback tooltip: shown only when Latte thin-tooltips are disabled/unavailable.
+    // This guarantees hover app-name hints without changing existing thin-tooltip behavior.
+    QtControls.ToolTip.visible: taskItem.containsMouse
+                                && !taskItem.isSeparator
+                                && fallbackTooltipText.length > 0
+                                && !windowsPreviewDlg.visible
+                                && !thinTooltipActive
+    QtControls.ToolTip.delay: 120
+    QtControls.ToolTip.timeout: -1
+    QtControls.ToolTip.text: fallbackTooltipText
 
     preserveIndicatorInInitialPosition: inBouncingAnimation || inAttentionBuiltinAnimation || inNewWindowBuiltinAnimation
 

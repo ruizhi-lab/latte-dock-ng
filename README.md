@@ -9,9 +9,7 @@ Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elega
 Screenshots
 ===========
 
-![](https://cdn.kde.org/screenshots/latte-dock/latte-dock_regular.png)
-
-![](https://cdn.kde.org/screenshots/latte-dock/latte-dock_settings.png)
+![](assets/screenshots/latte-dock-ng-screenshot.png)
 
 Development
 ============
