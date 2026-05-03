@@ -51,6 +51,8 @@
 #include <QApplication>
 #include <QScreen>
 #include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusReply>
 #include <QDebug>
 #include <QFile>
 #include <QFontDatabase>
@@ -188,6 +190,28 @@ Corona::~Corona()
 void Corona::onAboutToQuit()
 {
     m_inQuit = true;
+    bool sessionEnding = (qEnvironmentVariableIntValue("LATTE_SESSION_ENDING") == 1)
+                         || qApp->property("latte_session_ending").toBool();
+
+    if (!sessionEnding) {
+        QDBusInterface ksmserver(QStringLiteral("org.kde.ksmserver"),
+                                 QStringLiteral("/KSMServer"),
+                                 QStringLiteral("org.kde.KSMServerInterface"),
+                                 QDBusConnection::sessionBus());
+
+        if (ksmserver.isValid()) {
+            QDBusReply<bool> shuttingDownReply = ksmserver.call(QStringLiteral("isShuttingDown"));
+            if (shuttingDownReply.isValid() && shuttingDownReply.value()) {
+                sessionEnding = true;
+            }
+        }
+    }
+
+    if (sessionEnding) {
+        m_viewsScreenSyncTimer.stop();
+        qDebug() << "Latte Corona - fast shutdown path for session logout.";
+        return;
+    }
 
     //! BEGIN: Give the time to slide-out views when closing
     m_layoutsManager->synchronizer()->hideAllViews();

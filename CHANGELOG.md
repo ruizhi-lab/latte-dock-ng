@@ -2,6 +2,15 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.0.5] - 2026-05-03
+
+### Fixed
+- Fixed logout/session shutdown blocking by adding a reliable Wayland session-end path:
+  - detect KDE session shutdown via `org.kde.ksmserver.isShuttingDown()`
+  - mark fast teardown state consistently
+  - quit Latte promptly when shutdown is detected.
+- Fixed indicator-record removal crash path during teardown (`removeAt(-1)` guard in `Indicator::Factory::removeIndicatorRecords`).
+
 ## [v1.0.4] - 2026-05-03
 
 ### Fixed

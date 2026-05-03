@@ -14,8 +14,8 @@
 #include "templates/templatesmanager.h"
 
 // C++
-#include <memory>
 #include <csignal>
+#include <memory>
 
 // Qt
 #include <QApplication>
@@ -25,12 +25,14 @@
 #include <QCommandLineOption>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusReply>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QLockFile>
 #include <QSessionManager>
 #include <QTextStream>
+#include <QTimer>
 
 // KDE
 #include <KLocalizedString>
@@ -53,6 +55,7 @@ inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 inline void ensureUserLocalQmlImportPaths();
 inline void ensureKdeSessionEnvironment();
+inline bool isKdeSessionShuttingDown();
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -260,19 +263,41 @@ int main(int argc, char **argv)
     //! based on spectacle solution at:
     //!   - https://bugs.kde.org/show_bug.cgi?id=430411
     //!   - https://invent.kde.org/graphics/spectacle/-/commit/8db27170d63f8a4aaff09615e51e3cc0fb115c4d
-    auto disableSessionManagement = [](QSessionManager &sm) {
+    auto markSessionEnding = [&app]() {
+        if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
+            qputenv("LATTE_SESSION_ENDING", "1");
+        }
+
+        if (!app.property("latte_session_ending").toBool()) {
+            app.setProperty("latte_session_ending", true);
+            qInfo() << "Session shutdown request received; enabling fast Latte teardown.";
+        }
+    };
+
+    auto disableSessionManagement = [&app, &markSessionEnding](QSessionManager &sm) {
         sm.setRestartHint(QSessionManager::RestartNever);
+        markSessionEnding();
     };
 
-    auto quitOnSessionEnd = [&app, disableSessionManagement](QSessionManager &sm) {
-        disableSessionManagement(sm);
-        // Ensure the process exits during logout/shutdown even if session
-        // managers do not force-terminate us immediately.
-        QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
-    };
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, disableSessionManagement);
+    QObject::connect(&app, &QGuiApplication::saveStateRequest, disableSessionManagement);
 
-    QObject::connect(&app, &QGuiApplication::commitDataRequest, quitOnSessionEnd);
-    QObject::connect(&app, &QGuiApplication::saveStateRequest, quitOnSessionEnd);
+    // Wayland sessions may skip Qt session-manager callbacks.
+    // Poll ksmserver shutdown state and trigger the same fast path.
+    QTimer sessionShutdownPoll;
+    sessionShutdownPoll.setInterval(1000);
+    QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding]() {
+        if (app.property("latte_session_ending").toBool()) {
+            return;
+        }
+
+        if (isKdeSessionShuttingDown()) {
+            markSessionEnding();
+            qInfo() << "KSMServer shutdown detected; requesting Latte exit.";
+            QCoreApplication::quit();
+        }
+    });
+    sessionShutdownPoll.start();
 
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
@@ -307,7 +332,7 @@ int main(int argc, char **argv)
         qint64 pid{ -1};
 
         if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
-            kill(static_cast<pid_t>(pid), SIGINT);
+            kill(static_cast<pid_t>(pid), SIGTERM);
             timeout = -1;
         }
     }
@@ -434,13 +459,6 @@ int main(int argc, char **argv)
         qInstallMessageHandler(noMessageOutput);
     }
 
-    auto signal_handler = [](int) {
-        qGuiApp->exit();
-    };
-
-    std::signal(SIGINT, signal_handler);
-    std::signal(SIGTERM, signal_handler);
-
     Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
     KDBusService service(KDBusService::Unique);
 
@@ -521,6 +539,21 @@ inline void ensureKdeSessionEnvironment()
     if (qEnvironmentVariableIsEmpty("KDE_SESSION_VERSION")) {
         qputenv("KDE_SESSION_VERSION", "6");
     }
+}
+
+inline bool isKdeSessionShuttingDown()
+{
+    QDBusInterface ksmserver(QStringLiteral("org.kde.ksmserver"),
+                             QStringLiteral("/KSMServer"),
+                             QStringLiteral("org.kde.KSMServerInterface"),
+                             QDBusConnection::sessionBus());
+
+    if (!ksmserver.isValid()) {
+        return false;
+    }
+
+    QDBusReply<bool> reply = ksmserver.call(QStringLiteral("isShuttingDown"));
+    return reply.isValid() && reply.value();
 }
 
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
