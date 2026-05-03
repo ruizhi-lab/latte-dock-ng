@@ -15,6 +15,7 @@ Development
 ============
 
 - This fork: https://github.com/ruizhi-lab/latte-dock-ng
+- Release notes: `CHANGELOG.md`
 - Upstream KDE repo: https://invent.kde.org/plasma/latte-dock
 - GitHub mirror of upstream: https://github.com/KDE/latte-dock
 - Bug reports for this fork: https://github.com/ruizhi-lab/latte-dock-ng/issues
