@@ -36,8 +36,8 @@ Item {
 
     PlasmaExtras.Highlight {
         anchors.fill: audioStreamIcon
-        hovered: audioBadgeMouseArea.containsMouse
-        pressed: audioBadgeMouseArea.pressed
+        hovered: audioBadgeHover.hovered
+        pressed: audioBadgeTap.pressed
     }
 
     Kirigami.Icon {
@@ -50,27 +50,35 @@ Item {
 
             return "audio-volume-high-symbolic" + (Qt.application.layoutDirection === Qt.RightToLeft ? "-rtl" : "");
         }
-        selected: audioBadgeMouseArea.pressed
+        active: audioBadgeHover.hovered
+        selected: audioBadgeTap.pressed
+    }
+
+    HoverHandler {
+        id: audioBadgeHover
+        enabled: root.audioBadgeActionsEnabled
+    }
+
+    TapHandler {
+        id: audioBadgeTap
+        enabled: root.audioBadgeActionsEnabled
+        gesturePolicy: TapHandler.ReleaseWithinBounds
+
+        onTapped: function(_eventPoint, _button) {
+            taskItem.toggleMuted();
+        }
     }
 
     MouseArea {
-        id: audioBadgeMouseArea
+        id: audioBadgeWheelArea
         anchors.fill: parent
+        acceptedButtons: Qt.NoButton
         enabled: root.audioBadgeActionsEnabled
-        hoverEnabled: root.audioBadgeActionsEnabled
-        preventStealing: true
 
         property bool wheelIsBlocked: false
 
-        onPressed: function(mouse) {
-            mouse.accepted = true;
-        }
-
-        onClicked: {
-            taskItem.toggleMuted();
-        }
-
-        onWheel: {
+        onWheel: function(wheel) {
+            wheel.accepted = true;
             if (wheelIsBlocked) {
                 return;
             }
@@ -92,7 +100,7 @@ Item {
             id: scrollDelayer
             interval: 80
 
-            onTriggered: audioBadgeMouseArea.wheelIsBlocked = false;
+            onTriggered: audioBadgeWheelArea.wheelIsBlocked = false;
         }
     }
 }
