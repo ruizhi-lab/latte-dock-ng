@@ -31,6 +31,7 @@
 #include <QFileInfo>
 #include <QLockFile>
 #include <QSessionManager>
+#include <QStandardPaths>
 #include <QTextStream>
 #include <QTimer>
 
@@ -53,7 +54,8 @@
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-inline void ensureUserLocalQmlImportPaths();
+inline bool shouldUseUserLocalQmlImports(int argc, char **argv);
+inline void ensureUserLocalQmlImportPaths(int argc, char **argv);
 inline void ensureKdeSessionEnvironment();
 inline bool isKdeSessionShuttingDown();
 
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
     }
 
     QQuickWindow::setDefaultAlphaBuffer(true);
-    ensureUserLocalQmlImportPaths();
+    ensureUserLocalQmlImportPaths(argc, argv);
 
     qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
     const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
@@ -494,8 +496,40 @@ inline void prependEnvironmentPath(const char *envName, const QString &path)
     qputenv(envName, updated.toUtf8());
 }
 
-inline void ensureUserLocalQmlImportPaths()
+inline bool shouldUseUserLocalQmlImports(int argc, char **argv)
 {
+    if (qEnvironmentVariableIntValue("LATTE_FORCE_USER_LOCAL_QML_IMPORTS") == 1) {
+        return true;
+    }
+
+    if (qEnvironmentVariableIntValue("LATTE_DISABLE_USER_LOCAL_QML_IMPORTS") == 1) {
+        return false;
+    }
+
+    QString executable;
+
+    if (argc > 0 && argv && argv[0]) {
+        executable = QStandardPaths::findExecutable(QString::fromLocal8Bit(argv[0]));
+
+        if (executable.isEmpty()) {
+            executable = QFileInfo(QString::fromLocal8Bit(argv[0])).canonicalFilePath();
+        }
+    }
+
+    if (executable.isEmpty()) {
+        return false;
+    }
+
+    const QString userLocalBinPrefix = QDir::homePath() + QStringLiteral("/.local/bin/");
+    return executable.startsWith(userLocalBinPrefix);
+}
+
+inline void ensureUserLocalQmlImportPaths(int argc, char **argv)
+{
+    if (!shouldUseUserLocalQmlImports(argc, argv)) {
+        return;
+    }
+
     const QString userLocalPath = QDir::homePath() + QStringLiteral("/.local");
     const QStringList qmlCandidates{
         userLocalPath + QStringLiteral("/lib/qt6/qml"),

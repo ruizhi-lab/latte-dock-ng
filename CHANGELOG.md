@@ -2,6 +2,15 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.0.6] - 2026-05-03
+
+### Fixed
+- Fixed mixed install/runtime import-path regression: system installs no longer force-load `~/.local` Qt6 QML paths by default.
+- Prevented stale user-local QML trees from overriding packaged system modules when launching `/usr/bin/latte-dock-ng`.
+- Added explicit env toggles for diagnostics:
+  - `LATTE_FORCE_USER_LOCAL_QML_IMPORTS=1`
+  - `LATTE_DISABLE_USER_LOCAL_QML_IMPORTS=1`
+
 ## [v1.0.5] - 2026-05-03
 
 ### Fixed
