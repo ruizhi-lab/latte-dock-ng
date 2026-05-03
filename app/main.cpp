@@ -263,8 +263,16 @@ int main(int argc, char **argv)
     auto disableSessionManagement = [](QSessionManager &sm) {
         sm.setRestartHint(QSessionManager::RestartNever);
     };
-    QObject::connect(&app, &QGuiApplication::commitDataRequest, disableSessionManagement);
-    QObject::connect(&app, &QGuiApplication::saveStateRequest, disableSessionManagement);
+
+    auto quitOnSessionEnd = [&app, disableSessionManagement](QSessionManager &sm) {
+        disableSessionManagement(sm);
+        // Ensure the process exits during logout/shutdown even if session
+        // managers do not force-terminate us immediately.
+        QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
+    };
+
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, quitOnSessionEnd);
+    QObject::connect(&app, &QGuiApplication::saveStateRequest, quitOnSessionEnd);
 
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
@@ -430,8 +438,8 @@ int main(int argc, char **argv)
         qGuiApp->exit();
     };
 
-    std::signal(SIGKILL, signal_handler);
     std::signal(SIGINT, signal_handler);
+    std::signal(SIGTERM, signal_handler);
 
     Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
     KDBusService service(KDBusService::Unique);
