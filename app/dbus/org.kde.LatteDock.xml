@@ -1,0 +1,69 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.LatteDock">
+    <method name="activateLauncherMenu">
+    </method>
+    <method name="quitApplication">
+    </method>
+    <method name="setAutostart">
+        <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="updateDockItemBadge">
+        <arg name="identifier" type="s" direction="in"/>
+        <arg name="value" type="s" direction="in"/>
+    </method>
+    <method name="windowColorScheme">
+        <arg name="windowIdAndScheme" type="s" direction="in"/>
+    </method>
+    <method name="switchToLayout">
+        <arg name="layout" type="s" direction="in"/>
+    </method>
+    <method name="importLayoutFile">
+        <arg name="filepath" type="s" direction="in"/>
+        <arg name="suggestedLayoutName" type="s" direction="in"/>
+    </method>
+    <method name="exportViewTemplate">
+        <arg name="containmentId" type="u" direction="in"/>
+    </method>
+    <method name="addView">
+        <arg name="containmentId" type="u" direction="in"/>
+        <arg name="templateId" type="s" direction="in"/>
+    </method>
+    <method name="duplicateView">
+        <arg name="containmentId" type="u" direction="in"/>
+    </method>
+    <method name="moveViewToLayout">
+        <arg name="containmentId" type="u" direction="in"/>
+        <arg name="layoutName" type="s" direction="in"/>
+    </method>
+    <method name="removeView">
+        <arg name="containmentId" type="u" direction="in"/>
+    </method>
+    <method name="showSettingsWindow">
+        <arg name="page" type="i" direction="in"/>
+    </method>
+    <method name="contextMenuData">
+        <arg name="data" type="as" direction="out"/>
+        <arg name="containmentId" type="u" direction="in"/>
+    </method>
+    <method name="viewTemplatesData">
+        <arg name="data" type="as" direction="out"/>
+    </method>
+    <method name="setBackgroundFromBroadcast">
+        <arg name="activity" type="s" direction="in"/>
+        <arg name="screenName" type="s" direction="in"/>
+        <arg name="filename" type="s" direction="in"/>
+    </method>
+    <method name="setBroadcastedBackgroundsEnabled">
+        <arg name="activity" type="s" direction="in"/>
+        <arg name="screenName" type="s" direction="in"/>
+        <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="toggleHiddenState">
+        <arg name="layoutName" type="s" direction="in"/>
+        <arg name="viewName" type="s" direction="in"/>
+        <arg name="screenName" type="s" direction="in"/>
+        <arg name="screenEdge" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>

@@ -1,0 +1,70 @@
+#pragma once
+
+#if __has_include(<PlasmaActivities/PlasmaActivities/Info>)
+#include <PlasmaActivities/PlasmaActivities/Info>
+#elif __has_include(<PlasmaActivities/plasmaactivities/info.h>)
+#include <PlasmaActivities/plasmaactivities/info.h>
+#elif __has_include(<PlasmaActivities/Info>)
+#include <PlasmaActivities/Info>
+#elif __has_include(<PlasmaActivities/info.h>)
+#include <PlasmaActivities/info.h>
+#elif __has_include(<KActivities/info.h>)
+#include <KActivities/info.h>
+#elif __has_include(<kactivities/info.h>)
+#include <kactivities/info.h>
+#elif __has_include_next(<KActivities/Info>)
+#include_next <KActivities/Info>
+#else
+ #include <QObject>
+ #include <QString>
+
+namespace KActivities {
+class Info : public QObject
+{
+public:
+    explicit Info(const QString & = QString(), QObject *parent = nullptr)
+        : QObject(parent)
+    {
+    }
+
+    enum State {
+        Invalid = 0,
+        Unknown = 1,
+        Running = 2,
+        Starting = 3,
+        Stopped = 4,
+        Stopping = 5
+    };
+
+    State state() const
+    {
+        return Invalid;
+    }
+
+    QString id() const
+    {
+        return QString{};
+    }
+
+    QString name() const
+    {
+        return QString{};
+    }
+
+    QString icon() const
+    {
+        return QString{};
+    }
+
+    bool isCurrent() const
+    {
+        return false;
+    }
+
+    // signal-compatible stubs for pointer-to-member connects
+    void nameChanged(const QString &);
+    void iconChanged(const QString &);
+    void isCurrentChanged(bool);
+};
+}
+#endif

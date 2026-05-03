@@ -1,0 +1,34 @@
+#pragma once
+
+#if __has_include(<KNS3/QtQuickDialogWrapper>)
+#include <KNS3/QtQuickDialogWrapper>
+#elif __has_include(<KNewStuff/KNS3/QtQuickDialogWrapper>)
+#include <KNewStuff/KNS3/QtQuickDialogWrapper>
+#elif __has_include(<KNSCore/QtQuickDialogWrapper>)
+#include <KNSCore/QtQuickDialogWrapper>
+namespace KNS3 {
+using QtQuickDialogWrapper = KNSCore::QtQuickDialogWrapper;
+}
+#elif __has_include(<KNewStuffCore/KNSCore/QtQuickDialogWrapper>)
+#include <KNewStuffCore/KNSCore/QtQuickDialogWrapper>
+namespace KNS3 {
+using QtQuickDialogWrapper = KNSCore::QtQuickDialogWrapper;
+}
+#elif __has_include_next(<KNewStuff3/KNS3/QtQuickDialogWrapper>)
+#include_next <KNewStuff3/KNS3/QtQuickDialogWrapper>
+#else
+#include <QDialog>
+#include <QString>
+#include <QWidget>
+
+namespace KNS3 {
+class QtQuickDialogWrapper : public QDialog
+{
+public:
+    explicit QtQuickDialogWrapper(const QString &, QWidget *parent = nullptr)
+        : QDialog(parent)
+    {
+    }
+};
+}
+#endif

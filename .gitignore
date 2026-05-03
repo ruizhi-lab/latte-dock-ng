@@ -1,0 +1,47 @@
+*~
+!.arcconfig
+!.gitignore
+
+# Ignore hidden files
+.directory
+
+# build directory
+build*/
+/cmake-build*
+
+.DS_Store
+
+# backup files
+*.autosave
+*.desktop~
+*.gitignore~
+*.js~
+*.kate-swp
+*.qml~
+*.sh~
+*.xml~
+.*.cpp~
+.*.h~
+.*.js~
+.*.pot~
+.*.po~
+.*.qml~
+.*.txt~
+.*.xml~
+.*~
+*.*.user
+*.*.orig
+
+# locale files
+*.mo
+
+# KDevelop Project files
+*.kdev4
+.kdev4/
+
+!*.layout.latte
+
+CMakeLists.txt.user*
+/compile_commands.json
+
+.claude/worktrees/

@@ -1,0 +1,32 @@
+#pragma once
+
+#if __has_include(<KConfigPropertyMap>)
+#include <KConfigPropertyMap>
+#elif __has_include(<KConfigQml/KConfigPropertyMap>)
+#include <KConfigQml/KConfigPropertyMap>
+#elif __has_include(<KConfigQml/kconfigpropertymap.h>)
+#include <KConfigQml/kconfigpropertymap.h>
+#elif __has_include(<kconfigqml/kconfigpropertymap.h>)
+#include <kconfigqml/kconfigpropertymap.h>
+#else
+#include <QQmlPropertyMap>
+class KCoreConfigSkeleton;
+
+class KConfigPropertyMap : public QQmlPropertyMap
+{
+public:
+    explicit KConfigPropertyMap(KCoreConfigSkeleton *, QObject *parent = nullptr)
+        : QQmlPropertyMap(parent)
+    {
+    }
+};
+#endif
+
+// Define as class (not using-alias) to be compatible with forward declarations
+// of 'class KDeclarative::ConfigPropertyMap' in headers like indicator.h.
+namespace KDeclarative {
+class ConfigPropertyMap : public KConfigPropertyMap {
+public:
+    using KConfigPropertyMap::KConfigPropertyMap;
+};
+}

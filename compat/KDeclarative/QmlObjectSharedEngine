@@ -1,0 +1,14 @@
+#pragma once
+
+#if __has_include(<PlasmaQuick/SharedQmlEngine>)
+#include <PlasmaQuick/SharedQmlEngine>
+#else
+#include <plasmaquick/sharedqmlengine.h>
+#endif
+
+namespace KDeclarative {
+class QmlObjectSharedEngine : public PlasmaQuick::SharedQmlEngine {
+public:
+    using PlasmaQuick::SharedQmlEngine::SharedQmlEngine;
+};
+}

@@ -1,0 +1,21 @@
+set(lattedock-app_SRCS
+    ${lattedock-app_SRCS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/activitydata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/appletdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contextmenudata.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/errordata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/errorinformationdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/genericbasictable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/genericdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/generictable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layoutdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layoutcolordata.cpp    
+    ${CMAKE_CURRENT_SOURCE_DIR}/layouticondata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layoutstable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/preferencesdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/screendata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/uniqueidinfo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/viewdata.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/viewstable.cpp
+    PARENT_SCOPE
+)

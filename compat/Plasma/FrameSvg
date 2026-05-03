@@ -1,0 +1,29 @@
+#pragma once
+
+// Prefer legacy Plasma FrameSvg if available; otherwise provide a thin
+// compatibility class over KSvg::FrameSvg.
+#if __has_include(<Plasma/plasma/framesvg.h>)
+#include <Plasma/plasma/framesvg.h>
+#elif __has_include(<plasma/framesvg.h>)
+#include <plasma/framesvg.h>
+#elif __has_include(<KSvg/FrameSvg>)
+#include <KSvg/FrameSvg>
+
+namespace Plasma {
+class FrameSvg : public KSvg::FrameSvg
+{
+public:
+    using KSvg::FrameSvg::FrameSvg;
+};
+}
+#else
+#include <ksvg/framesvg.h>
+
+namespace Plasma {
+class FrameSvg : public KSvg::FrameSvg
+{
+public:
+    using KSvg::FrameSvg::FrameSvg;
+};
+}
+#endif

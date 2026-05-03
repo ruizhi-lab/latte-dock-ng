@@ -1,0 +1,17 @@
+#pragma once
+
+#if __has_include(<KPackage/packageloader.h>)
+#include <KPackage/packageloader.h>
+#elif __has_include(<KF6/KPackage/kpackage/packageloader.h>)
+#include <KF6/KPackage/kpackage/packageloader.h>
+#elif __has_include(<KPackage/kpackage/packageloader.h>)
+#include <KPackage/kpackage/packageloader.h>
+#elif __has_include(<kpackage/packageloader.h>)
+#include <kpackage/packageloader.h>
+#elif __has_include(<KPackage/KPackage/PackageLoader>)
+#include <KPackage/KPackage/PackageLoader>
+#elif __has_include_next(<KPackage/PackageLoader>)
+#include_next <KPackage/PackageLoader>
+#else
+#error "Could not find a usable KPackage::PackageLoader header"
+#endif

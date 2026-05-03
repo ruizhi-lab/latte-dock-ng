@@ -1,0 +1,20 @@
+#pragma once
+
+#include <QSGSimpleTextureNode>
+#include <QSGTexture>
+#include <QSharedPointer>
+
+class ManagedTextureNode : public QSGSimpleTextureNode
+{
+public:
+    ManagedTextureNode() = default;
+
+    void setTexture(const QSharedPointer<QSGTexture> &texture)
+    {
+        m_texture = texture;
+        QSGSimpleTextureNode::setTexture(m_texture.data());
+    }
+
+private:
+    QSharedPointer<QSGTexture> m_texture;
+};

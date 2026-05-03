@@ -1,0 +1,13 @@
+#pragma once
+
+#if __has_include(<PlasmaActivities/PlasmaActivities/ResourceInstance>)
+#include <PlasmaActivities/PlasmaActivities/ResourceInstance>
+#elif __has_include(<PlasmaActivities/plasmaactivities/resourceinstance.h>)
+#include <PlasmaActivities/plasmaactivities/resourceinstance.h>
+#elif __has_include(<PlasmaActivities/ResourceInstance>)
+#include <PlasmaActivities/ResourceInstance>
+#elif __has_include(<KActivities/resourceinstance.h>)
+#include <KActivities/resourceinstance.h>
+#elif __has_include_next(<KActivities/ResourceInstance>)
+#include_next <KActivities/ResourceInstance>
+#endif
