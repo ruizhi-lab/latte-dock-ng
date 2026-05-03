@@ -469,15 +469,24 @@ PlasmaExtras.Menu {
         }
     }
 
+    function requestExpandedPlacesMenu() {
+        if (menu.visualParent && menu.visualParent.showContextMenu) {
+            menu.visualParent.showContextMenu({showAllPlaces: true});
+        }
+    }
+
+    readonly property var showAllPlacesConnection: Connections {
+        target: backend
+
+        function onShowAllPlaces() {
+            menu.requestExpandedPlacesMenu();
+        }
+    }
+
     Component.onCompleted: {
         ActivitiesTools.launchersOnActivities = root.launchersOnActivities
         ActivitiesTools.currentActivity = activityInfo.currentActivity;
         ActivitiesTools.plasmoid = plasmoid;
-
-        // Cannot have "Connections" as child of PlasmaCoponents.ContextMenu.
-        backend.showAllPlaces.connect(function() {
-            visualParent.showContextMenu({showAllPlaces: true});
-        });
     }
 
 
