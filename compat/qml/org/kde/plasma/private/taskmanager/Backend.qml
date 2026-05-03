@@ -4,6 +4,7 @@
 */
 
 import QtQuick 2.0
+import org.kde.latte.private.tasks 0.1 as LatteTasks
 
 QtObject {
     id: backend
@@ -19,6 +20,14 @@ QtObject {
 
     signal addLauncher(var url)
     signal showAllPlaces()
+
+    readonly property QtObject contextMenuActionsBackend: LatteTasks.ContextMenuActionsBackend {}
+    readonly property var contextMenuActionsBridge: Connections {
+        target: contextMenuActionsBackend
+        function onShowAllPlaces() {
+            backend.showAllPlaces()
+        }
+    }
 
     function activateWindowView(winIds) {
     }
@@ -39,15 +48,15 @@ QtObject {
     }
 
     function placesActions(launcherUrl, showAllPlacesValue, menu) {
-        return [];
+        return contextMenuActionsBackend.placesActions(launcherUrl, showAllPlacesValue, menu);
     }
 
     function recentDocumentActions(launcherUrl, menu) {
-        return [];
+        return contextMenuActionsBackend.recentDocumentActions(launcherUrl, menu);
     }
 
     function jumpListActions(launcherUrl, menu) {
-        return [];
+        return contextMenuActionsBackend.jumpListActions(launcherUrl, menu);
     }
 
     function parentPid(pid) {

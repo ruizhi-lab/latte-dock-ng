@@ -15,10 +15,10 @@ Item {
     readonly property int tailThickness: destination ? destination.tailThicknessMargin : appletItem.metrics.margin.tailThickness
     readonly property int thickness: headThickness + tailThickness + (root.isHorizontal ? destination.height : destination.width)
     readonly property int lengthPadding: {
-        if ( (root.myView.alignment === LatteCore.Types.Justify && appletItem.firstChildOfStartLayout)
-                || (root.myView.alignment === LatteCore.Types.Justify && appletItem.lastChildOfEndLayout)
-                || (root.myView.alignment !== LatteCore.Types.Justify && appletItem.firstChildOfMainLayout)
-                || (root.myView.alignment !== LatteCore.Types.Justify && appletItem.lastChildOfMainLayout)) {
+        if ( (root.myView.alignment === LatteCore.types.Justify && appletItem.firstChildOfStartLayout)
+                || (root.myView.alignment === LatteCore.types.Justify && appletItem.lastChildOfEndLayout)
+                || (root.myView.alignment !== LatteCore.types.Justify && appletItem.firstChildOfMainLayout)
+                || (root.myView.alignment !== LatteCore.types.Justify && appletItem.lastChildOfMainLayout)) {
             //! Fitts Law on corners
             return destination ? destination.zoomScaleThickness * appletItem.lengthAppletFullMargin : appletItem.lengthAppletFullMargin;
         }

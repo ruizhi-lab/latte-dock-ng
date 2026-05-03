@@ -2,23 +2,23 @@
 
 > **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.6+ on Wayland only**. X11 support has been intentionally removed.
 
-Latte is a dock based on plasma frameworks that provides an elegant and intuitive experience for your tasks and plasmoids. It animates its contents by using parabolic zoom effect and tries to be there only when it is needed.
+Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.
 
 **"Art in Coffee"**
 
 Screenshots
 ===========
 
-![](https://cdn.kde.org/screenshots/latte-dock/latte-dock_regular.png)
-
-![](https://cdn.kde.org/screenshots/latte-dock/latte-dock_settings.png)
+![](assets/screenshots/latte-dock-ng-screenshot.png)
 
 Development
 ============
 
 - This fork: https://github.com/ruizhi-lab/latte-dock-ng
+- Release notes: `CHANGELOG.md`
 - Upstream KDE repo: https://invent.kde.org/plasma/latte-dock
 - GitHub mirror of upstream: https://github.com/KDE/latte-dock
+- Bug reports for this fork: https://github.com/ruizhi-lab/latte-dock-ng/issues
 - Bug reports for upstream: https://bugs.kde.org/enter_bug.cgi?product=lattedock
 
 
@@ -106,31 +106,33 @@ bash uninstall.sh --dry-run
 bash uninstall.sh --purge-user-data
 ```
 
-## Run Latte-Dock
+## Run Latte Dock NG
 
-Latte is now ready to be used by executing 
+Latte Dock NG is now ready to be used by executing
 ```
 latte-dock-ng
 ```
 
-or activating **Latte Dock** from the applications menu.
+or activating **Latte Dock NG** from the applications menu.
 
 
 Contributors
 ============
-[Varlesh](https://github.com/varlesh): Logos and Icons.
+- [Ruizhi Zhong](https://github.com/ruizhi-lab): Maintainer of this fork (Plasma 6.6+ / Wayland).
+- [Varlesh](https://github.com/varlesh): Logos and Icons.
+- Original Latte Dock authors and contributors: thank you for the upstream foundation.
 
 
 License & Copyright
 ===================
 
-**Original work:**
-Copyright (C) KDE Contributors — [https://github.com/KDE/latte-dock](https://github.com/KDE/latte-dock)
-Licensed under the GNU General Public License v2.0 or later (GPL-2.0-or-later).
-
-**Modifications in this fork (Plasma 6.6 Wayland port):**
+**Current fork (Latte Dock NG):**
 Copyright (C) 2024-2026 Ruizhi Zhong
-Licensed under the GNU General Public License v3.0 (GPL-3.0).
+Author & Contact: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
+Licensed under GNU General Public License 3.0 (GPL-3.0).
+
+This project is based on the original Latte Dock by KDE contributors.
+Special thanks to all original Latte Dock authors and contributors.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

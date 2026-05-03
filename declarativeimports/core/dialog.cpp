@@ -13,6 +13,17 @@
 namespace Latte {
 namespace Quick {
 
+namespace {
+
+inline int safeBoundInt(const int a, const int value, const int b)
+{
+    const int minValue = qMin(a, b);
+    const int maxValue = qMax(a, b);
+    return qBound(minValue, value, maxValue);
+}
+
+}
+
 Dialog::Dialog(QQuickItem *parent)
     : PlasmaQuick::Dialog(parent)
 {
@@ -146,8 +157,8 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
             y = parenttopleft.y() - size.height() - popupmargin;
         }
 
-        x = qBound(screengeometry.x(), x, screengeometry.right() - size.width() + 1);
-        y = qBound(screengeometry.y(), y, screengeometry.bottom() - size.height() + 1);
+        x = safeBoundInt(screengeometry.x(), x, screengeometry.right() - size.width() + 1);
+        y = safeBoundInt(screengeometry.y(), y, screengeometry.bottom() - size.height() + 1);
 
         QRect appletslayoutgeometry = appletsLayoutGeometryFromContainment();
 
@@ -162,13 +173,13 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
                 int bottomy = appletsglobalgeometry.bottom()-size.height();
 
                 if (appletsglobalgeometry.height() >= size.height()) {
-                    y = qBound(appletsglobalgeometry.y(), y, bottomy + 1);
+                    y = safeBoundInt(appletsglobalgeometry.y(), y, bottomy + 1);
                 }
             } else {
                 int rightx = appletsglobalgeometry.right()-size.width();
 
                 if (appletsglobalgeometry.width() >= size.width()) {
-                    x = qBound(appletsglobalgeometry.x(), x, rightx + 1);
+                    x = safeBoundInt(appletsglobalgeometry.x(), x, rightx + 1);
                 }
             }
         }

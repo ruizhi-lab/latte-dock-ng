@@ -70,7 +70,7 @@ void TabPreferences::initUi()
         }
     });
 
-    connect(m_ui->screenTrackerSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [ = ](int i) {
+    connect(m_ui->screenTrackerSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [ = ](int) {
         m_preferences.screensDelay = m_ui->screenTrackerSpinBox->value();
         Q_EMIT dataChanged();
     });
@@ -90,16 +90,6 @@ void TabPreferences::initUi()
         Q_EMIT dataChanged();
     });
 
-    connect(m_ui->screenTrackerSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [ = ](int i) {
-        m_preferences.screensDelay = m_ui->screenTrackerSpinBox->value();
-        Q_EMIT dataChanged();
-    });
-
-    connect(m_ui->metaPressHoldChkBox, &QCheckBox::toggled, this, [&]() {
-        m_preferences.metaHoldForBadges = m_ui->metaPressHoldChkBox->isChecked();
-        Q_EMIT dataChanged();
-    });
-
     connect(m_ui->infoWindowChkBox, &QCheckBox::toggled, this, [&]() {
         m_preferences.layoutsInformationWindow = m_ui->infoWindowChkBox->isChecked();
         Q_EMIT dataChanged();
@@ -115,7 +105,8 @@ void TabPreferences::initSettings()
     o_preferences.contextMenuAlwaysActions = m_corona->universalSettings()->contextMenuActionsAlwaysShown();
     o_preferences.isAvailableGeometryBroadcastedToPlasma = m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma();
     o_preferences.layoutsInformationWindow = m_corona->universalSettings()->showInfoWindow();
-    o_preferences.metaHoldForBadges = m_corona->universalSettings()->metaPressAndHoldEnabled();
+    // Wayland-only build: Meta press-and-hold forwarding is not supported.
+    o_preferences.metaHoldForBadges = false;
     o_preferences.parabolicSpread = m_corona->universalSettings()->parabolicSpread();
     o_preferences.thicknessMarginInfluence = m_corona->universalSettings()->thicknessMarginInfluence();
     o_preferences.screensDelay = m_corona->universalSettings()->screenTrackerInterval();
@@ -147,7 +138,6 @@ void TabPreferences::updateUi()
     m_ui->badges3DStyleChkBox->setChecked(m_preferences.badgeStyle3D);
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
-    m_ui->metaPressHoldChkBox->setChecked(m_preferences.metaHoldForBadges);
     m_ui->screenTrackerSpinBox->setValue(m_preferences.screensDelay);
 
     if (m_preferences.parabolicSpread == Data::Preferences::PARABOLICSPREAD) {
@@ -203,7 +193,8 @@ void TabPreferences::save()
     m_corona->universalSettings()->setBadges3DStyle(m_preferences.badgeStyle3D);
     m_corona->universalSettings()->setContextMenuActionsAlwaysShown(m_preferences.contextMenuAlwaysActions);
     m_corona->universalSettings()->setIsAvailableGeometryBroadcastedToPlasma(m_preferences.isAvailableGeometryBroadcastedToPlasma);
-    m_corona->universalSettings()->setMetaPressAndHoldEnabled(m_preferences.metaHoldForBadges);
+    // Wayland-only build: keep this disabled.
+    m_corona->universalSettings()->setMetaPressAndHoldEnabled(false);
     m_corona->universalSettings()->setShowInfoWindow(m_preferences.layoutsInformationWindow);
     m_corona->universalSettings()->setParabolicSpread(m_preferences.parabolicSpread);
     m_corona->universalSettings()->setThicknessMarginInfluence(m_preferences.thicknessMarginInfluence);

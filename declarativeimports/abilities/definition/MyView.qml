@@ -38,8 +38,8 @@ Item {
 
     property bool badgesIn3DStyle: true
 
-    property int alignment: LatteCore.Types.Center
-    property int visibilityMode: LatteCore.Types.None
+    property int alignment: LatteCore.types.Center
+    property int visibilityMode: LatteCore.types.None
 
     property real backgroundOpacity: 1.0
 

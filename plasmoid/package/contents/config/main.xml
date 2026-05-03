@@ -114,7 +114,7 @@
       <default>false</default>
     </entry>
     <entry name="showOnlyCurrentActivity" type="Bool">
-      <default>true</default>
+      <default>false</default>
     </entry>
     <entry name="hideAllTasks" type="Bool">
       <default>false</default>
@@ -254,4 +254,3 @@
     </entry>
   </group>
 </kcfg>
-

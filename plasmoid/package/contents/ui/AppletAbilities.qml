@@ -48,11 +48,11 @@ AbilityClient.AppletAbilities {
     Connections {
         target: _abilityContainer.userRequests
         function onSglViewType() {
-            if (viewType === LatteCore.Types.DockView) {
+            if (viewType === LatteCore.types.DockView) {
                 plasmoid.configuration.animationLauncherBouncing = true;
                 plasmoid.configuration.animationWindowInAttention = true;
                 plasmoid.configuration.animationWindowAddedInGroup = true;
-            } else if (viewType === LatteCore.Types.PanelView) {
+            } else if (viewType === LatteCore.types.PanelView) {
                 plasmoid.configuration.animationLauncherBouncing = false;
                 plasmoid.configuration.animationWindowInAttention = false;
                 plasmoid.configuration.animationWindowAddedInGroup = false;

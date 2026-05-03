@@ -384,7 +384,11 @@ Item {
 
         source: badgesLoader.active ? badgesLoader : taskIconItem
 
-        opacity: taskItem.containsMouse && !clickedAnimation.running && !taskItem.abilities.indicators.info.providesHoveredAnimation ? 1 : 0
+        opacity: taskItem.mouseArea.hoverVisualActive
+                 && taskItem.mouseArea.containsMouse
+                 && !taskItem.hasActive
+                 && !clickedAnimation.running
+                 && !taskItem.abilities.indicators.info.providesHoveredAnimation ? 1 : 0
         brightness: 0.30
         contrast: 0.1
 

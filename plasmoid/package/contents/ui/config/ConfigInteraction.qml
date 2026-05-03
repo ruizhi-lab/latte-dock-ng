@@ -87,13 +87,13 @@ Item {
 
                         currentIndex: {
                             switch(plasmoid.configuration.hoverAction) {
-                            case LatteTasks.Types.NoneAction:
+                            case LatteTasks.types.NoneAction:
                                 return 0;
-                            case LatteTasks.Types.PreviewWindows:
+                            case LatteTasks.types.PreviewWindows:
                                 return 1;
-                            case LatteTasks.Types.HighlightWindows:
+                            case LatteTasks.types.HighlightWindows:
                                 return 2;
-                            case LatteTasks.Types.PreviewAndHighlightWindows:
+                            case LatteTasks.types.PreviewAndHighlightWindows:
                                 return 3;
                             }
 
@@ -103,16 +103,16 @@ Item {
                         onCurrentIndexChanged: {
                             switch(currentIndex) {
                             case 0:
-                                plasmoid.configuration.hoverAction = LatteTasks.Types.NoneAction;
+                                plasmoid.configuration.hoverAction = LatteTasks.types.NoneAction;
                                 break;
                             case 1:
-                                plasmoid.configuration.hoverAction = LatteTasks.Types.PreviewWindows;
+                                plasmoid.configuration.hoverAction = LatteTasks.types.PreviewWindows;
                                 break;
                             case 2:
-                                plasmoid.configuration.hoverAction = LatteTasks.Types.HighlightWindows;
+                                plasmoid.configuration.hoverAction = LatteTasks.types.HighlightWindows;
                                 break;
                             case 3:
-                                plasmoid.configuration.hoverAction = LatteTasks.Types.PreviewAndHighlightWindows;
+                                plasmoid.configuration.hoverAction = LatteTasks.types.PreviewAndHighlightWindows;
                                 break;
                             }
                         }

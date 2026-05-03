@@ -45,7 +45,7 @@ Item {
         ///Left Edge
         State {
             name: "leftCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -54,7 +54,7 @@ Item {
         },
         State {
             name: "leftTop"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Top)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -63,7 +63,7 @@ Item {
         },
         State {
             name: "leftBottom"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Bottom)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -73,7 +73,7 @@ Item {
         ///Right Edge
         State {
             name: "rightCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -82,7 +82,7 @@ Item {
         },
         State {
             name: "rightTop"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Top)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -91,7 +91,7 @@ Item {
         },
         State {
             name: "rightBottom"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Bottom)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             PropertyChanges{
                 target: _abilityContainer.layout; horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
@@ -100,7 +100,7 @@ Item {
         ///Bottom Edge
         State {
             name: "bottomCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -109,7 +109,7 @@ Item {
         },
         State {
             name: "bottomLeft"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Left)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -118,7 +118,7 @@ Item {
         },
         State {
             name: "bottomRight"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Right)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -128,7 +128,7 @@ Item {
         ///Top Edge
         State {
             name: "topCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -137,7 +137,7 @@ Item {
         },
         State {
             name: "topLeft"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Left)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             PropertyChanges{
                 target: _abilityContainer.layout;
@@ -146,7 +146,7 @@ Item {
         },
         State {
             name: "topRight"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Right)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             PropertyChanges{
                 target: _abilityContainer.layout;

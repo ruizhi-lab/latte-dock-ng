@@ -22,17 +22,12 @@
 #include <QDebug>
 #include <QMenuBar>
 #include <QStandardItemModel>
-#include <QTimer>
 
 // KDE
 #include <KHelpMenu>
 
 namespace Ui {
 class SettingsDialog;
-}
-
-namespace KActivities {
-class Controller;
 }
 
 namespace Latte {
@@ -95,7 +90,6 @@ private Q_SLOTS:
     void showLayoutInformation();
     void showScreensInformation();
     void updateApplyButtonsState();
-    void updateWindowActivities();    
 
     void loadConfig();
     void saveConfig();
@@ -104,12 +98,10 @@ private Q_SLOTS:
 
 private:
     void initGlobalMenu();
-    void initLayoutMenu();
     void initFileMenu();
     void initHelpMenu();
 
     void save();
-    void setCurrentFreeActivitiesLayout(const int &row);
 
     bool saveChanges();
     QSize storedWindowSize() const;
@@ -143,11 +135,7 @@ private:
     KHelpMenu *m_helpMenu{nullptr};
 
     //! storage
-    KConfigGroup m_deprecatedStorage;
     KConfigGroup m_storage;
-
-    //! workaround to assign ALLACTIVITIES during startup
-    QTimer m_activitiesTimer;
 };
 
 }

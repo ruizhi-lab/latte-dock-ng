@@ -16,7 +16,7 @@ Item {
         ///Bottom Edge
         State {
             name: "bottomCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -25,7 +25,7 @@ Item {
         },
         State {
             name: "bottomLeft"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Left)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -34,7 +34,7 @@ Item {
         },
         State {
             name: "bottomRight"
-            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.Types.Right)
+            when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -44,7 +44,7 @@ Item {
         ///Top Edge
         State {
             name: "topCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -53,7 +53,7 @@ Item {
         },
         State {
             name: "topLeft"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Left)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -62,7 +62,7 @@ Item {
         },
         State {
             name: "topRight"
-            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.Types.Right)
+            when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -72,7 +72,7 @@ Item {
         ////Left Edge
         State {
             name: "leftCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -81,7 +81,7 @@ Item {
         },
         State {
             name: "leftTop"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Top)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -90,7 +90,7 @@ Item {
         },
         State {
             name: "leftBottom"
-            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.Types.Bottom)
+            when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -100,7 +100,7 @@ Item {
         ///Right Edge
         State {
             name: "rightCenter"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Center)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -109,7 +109,7 @@ Item {
         },
         State {
             name: "rightTop"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Top)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem
@@ -118,7 +118,7 @@ Item {
         },
         State {
             name: "rightBottom"
-            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.Types.Bottom)
+            when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: anchorsLoader.anchoredItem

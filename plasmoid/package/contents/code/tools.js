@@ -102,7 +102,7 @@ function activateNextPrevTask(next) {
 }
 
 function insertIndexAt(above, x, y) {
-    if (above && above.itemIndex) {
+    if (above && typeof above.itemIndex === "number" && above.itemIndex >= 0) {
         return above.itemIndex;
     } else {
         var distance = root.vertical ? y : x;
@@ -116,6 +116,10 @@ function insertIndexAt(above, x, y) {
             return stripe * LayoutManager.tasksPerStripe();
         }*/
 
-        return stripe-1;
+        if (stripe <= 0) {
+            return 0;
+        }
+
+        return stripe - 1;
     }
 }

@@ -66,6 +66,43 @@ DragDrop.DropArea {
         return false;
     }
 
+    function isInternalTaskSource(event) {
+        if (!event || !event.mimeData) {
+            return false;
+        }
+
+        var source = event.mimeData.source;
+
+        while (source) {
+            if (source.objectName === "TaskItem") {
+                return true;
+            }
+
+            source = source.parent;
+        }
+
+        return false;
+    }
+
+    function hasTaskMime(event) {
+        if (!event || !event.mimeData || event.mimeData.formats === undefined) {
+            return false;
+        }
+
+        var formats = event.mimeData.formats;
+
+        for (var i = 0; i < formats.length; ++i) {
+            var format = String(formats[i]);
+
+            if (format === "application/x-orgkdeplasmataskmanager_taskbuttonitem"
+                    || format.indexOf("plasmataskmanager") >= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     //! Give the time when an applet is dropped to be positioned properly
     Timer {
         id: clearInfoTimer
@@ -85,13 +122,10 @@ DragDrop.DropArea {
         }
     }
 
-    onDragEnter: {
+    function onDragEnter(event) {
         containsDrag = true;
         clearInfoTimer.stop();
-        var isTask = event !== undefined
-                && event.mimeData !== undefined
-                && event.mimeData.formats !== undefined
-                && event.mimeData.formats.indexOf("application/x-orgkdeplasmataskmanager_taskbuttonitem") >= 0;
+        var isTask = isInternalTaskSource(event) || hasTaskMime(event);
 
         var isSeparator = event !== undefined
                 && event.mimeData !== undefined
@@ -136,7 +170,7 @@ DragDrop.DropArea {
         dndSpacer.opacity = 1;
     }
 
-    onDragMove: {
+    function onDragMove(event) {
         containsDrag = true;
         clearInfoTimer.stop();
         if (dragInfo.isTask) {
@@ -166,7 +200,7 @@ DragDrop.DropArea {
         dndSpacer.parent = root;
     }
 
-    onDrop: {
+    function onDrop(event) {
         containsDrag = false;
         animations.needLength.removeEvent(dragArea);
 
@@ -191,7 +225,9 @@ DragDrop.DropArea {
                 eventy = masquearadedIndexFromPoint.y;
             }
 
-            plasmoid.processMimeData(event.mimeData, eventx, eventy);
+            if (typeof root.processMimeData === "function") {
+                root.processMimeData(event.mimeData, eventx, eventy);
+            }
             //! inform others what plasmoid was drag n' dropped to be added
             latteView.extendedInterface.appletDropped(event.mimeData, eventx, eventy);
             event.accept(event.proposedAction);

@@ -40,14 +40,14 @@ Item{
     readonly property bool isVertical: (location === PlasmaCore.Types.LeftEdge) || (location === PlasmaCore.Types.RightEdge)
     readonly property bool isHorizontal: !isVertical
 
-    Grid{
+    Flow{
         id: mainGlow
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         visible: glowItem.showGlow
 
-        rows: isHorizontal ? 1 : 0
-        columns: isVertical ? 1 : 0
+        flow: isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
+        spacing: 0
 
         property int halfCorner: 3*glowItem.size
         property int fullCorner: 6*glowItem.size

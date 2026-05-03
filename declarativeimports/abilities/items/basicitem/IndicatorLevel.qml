@@ -25,21 +25,30 @@ AbilityItem.IndicatorLevel {
 
     level.isDrawn: level.indicator && level.indicator.host && level.indicator.host.isEnabled && !abilityItem.isSeparator && !abilityItem.isHidden
 
+    readonly property var _metrics: (abilityItem.abilities && abilityItem.abilities.metrics) ? abilityItem.abilities.metrics : null
+    readonly property real _metricsIconSize: (_metrics && _metrics.iconSize !== undefined) ? _metrics.iconSize : 0
+    readonly property real _metricsLengthPaddings: (_metrics && _metrics.totals && _metrics.totals.lengthPaddings !== undefined) ? _metrics.totals.lengthPaddings : 0
+    readonly property real _metricsThickness: (_metrics && _metrics.thickness !== undefined) ? _metrics.thickness : 1
+
     readonly property real length: abilityItem.preserveIndicatorInInitialPosition ?
-                                       abilityItem.abilities.metrics.iconSize + abilityItem.abilities.metrics.totals.lengthPaddings :
-                                       abilityItem.parabolicItem.length - 2*abilityItem.parabolicItem.zoom*abilityItem.abilities.metrics.margin.length
+                                       _metricsIconSize + _metricsLengthPaddings :
+                                       ((abilityItem.parabolicItem && abilityItem.parabolicItem.length > 0)
+                                            ? (abilityItem.parabolicItem.length - 2 * abilityItem.parabolicItem.zoom * ((_metrics && _metrics.margin && _metrics.margin.length !== undefined) ? _metrics.margin.length : 0))
+                                            : (_metricsIconSize + _metricsLengthPaddings))
     readonly property real thickness: abilityItem.preserveIndicatorInInitialPosition ?
-                                          abilityItem.abilities.metrics.thickness :
-                                          abilityItem.parabolicItem.thickness
+                                          _metricsThickness :
+                                          ((abilityItem.parabolicItem && abilityItem.parabolicItem.thickness > 0)
+                                               ? abilityItem.parabolicItem.thickness
+                                               : _metricsThickness)
 
     Connections {
         target: abilityItem
         enabled: indicatorLevel.level.indicator.host ? indicatorLevel.level.indicator.host.info.needsMouseEventCoordinates : false
-        function onMousePressed() {
+        function onMousePressed(x, y, button) {
             var fixedPos = indicatorLevel.mapFromItem(abilityItem, x, y);
             level.mousePressed(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }
-        function onMouseReleased() {
+        function onMouseReleased(x, y, button) {
             var fixedPos = indicatorLevel.mapFromItem(abilityItem, x, y);
             level.mouseReleased(Math.round(fixedPos.x), Math.round(fixedPos.y), button);
         }

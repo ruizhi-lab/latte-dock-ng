@@ -62,7 +62,7 @@ Item {
             return;
         }
 
-        if (myView.alignment === LatteCore.Types.Center || myView.alignment === LatteCore.Types.Justify) {
+        if (myView.alignment === LatteCore.types.Center || myView.alignment === LatteCore.types.Justify) {
             updateScale(isTailSpacer, newScales);
         } else {
             length = 0;
@@ -77,7 +77,7 @@ Item {
             return;
         }
 
-        if (myView.alignment === LatteCore.Types.Center || myView.alignment === LatteCore.Types.Justify) {
+        if (myView.alignment === LatteCore.types.Center || myView.alignment === LatteCore.types.Justify) {
             updateScale(isHeadSpacer, newScales);
         } else {
             length = 0;

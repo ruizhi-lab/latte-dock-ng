@@ -347,7 +347,7 @@ void ViewsHandler::exportViewForBackup()
     exportFileDialog->setDefaultSuffix("view.latte");
 
     QStringList filters;
-    QString filter1(i18nc("export view", "Latte Dock/Panel file v0.2") + "(*.view.latte)");
+    QString filter1(i18nc("export view", "Latte Dock NG/Panel file v0.2") + "(*.view.latte)");
 
     filters << filter1;
 
@@ -437,7 +437,7 @@ void ViewsHandler::importView()
     importFileDialog->setDefaultSuffix("view.latte");
 
     QStringList filters;
-    filters << QString(i18nc("import dock panel", "Latte Dock or Panel file v0.2") + "(*.view.latte)");
+    filters << QString(i18nc("import dock panel", "Latte Dock NG or Panel file v0.2") + "(*.view.latte)");
     importFileDialog->setNameFilters(filters);
 
     connect(importFileDialog, &QFileDialog::finished, importFileDialog, &QFileDialog::deleteLater);

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Author: Michail Vourlakos, Smith Ar
-# Summary: Installation script for Latte Dock Panel
+# Author: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
+# Summary: Installation script for Latte Dock NG
 #
 # Run as root / sudo  → system install to /usr        (needs write access)
 # Run as normal user  → user install to ~/.local      (no sudo needed)
@@ -290,9 +290,11 @@ else
 fi
 
 fallback_taskmanager_dir="${qt_qml_dir}/org/kde/plasma/private/taskmanager"
-if [[ ! -d "$fallback_taskmanager_dir" ]]; then
+fallback_marker_file="${fallback_taskmanager_dir}/.latte-fallback-module"
+
+if [[ ! -d "$fallback_taskmanager_dir" || -f "$fallback_marker_file" ]]; then
     sync_tree "${script_dir}/compat/qml/org/kde/plasma/private/taskmanager" "$fallback_taskmanager_dir"
-    run_as_root touch "${fallback_taskmanager_dir}/.latte-fallback-module"
+    run_as_root touch "$fallback_marker_file"
 fi
 
 # ── Save install metadata ─────────────────────────────────────────────────────

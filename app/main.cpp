@@ -1,8 +1,9 @@
 /*
     SPDX-FileCopyrightText: 2016 Smith AR <audoban@openmailbox.org>
     SPDX-FileCopyrightText: 2016 Michail Vourlakos <mvourlakos@gmail.com>
+    SPDX-FileCopyrightText: 2024-2026 Ruizhi Zhong <ruizhi.zhong88@gmail.com>
 
-    SPDX-License-Identifier: GPL-2.0-or-later
+    SPDX-License-Identifier: GPL-3.0-or-later
 */
 
 // local
@@ -13,8 +14,8 @@
 #include "templates/templatesmanager.h"
 
 // C++
-#include <memory>
 #include <csignal>
+#include <memory>
 
 // Qt
 #include <QApplication>
@@ -24,12 +25,14 @@
 #include <QCommandLineOption>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusReply>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QLockFile>
 #include <QSessionManager>
 #include <QTextStream>
+#include <QTimer>
 
 // KDE
 #include <KLocalizedString>
@@ -52,6 +55,7 @@ inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 inline void ensureUserLocalQmlImportPaths();
 inline void ensureKdeSessionEnvironment();
+inline bool isKdeSessionShuttingDown();
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -259,11 +263,41 @@ int main(int argc, char **argv)
     //! based on spectacle solution at:
     //!   - https://bugs.kde.org/show_bug.cgi?id=430411
     //!   - https://invent.kde.org/graphics/spectacle/-/commit/8db27170d63f8a4aaff09615e51e3cc0fb115c4d
-    auto disableSessionManagement = [](QSessionManager &sm) {
-        sm.setRestartHint(QSessionManager::RestartNever);
+    auto markSessionEnding = [&app]() {
+        if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
+            qputenv("LATTE_SESSION_ENDING", "1");
+        }
+
+        if (!app.property("latte_session_ending").toBool()) {
+            app.setProperty("latte_session_ending", true);
+            qInfo() << "Session shutdown request received; enabling fast Latte teardown.";
+        }
     };
+
+    auto disableSessionManagement = [&app, &markSessionEnding](QSessionManager &sm) {
+        sm.setRestartHint(QSessionManager::RestartNever);
+        markSessionEnding();
+    };
+
     QObject::connect(&app, &QGuiApplication::commitDataRequest, disableSessionManagement);
     QObject::connect(&app, &QGuiApplication::saveStateRequest, disableSessionManagement);
+
+    // Wayland sessions may skip Qt session-manager callbacks.
+    // Poll ksmserver shutdown state and trigger the same fast path.
+    QTimer sessionShutdownPoll;
+    sessionShutdownPoll.setInterval(1000);
+    QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding]() {
+        if (app.property("latte_session_ending").toBool()) {
+            return;
+        }
+
+        if (isKdeSessionShuttingDown()) {
+            markSessionEnding();
+            qInfo() << "KSMServer shutdown detected; requesting Latte exit.";
+            QCoreApplication::quit();
+        }
+    });
+    sessionShutdownPoll.start();
 
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
@@ -298,7 +332,7 @@ int main(int argc, char **argv)
         qint64 pid{ -1};
 
         if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
-            kill(static_cast<pid_t>(pid), SIGINT);
+            kill(static_cast<pid_t>(pid), SIGTERM);
             timeout = -1;
         }
     }
@@ -425,13 +459,6 @@ int main(int argc, char **argv)
         qInstallMessageHandler(noMessageOutput);
     }
 
-    auto signal_handler = [](int) {
-        qGuiApp->exit();
-    };
-
-    std::signal(SIGKILL, signal_handler);
-    std::signal(SIGINT, signal_handler);
-
     Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
     KDBusService service(KDBusService::Unique);
 
@@ -514,12 +541,28 @@ inline void ensureKdeSessionEnvironment()
     }
 }
 
+inline bool isKdeSessionShuttingDown()
+{
+    QDBusInterface ksmserver(QStringLiteral("org.kde.ksmserver"),
+                             QStringLiteral("/KSMServer"),
+                             QStringLiteral("org.kde.KSMServerInterface"),
+                             QDBusConnection::sessionBus());
+
+    if (!ksmserver.isValid()) {
+        return false;
+    }
+
+    QDBusReply<bool> reply = ksmserver.call(QStringLiteral("isShuttingDown"));
+    return reply.isValid() && reply.value();
+}
+
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     if (msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n")
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
-        || msg.endsWith("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }")) {
+        || msg.endsWith("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }")
+        || msg.contains("Toolbox not loading, toolbox package is either invalid or disabled.")) {
         //! block warnings from dependencies that still ship legacy QML snippets.
         //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
         return;
@@ -579,24 +622,31 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
 
 inline void configureAboutData()
 {
+    // Keep the historical internal component id to preserve D-Bus service compatibility
+    // with existing callers that address org.kde.lattedock.
     KAboutData about(QStringLiteral("lattedock")
-                     , QStringLiteral("Latte Dock")
+                     , QStringLiteral("Latte Dock NG")
                      , QStringLiteral(VERSION)
-                     , i18n("Latte is a dock based on plasma frameworks that provides an elegant and "
-                            "intuitive experience for your tasks and plasmoids. It animates its contents "
-                            "by using parabolic zoom effect and tries to be there only when it is needed."
+                     , i18n("Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and "
+                            "intuitive experience for your tasks and widgets. It animates its contents "
+                            "using a parabolic zoom effect and stays out of the way when not needed."
+                            "\n\nSpecial thanks to the original Latte Dock authors and contributors."
                             "\n\n\"Art in Coffee\"")
-                     , KAboutLicense::GPL_V2
-                     , QStringLiteral("\251 2016-2017 Michail Vourlakos, Smith AR"));
+                     , KAboutLicense::GPL_V3
+                     , QStringLiteral("(C) 2024-2026 Ruizhi Zhong"));
 
     about.setHomepage(WEBSITE);
+    about.setBugAddress(BUG_ADDRESS);
     about.setProgramLogo(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
     about.setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
     about.setProductName(QByteArray("lattedock"));
 
-    // Authors
-    about.addAuthor(QStringLiteral("Michail Vourlakos"), QString(), QStringLiteral("mvourlakos@gmail.com"));
-    about.addAuthor(QStringLiteral("Smith AR"), QString(), QStringLiteral("audoban@openmailbox.org"));
+    // Author
+    about.addAuthor(QStringLiteral("Ruizhi Zhong"), QString(), QStringLiteral("ruizhi.zhong88@gmail.com"));
+
+    // Acknowledgement
+    about.addCredit(QStringLiteral("Latte Dock Authors and Contributors"),
+                    i18n("This project is based on Latte Dock. Thanks to all original authors and contributors."));
 
     KAboutData::setApplicationData(about);
 }

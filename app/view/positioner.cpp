@@ -740,9 +740,20 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
         canvas.moveTop(availableScreenRect.y());
         break;
 
-    default:
-        qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location()
-                   << " containment location:" << (m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop);
+    default: {
+        const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
+        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+
+        if (transientDesktopLocation) {
+            qDebug() << "transient desktop/floating location while updating canvas geometry"
+                     << m_view->location()
+                     << " containment location:" << containmentLocation;
+        } else {
+            qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location()
+                       << " containment location:" << containmentLocation;
+        }
+    }
     }
 
     setCanvasGeometry(canvas);
@@ -842,10 +853,21 @@ void Positioner::updatePosition(QRect availableScreenRect)
 
         break;
 
-    default:
-        qWarning() << "wrong location, couldn't update the panel position"
-                   << m_view->location()
-                   << " containment location:" << (m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop);
+    default: {
+        const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
+        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+
+        if (transientDesktopLocation) {
+            qDebug() << "transient desktop/floating location while updating panel position"
+                     << m_view->location()
+                     << " containment location:" << containmentLocation;
+        } else {
+            qWarning() << "wrong location, couldn't update the panel position"
+                       << m_view->location()
+                       << " containment location:" << containmentLocation;
+        }
+    }
     }
 
     if (m_slideOffset == 0 || m_nextScreenEdge != Plasma::Types::Floating /*exactly after relocating and changing screen edge*/) {
@@ -939,9 +961,20 @@ void Positioner::updateFormFactor()
         m_view->containment()->setFormFactor(Plasma::Types::Vertical);
         break;
 
-    default:
-        qWarning() << "wrong location, couldn't update the panel position" << m_view->location()
-                   << " containment location:" << m_view->containment()->location();
+    default: {
+        const Plasma::Types::Location containmentLocation = m_view->containment()->location();
+        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+
+        if (transientDesktopLocation) {
+            qDebug() << "transient desktop/floating location while updating form factor"
+                     << m_view->location()
+                     << " containment location:" << containmentLocation;
+        } else {
+            qWarning() << "wrong location, couldn't update the panel position" << m_view->location()
+                       << " containment location:" << containmentLocation;
+        }
+    }
     }
 }
 

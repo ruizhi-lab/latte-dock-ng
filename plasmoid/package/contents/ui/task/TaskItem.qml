@@ -6,6 +6,7 @@
 
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.15 as QtControls
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
@@ -40,16 +41,62 @@ AbilityItem.BasicItem {
 
     containsMouse: taskMouseArea.containsMouse || parabolicAreaContainsMouse
     thinTooltipText: {
-        if (root.showPreviews && !isLauncher) {
-            return "";
+        // Keep tooltips focused on application identity (app name), not window title.
+        // This matches dock-style behavior and avoids noisy dynamic titles.
+        if (model && model.AppName) {
+            const appNameText = String(model.AppName).trim();
+            if (appNameText.length > 0) {
+                return appNameText;
+            }
         }
 
-        return isWindow ? model.display : model.AppName;
+        if (!isWindow && model && model.display) {
+            const displayText = String(model.display).trim();
+            if (displayText.length > 0) {
+                return displayText;
+            }
+        }
+
+        if (launcherName && launcherName.length > 0) {
+            return launcherName;
+        }
+
+        return "";
     }
+
+    readonly property bool thinTooltipActive: abilities && abilities.thinTooltip && abilities.thinTooltip.isEnabled
+
+    readonly property string fallbackTooltipText: {
+        if (thinTooltipText && thinTooltipText.length > 0) {
+            return thinTooltipText;
+        }
+
+        if (model && model.GenericName) {
+            const genericNameText = String(model.GenericName).trim();
+            if (genericNameText.length > 0) {
+                return genericNameText;
+            }
+        }
+
+        return "";
+    }
+
+    // Fallback tooltip: shown only when Latte thin-tooltips are disabled/unavailable.
+    // This guarantees hover app-name hints without changing existing thin-tooltip behavior.
+    QtControls.ToolTip.visible: taskItem.containsMouse
+                                && !taskItem.isSeparator
+                                && fallbackTooltipText.length > 0
+                                && !windowsPreviewDlg.visible
+                                && !thinTooltipActive
+    QtControls.ToolTip.delay: 120
+    QtControls.ToolTip.timeout: -1
+    QtControls.ToolTip.text: fallbackTooltipText
 
     preserveIndicatorInInitialPosition: inBouncingAnimation || inAttentionBuiltinAnimation || inNewWindowBuiltinAnimation
 
-    parabolicItem.isParabolicEventBlocked: root.dragSource
+    // Keep hover wave active for neighboring tasks while dragging. Only the
+    // dragged source item itself should block parabolic updates.
+    parabolicItem.isParabolicEventBlocked: ((root.dragSource !== null) && (root.dragSource === taskItem))
                                            || !hoverEnabled
                                            || !taskItem.abilities.myView.isShownFully
                                            || inAnimation
@@ -148,8 +195,12 @@ AbilityItem.BasicItem {
                                                                      && windowsPreviewDlg.activeItem
                                                                      && (windowsPreviewDlg.activeItem === taskItem)) )
 
+    property var pendingActivationModelIndex: undefined
+    property bool pendingActivationIsMinimized: false
+    property bool pendingActivationIsActive: false
+
     indicator.isGroup: !root.disableAllWindowsFunctionality && taskItem.isGroupParent
-    indicator.isHovered: taskItem.containsMouse || (windowsPreviewDlg.containsMouse && (toolTipDelegate.parentTask === taskItem))
+    indicator.isHovered: taskItem.mouseArea.hoverVisualActive || (windowsPreviewDlg.containsMouse && (toolTipDelegate.parentTask === taskItem))
     indicator.isMinimized: !root.disableAllWindowsFunctionality && taskItem.isMinimized
     indicator.isPressed: taskItem.pressed
     indicator.inAttention: !root.disableAllWindowsFunctionality && taskItem.inAttention
@@ -443,27 +494,58 @@ AbilityItem.BasicItem {
     function activateTask() {
         if( taskItem.isLauncher || root.disableAllWindowsFunctionality){
             activateLauncher();
-        } else{
-            if (model.IsGroupParent) {
-                var isWindowViewAvailable = LatteCore.WindowSystem.compositingActive && backend.windowViewAvailable;
-                if (isWindowViewAvailable) {
-                    root.activateWindowView(model.WinIdList);
-                }
-            } else {
-                if (windowsPreviewDlg.visible) {
-                    forceHidePreview(8.3);
-                }
+            return;
+        }
 
-                if (isMinimized) {
-                    var i = modelIndex();
-                    tasksModel.requestToggleMinimized(i);
-                    tasksModel.requestActivate(i);
-                } else if (isActive) {
-                    tasksModel.requestToggleMinimized(modelIndex());
-                } else {
-                    tasksModel.requestActivate(modelIndex());
-                }
+        var taskIndex = modelIndex();
+
+        if (windowsPreviewDlg.visible) {
+            pendingActivationModelIndex = taskIndex;
+            pendingActivationIsMinimized = isMinimized;
+            pendingActivationIsActive = isActive;
+            forceHidePreview(8.3);
+            delayedActivationTimer.restart();
+            return;
+        }
+
+        activateWindowTask(taskIndex, isMinimized, isActive);
+    }
+
+    function activateWindowTask(taskIndex, taskIsMinimized, taskIsActive) {
+        if (model.IsGroupParent) {
+            var isWindowViewAvailable = LatteCore.WindowSystem.compositingActive && backend.windowViewAvailable;
+            if (isWindowViewAvailable) {
+                root.activateWindowView(model.WinIdList);
+            } else {
+                subWindows.activateNextTask();
             }
+            return;
+        }
+
+        var i = taskIndex !== undefined ? taskIndex : modelIndex();
+        var minimized = taskIsMinimized !== undefined ? taskIsMinimized : isMinimized;
+        var active = taskIsActive !== undefined ? taskIsActive : isActive;
+
+        if (minimized) {
+            tasksModel.requestToggleMinimized(i);
+            tasksModel.requestActivate(i);
+        } else if (active) {
+            tasksModel.requestToggleMinimized(i);
+        } else {
+            tasksModel.requestActivate(i);
+        }
+    }
+
+    Timer {
+        id: delayedActivationTimer
+        interval: 50
+        repeat: false
+
+        onTriggered: {
+            taskItem.activateWindowTask(pendingActivationModelIndex, pendingActivationIsMinimized, pendingActivationIsActive);
+            pendingActivationModelIndex = undefined;
+            pendingActivationIsMinimized = false;
+            pendingActivationIsActive = false;
         }
     }
 
@@ -623,9 +705,9 @@ AbilityItem.BasicItem {
 
     function modifierAccepted(mouse){
         if (mouse.modifiers & root.modifierQt){
-            if ((mouse.button === Qt.LeftButton && root.modifierClick === LatteTasks.Types.LeftClick)
-                    || (mouse.button === Qt.MiddleButton && root.modifierClick === LatteTasks.Types.MiddleClick)
-                    || (mouse.button === Qt.RightButton && root.modifierClick === LatteTasks.Types.RightClick))
+            if ((mouse.button === Qt.LeftButton && root.modifierClick === LatteTasks.types.LeftClick)
+                    || (mouse.button === Qt.MiddleButton && root.modifierClick === LatteTasks.types.MiddleClick)
+                    || (mouse.button === Qt.RightButton && root.modifierClick === LatteTasks.types.RightClick))
                 return true;
         }
 
@@ -973,7 +1055,12 @@ AbilityItem.BasicItem {
     }
 
     ///Item's Removal Animation
-    ListView.onRemove: TaskAnimations.RealRemovalAnimation{ id: taskRealRemovalAnimation }
+    TaskAnimations.RealRemovalAnimation{ id: taskRealRemovalAnimation }
+
+    ListView.onRemove: function() {
+        taskRealRemovalAnimation.stop();
+        taskRealRemovalAnimation.start();
+    }
 
     onIsLauncherAnimationRunningChanged: {
         if (!isLauncherAnimationRunning && taskRealRemovalAnimation.paused) {

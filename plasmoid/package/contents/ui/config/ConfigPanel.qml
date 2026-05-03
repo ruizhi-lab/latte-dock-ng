@@ -138,7 +138,7 @@ Item {
       //  anchors.verticalCenterOffset:  (mainColumn.height / 4)
 
         width: 0.85 * mainItem.width
-        text: i18n("For the disabled settings you should use the Latte Dock Configuration Window")
+        text: i18n("For the disabled settings, use the Latte Dock NG Settings window")
         visible: mainItem.isInNowDockPanel
 
         horizontalAlignment: Text.AlignHCenter

@@ -19,19 +19,19 @@ AbilityDefinition.Containment {
 
     alignment: {
         if (!myView) {
-            return LatteCore.Types.Center;
+            return LatteCore.types.Center;
         }
 
-        if (myView.alignment === LatteCore.Types.Justify) {
+        if (myView.alignment === LatteCore.types.Justify) {
             if (appletIndex>=0 && appletIndex<100) {
-                return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.Types.Left : LatteCore.Types.Top;
+                return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.types.Left : LatteCore.types.Top;
             } else if (appletIndex>=100 && appletIndex<200) {
-                return LatteCore.Types.Center;
+                return LatteCore.types.Center;
             } else if (appletIndex>=200) {
-                return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.Types.Right : LatteCore.Types.Bottom;
+                return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.types.Right : LatteCore.types.Bottom;
             }
 
-            return LatteCore.Types.Center;
+            return LatteCore.types.Center;
         }
 
         return myView.alignment;

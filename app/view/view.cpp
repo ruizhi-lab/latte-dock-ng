@@ -272,6 +272,15 @@ void View::init(Plasma::Containment *plasma_containment)
 
     connect(this, &View::activitiesChanged, this, &View::applyActivitiesToWindows);
     connect(m_positioner, &ViewPart::Positioner::winIdChanged, this, &View::applyActivitiesToWindows);
+    connect(m_positioner, &ViewPart::Positioner::winIdChanged, this, [this]() {
+        if (!m_visibility || !m_corona || !m_corona->wm()) {
+            return;
+        }
+
+        const bool onFrontLayer = !m_visibility->isBelowLayer();
+        const auto mode = onFrontLayer ? m_visibility->mode() : Types::WindowsAlwaysCover;
+        m_corona->wm()->setViewExtraFlags(this, onFrontLayer, mode);
+    });
 
     connect(this, &View::alignmentChanged, this, [&](){
         // inform neighbour vertical docks/panels to adjust their positioning

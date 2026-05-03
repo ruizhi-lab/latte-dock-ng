@@ -31,8 +31,8 @@ Item {
     property bool __isLoadedDuringViewStartup: false
 
     property string appletIndex: bridge && bridge.indexer ? String(bridge.indexer.appletIndex) : ""
-    property int group: LatteCore.Types.UniqueLaunchers
-    property string groupId: view && group === LatteCore.Types.UniqueLaunchers ? String(view.groupId) + "#" + appletIndex : ""
+    property int group: LatteCore.types.UniqueLaunchers
+    property string groupId: view && group === LatteCore.types.UniqueLaunchers ? String(view.groupId) + "#" + appletIndex : ""
 
     property Item bridge: null
     property Item layout: null
@@ -45,15 +45,15 @@ Item {
     readonly property string _NULLACTIVITYID_: "00000000-0000-0000-0000-000000000000"
 
     function inUniqueGroup() {
-        return group === LatteCore.Types.UniqueLaunchers;
+        return group === LatteCore.types.UniqueLaunchers;
     }
 
     function inLayoutGroup() {
-        return group === LatteCore.Types.LayoutLaunchers;
+        return group === LatteCore.types.LayoutLaunchers;
     }
 
     function inGlobalGroup() {
-        return group === LatteCore.Types.GlobalLaunchers;
+        return group === LatteCore.types.GlobalLaunchers;
     }
 
     function isSeparator(launcher){

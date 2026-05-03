@@ -324,22 +324,22 @@ Window{
             Text{
                 text: {
                     switch(plasmoid.configuration.alignment){
-                    case LatteCore.Types.Left:
+                    case LatteCore.types.Left:
                         return "Left";
                         break;
-                    case LatteCore.Types.Right:
+                    case LatteCore.types.Right:
                         return "Right";
                         break;
-                    case LatteCore.Types.Center:
+                    case LatteCore.types.Center:
                         return "Center";
                         break;
-                    case LatteCore.Types.Top:
+                    case LatteCore.types.Top:
                         return "Top";
                         break;
-                    case LatteCore.Types.Bottom:
+                    case LatteCore.types.Bottom:
                         return "Bottom";
                         break;
-                    case LatteCore.Types.Justify:
+                    case LatteCore.types.Justify:
                         return "Justify";
                         break;
                     }
@@ -358,43 +358,43 @@ Window{
                         return "";
 
                     switch(latteView.visibility.mode){
-                    case LatteCore.Types.AlwaysVisible:
+                    case LatteCore.types.AlwaysVisible:
                         return "Always Visible";
                         break;
-                    case LatteCore.Types.AutoHide:
+                    case LatteCore.types.AutoHide:
                         return "Auto Hide";
                         break;
-                    case LatteCore.Types.DodgeActive:
+                    case LatteCore.types.DodgeActive:
                         return "Dodge Active";
                         break;
-                    case LatteCore.Types.DodgeMaximized:
+                    case LatteCore.types.DodgeMaximized:
                         return "Dodge Maximized";
                         break;
-                    case LatteCore.Types.DodgeAllWindows:
+                    case LatteCore.types.DodgeAllWindows:
                         return "Dodge All Windows";
                         break;
-                    case LatteCore.Types.DodgeAllWindows:
+                    case LatteCore.types.DodgeAllWindows:
                         return "Dodge All Windows";
                         break;
-                    case LatteCore.Types.WindowsGoBelow:
+                    case LatteCore.types.WindowsGoBelow:
                         return "Windows Go Below";
                         break;
-                    case LatteCore.Types.WindowsCanCover:
+                    case LatteCore.types.WindowsCanCover:
                         return "Windows Can Cover";
                         break;
-                    case LatteCore.Types.WindowsAlwaysCover:
+                    case LatteCore.types.WindowsAlwaysCover:
                         return "Windows Always Cover";
                         break;
-                    case LatteCore.Types.SidebarOnDemand:
+                    case LatteCore.types.SidebarOnDemand:
                         return "OnDemand Sidebar";
                         break;
-                    case LatteCore.Types.SidebarAutoHide:
+                    case LatteCore.types.SidebarAutoHide:
                         return "AutoHide Sidebar";
                     break;
-                    case LatteCore.Types.NormalWindow:
+                    case LatteCore.types.NormalWindow:
                         return "Normal Window";
                         break;
-                    case LatteCore.Types.None:
+                    case LatteCore.types.None:
                         return "None";
                         break;
                     }

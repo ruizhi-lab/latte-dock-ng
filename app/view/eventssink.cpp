@@ -21,6 +21,17 @@
 namespace Latte {
 namespace ViewPart {
 
+namespace {
+
+inline qreal safeClamp(const qreal a, const qreal value, const qreal b)
+{
+    const qreal minValue = qMin(a, b);
+    const qreal maxValue = qMax(a, b);
+    return qBound(minValue, value, maxValue);
+}
+
+}
+
 EventsSink::EventsSink(Latte::View *parent)
     : QObject(parent),
       m_view(parent)
@@ -213,17 +224,27 @@ QEvent *EventsSink::onEvent(QEvent *e)
 
 QPointF EventsSink::positionAdjustedForDestination(const QPointF &point) const
 {
-    QRectF destinationRectToScene = m_destinationItem->mapRectToScene(QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+    if (!m_destinationItem || m_destinationItem->width() <= 0 || m_destinationItem->height() <= 0) {
+        return point;
+    }
 
-    return QPointF(qBound(destinationRectToScene.left(), point.x(), destinationRectToScene.right()),
-                   qBound(destinationRectToScene.top(), point.y(), destinationRectToScene.bottom()));
+    const QRectF destinationRectToScene = m_destinationItem->mapRectToScene(
+        QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+
+    return QPointF(safeClamp(destinationRectToScene.left(), point.x(), destinationRectToScene.right()),
+                   safeClamp(destinationRectToScene.top(), point.y(), destinationRectToScene.bottom()));
 }
 
 bool EventsSink::destinationContains(const QPointF &point) const
 {
-    QRectF destinationRectToScene = m_destinationItem->mapRectToScene(QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+    if (!m_destinationItem || m_destinationItem->width() <= 0 || m_destinationItem->height() <= 0) {
+        return false;
+    }
 
-    return destinationRectToScene.contains(point);
+    const QRectF destinationRectToScene = m_destinationItem->mapRectToScene(
+        QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+
+    return destinationRectToScene.normalized().contains(point);
 }
 
 bool EventsSink::originSinksContain(const QPointF &point) const

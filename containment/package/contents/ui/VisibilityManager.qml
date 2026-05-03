@@ -160,7 +160,7 @@ Item{
             return;
         }
 
-        if(latteView.visibility.containsMouse && latteView.visibility.mode !== LatteCore.Types.SidebarOnDemand) {
+        if(latteView.visibility.containsMouse && latteView.visibility.mode !== LatteCore.types.SidebarOnDemand) {
             updateMaskArea();
 
             if (slidingAnimationAutoHiddenOut.running && !inRelocationHiding) {
@@ -183,7 +183,7 @@ Item{
         var positioner = latteView.positioner ? latteView.positioner : null;
 
         //! WindowsCanCover case
-        if (visibility.mode === LatteCore.Types.WindowsCanCover) {
+        if (visibility.mode === LatteCore.types.WindowsCanCover) {
             visibility.setViewOnFrontLayer();
         }
 
@@ -220,7 +220,7 @@ Item{
             return;
         }
 
-        if (visibility.mode === LatteCore.Types.WindowsCanCover) {
+        if (visibility.mode === LatteCore.types.WindowsCanCover) {
             visibility.setViewOnBackLayer();
             return;
         }
@@ -228,7 +228,7 @@ Item{
         //! Normal Dodge/AutoHide case
         if (!slidingAnimationAutoHiddenOut.running
                 && !visibility.blockHiding
-                && (!visibility.containsMouse || visibility.mode === LatteCore.Types.SidebarOnDemand /*for SidebarOnDemand mouse should be ignored on hiding*/)
+                && (!visibility.containsMouse || visibility.mode === LatteCore.types.SidebarOnDemand /*for SidebarOnDemand mouse should be ignored on hiding*/)
                 && (!visibility.isHidden || slidingAnimationAutoHiddenIn.running /*it is not already hidden or is trying to show*/)) {
             slidingAnimationAutoHiddenOut.init();
         }

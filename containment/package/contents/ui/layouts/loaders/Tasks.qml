@@ -12,7 +12,7 @@ import org.kde.latte.private.containment 0.1 as LatteContainment
 
 Loader {
     id: tasksLoader
-    active: root.scrollAction === LatteContainment.Types.ScrollTasks || root.scrollAction === LatteContainment.Types.ScrollToggleMinimized
+    active: root.scrollAction === LatteContainment.types.ScrollTasks || root.scrollAction === LatteContainment.types.ScrollToggleMinimized
     sourceComponent: Item {
         TaskManager.TasksModel {
             id: tasksModel

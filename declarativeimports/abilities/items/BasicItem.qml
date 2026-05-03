@@ -391,6 +391,46 @@ Item{
         restoreAnimation.start();
     }
 
+    // Feed drag pointer coordinates directly to the parabolic tracker when
+    // hover move events are swallowed during button-held drags.
+    function updateParabolicFromExternalPosition(sourceItem, sourceX, sourceY) {
+        if (!parabolicEventsAreaLoader.active
+                || !parabolicEventsAreaLoader.item
+                || !abilityItem.abilities.parabolic.isEnabled
+                || parabolicItem.isParabolicEventBlocked) {
+            return false;
+        }
+
+        var area = parabolicEventsAreaLoader.item;
+        var localPos = sourceItem.mapToItem(area, sourceX, sourceY);
+
+        if (localPos.x < 0 || localPos.y < 0 || localPos.x > area.width || localPos.y > area.height) {
+            return false;
+        }
+
+        if (abilityItem.abilities.parabolic.currentParabolicItem !== area) {
+            abilityItem.abilities.parabolic.setCurrentParabolicItem(area);
+            var shortcutIndex = abilityItem.abilities.shortcuts.shortcutIndex(abilityItem.itemIndex);
+            abilityItem.abilities.parabolic.setCurrentParabolicItemIndex(shortcutIndex);
+        }
+
+        area.parabolicMove(localPos.x, localPos.y);
+        return true;
+    }
+
+    function clearParabolicFromExternalPosition() {
+        if (!parabolicEventsAreaLoader.active || !parabolicEventsAreaLoader.item) {
+            return;
+        }
+
+        var area = parabolicEventsAreaLoader.item;
+
+        if (abilityItem.abilities.parabolic.currentParabolicItem === area) {
+            abilityItem.abilities.parabolic.setCurrentParabolicItem(null);
+            area.parabolicExited();
+        }
+    }
+
     //BEGIN states
     states: [
         State {

@@ -21,6 +21,7 @@ Item {
 
     property Item target
     property Item ignoredItem
+    property Item dragParabolicItem
     property bool moved: false
     property bool containsDrag: false
 
@@ -46,10 +47,60 @@ Item {
         target: root
         function onDragSourceChanged() {
             if (!dragSource) {
+                if (dragParabolicItem && dragParabolicItem.clearParabolicFromExternalPosition) {
+                    dragParabolicItem.clearParabolicFromExternalPosition();
+                }
+                dragParabolicItem = null;
                 ignoredItem = null;
                 ignoreItemTimer.stop();
             }
         }
+    }
+
+    function updateDragParabolic(hoverItem, rootX, rootY) {
+        if (dragParabolicItem && dragParabolicItem !== hoverItem && dragParabolicItem.clearParabolicFromExternalPosition) {
+            dragParabolicItem.clearParabolicFromExternalPosition();
+        }
+
+        if (hoverItem && hoverItem.updateParabolicFromExternalPosition
+                && hoverItem.updateParabolicFromExternalPosition(dArea, rootX, rootY)) {
+            dragParabolicItem = hoverItem;
+        } else {
+            dragParabolicItem = null;
+        }
+    }
+
+    // Public entry point used by task delegates while dragging. Keep this on
+    // the MouseHandler root item so callers can reliably access it.
+    function reorderFromDragPosition(sourceItem, rootX, rootY) {
+        if (!sourceItem || !target || tasksModel.sortMode !== TaskManager.TasksModel.SortManual) {
+            return;
+        }
+
+        if (target.animating) {
+            return;
+        }
+
+        var eventToTarget = mapToItem(target, rootX, rootY);
+        var above = target.childAtPos(eventToTarget.x, eventToTarget.y, sourceItem);
+        updateDragParabolic(above, rootX, rootY);
+        var insertAt = TaskTools.insertIndexAt(above, eventToTarget.x, eventToTarget.y);
+
+        if (insertAt < 0 || insertAt >= tasksModel.count) {
+            return;
+        }
+
+        if (sourceItem === above || sourceItem.itemIndex === insertAt) {
+            return;
+        }
+
+        sourceItem.z = 100;
+        ignoredItem = above;
+
+        var from = sourceItem.itemIndex;
+        tasksModel.move(from, insertAt);
+
+        ignoreItemTimer.restart();
     }
 
     DropArea {
@@ -87,7 +138,38 @@ Item {
         }
 
         function isMovingTask(event) {
-            return event.mimeData.formats.indexOf("application/x-orgkdeplasmataskmanager_taskbuttonitem") >= 0;
+            if (root.dragSource) {
+                return true;
+            }
+
+            if (!event || !event.mimeData) {
+                return false;
+            }
+
+            var source = event.mimeData.source;
+
+            while (source) {
+                if (source.objectName === "TaskItem") {
+                    return true;
+                }
+
+                source = source.parent;
+            }
+
+            if (event.mimeData.formats === undefined) {
+                return false;
+            }
+
+            for (var i = 0; i < event.mimeData.formats.length; ++i) {
+                var format = String(event.mimeData.formats[i]);
+
+                if (format === "application/x-orgkdeplasmataskmanager_taskbuttonitem"
+                        || format.indexOf("plasmataskmanager") >= 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         function clearDroppingFlags() {
@@ -103,7 +185,7 @@ Item {
             }
         }
 
-        onDragEnter:{          
+        function onDragEnter(event) {
             inMovingTask = isMovingTask(event);
             inDroppingOnlyLaunchers = !inMovingTask && isDroppingOnlyLaunchers(event);
             inDroppingSeparator = !inMovingTask && isDroppingSeparator(event);
@@ -124,7 +206,7 @@ Item {
             dArea.containsDrag = true;
         }
 
-        onDragMove: {
+        function onDragMove(event) {
             if (!eventIsAccepted) {
                 clearDroppingFlags();
                 event.ignore();
@@ -139,7 +221,7 @@ Item {
 
             var eventToTarget = mapToItem(target, event.x, event.y);
 
-            var above = target.childAtPos(eventToTarget.x, eventToTarget.y);
+            var above = target.childAtPos(eventToTarget.x, eventToTarget.y, root.dragSource);
 
             // If we're mixing launcher tasks with other tasks and are moving
             // a (small) launcher task across a non-launcher task, don't allow
@@ -169,18 +251,7 @@ Item {
             //I use the ignoredItem in order to reduce the move calls as much
             //as possible
             if (tasksModel.sortMode == TaskManager.TasksModel.SortManual && root.dragSource && ignoredItem == null) {
-                var insertAt = TaskTools.insertIndexAt(above, eventToTarget.x, eventToTarget.y);
-
-                if (root.dragSource != above && root.dragSource.itemIndex != insertAt) {
-                    //      console.log(root.dragSource.itemIndex + " - "+insertAt);
-                    root.dragSource.z = 100;
-                    ignoredItem = above;
-
-                    var pos = root.dragSource.itemIndex;
-                    tasksModel.move(pos, insertAt);
-
-                    ignoreItemTimer.restart();
-                }
+                dArea.reorderFromDragPosition(root.dragSource, event.x, event.y);
             } else if (!root.dragSource && above && hoveredItem != above) {
                 hoveredItem = above;
                 activationTimer.restart();
@@ -196,13 +267,17 @@ Item {
 
         onDragLeave: {
             dArea.containsDrag = false;
+            if (dragParabolicItem && dragParabolicItem.clearParabolicFromExternalPosition) {
+                dragParabolicItem.clearParabolicFromExternalPosition();
+            }
+            dragParabolicItem = null;
             hoveredItem = null;
             clearDroppingFlags();
 
             activationTimer.stop();
         }
 
-        onDrop: {
+        function onDrop(event) {
             if (!eventIsAccepted) {
                 clearDroppingFlags();
                 event.ignore();
@@ -211,6 +286,10 @@ Item {
 
             // Reject internal drops.
             dArea.containsDrag = false;
+            if (dragParabolicItem && dragParabolicItem.clearParabolicFromExternalPosition) {
+                dragParabolicItem.clearParabolicFromExternalPosition();
+            }
+            dragParabolicItem = null;
 
             if (inDroppingSeparator) {
                 if (hoveredItem && hoveredItem.itemIndex >=0){

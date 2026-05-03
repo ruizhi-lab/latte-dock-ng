@@ -26,7 +26,9 @@ LatteComponents.IndicatorItem{
 
     property real textColorBrightness: colorBrightness(theme.textColor)
 
-    property color isActiveColor: theme.buttonFocusColor
+    property color isActiveColor: theme.buttonFocusColor !== undefined
+                                  ? theme.buttonFocusColor
+                                  : (theme.highlightColor !== undefined ? theme.highlightColor : theme.textColor)
     property color minimizedColor: {
         if (minimizedTaskColoredDifferently) {
             return (textColorBrightness > 127.5 ? Qt.darker(theme.textColor, 1.7) : Qt.lighter(theme.textColor, 7));
@@ -302,4 +304,3 @@ LatteComponents.IndicatorItem{
         ]
     }
 }// number of windows indicator
-

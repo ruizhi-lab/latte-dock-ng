@@ -6,6 +6,7 @@
 */
 
 #include "settingsdialog.h"
+#include "config-latte.h"
 
 // local
 #include "ui_settingsdialog.h"
@@ -23,11 +24,13 @@
 
 // Qt
 #include <QButtonGroup>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFileDialog>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QUrl>
 
 // KDE
 #include <KLocalizedString>
@@ -84,12 +87,6 @@ SettingsDialog::SettingsDialog(QWidget *parent, Latte::Corona *corona)
 
     connect(m_tabPreferencesHandler, &Settings::Handler::TabPreferences::dataChanged, this, &SettingsDialog::updateApplyButtonsState);
 
-    //! timers
-    m_activitiesTimer.setSingleShot(true);
-    m_activitiesTimer.setInterval(750);
-    connect(&m_activitiesTimer, &QTimer::timeout, this, &SettingsDialog::updateWindowActivities);
-    m_activitiesTimer.start();
-
     updateApplyButtonsState();
 }
 
@@ -135,10 +132,10 @@ void SettingsDialog::initFileMenu()
     QAction *screensAction = m_fileMenu->addAction(i18n("&Screens..."));
     screensAction->setIcon(QIcon::fromTheme("document-properties"));
     screensAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_S));
-    screensAction->setToolTip(i18n("Examine your screens and remove deprecated references"));
+    screensAction->setToolTip(i18n("Examine your screens and remove stale references"));
     connect(screensAction, &QAction::triggered, this, &SettingsDialog::showScreensDialog);
 
-    QAction *quitAction = m_fileMenu->addAction(i18n("&Quit Latte"));
+    QAction *quitAction = m_fileMenu->addAction(i18n("&Quit Latte Dock NG"));
     quitAction->setIcon(QIcon::fromTheme("application-exit"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
 
@@ -161,6 +158,16 @@ void SettingsDialog::initHelpMenu()
         m_helpMenu = new KHelpMenu(m_globalMenuBar);
         m_globalMenuBar->addMenu(m_helpMenu->menu());
     }
+
+    QAction *githubIssueAction = new QAction(i18n("Report Bug (GitHub Issue)..."), m_helpMenu->menu());
+    githubIssueAction->setIcon(QIcon::fromTheme(QStringLiteral("tools-report-bug")));
+    githubIssueAction->setToolTip(i18n("Open Latte Dock NG issue tracker on GitHub"));
+    connect(githubIssueAction, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QUrl(QStringLiteral(BUG_ADDRESS)));
+    });
+    m_helpMenu->menu()->insertAction(m_helpMenu->menu()->actions().isEmpty() ? nullptr : m_helpMenu->menu()->actions().constFirst(),
+                                     githubIssueAction);
+    m_helpMenu->menu()->insertSeparator(m_helpMenu->menu()->actions().size() > 1 ? m_helpMenu->menu()->actions().at(1) : nullptr);
 
     //! hide help menu actions that are not used
     m_helpMenu->action(KHelpMenu::menuHelpContents)->setVisible(false);
@@ -257,7 +264,7 @@ void SettingsDialog::importFullConfiguration()
     importFileDialog->setDefaultSuffix("latterc");
 
     QStringList filters;
-    filters << QString(i18nc("import full configuration", "Latte Dock Full Configuration file") + "(*.latterc)");
+    filters << QString(i18nc("import full configuration", "Latte Dock NG Full Configuration file") + "(*.latterc)");
     importFileDialog->setNameFilters(filters);
 
     connect(importFileDialog, &QFileDialog::finished, importFileDialog, &QFileDialog::deleteLater);
@@ -320,7 +327,7 @@ void SettingsDialog::exportFullConfiguration()
     exportFileDialog->setDefaultSuffix("latterc");
 
     QStringList filters;
-    QString filter2(i18nc("export full configuration", "Latte Dock Full Configuration file v0.2") + "(*.latterc)");
+    QString filter2(i18nc("export full configuration", "Latte Dock NG Full Configuration file v0.2") + "(*.latterc)");
 
     filters << filter2;
 
@@ -362,7 +369,7 @@ void SettingsDialog::exportFullConfiguration()
     exportFileDialog->open();
 
     QDate currentDate = QDate::currentDate();
-    QString proposedName = QStringLiteral("Latte Dock (") + currentDate.toString("yyyy-MM-dd")+")";
+    QString proposedName = QStringLiteral("Latte Dock NG (") + currentDate.toString("yyyy-MM-dd")+")";
 
     exportFileDialog->selectFile(proposedName);
 }
@@ -592,11 +599,6 @@ void SettingsDialog::dropEvent(QDropEvent *event)
 }
 
 
-
-void SettingsDialog::updateWindowActivities()
-{
-    // setOnActivities is X11-only; no-op on Wayland
-}
 
 void SettingsDialog::save()
 {

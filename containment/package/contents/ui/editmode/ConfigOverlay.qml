@@ -241,7 +241,7 @@ MouseArea {
         placeHolder.parent = configurationArea;
         currentApplet.z = 1;
 
-        if (root.myView.alignment === LatteCore.Types.Justify) {
+        if (root.myView.alignment === LatteCore.types.Justify) {
             fastLayoutManager.moveAppletsBasedOnJustifyAlignment();
         }
 

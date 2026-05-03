@@ -107,11 +107,11 @@ Item {
     property bool lastChildOfEndLayout: index === appletItem.layouter.endLayout.lastVisibleIndex
 
     readonly property bool atScreenEdge: {
-        if (appletItem.myView.alignment === LatteCore.Types.Center) {
+        if (appletItem.myView.alignment === LatteCore.types.Center) {
             return false;
         }
 
-        if (appletItem.myView.alignment === LatteCore.Types.Justify) {
+        if (appletItem.myView.alignment === LatteCore.types.Justify) {
             //! Justify case
             if (root.maxLengthPerCentage!==100 || plasmoid.configuration.offset!==0) {
                 return false;
@@ -134,17 +134,17 @@ Item {
             return false;
         }
 
-        if (appletItem.myView.alignment === LatteCore.Types.Left && plasmoid.configuration.offset===0) {
+        if (appletItem.myView.alignment === LatteCore.types.Left && plasmoid.configuration.offset===0) {
             //! Left case
             return firstChildOfMainLayout;
-        } else if (appletItem.myView.alignment === LatteCore.Types.Right && plasmoid.configuration.offset===0) {
+        } else if (appletItem.myView.alignment === LatteCore.types.Right && plasmoid.configuration.offset===0) {
             //! Right case
             return lastChildOfMainLayout;
         }
 
-        if (appletItem.myView.alignment === LatteCore.Types.Top && plasmoid.configuration.offset===0) {
+        if (appletItem.myView.alignment === LatteCore.types.Top && plasmoid.configuration.offset===0) {
             return firstChildOfMainLayout && latteView && latteView.y === latteView.screenGeometry.y;
-        } else if (appletItem.myView.alignment === LatteCore.Types.Bottom && plasmoid.configuration.offset===0) {
+        } else if (appletItem.myView.alignment === LatteCore.types.Bottom && plasmoid.configuration.offset===0) {
             return lastChildOfMainLayout && latteView && ((latteView.y + latteView.height) === (latteView.screenGeometry.y + latteView.screenGeometry.height));
         }
 

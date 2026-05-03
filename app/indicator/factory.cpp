@@ -235,10 +235,16 @@ void Factory::removeIndicatorRecords(const QString &path)
         m_plugins.remove(pluginId);
         m_pluginUiPaths.remove(pluginId);
 
-        int pos = m_customPluginIds.indexOf(pluginId);
+        const int pos = m_customPluginIds.indexOf(pluginId);
 
-        m_customPluginIds.removeAt(pos);
-        m_customPluginNames.removeAt(pos);
+        if (pos >= 0) {
+            m_customPluginIds.removeAt(pos);
+            if (pos < m_customPluginNames.size()) {
+                m_customPluginNames.removeAt(pos);
+            }
+        } else {
+            qWarning() << "Indicator removal list mismatch, plugin id not found in custom ids:" << pluginId;
+        }
         m_customLocalPluginIds.removeAll(pluginId);
 
         m_indicatorsPaths.removeAll(path);

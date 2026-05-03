@@ -15,20 +15,21 @@ AbilityDefinition.ParabolicEffect {
     property Item bridge: null
     property Item indexer: null
     property Item layout: null
+    readonly property bool hasBridgeParabolicHost: bridge && bridge.parabolic && bridge.parabolic.host
 
     isEnabled: ref.parabolic.isEnabled
     factor: ref.parabolic.factor
-    restoreZoomIsBlocked: bridge ? (bridge.parabolic.host.restoreZoomIsBlocked || local.restoreZoomIsBlocked) : local.restoreZoomIsBlocked
+    restoreZoomIsBlocked: hasBridgeParabolicHost ? (bridge.parabolic.host.restoreZoomIsBlocked || local.restoreZoomIsBlocked) : local.restoreZoomIsBlocked
     currentParabolicItem: ref.parabolic.currentParabolicItem
     spread: ref.parabolic.spread
 
-    readonly property bool isActive: bridge !== null
+    readonly property bool isActive: hasBridgeParabolicHost
     //! private properties can not go to definition because can not be made readonly in there
     //! special care must be taken in order to be redefined in local properties
     readonly property bool directRenderingEnabled: ref.parabolic._privates.directRenderingEnabled
     readonly property bool horizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property bool isHovered: {
-        if (!bridge || !bridge.parabolic.host.currentParabolicItem || !layout) {
+        if (!hasBridgeParabolicHost || !bridge.parabolic.host.currentParabolicItem || !layout) {
             return false;
         }
 
@@ -53,7 +54,7 @@ AbilityDefinition.ParabolicEffect {
 
     Item {
         id: ref
-        readonly property Item parabolic: bridge ? bridge.parabolic.host : local
+        readonly property Item parabolic: hasBridgeParabolicHost ? bridge.parabolic.host : local
     }
 
     onIsActiveChanged: {
@@ -83,7 +84,7 @@ AbilityDefinition.ParabolicEffect {
     Connections {
         target: parabolic
         function onRestoreZoomIsBlockedChanged() {
-            if (!(bridge || bridge.host)) {
+            if (!hasBridgeParabolicHost) {
                 if (!parabolic.restoreZoomIsBlocked) {
                     parabolic.startRestoreZoomTimer();
                 } else {
@@ -108,7 +109,7 @@ AbilityDefinition.ParabolicEffect {
             return;
         }
 
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.startRestoreZoomTimer();
         } else {
             restoreZoomTimer.start();
@@ -116,7 +117,7 @@ AbilityDefinition.ParabolicEffect {
     }
 
     function stopRestoreZoomTimer(){
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.stopRestoreZoomTimer();
         } else {
             restoreZoomTimer.stop();
@@ -124,7 +125,7 @@ AbilityDefinition.ParabolicEffect {
     }
 
     function setDirectRenderingEnabled(value) {
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.setDirectRenderingEnabled(value);
         } else {
             local._privates.directRenderingEnabled = value;
@@ -132,7 +133,7 @@ AbilityDefinition.ParabolicEffect {
     }
 
     function setCurrentParabolicItem(item) {
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.setCurrentParabolicItem(item);
         } else {
             local.currentParabolicItem = item;
@@ -151,7 +152,7 @@ AbilityDefinition.ParabolicEffect {
 
     function sltTrackLowerItemScale(delegateIndex, newScales){
         //! send update signal to host
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
             if (delegateIndex === -1) {
                 bridge.parabolic.clientRequestUpdateLowerItemScale(newScales);
@@ -163,7 +164,7 @@ AbilityDefinition.ParabolicEffect {
 
     function sltTrackHigherItemScale(delegateIndex, newScales) {
         //! send update signal to host
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
             if (delegateIndex >= indexer.itemsCount) {
                 bridge.parabolic.clientRequestUpdateHigherItemScale(newScales);
@@ -174,7 +175,7 @@ AbilityDefinition.ParabolicEffect {
     }
 
     function setCurrentParabolicItemIndex(index) {
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.setCurrentParabolicItemIndex(index);
         }
     }
@@ -184,7 +185,7 @@ AbilityDefinition.ParabolicEffect {
             return
         }
 
-        if (bridge) {
+        if (hasBridgeParabolicHost) {
             bridge.parabolic.host.sglClearZoom();
         } else {
             parabolic.sglClearZoom();

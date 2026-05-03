@@ -11,10 +11,10 @@ import QtQuick.Effects
 
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasma5support 2.0 as Plasma5Support
 import org.kde.ksvg 1.0 as KSvg
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.private.mpris as Mpris
 
 import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.plasma.private.taskmanager 0.1 as TaskManagerApplet
@@ -106,7 +106,7 @@ PlasmoidItem {
 
     //global plasmoid reference to the context menu
     property QtObject contextMenu: null
-    property QtObject contextMenuComponent: Qt.createComponent("ContextMenu.qml");
+    property QtObject contextMenuComponent: Qt.createComponent("ContextMenu.qml", Component.PreferSynchronous);
     property Item dragSource: null
 
     property Item tasksExtendedManager: _tasksExtendedManager
@@ -125,11 +125,11 @@ PlasmoidItem {
 
     //BEGIN properties
     property bool groupTasksByDefault: plasmoid.configuration.groupTasksByDefault
-    property bool highlightWindows: hoverAction === LatteTasks.Types.HighlightWindows || hoverAction === LatteTasks.Types.PreviewAndHighlightWindows
+    property bool highlightWindows: hoverAction === LatteTasks.types.HighlightWindows || hoverAction === LatteTasks.types.PreviewAndHighlightWindows
 
     property bool scrollingEnabled: plasmoid.configuration.scrollTasksEnabled
     property bool autoScrollTasksEnabled: scrollingEnabled && plasmoid.configuration.autoScrollTasksEnabled
-    property bool manualScrollTasksEnabled: scrollingEnabled &&  manualScrollTasksType !== LatteTasks.Types.ManualScrollDisabled
+    property bool manualScrollTasksEnabled: scrollingEnabled &&  manualScrollTasksType !== LatteTasks.types.ManualScrollDisabled
     property int manualScrollTasksType: plasmoid.configuration.manualScrollTasksType
 
     property bool showInfoBadge: plasmoid.configuration.showInfoBadge
@@ -164,7 +164,7 @@ PlasmoidItem {
         return "";
     }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
-    property bool showPreviews:  hoverAction === LatteTasks.Types.PreviewWindows || hoverAction === LatteTasks.Types.PreviewAndHighlightWindows
+    property bool showPreviews:  hoverAction === LatteTasks.types.PreviewWindows || hoverAction === LatteTasks.types.PreviewAndHighlightWindows
     property bool showWindowActions: plasmoid.configuration.showWindowActions && !disableAllWindowsFunctionality
     property bool showWindowsOnlyFromLaunchers: plasmoid.configuration.showWindowsOnlyFromLaunchers && !disableAllWindowsFunctionality
 
@@ -177,22 +177,22 @@ PlasmoidItem {
     property int modifierClickAction: plasmoid.configuration.modifierClickAction
     property int modifierClick: plasmoid.configuration.modifierClick
     property int modifierQt:{
-        if (modifier === LatteTasks.Types.Shift)
+        if (modifier === LatteTasks.types.Shift)
             return Qt.ShiftModifier;
-        else if (modifier === LatteTasks.Types.Ctrl)
+        else if (modifier === LatteTasks.types.Ctrl)
             return Qt.ControlModifier;
-        else if (modifier === LatteTasks.Types.Alt)
+        else if (modifier === LatteTasks.types.Alt)
             return Qt.AltModifier;
-        else if (modifier === LatteTasks.Types.Meta)
+        else if (modifier === LatteTasks.types.Meta)
             return Qt.MetaModifier;
         else return -1;
     }
     property int taskScrollAction: plasmoid.configuration.taskScrollAction
 
     onTaskScrollActionChanged: {
-        if (taskScrollAction > LatteTasks.Types.ScrollToggleMinimized) {
-            //! migrating scroll action to LatteTasks.Types.ScrollAction
-            plasmoid.configuration.taskScrollAction = plasmoid.configuration.taskScrollAction-LatteTasks.Types.ScrollToggleMinimized;
+        if (taskScrollAction > LatteTasks.types.ScrollToggleMinimized) {
+            //! migrating scroll action to LatteTasks.types.ScrollAction
+            plasmoid.configuration.taskScrollAction = plasmoid.configuration.taskScrollAction-LatteTasks.types.ScrollToggleMinimized;
         }
     }
 
@@ -348,6 +348,7 @@ PlasmoidItem {
     function forcePreviewsHiding(debug) {
         // console.log(" org.kde.latte   Tasks: Force hide previews event called: "+debug);
         windowsPreviewDlg.activeItem = null;
+        toolTipDelegate.clearPreviewData();
         windowsPreviewDlg.visible = false;
     }
 
@@ -544,6 +545,7 @@ PlasmoidItem {
 
         groupMode: groupTasksByDefault ? TaskManager.TasksModel.GroupApplications : TaskManager.TasksModel.GroupDisabled
         sortMode: TaskManager.TasksModel.SortManual
+        taskReorderingEnabled: true
 
         property bool anyTaskDemandsAttentionInValidTime: false
 
@@ -616,6 +618,8 @@ PlasmoidItem {
 
     Item {
         id: dragHelper
+        width: 1
+        height: 1
 
         Drag.dragType: Drag.Automatic
         Drag.supportedActions: Qt.CopyAction | Qt.MoveAction | Qt.LinkAction
@@ -638,80 +642,8 @@ PlasmoidItem {
         Component.onCompleted: previousActivity = currentActivity;
     }
 
-    Plasma5Support.DataSource {
+    Mpris.Mpris2Model {
         id: mpris2Source
-        engine: "mpris2"
-        connectedSources: sources
-        function sourceNameForLauncherUrl(launcherUrl, pid) {
-            if (!launcherUrl || launcherUrl === "") {
-                return "";
-            }
-
-            // MPRIS spec explicitly mentions that "DesktopEntry" is with .desktop extension trimmed
-            // Moreover, remove URL parameters, like wmClass (part after the question mark)
-            var desktopFileName = launcherUrl.toString().split('/').pop().split('?')[0].replace(".desktop", "")
-            if (desktopFileName.indexOf("applications:") === 0) {
-                desktopFileName = desktopFileName.substr(13)
-            }
-
-            for (var i = 0, length = connectedSources.length; i < length; ++i) {
-                var source = connectedSources[i];
-                // we intend to connect directly, otherwise the multiplexer steals the connection away
-                if (source === "@multiplex") {
-                    continue;
-                }
-
-                var sourceData = data[source];
-                if (!sourceData) {
-                    continue;
-                }
-
-                if (sourceData.DesktopEntry === desktopFileName || (pid && sourceData.InstancePid === pid)) {
-                    return source;
-                }
-
-                var metadata = sourceData.Metadata;
-                if (metadata) {
-                    var kdePid = metadata["kde:pid"];
-                    if (kdePid && pid === kdePid) {
-                        return source;
-                    }
-                }
-            }
-
-            return ""
-        }
-
-        function startOperation(source, op) {
-            var service = serviceForSource(source)
-            var operation = service.operationDescription(op)
-            return service.startOperationCall(operation)
-        }
-
-        function goPrevious(source) {
-            startOperation(source, "Previous");
-        }
-        function goNext(source) {
-            startOperation(source, "Next");
-        }
-        function play(source) {
-            startOperation(source, "Play");
-        }
-        function pause(source) {
-            startOperation(source, "Pause");
-        }
-        function playPause(source) {
-            startOperation(source, "PlayPause");
-        }
-        function stop(source) {
-            startOperation(source, "Stop");
-        }
-        function raise(source) {
-            startOperation(source, "Raise");
-        }
-        function quit(source) {
-            startOperation(source, "Quit");
-        }
     }
 
     Loader {
@@ -755,9 +687,13 @@ PlasmoidItem {
         myView.local.itemShadow.isEnabled: plasmoid.configuration.showShadows
         myView.local.itemShadow.size: Math.ceil(0.12*appletAbilities.metrics.iconSize)
 
-        parabolic.local.isEnabled: (!root.inPlasma || root.inPlasmaDesktop) && parabolic.local.factor.zoom > 1.0
-        parabolic.local.factor.zoom: parabolic.isEnabled ? ( 1 + (plasmoid.configuration.zoomLevel / 20) ) : 1.0
-        parabolic.local.factor.maxZoom: parabolic.isEnabled ? Math.max(parabolic.local.factor.zoom, 1.6) : 1.0
+        // Avoid self-referential bindings between parabolic.isEnabled and
+        // parabolic.local.factor.zoom that can keep zoom disabled after startup.
+        readonly property real localParabolicZoom: 1 + (plasmoid.configuration.zoomLevel / 20)
+        readonly property bool localParabolicEnabled: (!root.inPlasma || root.inPlasmaDesktop) && localParabolicZoom > 1.0
+        parabolic.local.isEnabled: localParabolicEnabled
+        parabolic.local.factor.zoom: localParabolicEnabled ? localParabolicZoom : 1.0
+        parabolic.local.factor.maxZoom: localParabolicEnabled ? Math.max(parabolic.local.factor.zoom, 1.6) : 1.0
         parabolic.local.restoreZoomIsBlocked: root.contextMenu || windowsPreviewDlg.containsMouse
 
         shortcuts.isStealingGlobalPositionShortcuts: plasmoid.configuration.isPreferredForPositionShortcuts
@@ -928,7 +864,7 @@ PlasmoidItem {
                 });
             }
 
-            onUrlsDropped: {
+            function onUrlsDropped(urls) {
                 //! inform synced docks for new dropped launchers
                 if (onlyLaunchersInDroppedList(urls)) {
                     appletAbilities.launchers.addDroppedLaunchers(urls);
@@ -1027,21 +963,40 @@ PlasmoidItem {
                     ///    NumberAnimation { properties: "x,y"; duration: 400; easing.type: Easing.Linear }
                     ///}
 
-                    function childAtPos(x, y){
+                    function childAtPos(x, y, ignoredItem){
                         var tasks = icList.contentItem.children;
+                        var bestTask = null;
+                        var bestDistance = Number.POSITIVE_INFINITY;
 
                         for(var i=0; i<tasks.length; ++i){
                             var task = tasks[i];
 
+                            if (task.objectName !== "TaskItem") {
+                                continue;
+                            }
+
+                            if (ignoredItem && task === ignoredItem) {
+                                continue;
+                            }
+
                             var choords = mapFromItem(task,0, 0);
 
-                            if( (task.objectName==="TaskItem") && (x>=choords.x) && (x<=choords.x+task.width)
-                                    && (y>=choords.y) && (y<=choords.y+task.height)){
-                                return task;
+                            if ((x>=choords.x) && (x<=choords.x+task.width)
+                                    && (y>=choords.y) && (y<=choords.y+task.height)) {
+                                // In parabolic mode, task delegates can overlap. Pick the
+                                // closest center to the pointer to get stable reorder target.
+                                var centerX = choords.x + (task.width / 2);
+                                var centerY = choords.y + (task.height / 2);
+                                var distance = root.vertical ? Math.abs(y - centerY) : Math.abs(x - centerX);
+
+                                if (distance < bestDistance) {
+                                    bestDistance = distance;
+                                    bestTask = task;
+                                }
                             }
                         }
 
-                        return null;
+                        return bestTask;
                     }
 
                     function childAtIndex(position) {
@@ -1261,7 +1216,23 @@ PlasmoidItem {
         initialArgs.mpris2Source = mpris2Source;
         initialArgs.backend = backend;
 
+        if (!root.contextMenuComponent || root.contextMenuComponent.status === Component.Error) {
+            if (root.contextMenuComponent && root.contextMenuComponent.status === Component.Error) {
+                console.warn("ContextMenu component load error:", root.contextMenuComponent.errorString());
+            }
+            root.contextMenuComponent = Qt.createComponent("ContextMenu.qml", Component.PreferSynchronous);
+        }
+
+        if (root.contextMenuComponent.status !== Component.Ready) {
+            console.warn("ContextMenu component is not ready:", root.contextMenuComponent.errorString());
+            return null;
+        }
+
         root.contextMenu = root.contextMenuComponent.createObject(rootTask, initialArgs);
+
+        if (!root.contextMenu) {
+            console.warn("ContextMenu object creation failed:", root.contextMenuComponent.errorString());
+        }
 
         return root.contextMenu;
     }
@@ -1270,6 +1241,10 @@ PlasmoidItem {
         root.activateWindowView.connect(backend.activateWindowView);
         root.windowsHovered.connect(backend.windowsHovered);
         updateListViewParent();
+
+        if (root.contextMenuComponent.status === Component.Error) {
+            console.warn("ContextMenu component load error:", root.contextMenuComponent.errorString());
+        }
     }
 
     Component.onDestruction: {
@@ -1284,7 +1259,7 @@ PlasmoidItem {
         ///Bottom Edge
         State {
             name: "bottomCenter"
-            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.Types.Center)
+            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -1293,7 +1268,7 @@ PlasmoidItem {
         },
         State {
             name: "bottomLeft"
-            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.Types.Left)
+            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.types.Left)
 
             AnchorChanges {
                 target: barLine
@@ -1302,7 +1277,7 @@ PlasmoidItem {
         },
         State {
             name: "bottomRight"
-            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.Types.Right)
+            when: (root.location===PlasmaCore.Types.BottomEdge && root.alignment===LatteCore.types.Right)
 
             AnchorChanges {
                 target: barLine
@@ -1312,7 +1287,7 @@ PlasmoidItem {
         ///Top Edge
         State {
             name: "topCenter"
-            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.Types.Center)
+            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -1321,7 +1296,7 @@ PlasmoidItem {
         },
         State {
             name: "topLeft"
-            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.Types.Left)
+            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.types.Left)
 
             AnchorChanges {
                 target: barLine
@@ -1330,7 +1305,7 @@ PlasmoidItem {
         },
         State {
             name: "topRight"
-            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.Types.Right)
+            when: (root.location===PlasmaCore.Types.TopEdge && root.alignment===LatteCore.types.Right)
 
             AnchorChanges {
                 target: barLine
@@ -1340,7 +1315,7 @@ PlasmoidItem {
         ////Left Edge
         State {
             name: "leftCenter"
-            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.Types.Center)
+            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -1349,7 +1324,7 @@ PlasmoidItem {
         },
         State {
             name: "leftTop"
-            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.Types.Top)
+            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.types.Top)
 
             AnchorChanges {
                 target: barLine
@@ -1358,7 +1333,7 @@ PlasmoidItem {
         },
         State {
             name: "leftBottom"
-            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.Types.Bottom)
+            when: (root.location===PlasmaCore.Types.LeftEdge && root.alignment===LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: barLine
@@ -1368,7 +1343,7 @@ PlasmoidItem {
         ///Right Edge
         State {
             name: "rightCenter"
-            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.Types.Center)
+            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -1377,7 +1352,7 @@ PlasmoidItem {
         },
         State {
             name: "rightTop"
-            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.Types.Top)
+            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.types.Top)
 
             AnchorChanges {
                 target: barLine
@@ -1386,7 +1361,7 @@ PlasmoidItem {
         },
         State {
             name: "rightBottom"
-            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.Types.Bottom)
+            when: (root.location===PlasmaCore.Types.RightEdge && root.alignment===LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: barLine

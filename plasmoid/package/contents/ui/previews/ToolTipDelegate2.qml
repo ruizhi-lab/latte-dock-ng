@@ -26,19 +26,19 @@ PlasmaComponents.ScrollView {
     readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
     property Item parentTask: null
-    property var rootIndex: []
+    property var rootIndex: undefined
 
     property string appName
     property int pidParent
     property bool isGroup
     property bool hideCloseButtons
 
-    property var windows: []
+    property var windows: undefined
     readonly property bool isWin: windows !== undefined
 
     property variant icon
     property url launcherUrl
-    property bool isLauncher
+    property bool isLauncher: true
     property bool isMinimizedParent
 
     // Needed for generateSubtext()
@@ -64,6 +64,25 @@ PlasmaComponents.ScrollView {
     QQC2.ScrollBar.horizontal.policy: QQC2.ScrollBar.AlwaysOff
     QQC2.ScrollBar.vertical.policy: QQC2.ScrollBar.AlwaysOff
 
+    function clearPreviewData() {
+        parentTask = null;
+        rootIndex = undefined;
+        appName = "";
+        pidParent = -1;
+        isGroup = false;
+        hideCloseButtons = false;
+        windows = undefined;
+        icon = "";
+        launcherUrl = "";
+        isLauncher = true;
+        isMinimizedParent = false;
+        displayParent = "";
+        genericName = "";
+        virtualDesktopParent = [0];
+        isOnAllVirtualDesktopsParent = false;
+        activitiesParent = [];
+    }
+
     Item{
         width: contentItem.width
         height: contentItem.height
@@ -81,7 +100,7 @@ PlasmaComponents.ScrollView {
                 windowsPreviewDlg.hide(9.9);
             }
 
-            onDragMove: {
+            function onDragMove(event) {
                 var current = mainToolTip.instanceAtPos(event.x, event.y);
 
                 if (current && currentWindow !== current && current.submodelIndex) {

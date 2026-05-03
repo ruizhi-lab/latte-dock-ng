@@ -19,10 +19,10 @@ Item {
                                      && plasmoid.configuration.autoSizeEnabled
                                      && !root.containsOnlyPlasmaTasks
                                      && layouter.fillApplets<=0
-                                     && !(root.inConfigureAppletsMode && plasmoid.configuration.alignment === LatteCore.Types.Justify) /*block shrinking for justify splitters*/
+                                     && !(root.inConfigureAppletsMode && plasmoid.configuration.alignment === LatteCore.types.Justify) /*block shrinking for justify splitters*/
                                      && latteView
-                                     && latteView.visibility.mode !== LatteCore.Types.SidebarOnDemand
-                                     && latteView.visibility.mode !== LatteCore.Types.SidebarAutoHide
+                                     && latteView.visibility.mode !== LatteCore.types.SidebarOnDemand
+                                     && latteView.visibility.mode !== LatteCore.types.SidebarAutoHide
 
     property int iconSize: -1 //it is not set, this is the default
 
@@ -171,7 +171,7 @@ Item {
             //console.log("------Entered check-----");
             //console.log("max length: "+ maxLength);
 
-            layoutLength = (plasmoid.configuration.alignment === LatteCore.Types.Justify) ?
+            layoutLength = (plasmoid.configuration.alignment === LatteCore.types.Justify) ?
                         layouts.startLayout.length+layouts.mainLayout.length+layouts.endLayout.length : layouts.mainLayout.length
 
 

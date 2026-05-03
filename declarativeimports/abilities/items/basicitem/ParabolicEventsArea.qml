@@ -95,7 +95,7 @@ Item {
         }
     }
 
-    onParabolicEntered: {
+    onParabolicEntered: function(mouseX, mouseY) {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
 
@@ -113,7 +113,7 @@ Item {
         }
     }
 
-    onParabolicMove: {
+    onParabolicMove: function(mouseX, mouseY) {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
 
@@ -141,7 +141,7 @@ Item {
         }
     }
 
-    onParabolicExited: {
+    onParabolicExited: function() {
         lastParabolicPos = 0;
 
         if (isThinTooltipEnabled) {

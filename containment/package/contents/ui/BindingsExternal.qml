@@ -47,7 +47,7 @@ Item {
         when: latteView && updateIsEnabled && !visibilityManager.inClientSideScreenEdgeSliding
         value: {
             if (root.behaveAsPlasmaPanel
-                    || root.viewType === LatteCore.Types.PanelView
+                    || root.viewType === LatteCore.types.PanelView
                     || LatteCore.WindowSystem.isPlatformWayland) {
                 return 0;
             }
@@ -122,8 +122,8 @@ Item {
             }
 
             var isTouchingTopScreenEdge = (latteView.y === latteView.screenGeometry.y);
-            var isStickedOnTopBorder = (plasmoid.configuration.alignment === LatteCore.Types.Justify && plasmoid.configuration.maxLength===100)
-                    || (plasmoid.configuration.alignment === LatteCore.Types.Top && plasmoid.configuration.offset===0);
+            var isStickedOnTopBorder = (plasmoid.configuration.alignment === LatteCore.types.Justify && plasmoid.configuration.maxLength===100)
+                    || (plasmoid.configuration.alignment === LatteCore.types.Top && plasmoid.configuration.offset===0);
 
             return root.isVertical && !latteView.visibility.isHidden && !isTouchingTopScreenEdge && isStickedOnTopBorder && background.isShown;
         }
@@ -142,8 +142,8 @@ Item {
             var screenBottom = latteView.screenGeometry.y + latteView.screenGeometry.height;
             var isTouchingBottomScreenEdge = (latteBottom === screenBottom);
 
-            var isStickedOnBottomBorder = (plasmoid.configuration.alignment === LatteCore.Types.Justify && plasmoid.configuration.maxLength===100)
-                    || (plasmoid.configuration.alignment === LatteCore.Types.Bottom && plasmoid.configuration.offset===0);
+            var isStickedOnBottomBorder = (plasmoid.configuration.alignment === LatteCore.types.Justify && plasmoid.configuration.maxLength===100)
+                    || (plasmoid.configuration.alignment === LatteCore.types.Bottom && plasmoid.configuration.offset===0);
 
             return root.isVertical && !latteView.visibility.isHidden && !isTouchingBottomScreenEdge && isStickedOnBottomBorder && background.isShown;
         }
@@ -172,7 +172,7 @@ Item {
                && (!root.screenEdgeMarginEnabled /*no-floating*/
                    || (root.screenEdgeMarginEnabled /*floating with justify alignment and 100% maxlength*/
                        && plasmoid.configuration.maxLength===100
-                       && myView.alignment===LatteCore.Types.Justify
+                       && myView.alignment===LatteCore.types.Justify
                        && !root.hideLengthScreenGaps))
     }
 
@@ -323,11 +323,11 @@ Item {
         property: "isFloatingGapWindowEnabled"
         when: latteView && latteView.visibility
         value: root.hasFloatingGapInputEventsDisabled
-               && (latteView.visibility.mode === LatteCore.Types.AutoHide
-                   || latteView.visibility.mode === LatteCore.Types.DodgeActive
-                   || latteView.visibility.mode === LatteCore.Types.DodgeAllWindows
-                   || latteView.visibility.mode === LatteCore.Types.DodgeMaximized
-                   || latteView.visibility.mode === LatteCore.Types.SidebarAutoHide)
+               && (latteView.visibility.mode === LatteCore.types.AutoHide
+                   || latteView.visibility.mode === LatteCore.types.DodgeActive
+                   || latteView.visibility.mode === LatteCore.types.DodgeAllWindows
+                   || latteView.visibility.mode === LatteCore.types.DodgeMaximized
+                   || latteView.visibility.mode === LatteCore.types.SidebarAutoHide)
     }
 
     //! View::WindowsTracker bindings
@@ -339,15 +339,15 @@ Item {
         //! takes place during startup and as such startup time is reduced
         when: latteView && latteView.windowsTracker && latteView.visibility && !root.inStartup
         value: (latteView && latteView.visibility
-                && !(latteView.visibility.mode === LatteCore.Types.AlwaysVisible /* Visibility */
-                     || latteView.visibility.mode === LatteCore.Types.WindowsGoBelow
-                     || latteView.visibility.mode === LatteCore.Types.AutoHide))
+                && !(latteView.visibility.mode === LatteCore.types.AlwaysVisible /* Visibility */
+                     || latteView.visibility.mode === LatteCore.types.WindowsGoBelow
+                     || latteView.visibility.mode === LatteCore.types.AutoHide))
                || indexer.clientsTrackingWindowsCount  > 0                   /*Applets Need Windows Tracking */
                || root.dragActiveWindowEnabled                               /*Dragging Active Window(Empty Areas)*/
                || ((root.backgroundOnlyOnMaximized                           /*Dynamic Background */
                     || plasmoid.configuration.solidBackgroundForMaximized
                     || root.disablePanelShadowMaximized
-                    || root.windowColors !== LatteContainment.Types.NoneWindowColors))
+                    || root.windowColors !== LatteContainment.types.NoneWindowColors))
                || (root.screenEdgeMarginsEnabled                             /*Dynamic Screen Edge Margin*/
                    && plasmoid.configuration.hideFloatingGapForMaximized)
     }

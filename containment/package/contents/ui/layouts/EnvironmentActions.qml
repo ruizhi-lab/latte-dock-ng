@@ -22,9 +22,9 @@ Loader {
     width: root.isHorizontal ? length : localThickness
     height: root.isVertical ? length :  localThickness
 
-    property int alignment: LatteCore.Types.BottomEdgeCenterAlign
+    property int alignment: LatteCore.types.BottomEdgeCenterAlign
 
-    readonly property bool useAllLayouts: root.myView.alignment === LatteCore.Types.Justify
+    readonly property bool useAllLayouts: root.myView.alignment === LatteCore.types.Justify
 
     readonly property int localThickness: active ? metrics.totals.thickness + metrics.margin.screenEdge : 0
     readonly property int length: {
@@ -103,7 +103,7 @@ Loader {
                 return;
             }
 
-            if (root.scrollAction === LatteContainment.Types.ScrollNone) {
+            if (root.scrollAction === LatteContainment.types.ScrollNone) {
                 root.emptyAreasWheel(wheel);
                 return;
             }
@@ -125,11 +125,11 @@ Loader {
 
             if (angle>10) {
                 //! upwards
-                if (root.scrollAction === LatteContainment.Types.ScrollDesktops) {
+                if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
                     latteView.windowsTracker.switchToPreviousVirtualDesktop();
-                } else if (root.scrollAction === LatteContainment.Types.ScrollActivities) {
+                } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToPreviousActivity();
-                } else if (root.scrollAction === LatteContainment.Types.ScrollToggleMinimized) {
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
                     if (!ctrlPressed) {
                         tasksLoader.item.activateNextPrevTask(true);
                     } else if (!selectedWindowsTracker.lastActiveWindow.isMaximized){
@@ -140,11 +140,11 @@ Loader {
                 }
             } else if (angle<-10) {
                 //! downwards
-                if (root.scrollAction === LatteContainment.Types.ScrollDesktops) {
+                if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
                     latteView.windowsTracker.switchToNextVirtualDesktop();
-                } else if (root.scrollAction === LatteContainment.Types.ScrollActivities) {
+                } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToNextActivity();
-                } else if (root.scrollAction === LatteContainment.Types.ScrollToggleMinimized) {
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
                     if (!ctrlPressed) {
                         if (selectedWindowsTracker.lastActiveWindow.isValid
                                 && !selectedWindowsTracker.lastActiveWindow.isMinimized
@@ -232,7 +232,7 @@ Loader {
     states:[
         State {
             name: "bottomCenter"
-            when: (alignment === LatteCore.Types.BottomEdgeCenterAlign)
+            when: (alignment === LatteCore.types.BottomEdgeCenterAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -242,7 +242,7 @@ Loader {
         },
         State {
             name: "bottomLeft"
-            when: (alignment === LatteCore.Types.BottomEdgeLeftAlign)
+            when: (alignment === LatteCore.types.BottomEdgeLeftAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -252,7 +252,7 @@ Loader {
         },
         State {
             name: "bottomRight"
-            when: (alignment === LatteCore.Types.BottomEdgeRightAlign)
+            when: (alignment === LatteCore.types.BottomEdgeRightAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -262,7 +262,7 @@ Loader {
         },
         State {
             name: "topCenter"
-            when: (alignment === LatteCore.Types.TopEdgeCenterAlign)
+            when: (alignment === LatteCore.types.TopEdgeCenterAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -272,7 +272,7 @@ Loader {
         },
         State {
             name: "topLeft"
-            when: (alignment === LatteCore.Types.TopEdgeLeftAlign)
+            when: (alignment === LatteCore.types.TopEdgeLeftAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -282,7 +282,7 @@ Loader {
         },
         State {
             name: "topRight"
-            when: (alignment === LatteCore.Types.TopEdgeRightAlign)
+            when: (alignment === LatteCore.types.TopEdgeRightAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -292,7 +292,7 @@ Loader {
         },
         State {
             name: "leftCenter"
-            when: (alignment === LatteCore.Types.LeftEdgeCenterAlign)
+            when: (alignment === LatteCore.types.LeftEdgeCenterAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -302,7 +302,7 @@ Loader {
         },
         State {
             name: "leftTop"
-            when: (alignment === LatteCore.Types.LeftEdgeTopAlign)
+            when: (alignment === LatteCore.types.LeftEdgeTopAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -312,7 +312,7 @@ Loader {
         },
         State {
             name: "leftBottom"
-            when: (alignment === LatteCore.Types.LeftEdgeBottomAlign)
+            when: (alignment === LatteCore.types.LeftEdgeBottomAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -322,7 +322,7 @@ Loader {
         },
         State {
             name: "rightCenter"
-            when: (alignment === LatteCore.Types.RightEdgeCenterAlign)
+            when: (alignment === LatteCore.types.RightEdgeCenterAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -332,7 +332,7 @@ Loader {
         },
         State {
             name: "rightTop"
-            when: (alignment === LatteCore.Types.RightEdgeTopAlign)
+            when: (alignment === LatteCore.types.RightEdgeTopAlign)
 
             AnchorChanges {
                 target: environmentLoader
@@ -342,7 +342,7 @@ Loader {
         },
         State {
             name: "rightBottom"
-            when: (alignment === LatteCore.Types.RightEdgeBottomAlign)
+            when: (alignment === LatteCore.types.RightEdgeBottomAlign)
 
             AnchorChanges {
                 target: environmentLoader

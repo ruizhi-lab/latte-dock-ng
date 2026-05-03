@@ -299,10 +299,14 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
         // Keep compositor-side panel behavior aligned with Latte visibility mode.
         switch (mode) {
-        case Latte::Types::AutoHide:
         case Latte::Types::DodgeActive:
         case Latte::Types::DodgeMaximized:
         case Latte::Types::DodgeAllWindows:
+            // Dodge visibility is handled by Latte itself. Keep compositor-side
+            // behavior non-reserving so desktop icons/workarea are not shifted.
+            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
+            break;
+        case Latte::Types::AutoHide:
         case Latte::Types::SidebarOnDemand:
         case Latte::Types::SidebarAutoHide:
             surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);

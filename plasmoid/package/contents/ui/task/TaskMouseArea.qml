@@ -22,6 +22,7 @@ MouseArea {
                   &&(!inBouncingAnimation) && !isSeparator
 
     property bool pressed: false
+    property bool hoverVisualActive: false
     // Drag should start only after resistance delay expires and pointer
     // moved enough. This avoids getting stuck in drag state on canceled clicks.
     property bool dragReady: false
@@ -35,6 +36,8 @@ MouseArea {
     }
 
     onEntered: {
+        hoverVisualActive = true;
+
         if (isLauncher && windowsPreviewDlg.visible) {
             windowsPreviewDlg.hide(1);
         }
@@ -70,6 +73,7 @@ MouseArea {
     }
 
     onExited: {
+        hoverVisualActive = false;
         taskItem.isAbleToShowPreview = true;
 
         if (root.showPreviews) {
@@ -84,8 +88,9 @@ MouseArea {
         }
 
         if((inAnimation == false)&&(!root.taskInAnimation)&&(!root.disableRestoreZoom) && hoverEnabled){
-            // mouse.button is always 0 here, hence checking with mouse.buttons
-            if (pressX != -1 && mouse.buttons == Qt.LeftButton
+            // In Qt6, move events can report inconsistent mouse.buttons during an
+            // active press/drag sequence. Fall back to our pressed state.
+            if (pressX != -1 && ((mouse.buttons & Qt.LeftButton) || pressed)
                     && dragReady
                     && !taskItem.isDragged
                     && (Math.abs(pressX - mouse.x) + Math.abs(pressY - mouse.y) >= Qt.styleHints.startDragDistance) ) {
@@ -93,12 +98,24 @@ MouseArea {
                 taskItem.isDragged = true;
                 dragReady = false;
             }
+
+            // Keep local fallback active during the whole drag session.
+            // On some Qt6/Wayland setups DropArea drag-move callbacks are sparse;
+            // this path guarantees continuous reordering as the pointer moves.
+            if (taskItem.isDragged && mouseHandler.reorderFromDragPosition) {
+                var posInMouseHandler = taskMouseArea.mapToItem(mouseHandler, mouse.x, mouse.y);
+                mouseHandler.reorderFromDragPosition(taskItem, posInMouseHandler.x, posInMouseHandler.y);
+            }
         }
     }
 
     onContainsMouseChanged:{
-        if(!containsMouse && !inAnimation) {
-            pressed=false;
+        if(!containsMouse) {
+            hoverVisualActive = false;
+
+            if (!inAnimation) {
+                pressed=false;
+            }
         }
 
         ////disable hover effect///
@@ -116,6 +133,7 @@ MouseArea {
         if ((mouse.button == Qt.LeftButton)||(mouse.button == Qt.MidButton) || modAccepted) {
             lastButtonClicked = mouse.button;
             pressed = true;
+            hoverVisualActive = false;
             dragReady = false;
             pressX = mouse.x;
             pressY = mouse.y;
@@ -123,8 +141,7 @@ MouseArea {
             if(!modAccepted){
                 _resistanerTimer.start();
             }
-        }
-        else if (mouse.button == Qt.RightButton && !modAccepted){
+        } else if (mouse.button === Qt.RightButton && !modAccepted) {
             // When we're a launcher, there's no window controls, so we can show all
             // places without the menu getting super huge.
             if (model.IsLauncher === true && !isSeparator) {
@@ -138,6 +155,7 @@ MouseArea {
     onReleased: function(mouse) {
         //console.log("Released Task Delegate...");
         _resistanerTimer.stop();
+        hoverVisualActive = false;
         dragReady = false;
 
         if (pressed
@@ -146,18 +164,18 @@ MouseArea {
 
             if (modifierAccepted(mouse) && !root.disableAllWindowsFunctionality){
                 if( !taskItem.isLauncher ){
-                    if (root.modifierClickAction == LatteTasks.Types.NewInstance) {
+                    if (root.modifierClickAction == LatteTasks.types.NewInstance) {
                         tasksModel.requestNewInstance(modelIndex());
-                    } else if (root.modifierClickAction == LatteTasks.Types.Close) {
+                    } else if (root.modifierClickAction == LatteTasks.types.Close) {
                         tasksModel.requestClose(modelIndex());
-                    } else if (root.modifierClickAction == LatteTasks.Types.ToggleMinimized) {
+                    } else if (root.modifierClickAction == LatteTasks.types.ToggleMinimized) {
                         tasksModel.requestToggleMinimized(modelIndex());
-                    } else if ( root.modifierClickAction == LatteTasks.Types.CycleThroughTasks) {
+                    } else if ( root.modifierClickAction == LatteTasks.types.CycleThroughTasks) {
                         if (isGroupParent)
                             subWindows.activateNextTask();
                         else
                             activateTask();
-                    } else if (root.modifierClickAction == LatteTasks.Types.ToggleGrouping) {
+                    } else if (root.modifierClickAction == LatteTasks.types.ToggleGrouping) {
                         tasksModel.requestToggleGrouping(modelIndex());
                     }
                 } else {
@@ -165,18 +183,18 @@ MouseArea {
                 }
             } else if (mouse.button == Qt.MidButton && !root.disableAllWindowsFunctionality){
                 if( !taskItem.isLauncher ){
-                    if (root.middleClickAction == LatteTasks.Types.NewInstance) {
+                    if (root.middleClickAction == LatteTasks.types.NewInstance) {
                         tasksModel.requestNewInstance(modelIndex());
-                    } else if (root.middleClickAction == LatteTasks.Types.Close) {
+                    } else if (root.middleClickAction == LatteTasks.types.Close) {
                         tasksModel.requestClose(modelIndex());
-                    } else if (root.middleClickAction == LatteTasks.Types.ToggleMinimized) {
+                    } else if (root.middleClickAction == LatteTasks.types.ToggleMinimized) {
                         tasksModel.requestToggleMinimized(modelIndex());
-                    } else if ( root.middleClickAction == LatteTasks.Types.CycleThroughTasks) {
+                    } else if ( root.middleClickAction == LatteTasks.types.CycleThroughTasks) {
                         if (isGroupParent)
                             subWindows.activateNextTask();
                         else
                             activateTask();
-                    } else if (root.middleClickAction == LatteTasks.Types.ToggleGrouping) {
+                    } else if (root.middleClickAction == LatteTasks.types.ToggleGrouping) {
                         tasksModel.requestToggleGrouping(modelIndex());
                     }
                 } else {
@@ -186,19 +204,20 @@ MouseArea {
                 var canPresentWindowsIsSupported = LatteCore.WindowSystem.compositingActive && backend.windowViewAvailable;
 
                 if( !taskItem.isLauncher && !root.disableAllWindowsFunctionality ){
-                    if ( (root.leftClickAction === LatteTasks.Types.PreviewWindows && isGroupParent)
+                    if ( (root.leftClickAction === LatteTasks.types.PreviewWindows && isGroupParent && windowsCount > 1)
                             || ( !canPresentWindowsIsSupported
-                                && root.leftClickAction === LatteTasks.Types.PresentWindows
-                                && isGroupParent) ) {
+                                && root.leftClickAction === LatteTasks.types.PresentWindows
+                                && isGroupParent
+                                && windowsCount > 1) ) {
                         if(windowsPreviewDlg.activeItem !== taskItem || !windowsPreviewDlg.visible){
                             showPreviewWindow();
                         } else {
                             forceHidePreview(21.1);
                         }
-                    } else if ( (root.leftClickAction === LatteTasks.Types.PresentWindows && !(isGroupParent && !LatteCore.WindowSystem.compositingActive))
-                               || ((root.leftClickAction === LatteTasks.Types.PreviewWindows && !isGroupParent)) ) {
+                    } else if ( (root.leftClickAction === LatteTasks.types.PresentWindows && !(isGroupParent && !LatteCore.WindowSystem.compositingActive))
+                               || ((root.leftClickAction === LatteTasks.types.PreviewWindows && (!isGroupParent || windowsCount <= 1))) ) {
                         activateTask();
-                    } else if (root.leftClickAction === LatteTasks.Types.CycleThroughTasks) {
+                    } else if (root.leftClickAction === LatteTasks.types.CycleThroughTasks) {
                         if (isGroupParent) {
                             subWindows.activateNextTask();
                         } else {
@@ -219,19 +238,23 @@ MouseArea {
     onCanceled: {
         // Keep internal press/drag state sane when event ownership changes.
         _resistanerTimer.stop();
+        hoverVisualActive = false;
         dragReady = false;
         pressed = false;
         pressX = -1;
         pressY = -1;
-        taskItem.isDragged = false;
 
-        if (root.dragSource === taskItem) {
-            root.dragSource = null;
+        // When a real DnD session is active, cancellation is expected because
+        // pointer grab moves to drag handling. Keep drag state in that case only.
+        if (dragHelper.Drag.active) {
+            return;
         }
+
+        taskItem.isDragged = false;
     }
 
     onWheel: function(wheel) {
-        var wheelActionsEnabled = (root.taskScrollAction !== LatteTasks.Types.ScrollNone || root.manualScrollTasksEnabled);
+        var wheelActionsEnabled = (root.taskScrollAction !== LatteTasks.types.ScrollNone || root.manualScrollTasksEnabled);
 
         if (isSeparator
                 || wheelIsBlocked
@@ -262,8 +285,8 @@ MouseArea {
 
             var overflowScrollingAccepted = (root.manualScrollTasksEnabled
                                              && scrollableList.contentsExceed
-                                             && (root.manualScrollTasksType === LatteTasks.Types.ManualScrollVerticalHorizontal
-                                                 || (root.manualScrollTasksType === LatteTasks.Types.ManualScrollOnlyParallel && parallelScrolling)) );
+                                             && (root.manualScrollTasksType === LatteTasks.types.ManualScrollVerticalHorizontal
+                                                 || (root.manualScrollTasksType === LatteTasks.types.ManualScrollOnlyParallel && parallelScrolling)) );
 
 
             if (overflowScrollingAccepted) {
@@ -290,8 +313,8 @@ MouseArea {
 
             var overflowScrollingAccepted = (root.manualScrollTasksEnabled
                                              && scrollableList.contentsExceed
-                                             && (root.manualScrollTasksType === LatteTasks.Types.ManualScrollVerticalHorizontal
-                                                 || (root.manualScrollTasksType === LatteTasks.Types.ManualScrollOnlyParallel && parallelScrolling)) );
+                                             && (root.manualScrollTasksType === LatteTasks.types.ManualScrollVerticalHorizontal
+                                                 || (root.manualScrollTasksType === LatteTasks.types.ManualScrollOnlyParallel && parallelScrolling)) );
 
 
             if (overflowScrollingAccepted) {
@@ -300,7 +323,7 @@ MouseArea {
                 if (isLauncher || root.disableAllWindowsFunctionality) {
                     // do nothing
                 } else if (isGroupParent) {
-                    if (root.taskScrollAction === LatteTasks.Types.ScrollToggleMinimized) {
+                    if (root.taskScrollAction === LatteTasks.types.ScrollToggleMinimized) {
                         subWindows.minimizeTask();
                     } else {
                         subWindows.activatePreviousTask();
@@ -308,7 +331,7 @@ MouseArea {
                 } else {
                     var taskIndex = modelIndex();
 
-                    var hidingTask = (!isMinimized && root.taskScrollAction === LatteTasks.Types.ScrollToggleMinimized);
+                    var hidingTask = (!isMinimized && root.taskScrollAction === LatteTasks.types.ScrollToggleMinimized);
 
                     if (isMinimized || hidingTask) {
                         tasksModel.requestToggleMinimized(taskIndex);

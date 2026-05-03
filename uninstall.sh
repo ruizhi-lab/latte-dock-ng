@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Author: Michail Vourlakos
-# Summary: Uninstallation script for Latte Dock Panel
+# Author: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
+# Summary: Uninstallation script for Latte Dock NG
 #
 # Run as root / sudo  → removes system install from /usr  AND all user data
 # Run as normal user  → removes user install from ~/.local only

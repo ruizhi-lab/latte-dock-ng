@@ -23,10 +23,10 @@ AbilityHost.MyView {
                                                       background.themeExtendedBackground.maxOpacity : plasmoid.configuration.panelTransparency / 100
 
     readonly property string itemShadowCurrentColor: {
-        if (plasmoid.configuration.shadowColorType === LatteContainment.Types.ThemeColorShadow) {
+        if (plasmoid.configuration.shadowColorType === LatteContainment.types.ThemeColorShadow) {
             var strC = String(theme.textColor);
             return strC.indexOf("#") === 0 ? strC.substr(1) : strC;
-        } else if (plasmoid.configuration.shadowColorType === LatteContainment.Types.UserColorShadow) {
+        } else if (plasmoid.configuration.shadowColorType === LatteContainment.types.UserColorShadow) {
             return plasmoid.configuration.shadowColor;
         }
 

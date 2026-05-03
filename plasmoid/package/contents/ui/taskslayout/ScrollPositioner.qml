@@ -15,12 +15,12 @@ Rectangle {
     id: listViewBase
     x: {
         if (!root.vertical) {
-            if (root.alignment === LatteCore.Types.Center) {
+            if (root.alignment === LatteCore.types.Center) {
                 //! this way we get a perfectly centered offset value
                 return (icList.width-1) / 2;
-            } else if (root.alignment === LatteCore.Types.Left){
+            } else if (root.alignment === LatteCore.types.Left){
                 return 0;
-            } else if (root.alignment === LatteCore.Types.Right){
+            } else if (root.alignment === LatteCore.types.Right){
                 //! this way we get a perfectly right aligned offset value
                 return (icList.width-1);
             }
@@ -31,12 +31,12 @@ Rectangle {
 
     y: {
         if (root.vertical) {
-            if (root.alignment === LatteCore.Types.Center) {
+            if (root.alignment === LatteCore.types.Center) {
                 //! this way we get a perfectly centered offset value
                 return (icList.height-1) / 2;
-            } else if (root.alignment === LatteCore.Types.Top){
+            } else if (root.alignment === LatteCore.types.Top){
                 return 0;
-            } else if (root.alignment === LatteCore.Types.Bottom){
+            } else if (root.alignment === LatteCore.types.Bottom){
                 //! this way we get a perfectly bottom aligned offset value
                 return (icList.height-1);
             }

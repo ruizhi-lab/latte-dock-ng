@@ -4,6 +4,8 @@
 
 # Ignore hidden files
 .directory
+.cache/
+.claude/settings.local.json
 
 # build directory
 build*/

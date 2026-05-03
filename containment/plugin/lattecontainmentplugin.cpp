@@ -16,6 +16,6 @@
 void LatteContainmentPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(QLatin1StringView(uri) == QLatin1StringView("org.kde.latte.private.containment"));
-    qmlRegisterUncreatableType<Latte::Containment::Types>(uri, 0, 1, "Types", QStringLiteral("Latte Containment Types uncreatable"));
+    qmlRegisterUncreatableType<Latte::Containment::Types>(uri, 0, 1, "types", QStringLiteral("Latte Containment Types uncreatable"));
     qmlRegisterType<Latte::Containment::LayoutManager>(uri, 0, 1, "LayoutManager");
 }

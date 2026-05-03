@@ -34,7 +34,7 @@ Ability.MyViewPrivate {
     badgesIn3DStyle: universalSettings ? universalSettings.badges3DStyle : true
 
     alignment: plasmoid.configuration.alignment
-    visibilityMode: isReady ? view.visibility.mode : LatteCore.Types.None
+    visibilityMode: isReady ? view.visibility.mode : LatteCore.types.None
 
     backgroundOpacity: background.currentOpacity
 
