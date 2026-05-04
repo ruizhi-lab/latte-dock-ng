@@ -61,6 +61,17 @@ Item{
     // @since: 0.9
     readonly property bool applyPalette: !applet.latteSideColoringEnabled ? colorizerManager.mustBeShown : false
 
+    // NAME: panelPalette
+    //   USAGE: read-only
+    //   EXPLANATION: Always panel-aware palette derived from the active Plasma
+    //       desktop theme's colors file (via themeExtended). Independent of
+    //       applyPalette and latteSideColoringEnabled, intended for visual
+    //       elements rendered ON the panel (e.g. running-task indicators) that
+    //       must always contrast with the panel itself, not the window color
+    //       scheme. Especially important for mixed themes where the Plasma
+    //       panel theme is dark but the window color scheme is light.
+    readonly property QtObject panelPalette: colorizerManager.panelPalette
+
     // NAME: parabolicEffectEnabled
     //   USAGE: read-only
     //   EXPLANATION: Parabolic Effect is enabled or not for this Latte View

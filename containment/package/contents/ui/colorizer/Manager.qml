@@ -129,6 +129,14 @@ Loader{
         return theme;
     }
 
+    //! Always panel-aware palette: prefers the actual Plasma desktop theme's
+    //! colors file (loaded by Latte via themeExtended), falling back to the
+    //! global Plasma.Theme. This is independent of `applyTheme` (which is
+    //! gated by user-selected coloring modes) and is intended for visual
+    //! elements rendered ON the panel (e.g. running-task indicators) so they
+    //! always contrast with the panel, not the window color scheme.
+    readonly property QtObject panelPalette: themeExtended && themeExtended.defaultTheme ? themeExtended.defaultTheme : theme
+
     property color applyColor: textColor
 
     readonly property color backgroundColor:applyTheme.backgroundColor

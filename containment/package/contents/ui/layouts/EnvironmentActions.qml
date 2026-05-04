@@ -214,7 +214,8 @@ Loader {
                 isPressed: mainArea.pressed
                 panelOpacity: root.background.currentOpacity
                 shadowColor: root.myView.itemShadow.shadowSolidColor
-                palette: colorizerManager.applyTheme
+                palette: colorizerManager.mustBeShown ? colorizerManager.applyTheme
+                                                      : colorizerManager.panelPalette
 
                 iconBackgroundColor: "brown"
                 iconGlowColor: "pink"

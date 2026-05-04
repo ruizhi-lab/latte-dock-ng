@@ -46,7 +46,11 @@ AbilityDefinition.MyView {
 
     itemShadow: ref.myView.itemShadow
 
-    palette: bridge && bridge.applyPalette ? bridge.palette : theme
+    // Prefer Latte's panel-aware palette when no colorizer override is active,
+    // so indicators/labels rendered on the panel always contrast with it
+    // (correct for mixed themes like Klassy Light or Breeze 阴阳).
+    palette: bridge && bridge.applyPalette ? bridge.palette
+                                           : (bridge && bridge.panelPalette ? bridge.panelPalette : theme)
 
     readonly property AbilityDefinition.MyView local: AbilityDefinition.MyView {
         isShownFully: true

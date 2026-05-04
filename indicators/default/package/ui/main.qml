@@ -7,19 +7,12 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
 
 LatteComponents.IndicatorItem{
     id: root
-    // Use the Header color set so the indicator picks panel-contrast colors
-    // (works correctly for mixed themes like Klassy Light or Breeze 阴阳 where
-    // the Plasma panel theme is dark but the window color scheme is light).
-    Kirigami.Theme.colorSet: Kirigami.Theme.Header
-    Kirigami.Theme.inherit: false
-
     extraMaskThickness: reversedEnabled && glowEnabled ? 1.7 * (factor * indicator.maxIconSize) : 0
 
     enabledForApplets: indicator && indicator.configuration ? indicator.configuration.enabledForApplets : true
@@ -34,24 +27,14 @@ LatteComponents.IndicatorItem{
 
     readonly property int thicknessMargin: screenEdgeMargin + thickLocalMargin + (glowEnabled ? 1 : 0)
 
-    // Prefer Kirigami.Theme.Header colors (panel-area scheme) so indicators
-    // contrast with the panel, not the window. This is essential for mixed
-    // themes (dark panel + light windows). Fall back to indicator.palette only
-    // when Header colors are unavailable.
-    readonly property bool _hasHeaderTheme: Kirigami.Theme.textColor !== undefined
-                                            && Kirigami.Theme.backgroundColor !== undefined
-
-    property color textColorSafe: _hasHeaderTheme
-                                  ? Kirigami.Theme.textColor
-                                  : ((indicator && indicator.palette && indicator.palette.textColor !== undefined)
-                                     ? indicator.palette.textColor
-                                     : "#ffffff")
+    property color textColorSafe: (indicator && indicator.palette && indicator.palette.textColor !== undefined)
+                                 ? indicator.palette.textColor
+                                 : "#ffffff"
     property real textColorBrightness: colorBrightness(textColorSafe)
-    property color backgroundColorSafe: _hasHeaderTheme
-                                        ? Kirigami.Theme.backgroundColor
-                                        : ((indicator && indicator.palette && indicator.palette.backgroundColor !== undefined)
-                                           ? indicator.palette.backgroundColor
-                                           : (textColorBrightness > 127.5 ? "#202020" : "#e8e8e8"))
+    property color backgroundColorSafe: (indicator && indicator.palette && indicator.palette.backgroundColor !== undefined)
+                                       ? indicator.palette.backgroundColor
+                                       : (textColorBrightness > 127.5 ? "#202020" : "#e8e8e8")
+
     property real backgroundColorBrightness: colorBrightness(backgroundColorSafe)
     property color isActiveColor: oppositeToBackgroundColor(textColorSafe)
     property color minimizedColor: {

@@ -758,7 +758,11 @@ Item {
                 panelOpacity: root.background.currentOpacity
                 shadowColor: appletItem.myView.itemShadow.shadowSolidColor
 
-                palette: colorizerManager.applyTheme
+                // Always panel-aware: when colorizer is active use it, otherwise
+                // use the actual Plasma desktop theme colors so the indicator
+                // contrasts with the panel rather than the window color scheme.
+                palette: colorizerManager.mustBeShown ? colorizerManager.applyTheme
+                                                      : colorizerManager.panelPalette
 
                 //!icon colors
                 iconBackgroundColor: appletItem.wrapper.overlayIconLoader.backgroundColor
