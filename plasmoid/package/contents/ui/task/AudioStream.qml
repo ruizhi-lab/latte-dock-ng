@@ -15,6 +15,21 @@ Item {
 
     readonly property int outerMargin: Math.round(Math.max(1, Math.min(parent.width, parent.height) * 0.04))
     readonly property bool activeAudioState: taskItem.playingAudio || taskItem.muted
+    readonly property color badgeIconColor: {
+        if (taskItem
+                && taskItem.abilities
+                && taskItem.abilities.myView
+                && taskItem.abilities.myView.palette
+                && taskItem.abilities.myView.palette.buttonFocusColor !== undefined) {
+            return taskItem.abilities.myView.palette.buttonFocusColor;
+        }
+
+        if (theme && theme.highlightColor !== undefined) {
+            return theme.highlightColor;
+        }
+
+        return "#3daee9";
+    }
 
     z: 200
     width: Math.round(Math.max(18, Math.min(Math.min(parent.width, parent.height) * 0.42, Kirigami.Units.iconSizes.medium)))
@@ -50,6 +65,8 @@ Item {
 
             return "audio-volume-high-symbolic" + (Qt.application.layoutDirection === Qt.RightToLeft ? "-rtl" : "");
         }
+        isMask: true
+        color: audioStreamIconBox.badgeIconColor
         active: audioBadgeHover.hovered
         selected: audioBadgeTap.pressed
     }

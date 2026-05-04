@@ -31,13 +31,14 @@ LatteComponents.IndicatorItem{
                                  ? indicator.palette.textColor
                                  : "#ffffff"
     property real textColorBrightness: colorBrightness(textColorSafe)
-
-    property color isActiveColor: (indicator && indicator.palette && indicator.palette.buttonFocusColor !== undefined)
-                                  ? indicator.palette.buttonFocusColor
-                                  : textColorSafe
+    property color backgroundColorSafe: (indicator && indicator.palette && indicator.palette.backgroundColor !== undefined)
+                                       ? indicator.palette.backgroundColor
+                                       : (textColorBrightness > 127.5 ? "#202020" : "#e8e8e8")
+    property real backgroundColorBrightness: colorBrightness(backgroundColorSafe)
+    property color isActiveColor: oppositeToBackgroundColor(textColorSafe)
     property color minimizedColor: {
         if (minimizedTaskColoredDifferently) {
-            return (textColorBrightness > 127.5 ? Qt.darker(textColorSafe, 1.7) : Qt.lighter(textColorSafe, 7));
+            return tonedDownOppositeColor(isActiveColor);
         }
 
         return isActiveColor;
@@ -68,6 +69,27 @@ LatteComponents.IndicatorItem{
 
     function colorBrightness(color) {
         return colorBrightnessFromRGB(color.r * 255, color.g * 255, color.b * 255);
+    }
+
+    function hasOppositeBrightness(foregroundColor, baseBackgroundColor) {
+        var foregroundBrightness = colorBrightness(foregroundColor);
+        var baseBrightness = colorBrightness(baseBackgroundColor);
+
+        return (baseBrightness > 127.5 && foregroundBrightness < 127.5)
+                || (baseBrightness <= 127.5 && foregroundBrightness >= 127.5);
+    }
+
+    function oppositeToBackgroundColor(candidateColor) {
+        if (hasOppositeBrightness(candidateColor, backgroundColorSafe)) {
+            return candidateColor;
+        }
+
+        return backgroundColorBrightness > 127.5 ? Qt.darker(candidateColor, 1.8) : Qt.lighter(candidateColor, 1.8);
+    }
+
+    function tonedDownOppositeColor(baseColor) {
+        var tonedColor = backgroundColorBrightness > 127.5 ? Qt.lighter(baseColor, 1.28) : Qt.darker(baseColor, 1.28);
+        return oppositeToBackgroundColor(tonedColor);
     }
 
     // formula for brightness according to:
