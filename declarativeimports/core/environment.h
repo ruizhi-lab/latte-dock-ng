@@ -10,6 +10,8 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QJSEngine>
+#include <QString>
+#include <QVariant>
 
 
 namespace Latte{
@@ -22,6 +24,7 @@ class Environment final: public QObject
 
     Q_PROPERTY(uint shortDuration READ shortDuration NOTIFY shortDurationChanged)
     Q_PROPERTY(uint longDuration READ longDuration NOTIFY longDurationChanged)
+    Q_PROPERTY(uint iconThemeVersion READ iconThemeVersion NOTIFY iconThemeVersionChanged)
 
 public:
     static const int SeparatorLength = 5;
@@ -32,13 +35,22 @@ public:
 
     uint shortDuration() const;
     uint longDuration() const;
+    uint iconThemeVersion() const;
 
 public Q_SLOTS:
     Q_INVOKABLE uint makeVersion(uint major, uint minor, uint release) const;
+    Q_INVOKABLE QVariant iconSourceForTheme(const QVariant &source) const;
+    Q_INVOKABLE QString iconDescriptor(const QVariant &source) const;
 
 Q_SIGNALS:
     void longDurationChanged();
     void shortDurationChanged();
+    void iconThemeVersionChanged();
+
+private:
+    void markIconThemeChanged();
+    QString currentIconTheme() const;
+    uint m_iconThemeVersion{0};
 
 };
 

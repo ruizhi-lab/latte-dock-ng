@@ -571,7 +571,8 @@ AbilityItem.BasicItem {
             return model.IsGroupParent == true;
         });
         toolTipDelegate.icon = Qt.binding(function() {
-            return model.decoration;
+            const _iconThemeVersion = LatteCore.Environment.iconThemeVersion;
+            return LatteCore.Environment.iconSourceForTheme(model.decoration);
         });
         toolTipDelegate.launcherUrl = Qt.binding(function() {
             return model.LauncherUrlWithoutIcon;

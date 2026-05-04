@@ -26,6 +26,17 @@ Item {
     readonly property color backgroundColor: iconColorsLoader.active ? iconColorsLoader.item.backgroundColor : theme.backgroundColor
     readonly property color glowColor: iconColorsLoader.active ? iconColorsLoader.item.glowColor : theme.textColor
 
+    function resetTaskIconSourceBinding() {
+        taskIconItem.source = Qt.binding(function() {
+            return LatteCore.Environment.iconSourceForTheme(decoration);
+        });
+    }
+
+    function forceRefreshTaskIconSource() {
+        taskIconItem.source = "";
+        resetTaskIconSourceBinding();
+    }
+
     readonly property bool smartLauncherEnabled: (taskItem.isStartup === false) //! it needs to be enabled independent of user-set option because it is used from indicators
     readonly property bool progressVisible: smartLauncherItem && smartLauncherItem.progressVisible
     readonly property real progress: smartLauncherItem && smartLauncherItem.progress ? smartLauncherItem.progress : 0
@@ -77,7 +88,7 @@ Item {
         id: taskIconItem
         anchors.fill: parent
         //roundToIconSize: false
-        source: decoration
+        source: LatteCore.Environment.iconSourceForTheme(decoration)
         visible: !badgesLoader.active
 
         readonly property real size: Math.min(width,height)
@@ -124,6 +135,20 @@ Item {
                 AnchorAnimation { duration: 1.5 * taskItem.abilities.animations.speedFactor.current * taskItem.abilities.animations.duration.large }
             }
         ]
+    }
+
+    Connections {
+        target: LatteCore.Environment
+
+        function onIconThemeVersionChanged() {
+            console.log("TaskIcon refresh",
+                        taskItem ? taskItem.appName : "",
+                        "v", LatteCore.Environment.iconThemeVersion,
+                        LatteCore.Environment.iconDescriptor(decoration),
+                        "launcherUrlWithIcon", taskItem ? taskItem.launcherUrlWithIcon : "",
+                        "modelLauncherUrlWithIcon", taskItem ? taskItem.modelLauncherUrlWithIcon : "");
+            taskIconContainer.forceRefreshTaskIconSource();
+        }
     }
 
     //! Combined Loader for Progress and Audio badges masks
