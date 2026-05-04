@@ -147,11 +147,18 @@ void Factory::reload(const QString &indicatorPath)
                 pluginChangedId = metadata.pluginId();
                 QString uiFile = indicatorPath + "/package/" + metadata.value("X-Latte-MainScript");
 
-                if (!m_plugins.contains(metadata.pluginId())) {
+                // User-local installs (under $HOME) always take precedence over system-wide
+                // installs so a development override at ~/.local/share/latte/indicators wins
+                // even when /usr/share/latte/indicators ships the same plugin id.
+                const bool isLocal = indicatorPath.startsWith(QDir::homePath());
+                const bool override = isLocal || !m_plugins.contains(metadata.pluginId());
+
+                if (override) {
                     m_plugins[metadata.pluginId()] = metadata;
                 }
 
-                if (QFileInfo(uiFile).exists()) {
+                if (QFileInfo(uiFile).exists()
+                        && (override || !m_pluginUiPaths.contains(metadata.pluginId()))) {
                     m_pluginUiPaths[metadata.pluginId()] = QFileInfo(uiFile).absolutePath();
                 }
 
