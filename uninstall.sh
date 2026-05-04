@@ -147,13 +147,24 @@ fi
 # ── Collect manifests ─────────────────────────────────────────────────────────
 if [[ "$manifest_provided" == "false" ]]; then
     shopt -s nullglob
+    declare -a raw_candidates=()
     for candidate in \
             "${build_dir_pattern}/install_manifest.txt" \
             "${script_dir}/build/install_manifest.txt" \
             "${script_dir}"/build-*/install_manifest.txt; do
-        [[ -f "$candidate" ]] && manifest_paths+=("$candidate")
+        [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
     done
     shopt -u nullglob
+
+    # Dedupe by canonical path
+    for raw in "${raw_candidates[@]:-}"; do
+        canonical="$(readlink -f "$raw" 2>/dev/null || echo "$raw")"
+        local_dup="false"
+        for existing in "${manifest_paths[@]:-}"; do
+            [[ "$existing" == "$canonical" ]] && { local_dup="true"; break; }
+        done
+        [[ "$local_dup" == "false" ]] && manifest_paths+=("$canonical")
+    done
 
     # Keep only manifests matching the install mode (by prefix in paths)
     if [[ ${#manifest_paths[@]} -gt 0 && "$install_mode" == "user" ]]; then
@@ -399,6 +410,13 @@ for qml_dir in "${qml_dirs[@]}"; do
             "${qml_dir}/org/kde/latte/private/tasks" \
             "${qml_dir}/org/kde/latte/private/containment"; do
         remove_tree "$qml_module_dir"
+    done
+
+    # Drop empty parent dirs left after module removal
+    for parent_dir in \
+            "${qml_dir}/org/kde/latte/private" \
+            "${qml_dir}/org/kde/latte"; do
+        remove_dir_if_empty "$parent_dir"
     done
 
     fallback_dir="${qml_dir}/org/kde/plasma/private/taskmanager"
