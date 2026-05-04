@@ -89,11 +89,7 @@ Item {
         anchors.fill: parent
         //roundToIconSize: false
         source: LatteCore.Environment.iconSourceForTheme(decoration)
-        // Qt6 RHI cannot compile the legacy inline GLSL fragmentShader used by
-        // badgesLoader, so the masked icon never renders. Keep the original
-        // icon visible whenever info/progress masking isn't actually needed
-        // (e.g. audio-only badge sits in a corner and doesn't require a hole).
-        visible: !badgesLoader.active || (!badgesLoader.showInfo && !badgesLoader.showProgress)
+        visible: !badgesLoader.active
 
         readonly property real size: Math.min(width,height)
 
@@ -183,143 +179,109 @@ Item {
         }
 
         sourceComponent: Item{
-            ShaderEffect {
-                id: iconOverlay
-                enabled: false
+            // Source layer: the icon (with optional monochromize overlay).
+            // Hidden + layer-enabled so it's only rendered into a texture for
+            // the MultiEffect below (matches the old ShaderEffectSource setup).
+            Item {
+                id: iconSourceLayer
                 anchors.fill: parent
-                property var source: ShaderEffectSource {
-                    sourceItem: Kirigami.Icon{
-                        width: taskIconItem.width
-                        height: taskIconItem.height
-                        smooth: taskIconItem.smooth
-                        source: taskIconItem.source
-                        //roundToIconSize: taskIconItem.roundToIconSize
-                        active: taskIconItem.active
+                visible: false
+                layer.enabled: true
 
-                        Loader{
+                Kirigami.Icon {
+                    id: iconSource
+                    anchors.fill: parent
+                    smooth: taskIconItem.smooth
+                    source: taskIconItem.source
+                    active: taskIconItem.active
+
+                    Loader {
+                        anchors.fill: parent
+                        active: plasmoid.configuration.forceMonochromaticIcons
+
+                        sourceComponent: MultiEffect {
                             anchors.fill: parent
-                            active: plasmoid.configuration.forceMonochromaticIcons
-
-                            sourceComponent: MultiEffect {
-                                anchors.fill: parent
-                                colorization: 1.0
-                                colorizationColor: latteBridge ? latteBridge.palette.textColor : "transparent"
-                                source: taskIconItem
-                            }
+                            colorization: 1.0
+                            colorizationColor: latteBridge ? latteBridge.palette.textColor : "transparent"
+                            source: iconSource
                         }
                     }
                 }
-                property var mask: ShaderEffectSource {
-                    sourceItem: Item{
-                        LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft && !root.vertical
-                        LayoutMirroring.childrenInherit: true
+            }
 
-                        width: taskIconContainer.width
-                        height: taskIconContainer.height
+            // Mask layer: corner rectangles where badges go. Same layer trick.
+            Item {
+                id: maskLayer
+                anchors.fill: parent
+                visible: false
+                layer.enabled: true
 
-                        Rectangle{
-                            id: maskRect
-                            width: Math.max(badgeVisualsLoader.infoBadgeWidth, parent.width / 2)
-                            height: parent.height / 2
-                            radius: parent.height
-                            visible: badgesLoader.showInfo || badgesLoader.showProgress
+                LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft && !root.vertical
+                LayoutMirroring.childrenInherit: true
 
-                            //! Removes any remainings from the icon around the roundness at the corner
-                            Rectangle{
-                                id: maskCorner
-                                width: parent.width/2
-                                height: parent.height/2
-                            }
+                Rectangle {
+                    id: maskRect
+                    width: Math.max(badgeVisualsLoader.infoBadgeWidth, parent.width / 2)
+                    height: parent.height / 2
+                    radius: parent.height
+                    visible: badgesLoader.showInfo || badgesLoader.showProgress
 
-                            states: [
-                                State {
-                                    name: "default"
-                                    when: (root.location !== PlasmaCore.Types.RightEdge)
-
-                                    AnchorChanges {
-                                        target: maskRect
-                                        anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
-                                    }
-                                    AnchorChanges {
-                                        target: maskCorner
-                                        anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
-                                    }
-                                },
-                                State {
-                                    name: "right"
-                                    when: (root.location === PlasmaCore.Types.RightEdge)
-
-                                    AnchorChanges {
-                                        target: maskRect
-                                        anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
-                                    }
-                                    AnchorChanges {
-                                        target: maskCorner
-                                        anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
-                                    }
-                                }
-                            ]
-                        } // progressMask
-
-                        Rectangle{
-                            id: maskRect2
-                            width: parent.width/2
-                            height: width
-                            radius: width
-                            visible: badgesLoader.showAudio
-
-                            Rectangle{
-                                id: maskCorner2
-                                width:parent.width/2
-                                height:parent.height/2
-                            }
-
-                            states: [
-                                State {
-                                    name: "default"
-                                    when: (root.location !== PlasmaCore.Types.RightEdge)
-
-                                    AnchorChanges {
-                                        target: maskRect2
-                                        anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
-                                    }
-                                    AnchorChanges {
-                                        target: maskCorner2
-                                        anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
-                                    }
-                                },
-                                State {
-                                    name: "right"
-                                    when: (root.location === PlasmaCore.Types.RightEdge)
-
-                                    AnchorChanges {
-                                        target: maskRect2
-                                        anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
-                                    }
-                                    AnchorChanges {
-                                        target: maskCorner2
-                                        anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
-                                    }
-                                }
-                            ]
-                        } // audio mask
+                    //! Removes any remainings from the icon around the roundness at the corner
+                    Rectangle {
+                        id: maskCorner
+                        width: parent.width / 2
+                        height: parent.height / 2
                     }
-                    hideSource: true
-                    live: true
-                } //end of mask
 
-                supportsAtlasTextures: true
+                    states: [
+                        State {
+                            name: "default"
+                            when: (root.location !== PlasmaCore.Types.RightEdge)
 
-                fragmentShader: "
-        varying highp vec2 qt_TexCoord0;
-        uniform highp float qt_Opacity;
-        uniform lowp sampler2D source;
-        uniform lowp sampler2D mask;
-        void main() {
-            gl_FragColor = texture2D(source, qt_TexCoord0.st) * (1.0 - (texture2D(mask, qt_TexCoord0.st).a)) * qt_Opacity;
-        }
-    "
-            } //end of sourceComponent
+                            AnchorChanges {
+                                target: maskRect
+                                anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
+                            }
+                            AnchorChanges {
+                                target: maskCorner
+                                anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right;}
+                            }
+                        },
+                        State {
+                            name: "right"
+                            when: (root.location === PlasmaCore.Types.RightEdge)
+
+                            AnchorChanges {
+                                target: maskRect
+                                anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
+                            }
+                            AnchorChanges {
+                                target: maskCorner
+                                anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined;}
+                            }
+                        }
+                    ]
+                } // progressMask
+
+                // (No audio mask: the audio badge is small and translucent,
+                //  it overlays the icon directly without needing a cutout —
+                //  and the legacy Qt5 mask was anchored to the wrong corner
+                //  anyway, leaving an empty hole opposite the badge.)
+            }
+
+            // Replaces a Qt5-era ShaderEffect with hand-written GLSL that
+            // Qt6 RHI cannot compile (would yield "Failed to find shader …").
+            // Equivalent semantics: render iconSourceLayer, but punch holes
+            // wherever maskLayer is opaque so the badges visuals can sit in.
+            MultiEffect {
+                id: iconOverlay
+                anchors.fill: parent
+                source: iconSourceLayer
+                maskEnabled: true
+                maskInverted: true
+                maskSource: maskLayer
+                maskThresholdMin: 0.5
+            }
         }
     }
     ////!
@@ -369,17 +331,15 @@ Item {
         id: badgesGreyEffectLoader
         z: 31
         anchors.fill: parent
+        // Qt6 MultiEffect always implicitly enables `layer.enabled` on its
+        // source, replacing the source's normal rendering with the effect's
+        // output. Only activate during the drag-grey phase so the badge text
+        // stays visible when stateColorizer.opacity == 0.
         active: badgeVisualsLoader.active
                 && taskItem.abilities.environment.isGraphicsSystemAccelerated
+                && stateColorizer.opacity > 0
         sourceComponent: MultiEffect{
             source: badgeVisualsLoader.item
-
-            //! HACK TO AVOID PIXELIZATION
-            //! WORKAROUND: When Effects are enabled e.g. BrightnessContrast, Colorize etc.
-            //! the icon appears pixelated. It is even most notable when parabolic.factor.zoom === 1
-            //! I don't know enabling cached=true helps, but it does.
-            //! In Question?
-            //cached: true
 
             opacity: stateColorizer.opacity
             saturation: -1.0
