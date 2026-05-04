@@ -24,6 +24,10 @@ Item {
     property Item dragParabolicItem
     property bool moved: false
     property bool containsDrag: false
+    property Item pendingPinnedSource: null
+    property int pendingPinnedTargetIndex: -1
+    property string pendingPinnedLauncherUrl: ""
+    property int pendingPinnedAttempts: 0
 
     property alias hoveredItem: dropHandler.hoveredItem
 
@@ -31,6 +35,41 @@ Item {
     readonly property alias isDroppingFiles: dropHandler.inDroppingFiles
     readonly property alias isDroppingOnlyLaunchers: dropHandler.inDroppingOnlyLaunchers
     readonly property alias isDroppingSeparator: dropHandler.inDroppingSeparator
+
+    function isLauncherTask(task) {
+        return task && task.m && task.m.IsLauncher === true;
+    }
+
+    function launcherUrlForTask(task) {
+        if (!task) {
+            return "";
+        }
+
+        if (task.launcherUrl && task.launcherUrl.length > 0) {
+            return task.launcherUrl;
+        }
+
+        if (task.launcherUrlWithIcon && task.launcherUrlWithIcon.length > 0) {
+            return task.launcherUrlWithIcon;
+        }
+
+        return "";
+    }
+
+    function schedulePromoteToLauncherAndMove(sourceItem, targetIndex, launcherUrl) {
+        pendingPinnedSource = sourceItem;
+        pendingPinnedTargetIndex = Math.max(0, targetIndex);
+        pendingPinnedLauncherUrl = launcherUrl;
+        pendingPinnedAttempts = 0;
+        promotePinnedTaskTimer.restart();
+    }
+
+    function clearPendingPromoteMove() {
+        pendingPinnedSource = null;
+        pendingPinnedTargetIndex = -1;
+        pendingPinnedLauncherUrl = "";
+        pendingPinnedAttempts = 0;
+    }
 
     Timer {
         id: ignoreItemTimer
@@ -40,6 +79,44 @@ Item {
 
         onTriggered: {
             ignoredItem = null;
+        }
+    }
+
+    Timer {
+        id: promotePinnedTaskTimer
+
+        interval: 40
+        repeat: true
+
+        onTriggered: {
+            if (!pendingPinnedSource || pendingPinnedTargetIndex < 0) {
+                clearPendingPromoteMove();
+                stop();
+                return;
+            }
+
+            var sourceItem = pendingPinnedSource;
+            var launcherReady = isLauncherTask(sourceItem)
+                    || tasksModel.launcherPosition(pendingPinnedLauncherUrl) >= 0;
+
+            if (launcherReady) {
+                var from = sourceItem.itemIndex;
+                var to = Math.max(0, Math.min(pendingPinnedTargetIndex, tasksModel.count - 1));
+
+                if (from >= 0 && to >= 0 && from !== to) {
+                    tasksModel.move(from, to);
+                }
+
+                clearPendingPromoteMove();
+                stop();
+                return;
+            }
+
+            pendingPinnedAttempts = pendingPinnedAttempts + 1;
+            if (pendingPinnedAttempts > 25) {
+                clearPendingPromoteMove();
+                stop();
+            }
         }
     }
 
@@ -53,6 +130,8 @@ Item {
                 dragParabolicItem = null;
                 ignoredItem = null;
                 ignoreItemTimer.stop();
+                clearPendingPromoteMove();
+                promotePinnedTaskTimer.stop();
             }
         }
     }
@@ -91,6 +170,32 @@ Item {
         }
 
         if (sourceItem === above || sourceItem.itemIndex === insertAt) {
+            return;
+        }
+
+        var sourceIsLauncher = isLauncherTask(sourceItem);
+        var targetTask = above ? above : (target.childAtIndex ? target.childAtIndex(insertAt) : null);
+        var targetIsLauncher = isLauncherTask(targetTask);
+
+        // Keep pinned launchers inside the launcher area.
+        if (sourceIsLauncher && targetTask && !targetIsLauncher) {
+            return;
+        }
+
+        // Allow dragging a non-pinned running app into launcher area by pinning it first.
+        if (!sourceIsLauncher && targetTask && targetIsLauncher) {
+            var launcherUrl = launcherUrlForTask(sourceItem);
+            if (launcherUrl.length <= 0) {
+                return;
+            }
+
+            if (tasksModel.launcherPosition(launcherUrl) === -1) {
+                appletAbilities.launchers.addLauncher(launcherUrl);
+            }
+
+            schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl);
+            ignoredItem = targetTask;
+            ignoreItemTimer.restart();
             return;
         }
 
