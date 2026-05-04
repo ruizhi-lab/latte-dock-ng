@@ -36,18 +36,11 @@ Item{
 
     property Item appletRootItem: appletDiscoveredRootItem ? appletDiscoveredRootItem : appletDefaultRootItem
     property Item appletDiscoveredRootItem: null
-    // Plasma 6: applet IS the plasmoid root (PlasmoidItem). Pre-Plasma 6 the
-    // plasmoid root was applet.children[0]. Prefer applet itself when it owns
-    // the latteBridge property, otherwise fall back to the first child.
-    property Item appletDefaultRootItem: {
-        if (!applet) {
-            return null;
-        }
-        if (typeof applet.latteBridge !== "undefined") {
-            return applet;
-        }
-        return applet.children && applet.children.length > 0 ? applet.children[0] : null;
-    }
+    // Transient fallback before AppletIdentifier.checkAndUpdateAppletRootItem
+    // resolves the real plasmoid root (which in Plasma 6 is `applet` itself).
+    // Avoid reading applet.latteBridge here — the bridge later writes back to
+    // that property and creates a binding loop.
+    property Item appletDefaultRootItem: applet && applet.children && applet.children.length>0 ? applet.children[0] : null
 
     property Item appletIconItem: null //first applet's IconItem to be used by Latte
     property Item appletImageItem: null //first applet's ImageItem to be used by Latte
