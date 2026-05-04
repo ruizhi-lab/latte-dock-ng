@@ -97,7 +97,12 @@ Item{
 
     readonly property bool isHorizontal: !isVertical
     readonly property bool isVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
+    readonly property bool hasParabolicTrackingArea: parabolicEventsAreaLoader.active
     readonly property bool parabolicAreaContainsMouse: parabolicEventsAreaLoader.active && parabolicEventsAreaLoader.item.containsMouse
+    readonly property bool parabolicAreaDirectContainsMouse: parabolicEventsAreaLoader.active && parabolicEventsAreaLoader.item && parabolicEventsAreaLoader.item.pointerContainsMouse
+    readonly property bool parabolicAreaIsCurrent: parabolicEventsAreaLoader.active
+                                                && parabolicEventsAreaLoader.item
+                                                && (abilityItem.abilities.parabolic.currentParabolicItem === parabolicEventsAreaLoader.item)
     readonly property int parabolicAreaLastMousePos: {
         if (parabolicEventsAreaLoader.active) {
             return Math.round(plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parabolicEventsAreaLoader.item.lastMouseX : parabolicEventsAreaLoader.item.lastMouseY);

@@ -17,6 +17,7 @@ Item {
     property int lastParabolicPos: 0
 
     readonly property bool containsMouse: (abilityItem.abilities.parabolic.currentParabolicItem === _parabolicArea) || parabolicMouseArea.containsMouse
+    readonly property bool pointerContainsMouse: parabolicMouseArea.containsMouse
 
     readonly property bool isParabolicEnabled: parabolicEventsAreaLoader.isParabolicEnabled
     readonly property bool isThinTooltipEnabled: parabolicEventsAreaLoader.isThinTooltipEnabled

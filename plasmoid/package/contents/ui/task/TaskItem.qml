@@ -40,6 +40,9 @@ AbilityItem.BasicItem {
     isSeparatorInRealLength: isSeparator && root.dragSource
 
     containsMouse: taskMouseArea.containsMouse || parabolicAreaContainsMouse
+    readonly property bool visualContainsMouse: hasParabolicTrackingArea
+                                                ? (parabolicAreaDirectContainsMouse || parabolicAreaIsCurrent)
+                                                : taskMouseArea.containsMouse
     thinTooltipText: {
         // Keep tooltips focused on application identity (app name), not window title.
         // This matches dock-style behavior and avoids noisy dynamic titles.
@@ -83,7 +86,7 @@ AbilityItem.BasicItem {
 
     // Fallback tooltip: shown only when Latte thin-tooltips are disabled/unavailable.
     // This guarantees hover app-name hints without changing existing thin-tooltip behavior.
-    QtControls.ToolTip.visible: taskItem.containsMouse
+    QtControls.ToolTip.visible: taskItem.visualContainsMouse
                                 && !taskItem.isSeparator
                                 && fallbackTooltipText.length > 0
                                 && !windowsPreviewDlg.visible
@@ -196,9 +199,10 @@ AbilityItem.BasicItem {
                                                                      && (windowsPreviewDlg.activeItem === taskItem)) )
 
     indicator.isGroup: !root.disableAllWindowsFunctionality && taskItem.isGroupParent
-    indicator.isHovered: taskItem.containsMouse || (windowsPreviewDlg.containsMouse && (toolTipDelegate.parentTask === taskItem))
+    indicator.isHovered: taskItem.visualContainsMouse
+                         || (windowsPreviewDlg.containsMouse && (toolTipDelegate.parentTask === taskItem))
     indicator.isMinimized: !root.disableAllWindowsFunctionality && taskItem.isMinimized
-    indicator.isPressed: taskItem.pressed
+    indicator.isPressed: taskItem.pressed && taskItem.visualContainsMouse
     indicator.inAttention: !root.disableAllWindowsFunctionality && taskItem.inAttention
     indicator.inRemoving: taskItem.inRemoveStage
 

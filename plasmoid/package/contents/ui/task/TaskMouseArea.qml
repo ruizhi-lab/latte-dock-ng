@@ -70,6 +70,9 @@ MouseArea {
     }
 
     onExited: {
+        pressed = false;
+        dragReady = false;
+        taskItem.clearParabolicFromExternalPosition();
         taskItem.isAbleToShowPreview = true;
 
         if (root.showPreviews) {
@@ -106,8 +109,10 @@ MouseArea {
     }
 
     onContainsMouseChanged:{
-        if(!containsMouse && !inAnimation) {
+        if(!containsMouse) {
             pressed=false;
+            dragReady = false;
+            taskItem.clearParabolicFromExternalPosition();
         }
 
         ////disable hover effect///
