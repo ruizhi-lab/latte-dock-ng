@@ -2,6 +2,15 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.0.8] - 2026-05-04
+
+### Fixed
+- Refined task icon highlight behavior to avoid stale clicked-highlight regression while preserving hover feedback behavior.
+- Improved task-state indicator contrast logic against panel light/dark themes, while keeping audio mute/unmute corner badge color independent.
+- Fixed task drag sorting policy:
+  - dragging a non-pinned running app into pinned area now auto-pins it and reorders into the target position;
+  - dragging a pinned launcher into non-pinned area remains blocked.
+
 ## [v1.0.6] - 2026-05-03
 
 ### Fixed
