@@ -271,7 +271,19 @@ PlasmoidItem {
 
         function onIsReadyChanged() {
             if (appletAbilities.myView.isReady) {
-                plasmoid.action("configure").visible = false;
+                // Plasma 6 dropped JS plasmoid.action(); use internalAction()
+                // and tolerate older builds that may not expose it yet.
+                var configureAction = null;
+                if (typeof Plasmoid !== "undefined" && Plasmoid) {
+                    if (typeof Plasmoid.internalAction === "function") {
+                        configureAction = Plasmoid.internalAction("configure");
+                    } else if (typeof Plasmoid.action === "function") {
+                        configureAction = Plasmoid.action("configure");
+                    }
+                }
+                if (configureAction) {
+                    configureAction.visible = false;
+                }
                 plasmoid.configuration.isInLatteDock = true;
             }
         }

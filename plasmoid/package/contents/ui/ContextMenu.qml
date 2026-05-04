@@ -125,12 +125,33 @@ PlasmaExtras.Menu {
     }
 
     function appletAction(name) {
-        if (plasmoid && typeof plasmoid.action === "function") {
-            return plasmoid.action(name);
+        // Plasma 6: the JS-accessible Plasmoid.action(name) was replaced by
+        // Plasmoid.internalAction(name); fall back to scanning
+        // contextualActions for older builds, then to the legacy method.
+        if (typeof Plasmoid !== "undefined" && Plasmoid) {
+            if (typeof Plasmoid.internalAction === "function") {
+                return Plasmoid.internalAction(name);
+            }
+
+            if (Plasmoid.contextualActions) {
+                for (var i = 0; i < Plasmoid.contextualActions.length; ++i) {
+                    var candidate = Plasmoid.contextualActions[i];
+                    if (!candidate) {
+                        continue;
+                    }
+                    if (candidate.objectName === name || candidate.name === name) {
+                        return candidate;
+                    }
+                }
+            }
+
+            if (typeof Plasmoid.action === "function") {
+                return Plasmoid.action(name);
+            }
         }
 
-        if (typeof Plasmoid !== "undefined" && Plasmoid && typeof Plasmoid.action === "function") {
-            return Plasmoid.action(name);
+        if (plasmoid && typeof plasmoid.action === "function") {
+            return plasmoid.action(name);
         }
 
         return null;
