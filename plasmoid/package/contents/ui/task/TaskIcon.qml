@@ -89,7 +89,11 @@ Item {
         anchors.fill: parent
         //roundToIconSize: false
         source: LatteCore.Environment.iconSourceForTheme(decoration)
-        visible: !badgesLoader.active
+        // Qt6 RHI cannot compile the legacy inline GLSL fragmentShader used by
+        // badgesLoader, so the masked icon never renders. Keep the original
+        // icon visible whenever info/progress masking isn't actually needed
+        // (e.g. audio-only badge sits in a corner and doesn't require a hole).
+        visible: !badgesLoader.active || (!badgesLoader.showInfo && !badgesLoader.showProgress)
 
         readonly property real size: Math.min(width,height)
 
