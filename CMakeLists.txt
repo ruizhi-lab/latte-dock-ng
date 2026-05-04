@@ -336,6 +336,7 @@ configure_file(app/settings/generic/generictools.cpp containmentactions/contextm
 configure_file(app/data/contextmenudata.h containmentactions/contextmenu/contextmenudata.h)
 
 # subdirectories
+add_subdirectory(compat/qml)
 add_subdirectory(declarativeimports)
 add_subdirectory(indicators)
 add_subdirectory(app)
