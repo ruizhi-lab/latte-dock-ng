@@ -49,6 +49,13 @@ function checkAndUpdateAppletRootItem() {
         return;
     }
 
+    // Plasma 6: applet itself is the plasmoid root (PlasmoidItem),
+    // not a wrapper around it as in Plasma < 6.
+    if (hasLatteBridgeProperty(applet)) {
+        appletDiscoveredRootItem = applet;
+        return;
+    }
+
     var level0 = applet.children;
 
     for(var i=0; i<level0.length; ++i){
