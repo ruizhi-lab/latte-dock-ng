@@ -3,7 +3,7 @@ project(lattedock)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(VERSION 1.0.9)
+set(VERSION 1.0.10)
 set(AUTHOR "Ruizhi Zhong")
 set(EMAIL "ruizhi.zhong88@gmail.com")
 set(WEBSITE "https://github.com/ruizhi-lab/latte-dock-ng")
