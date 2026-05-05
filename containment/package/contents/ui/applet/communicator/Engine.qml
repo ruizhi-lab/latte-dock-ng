@@ -24,7 +24,16 @@ Item{
         return !!item && (typeof item.latteBridge !== "undefined");
     }
 
-    property bool appletContainsLatteBridge: hasLatteBridgeProperty(appletRootItem)
+    // Event-driven instead of a live binding: a binding here would depend on
+    // appletRootItem.latteBridge and re-evaluate every time LatteBridge writes
+    // to it, which QML reports as a (harmless) binding loop. Recompute only
+    // when the Item reference itself changes — once at startup and whenever
+    // checkAndUpdateAppletRootItem promotes appletDiscoveredRootItem.
+    property bool appletContainsLatteBridge: false
+
+    onAppletRootItemChanged: {
+        appletContainsLatteBridge = hasLatteBridgeProperty(appletRootItem);
+    }
     //!              END OF INTERNAL APPLET PROPERTIES
     //             -------------------------------------
 
@@ -78,7 +87,15 @@ Item{
                 AppletIdentifier.checkAndUpdateAppletRootItem();
                 AppletIdentifier.reconsiderAppletIconItem();
                 overlayInitTimer.start();
+                appletContainsLatteBridge = hasLatteBridgeProperty(appletRootItem);
             }
+        }
+    }
+
+    Component.onCompleted: {
+        if (applet) {
+            AppletIdentifier.checkAndUpdateAppletRootItem();
+            appletContainsLatteBridge = hasLatteBridgeProperty(appletRootItem);
         }
     }
 
