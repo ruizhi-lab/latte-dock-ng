@@ -75,7 +75,10 @@ Item {
         id: ignoreItemTimer
 
         repeat: false
-        interval: 200
+        // Matches plasma-desktop's taskmanager: 750ms is enough to prevent the
+        // launcher-vs-task oscillation case without globally throttling the
+        // wave / reorder rate the rest of the time.
+        interval: 750
 
         onTriggered: {
             ignoredItem = null;
@@ -137,16 +140,23 @@ Item {
     }
 
     function updateDragParabolic(hoverItem, rootX, rootY) {
-        if (dragParabolicItem && dragParabolicItem !== hoverItem && dragParabolicItem.clearParabolicFromExternalPosition) {
-            dragParabolicItem.clearParabolicFromExternalPosition();
-        }
-
+        // Atomic transition between items: let updateParabolicFromExternalPosition
+        // call setCurrentParabolicItem(B) which replaces the previous current item
+        // in place. Clearing the previous item first would briefly set
+        // currentParabolicItem to null and arm restoreZoomTimer / disable
+        // directRendering, producing a visible hiccup in the wave when drag
+        // events are sparse (typical on Wayland).
         if (hoverItem && hoverItem.updateParabolicFromExternalPosition
                 && hoverItem.updateParabolicFromExternalPosition(dArea, rootX, rootY)) {
             dragParabolicItem = hoverItem;
-        } else {
-            dragParabolicItem = null;
+            return;
         }
+
+        // Truly leaving any item — restore zoom on the previous target.
+        if (dragParabolicItem && dragParabolicItem.clearParabolicFromExternalPosition) {
+            dragParabolicItem.clearParabolicFromExternalPosition();
+        }
+        dragParabolicItem = null;
     }
 
     // Public entry point used by task delegates while dragging. Keep this on
@@ -328,34 +338,35 @@ Item {
 
             var above = target.childAtPos(eventToTarget.x, eventToTarget.y, root.dragSource);
 
-            // If we're mixing launcher tasks with other tasks and are moving
-            // a (small) launcher task across a non-launcher task, don't allow
-            // the latter to be the move target twice in a row for a while, as
-            // it will naturally be moved underneath the cursor as result of the
-            // initial move, due to being far larger than the launcher delegate.
-            // TODO: This restriction (minus the timer, which improves things)
-            // has been proven out in the EITM fork, but could be improved later
-            // by tracking the cursor movement vector and allowing the drag if
-            // the movement direction has reversed, establishing user intent to
-            // move back.
-            if (root.dragSource == null
-                    && ignoredItem == above)
+            // Always drive the parabolic wave from the latest pointer position,
+            // independently of the reorder cooldown below. This is the
+            // mitigation for sparse Wayland drag-motion events: every event we
+            // do receive needs to update the wave, even when the same item is
+            // the current reorder target (cooldown active).
+            if (root.dragSource) {
+                dArea.updateDragParabolic(above, event.x, event.y);
+            }
+
+            // Per-item cooldown (matches plasma-desktop's MouseHandler.qml):
+            // only the *specific* item we just moved past is blocked for the
+            // cooldown window, so cursor sweeps across multiple delegates
+            // continue to reorder smoothly. The previous global gate
+            // (ignoredItem == null) caused 200 ms-1 reorder updates regardless
+            // of where the pointer went next.
+            if (root.dragSource == null && above === ignoredItem) {
                 return;
+            }
 
             if (root.dragSource != null
                     && root.dragSource.m.IsLauncher === true && above != null
                     && above.m != null
-                    && above.m.IsLauncher !== true && above == ignoredItem) {
+                    && above.m.IsLauncher !== true && above === ignoredItem) {
                 return;
-            } else {
-                //ignoredItem = null;
             }
 
-            //at some point it was needed the following  && above != ignoredItem
-            //but know not... strange... && above != ignoredItem
-            //I use the ignoredItem in order to reduce the move calls as much
-            //as possible
-            if (tasksModel.sortMode == TaskManager.TasksModel.SortManual && root.dragSource && ignoredItem == null) {
+            if (tasksModel.sortMode == TaskManager.TasksModel.SortManual
+                    && root.dragSource
+                    && above !== ignoredItem) {
                 dArea.reorderFromDragPosition(root.dragSource, event.x, event.y);
             } else if (!root.dragSource && above && hoveredItem != above) {
                 hoveredItem = above;
