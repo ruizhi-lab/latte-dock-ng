@@ -191,22 +191,39 @@ Column {
                 id:previewThumbLoader
                 anchors.fill: parent
                 anchors.margins: Math.max(2, previewShadow.radius)
-                active: LatteCore.WindowSystem.isPlatformWayland
-                visible: !albumArtImage.visible && !thumbnailSourceItem.isMinimized
+                // Disabled together with TaskItem.showPreviewWindow(): the
+                // preview popup itself is suppressed under Plasma 6 / Wayland,
+                // so we don't need to keep PipeWire ScreencastingRequest
+                // objects alive for every task — they would otherwise emit
+                // "无法找到窗口 ID 0" / "No QSGTexture provided" warnings
+                // continuously while the delegate tree is preloaded as
+                // mainItem of the (always-hidden) dialog.
+                active: false
+                // Async load matches plasma-desktop's taskmanager pattern;
+                // synchronous loading was blocking the dock UI on every
+                // hover and producing visible jank.
+                asynchronous: true
+                // Only show once PipeWire actually has frames. Prior to that
+                // the source has no texture, which triggers periodic
+                // "No QSGTexture provided from updateSampledImage()" warnings
+                // and (under DodgeActive) crashes during the dock's
+                // configure-driven re-render.
+                visible: !albumArtImage.visible
+                         && !thumbnailSourceItem.isMinimized
+                         && (item ? (item.hasThumbnail ?? false) : false)
                 onStatusChanged: {
                     if (status === Loader.Error && source !== "PlasmaCoreThumbnail.qml") {
                         source = "PlasmaCoreThumbnail.qml";
                     }
                 }
                 source:  {
-                    // On Wayland, PlasmaCore.WindowThumbnail is broken because
-                    // the legacy uint winId API can't accept the QString UUIDs
-                    // the tasks model provides; the resulting null QSGTexture
-                    // leaks "No QSGTexture provided from updateSampledImage()"
-                    // warnings and crashes the dock under DodgeActive's
-                    // configure cycle. Try the PipeWire-backed thumbnail
-                    // first; onStatusChanged falls back to PlasmaCoreThumbnail
-                    // if org.kde.pipewire isn't installed.
+                    // On Wayland, PlasmaCore.WindowThumbnail can't accept the
+                    // QString UUIDs the tasks model provides on Wayland —
+                    // assignment fails, the resulting null QSGTexture leaks
+                    // warnings, and DodgeActive's configure cycle dereferences
+                    // the freed texture and crashes. Use the PipeWire-backed
+                    // thumbnail; onStatusChanged falls back to
+                    // PlasmaCoreThumbnail if org.kde.pipewire isn't installed.
                     if (LatteCore.WindowSystem.isPlatformWayland) {
                         return "PipeWireThumbnail.5.26.qml";
                     }

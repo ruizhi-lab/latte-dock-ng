@@ -3,38 +3,29 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import QtQuick.Window 2.15
+import QtQuick
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.pipewire 0.1 as PipeWire
+import org.kde.pipewire as PipeWire
 import org.kde.taskmanager 0.1 as TaskManager
 
-// opacity doesn't work in the root item
-Item {
+// Mirrors plasma-desktop's applets/taskmanager/qml/PipeWireThumbnail.qml.
+// Latte previously wrapped this in an opacity-animation Item with
+// `enabled: false` and `visible: waylandItem.nodeId > 0` guards, which
+// prevented the source from ever producing frames (you'd get the
+// thumbnail frame but no contents, plus periodic "No QSGTexture provided
+// from updateSampledImage()" warnings while nodeId was 0). Sticking close
+// to upstream lets PipeWireSourceItem manage its own readiness via the
+// `ready` property; ToolTipInstance gates visibility on that.
+PipeWire.PipeWireSourceItem {
+    id: pipeWireSourceItem
+
+    readonly property alias hasThumbnail: pipeWireSourceItem.ready
+
     anchors.fill: parent
+    nodeId: waylandItem.nodeId
 
-    PipeWire.PipeWireSourceItem {
-        id: pipeWireSourceItem
-
-        enabled: false // Must be set in pipewiresourceitem.cpp so opacity animation can work
-        visible: waylandItem.nodeId > 0
-        nodeId: waylandItem.nodeId
-
-        anchors.fill: parent
-
-        opacity: enabled ? 1 : 0
-
-        TaskManager.ScreencastingRequest {
-            id: waylandItem
-            uuid: !windowsPreviewDlg.visible ? "" : thumbnailSourceItem.winId
-        }
-
-        /*Behavior on opacity {
-            OpacityAnimator {
-                duration: PlasmaCore.Units.longDuration
-                easing.type: Easing.OutCubic
-            }
-        }*/
+    TaskManager.ScreencastingRequest {
+        id: waylandItem
+        uuid: thumbnailSourceItem.winId
     }
 }
