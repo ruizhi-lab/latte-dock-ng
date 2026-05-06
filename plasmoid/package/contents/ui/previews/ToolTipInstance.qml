@@ -30,9 +30,6 @@ Column {
     id: instance
     readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
-    // org.kde.pipewire is optional on some distros. Keep disabled by default to
-    // avoid hard runtime import failures in tooltip previews.
-    property bool pipeWireModuleAvailable: false
     property var submodelIndex
     property int flatIndex: isGroup && itemIndex>=0 ? itemIndex : 0
 
@@ -202,7 +199,15 @@ Column {
                     }
                 }
                 source:  {
-                    if (LatteCore.WindowSystem.isPlatformWayland && pipeWireModuleAvailable) {
+                    // On Wayland, PlasmaCore.WindowThumbnail is broken because
+                    // the legacy uint winId API can't accept the QString UUIDs
+                    // the tasks model provides; the resulting null QSGTexture
+                    // leaks "No QSGTexture provided from updateSampledImage()"
+                    // warnings and crashes the dock under DodgeActive's
+                    // configure cycle. Try the PipeWire-backed thumbnail
+                    // first; onStatusChanged falls back to PlasmaCoreThumbnail
+                    // if org.kde.pipewire isn't installed.
+                    if (LatteCore.WindowSystem.isPlatformWayland) {
                         return "PipeWireThumbnail.5.26.qml";
                     }
 
