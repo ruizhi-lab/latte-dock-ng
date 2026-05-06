@@ -162,6 +162,23 @@ Item{
         return result;
     }
 
+    //! Skip "phantom" group entries (e.g. ghostty's headless daemon
+    //! registers an xdg_toplevel with no real surface; activating it is a
+    //! no-op which makes the task icon feel frozen).
+    function isActivatableChild(kid) {
+        if (!kid || !kid.model) {
+            return false;
+        }
+        if (kid.model.IsHidden === true) {
+            return false;
+        }
+        var winIdList = kid.model.WinIdList;
+        if (winIdList === undefined || winIdList.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
     //! function which is used to cycle activation into
     //! a group of windows
     function activateNextTask() {
@@ -172,19 +189,26 @@ Item{
         }
 
         var childs = windowsLocalModel.items;
-        var nextAvailableWindow = -1;
+        var activeIdx = -1;
 
         for(var i=0; i<childs.count; ++i){
             var kid = childs.get(i);
             if (kid.model.IsActive === true) {
-                nextAvailableWindow = i + 1;
+                activeIdx = i;
                 break;
             }
         }
 
-        //the active window is the last one
-        if (nextAvailableWindow >= childs.count) {
-            nextAvailableWindow = 0;
+        // Pick the next activatable sibling, wrapping around. Skip phantom
+        // children (no surface) so a single click reliably reaches a real
+        // window.
+        var nextAvailableWindow = -1;
+        for(var step=1; step<=childs.count; ++step) {
+            var probe = ((activeIdx === -1 ? -1 : activeIdx) + step + childs.count) % childs.count;
+            if (isActivatableChild(childs.get(probe))) {
+                nextAvailableWindow = probe;
+                break;
+            }
         }
 
         if (nextAvailableWindow === -1 && lastActiveWinInGroup !==-1){
@@ -193,7 +217,7 @@ Item{
                 var winIdList = kid.model.WinIdList;
                 var kidId = (winIdList !== undefined ? winIdList[0] : 0);
 
-                if (kidId === lastActiveWinInGroup) {
+                if (kidId === lastActiveWinInGroup && isActivatableChild(kid)) {
                     nextAvailableWindow = i;
                     break;
                 }

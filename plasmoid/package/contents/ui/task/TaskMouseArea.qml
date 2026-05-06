@@ -203,11 +203,16 @@ MouseArea {
                             || ( !canPresentWindowsIsSupported
                                 && root.leftClickAction === LatteTasks.types.PresentWindows
                                 && isGroupParent) ) {
-                        if(windowsPreviewDlg.activeItem !== taskItem || !windowsPreviewDlg.visible){
-                            showPreviewWindow();
-                        } else {
-                            forceHidePreview(21.1);
-                        }
+                        // The legacy path here was showPreviewWindow(), but
+                        // window-preview thumbnails are unstable on Plasma 6 /
+                        // Wayland (see TaskItem.showPreviewWindow comment) so
+                        // that function was neutered. Without a fallback the
+                        // click felt frozen for grouped tasks whenever KWin's
+                        // WindowView/Overview effect wasn't available.
+                        // Cycle through real windows instead — matches the
+                        // subWindows.activateNextTask path used by
+                        // CycleThroughTasks and skips phantom toplevels.
+                        subWindows.activateNextTask();
                     } else if ( (root.leftClickAction === LatteTasks.types.PresentWindows && !(isGroupParent && !LatteCore.WindowSystem.compositingActive))
                                || ((root.leftClickAction === LatteTasks.types.PreviewWindows && !isGroupParent)) ) {
                         activateTask();

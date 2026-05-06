@@ -496,10 +496,15 @@ AbilityItem.BasicItem {
             activateLauncher();
         } else{
             if (model.IsGroupParent) {
-                var isWindowViewAvailable = LatteCore.WindowSystem.compositingActive && backend.windowViewAvailable;
-                if (isWindowViewAvailable) {
-                    root.activateWindowView(model.WinIdList);
-                }
+                // Always cycle through real windows of the group. The legacy
+                // path went through KWin's WindowView/Overview effect via
+                // backend.windowViewAvailable, but it isn't reliably
+                // installed/enabled across Plasma 6 Wayland sessions and is
+                // a no-op for groups whose extra entry is a phantom toplevel
+                // (e.g. ghostty's headless daemon process). activateNextTask
+                // already filters phantoms (IsHidden / empty WinIdList) so
+                // a single click lands on a focusable terminal.
+                subWindows.activateNextTask();
             } else {
                 if (windowsPreviewDlg.visible) {
                     forceHidePreview(8.3);
@@ -526,17 +531,14 @@ AbilityItem.BasicItem {
     }
 
     function showPreviewWindow() {
-        if (root.disableAllWindowsFunctionality || !isAbleToShowPreview) {
-            return;
-        }
-
-        if(windowsPreviewDlg.activeItem !== taskItem){
-            if (!taskItem.abilities.myView.isReady
-                    || (taskItem.abilities.myView.isReady && taskItem.abilities.myView.isShownFully)) {
-                taskItem.preparePreviewWindow(false);
-                windowsPreviewDlg.show(taskItem);
-            }
-        }
+        // Window-preview thumbnails are broken on Plasma 6 / Wayland: the
+        // legacy WindowThumbnail can't accept QString UUIDs, the PipeWire
+        // path is slow, leaks "No QSGTexture provided from updateSampledImage()"
+        // warnings, and the dock crashes under DodgeActive's configure cycle.
+        // Until upstream PipeWireSourceItem behavior stabilizes here, suppress
+        // the preview popup entirely. The thin tooltip (app name) still works
+        // and is enough.
+        return;
     }
 
     function hidePreviewWindow() {
@@ -689,10 +691,9 @@ AbilityItem.BasicItem {
     }
 
     function slotShowPreviewForTasks(group) {
-        if (group === taskItem && !windowsPreviewDlg.visible) {
-            preparePreviewWindow(true);
-            windowsPreviewDlg.show(taskItem);
-        }
+        // Same rationale as showPreviewWindow(): suppressed while the
+        // Plasma 6 / Wayland thumbnail story is unstable.
+        return;
     }
 
     function slotPublishGeometries() {
