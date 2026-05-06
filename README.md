@@ -78,6 +78,13 @@ Minimum requirements:
  PlasmaWaylandProtocols >= 1.6
  Wayland::Client
 ```
+### From my personal gentoo overlay for Gentoo Linux
+
+```bash
+eselect repository add ruizhi-overlay git https://github.com/ruizhi-lab/gentoo-overlay.git
+emaint sync -r ruizhi-overlay
+emerge -av kde-misc/latte-dock-ng
+```
 
 ### From source
 
