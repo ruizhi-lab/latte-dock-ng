@@ -8,6 +8,7 @@ import QtQuick 2.5
 import QtQuick.Layouts 1.3
 import QtQuick.Templates 2.2 as T
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.2 as Kirigami
 
 import org.kde.latte.components 1.0 as LatteComponents
 
@@ -19,6 +20,8 @@ T.CheckDelegate {
     implicitHeight: isSeparator ? 1 : Math.max(contentItem.implicitHeight, indicator ? indicator.implicitHeight : 0) + topPadding + bottomPadding
     hoverEnabled: !isSeparator
 
+    readonly property var units: Kirigami.Units
+
     topPadding: margin
     bottomPadding: margin
     leftPadding: isSeparator ? 0 : margin
@@ -28,7 +31,7 @@ T.CheckDelegate {
     property bool isSeparator: false
 
     property bool blankSpaceForEmptyIcons: false
-    property string icon
+    property string iconName
     property string iconToolTip
     property bool iconOnlyWhenHovered
     property string toolTip
@@ -49,14 +52,13 @@ T.CheckDelegate {
             Layout.maximumWidth: parent.height
             Layout.minimumHeight: parent.height
             Layout.maximumHeight: parent.height
-            visible: !isSeparator && icon && (!control.iconOnlyWhenHovered || (control.iconOnlyWhenHovered && control.isHovered))
+            visible: !isSeparator && iconName && (!control.iconOnlyWhenHovered || (control.iconOnlyWhenHovered && control.isHovered))
             color: control.iconToolTip && iconMouseArea.containsMouse ? theme.highlightColor : "transparent"
 
-            PlasmaCore.IconItem {
+            Kirigami.Icon {
                 id: iconElement
                 anchors.fill: parent
-                colorGroup: PlasmaCore.Theme.ButtonColorGroup
-                source: control.icon
+                source: control.iconName
             }
 
             LatteComponents.ToolTip{
@@ -80,7 +82,7 @@ T.CheckDelegate {
             //blank space when no icon is shown
             Layout.minimumHeight: parent.height
             Layout.minimumWidth: parent.height
-            visible: !isSeparator && control.blankSpaceForEmptyIcons && (!icon || (control.iconOnlyWhenHovered && !control.isHovered) )
+            visible: !isSeparator && control.blankSpaceForEmptyIcons && (!iconName || (control.iconOnlyWhenHovered && !control.isHovered) )
             color: "transparent"
         }
 

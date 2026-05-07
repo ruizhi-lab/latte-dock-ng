@@ -17,6 +17,8 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 import org.kde.kquickcontrolsaddons 2.0 as KQuickControlAddons
 
+import org.kde.kirigami 2.0 as Kirigami
+
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
 
@@ -30,6 +32,11 @@ Loader {
         id: dialog
         width: appliedWidth
         height: appliedHeight
+
+        // Plasma 5 provided 'units' as a global context property; Plasma 6
+        // removed it — expose Kirigami.Units under the same name so all
+        // descendant items continue to work without individual changes.
+        readonly property var units: Kirigami.Units
 
         readonly property bool basicLevel: !advancedLevel
         readonly property bool advancedLevel: universalSettings.inAdvancedModeForEditSettings
@@ -182,12 +189,12 @@ Loader {
 
                     readonly property int trademarkHeight: 48
 
-                    PlasmaCore.SvgItem{
+                    KSvg.SvgItem{
                         id: latteTrademark
                         width: Qt.application.layoutDirection !== Qt.RightToLeft ? Math.ceil(1.70 * height) : height
                         height: trademark.height
 
-                        svg: PlasmaCore.Svg{
+                        svg: KSvg.Svg{
                             imagePath: Qt.application.layoutDirection !== Qt.RightToLeft ? universalSettings.trademarkPath() : universalSettings.trademarkIconPath()
                         }
                     }
@@ -610,9 +617,9 @@ Loader {
                     Layout.fillWidth: true
                     enabled: dialog.advancedLevel
                     text: i18n("Remove")
-                    iconSource: "delete"
+                    icon.name: "delete"
                     opacity: enabled ? 1 : 0
-                    tooltip: i18n("Remove current dock")
+                    PlasmaComponents.ToolTip { text: i18n("Remove current dock") }
 
                     onClicked: latteView.removeView()
                 }
@@ -622,8 +629,8 @@ Loader {
                     Layout.fillWidth: true
 
                     text: i18n("Close")
-                    iconSource: "dialog-close"
-                    tooltip: i18n("Close settings window")
+                    icon.name: "dialog-close"
+                    PlasmaComponents.ToolTip { text: i18n("Close settings window") }
 
                     onClicked: viewConfig.hideConfigWindow();
                 }

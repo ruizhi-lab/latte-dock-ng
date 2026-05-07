@@ -655,8 +655,8 @@ PlasmaComponents.Page {
                             Layout.fillWidth: true
                             text: i18n("Drag Active Window")
                             checkable: true
-                            tooltip: i18n("The user can use left mouse button to drag and maximized/restore last active window from empty areas")
-                            iconName: "transform-move"
+                            icon.name: "transform-move"
+                            PlasmaComponents.ToolTip { text: i18n("The user can use left mouse button to drag and maximized/restore last active window from empty areas") }
 
                             readonly property int dragActiveWindowEnabled: plasmoid.configuration.dragActiveWindowEnabled
 
@@ -680,8 +680,8 @@ PlasmaComponents.Page {
                             Layout.fillWidth: true
                             text: i18n("Close Active Window")
                             checkable: true
-                            tooltip: i18n("The user can use middle mouse button to close last active window from empty areas")
-                            iconName: "window-close"
+                            icon.name: "window-close"
+                            PlasmaComponents.ToolTip { text: i18n("The user can use middle mouse button to close last active window from empty areas") }
 
                             readonly property int closeActiveWindowEnabled: plasmoid.configuration.closeActiveWindowEnabled
 

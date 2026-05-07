@@ -6,6 +6,7 @@
 import QtQuick 2.6
 import QtQuick.Templates 2.2 as T
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.ksvg 1.0 as KSvg
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
 T.ToolTip {
@@ -31,8 +32,8 @@ T.ToolTip {
         color: PlasmaCore.ColorScope.textColor
     }
 
-    background: PlasmaCore.FrameSvgItem {
+    background: KSvg.FrameSvgItem {
         imagePath: "widgets/background"
-        enabledBorders: PlasmaCore.FrameSvg.AllBorders
+        enabledBorders: KSvg.FrameSvg.AllBorders
     }
 }

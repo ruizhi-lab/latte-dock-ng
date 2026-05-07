@@ -23,7 +23,12 @@ import org.kde.plasma.private.shell 2.0 as PlasmaShell
 
 PC3.Page {
     id: main
-    width: Math.max(heading.paintedWidth, PlasmaCore.Units.iconSizes.enormous * 3 + PlasmaCore.Units.smallSpacing * 4 + PlasmaCore.Units.gridUnit * 2)
+    // The dialog background SVG uses the Plasma panel/dark theme colours; set
+    // Complementary so that Kirigami text colours (white) contrast correctly.
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    Kirigami.Theme.inherit: false
+
+    width: Math.max(heading.paintedWidth, Kirigami.Units.iconSizes.enormous * 3 + Kirigami.Units.smallSpacing * 4 + Kirigami.Units.gridUnit * 2)
   //  height: 800//Screen.height
     opacity: draggingWidget ? 0.3 : 1
     visible: viewConfig.visible
@@ -59,18 +64,22 @@ PC3.Page {
 
     onVisibleChanged: {
         if (!visible) {
-            kwindowsystem.showingDesktop = false;
+            KWindowSystem.showingDesktop = false;
         }
     }
 
     onWidgetExplorerChanged: {
         if (widgetExplorer) {
             setModelTimer.start();
+            // Also bind immediately in case the timer already fired with a null model
+            if (widgetExplorer.widgetsModel) {
+                list.model = widgetExplorer.widgetsModel;
+            }
         }
     }
 
     Component.onDestruction: {
-        if (pendingUninstallTimer.running) {
+        if (pendingUninstallTimer.running && widgetExplorer && widgetExplorer.widgetsModel) {
             // we're not being destroyed so at least reset the filters
             widgetExplorer.widgetsModel.filterQuery = ""
             widgetExplorer.widgetsModel.filterType = ""
@@ -80,14 +89,10 @@ PC3.Page {
 
     function addCurrentApplet() {
         var pluginName = list.currentItem ? list.currentItem.pluginName : ""
-        if (pluginName) {
+        if (pluginName && widgetExplorer && typeof widgetExplorer.addApplet === "function") {
             widgetExplorer.addApplet(pluginName);
             latteView.extendedInterface.appletCreated(pluginName);
         }
-    }
-
-    KWindowSystem {
-        id: kwindowsystem
     }
 
     QQC2.Action {
@@ -145,15 +150,16 @@ PC3.Page {
             list.contentX = 0
             list.contentY = 0
             categoryButton.text = (model.filterData ? model.display : i18nd("plasma_shell_org.kde.plasma.desktop", "All Widgets"))
-            widgetExplorer.widgetsModel.filterQuery = model.filterData
-            widgetExplorer.widgetsModel.filterType = model.filterType
+            if (widgetExplorer && widgetExplorer.widgetsModel) {
+                widgetExplorer.widgetsModel.filterQuery = model.filterData
+                widgetExplorer.widgetsModel.filterType = model.filterType
+            }
         }
     }
 
     PlasmaExtras.ModelContextMenu {
         id: getWidgetsDialog
         visualParent: getWidgetsButton
-        placement: PlasmaCore.Types.TopPosedLeftAlignedPopup
         // model set on first invocation
         onClicked: model.trigger()
     }
@@ -178,7 +184,7 @@ PC3.Page {
         }
         mainItem: Tooltip { id: tooltipWidget }
         Behavior on y {
-            NumberAnimation { duration: PlasmaCore.Units.longDuration }
+            NumberAnimation { duration: Kirigami.Units.longDuration }
         }
     }
     Timer {
@@ -217,8 +223,10 @@ PC3.Page {
                     icon.name: "get-hot-new-stuff"
                     text: i18nd("plasma_shell_org.kde.plasma.desktop", "Get New Widgets…")
                     onClicked: {
-                        getWidgetsDialog.model = widgetExplorer.widgetsMenuActions
-                        getWidgetsDialog.openRelative()
+                        if (widgetExplorer && widgetExplorer.widgetsMenuActions) {
+                            getWidgetsDialog.model = widgetExplorer.widgetsMenuActions
+                            getWidgetsDialog.openRelative()
+                        }
                     }
                 }
                 PC3.ToolButton {
@@ -231,6 +239,10 @@ PC3.Page {
             RowLayout {
                 PC3.TextField {
                     id: searchInput
+                    // PC3.TextField resets the colorSet to View (dark text); override
+                    // so typed text matches the Complementary (light) context.
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                    Kirigami.Theme.inherit: false
                     Layout.fillWidth: true
                     clearButtonShown: true
                     placeholderText: i18nd("plasma_shell_org.kde.plasma.desktop", "Search…")
@@ -240,18 +252,28 @@ PC3.Page {
                     onTextChanged: {
                         list.positionViewAtBeginning()
                         list.currentIndex = -1
-                        widgetExplorer.widgetsModel.searchTerm = text
+                        if (widgetExplorer && widgetExplorer.widgetsModel) {
+                            widgetExplorer.widgetsModel.searchTerm = text
+                        }
                     }
 
-                    Component.onCompleted: if (Kirigami.InputMethod && !Kirigami.InputMethod.willShowOnActive) { forceActiveFocus() }
+                    Component.onCompleted: {
+                        try {
+                            if (!Kirigami.InputMethod || !Kirigami.InputMethod.willShowOnActive) { forceActiveFocus(); }
+                        } catch(e) { forceActiveFocus(); }
+                    }
                 }
                 PC3.ToolButton {
                     id: categoryButton
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                    Kirigami.Theme.inherit: false
                     text: i18nd("plasma_shell_org.kde.plasma.desktop", "All Widgets")
                     icon.name: "view-filter"
                     onClicked: {
-                        categoriesDialog.model = widgetExplorer.filterModel
-                        categoriesDialog.open(0, categoryButton.height)
+                        if (widgetExplorer && widgetExplorer.filterModel) {
+                            categoriesDialog.model = widgetExplorer.filterModel
+                            categoriesDialog.open(0, categoryButton.height)
+                        }
                     }
 
                     PC3.ToolTip {
@@ -267,7 +289,7 @@ PC3.Page {
         interval: 20
         running: true
         onTriggered: {
-            if (widgetExplorer) {
+            if (widgetExplorer && widgetExplorer.widgetsModel) {
                 list.model = widgetExplorer.widgetsModel
             }
         }
@@ -277,14 +299,11 @@ PC3.Page {
         anchors.fill: parent
         //anchors.rightMargin: - main.sidePanel.margins.right
 
-        // HACK: workaround for https://bugreports.qt.io/browse/QTBUG-83890
-        PC3.ScrollBar.horizontal.policy: PC3.ScrollBar.AlwaysOff
-
         // hide the flickering by fading in nicely
         opacity: setModelTimer.running ? 0 : 1
         Behavior on opacity {
             OpacityAnimator {
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 easing.type: Easing.InOutQuad
             }
         }
@@ -297,7 +316,7 @@ PC3.Page {
             activeFocusOnTab: true
             keyNavigationWraps: true
             cellWidth: Math.floor(width / 3)
-            cellHeight: cellWidth + PlasmaCore.Units.gridUnit * 4 + PlasmaCore.Units.smallSpacing * 2
+            cellHeight: cellWidth + Kirigami.Units.gridUnit * 4 + Kirigami.Units.smallSpacing * 2
 
             delegate: AppletDelegate {}
             highlight: PlasmaExtras.Highlight {}
@@ -309,7 +328,7 @@ PC3.Page {
                 NumberAnimation {
                     properties: "x"
                     from: -list.width
-                    duration: PlasmaCore.Units.shortDuration
+                    duration: Kirigami.Units.shortDuration
                 }
             }
 
@@ -318,7 +337,7 @@ PC3.Page {
                 NumberAnimation {
                     properties: "x"
                     to: list.width
-                    duration: PlasmaCore.Units.shortDuration
+                    duration: Kirigami.Units.shortDuration
                 }
             }
 
@@ -331,7 +350,7 @@ PC3.Page {
             displaced: Transition {
                 NumberAnimation {
                     properties: "x,y"
-                    duration: PlasmaCore.Units.shortDuration
+                    duration: Kirigami.Units.shortDuration
                 }
             }
         }
@@ -339,7 +358,7 @@ PC3.Page {
 
     PlasmaExtras.PlaceholderMessage {
         anchors.centerIn: parent
-        width: parent.width - (PlasmaCore.Units.largeSpacing * 4)
+        width: parent.width - (Kirigami.Units.largeSpacing * 4)
         text: searchInput.text.length > 0 ? i18n("No widgets matched the search terms") : i18n("No widgets available")
         visible: list.count == 0
     }
@@ -359,6 +378,11 @@ PC3.Page {
 
         interval: 200
         onTriggered: {
+            if (!widgetExplorer || typeof widgetExplorer.uninstall !== "function") {
+                applets = []
+                return
+            }
+
             for (var i = 0, length = applets.length; i < length; ++i) {
                 widgetExplorer.uninstall(applets[i])
             }

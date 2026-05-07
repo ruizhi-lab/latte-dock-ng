@@ -101,8 +101,9 @@ Item{
         id: tooltipBtn
         anchors.fill: visibleButtonRoot
         opacity: 0
-        tooltip: button.tooltip
 
         onPressedChanged: button.pressedChanged(pressed)
+
+        PlasmaComponents.ToolTip { text: button.tooltip }
     }
 }

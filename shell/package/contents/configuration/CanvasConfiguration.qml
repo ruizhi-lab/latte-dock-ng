@@ -135,7 +135,7 @@ Loader {
         PlasmaComponents.Button {
             anchors.fill: editBackMouseArea
             opacity: 0
-            tooltip: editBackMouseArea.tooltip
+            PlasmaComponents.ToolTip { text: editBackMouseArea.tooltip }
         }
 
         //! Settings Overlay

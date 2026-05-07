@@ -47,7 +47,7 @@ Grid {
         checkable: true
         checked: latteView.type === LatteCore.Types.DockView
         text: i18nc("dock type","Dock")
-        tooltip: i18n("Change the behavior and appearance to Dock type")
+        PlasmaComponents.ToolTip { text: i18n("Change the behavior and appearance to Dock type") }
 
         onPressedChanged: {
             if (pressed && !checked) {
@@ -90,7 +90,7 @@ Grid {
         checkable: true
         checked: latteView.type === LatteCore.Types.PanelView
         text: i18nc("panel type","Panel")
-        tooltip: i18n("Change the behavior and appearance to Panel type")
+        PlasmaComponents.ToolTip { text: i18n("Change the behavior and appearance to Panel type") }
 
         onPressedChanged: {
             if (pressed && !checked) {

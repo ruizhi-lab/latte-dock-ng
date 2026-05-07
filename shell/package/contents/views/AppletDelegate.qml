@@ -6,15 +6,15 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.4
+import QtQuick 2.15
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.0 as Kirigami
+import org.kde.kwindowsystem 1.0
 import org.kde.draganddrop 2.0
-
-import org.kde.latte.core 0.2 as LatteCore
 
 Item {
     id: delegate
@@ -25,10 +25,13 @@ Item {
     width: list.cellWidth
     height: list.cellHeight
 
+    HoverHandler {
+        onHoveredChanged: if (hovered) delegate.GridView.view.currentIndex = index
+    }
+
     DragArea {
         anchors.fill: parent
         supportedActions: Qt.MoveAction | Qt.LinkAction
-        //onDragStarted: tooltipDialog.visible = false
         delegateImage: decoration
         enabled: !delegate.pendingUninstall
         mimeData {
@@ -37,7 +40,7 @@ Item {
         Component.onCompleted: mimeData.setData("text/x-plasmoidservicename", pluginName)
 
         onDragStarted: {
-            kwindowsystem.showingDesktop = true;
+            KWindowSystem.showingDesktop = true;
             main.draggingWidget = true;
         }
         onDrop: {
@@ -47,134 +50,128 @@ Item {
         MouseArea {
             id: mouseArea
             anchors.fill: parent
-            hoverEnabled: true
             onDoubleClicked: {
                 if (!delegate.pendingUninstall) {
                     widgetExplorer.addApplet(pluginName);
                     latteView.extendedInterface.appletCreated(pluginName);
                 }
             }
-            onEntered: delegate.GridView.view.currentIndex = index
-            onExited: delegate.GridView.view.currentIndex = - 1
         }
 
         ColumnLayout {
             id: mainLayout
-            spacing: units.smallSpacing
+            spacing: Kirigami.Units.smallSpacing
             anchors {
                 left: parent.left
                 right: parent.right
-                //bottom: parent.bottom
-                margins: units.smallSpacing * 2
-                rightMargin: units.smallSpacing * 2 // don't cram the text to the border too much
+                margins: Kirigami.Units.smallSpacing * 2
+                rightMargin: Kirigami.Units.smallSpacing * 2
                 top: parent.top
             }
 
             Item {
                 id: iconContainer
-                width: units.iconSizes.enormous
+                width: Kirigami.Units.iconSizes.enormous
                 height: width
                 Layout.alignment: Qt.AlignHCenter
                 opacity: delegate.pendingUninstall ? 0.6 : 1
                 Behavior on opacity {
                     OpacityAnimator {
-                        duration: units.longDuration
+                        duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                     }
                 }
 
-                Item {
-                    id: iconWidget
+                Kirigami.Icon {
                     anchors.fill: parent
-                    LatteCore.IconItem {
-                        anchors.fill: parent
-                        source: model.decoration
-                        visible: model.screenshot === ""
-                    }
-                    Image {
-                        width: units.iconSizes.enormous
-                        height: width
-                        anchors.fill: parent
-                        fillMode: Image.PreserveAspectFit
-                        source: model.screenshot
-                    }
+                    source: model.decoration
+                    visible: model.screenshot === ""
+                }
+                Image {
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: model.screenshot
                 }
 
-                Item {
-                    id: badgeMask
-                    anchors.fill: parent
-
-                    Rectangle {
-                        x: Math.round(-units.smallSpacing * 1.5 / 2)
-                        y: x
-                        width: runningBadge.width + Math.round(units.smallSpacing * 1.5)
-                        height: width
-                        radius: height
-                        visible: running && delegate.GridView.isCurrentItem
-                    }
-                }
-
+                // Top-left: instance-count badge (or "New!" badge)
                 Rectangle {
-                    id: runningBadge
-                    width: height
-                    height: Math.round(theme.mSize(countLabel.font).height * 1.3)
-                    radius: height
-                    color: theme.highlightColor
-                    visible: running && delegate.GridView.isCurrentItem
-                    onVisibleChanged: maskShaderSource.scheduleUpdate()
+                    id: overlayedBadge
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                    }
+                    width: countLabel.implicitWidth + height
+                    height: Math.round(Kirigami.Units.iconSizes.sizeForLabels * 1.3)
+                    radius: height / 2
+                    color: (running && delegate.GridView.isCurrentItem) ? Kirigami.Theme.highlightColor : Kirigami.Theme.positiveTextColor
+                    visible: ((running && delegate.GridView.isCurrentItem) || model.recent) ?? false
 
                     PlasmaComponents.Label {
                         id: countLabel
-                        anchors.fill: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        text: running
+                        anchors.centerIn: parent
+                        text: (running && delegate.GridView.isCurrentItem)
+                            ? running
+                            : i18ndc("plasma_shell_org.kde.plasma.desktop", "Text displayed on top of newly installed widgets", "New!")
+                        color: "white"
                     }
                 }
 
-                ShaderEffect {
-                    anchors.fill: parent
-                    property var source: ShaderEffectSource {
-                        sourceItem: iconWidget
-                        hideSource: true
-                        live: false
+                // Top-right (when uninstall present): remove all running instances
+                PlasmaComponents.ToolButton {
+                    id: removeInstancesButton
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                    Kirigami.Theme.inherit: false
+                    anchors {
+                        top: parent.top
+                        right: uninstallButton.visible ? uninstallButton.left : parent.right
+                        rightMargin: uninstallButton.visible ? Kirigami.Units.smallSpacing : 0
                     }
-                    property var mask: ShaderEffectSource {
-                        id: maskShaderSource
-                        sourceItem: badgeMask
-                        hideSource: true
-                        live: false
-                    }
+                    icon.name: "edit-clear-all"
+                    display: PlasmaComponents.AbstractButton.IconOnly
+                    flat: false
+                    visible: (running && delegate.GridView.isCurrentItem) ?? false
 
-                    supportsAtlasTextures: true
+                    text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Remove all instances")
+                    PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
+                    PlasmaComponents.ToolTip.visible: hovered
+                    PlasmaComponents.ToolTip.text: text
 
-                    fragmentShader: "
-                        varying highp vec2 qt_TexCoord0;
-                        uniform highp float qt_Opacity;
-                        uniform lowp sampler2D source;
-                        uniform lowp sampler2D mask;
-                        void main() {
-                            gl_FragColor = texture2D(source, qt_TexCoord0.st) * (1.0 - (texture2D(mask, qt_TexCoord0.st).a)) * qt_Opacity;
+                    onHoveredChanged: {
+                        if (hovered) {
+                            delegate.GridView.view.currentIndex = index
                         }
-                    "
+                    }
+
+                    onClicked: {
+                        if (typeof widgetExplorer.removeAllInstances === "function") {
+                            widgetExplorer.removeAllInstances(pluginName)
+                        }
+                    }
                 }
 
+                // Top-right: uninstall (only for user-installed widgets)
                 PlasmaComponents.ToolButton {
                     id: uninstallButton
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                    Kirigami.Theme.inherit: false
                     anchors {
                         top: parent.top
                         right: parent.right
                     }
-                    iconSource: delegate.pendingUninstall ? "edit-undo" : "edit-delete"
-                    // we don't really "undo" anything but we'll pretend to the user that we do
-                    tooltip: delegate.pendingUninstall ? i18nd("plasma_shell_org.kde.plasma.desktop", "Undo uninstall")
-                                                       : i18nd("plasma_shell_org.kde.plasma.desktop", "Uninstall widget")
+                    icon.name: delegate.pendingUninstall ? "edit-undo" : "edit-delete"
+                    display: PlasmaComponents.AbstractButton.IconOnly
                     flat: false
-                    visible: model.local && delegate.GridView.isCurrentItem
+                    visible: (model.local && delegate.GridView.isCurrentItem) ?? false
+
+                    text: delegate.pendingUninstall
+                        ? i18nd("plasma_shell_org.kde.plasma.desktop", "Cancel Uninstallation")
+                        : i18nd("plasma_shell_org.kde.plasma.desktop", "Uninstall widget")
+                    PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
+                    PlasmaComponents.ToolTip.visible: hovered
+                    PlasmaComponents.ToolTip.text: text
 
                     onHoveredChanged: {
                         if (hovered) {
-                            // hovering the uninstall button triggers onExited of the main mousearea
                             delegate.GridView.view.currentIndex = index
                         }
                     }
@@ -182,9 +179,9 @@ Item {
                     onClicked: {
                         var pending = pendingUninstallTimer.applets
                         if (delegate.pendingUninstall) {
-                            var index = pending.indexOf(pluginName)
-                            if (index > -1) {
-                                pending.splice(index, 1)
+                            var idx = pending.indexOf(pluginName)
+                            if (idx > -1) {
+                                pending.splice(idx, 1)
                             }
                         } else {
                             pending.push(pluginName)
@@ -212,10 +209,9 @@ Item {
             }
             PlasmaComponents.Label {
                 Layout.fillWidth: true
-                // otherwise causes binding loop due to the way the Plasma sets the height
                 height: implicitHeight
                 text: model.description
-                font: theme.smallestFont
+                font: Kirigami.Theme.smallFont
                 wrapMode: Text.WordWrap
                 elide: Text.ElideRight
                 maximumLineCount: heading.lineCount === 1 ? 3 : 2

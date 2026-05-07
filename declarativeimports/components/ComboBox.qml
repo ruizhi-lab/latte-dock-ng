@@ -13,10 +13,13 @@ import QtQuick.Effects
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.2 as Kirigami
+import org.kde.ksvg 1.0 as KSvg
 import "private" as Private
 
 T.ComboBox {
     id: control
+
+    readonly property var units: Kirigami.Units
 
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding) + indicator.implicitWidth + rightPadding
@@ -55,7 +58,7 @@ T.ComboBox {
         width: control.popup.width
         enabled: !isSeparator && (control.enabledRole.length>0 ? (isArray ? modelData[control.enabledRole] : model[control.enabledRole]) : true)
         text: control.textRole.length>0 ? (isArray ? modelData[control.textRole] : model[control.textRole]) : modelData
-        icon: control.iconRole.length>0 ? (isArray ? modelData[control.iconRole] : model[control.iconRole]) : ''
+        iconName: control.iconRole.length>0 ? (isArray ? modelData[control.iconRole] : model[control.iconRole]) : ''
         iconToolTip: control.iconToolTipRole.length>0 ? (isArray ? modelData[control.iconToolTipRole] : model[control.iconToolTipRole]) : ''
         iconOnlyWhenHovered: control.iconOnlyWhenHoveredRole.length>0 ? (isArray ? modelData[control.iconOnlyWhenHoveredRole] : model[control.iconOnlyWhenHoveredRole]) : ''
         isSeparator: control.isSeparatorRole.length>0 ? (isArray ? modelData[control.isSeparatorRole] : model[control.isSeparatorRole]) : false
@@ -86,7 +89,7 @@ T.ComboBox {
         }
     }
 
-    indicator: PlasmaCore.SvgItem {
+    indicator: KSvg.SvgItem {
         implicitWidth: units.iconSizes.small
         implicitHeight: implicitWidth
         anchors {
@@ -94,9 +97,8 @@ T.ComboBox {
             rightMargin: control.buttonIsTransparent ? 0 : surfaceNormal.margins.right
             verticalCenter: parent.verticalCenter
         }
-        svg: PlasmaCore.Svg {
+        svg: KSvg.Svg {
             imagePath: "widgets/arrows"
-            colorGroup: PlasmaCore.Theme.ButtonColorGroup
         }
         elementId: "down-arrow"
     }
@@ -172,17 +174,15 @@ T.ComboBox {
             anchors.fill: parent
             opacity: 0
             visible: control && control.currentIndex>=0 && control.toolTipRole.length>0
-            tooltip: {
-                if (!visible) {
-                    return "";
-                }
 
-                if (Array.isArray(control.model)) {
+            property string computedTooltip: {
+                if (!visible) return "";
+                if (Array.isArray(control.model))
                     return control.model[control.currentIndex][control.toolTipRole];
-                } else {
-                    return control.model.get(control.currentIndex)[control.toolTipRole];
-                }
+                return control.model.get(control.currentIndex)[control.toolTipRole];
             }
+
+            PlasmaComponents.ToolTip { text: hiddenTooltipButton.computedTooltip }
 
             onPressedChanged: {
                 if (pressed) {
@@ -202,12 +202,11 @@ T.ComboBox {
                 rightMargin: control.mirrored ? 1 : 0
             }
 
-            PlasmaCore.IconItem {
+            Kirigami.Icon {
                 id: selectedIcon
                 implicitWidth: textLabel.height
                 implicitHeight: textLabel.height
 
-                colorGroup: PlasmaCore.Theme.ButtonColorGroup
                 source: {
                     if (control
                             && control.currentIndex>=0
@@ -311,7 +310,7 @@ T.ComboBox {
         y: rect.y + 6
     }*/
 
-    background: PlasmaCore.FrameSvgItem {
+    background: KSvg.FrameSvgItem {
         id: surfaceNormal
         //retrocompatibility with old controls
         implicitWidth: units.gridUnit * 6
