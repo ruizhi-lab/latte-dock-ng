@@ -1320,20 +1320,24 @@ QQuickItem *LayoutManager::appletItemInLayout(QQuickItem *layout, const int &id)
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
         bool isParabolicEdgeSpacer = item->property("isParabolicEdgeSpacer").toBool();
         if (!isInternalSplitter && !isParabolicEdgeSpacer) {
-            QVariant appletVariant = item->property("applet");
-            if (!appletVariant.isValid()) {
-                continue;
+            QObject *backendApplet = item->property("backendAppletRef").value<QObject *>();
+            int currentId = appletId(backendApplet);
+
+            if (currentId <= 0) {
+                QVariant appletVariant = item->property("applet");
+                if (!appletVariant.isValid()) {
+                    continue;
+                }
+
+                QObject *applet = appletVariant.value<QObject *>();
+                if (!applet) {
+                    continue;
+                }
+
+                currentId = appletId(applet);
             }
 
-            QObject *applet = appletVariant.value<QObject *>();
-
-            if (!applet) {
-                continue;
-            }
-
-            int tempid = applet->property("id").toInt();
-
-            if (id == tempid) {
+            if (id == currentId) {
                 return item;
             }
         }

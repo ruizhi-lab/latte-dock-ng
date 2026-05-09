@@ -5,15 +5,24 @@
 
 import QtQuick 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.15 as QQC2
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.latte.components 1.0 as LatteComponents
 
 Rectangle {
     id: root
+    Kirigami.Theme.inherit: true
     color: "transparent"
+
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
+    readonly property color safeTextColor: (theme && theme.textColor !== undefined) ? theme.textColor : "white"
+    readonly property color safeButtonTextColor: safeTextColor
+    readonly property color safeButtonColor: (theme && theme.backgroundColor !== undefined) ? theme.backgroundColor : "white"
 
     implicitWidth: buttonMetrics.implicitWidth
     implicitHeight: buttonMetrics.implicitHeight
@@ -50,8 +59,9 @@ Rectangle {
 
     signal iconClicked(int index);
 
-    PlasmaComponents.Button {
+    QQC2.Button {
         id: mainButton
+        Kirigami.Theme.inherit: true
         anchors.left: Qt.application.layoutDirection === Qt.RightToLeft ? undefined : parent.left
         anchors.right: Qt.application.layoutDirection === Qt.RightToLeft ? parent.right : undefined
         LayoutMirroring.enabled: false
@@ -65,15 +75,23 @@ Rectangle {
         height: mainComboBox.height
 
         text: root.checkable ?  " " : buttonText
-        iconSource: buttonIconSource
-        tooltip: buttonToolTip
+        icon.name: buttonIconSource
+        palette.button: safeButtonColor
+        palette.buttonText: safeButtonTextColor
+        palette.window: safeButtonColor
+        palette.windowText: safeTextColor
+        hoverEnabled: true
+
+        QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+        QQC2.ToolTip.visible: hovered && buttonToolTip !== ""
+        QQC2.ToolTip.text: buttonToolTip
 
         onClicked: {
             if (buttonIsTriggeringMenu) {
                 //! hiding combobox is triggered by default behavior
                 mainComboBox.popup.visible = !mainComboBox.popup.visible;
                 mainComboBox.down = mainComboBox.popup.visible;
-                mainComboBox.pressed = mainComboBox.popup.visible;
+                root.comboBoxForcePressed = mainComboBox.popup.visible;
             }
         }
 
@@ -85,6 +103,16 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             visible: parent.enabled && buttonIsTriggeringMenu && mainComboBox.popup.visible
+        }
+    }
+
+    Connections {
+        target: mainComboBox.popup
+
+        function onVisibleChanged() {
+            if (root.buttonIsTriggeringMenu) {
+                root.comboBoxForcePressed = mainComboBox.popup.visible;
+            }
         }
     }
 
@@ -124,12 +152,12 @@ Rectangle {
         onIconClicked: root.iconClicked(index);
     }
 
-    PlasmaComponents.Label{
+    PlasmaComponents3.Label{
         width: labelMetrics.exceeds ? parent.width-mainComboBox.width :  parent.width
         height: parent.height
         text: buttonText
         font: mainButton.font
-        color: buttonIsTransparent ? theme.textColor : theme.buttonTextColor
+        color: buttonIsTransparent ? safeTextColor : safeButtonTextColor
         visible: root.checkable || (mainButton.opacity === 0)
 
         elide: Text.ElideRight
@@ -137,7 +165,7 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
     }
 
-    PlasmaComponents.Label{
+    PlasmaComponents3.Label{
         id: labelMetrics
         text: root.buttonText
         opacity: 0

@@ -165,6 +165,11 @@ Item {
     }
 
     function sltUpdateItemScale(delegateIndex, newScales, islower) {
+        if (!parabolic.tryEnterRelay()) {
+            return;
+        }
+
+        try {
         var ishigher = !islower;
         var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
         var sideindex = islower ? appletItem.index-1 : appletItem.index+1;
@@ -218,6 +223,9 @@ Item {
             } else {
                 updateScale(appletItem.index, 1);
             }
+        }
+        } finally {
+            parabolic.leaveRelay();
         }
     }
 

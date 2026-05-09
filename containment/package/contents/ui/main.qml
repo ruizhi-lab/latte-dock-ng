@@ -179,7 +179,14 @@ ContainmentItem {
     property bool inFullJustify: (plasmoid.configuration.alignment === LatteCore.types.Justify) && (maxLengthPerCentage===100)
     property bool inStartup: true
 
-    property bool isHorizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
+    // Use edge location as the source of truth during relocation; formFactor can
+    // be temporarily stale while the view is moving between edges.
+    readonly property bool _edgeIsVertical: plasmoid.location === PlasmaCore.Types.LeftEdge
+                                            || plasmoid.location === PlasmaCore.Types.RightEdge
+    readonly property bool _edgeIsHorizontal: plasmoid.location === PlasmaCore.Types.TopEdge
+                                              || plasmoid.location === PlasmaCore.Types.BottomEdge
+    property bool isHorizontal: _edgeIsHorizontal ? true
+                                                  : (_edgeIsVertical ? false : (plasmoid.formFactor === PlasmaCore.Types.Horizontal))
     property bool isVertical: !isHorizontal
 
     property bool mouseWheelActions: plasmoid.configuration.mouseWheelActions
@@ -486,6 +493,7 @@ ContainmentItem {
             if (latteView.positioner) {
                 latteView.positioner.hidingForRelocationStarted.connect(visibilityManager.slotHideDockDuringLocationChange);
                 latteView.positioner.showingAfterRelocationFinished.connect(visibilityManager.slotShowDockAfterLocationChange);
+                repairAppletContainersTimer.restart();
             }
         }
 
@@ -495,6 +503,23 @@ ContainmentItem {
                 latteView.visibility.onMustBeHide.connect(visibilityManager.slotMustBeHide);
                 latteView.visibility.onMustBeShown.connect(visibilityManager.slotMustBeShown);
             }
+        }
+    }
+
+    Connections {
+        target: plasmoid
+        function onLocationChanged() {
+            repairAppletContainersTimer.restart();
+        }
+        function onFormFactorChanged() {
+            repairAppletContainersTimer.restart();
+        }
+    }
+
+    Connections {
+        target: latteView && latteView.positioner ? latteView.positioner : null
+        function onShowingAfterRelocationFinished() {
+            repairAppletContainersTimer.restart();
         }
     }
 
@@ -846,6 +871,16 @@ ContainmentItem {
         onAppletOrderChanged: root.updateIndexes();
         onSplitterPositionChanged: root.updateIndexes();
         onSplitterPosition2Changed: root.updateIndexes();
+    }
+
+    Timer {
+        id: repairAppletContainersTimer
+        interval: 180
+        repeat: false
+        onTriggered: {
+            fastLayoutManager.repairAppletContainers();
+            root.updateIndexes();
+        }
     }
 
     ///////////////BEGIN UI elements

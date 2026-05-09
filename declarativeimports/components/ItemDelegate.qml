@@ -21,6 +21,7 @@ T.CheckDelegate {
     hoverEnabled: !isSeparator
 
     readonly property var units: Kirigami.Units
+    readonly property var safeTheme: (typeof theme !== "undefined" && theme) ? theme : Kirigami.Theme
 
     topPadding: margin
     bottomPadding: margin
@@ -53,7 +54,7 @@ T.CheckDelegate {
             Layout.minimumHeight: parent.height
             Layout.maximumHeight: parent.height
             visible: !isSeparator && iconName && (!control.iconOnlyWhenHovered || (control.iconOnlyWhenHovered && control.isHovered))
-            color: control.iconToolTip && iconMouseArea.containsMouse ? theme.highlightColor : "transparent"
+            color: control.iconToolTip && iconMouseArea.containsMouse ? safeTheme.highlightColor : "transparent"
 
             Kirigami.Icon {
                 id: iconElement
@@ -90,7 +91,7 @@ T.CheckDelegate {
             Layout.fillWidth: true
             text: control.text
             font: control.font
-            color: theme.viewTextColor
+            color: safeTheme.textColor
             elide: Text.ElideRight
             visible: !isSeparator && control.text
             horizontalAlignment: control.textHorizontalAlignment
@@ -100,7 +101,7 @@ T.CheckDelegate {
         Rectangle {
             width: parent.width
             height: 1
-            color: theme.textColor
+            color: safeTheme.textColor
             opacity: 0.25
             visible: isSeparator
         }
@@ -120,6 +121,6 @@ T.CheckDelegate {
             return 0;
         }
 
-        color: theme.highlightColor
+        color: safeTheme.highlightColor
     }
 }

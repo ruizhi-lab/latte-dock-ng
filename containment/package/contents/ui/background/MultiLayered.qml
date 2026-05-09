@@ -269,7 +269,7 @@ BackgroundProperties{
             return themeExtendedBackground.roundness;
         }
 
-        return plasmoid.formFactor === PlasmaCore.Types.Horizontal ?
+        return root.isHorizontal ?
                     (plasmoid.configuration.backgroundRadius/100) * solidBackground.height :
                     (plasmoid.configuration.backgroundRadius/100) * solidBackground.width
     }
@@ -284,6 +284,62 @@ BackgroundProperties{
     readonly property color customShadowColor: themeExtendedBackground ? themeExtendedBackground.shadowColor : "black"
 
     property QtObject themeExtendedBackground: null
+
+    property string _pendingGeometryDebugReason: ""
+
+    function scheduleGeometryDebug(reason) {
+        _pendingGeometryDebugReason = reason;
+        if (!panelGeometryDebugTimer.running) {
+            panelGeometryDebugTimer.start();
+        }
+    }
+
+    function logPanelGeometry(reason) {
+        var viewDims = latteView ? (latteView.width + "x" + latteView.height) : "n/a";
+        var viewThicks = latteView ? ("max=" + latteView.maxThickness + ",normal=" + latteView.normalThickness + ",maxNormal=" + latteView.maxNormalThickness) : "n/a";
+        var maskVals = "normal=" + metrics.mask.thickness.normal
+                + ",maxNormalForItemsWOEdge=" + metrics.mask.thickness.maxNormalForItemsWithoutScreenEdge
+                + ",maxNormalForItems=" + metrics.mask.thickness.maxNormalForItems;
+
+        console.log("LATTE_NG_PANEL_GEOM reason:", reason,
+                    "loc:", plasmoid.location,
+                    "form:", plasmoid.formFactor,
+                    "root:", root.width + "x" + root.height,
+                    "bar:", barLine.width + "x" + barLine.height,
+                    "bgThickness:", background.thickness,
+                    "visualThickness:", totals.visualThickness,
+                    "visualLength:", totals.visualLength,
+                    "metricsThickness:", metrics.totals.thickness,
+                    "maxThicknessForView:", metrics.maxThicknessForView,
+                    "mask:", maskVals,
+                    "view:", viewDims,
+                    "viewThicks:", viewThicks);
+    }
+
+    Timer {
+        id: panelGeometryDebugTimer
+        interval: 50
+        repeat: false
+        onTriggered: {
+            barLine.logPanelGeometry(barLine._pendingGeometryDebugReason);
+        }
+    }
+
+    Component.onCompleted: scheduleGeometryDebug("completed")
+
+    Connections {
+        target: plasmoid
+        function onLocationChanged() { barLine.scheduleGeometryDebug("locationChanged"); }
+        function onFormFactorChanged() { barLine.scheduleGeometryDebug("formFactorChanged"); }
+    }
+
+    Connections {
+        target: root
+        function onIsHorizontalChanged() { barLine.scheduleGeometryDebug("root.isHorizontalChanged"); }
+    }
+
+    onWidthChanged: scheduleGeometryDebug("bar.widthChanged")
+    onHeightChanged: scheduleGeometryDebug("bar.heightChanged")
 
     Behavior on opacity{
         NumberAnimation {

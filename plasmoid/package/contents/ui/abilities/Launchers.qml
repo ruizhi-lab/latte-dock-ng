@@ -29,6 +29,11 @@ Item {
     property bool isShowingAddLaunchersMessage: false
 
     property bool __isLoadedDuringViewStartup: false
+    property bool _suppressLauncherListWriteBack: false
+    property bool _geometryTransitionInProgress: false
+    property int _transientEmptyRecoveries: 0
+    property string _pendingRestoreReason: ""
+    property var _lastKnownGoodLauncherList: []
 
     property string appletIndex: bridge && bridge.indexer ? String(bridge.indexer.appletIndex) : ""
     property int group: LatteCore.types.UniqueLaunchers
@@ -283,13 +288,11 @@ Item {
         var launch = [];
         var launchersList = [];
 
-        if (bridge && bridge.launchers.host.isReady) {
-            if (!_launchers.inUniqueGroup()) {
-                if (_launchers.inLayoutGroup()) {
-                    launchersList = bridge.launchers.host.layoutLaunchers;
-                } else if (_launchers.inGlobalGroup()) {
-                    launchersList = bridge.launchers.host.universalLaunchers;
-                }
+        if (bridge && bridge.launchers.host.isReady && !_launchers.inUniqueGroup()) {
+            if (_launchers.inLayoutGroup()) {
+                launchersList = bridge.launchers.host.layoutLaunchers;
+            } else if (_launchers.inGlobalGroup()) {
+                launchersList = bridge.launchers.host.universalLaunchers;
             }
         } else {
             launchersList = plasmoid.configuration.launchers59;
@@ -316,6 +319,10 @@ Item {
     }
 
     function importLauncherListInModel() {
+        if (!tasksModel) {
+            return;
+        }
+
         var launchersList = [];
 
         if (bridge && bridge.launchers.host.isReady && !inUniqueGroup()) {
@@ -341,7 +348,56 @@ Item {
             console.log("Tasks: Migrated legacy launcher desktop ids to preferred urls...");
         }
 
-        tasksModel.launcherList = normalized.list;
+        tasksModel.launcherList = normalized.list.slice(0);
+        tasksModel.syncLaunchers();
+
+        if (normalized.list.length > 0) {
+            _launchers._lastKnownGoodLauncherList = normalized.list.slice(0);
+        }
+    }
+
+    function restoreLaunchersFromConfig(reason) {
+        if (!tasksModel) {
+            return;
+        }
+
+        var storedLaunchers = currentStoredLauncherList();
+        var sourceLaunchers = storedLaunchers.length > 0
+                ? storedLaunchers
+                : _lastKnownGoodLauncherList;
+
+        if (!sourceLaunchers || sourceLaunchers.length === 0) {
+            console.log("Tasks: launcher restore skipped, no stored launchers (reason:", reason, ")");
+            return;
+        }
+
+        var normalized = normalizeLauncherList(sourceLaunchers);
+        var restoredList = normalized.list.slice(0);
+
+        _suppressLauncherListWriteBack = true;
+        tasksModel.launcherList = restoredList;
+        tasksModel.syncLaunchers();
+        _lastKnownGoodLauncherList = restoredList.slice(0);
+        launcherWriteBackUnlockTimer.restart();
+
+        console.log("Tasks: restored launchers after geometry change (reason:", reason,
+                    ", launchers:", restoredList.length,
+                    ", tasksCount:", tasksModel.count, ")");
+    }
+
+    function scheduleLaunchersRestore(reason) {
+        _pendingRestoreReason = reason || "unspecified";
+        _geometryTransitionInProgress = true;
+        geometryTransitionGuardTimer.restart();
+
+        console.log("Tasks: schedule launcher restore (reason:", _pendingRestoreReason,
+                    ", viewReady:", appletAbilities.myView.isReady,
+                    ", launchers:", currentStoredLauncherList().length,
+                    ", tasksCount:", tasksModel ? tasksModel.count : -1, ")");
+
+        launchersRestoreTimer.restart();
+        launchersRestoreFollowUpTimer.restart();
+        launchersRestoreFinalTimer.restart();
     }
 
     function normalizeLauncherUrl(url) {
@@ -490,6 +546,23 @@ Item {
     }
 
     Connections {
+        target: plasmoid
+        function onLocationChanged() {
+            _launchers.scheduleLaunchersRestore("locationChanged");
+        }
+
+        function onFormFactorChanged() {
+            _launchers.scheduleLaunchersRestore("formFactorChanged");
+        }
+
+        function onUserConfiguringChanged() {
+            if (!plasmoid.userConfiguring && appletAbilities.myView.isReady) {
+                _launchers.scheduleLaunchersRestore("configurationClosed");
+            }
+        }
+    }
+
+    Connections {
         target: bridge ? bridge.launchers.host : null
         function onIsReadyChanged() {
             if (bridge && bridge.launchers.host.isReady && !_launchers.__isLoadedDuringViewStartup) {
@@ -502,6 +575,38 @@ Item {
     Connections {
         target: _launchers.tasksModel
         function onLauncherListChanged() {
+            if (_launchers._suppressLauncherListWriteBack) {
+                return;
+            }
+
+            var currentModelLaunchers = (_launchers.tasksModel && _launchers.tasksModel.launcherList)
+                    ? _launchers.tasksModel.launcherList : [];
+
+            if (currentModelLaunchers.length > 0) {
+                _launchers._lastKnownGoodLauncherList = currentModelLaunchers.slice(0);
+            }
+
+            // During edge/form-factor transitions, TasksModel can briefly publish an
+            // empty launcher list before its internal state stabilizes. Guard this
+            // transient phase to avoid persisting an empty launcher set.
+            if (currentModelLaunchers.length === 0
+                    && _launchers._geometryTransitionInProgress
+                    && appletAbilities.myView.isReady) {
+                var storedLaunchers = _launchers.currentStoredLauncherList();
+                var fallbackLaunchers = storedLaunchers.length > 0
+                        ? storedLaunchers
+                        : _launchers._lastKnownGoodLauncherList;
+
+                if (fallbackLaunchers.length > 0 && _launchers._transientEmptyRecoveries < 8) {
+                    _launchers._transientEmptyRecoveries++;
+                    console.log("Tasks: transient empty launcher list during geometry transition, restoring from stored launchers...");
+                    _launchers.scheduleLaunchersRestore("transientEmptyLauncherList");
+                    return;
+                }
+            } else {
+                _launchers._transientEmptyRecoveries = 0;
+            }
+
             if (bridge && bridge.launchers.host.isReady) {
                 if (!_launchers.inUniqueGroup()) {
                     if (_launchers.inLayoutGroup()) {
@@ -510,7 +615,7 @@ Item {
                         bridge.launchers.host.setUniversalLaunchers(_launchers.tasksModel.launcherList);
                     }
                 } else {
-                    plasmoid.configuration.launchers59 = _launchers.tasksModel.launcherList;
+                    plasmoid.configuration.launchers59 = currentModelLaunchers;
                 }
 
                 if (inDraggingPhase) {
@@ -518,9 +623,58 @@ Item {
                 }
             } else if (!appletAbilities.myView.isReady) {
                 // This way we make sure that a delayed view.layout initialization does not store irrelevant launchers from different
-                // group to UNIQUE launchers group
-                plasmoid.configuration.launchers59 = _launchers.tasksModel.launcherList;
+                // group to UNIQUE launchers group.
+                // Never persist transient empties during startup/edge transition.
+                if (currentModelLaunchers.length > 0) {
+                    plasmoid.configuration.launchers59 = currentModelLaunchers;
+                }
             }
+        }
+    }
+
+    Timer {
+        id: launchersRestoreTimer
+        interval: 450
+        repeat: false
+        onTriggered: {
+            _launchers.restoreLaunchersFromConfig(_launchers._pendingRestoreReason + ":primary");
+        }
+    }
+
+    Timer {
+        id: launchersRestoreFollowUpTimer
+        interval: 1200
+        repeat: false
+        onTriggered: {
+            _launchers.restoreLaunchersFromConfig(_launchers._pendingRestoreReason + ":followup");
+        }
+    }
+
+    Timer {
+        id: launchersRestoreFinalTimer
+        interval: 2200
+        repeat: false
+        onTriggered: {
+            _launchers.restoreLaunchersFromConfig(_launchers._pendingRestoreReason + ":final");
+        }
+    }
+
+    Timer {
+        id: geometryTransitionGuardTimer
+        interval: 2600
+        repeat: false
+        onTriggered: {
+            _launchers._geometryTransitionInProgress = false;
+            _launchers._transientEmptyRecoveries = 0;
+        }
+    }
+
+    Timer {
+        id: launcherWriteBackUnlockTimer
+        interval: 160
+        repeat: false
+        onTriggered: {
+            _launchers._suppressLauncherListWriteBack = false;
         }
     }
 }

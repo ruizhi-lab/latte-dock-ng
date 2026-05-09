@@ -15,6 +15,8 @@ AbilityDefinition.ParabolicEffect {
     property Item bridge: null
     property Item indexer: null
     property Item layout: null
+    // Prevent host->client relay messages from being echoed back to host.
+    property bool suppressTrackRelay: false
     readonly property bool hasBridgeParabolicHost: bridge && bridge.parabolic && bridge.parabolic.host
 
     isEnabled: ref.parabolic.isEnabled
@@ -142,17 +144,27 @@ AbilityDefinition.ParabolicEffect {
 
     function hostRequestUpdateLowerItemScale(newScales){
         //! function called from host
-        sglUpdateLowerItemScale(indexer.itemsCount-1, newScales);
+        suppressTrackRelay = true;
+        try {
+            sglUpdateLowerItemScale(indexer.itemsCount-1, newScales);
+        } finally {
+            suppressTrackRelay = false;
+        }
     }
 
     function hostRequestUpdateHigherItemScale(newScales){
         //! function called from host
-        sglUpdateHigherItemScale(0, newScales);
+        suppressTrackRelay = true;
+        try {
+            sglUpdateHigherItemScale(0, newScales);
+        } finally {
+            suppressTrackRelay = false;
+        }
     }
 
     function sltTrackLowerItemScale(delegateIndex, newScales){
         //! send update signal to host
-        if (hasBridgeParabolicHost) {
+        if (hasBridgeParabolicHost && !suppressTrackRelay) {
             var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
             if (delegateIndex === -1) {
                 bridge.parabolic.clientRequestUpdateLowerItemScale(newScales);
@@ -164,7 +176,7 @@ AbilityDefinition.ParabolicEffect {
 
     function sltTrackHigherItemScale(delegateIndex, newScales) {
         //! send update signal to host
-        if (hasBridgeParabolicHost) {
+        if (hasBridgeParabolicHost && !suppressTrackRelay) {
             var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
             if (delegateIndex >= indexer.itemsCount) {
                 bridge.parabolic.clientRequestUpdateHigherItemScale(newScales);

@@ -75,6 +75,11 @@ void CanvasConfigView::syncGeometry()
 
     auto geometry = m_latteView->positioner()->canvasGeometry();
 
+    // Guard against 0x0 surfaces which abort the Wayland connection.
+    if (geometry.width() <= 0 || geometry.height() <= 0) {
+        return;
+    }
+
     if (m_geometryWhenVisible == geometry) {
         return;
     }

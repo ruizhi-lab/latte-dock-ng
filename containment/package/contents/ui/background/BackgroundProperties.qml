@@ -17,8 +17,16 @@ Item{
     property bool hasRightBorder: false
     property bool hasTopBorder: false
     property bool hasBottomBorder: false
+
+    readonly property bool edgeIsVertical: plasmoid.location === PlasmaCore.Types.LeftEdge
+                                           || plasmoid.location === PlasmaCore.Types.RightEdge
+    readonly property bool edgeIsHorizontal: plasmoid.location === PlasmaCore.Types.TopEdge
+                                             || plasmoid.location === PlasmaCore.Types.BottomEdge
+    readonly property bool isVertical: edgeIsVertical ? true
+                                    : (edgeIsHorizontal ? false : (plasmoid.formFactor === PlasmaCore.Types.Vertical))
+
     readonly property bool hasBothLengthShadows:{
-        if (plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+        if (isVertical) {
             return (hasTopBorder && hasBottomBorder);
         }
 

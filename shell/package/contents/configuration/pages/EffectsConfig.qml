@@ -9,6 +9,7 @@ import QtQuick.Dialogs as QtDialogs
 import QtQuick.Controls 2.12 as QtQuickControls212
 
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.0 as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
@@ -98,8 +99,8 @@ PlasmaComponents.Page {
                         enabled: showAppletShadow.checked
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", shadowSizeSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -146,8 +147,8 @@ PlasmaComponents.Page {
                         enabled: showAppletShadow.checked
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", shadowOpacitySlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -165,44 +166,50 @@ PlasmaComponents.Page {
                         return strC.indexOf("#") === 0 ? strC.substr(1) : strC;
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: defaultShadowBtn
                         Layout.fillWidth: true
 
                         text: i18nc("default shadow", "Default Color")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
-                        tooltip: i18n("Default shadow for applets")
 
-                        readonly property int type: LatteContainment.Types.DefaultColorShadow
+                        readonly property int type: LatteContainment.types.DefaultColorShadow
 
                         onPressedChanged: {
                             if (pressed) {
                                 plasmoid.configuration.shadowColorType = type;
                             }
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Default shadow for applets")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: themeShadowBtn
                         Layout.fillWidth: true
 
                         text: i18nc("theme shadow", "Theme Color")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
-                        tooltip: i18n("Shadow from theme color palette")
 
-                        readonly property int type: LatteContainment.Types.ThemeColorShadow
+                        readonly property int type: LatteContainment.types.ThemeColorShadow
 
                         onPressedChanged: {
                             if (pressed) {
                                 plasmoid.configuration.shadowColorType = type;
                             }
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Shadow from theme color palette")
+                        }
                     }
 
                     //overlayed button
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: userShadowBtn
                         Layout.fillWidth: true
                         Layout.minimumWidth: shadowOpacityLbl.width
@@ -211,14 +218,17 @@ PlasmaComponents.Page {
 
                         checkable: false
                         checked: plasmoid.configuration.shadowColorType === type
-                        tooltip: i18n("Use set shadow color")
 
-                        readonly property int type: LatteContainment.Types.UserColorShadow
+                        readonly property int type: LatteContainment.types.UserColorShadow
 
                         onPressedChanged: {
                             if (pressed) {
                                 plasmoid.configuration.shadowColorType = type;
                             }
+                        }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Use set shadow color")
                         }
 
                         Rectangle{
@@ -317,7 +327,7 @@ PlasmaComponents.Page {
 
                         property int duration: plasmoid.configuration.durationTime
 
-                        PlasmaComponents.Button {
+                        LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x1")
                             checked: parent.duration === duration
@@ -331,7 +341,7 @@ PlasmaComponents.Page {
                                 }
                             }
                         }
-                        PlasmaComponents.Button {
+                        LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x2")
                             checked: parent.duration === duration
@@ -345,7 +355,7 @@ PlasmaComponents.Page {
                                 }
                             }
                         }
-                        PlasmaComponents.Button {
+                        LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x3")
                             checked: parent.duration === duration
@@ -454,11 +464,11 @@ PlasmaComponents.Page {
 
                         function selectTab(type) {
                             if (type === latteBtn.type) {
-                                tabBar.currentTab = latteBtn;
+                                tabBar.currentIndex = 0;
                             } else if (type === plasmaBtn.type) {
-                                tabBar.currentTab = plasmaBtn;
+                                tabBar.currentIndex = 1;
                             } else if (type === customIndicator.type) {
-                                tabBar.currentTab = customBtn;
+                                tabBar.currentIndex = 2;
                             }
                         }
 

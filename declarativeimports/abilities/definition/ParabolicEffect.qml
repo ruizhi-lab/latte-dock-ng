@@ -32,6 +32,23 @@ Item {
     signal sglUpdateLowerItemScale(int delegateIndex, variant newScales);
     signal sglUpdateHigherItemScale(int delegateIndex, variant newScales);
 
+    // Guard against accidental recursive re-entry in parabolic signal relays.
+    property int relayDepth: 0
+    readonly property int maxRelayDepth: 160
+
+    function tryEnterRelay() {
+        if (relayDepth >= maxRelayDepth) {
+            return false;
+        }
+
+        relayDepth = relayDepth + 1;
+        return true;
+    }
+
+    function leaveRelay() {
+        relayDepth = Math.max(0, relayDepth - 1);
+    }
+
     readonly property int _spreadSteps: (spread - 1) / 2
 
     function applyParabolicEffect(itemIndex, itemMousePosition, itemLength) {

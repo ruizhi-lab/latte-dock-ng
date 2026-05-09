@@ -109,6 +109,14 @@ void PrimaryConfigView::init()
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
     setSource(source);
     syncGeometry();
+
+    // The QML root may resolve its implicit size asynchronously in Qt 6, so
+    // re-run syncGeometry whenever it changes. Otherwise the window stays at
+    // its initial 0x0 and Wayland kills the connection.
+    if (rootObject()) {
+        connect(rootObject(), &QQuickItem::widthChanged, this, &PrimaryConfigView::syncGeometry);
+        connect(rootObject(), &QQuickItem::heightChanged, this, &PrimaryConfigView::syncGeometry);
+    }
 }
 
 Config::IndicatorUiManager *PrimaryConfigView::indicatorUiManager()
@@ -333,7 +341,24 @@ void PrimaryConfigView::syncGeometry()
         return;
     }
 
-    const QSize size(rootObject()->width(), rootObject()->height());
+    int resolvedWidth = static_cast<int>(rootObject()->width());
+    int resolvedHeight = static_cast<int>(rootObject()->height());
+
+    if (resolvedWidth <= 0 || resolvedHeight <= 0) {
+        resolvedWidth = static_cast<int>(rootObject()->implicitWidth());
+        resolvedHeight = static_cast<int>(rootObject()->implicitHeight());
+    }
+
+    const QSize size(resolvedWidth, resolvedHeight);
+
+    // In Qt 6 the QML root may not yet have its implicit size when init() calls
+    // syncGeometry(). Showing a 0x0 surface on Wayland aborts the Wayland
+    // connection ("invalid window geometry size") and crashes Latte. Bail out
+    // and let a later widthChanged/heightChanged trigger schedule a real
+    // geometry sync once the QML has laid itself out.
+    if (size.width() <= 0 || size.height() <= 0) {
+        return;
+    }
     const auto location = m_latteView->containment()->location();
     const auto scrGeometry = m_latteView->screenGeometry();
     const auto availGeometry = m_availableScreenGeometry;

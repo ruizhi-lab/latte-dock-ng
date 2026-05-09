@@ -9,14 +9,21 @@ import QtQuick.Layouts 1.3
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.plasma.plasmoid 2.0
 
+import org.kde.latte.components 1.0 as LatteComponents
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.private.containment 0.1 as LatteContainment
 
 Grid {
     id: typeRow
+    Kirigami.Theme.inherit: false
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
+    readonly property var theme: Kirigami.Theme
+    readonly property var units: Kirigami.Units
 
     width: horizontal ? content.width - 4*units.smallSpacing : 9 * theme.defaultFont.pixelSize
     anchors.leftMargin: horizontal ? units.smallSpacing : 0
@@ -39,32 +46,35 @@ Grid {
 
     property bool horizontal: false
 
-    PlasmaComponents.Button {
+    LatteComponents.Button {
         id: dockTypeButton
+        Kirigami.Theme.inherit: true
         width: horizontal ? (parent.width - parent.spacing)/ 2 : parent.width
         enabled: LatteCore.WindowSystem.compositingActive
 
         checkable: true
-        checked: latteView.type === LatteCore.Types.DockView
+        checked: latteView.type === LatteCore.types.DockView
         text: i18nc("dock type","Dock")
         PlasmaComponents.ToolTip { text: i18n("Change the behavior and appearance to Dock type") }
 
-        onPressedChanged: {
-            if (pressed && !checked) {
-                latteView.userRequestedViewType(LatteCore.Types.DockView);
+        onClicked: {
+            if (!checked) {
+                latteView.userRequestedViewType(LatteCore.types.DockView);
 
-                latteView.visibility.mode = LatteCore.Types.DodgeActive;
-                plasmoid.configuration.alignment = LatteCore.Types.Center;
+                latteView.visibility.mode = LatteCore.types.DodgeActive;
+                plasmoid.configuration.alignment = LatteCore.types.Center;
                 plasmoid.configuration.useThemePanel = true;
                 plasmoid.configuration.solidPanel = false;
-                plasmoid.configuration.panelSize = 5;
+                // In Plasma 6/Wayland, very small dock thickness can make task
+                // items effectively disappear on side edges.
+                plasmoid.configuration.panelSize = 10;
                 plasmoid.configuration.appletShadowsEnabled = true;
                 plasmoid.configuration.zoomLevel = 16;
                 //plasmoid.configuration.autoDecreaseIconSize = true;
 
                 //! Empty Areas
                 plasmoid.configuration.dragActiveWindowEnabled = false;
-                plasmoid.configuration.scrollAction = LatteContainment.Types.ScrollNone;
+                plasmoid.configuration.scrollAction = LatteContainment.types.ScrollNone;
 
                 //! Items
                 plasmoid.configuration.autoSizeEnabled = true;
@@ -82,22 +92,23 @@ Grid {
         }
     }
 
-    PlasmaComponents.Button {
+    LatteComponents.Button {
         id: panelTypeButton
+        Kirigami.Theme.inherit: true
         width: dockTypeButton.width
         enabled: LatteCore.WindowSystem.compositingActive
 
         checkable: true
-        checked: latteView.type === LatteCore.Types.PanelView
+        checked: latteView.type === LatteCore.types.PanelView
         text: i18nc("panel type","Panel")
         PlasmaComponents.ToolTip { text: i18n("Change the behavior and appearance to Panel type") }
 
-        onPressedChanged: {
-            if (pressed && !checked) {
-                latteView.userRequestedViewType(LatteCore.Types.PanelView);
+        onClicked: {
+            if (!checked) {
+                latteView.userRequestedViewType(LatteCore.types.PanelView);
 
-                latteView.visibility.mode = LatteCore.Types.AlwaysVisible;
-                plasmoid.configuration.alignment = LatteCore.Types.Justify;
+                latteView.visibility.mode = LatteCore.types.AlwaysVisible;
+                plasmoid.configuration.alignment = LatteCore.types.Justify;
                 plasmoid.configuration.useThemePanel = true;
                 plasmoid.configuration.solidPanel = false;
                 plasmoid.configuration.panelSize = 100;
@@ -129,4 +140,3 @@ Grid {
         }
     }
 }
-

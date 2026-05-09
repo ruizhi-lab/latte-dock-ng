@@ -14,6 +14,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 import org.kde.kquickcontrolsaddons 2.0 as KQuickControlAddons
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.latte.core 0.2 as LatteCore
 
@@ -24,6 +25,10 @@ Loader {
 
     sourceComponent: FocusScope {
         id: dialog
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Window
+        readonly property var theme: Kirigami.Theme
+        readonly property var units: Kirigami.Units
 
         width: typeSettings.width + units.smallSpacing * 4
         height: typeSettings.height + units.smallSpacing * 4
@@ -34,15 +39,21 @@ Loader {
 
         property bool panelIsVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
-        KSvg.FrameSvgItem{
-            id: backgroundFrameSvgItem
+        Rectangle {
             anchors.fill: parent
-            imagePath: "dialogs/background"
-            enabledBorders: viewConfig.enabledBorders
-
-            onEnabledBordersChanged: viewConfig.updateEffects()
-            Component.onCompleted: viewConfig.updateEffects()
+            color: theme.backgroundColor
+            border.color: Qt.rgba(theme.textColor.r, theme.textColor.g, theme.textColor.b, 0.12)
+            border.width: 1
+            radius: Math.max(4, units.smallSpacing)
         }
+
+        Connections {
+            target: viewConfig
+            function onEnabledBordersChanged() {
+                viewConfig.updateEffects();
+            }
+        }
+        Component.onCompleted: viewConfig.updateEffects()
 
         LatteExtraControls.TypeSelection{
             id: typeSettings

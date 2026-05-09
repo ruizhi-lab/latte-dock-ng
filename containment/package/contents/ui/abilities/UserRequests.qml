@@ -14,7 +14,7 @@ AbilityDefinition.UserRequests {
 
     Connections {
         target: view
-        function onUserRequestedViewType() {
+        function onUserRequestedViewType(type) {
             containerUserRequests.sglViewType(type);
         }
     }

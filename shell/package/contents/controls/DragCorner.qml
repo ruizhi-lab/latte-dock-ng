@@ -5,15 +5,23 @@
 
 import QtQuick 2.7
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.0 as Kirigami
 
 Rectangle {
     id: _corner
+    readonly property var theme: Kirigami.Theme
+    readonly property color safeTextColor: (theme && theme.textColor !== undefined) ? theme.textColor : "white"
+    readonly property color safeFocusColor: (theme && theme.buttonFocusColor !== undefined)
+                                              ? theme.buttonFocusColor
+                                              : ((theme && theme.focusColor !== undefined)
+                                                   ? theme.focusColor
+                                                   : ((theme && theme.highlightColor !== undefined) ? theme.highlightColor : safeTextColor))
     width: 22
     height: width
     anchors.horizontalCenter: parent.right
     anchors.verticalCenter: parent.top
     rotation: 45
-    color: resizeWindowMouseArea.isActive ? theme.buttonFocusColor : theme.textColor
+    color: resizeWindowMouseArea.isActive ? safeFocusColor : safeTextColor
     opacity: resizeWindowMouseArea.isActive ? 1 : 0.2
 
     readonly property alias isActive: resizeWindowMouseArea.isActive

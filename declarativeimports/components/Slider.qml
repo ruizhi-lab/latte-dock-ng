@@ -3,125 +3,106 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.7
-import QtQuick.Templates 2.0 as T
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.ksvg 1.0 as KSvg
-import "private" as Private
+import QtQuick 2.15
+import QtQuick.Controls 2.15 as QQC2
+import org.kde.kirigami 2.0 as Kirigami
 
-T.Slider {
+QQC2.Slider {
     id: control
+    Kirigami.Theme.inherit: true
 
-    implicitWidth: Math.max(background ? background.implicitWidth : 0,
-        Math.max(handle ? handle.implicitWidth : 0,
-                 handle ? handle.implicitWidth : 0) + leftPadding + rightPadding)
-    implicitHeight: Math.max(background ? background.implicitHeight : 0,
-        Math.max(handle ? handle.implicitHeight : 0,
-                 handle ? handle.implicitHeight : 0) + topPadding + bottomPadding)
-
-    //padding: 3*units.smallSpacing //5//units.gridUnit
-    topPadding: 3*units.smallSpacing
-    bottomPadding: 3*units.smallSpacing
-    leftPadding: units.smallSpacing
-    rightPadding: units.smallSpacing
-
-    snapMode: T.Slider.SnapOnRelease
-
-    readonly property bool minimumInternalValueIsSet: (minimumInternalValue!==from && minimumInternalValue !== -10000)
+    readonly property var units: Kirigami.Units
+    readonly property bool minimumInternalValueIsSet: (minimumInternalValue !== from && minimumInternalValue !== -10000)
     property int minimumInternalValue: -10000
 
-    KSvg.Svg {
-        id: grooveSvg
-        imagePath: "widgets/slider"
-        colorGroup: PlasmaCore.ColorScope.colorGroup
-    }
+    implicitWidth: Math.max(background ? background.implicitWidth : 0,
+                            handle ? handle.implicitWidth : 0) + leftPadding + rightPadding
+    implicitHeight: Math.max(background ? background.implicitHeight : 0,
+                             handle ? handle.implicitHeight : 0) + topPadding + bottomPadding
 
-    KSvg.FrameSvgItem {
-        id: minimumValueGroove
-        imagePath: "widgets/slider"
-        prefix: "groove-highlight"
-        x: limitedX - width/2
-        y: parent.height/2 - height/2
-        width: parent.height * 0.6
-        height: 2
-        rotation: 90
-        visible: minimumInternalValueIsSet
+    topPadding: 2 * units.smallSpacing
+    bottomPadding: 2 * units.smallSpacing
+    leftPadding: units.smallSpacing
+    rightPadding: units.smallSpacing
+    snapMode: QQC2.Slider.SnapOnRelease
 
-        readonly property int limitedX: limitedPer * parent.width
-        readonly property real limitedPer: ((minimumInternalValue-from)/(to-from))
+    readonly property color trackColor: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.22)
+    readonly property color fillColor: Kirigami.Theme.highlightColor
+    readonly property color limitColor: Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.35)
+    readonly property color handleColor: Kirigami.Theme.backgroundColor
+    readonly property color handleBorderColor: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.35)
+    readonly property real fillOpacity: (enabled && minimumInternalValueIsSet && value < minimumInternalValue) ? 0.35 : (enabled ? 1 : 0.45)
 
-        opacity: {
-            if (control.enabled && minimumInternalValueIsSet && value < minimumInternalValue) {
-                return 0.3
-            }
-
-            if (control.enabled) {
-                return 1;
-            }
-
-            return 0.4;
-        }
-    }
-
-    handle: Item {
-        property bool horizontal: control.orientation === Qt.Horizontal
-        x: leftFixedPadding + (horizontal ? control.visualPosition * (control.availableWidth - width / 2) : (control.availableWidth - width) / 2)
-        y: topFixedPadding + (horizontal ? (control.availableHeight - height) / 2 : control.visualPosition * (control.availableHeight - height / 2))
-
-        width: firstHandle.naturalSize.width
-        height: firstHandle.naturalSize.height
-
-        property int leftFixedPadding: horizontal && control.visualPosition === 0 ? 0 : control.leftPadding
-        property int topFixedPadding: !horizontal && control.visualPosition === 0 ? 0 : control.topPadding
-
-        Private.RoundShadow {
-            anchors.fill: parent
-            imagePath: "widgets/slider"
-            focusElement: parent.horizontal ? "horizontal-slider-focus" : "vertical-slider-focus"
-            hoverElement: parent.horizontal ? "horizontal-slider-hover" : "vertical-slider-hover"
-            shadowElement: parent.horizontal ? "horizontal-slider-shadow" : "vertical-slider-shadow"
-            state: control.activeFocus ? "focus" : (control.hovered ? "hover" : "shadow")
-        }
-        KSvg.SvgItem {
-            id: firstHandle
-            anchors.fill: parent
-            svg: grooveSvg
-            elementId: parent.horizontal ? "horizontal-slider-handle" : "vertical-slider-handle"
-        }
-    }
-
-    background: KSvg.FrameSvgItem {
-        imagePath: "widgets/slider"
-        prefix: "groove"
+    background: Item {
+        id: sliderBackground
         readonly property bool horizontal: control.orientation === Qt.Horizontal
-        implicitWidth: horizontal ? units.gridUnit * 8 : margins.left + margins.right
-        implicitHeight: horizontal ? margins.top + margins.bottom : units.gridUnit * 8
+
+        implicitWidth: horizontal ? units.gridUnit * 8 : units.gridUnit
+        implicitHeight: horizontal ? units.gridUnit : units.gridUnit * 8
         width: horizontal ? control.availableWidth : implicitWidth
         height: horizontal ? implicitHeight : control.availableHeight
         anchors.centerIn: parent
-        scale: horizontal && control.mirrored ? -1 : 1
 
-        KSvg.FrameSvgItem {
-            id: grooveHighlight
-            imagePath: "widgets/slider"
-            prefix: "groove-highlight"
-            x: parent.horizontal ? 0 : (parent.width - width) / 2
-            y: parent.horizontal ? (parent.height - height) / 2 : control.visualPosition * parent.height
-            width: parent.horizontal ? control.position * parent.width + invisibleSpacer : parent.width
-            height: parent.horizontal ? parent.height : control.position * parent.height + invisibleSpacer
-            opacity: {
-                if (control.enabled && minimumInternalValueIsSet && value < minimumInternalValue) {
-                    return 0.3
-                }
-
-                if (control.enabled) {
-                    return 1;
-                }
-
-                return 0.4;
-            }
-
-            property int invisibleSpacer: control.position === 0 ? 4 : 0
+        Rectangle {
+            id: track
+            anchors.centerIn: parent
+            width: sliderBackground.horizontal ? sliderBackground.width : Math.max(3, units.smallSpacing)
+            height: sliderBackground.horizontal ? Math.max(3, units.smallSpacing) : sliderBackground.height
+            radius: Math.max(1, units.smallSpacing / 2)
+            color: control.trackColor
         }
+
+        Rectangle {
+            id: highlightTrack
+            radius: track.radius
+            color: control.fillColor
+            opacity: control.fillOpacity
+
+            x: sliderBackground.horizontal ? track.x : track.x
+            y: sliderBackground.horizontal
+               ? track.y
+               : (track.y + (1 - control.visualPosition) * track.height)
+            width: sliderBackground.horizontal
+                   ? control.position * track.width
+                   : track.width
+            height: sliderBackground.horizontal
+                    ? track.height
+                    : control.position * track.height
+        }
+
+        Rectangle {
+            visible: control.minimumInternalValueIsSet
+            color: control.limitColor
+            radius: Math.max(1, units.smallSpacing / 2)
+
+            readonly property real limitedPer: (control.to - control.from) === 0
+                                                ? 0
+                                                : ((control.minimumInternalValue - control.from) / (control.to - control.from))
+
+            x: sliderBackground.horizontal
+               ? (track.x + Math.max(0, Math.min(1, limitedPer)) * track.width) - width / 2
+               : track.x
+            y: sliderBackground.horizontal
+               ? track.y
+               : (track.y + (1 - Math.max(0, Math.min(1, limitedPer))) * track.height) - height / 2
+            width: sliderBackground.horizontal ? Math.max(2, units.smallSpacing / 2) : track.width
+            height: sliderBackground.horizontal ? track.height : Math.max(2, units.smallSpacing / 2)
+        }
+    }
+
+    handle: Rectangle {
+        x: control.leftPadding + (control.orientation === Qt.Horizontal
+                                  ? control.visualPosition * (control.availableWidth - width)
+                                  : (control.availableWidth - width) / 2)
+        y: control.topPadding + (control.orientation === Qt.Horizontal
+                                 ? (control.availableHeight - height) / 2
+                                 : (1 - control.visualPosition) * (control.availableHeight - height))
+        width: Math.max(units.gridUnit * 0.9, 16)
+        height: width
+        radius: width / 2
+        color: control.handleColor
+        border.width: 1
+        border.color: control.handleBorderColor
+        opacity: control.enabled ? 1 : 0.6
     }
 }

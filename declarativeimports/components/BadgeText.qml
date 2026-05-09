@@ -4,9 +4,12 @@
 */
 
 import QtQuick 2.2
+import org.kde.kirigami 2.0 as Kirigami
 import org.kde.plasma.plasmoid 2.0
 
 Rectangle {
+    readonly property var units: Kirigami.Units
+
     property double proportion: 0
 
     property double previousProportion: 0

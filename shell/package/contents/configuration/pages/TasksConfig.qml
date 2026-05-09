@@ -363,57 +363,66 @@ PlasmaComponents.Page {
                     readonly property int buttonsCount: layoutGroupButton.visible ? 3 : 2
                     readonly property int buttonSize: (dialog.optionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("unique launchers group","Unique Group")
                         checked: parent.group === group
                         checkable: false
-                        tooltip: i18n("Use a unique set of launchers for this view which is independent from any other view")
 
-                        readonly property int group: LatteCore.Types.UniqueLaunchers
+                        readonly property int group: LatteCore.types.UniqueLaunchers
 
                         onPressedChanged: {
                             if (pressed) {
                                 tasks.configuration.launchersGroup = group;
                             }
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Use a unique set of launchers for this view which is independent from any other view")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: layoutGroupButton
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("layout launchers group","Layout Group")
                         checked: parent.group === group
                         checkable: false
-                        tooltip: i18n("Use the current layout set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views in the <b>same layout</b>")
                         //! it is shown only when the user has activated that option manually from the text layout file
                         visible: tasks.configuration.launchersGroup === group
 
-                        readonly property int group: LatteCore.Types.LayoutLaunchers
+                        readonly property int group: LatteCore.types.LayoutLaunchers
 
                         onPressedChanged: {
                             if (pressed) {
                                 tasks.configuration.launchersGroup = group;
                             }
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Use the current layout set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views in the <b>same layout</b>")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("global launchers group","Global Group")
                         checked: parent.group === group
                         checkable: false
-                        tooltip: i18n("Use the global set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views and between <b>different layouts</b>")
 
-                        readonly property int group: LatteCore.Types.GlobalLaunchers
+                        readonly property int group: LatteCore.types.GlobalLaunchers
 
                         onPressedChanged: {
                             if (pressed) {
                                 tasks.configuration.launchersGroup = group;
                             }
+                        }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Use the global set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views and between <b>different layouts</b>")
                         }
                     }
                 }
@@ -539,11 +548,11 @@ PlasmaComponents.Page {
 
                         currentIndex: {
                             switch(tasks.configuration.leftClickAction) {
-                            case LatteTasks.Types.PresentWindows:
+                            case LatteTasks.types.PresentWindows:
                                 return 0;
-                            case LatteTasks.Types.CycleThroughTasks:
+                            case LatteTasks.types.CycleThroughTasks:
                                 return 1;
-                            case LatteTasks.Types.PreviewWindows:
+                            case LatteTasks.types.PreviewWindows:
                                 return 2;
                             }
 
@@ -553,13 +562,13 @@ PlasmaComponents.Page {
                         onCurrentIndexChanged: {
                             switch(currentIndex) {
                             case 0:
-                                tasks.configuration.leftClickAction = LatteTasks.Types.PresentWindows;
+                                tasks.configuration.leftClickAction = LatteTasks.types.PresentWindows;
                                 break;
                             case 1:
-                                tasks.configuration.leftClickAction = LatteTasks.Types.CycleThroughTasks;
+                                tasks.configuration.leftClickAction = LatteTasks.types.CycleThroughTasks;
                                 break;
                             case 2:
-                                tasks.configuration.leftClickAction = LatteTasks.Types.PreviewWindows;
+                                tasks.configuration.leftClickAction = LatteTasks.types.PreviewWindows;
                                 break;
                             }
                         }
@@ -602,13 +611,13 @@ PlasmaComponents.Page {
 
                         currentIndex: {
                             switch(tasks.configuration.hoverAction) {
-                            case LatteTasks.Types.NoneAction:
+                            case LatteTasks.types.NoneAction:
                                 return 0;
-                            case LatteTasks.Types.PreviewWindows:
+                            case LatteTasks.types.PreviewWindows:
                                 return 1;
-                            case LatteTasks.Types.HighlightWindows:
+                            case LatteTasks.types.HighlightWindows:
                                 return 2;
-                            case LatteTasks.Types.PreviewAndHighlightWindows:
+                            case LatteTasks.types.PreviewAndHighlightWindows:
                                 return 3;
                             }
 
@@ -618,16 +627,16 @@ PlasmaComponents.Page {
                         onCurrentIndexChanged: {
                             switch(currentIndex) {
                             case 0:
-                                tasks.configuration.hoverAction = LatteTasks.Types.NoneAction;
+                                tasks.configuration.hoverAction = LatteTasks.types.NoneAction;
                                 break;
                             case 1:
-                                tasks.configuration.hoverAction = LatteTasks.Types.PreviewWindows;
+                                tasks.configuration.hoverAction = LatteTasks.types.PreviewWindows;
                                 break;
                             case 2:
-                                tasks.configuration.hoverAction = LatteTasks.Types.HighlightWindows;
+                                tasks.configuration.hoverAction = LatteTasks.types.HighlightWindows;
                                 break;
                             case 3:
-                                tasks.configuration.hoverAction = LatteTasks.Types.PreviewAndHighlightWindows;
+                                tasks.configuration.hoverAction = LatteTasks.types.PreviewAndHighlightWindows;
                                 break;
                             }
                         }
@@ -724,7 +733,7 @@ PlasmaComponents.Page {
                 text: i18n("Recycling")
             }
 
-            PlasmaComponents.Button {
+            LatteComponents.Button {
                 Layout.minimumWidth: dialog.optionsWidth
                 Layout.maximumWidth: Layout.minimumWidth
                 Layout.leftMargin: units.smallSpacing * 2

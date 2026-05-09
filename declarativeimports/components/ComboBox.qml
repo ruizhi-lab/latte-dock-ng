@@ -18,8 +18,45 @@ import "private" as Private
 
 T.ComboBox {
     id: control
+    Kirigami.Theme.inherit: true
 
+    readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
+    readonly property color safeTextColor: (theme && theme.textColor !== undefined) ? theme.textColor : "white"
+    readonly property color safeHighlightedTextColor: (theme && theme.highlightedTextColor !== undefined) ? theme.highlightedTextColor : safeTextColor
+    readonly property color safeButtonTextColor: safeTextColor
+    readonly property color safeBackgroundColor: (theme && theme.backgroundColor !== undefined) ? theme.backgroundColor : "white"
+    readonly property color safeButtonColor: safeBackgroundColor
+    readonly property color safeButtonBorderColor: Qt.rgba(safeTextColor.r, safeTextColor.g, safeTextColor.b, 0.35)
+    readonly property color safePressedBorderColor: (theme && theme.highlightColor !== undefined)
+                                                    ? theme.highlightColor
+                                                    : safeButtonBorderColor
+    readonly property int frameMargin: units.smallSpacing
+
+    function modelItemAt(idx) {
+        if (!model || idx < 0) {
+            return null;
+        }
+
+        if (Array.isArray(model)) {
+            return model[idx];
+        }
+
+        if (typeof model.get === "function") {
+            return model.get(idx);
+        }
+
+        return model[idx];
+    }
+
+    function modelRoleAt(idx, role) {
+        if (!role || role.length === 0) {
+            return "";
+        }
+
+        var item = modelItemAt(idx);
+        return item ? item[role] : "";
+    }
 
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding) + indicator.implicitWidth + rightPadding
@@ -27,10 +64,10 @@ T.ComboBox {
     baselineOffset: contentItem.y + contentItem.baselineOffset
 
     hoverEnabled: true
-    topPadding: surfaceNormal.margins.top
-    leftPadding: surfaceNormal.margins.left
-    rightPadding: surfaceNormal.margins.right + units.gridUnit * 2
-    bottomPadding: surfaceNormal.margins.bottom
+    topPadding: frameMargin
+    leftPadding: frameMargin
+    rightPadding: frameMargin + units.gridUnit * 2
+    bottomPadding: frameMargin
 
     wheelEnabled: false
 
@@ -75,14 +112,14 @@ T.ComboBox {
             id: tooltipBtn
             anchors.fill: parent
             opacity: 0
-            tooltip: parent.toolTip
-            visible: tooltip !== ''
+            visible: parent.toolTip !== ''
+
+            PlasmaComponents.ToolTip { text: tooltipBtn.parent ? tooltipBtn.parent.toolTip : "" }
 
             onPressedChanged: {
                 if (!pressed) {
                     control.currentIndex = index;
                     control.down = false;
-                    control.pressed = false;
                     control.popup.visible = false;
                 }
             }
@@ -94,7 +131,7 @@ T.ComboBox {
         implicitHeight: implicitWidth
         anchors {
             right: parent.right
-            rightMargin: control.buttonIsTransparent ? 0 : surfaceNormal.margins.right
+            rightMargin: control.buttonIsTransparent ? 0 : frameMargin
             verticalCenter: parent.verticalCenter
         }
         svg: KSvg.Svg {
@@ -133,7 +170,6 @@ T.ComboBox {
         onReleased: onGenericReleased()
         onCanceled: {
             control.down = false;
-            control.pressed = false;
         }
         onPositionChanged: {
             var pos = listView.mapFromItem(this, mouse.x, mouse.y);
@@ -146,7 +182,6 @@ T.ComboBox {
             target: popup
             function onClosed() {
                 control.down = false;
-                control.pressed = false;
             }
         }
 
@@ -154,14 +189,12 @@ T.ComboBox {
             indexUnderMouse = -1;
             listView.currentIndex = control.highlightedIndex;
             control.down = true;
-            control.pressed = true;
             control.popup.visible = !control.popup.visible;
         }
 
         function onGenericReleased() {
             if (!containsMouse && !hiddenTooltipButton.hovered) {
                 control.down = false;
-                control.pressed = false;
                 control.popup.visible = false;
             }
             if (indexUnderMouse > -1) {
@@ -177,9 +210,7 @@ T.ComboBox {
 
             property string computedTooltip: {
                 if (!visible) return "";
-                if (Array.isArray(control.model))
-                    return control.model[control.currentIndex][control.toolTipRole];
-                return control.model.get(control.currentIndex)[control.toolTipRole];
+                return control.modelRoleAt(control.currentIndex, control.toolTipRole);
             }
 
             PlasmaComponents.ToolTip { text: hiddenTooltipButton.computedTooltip }
@@ -211,12 +242,7 @@ T.ComboBox {
                     if (control
                             && control.currentIndex>=0
                             && control.iconRole.length>0) {
-
-                        if (Array.isArray(control.model)) {
-                            return control.model[control.currentIndex][control.iconRole];
-                        } else {
-                            return control.model.get(control.currentIndex)[control.iconRole];
-                        }
+                        return control.modelRoleAt(control.currentIndex, control.iconRole);
                     }
 
                     return "";
@@ -234,7 +260,9 @@ T.ComboBox {
 
                 text: control.displayText
                 font: control.font
-                color: control.pressed ? theme.highlightedTextColor : theme.buttonTextColor
+                color: control.pressed
+                       ? safeHighlightedTextColor
+                       : (control.buttonIsTransparent ? safeTextColor : safeButtonTextColor)
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 opacity: control.enabled ? 1 : 0.6
@@ -310,47 +338,22 @@ T.ComboBox {
         y: rect.y + 6
     }*/
 
-    background: KSvg.FrameSvgItem {
+    background: Rectangle {
         id: surfaceNormal
-        //retrocompatibility with old controls
         implicitWidth: units.gridUnit * 6
         width: parent.width
         height: parent.height
+        radius: Math.max(2, units.smallSpacing)
+        color: safeButtonColor
+        border.width: 1
+        border.color: control.pressed || control.forcePressed
+                      ? safePressedBorderColor
+                      : safeButtonBorderColor
 
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: control.buttonIsTransparent ? -margins.right : 0
-        readonly property bool editable: control.hasOwnProperty("editable") && control.editable
-        imagePath: editable ? "widgets/lineedit" : "widgets/button"
-        prefix: editable
-                ? "base"
-                : (control.pressed || control.forcePressed ? "pressed" : "normal")
-
-        opacity: control.buttonIsTransparent && prefix !== "pressed" && textFieldPrivate.state !== "hover" && !control.popup.visible ? 0 : 1
-
-        Private.TextFieldFocus {
-            id: textFieldPrivate
-            visible: parent.editable
-            z: -1
-            state: control.activeFocus ? "focus" : (control.hovered ? "hover" : "hidden")
-            anchors.fill: parent
-        }
-        Private.ButtonShadow {
-            z: -1
-            visible: !parent.editable
-            anchors.fill: parent
-            state: {
-                if (control.pressed) {
-                    return "hidden"
-                } else if (control.hovered) {
-                    return "hover"
-                } else if (control.activeFocus) {
-                    return "focus"
-                } else {
-                    return "shadow"
-                }
-            }
-        }
+        anchors.rightMargin: control.buttonIsTransparent ? -frameMargin : 0
+        opacity: control.buttonIsTransparent && !control.pressed && !control.popup.visible ? 0 : 1
 
         MouseArea {
             anchors {
@@ -375,6 +378,9 @@ T.ComboBox {
     }
 
     popup: T.Popup {
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
         x: {
             if (!control.mirrored) {
                 if (popUpRelativeX !== 0) {
@@ -436,8 +442,8 @@ T.ComboBox {
                 margins: -1
             }
             radius: 2
-            color: theme.viewBackgroundColor
-            border.color: Qt.rgba(theme.textColor.r, theme.textColor.g, theme.textColor.b, 0.3)
+            color: safeBackgroundColor
+            border.color: Qt.rgba(safeTextColor.r, safeTextColor.g, safeTextColor.b, 0.3)
             layer.enabled: true
 
             layer.effect: MultiEffect {

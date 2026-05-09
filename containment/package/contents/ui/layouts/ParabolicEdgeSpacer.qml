@@ -58,6 +58,11 @@ Item {
     }
 
     function sltUpdateLowerItemScale(delegateIndex, newScales) {
+        if (!parabolic.tryEnterRelay()) {
+            return;
+        }
+
+        try {
         if (!isTailSpacer || delegateIndex !== index) {
             return;
         }
@@ -70,9 +75,17 @@ Item {
 
         //! clear side neighbours
         parabolic.sglUpdateLowerItemScale(index - 1, [1]);
+        } finally {
+            parabolic.leaveRelay();
+        }
     }
 
     function sltUpdateHigherItemScale(delegateIndex, newScales) {
+        if (!parabolic.tryEnterRelay()) {
+            return;
+        }
+
+        try {
         if (!isHeadSpacer || delegateIndex !== index) {
             return;
         }
@@ -85,6 +98,9 @@ Item {
 
         //! clear side neighbours
         parabolic.sglUpdateHigherItemScale(index + 1, [1]);
+        } finally {
+            parabolic.leaveRelay();
+        }
     }
 
     function sltClearZoom(){

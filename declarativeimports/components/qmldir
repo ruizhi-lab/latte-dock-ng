@@ -3,6 +3,7 @@ module org.kde.latte.components
 AddItem 1.0 AddItem.qml
 AddingArea 1.0 AddingArea.qml
 BadgeText 1.0 BadgeText.qml
+Button 1.0 Button.qml
 CheckBox 1.0 CheckBox.qml
 CheckBoxesColumn 1.0 CheckBoxesColumn.qml
 ComboBox 1.0 ComboBox.qml

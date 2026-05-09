@@ -23,6 +23,26 @@
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 
+namespace {
+QObject *findGraphicContextObject(QObject *containmentObject)
+{
+    if (!containmentObject) {
+        return nullptr;
+    }
+
+    QObject *candidate = containmentObject->property("_plasma_graphicObject").value<QObject *>();
+    if (candidate) {
+        return candidate;
+    }
+
+    candidate = containmentObject->property("graphicObject").value<QObject *>();
+    if (candidate) {
+        return candidate;
+    }
+    return nullptr;
+}
+}
+
 namespace Latte {
 namespace ViewPart {
 
@@ -161,10 +181,67 @@ void SubConfigView::initParentView(Latte::View *view)
 
     viewconnections << connect(m_latteView->positioner(), &ViewPart::Positioner::canvasGeometryChanged, this, &SubConfigView::syncGeometry);
 
-    //! Assign app interfaces in be accessible through containment graphic item
-    QQuickItem *containmentGraphicItem = qobject_cast<QQuickItem *>(m_latteView->containment()->property("_plasma_graphicObject").value<QObject *>());
-    rootContext()->setContextProperty(QStringLiteral("plasmoid"), containmentGraphicItem);
     rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
+    m_plasmoidContextSyncAttempts = 0;
+    m_hasGraphicPlasmoidContext = false;
+    m_loggedPlasmoidContext = false;
+    syncPlasmoidContext();
+}
+
+void SubConfigView::syncPlasmoidContext()
+{
+    if (!m_latteView || !m_latteView->containment()) {
+        return;
+    }
+
+    QObject *containmentObject = m_latteView->containment();
+    QObject *containmentGraphicObject = findGraphicContextObject(containmentObject);
+    QObject *plasmoidContextObject = nullptr;
+    const bool hasGraphicObject = containmentGraphicObject != nullptr;
+
+    if (hasGraphicObject) {
+        // Keep legacy semantics: configuration QML expects the containment
+        // graphic object, not an arbitrary child object.
+        plasmoidContextObject = containmentGraphicObject;
+    }
+
+    if (!plasmoidContextObject) {
+        plasmoidContextObject = containmentObject;
+    }
+
+    rootContext()->setContextProperty(QStringLiteral("plasmoid"), plasmoidContextObject);
+
+    if (!m_loggedPlasmoidContext && plasmoidContextObject) {
+        const QMetaObject *metaObj = plasmoidContextObject->metaObject();
+        qDebug() << "latte::config plasmoid context class:" << metaObj->className()
+                 << "has configuration:" << (metaObj->indexOfProperty("configuration") >= 0)
+                 << "has location:" << (metaObj->indexOfProperty("location") >= 0)
+                 << "has formFactor:" << (metaObj->indexOfProperty("formFactor") >= 0);
+        m_loggedPlasmoidContext = true;
+    }
+
+    if (hasGraphicObject) {
+        if (!m_hasGraphicPlasmoidContext) {
+            qDebug() << "latte::config switched plasmoid context to graphic object";
+            m_hasGraphicPlasmoidContext = true;
+        }
+        return;
+    }
+
+    // In some startup paths the graphic object arrives noticeably later than the
+    // config window construction. Keep probing for a while and upgrade context
+    // to the real graphic object as soon as it is available.
+    if (m_plasmoidContextSyncAttempts == 0) {
+        const QMetaObject *metaObj = containmentObject->metaObject();
+        qDebug() << "latte::config containment context fallback class:" << metaObj->className()
+                 << "has _plasma_graphicObject property:" << (metaObj->indexOfProperty("_plasma_graphicObject") >= 0)
+                 << "has graphicObject property:" << (metaObj->indexOfProperty("graphicObject") >= 0);
+    }
+
+    if (m_plasmoidContextSyncAttempts < 200) {
+        ++m_plasmoidContextSyncAttempts;
+        QTimer::singleShot(50, this, &SubConfigView::syncPlasmoidContext);
+    }
 }
 
 void SubConfigView::requestActivate()

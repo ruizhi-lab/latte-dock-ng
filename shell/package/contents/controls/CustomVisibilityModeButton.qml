@@ -25,7 +25,7 @@ LatteComponents.ComboBoxButton{
     comboBoxPopUpAlignRight: Qt.application.layoutDirection !== Qt.RightToLeft
     comboBoxPopupTextHorizontalAlignment: Text.AlignHCenter
 
-    property int mode: LatteCore.Types.WindowsGoBelow
+    property int mode: LatteCore.types.WindowsGoBelow
     readonly property int currentModeIndex: {
         for (var i=0; i<modes.length; ++i) {
             if (modes[i].pluginId === mode) {

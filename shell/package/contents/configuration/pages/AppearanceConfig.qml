@@ -7,6 +7,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.0 as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
@@ -96,8 +97,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: i18nc("number in pixels, e.g. 12 px.", "%1 px.", appletsSizeSlider.value)//.arg(appletsSizeSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -118,7 +119,7 @@ PlasmaComponents.Page {
                         Layout.fillWidth: true
                         value: plasmoid.configuration.proportionIconSize
                         from: 1.0
-                        to: (latteView.visibility.mode === LatteCore.Types.SidebarOnDemand || latteView.visibility.mode === LatteCore.Types.SidebarAutoHide)  ? 25 : 12
+                        to: (latteView.visibility.mode === LatteCore.types.SidebarOnDemand || latteView.visibility.mode === LatteCore.types.SidebarAutoHide)  ? 25 : 12
                         stepSize: 0.1
                         wheelEnabled: false
 
@@ -147,8 +148,8 @@ PlasmaComponents.Page {
 
                     PlasmaComponents.Label {
                         id: absoluteSizeLbl
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         text: proportionSizeSlider.value !== proportionSizeSlider.from ?
                                   (absoluteSizeLblMouseArea.containsMouse ?
@@ -209,8 +210,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", Number((zoomSlider.value * 100) - 100).toFixed(0))
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
             }
@@ -266,13 +267,13 @@ PlasmaComponents.Page {
                                 var newTotal = Math.abs(plasmoid.configuration.offset) + value;
 
                                 //centered and justify alignments based on offset and get out of the screen in some cases
-                                var centeredCheck = ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                                     || (plasmoid.configuration.alignment === LatteCore.Types.Justify))
+                                var centeredCheck = ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                                     || (plasmoid.configuration.alignment === LatteCore.types.Justify))
                                         && ((Math.abs(plasmoid.configuration.offset) + value/2) > 50);
 
                                 if (newTotal > 100 || centeredCheck) {
-                                    if ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                            || (plasmoid.configuration.alignment === LatteCore.Types.Justify)) {
+                                    if ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                            || (plasmoid.configuration.alignment === LatteCore.types.Justify)) {
 
                                         var suggestedValue = (plasmoid.configuration.offset<0) ? Math.min(0, -(100-value)): Math.max(0, 100-value);
 
@@ -316,8 +317,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", maxLengthSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         LatteComponents.ScrollArea {
                             anchors.fill: parent
@@ -351,7 +352,7 @@ PlasmaComponents.Page {
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
                     visible: dialog.advancedLevel
-                    enabled: (plasmoid.configuration.alignment !== LatteCore.Types.Justify)
+                    enabled: (plasmoid.configuration.alignment !== LatteCore.types.Justify)
 
                     PlasmaComponents.Label {
                         id: minLengthLbl
@@ -399,8 +400,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", minLengthSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         LatteComponents.ScrollArea {
                             anchors.fill: parent
@@ -455,11 +456,11 @@ PlasmaComponents.Page {
                         property bool userInputIsValid: false
                         readonly property bool sliderIsReady: viewConfig.isReady && (from===fromValue) && (to===toValue)
 
-                        readonly property int fromValue: ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                                          || (plasmoid.configuration.alignment === LatteCore.Types.Justify)) ? -offsetSlider.screenLengthMaxFactor :  0
+                        readonly property int fromValue: ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                                          || (plasmoid.configuration.alignment === LatteCore.types.Justify)) ? -offsetSlider.screenLengthMaxFactor :  0
 
-                        readonly property int toValue: ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                                        || (plasmoid.configuration.alignment === LatteCore.Types.Justify)) ? offsetSlider.screenLengthMaxFactor :  2*offsetSlider.screenLengthMaxFactor
+                        readonly property int toValue: ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                                        || (plasmoid.configuration.alignment === LatteCore.types.Justify)) ? offsetSlider.screenLengthMaxFactor :  2*offsetSlider.screenLengthMaxFactor
 
                         property real offsetValue: plasmoid.configuration.offset
 
@@ -489,12 +490,12 @@ PlasmaComponents.Page {
                                 var newTotal = Math.abs(value) + plasmoid.configuration.maxLength;
 
                                 //centered and justify alignments based on offset and get out of the screen in some cases
-                                var centeredCheck = ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                                     || (plasmoid.configuration.alignment === LatteCore.Types.Justify))
+                                var centeredCheck = ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                                     || (plasmoid.configuration.alignment === LatteCore.types.Justify))
                                         && ((Math.abs(value) + plasmoid.configuration.maxLength/2) > 50);
                                 if (newTotal > 100 || centeredCheck) {
-                                    plasmoid.configuration.maxLength = ((plasmoid.configuration.alignment === LatteCore.Types.Center)
-                                                                        || (plasmoid.configuration.alignment === LatteCore.Types.Justify)) ?
+                                    plasmoid.configuration.maxLength = ((plasmoid.configuration.alignment === LatteCore.types.Center)
+                                                                        || (plasmoid.configuration.alignment === LatteCore.types.Justify)) ?
                                                 2*(50 - Math.abs(value)) :100 - Math.abs(value);
                                 }
                             }
@@ -529,8 +530,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", offsetSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         LatteComponents.ScrollArea {
                             anchors.fill: parent
@@ -636,8 +637,8 @@ PlasmaComponents.Page {
                                   i18nc("number in pixels, e.g. 8 px.","%1 px.", currentValueInPixels) :
                                   i18nc("number in percentage, e.g. 85 %","%1 %", lengthExtMarginSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         readonly property int currentValueInPixels: (lengthExtMarginSlider.value/100) * latteView.metrics.maxIconSize
 
@@ -682,8 +683,8 @@ PlasmaComponents.Page {
                                   i18nc("number in pixels, e.g. 8 px.","%1 px.", currentValueInPixels) :
                                   i18nc("number in percentage, e.g. 85 %","%1 %", currentValue)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         readonly property int currentValue: Math.max(thickMarginSlider.minimumInternalValue, thickMarginSlider.value)
                         readonly property int currentValueInPixels: (currentValue/100) * latteView.metrics.maxIconSize
@@ -726,8 +727,8 @@ PlasmaComponents.Page {
                     PlasmaComponents.Label {
                         text: currentValue < 0 ? "---" : i18nc("number in pixels, e.g. 85 px.","%1 px.", currentValue)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         readonly property int currentValue: screenEdgeMarginSlider.value
                     }
@@ -768,23 +769,23 @@ PlasmaComponents.Page {
                     model: [
                         {
                             name: i18nc("plasma theme colors", "Plasma Theme Colors"),
-                            value: LatteContainment.Types.PlasmaThemeColors
+                            value: LatteContainment.types.PlasmaThemeColors
                         },{
                             name: i18nc("dark theme colors", "Dark Colors"),
-                            value: LatteContainment.Types.DarkThemeColors
+                            value: LatteContainment.types.DarkThemeColors
                         },{
                             name: i18nc("light theme colors", "Light Colors"),
-                            value: LatteContainment.Types.LightThemeColors
+                            value: LatteContainment.types.LightThemeColors
                         },{
                             name: i18nc("layout custom colors", "Layout Custom Colors"),
-                            value: LatteContainment.Types.LayoutThemeColors
+                            value: LatteContainment.types.LayoutThemeColors
                         },
                         /*,{
                             name: i18nc("reverse plasma theme colors", "Reverse"),
-                            value: LatteContainment.Types.ReverseThemeColors
+                            value: LatteContainment.types.ReverseThemeColors
                         }*/{
                             name: i18nc("smart theme colors", "Smart Colors Based On Desktop Background"),
-                            value: LatteContainment.Types.SmartThemeColors
+                            value: LatteContainment.types.SmartThemeColors
                         }
                     ]
 
@@ -793,17 +794,17 @@ PlasmaComponents.Page {
                     onCurrentIndexChanged: plasmoid.configuration.themeColors = model[currentIndex].value
 
                     function colorsToIndex(colors) {
-                        if (colors === LatteContainment.Types.PlasmaThemeColors) {
+                        if (colors === LatteContainment.types.PlasmaThemeColors) {
                             return 0;
-                        } else if (colors === LatteContainment.Types.DarkThemeColors) {
+                        } else if (colors === LatteContainment.types.DarkThemeColors) {
                             return 1;
-                        } else if (colors === LatteContainment.Types.LightThemeColors) {
+                        } else if (colors === LatteContainment.types.LightThemeColors) {
                             return 2;
-                        } else if (colors === LatteContainment.Types.ReverseThemeColors) {
+                        } else if (colors === LatteContainment.types.ReverseThemeColors) {
                             return 3;
-                        } else if (colors === LatteContainment.Types.LayoutThemeColors) {
+                        } else if (colors === LatteContainment.types.LayoutThemeColors) {
                             return 3;
-                        } else if (colors === LatteContainment.Types.SmartThemeColors) {
+                        } else if (colors === LatteContainment.types.SmartThemeColors) {
                             return 4;
                         }
                     }
@@ -920,8 +921,8 @@ PlasmaComponents.Page {
                         enabled: showBackground.checked
                         text: i18nc("number in percentage, e.g. 85 %","%1 %", panelSizeSlider.value)
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -970,8 +971,8 @@ PlasmaComponents.Page {
                         enabled: transparencySlider.enabled
                         text: transparencySlider.value >= 0 ? i18nc("number in percentage, e.g. 85 %","%1 %", transparencySlider.value) : i18nc("Default word abbreviation", "Def.")
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -1012,8 +1013,8 @@ PlasmaComponents.Page {
                         enabled: radiusSlider.enabled
                         text: radiusSlider.value >= 0 ? i18nc("number in percentage, e.g. 85 %","%1 %", radiusSlider.value) : i18nc("Default word abbreviation", "Def.")
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -1055,8 +1056,8 @@ PlasmaComponents.Page {
                         enabled: shadowSlider.enabled
                         text: shadowSlider.value >= 0 ? i18nc("number in pixels, e.g. 12 px.", "%1 px.", shadowSlider.value ) : i18nc("Default word abbreviation", "Def.")
                         horizontalAlignment: Text.AlignRight
-                        Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-                        Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 4
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 4
                     }
                 }
 
@@ -1069,14 +1070,13 @@ PlasmaComponents.Page {
 
                     readonly property int buttonSize: (dialog.optionsWidth - (2 * spacing)) / children.length
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: panelBlur
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18n("Blur")
                         checkable: true
                         enabled: showBackground.checked && LatteCore.WindowSystem.compositingActive
-                        tooltip: i18n("Background is blurred underneath")
 
                         readonly property int blurEnabled: plasmoid.configuration.blurEnabled
 
@@ -1085,16 +1085,19 @@ PlasmaComponents.Page {
                         onClicked: {
                             plasmoid.configuration.blurEnabled  = checked
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Background is blurred underneath")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: panelShadows
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18n("Shadows")
                         checkable: true
                         enabled: showBackground.checked && LatteCore.WindowSystem.compositingActive && themeExtended.hasShadow
-                        tooltip: i18n("Background shows its shadows")
 
                         readonly property int panelShadows: plasmoid.configuration.panelShadows
 
@@ -1103,9 +1106,13 @@ PlasmaComponents.Page {
                         onClicked: {
                             plasmoid.configuration.panelShadows  = checked
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Background shows its shadows")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: solidBackground
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
@@ -1113,14 +1120,17 @@ PlasmaComponents.Page {
                         checkable: true
                         checked: plasmoid.configuration.panelOutline
                         enabled: showBackground.checked
-                        tooltip: i18n("Background draws a line for its borders. You can set the line size from Latte Preferences")
 
                         onClicked: {
                             plasmoid.configuration.panelOutline = checked;
                         }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Background draws a line for its borders. You can set the line size from Latte Preferences")
+                        }
                     }
 
-                    PlasmaComponents.Button {
+                    LatteComponents.Button {
                         id: allCorners
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
@@ -1130,12 +1140,15 @@ PlasmaComponents.Page {
                         enabled: showBackground.checked
                                  && ((plasmoid.configuration.screenEdgeMargin===-1) /*no-floating*/
                                      || (plasmoid.configuration.screenEdgeMargin > -1 /*floating with justify alignment and 100% maxlength*/
-                                         && plasmoid.configuration.alignment ===LatteCore.Types.Justify
+                                         && plasmoid.configuration.alignment ===LatteCore.types.Justify
                                          && plasmoid.configuration.maxLength===100))
-                        tooltip: i18n("Background draws all corners at all cases.")
 
                         onClicked: {
                             plasmoid.configuration.backgroundAllCorners = checked;
+                        }
+
+                        PlasmaComponents.ToolTip {
+                            text: i18n("Background draws all corners at all cases.")
                         }
                     }
                 }

@@ -60,6 +60,12 @@ Item{
     readonly property bool bothHorizontals: (bottomBorder && topBorder)
 
     readonly property bool drawWithoutRoundness: onlyHorizontalBorders || onlyVerticalBorders
+    readonly property bool edgeIsVertical: plasmoid.location === PlasmaCore.Types.LeftEdge
+                                           || plasmoid.location === PlasmaCore.Types.RightEdge
+    readonly property bool edgeIsHorizontal: plasmoid.location === PlasmaCore.Types.TopEdge
+                                             || plasmoid.location === PlasmaCore.Types.BottomEdge
+    readonly property bool isHorizontal: edgeIsHorizontal ? true
+                                      : (edgeIsVertical ? false : (plasmoid.formFactor === PlasmaCore.Types.Horizontal))
 
     readonly property Item painterRectangle: painter
 
@@ -115,7 +121,7 @@ Item{
         opacity: backgroundOpacity
 
         width: {
-            if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+            if (main.isHorizontal) {
                 if (drawWithoutRoundness) {
                     return parent.width + 2*borderWidth;
                 } else if (noOfBorders === 2 || (noOfBorders === 3 && bothHorizontals)) {
@@ -123,7 +129,7 @@ Item{
                 } else if (noOfBorders === 3 && bothVerticals) {
                     return parent.width;
                 }
-            } else if (plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+            } else {
                 if (drawWithoutRoundness) {
                     return parent.width + 2 * borderWidth;
                 } else if ((noOfBorders === 2 && !bothVerticals) || (noOfBorders === 3 && bothHorizontals)) {
@@ -136,13 +142,13 @@ Item{
 
 
         height: {
-            if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+            if (main.isHorizontal) {
                 if (drawWithoutRoundness) {
                     return parent.height + 2 * borderWidth;
                 } else if ((noOfBorders === 2 && !bothHorizontals) || (noOfBorders === 3 && bothVerticals)) {
                     return parent.height + Math.max(roundness,2 * borderWidth);
                 }
-            } else if (plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+            } else {
                 if (drawWithoutRoundness) {
                     return parent.height + 2*borderWidth;
                 } else if (noOfBorders === 2 || (noOfBorders === 3 && bothVerticals)) {
@@ -171,7 +177,7 @@ Item{
         states: [
             State {
                 name: "horizontal"
-                when: (plasmoid.formFactor === PlasmaCore.Types.Horizontal)
+                when: main.isHorizontal
 
                 PropertyChanges{
                     target: painter
@@ -200,7 +206,7 @@ Item{
             },
             State {
                 name: "vertical"
-                when: (plasmoid.formFactor === PlasmaCore.Types.Vertical)
+                when: !main.isHorizontal
 
                 PropertyChanges{
                     target: painter

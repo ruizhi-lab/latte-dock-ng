@@ -8,12 +8,78 @@ import QtQuick.Layouts 1.3
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.plasmoid 2.0
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.latte.components 1.0 as LatteComponents
 
 ColumnLayout {
     id: root
     Layout.fillWidth: true
+    Kirigami.Theme.inherit: true
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
+    readonly property var units: Kirigami.Units
+    readonly property bool hasIndicatorConfig: (typeof indicator !== "undefined") && indicator && indicator.configuration
+    readonly property bool latteTasksArePresent: (typeof indicator !== "undefined") && indicator && indicator.latteTasksArePresent
+    property var indicatorConfigFallback: ({
+        activeStyle: 0,
+        size: 0.08,
+        thickMargin: 0.0,
+        lengthPadding: 0.0,
+        backgroundCornerMargin: 0.0,
+        glowEnabled: true,
+        glowApplyTo: 1,
+        glowOpacity: 0.55,
+        minimizedTaskColoredDifferently: false,
+        extraDotOnActive: true,
+        enabledForApplets: true,
+        reversed: false
+    })
+    readonly property var indicatorConfig: hasIndicatorConfig ? indicator.configuration : indicatorConfigFallback
+    function configBool(value, fallback) {
+        if (value === undefined || value === null) {
+            return fallback;
+        }
+
+        return !!value;
+    }
+
+    function configInt(value, fallback) {
+        if (value === undefined || value === null) {
+            return fallback;
+        }
+
+        var numeric = Number(value);
+        return isNaN(numeric) ? fallback : numeric;
+    }
+
+    function configReal(value, fallback) {
+        if (value === undefined || value === null) {
+            return fallback;
+        }
+
+        var numeric = Number(value);
+        return isNaN(numeric) ? fallback : numeric;
+    }
+
+    readonly property int activeStyleValue: configInt(indicatorConfig.activeStyle, indicatorConfigFallback.activeStyle)
+    readonly property real thicknessValue: configReal(indicatorConfig.size, indicatorConfigFallback.size)
+    readonly property real thickMarginValue: configReal(indicatorConfig.thickMargin, indicatorConfigFallback.thickMargin)
+    readonly property real lengthPaddingValue: configReal(indicatorConfig.lengthPadding, indicatorConfigFallback.lengthPadding)
+    readonly property real backgroundCornerMarginValue: configReal(indicatorConfig.backgroundCornerMargin, indicatorConfigFallback.backgroundCornerMargin)
+    readonly property bool glowEnabledValue: configBool(indicatorConfig.glowEnabled, indicatorConfigFallback.glowEnabled)
+    readonly property int glowApplyToValue: configInt(indicatorConfig.glowApplyTo, indicatorConfigFallback.glowApplyTo)
+    readonly property real glowOpacityValue: configReal(indicatorConfig.glowOpacity, indicatorConfigFallback.glowOpacity)
+    readonly property bool minimizedTaskColoredDifferentlyValue: configBool(indicatorConfig.minimizedTaskColoredDifferently, indicatorConfigFallback.minimizedTaskColoredDifferently)
+    readonly property bool extraDotOnActiveValue: configBool(indicatorConfig.extraDotOnActive, indicatorConfigFallback.extraDotOnActive)
+    readonly property bool enabledForAppletsValue: configBool(indicatorConfig.enabledForApplets, indicatorConfigFallback.enabledForApplets)
+    readonly property bool reversedValue: configBool(indicatorConfig.reversed, indicatorConfigFallback.reversed)
+    readonly property int valueLabelWidth: valueTextMetrics.advanceWidth + units.smallSpacing * 2
+
+    TextMetrics {
+        id: valueTextMetrics
+        text: "100 %"
+    }
 
     LatteComponents.SubHeader {
         text: i18nc("indicator style","Style")
@@ -23,12 +89,12 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 2
 
-        property int indicatorType: indicator.configuration.activeStyle
+        property int indicatorType: root.activeStyleValue
 
         readonly property int buttonsCount: 2
         readonly property int buttonSize: (dialog.optionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
-        PlasmaComponents.Button {
+        LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("line indicator","Line")
@@ -38,14 +104,10 @@ ColumnLayout {
 
             readonly property int indicatorType: 0 /*Line*/
 
-            onPressedChanged: {
-                if (pressed) {
-                    indicator.configuration.activeStyle = indicatorType;
-                }
-            }
+            onClicked: root.indicatorConfig.activeStyle = indicatorType
         }
 
-        PlasmaComponents.Button {
+        LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("dots indicator", "Dots")
@@ -55,11 +117,7 @@ ColumnLayout {
 
             readonly property int indicatorType: 1 /*Dot*/
 
-            onPressedChanged: {
-                if (pressed) {
-                    indicator.configuration.activeStyle = indicatorType;
-                }
-            }
+            onClicked: root.indicatorConfig.activeStyle = indicatorType
         }
     }
 
@@ -76,7 +134,7 @@ ColumnLayout {
             id: sizeSlider
             Layout.fillWidth: true
 
-            value: Math.round(indicator.configuration.size * 100)
+            value: Math.round(root.thicknessValue * 100)
             from: 3
             to: 25
             stepSize: 1
@@ -84,7 +142,7 @@ ColumnLayout {
 
             onPressedChanged: {
                 if (!pressed) {
-                    indicator.configuration.size = Number(value / 100).toFixed(2);
+                    root.indicatorConfig.size = Number(value / 100).toFixed(2);
                 }
             }
         }
@@ -92,8 +150,8 @@ ColumnLayout {
         PlasmaComponents.Label {
             text: i18nc("number in percentage, e.g. 85 %","%1 %", currentValue)
             horizontalAlignment: Text.AlignRight
-            Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-            Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+            Layout.minimumWidth: root.valueLabelWidth
+            Layout.maximumWidth: root.valueLabelWidth
 
             readonly property int currentValue: sizeSlider.value
         }
@@ -112,7 +170,7 @@ ColumnLayout {
             id: thickMarginSlider
             Layout.fillWidth: true
 
-            value: Math.round(indicator.configuration.thickMargin * 100)
+            value: Math.round(root.thickMarginValue * 100)
             from: 0
             to: 30
             stepSize: 1
@@ -120,7 +178,7 @@ ColumnLayout {
 
             onPressedChanged: {
                 if (!pressed) {
-                    indicator.configuration.thickMargin = value / 100;
+                    root.indicatorConfig.thickMargin = value / 100;
                 }
             }
         }
@@ -128,8 +186,8 @@ ColumnLayout {
         PlasmaComponents.Label {
             text: i18nc("number in percentage, e.g. 85 %","%1 %", currentValue)
             horizontalAlignment: Text.AlignRight
-            Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-            Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+            Layout.minimumWidth: root.valueLabelWidth
+            Layout.maximumWidth: root.valueLabelWidth
 
             readonly property int currentValue: thickMarginSlider.value
         }
@@ -148,7 +206,7 @@ ColumnLayout {
             id: lengthIntMarginSlider
             Layout.fillWidth: true
 
-            value: Math.round(indicator.configuration.lengthPadding * 100)
+            value: Math.round(root.lengthPaddingValue * 100)
             from: 0
             to: maxMargin
             stepSize: 1
@@ -158,7 +216,7 @@ ColumnLayout {
 
             onPressedChanged: {
                 if (!pressed) {
-                    indicator.configuration.lengthPadding = value / 100;
+                    root.indicatorConfig.lengthPadding = value / 100;
                 }
             }
         }
@@ -166,8 +224,8 @@ ColumnLayout {
         PlasmaComponents.Label {
             text: i18nc("number in percentage, e.g. 85 %","%1 %", currentValue)
             horizontalAlignment: Text.AlignRight
-            Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-            Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+            Layout.minimumWidth: root.valueLabelWidth
+            Layout.maximumWidth: root.valueLabelWidth
 
             readonly property int currentValue: lengthIntMarginSlider.value
         }
@@ -186,7 +244,7 @@ ColumnLayout {
             id: backgroundCornerMarginSlider
             Layout.fillWidth: true
 
-            value: Math.round(indicator.configuration.backgroundCornerMargin * 100)
+            value: Math.round(root.backgroundCornerMarginValue * 100)
             from: 0
             to: 100
             stepSize: 1
@@ -194,7 +252,7 @@ ColumnLayout {
 
             onPressedChanged: {
                 if (!pressed) {
-                    indicator.configuration.backgroundCornerMargin = value / 100;
+                    root.indicatorConfig.backgroundCornerMargin = value / 100;
                 }
             }
         }
@@ -202,8 +260,8 @@ ColumnLayout {
         PlasmaComponents.Label {
             text: i18nc("number in percentage, e.g. 85 %","%1 %", currentValue)
             horizontalAlignment: Text.AlignRight
-            Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-            Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+            Layout.minimumWidth: root.valueLabelWidth
+            Layout.maximumWidth: root.valueLabelWidth
 
             readonly property int currentValue: backgroundCornerMarginSlider.value
         }
@@ -215,27 +273,27 @@ ColumnLayout {
         Layout.minimumHeight: implicitHeight
         Layout.bottomMargin: units.smallSpacing
 
-        checked: indicator.configuration.glowEnabled
+        checked: root.glowEnabledValue
         level: 2
         text: i18n("Glow")
         tooltip: i18n("Enable/disable indicator glow")
 
         onPressed: {
-            indicator.configuration.glowEnabled = !indicator.configuration.glowEnabled;
+            root.indicatorConfig.glowEnabled = !root.indicatorConfig.glowEnabled;
         }
     }
 
     RowLayout {
         Layout.fillWidth: true
         spacing: 2
-        enabled: indicator.configuration.glowEnabled
+        enabled: root.glowEnabledValue
 
-        property int option: indicator.configuration.glowApplyTo
+        property int option: root.glowApplyToValue
 
         readonly property int buttonsCount: 2
         readonly property int buttonSize: (dialog.optionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
-        PlasmaComponents.Button {
+        LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("glow only to active task/applet indicators","On Active")
@@ -245,14 +303,10 @@ ColumnLayout {
 
             readonly property int option: 1 /*OnActive*/
 
-            onPressedChanged: {
-                if (pressed) {
-                    indicator.configuration.glowApplyTo = option;
-                }
-            }
+            onClicked: root.indicatorConfig.glowApplyTo = option
         }
 
-        PlasmaComponents.Button {
+        LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("glow to all task/applet indicators","All")
@@ -262,11 +316,7 @@ ColumnLayout {
 
             readonly property int option: 2 /*All*/
 
-            onPressedChanged: {
-                if (pressed) {
-                    indicator.configuration.glowApplyTo = option;
-                }
-            }
+            onClicked: root.indicatorConfig.glowApplyTo = option
         }
     }
 
@@ -274,7 +324,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 2
 
-        enabled: indicator.configuration.glowEnabled
+        enabled: root.glowEnabledValue
 
         PlasmaComponents.Label {
             Layout.minimumWidth: implicitWidth
@@ -288,44 +338,33 @@ ColumnLayout {
             Layout.fillWidth: true
 
             leftPadding: 0
-            value: indicator.configuration.glowOpacity * 100
+            value: root.glowOpacityValue * 100
             from: 0
             to: 100
             stepSize: 5
             wheelEnabled: false
 
-            function updateGlowOpacity() {
-                if (!pressed)
-                    indicator.configuration.glowOpacity = value/100;
-            }
-
             onPressedChanged: {
-                updateGlowOpacity();
-            }
-
-            Component.onCompleted: {
-                valueChanged.connect(updateGlowOpacity);
-            }
-
-            Component.onDestruction: {
-                valueChanged.disconnect(updateGlowOpacity);
+                if (!pressed) {
+                    root.indicatorConfig.glowOpacity = value/100;
+                }
             }
         }
 
         PlasmaComponents.Label {
             text: i18nc("number in percentage, e.g. 85 %","%1 %", glowOpacitySlider.value)
             horizontalAlignment: Text.AlignRight
-            Layout.minimumWidth: theme.mSize(theme.defaultFont).width * 4
-            Layout.maximumWidth: theme.mSize(theme.defaultFont).width * 4
+            Layout.minimumWidth: root.valueLabelWidth
+            Layout.maximumWidth: root.valueLabelWidth
         }
     }
 
     ColumnLayout {
         spacing: 0
-        visible: indicator.latteTasksArePresent
+        visible: root.latteTasksArePresent
 
         LatteComponents.SubHeader {
-            enabled: indicator.configuration.glowApplyTo!==0/*None*/
+            enabled: root.glowApplyToValue!==0/*None*/
             text: i18n("Tasks")
         }
 
@@ -333,10 +372,10 @@ ColumnLayout {
             LatteComponents.CheckBox {
                 Layout.maximumWidth: dialog.optionsWidth
                 text: i18n("Different color for minimized windows")
-                value: indicator.configuration.minimizedTaskColoredDifferently
+                value: root.minimizedTaskColoredDifferentlyValue
 
                 onClicked: {
-                    indicator.configuration.minimizedTaskColoredDifferently = !indicator.configuration.minimizedTaskColoredDifferently;
+                    root.indicatorConfig.minimizedTaskColoredDifferently = !root.indicatorConfig.minimizedTaskColoredDifferently;
                 }
             }
 
@@ -344,18 +383,18 @@ ColumnLayout {
                 Layout.maximumWidth: dialog.optionsWidth
                 text: i18n("Show an extra dot for grouped windows when active")
                 tooltip: i18n("Grouped windows show both a line and a dot when one of them is active and the Line Active Indicator is enabled")
-                enabled: indicator.configuration.activeStyle === 0 /*Line*/
-                value: indicator.configuration.extraDotOnActive
+                enabled: root.activeStyleValue === 0 /*Line*/
+                value: root.extraDotOnActiveValue
 
                 onClicked: {
-                    indicator.configuration.extraDotOnActive = !indicator.configuration.extraDotOnActive;
+                    root.indicatorConfig.extraDotOnActive = !root.indicatorConfig.extraDotOnActive;
                 }
             }
         }
     }
 
     LatteComponents.SubHeader {
-        enabled: indicator.configuration.glowApplyTo!==0/*None*/
+        enabled: root.glowApplyToValue!==0/*None*/
         text: i18n("Options")
     }
 
@@ -363,20 +402,20 @@ ColumnLayout {
         Layout.maximumWidth: dialog.optionsWidth
         text: i18n("Show indicators for applets")
         tooltip: i18n("Indicators are shown for applets")
-        value: indicator.configuration.enabledForApplets
+        value: root.enabledForAppletsValue
 
         onClicked: {
-            indicator.configuration.enabledForApplets = !indicator.configuration.enabledForApplets;
+            root.indicatorConfig.enabledForApplets = !root.indicatorConfig.enabledForApplets;
         }
     }
 
     LatteComponents.CheckBox {
         Layout.maximumWidth: dialog.optionsWidth
         text: i18n("Reverse indicator style")
-        value: indicator.configuration.reversed
+        value: root.reversedValue
 
         onClicked: {
-            indicator.configuration.reversed = !indicator.configuration.reversed;
+            root.indicatorConfig.reversed = !root.indicatorConfig.reversed;
         }
     }
 }

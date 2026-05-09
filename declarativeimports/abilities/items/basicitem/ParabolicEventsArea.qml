@@ -192,6 +192,11 @@ Item {
     }
 
     function sltUpdateItemScale(delegateIndex, newScales, islower) {
+        if (!abilityItem.abilities.parabolic.tryEnterRelay()) {
+            return;
+        }
+
+        try {
         var ishigher = !islower;
         var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
         var sideindex = islower ? index-1 : index+1;
@@ -227,6 +232,9 @@ Item {
         } else if ((islower && clearrequestedfromlastacceptedsignal && (index < delegateIndex))           //accept requestedfromlastacceptedsignal in lower direction if that is the case
                    || (ishigher && clearrequestedfromlastacceptedsignal && (index > delegateIndex))) {    //accept requestedfromlastacceptedsignal in higher direction if that is the case
             updateScale(index, 1);
+        }
+        } finally {
+            abilityItem.abilities.parabolic.leaveRelay();
         }
     }
 

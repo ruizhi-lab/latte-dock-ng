@@ -6,6 +6,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 
+import org.kde.kirigami 2.0 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
@@ -17,6 +18,8 @@ Item {
     Item {
         id: hiddenIndicatorPage
         anchors.fill: parent
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
         readonly property int optionsWidth: dialog.optionsWidth
         readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
@@ -105,6 +108,9 @@ Item {
         ColumnLayout {
             id: page1
             width: stackView.width
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
             readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
             readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
             readonly property int optionsWidth: dialog.optionsWidth
@@ -115,6 +121,9 @@ Item {
         ColumnLayout {
             id: page2
             width: stackView.width
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
             readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
             readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
             readonly property int optionsWidth: dialog.optionsWidth
@@ -125,6 +134,9 @@ Item {
         ColumnLayout {
             id: hiddenPages
             width: stackView.width
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
             readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
             readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
             readonly property int optionsWidth: dialog.optionsWidth

@@ -6,6 +6,7 @@
 import QtQuick 2.8
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.latte.private.app 0.1 as LatteApp
 import org.kde.latte.core 0.2 as LatteCore
@@ -18,6 +19,8 @@ Loader {
 
     sourceComponent: Item{
         id: root
+        readonly property var theme: Kirigami.Theme
+        readonly property var units: Kirigami.Units
         readonly property bool isVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
         readonly property bool isHorizontal: !isVertical
 
@@ -37,10 +40,10 @@ Loader {
         }
 
         property string appChosenShadowColor: {
-            if (plasmoid.configuration.shadowColorType === LatteContainment.Types.ThemeColorShadow) {
+            if (plasmoid.configuration.shadowColorType === LatteContainment.types.ThemeColorShadow) {
                 var strC = String(theme.textColor);
                 return strC.indexOf("#") === 0 ? strC.substr(1) : strC;
-            } else if (plasmoid.configuration.shadowColorType === LatteContainment.Types.UserColorShadow) {
+            } else if (plasmoid.configuration.shadowColorType === LatteContainment.types.UserColorShadow) {
                 return plasmoid.configuration.shadowColor;
             }
 

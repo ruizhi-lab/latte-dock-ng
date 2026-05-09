@@ -100,6 +100,7 @@ public Q_SLOTS:
     Q_INVOKABLE void insertBefore(QQuickItem *hoveredItem, QQuickItem *item);
     Q_INVOKABLE void insertAfter(QQuickItem *hoveredItem, QQuickItem *item);
     Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, const int &x, const int &y);
+    Q_INVOKABLE void repairAppletContainers();
 
     Q_INVOKABLE int dndSpacerIndex();
 

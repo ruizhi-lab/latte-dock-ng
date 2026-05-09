@@ -62,6 +62,11 @@ void SecondaryConfigView::init()
     setSource(source);
     syncGeometry();
 
+    if (rootObject()) {
+        connect(rootObject(), &QQuickItem::widthChanged, this, &SecondaryConfigView::syncGeometry);
+        connect(rootObject(), &QQuickItem::heightChanged, this, &SecondaryConfigView::syncGeometry);
+    }
+
     if (m_parent) {
         m_parent->requestActivate();
     }
@@ -88,7 +93,19 @@ void SecondaryConfigView::syncGeometry()
         return;
     }
 
-    const QSize size(rootObject()->width(), rootObject()->height());
+    int resolvedWidth = static_cast<int>(rootObject()->width());
+    int resolvedHeight = static_cast<int>(rootObject()->height());
+
+    if (resolvedWidth <= 0 || resolvedHeight <= 0) {
+        resolvedWidth = static_cast<int>(rootObject()->implicitWidth());
+        resolvedHeight = static_cast<int>(rootObject()->implicitHeight());
+    }
+
+    const QSize size(resolvedWidth, resolvedHeight);
+    // Same Wayland 0x0 guard as PrimaryConfigView::syncGeometry().
+    if (size.width() <= 0 || size.height() <= 0) {
+        return;
+    }
     const auto location = m_latteView->containment()->location();
     const auto scrGeometry = m_latteView->screenGeometry();
     const auto availGeometry = m_parent->availableScreenGeometry();

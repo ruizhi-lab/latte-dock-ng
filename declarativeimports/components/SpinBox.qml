@@ -5,7 +5,10 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 2.15 as QQC2
+import org.kde.kirigami 2.0 as Kirigami
 
 QQC2.SpinBox {
-    implicitWidth: theme.mSize(theme.defaultFont).width * 10
+    Kirigami.Theme.inherit: true
+
+    implicitWidth: Kirigami.Units.gridUnit * 10
 }

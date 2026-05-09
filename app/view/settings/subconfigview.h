@@ -91,6 +91,7 @@ protected:
 
 private Q_SLOTS:
     void updateWaylandId();
+    void syncPlasmoidContext();
 
 private:
     void setupWaylandIntegration();
@@ -99,6 +100,9 @@ private:
     QString m_validTitle;
 
     QTimer m_showTimer;
+    int m_plasmoidContextSyncAttempts{0};
+    bool m_hasGraphicPlasmoidContext{false};
+    bool m_loggedPlasmoidContext{false};
 
     Latte::WindowSystem::WindowId m_waylandWindowId;
 };
@@ -106,4 +110,3 @@ private:
 }
 }
 #endif //SUBCONFIGVIEW_H
-

@@ -14,8 +14,15 @@ Item{
     property int visualLength: 0
     property int visualMaxThickness: 0
 
+    readonly property bool edgeIsVertical: plasmoid.location === PlasmaCore.Types.LeftEdge
+                                           || plasmoid.location === PlasmaCore.Types.RightEdge
+    readonly property bool edgeIsHorizontal: plasmoid.location === PlasmaCore.Types.TopEdge
+                                             || plasmoid.location === PlasmaCore.Types.BottomEdge
+    readonly property bool isHorizontal: edgeIsHorizontal ? true
+                                      : (edgeIsVertical ? false : (plasmoid.formFactor === PlasmaCore.Types.Horizontal))
+
     readonly property int shadowsLength: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+        if (isHorizontal) {
             return shadows.left+shadows.right;
         } else {
             return shadows.top+shadows.bottom;
@@ -23,7 +30,7 @@ Item{
     }
 
     readonly property int shadowsThickness: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+        if (isHorizontal) {
             return shadows.top+shadows.bottom;
         } else {
             return shadows.left+shadows.right;
@@ -31,7 +38,7 @@ Item{
     }
 
     readonly property int paddingsLength: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+        if (isHorizontal) {
             return paddings.left+paddings.right;
         } else {
             return paddings.top+paddings.bottom;

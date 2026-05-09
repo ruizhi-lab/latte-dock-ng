@@ -8,6 +8,7 @@ import QtQuick.Layouts 1.3
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.plasma.plasmoid 2.0
 
@@ -15,6 +16,9 @@ import "." as LatteExtraControls
 
 Item {
     id: item
+    readonly property var units: Kirigami.Units
+    Kirigami.Theme.inherit: true
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
     Layout.rightMargin: {
         if (level === 1) {
@@ -69,6 +73,8 @@ Item {
                 text: item.text
                 enabled: item.checked && item.enabled
                 visible: level === 1
+                Kirigami.Theme.inherit: true
+                Kirigami.Theme.colorSet: Kirigami.Theme.Window
             }
 
             LatteExtraControls.SubHeader {
@@ -77,6 +83,8 @@ Item {
                 enabled: item.checked && item.enabled
                 visible: level === 2
                 isFirstSubCategory: item.isFirstSubCategory
+                Kirigami.Theme.inherit: true
+                Kirigami.Theme.colorSet: Kirigami.Theme.Window
             }
 
             PlasmaComponents.Label {
@@ -84,14 +92,22 @@ Item {
                 text: item.text
                 enabled: item.checked && item.enabled
                 visible: level > 2
+                Kirigami.Theme.inherit: true
+                Kirigami.Theme.colorSet: Kirigami.Theme.Window
             }
         }
 
         PlasmaComponents.Button {
             //tooltip ghost
             anchors.fill: textElement
-            tooltip: item.tooltip
             opacity: 0
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
+            PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
+            PlasmaComponents.ToolTip.visible: hovered && item.tooltip !== ""
+            PlasmaComponents.ToolTip.text: item.tooltip
+
             onPressedChanged: {
                 if (pressed) {
                     item.pressed();
@@ -106,12 +122,20 @@ Item {
         anchors.right: row.right
         checked: item.checked
         enabled: item.enabled
+        Kirigami.Theme.inherit: true
+        Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
         PlasmaComponents.Button {
             //tooltip ghost
             anchors.fill: parent
-            tooltip: item.tooltip
             opacity: 0
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
+            PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
+            PlasmaComponents.ToolTip.visible: hovered && item.tooltip !== ""
+            PlasmaComponents.ToolTip.text: item.tooltip
+
             onPressedChanged: {
                 if (pressed) {
                     item.pressed();

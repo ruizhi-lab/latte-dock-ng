@@ -9,11 +9,14 @@ import QtQuick.Layouts 1.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
 import org.kde.latte.core 0.2 as LatteCore
 
 Item{
     id: rulerItem
+
+    readonly property var theme: Kirigami.Theme
 
     width: root.isHorizontal ? userMaxLength : thickness
     height: root.isVertical ? userMaxLength : thickness
@@ -70,13 +73,13 @@ Item{
         property: "xL"
         value: {
             if (root.isHorizontal) {
-                if (plasmoid.configuration.alignment === LatteCore.Types.Justify) {
+                if (plasmoid.configuration.alignment === LatteCore.types.Justify) {
                     return root.width/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Left) {
+                } else if (root.panelAlignment === LatteCore.types.Left) {
                     return root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Center) {
+                } else if (root.panelAlignment === LatteCore.types.Center) {
                     return root.width/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Right) {
+                } else if (root.panelAlignment === LatteCore.types.Right) {
                     return root.width - rulerItem.length - root.offset;
                 }
             } else {
@@ -90,13 +93,13 @@ Item{
         property: "yL"
         value: {
             if (root.isVertical) {
-                if (plasmoid.configuration.alignment === LatteCore.Types.Justify) {
+                if (plasmoid.configuration.alignment === LatteCore.types.Justify) {
                     return root.height/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Top) {
+                } else if (root.panelAlignment === LatteCore.types.Top) {
                     return root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Center) {
+                } else if (root.panelAlignment === LatteCore.types.Center) {
                     return root.height/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.Types.Bottom) {
+                } else if (root.panelAlignment === LatteCore.types.Bottom) {
                     return root.height - rulerItem.length - root.offset;
                 }
             } else {
@@ -137,16 +140,14 @@ Item{
         }
     }
 
-    Grid{
+    Flow{
         id: rulerGrid
         width: root.isHorizontal ? parent.length : undefined
         height: root.isVertical ? parent.length : undefined
 
-        rows: root.isHorizontal ? 1 : 0
-        columns: root.isVertical ? 1 : 0
         spacing: 2
 
-        flow: root.isHorizontal ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        flow: root.isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
 
         x: {
             if (plasmoid.location === PlasmaCore.Types.LeftEdge) {

@@ -40,10 +40,10 @@ PlasmoidItem {
     Layout.fillWidth: scrollingEnabled && !root.vertical
     Layout.fillHeight: scrollingEnabled && root.vertical
 
-    Layout.minimumWidth: inPlasma && root.isHorizontal ? minimumLength : -1
-    Layout.minimumHeight: inPlasma && !root.isHorizontal ? minimumLength : -1
-    Layout.preferredWidth: tasksWidth
-    Layout.preferredHeight: tasksHeight
+    Layout.minimumWidth: root.isHorizontal ? minimumLength : -1
+    Layout.minimumHeight: root.isHorizontal ? -1 : minimumLength
+    Layout.preferredWidth: root.isHorizontal ? taskLayoutLengthHint : taskLayoutThicknessHint
+    Layout.preferredHeight: root.isHorizontal ? taskLayoutThicknessHint : taskLayoutLengthHint
     Layout.maximumWidth: -1
     Layout.maximumHeight: -1
 
@@ -60,8 +60,11 @@ PlasmoidItem {
     property bool useThemePanel: plasmoid.configuration.useThemePanel
     property bool taskInAnimation: noTasksInAnimation > 0 ? true : false
     property bool transparentPanel: plasmoid.configuration.transparentPanel
-    property bool vertical: plasmoid.formFactor === PlasmaCore.Types.Vertical ? true : false
-    property bool isHorizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? true : false
+    // Derive task orientation primarily from edge location so relocation does not
+    // transiently collapse task geometry when formFactor lags behind.
+    property bool vertical: (root.location === PlasmaCore.Types.LeftEdge
+                             || root.location === PlasmaCore.Types.RightEdge)
+    property bool isHorizontal: !vertical
 
     property bool hasTaskDemandingAttention: false
 
@@ -89,7 +92,7 @@ PlasmoidItem {
     property int internalWidthMargins: root.vertical ? appletAbilities.metrics.totals.thicknessEdges : appletAbilities.metrics.totals.lengthPaddings
     property int internalHeightMargins: !root.vertical ? appletAbilities.metrics.totals.thicknessEdges : appletAbilities.metrics.totals.lengthPaddings
 
-    readonly property int minimumLength: inPlasma ? (root.isHorizontal ? tasksWidth : tasksHeight) : -1;
+    readonly property int minimumLength: Math.round(taskLayoutLengthHint)
 
     property real textColorBrightness: ColorizerTools.colorBrightness(themeTextColor)
 
@@ -113,6 +116,8 @@ PlasmoidItem {
     readonly property alias appletAbilities: _appletAbilities
 
     readonly property alias containsDrag: mouseHandler.containsDrag
+    property string pendingTaskLayoutRefreshReason: ""
+    property int pendingTaskLayoutRefreshPass: 0
 
     //! Animations
     readonly property bool launcherBouncingEnabled: appletAbilities.animations.active && plasmoid.configuration.animationLauncherBouncing
@@ -198,9 +203,33 @@ PlasmoidItem {
 
     //! Real properties are need in order for parabolic effect to be 1px precise perfect.
     //! This way moving from Tasks to Applets and vice versa is pretty stable when hovering with parabolic effect.
-    property real tasksHeight:  mouseHandler.height
-    property real tasksWidth: mouseHandler.width
-    property real tasksLength: root.vertical ? mouseHandler.height : mouseHandler.width
+    readonly property real taskLayoutLengthHint: {
+        var contentLength = root.vertical ? icList.contentHeight : icList.contentWidth;
+
+        if (!(contentLength > 0)) {
+            contentLength = root.vertical ? icList.height : icList.width;
+        }
+
+        if (!(contentLength > 0)) {
+            contentLength = root.vertical ? mouseHandler.height : mouseHandler.width;
+        }
+
+        return Math.max(appletAbilities.metrics.iconSize, contentLength);
+    }
+
+    readonly property real taskLayoutThicknessHint: {
+        var thickness = appletAbilities.metrics.mask.thickness.normal;
+
+        if (!(thickness > 0)) {
+            thickness = appletAbilities.metrics.totals.thickness;
+        }
+
+        return Math.max(appletAbilities.metrics.iconSize, thickness);
+    }
+
+    property real tasksHeight: root.isHorizontal ? taskLayoutThicknessHint : taskLayoutLengthHint
+    property real tasksWidth: root.isHorizontal ? taskLayoutLengthHint : taskLayoutThicknessHint
+    property real tasksLength: taskLayoutLengthHint
 
     readonly property int alignment: appletAbilities.containment.alignment
 
@@ -249,6 +278,12 @@ PlasmoidItem {
         target: plasmoid
         function onLocationChanged() {
             iconGeometryTimer.start();
+            refreshTaskLayoutAfterEdgeChange("locationChanged");
+        }
+
+        function onFormFactorChanged() {
+            iconGeometryTimer.start();
+            refreshTaskLayoutAfterEdgeChange("formFactorChanged");
         }
     }
 
@@ -765,8 +800,14 @@ PlasmoidItem {
         anchors.horizontalCenter: !root.vertical ? parent.horizontalCenter : undefined
         anchors.verticalCenter: root.vertical ? parent.verticalCenter : undefined
 
-        width: ( icList.orientation === Qt.Horizontal ) ? icList.width + spacing : smallSize
-        height: ( icList.orientation === Qt.Vertical ) ? icList.height + spacing : smallSize
+        // For vertical docks the panel thickness should follow task thickness,
+        // not a fixed tiny fallback size.
+        width: (icList.orientation === Qt.Horizontal)
+               ? icList.width + spacing
+               : Math.max(icList.width + spacing, scrollableList.thickness, smallSize)
+        height: (icList.orientation === Qt.Vertical)
+                ? icList.height + spacing
+                : Math.max(icList.height + spacing, scrollableList.thickness, smallSize)
 
         property int spacing: latteBridge ? 0 : appletAbilities.metrics.iconSize / 2
         property int smallSize: Math.max(0.10 * appletAbilities.metrics.iconSize, 16)
@@ -926,7 +967,6 @@ PlasmoidItem {
             Binding {
                 target: scrollableList
                 property: "thickness"
-                when: !appletAbilities.myView.inRelocationHiding
                 value: {
                     if (appletAbilities.myView.isReady) {
                         return appletAbilities.animations.hasThicknessAnimation ? appletAbilities.metrics.mask.thickness.zoomed : appletAbilities.metrics.mask.thickness.normal;
@@ -939,8 +979,18 @@ PlasmoidItem {
             Binding {
                 target: scrollableList
                 property: "length"
-                when: !appletAbilities.myView.inRelocationHiding
-                value: root.vertical ? Math.min(root.height, root.tasksLength) : Math.min(root.width, root.tasksLength)
+                value: {
+                    var contentLength = Math.max(1, root.tasksLength);
+                    var edgeLength = root.vertical ? root.height : root.width;
+
+                    // During edge relocation the host can briefly report 0 or tiny
+                    // dimensions; in that phase keep content-driven length.
+                    if (edgeLength <= 1) {
+                        return contentLength;
+                    }
+
+                    return Math.min(edgeLength, contentLength);
+                }
             }
 
             TasksLayout.ScrollPositioner {
@@ -949,6 +999,7 @@ PlasmoidItem {
                 ListView {
                     id:icList
                     model: tasksModel
+                    orientation: root.vertical ? ListView.Vertical : ListView.Horizontal
                     delegate: Task.TaskItem{
                         abilities: appletAbilities
                     }
@@ -1139,8 +1190,85 @@ PlasmoidItem {
         }
     }
 
+    Timer {
+        id: taskLayoutRefreshTimer
+        interval: 120
+        repeat: true
+
+        onTriggered: {
+            pendingTaskLayoutRefreshPass = pendingTaskLayoutRefreshPass + 1;
+            refreshTaskLayoutPass(pendingTaskLayoutRefreshReason, pendingTaskLayoutRefreshPass);
+
+            if (pendingTaskLayoutRefreshPass >= 8) {
+                stop();
+            }
+        }
+    }
+
 
     //// functions
+    function refreshTaskLayoutAfterEdgeChange(reason) {
+        pendingTaskLayoutRefreshReason = reason;
+        pendingTaskLayoutRefreshPass = 0;
+        refreshTaskLayoutPass(reason, 0);
+        taskLayoutRefreshTimer.restart();
+    }
+
+    function refreshTaskLayoutPass(reason, pass) {
+        if (!scrollableList || !icList) {
+            return;
+        }
+
+        scrollableList.contentX = 0;
+        scrollableList.contentY = 0;
+        icList.forceLayout();
+        root.publishTasksGeometries();
+
+        var visibleCount = 0;
+        var taskDetails = [];
+        var tasks = icList.contentItem.children;
+
+        for (var i = 0; i < tasks.length; ++i) {
+            var task = tasks[i];
+
+            if (!task || task.objectName !== "TaskItem") {
+                continue;
+            }
+
+            if (task.visible && !task.isForcedHidden) {
+                visibleCount = visibleCount + 1;
+            }
+
+            if (taskDetails.length < 12) {
+                taskDetails.push(String(task.itemIndex)
+                                 + ":v=" + task.visible
+                                 + ":f=" + task.isForcedHidden
+                                 + ":l=" + task.isLauncher
+                                 + ":w=" + task.isWindow
+                                 + ":x=" + Math.round(task.x)
+                                 + ":y=" + Math.round(task.y)
+                                 + ":W=" + Math.round(task.width)
+                                 + ":H=" + Math.round(task.height));
+            }
+        }
+
+        console.log("LATTE_NG_TASK_LAYOUT reason:", reason,
+                    "pass:", pass,
+                    "vertical:", root.vertical,
+                    "location:", root.location,
+                    "root:", Math.round(root.width) + "x" + Math.round(root.height),
+                    "scroll:", Math.round(scrollableList.x) + "," + Math.round(scrollableList.y) + " "
+                              + Math.round(scrollableList.width) + "x" + Math.round(scrollableList.height),
+                    "content:", Math.round(scrollableList.contentWidth) + "x" + Math.round(scrollableList.contentHeight),
+                    "icList:", Math.round(icList.x) + "," + Math.round(icList.y) + " "
+                              + Math.round(icList.width) + "x" + Math.round(icList.height),
+                    "orientation:", icList.orientation === ListView.Horizontal ? "H" : "V",
+                    "model:", tasksModel.count,
+                    "children:", tasks.length,
+                    "visible:", visibleCount,
+                    "tasks:", taskDetails.join("|"));
+    }
+
     function activateTaskAtIndex(index) {
         // This is called with Meta+number shortcuts by plasmashell when Tasks are in a plasma panel.
         appletAbilities.shortcuts.sglActivateEntryAtIndex(index);

@@ -35,10 +35,6 @@ Loader {
         width: appliedWidth
         height: appliedHeight
         readonly property var theme: Kirigami.Theme
-        SystemPalette {
-            id: systemPalette
-            colorGroup: SystemPalette.Active
-        }
 
         // Plasma 5 provided 'units' as a global context property; Plasma 6
         // removed it — expose Kirigami.Units under the same name so all
@@ -102,8 +98,8 @@ Loader {
         property bool panelIsVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
         property int subGroupSpacing: units.largeSpacing + units.smallSpacing * 1.5
 
-        property color bC: systemPalette.window
-        property color tC: systemPalette.windowText
+        property color bC: theme.backgroundColor
+        property color tC: theme.textColor
         property color transparentBackgroundColor: Qt.rgba(bC.r, bC.g, bC.b, 0.7)
         property color borderColor: Qt.rgba(tC.r, tC.g, tC.b, 0.12)
 
@@ -161,6 +157,8 @@ Loader {
 
         ColumnLayout {
             id: content
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
             Layout.minimumWidth: width
             Layout.minimumHeight: calculatedHeight
@@ -653,7 +651,7 @@ Loader {
 
                 }
 
-                PlasmaComponents.Button {
+                LatteComponents.Button {
                     id: removeView
                     Layout.fillWidth: true
                     enabled: dialog.advancedLevel
@@ -665,7 +663,7 @@ Loader {
                     onClicked: latteView.removeView()
                 }
 
-                PlasmaComponents.Button {
+                LatteComponents.Button {
                     id: closeButton
                     Layout.fillWidth: true
 

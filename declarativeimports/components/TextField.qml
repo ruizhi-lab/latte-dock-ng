@@ -2,13 +2,22 @@
     SPDX-FileCopyrightText: 2019 Michail Vourlakos <mvourlakos@gmail.com>
     SPDX-License-Identifier: GPL-2.0-or-later
 */
-import QtQuick 2.0
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15 as QQC2
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
-PlasmaComponents.TextField {
+QQC2.TextField {
     id: textField
+    Kirigami.Theme.inherit: true
+
+    palette.base: Kirigami.Theme.backgroundColor
+    palette.text: Kirigami.Theme.textColor
+    palette.button: Kirigami.Theme.backgroundColor
+    palette.buttonText: Kirigami.Theme.textColor
+    palette.highlight: Kirigami.Theme.highlightColor
+    palette.highlightedText: Kirigami.Theme.highlightedTextColor
 
     validator: IntValidator {
         bottom: minValue
@@ -25,7 +34,11 @@ PlasmaComponents.TextField {
     placeholderText: i18n("none")
     horizontalAlignment: Text.AlignLeft
 
-    readonly property int implicitWidth: internalContent.width + theme.mSize(theme.defaultFont).width * 3.5
+    // implicitWidth is FINAL on T.TextField in Qt 6; use a binding instead of
+    // shadowing with `readonly property`. Use Kirigami.Units.gridUnit as the
+    // Plasma 6 replacement for the removed theme.mSize() helper.
+    implicitWidth: internalContent.implicitWidth + Kirigami.Units.gridUnit * 6
+    rightPadding: internalContent.implicitWidth + Kirigami.Units.smallSpacing
 
     readonly property int value: text === "" ? minValue : parseInt(text)
     property int step: 100
@@ -53,27 +66,28 @@ PlasmaComponents.TextField {
         LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
         LayoutMirroring.childrenInherit: true
 
-        PlasmaComponents.Label {
+        QQC2.Label {
             Layout.alignment: Qt.AlignVCenter
-            color: textField.textColor
             text: i18n("ms.")
             font.italic: true
             opacity: value === 0 ? 0 : 0.6
         }
-        PlasmaComponents.Button {
+        QQC2.Button {
             id: downButton
+            Kirigami.Theme.inherit: true
 
             Layout.fillHeight: true
             Layout.preferredWidth: height
             Layout.maximumWidth: height
-            Layout.leftMargin: Qt.application.layoutDirection === Qt.RightToLeft ? 0 : 0.7 * theme.mSize(theme.defaultFont).width
-            Layout.rightMargin: Qt.application.layoutDirection === Qt.RightToLeft ? 0.7 * theme.mSize(theme.defaultFont).width : 0
+            Layout.leftMargin: Qt.application.layoutDirection === Qt.RightToLeft ? 0 : 0.7 * Kirigami.Units.gridUnit
+            Layout.rightMargin: Qt.application.layoutDirection === Qt.RightToLeft ? 0.7 * Kirigami.Units.gridUnit : 0
 
             text: "-"
             onClicked: decrement()
         }
-        PlasmaComponents.Button {
+        QQC2.Button {
             id: upButton
+            Kirigami.Theme.inherit: true
 
             Layout.fillHeight: true
             Layout.preferredWidth: height

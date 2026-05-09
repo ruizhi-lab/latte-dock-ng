@@ -8,9 +8,11 @@ import QtQuick.Layouts 1.1
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.0 as Kirigami
 
 Item{
     id: button
+    readonly property var units: Kirigami.Units
     width: visibleButton.width
     height: visibleButton.height
 
