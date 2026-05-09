@@ -57,20 +57,15 @@ Item{
             visible: false
 
             //! Shadow
-            Loader{
-                id: tempTaskShadow
+            MultiEffect {
                 anchors.fill: tempRemoveIcon
-                active: taskItem.abilities.myView.itemShadow.isEnabled
-                        && taskItem.abilities.environment.isGraphicsSystemAccelerated
-
-                sourceComponent: MultiEffect{
-                    anchors.fill: tempRemoveIcon
-                    shadowEnabled: true
-                    shadowColor: "#ff080808"
-                    source: tempRemoveIcon
-                    shadowBlur: 0.5
-                    shadowVerticalOffset: 2
-                }
+                visible: taskItem.abilities.myView.itemShadow.isEnabled
+                         && taskItem.abilities.environment.isGraphicsSystemAccelerated
+                shadowEnabled: visible
+                shadowColor: "#ff080808"
+                source: tempRemoveIcon
+                shadowBlur: 0.5
+                shadowVerticalOffset: 2
             }
 
             Kirigami.Icon{
