@@ -53,7 +53,7 @@ Item {
         }
     }
 
-    onParabolicEntered: {
+    onParabolicEntered: function(mouseX, mouseY) {
         lastMousePoint.x = mouseX;
         lastMousePoint.y = mouseY;
 
@@ -84,7 +84,7 @@ Item {
         }
     }
 
-    onParabolicMove: {
+    onParabolicMove: function(mouseX, mouseY) {
         lastMousePoint.x = mouseX;
         lastMousePoint.y = mouseY;
 
@@ -157,9 +157,10 @@ Item {
 
     function updateScale(nIndex, nScale){
         if(appletItem && (appletItem.index === nIndex) /*&& !appletItem.containsMouse*/){ /*disable it in order to increase parabolic effect responsiveness*/
-            if ( (parabolicEffectIsSupported && !appletItem.originalAppletBehavior && !appletItem.communicator.indexerIsSupported)
-                    && (applet && applet.status !== PlasmaCore.Types.HiddenStatus)){
-                    wrapper.zoomScale = Math.max(1, nScale);
+            if ((parabolicEffectIsSupported && !appletItem.originalAppletBehavior && !appletItem.communicator.indexerIsSupported)
+                    && applet
+                    && (applet.status !== PlasmaCore.Types.HiddenStatus || appletItem.keepVisibleOnHiddenStatus)) {
+                wrapper.zoomScale = Math.max(1, nScale);
             }
         }
     }

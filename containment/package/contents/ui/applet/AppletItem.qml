@@ -24,6 +24,7 @@ Item {
     id: appletItem
     width: isInternalViewSplitter && !root.inConfigureAppletsMode ? 0 : computeWidth
     height: isInternalViewSplitter && !root.inConfigureAppletsMode ? 0 : computeHeight
+    z: externalAppletDrawsAboveTasks ? 1000 : 0
 
     //any applets that exceed their limits should not take events from their surrounding applets
     //clip: !isSeparator && !parabolicAreaLoader.active
@@ -76,6 +77,23 @@ Item {
                                                        && root.dragOverlay.pressed
 
     property bool appletBlocksColorizing: !communicator.requires.latteSideColoringEnabled || communicator.indexerIsSupported
+    readonly property bool isExternalPlasmaApplet: pluginName !== ""
+                                                 && !isInternalViewSplitter
+                                                 && !indexerIsSupported
+                                                 && pluginName.indexOf("org.kde.latte.") !== 0
+                                                 && pluginName.indexOf("audoban.applet.") !== 0
+    readonly property bool externalAppletDrawsAboveTasks: isExternalPlasmaApplet
+                                                          && !isSeparator
+                                                          && !isSpacer
+                                                          && !isSystray
+    readonly property bool keepVisibleOnHiddenStatus: externalAppletDrawsAboveTasks
+    readonly property bool externalAppletHasStableNativeSizing: applet
+                                                               && applet.Layout
+                                                               && applet.Layout.preferredWidth > 0
+                                                               && applet.Layout.preferredHeight > 0
+    readonly property bool externalAppletUsesFixedSlotSizing: externalAppletDrawsAboveTasks
+                                                             && !communicator.appletMainIconIsFound
+                                                             && !externalAppletHasStableNativeSizing
     property bool appletBlocksParabolicEffect: communicator.requires.parabolicEffectLocked
     readonly property bool lockZoom: !parabolicEffectIsSupported
                                      || appletBlocksParabolicEffect
@@ -85,21 +103,27 @@ Item {
 
     property bool isActive: (isExpanded
                              && !appletItem.communicator.indexerIsSupported
-                             && applet.pluginName !== "org.kde.activeWindowControl"
-                             && applet.pluginName !== "org.kde.plasma.appmenu")
+                             && pluginName !== "org.kde.activeWindowControl"
+                             && pluginName !== "org.kde.plasma.appmenu")
 
     property bool isExpanded: false
 
     property bool isScheduledForDestruction: (fastLayoutManager && applet && fastLayoutManager.appletsInScheduledDestruction.indexOf(applet.id)>=0)
-    property bool isHidden: (!root.inConfigureAppletsMode && ((applet && applet.status === PlasmaCore.Types.HiddenStatus ) || isInternalViewSplitter)) || isScheduledForDestruction
+    property bool isHidden: (!root.inConfigureAppletsMode
+                             && (((applet
+                                   && applet.status === PlasmaCore.Types.HiddenStatus
+                                   && !keepVisibleOnHiddenStatus)
+                                  || isInternalViewSplitter)))
+                            || isScheduledForDestruction
     property bool isInternalViewSplitter: (internalSplitterId > 0)
     property bool isZoomed: false
     property bool isPlaceHolder: false
     property bool isPressed: viewSignalsConnector.pressed
-    property bool isSeparator: applet && (applet.pluginName === "audoban.applet.separator"
-                                          || applet.pluginName === "org.kde.latte.separator")
-    property bool isSpacer: applet && (applet.pluginName === "org.kde.latte.spacer")
-    property bool isSystray: applet && (applet.pluginName === "org.kde.plasma.systemtray" || applet.pluginName === "org.nomad.systemtray" )
+    property QtObject backendAppletRef: null
+    property bool isSeparator: pluginName === "audoban.applet.separator"
+                               || pluginName === "org.kde.latte.separator"
+    property bool isSpacer: pluginName === "org.kde.latte.spacer"
+    property bool isSystray: pluginName === "org.kde.plasma.systemtray" || pluginName === "org.nomad.systemtray"
 
     property bool firstChildOfStartLayout: index === appletItem.layouter.startLayout.firstVisibleIndex
     property bool firstChildOfMainLayout: index === appletItem.layouter.mainLayout.firstVisibleIndex
@@ -288,7 +312,18 @@ Item {
     property int internalWidthMargins: root.isVertical ? metrics.totals.thicknessEdges : 2 * lengthAppletPadding
     property int internalHeightMargins: root.isHorizontal ? root.metrics.totals.thicknessEdges : 2 * lengthAppletPadding
 
-    readonly property string pluginName: isInternalViewSplitter ? "org.kde.latte.splitter" : ((applet && applet.pluginName !== undefined) ? applet.pluginName : "")
+    property string sourceAppletPluginName: ""
+    readonly property string pluginName: {
+        if (isInternalViewSplitter) {
+            return "org.kde.latte.splitter";
+        }
+
+        if (sourceAppletPluginName !== "") {
+            return sourceAppletPluginName;
+        }
+
+        return (applet && applet.pluginName !== undefined) ? applet.pluginName : "";
+    }
 
     //! are set by the indicator
     readonly property int iconOffsetX: indicatorBackLayer.level.requested.iconOffsetX
@@ -305,7 +340,7 @@ Item {
                                                    wrapper.height
 
     property Item applet: null
-    property Item latteStyleApplet: applet && ((applet.pluginName === "org.kde.latte.spacer") || (applet.pluginName === "org.kde.latte.separator")) ?
+    property Item latteStyleApplet: applet && ((pluginName === "org.kde.latte.spacer") || (pluginName === "org.kde.latte.separator")) ?
                                         (applet.children[0] ? applet.children[0] : null) : null
 
     property Item appletWrapper: wrapper.wrapperContainer
@@ -917,7 +952,7 @@ Item {
         //! in hidden state applets must pass on parabolic messages to neighbours
         readonly property bool isParabolicEnabled: appletItem.parabolic.isEnabled && !lockZoom
         readonly property bool isThinTooltipEnabled: appletItem.thinTooltip.isEnabled && !isHidden
-        readonly property bool hasParabolicMessagesEnabled: appletItem.parabolic.isEnabled && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden)
+        readonly property bool hasParabolicMessagesEnabled: appletItem.parabolic.isEnabled && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
 
         sourceComponent: ParabolicArea{}
 

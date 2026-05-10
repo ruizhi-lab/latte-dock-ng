@@ -51,6 +51,7 @@ PC3.Page {
     property bool draggingWidget: false
 
     property QtObject widgetExplorer: widgetExplorerLoader.active ? widgetExplorerLoader.item : null
+    property int runningCountRevision: 0
 
     signal closed();
 
@@ -71,6 +72,7 @@ PC3.Page {
     onWidgetExplorerChanged: {
         if (widgetExplorer) {
             setModelTimer.start();
+            scheduleRunningCountRefresh();
             // Also bind immediately in case the timer already fired with a null model
             if (widgetExplorer.widgetsModel) {
                 list.model = widgetExplorer.widgetsModel;
@@ -91,7 +93,99 @@ PC3.Page {
         var pluginName = list.currentItem ? list.currentItem.pluginName : ""
         if (pluginName && widgetExplorer && typeof widgetExplorer.addApplet === "function") {
             widgetExplorer.addApplet(pluginName);
-            latteView.extendedInterface.appletCreated(pluginName);
+            scheduleRunningCountRefresh();
+        }
+    }
+
+    function pluginNameForApplet(applet) {
+        if (!applet) {
+            return "";
+        }
+
+        var directName = (applet.pluginName !== undefined && applet.pluginName !== null) ? String(applet.pluginName) : "";
+        if (directName !== "") {
+            return directName;
+        }
+
+        if (applet.metaData !== undefined && applet.metaData && applet.metaData.pluginId !== undefined) {
+            var metadataName = (applet.metaData.pluginId !== null) ? String(applet.metaData.pluginId) : "";
+            if (metadataName !== "") {
+                return metadataName;
+            }
+        }
+
+        if (applet.applet !== undefined && applet.applet && applet.applet !== applet) {
+            var backendName = pluginNameForApplet(applet.applet);
+            if (backendName !== "") {
+                return backendName;
+            }
+        }
+
+        if (applet.plasmoid !== undefined && applet.plasmoid && applet.plasmoid !== applet) {
+            var plasmoidName = pluginNameForApplet(aplet.plasmoid);
+            if (plasmoidName !== "") {
+                return plasmoidName;
+            }
+        }
+
+        return "";
+    }
+
+    function runningInstancesFor(pluginName) {
+        // Plasma's WidgetExplorer model can briefly over-count right after
+        // addApplet(). Use the live containment state for Latte's badge.
+        runningCountRevision;
+
+        if (!pluginName || !containmentFromView || !containmentFromView.applets) {
+            return 0;
+        }
+
+        var count = 0;
+        for (var i = 0; i < containmentFromView.applets.length; ++i) {
+            if (pluginNameForApplet(containmentFromView.applets[i]) === pluginName) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    function scheduleRunningCountRefresh() {
+        runningCountRevision++;
+        runningCountRefreshTimer.remainingRuns = 20;
+        runningCountRefreshTimer.restart();
+    }
+
+    Timer {
+        id: runningCountRefreshTimer
+        interval: 100
+        repeat: true
+
+        property int remainingRuns: 0
+
+        onTriggered: {
+            main.runningCountRevision++;
+            remainingRuns--;
+            if (remainingRuns <= 0) {
+                stop();
+            }
+        }
+    }
+
+    Connections {
+        target: containmentFromView
+        ignoreUnknownSignals: true
+
+        function onAppletsChanged() {
+            main.scheduleRunningCountRefresh();
+        }
+
+        function onAppletAdded() {
+            main.scheduleRunningCountRefresh();
+        }
+
+        function onAppletRemoved() {
+            main.scheduleRunningCountRefresh();
         }
     }
 

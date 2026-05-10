@@ -21,6 +21,7 @@ Item {
 
     readonly property string pluginName: model.pluginName
     readonly property bool pendingUninstall: pendingUninstallTimer.applets.indexOf(pluginName) > -1
+    readonly property int runningInstances: main.runningInstancesFor(pluginName)
 
     width: list.cellWidth
     height: list.cellHeight
@@ -53,7 +54,7 @@ Item {
             onDoubleClicked: {
                 if (!delegate.pendingUninstall) {
                     widgetExplorer.addApplet(pluginName);
-                    latteView.extendedInterface.appletCreated(pluginName);
+                    main.scheduleRunningCountRefresh();
                 }
             }
         }
@@ -103,14 +104,14 @@ Item {
                     width: countLabel.implicitWidth + height
                     height: Math.round(Kirigami.Units.iconSizes.sizeForLabels * 1.3)
                     radius: height / 2
-                    color: (running && delegate.GridView.isCurrentItem) ? Kirigami.Theme.highlightColor : Kirigami.Theme.positiveTextColor
-                    visible: ((running && delegate.GridView.isCurrentItem) || model.recent) ?? false
+                    color: (delegate.runningInstances > 0 && delegate.GridView.isCurrentItem) ? Kirigami.Theme.highlightColor : Kirigami.Theme.positiveTextColor
+                    visible: ((delegate.runningInstances > 0 && delegate.GridView.isCurrentItem) || model.recent) ?? false
 
                     PlasmaComponents.Label {
                         id: countLabel
                         anchors.centerIn: parent
-                        text: (running && delegate.GridView.isCurrentItem)
-                            ? running
+                        text: (delegate.runningInstances > 0 && delegate.GridView.isCurrentItem)
+                            ? delegate.runningInstances
                             : i18ndc("plasma_shell_org.kde.plasma.desktop", "Text displayed on top of newly installed widgets", "New!")
                         color: "white"
                     }
@@ -129,7 +130,7 @@ Item {
                     icon.name: "edit-clear-all"
                     display: PlasmaComponents.AbstractButton.IconOnly
                     flat: false
-                    visible: (running && delegate.GridView.isCurrentItem) ?? false
+                    visible: (delegate.runningInstances > 0 && delegate.GridView.isCurrentItem) ?? false
 
                     text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Remove all instances")
                     PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay

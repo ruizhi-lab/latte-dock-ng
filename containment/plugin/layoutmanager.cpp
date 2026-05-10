@@ -527,6 +527,11 @@ QObject *LayoutManager::resolveAppletQuickItemObject(QObject *applet) const
     return nullptr;
 }
 
+QObject *LayoutManager::resolveAppletQuickItem(QObject *applet) const
+{
+    return resolveAppletQuickItemObject(applet);
+}
+
 QList<QObject *> LayoutManager::plasmoidApplets() const
 {
     QList<QObject *> applets;
@@ -1570,7 +1575,21 @@ void LayoutManager::repairAppletContainers()
             continue;
         }
 
-        if (appletItem(id)) {
+        if (QQuickItem *existingItem = appletItem(id)) {
+            const bool hasResolvedAppletItem = existingItem->property("applet").value<QObject *>() != nullptr;
+
+            if (!hasResolvedAppletItem) {
+                QVariant appletContainerVariant;
+                appletContainerVariant.setValue(existingItem);
+
+                QVariant appletVariant;
+                appletVariant.setValue(applet);
+
+                m_initAppletContainerMethod.invoke(m_rootItem,
+                                                   Q_ARG(QVariant, appletContainerVariant),
+                                                   Q_ARG(QVariant, appletVariant));
+            }
+
             continue;
         }
 
@@ -1610,10 +1629,16 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         return;
     }
 
+    const int id = appletId(applet);
+    if (id > 0 && appletItem(id)) {
+        return;
+    }
+
     Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
     QVariant appletItemVariant;
     QVariant appletVariant;
-    appletVariant.setValue(applet);
+    QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
+    appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
     m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
     QQuickItem *aitem = appletItemVariant.value<QQuickItem *>();
 
@@ -1666,6 +1691,11 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
         return;
     }
 
+    const int id = appletId(applet);
+    if (id > 0 && appletItem(id)) {
+        return;
+    }
+
     Plasma::Applet *backendApplet = qobject_cast<Plasma::Applet *>(applet);
 
     if (!backendApplet) {
@@ -1680,7 +1710,8 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
         int id = backendApplet->id();
         QVariant appletContainerVariant; appletContainerVariant.setValue(m_appletsInScheduledDestruction[id]);
         QVariant appletVariant;
-        appletVariant.setValue(applet);
+        QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
+        appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
         m_initAppletContainerMethod.invoke(m_rootItem, Q_ARG(QVariant, appletContainerVariant), Q_ARG(QVariant, appletVariant));
         setAppletInScheduledDestruction(id, false);
         return;
@@ -1688,7 +1719,8 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
 
     QVariant appletItemVariant;
     QVariant appletVariant;
-    appletVariant.setValue(applet);
+    QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
+    appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
     m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
     QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
 

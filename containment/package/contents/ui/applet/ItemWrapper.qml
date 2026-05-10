@@ -277,10 +277,17 @@ Item{
     Binding {
         target: wrapper
         property: "layoutThickness"
-        when: latteView && (wrapper.zoomScale === 1 || communicator.parabolicEffectIsSupported)
+        when: latteView
+              && (wrapper.zoomScale === 1
+                  || communicator.parabolicEffectIsSupported
+                  || appletItem.externalAppletUsesFixedSlotSizing)
         value: {
             if (appletItem.isInternalViewSplitter){
                 return !root.inConfigureAppletsMode ? 0 : proposedItemThickness;
+            }
+
+            if (appletItem.externalAppletUsesFixedSlotSizing) {
+                return proposedItemThickness;
             }
 
             // avoid binding loops on startup
@@ -295,8 +302,14 @@ Item{
     Binding {
         target: wrapper
         property: "layoutLength"
-        when: latteView && !appletItem.isAutoFillApplet && (wrapper.zoomScale === 1)
+        when: latteView
+              && !appletItem.isAutoFillApplet
+              && (wrapper.zoomScale === 1 || appletItem.externalAppletUsesFixedSlotSizing)
         value: {
+            if (appletItem.externalAppletUsesFixedSlotSizing) {
+                return appletItem.metrics.iconSize;
+            }
+
             if (applet && ( appletMaximumLength < appletItem.metrics.iconSize
                            || appletPreferredLength > appletItem.metrics.iconSize
                            || appletItem.originalAppletBehavior)) {
@@ -318,10 +331,21 @@ Item{
 
     Binding {
         target: wrapper
+        property: "disableThicknessScale"
+        when: latteView
+        value: appletItem.externalAppletUsesFixedSlotSizing
+    }
+
+    Binding {
+        target: wrapper
         property: "disableLengthScale"
         when: latteView && !(appletItem.isAutoFillApplet || appletItem.indexerIsSupported)
         value: {
             var blockParabolicEffectInLength = false;
+
+            if (appletItem.externalAppletUsesFixedSlotSizing) {
+                return false;
+            }
 
             if (communicator.parabolicEffectIsSupported) {
                 return true;
@@ -448,6 +472,24 @@ Item{
         id:_wrapperContainer
         width: root.isHorizontal ? _length : _thickness
         height: root.isHorizontal ? _thickness : _length
+        scale: appletItem.externalAppletUsesFixedSlotSizing ? wrapper.zoomScale : 1
+        transformOrigin: {
+            if (!appletItem.externalAppletUsesFixedSlotSizing) {
+                return Item.Center;
+            }
+
+            if (plasmoid.location === PlasmaCore.Types.BottomEdge) {
+                return Item.Bottom;
+            } else if (plasmoid.location === PlasmaCore.Types.TopEdge) {
+                return Item.Top;
+            } else if (plasmoid.location === PlasmaCore.Types.LeftEdge) {
+                return Item.Left;
+            } else if (plasmoid.location === PlasmaCore.Types.RightEdge) {
+                return Item.Right;
+            }
+
+            return Item.Center;
+        }
 
         property int _length:0 // through Binding to avoid binding loops
         property int _thickness:0 // through Binding to avoid binding loops
@@ -499,6 +541,10 @@ Item{
             value: {
                 if (appletItem.isAutoFillApplet && (appletItem.maxAutoFillLength>-1)){
                     return wrapper.length;
+                }
+
+                if (appletItem.externalAppletUsesFixedSlotSizing) {
+                    return wrapper.layoutLength;
                 }
 
                 return wrapper.zoomScaleLength * wrapper.layoutLength;

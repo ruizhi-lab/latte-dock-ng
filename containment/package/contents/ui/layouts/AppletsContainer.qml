@@ -12,10 +12,10 @@ import org.kde.latte.core 0.2 as LatteCore
 Grid {
     id: appletsContainer
 
-    columns: root.isVertical ? 1 : 0
+    columns: root.isHorizontal ? Math.max(1, children.length) : 1
     columnSpacing: 0
     flow: isHorizontal ? Grid.LeftToRight : Grid.TopToBottom
-    rows: root.isHorizontal ? 1 : 0
+    rows: root.isVertical ? Math.max(1, children.length) : 1
     rowSpacing: 0
 
     opacity: {

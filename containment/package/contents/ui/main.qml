@@ -611,6 +611,8 @@ ContainmentItem {
         } else {
             fastLayoutManager.addAppletItem(applet, x, y);
         }
+
+        runtimeAppletRepairTimer.schedule();
     }
 
     Containment.onAppletRemoved: function(applet) { fastLayoutManager.removeAppletItem(applet); }
@@ -635,6 +637,9 @@ ContainmentItem {
     //////////////START OF FUNCTIONS
     function createAppletItem(applet) {
         var appletContainer = appletItemComponent.createObject(dndSpacer.parent);
+        appletContainer.backendAppletRef = applet;
+        appletContainer.sourceAppletPluginName = appletPluginName(applet);
+
         if (!initAppletContainer(appletContainer, applet)) {
             // The applet's QML graphic object may not be ready yet at startup.
             // Defer with a Timer and retry; if it still fails after a few
@@ -649,9 +654,9 @@ ContainmentItem {
                     retryTimer.stop();
                     retryTimer.destroy();
                     appletContainer.visible = Qt.binding(function() {
-                        return (appletContainer.applet && appletContainer.applet.status !== PlasmaCore.Types.HiddenStatus || (!plasmoid.immutable && root.inConfigureAppletsMode)) && !appletContainer.isHidden;
+                        return appletContainerShouldBeVisible(appletContainer);
                     });
-                } else if (retryCount >= 20) { // ~1s
+                } else if (retryCount >= 80) { // ~4s
                     retryTimer.stop();
                     retryTimer.destroy();
                     appletContainer.destroy();
@@ -663,9 +668,51 @@ ContainmentItem {
 
         // don't show applet if it chooses to be hidden but still make it  accessible in the panelcontroller
         appletContainer.visible = Qt.binding(function() {
-            return (appletContainer.applet && appletContainer.applet.status !== PlasmaCore.Types.HiddenStatus || (!plasmoid.immutable && root.inConfigureAppletsMode)) && !appletContainer.isHidden;
+            return appletContainerShouldBeVisible(appletContainer);
         });
         return appletContainer;
+    }
+
+    function appletContainerShouldBeVisible(appletContainer) {
+        return ((appletContainer.applet
+                 && (appletContainer.applet.status !== PlasmaCore.Types.HiddenStatus
+                     || appletContainer.keepVisibleOnHiddenStatus))
+                || (!plasmoid.immutable && root.inConfigureAppletsMode))
+                && !appletContainer.isHidden;
+    }
+
+    function appletPluginName(applet) {
+        if (!applet) {
+            return "";
+        }
+
+        var directName = (applet.pluginName !== undefined && applet.pluginName !== null) ? String(applet.pluginName) : "";
+        if (directName !== "") {
+            return directName;
+        }
+
+        if (applet.metaData !== undefined && applet.metaData && applet.metaData.pluginId !== undefined) {
+            var metadataName = (applet.metaData.pluginId !== null) ? String(applet.metaData.pluginId) : "";
+            if (metadataName !== "") {
+                return metadataName;
+            }
+        }
+
+        if (applet.applet !== undefined && applet.applet && applet.applet !== applet) {
+            var backendName = appletPluginName(applet.applet);
+            if (backendName !== "") {
+                return backendName;
+            }
+        }
+
+        if (applet.plasmoid !== undefined && applet.plasmoid && applet.plasmoid !== applet) {
+            var plasmoidName = appletPluginName(applet.plasmoid);
+            if (plasmoidName !== "") {
+                return plasmoidName;
+            }
+        }
+
+        return "";
     }
 
     function resolveAppletItem(applet) {
@@ -675,6 +722,13 @@ ContainmentItem {
 
         if (applet.anchors !== undefined) {
             return applet;
+        }
+
+        if (fastLayoutManager && typeof fastLayoutManager.resolveAppletQuickItem === "function") {
+            var resolvedAppletItem = fastLayoutManager.resolveAppletQuickItem(applet);
+            if (resolvedAppletItem && resolvedAppletItem.anchors !== undefined) {
+                return resolvedAppletItem;
+            }
         }
 
         if (typeof Containment.itemFor === "function") {
@@ -703,6 +757,9 @@ ContainmentItem {
     }
 
     function initAppletContainer(appletContainer, applet) {
+        appletContainer.backendAppletRef = applet;
+        appletContainer.sourceAppletPluginName = appletPluginName(applet);
+
         var appletItem = resolveAppletItem(applet);
         if (!appletItem || appletItem.anchors === undefined) {
             return false;
@@ -880,6 +937,29 @@ ContainmentItem {
         onTriggered: {
             fastLayoutManager.repairAppletContainers();
             root.updateIndexes();
+        }
+    }
+
+    Timer {
+        id: runtimeAppletRepairTimer
+        interval: 150
+        repeat: true
+
+        property int remainingRuns: 0
+
+        function schedule() {
+            remainingRuns = 40;
+            restart();
+        }
+
+        onTriggered: {
+            fastLayoutManager.repairAppletContainers();
+            root.updateIndexes();
+
+            remainingRuns--;
+            if (remainingRuns <= 0) {
+                stop();
+            }
         }
     }
 
