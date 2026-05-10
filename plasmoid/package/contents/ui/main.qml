@@ -1223,50 +1223,6 @@ PlasmoidItem {
         scrollableList.contentY = 0;
         icList.forceLayout();
         root.publishTasksGeometries();
-
-        var visibleCount = 0;
-        var taskDetails = [];
-        var tasks = icList.contentItem.children;
-
-        for (var i = 0; i < tasks.length; ++i) {
-            var task = tasks[i];
-
-            if (!task || task.objectName !== "TaskItem") {
-                continue;
-            }
-
-            if (task.visible && !task.isForcedHidden) {
-                visibleCount = visibleCount + 1;
-            }
-
-            if (taskDetails.length < 12) {
-                taskDetails.push(String(task.itemIndex)
-                                 + ":v=" + task.visible
-                                 + ":f=" + task.isForcedHidden
-                                 + ":l=" + task.isLauncher
-                                 + ":w=" + task.isWindow
-                                 + ":x=" + Math.round(task.x)
-                                 + ":y=" + Math.round(task.y)
-                                 + ":W=" + Math.round(task.width)
-                                 + ":H=" + Math.round(task.height));
-            }
-        }
-
-        console.log("LATTE_NG_TASK_LAYOUT reason:", reason,
-                    "pass:", pass,
-                    "vertical:", root.vertical,
-                    "location:", root.location,
-                    "root:", Math.round(root.width) + "x" + Math.round(root.height),
-                    "scroll:", Math.round(scrollableList.x) + "," + Math.round(scrollableList.y) + " "
-                              + Math.round(scrollableList.width) + "x" + Math.round(scrollableList.height),
-                    "content:", Math.round(scrollableList.contentWidth) + "x" + Math.round(scrollableList.contentHeight),
-                    "icList:", Math.round(icList.x) + "," + Math.round(icList.y) + " "
-                              + Math.round(icList.width) + "x" + Math.round(icList.height),
-                    "orientation:", icList.orientation === ListView.Horizontal ? "H" : "V",
-                    "model:", tasksModel.count,
-                    "children:", tasks.length,
-                    "visible:", visibleCount,
-                    "tasks:", taskDetails.join("|"));
     }
 
     function activateTaskAtIndex(index) {

@@ -12,10 +12,12 @@ import org.kde.latte.core 0.2 as LatteCore
 Grid {
     id: appletsContainer
 
-    columns: root.isHorizontal ? Math.max(1, children.length) : 1
+    // Keep the layout single-row/single-column while giving Grid enough capacity
+    // during transient edge/form-factor changes before children are fully settled.
+    columns: 99999
     columnSpacing: 0
     flow: isHorizontal ? Grid.LeftToRight : Grid.TopToBottom
-    rows: root.isVertical ? Math.max(1, children.length) : 1
+    rows: 99999
     rowSpacing: 0
 
     opacity: {

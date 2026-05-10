@@ -617,7 +617,11 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n")
         || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
         || msg.endsWith("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }")
-        || msg.contains("Toolbox not loading, toolbox package is either invalid or disabled.")) {
+        || msg.contains("Toolbox not loading, toolbox package is either invalid or disabled.")
+        || (msg.contains("Could not find required file \"mainscript\" for package \"/usr/share/plasma/plasmoids/org.kde.plasma.")
+            && msg.contains("should be QList(\"ui/main.qml\")"))
+        || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml")
+        || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml")) {
         //! block warnings from dependencies that still ship legacy QML snippets.
         //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
         return;
