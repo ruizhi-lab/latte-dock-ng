@@ -45,6 +45,7 @@ ScreenGeometries::ScreenGeometries(Latte::Corona *parent)
     m_startupInitTimer.start();
 
     m_plasmaServiceWatcher->setConnection(QDBusConnection::sessionBus());
+    m_plasmaServiceWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
     m_plasmaServiceWatcher->setWatchedServices(QStringList({PLASMASERVICE}));
     connect(m_plasmaServiceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this](const QString & serviceName) {
         if (serviceName == PLASMASERVICE && !m_plasmaInterfaceAvailable) {

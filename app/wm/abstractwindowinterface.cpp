@@ -66,6 +66,8 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
 
     //! KWin Service tracking
     m_kwinServiceWatcher->setConnection(QDBusConnection::sessionBus());
+    m_kwinServiceWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration
+                                       | QDBusServiceWatcher::WatchForUnregistration);
     m_kwinServiceWatcher->setWatchedServices(QStringList({KWINSERVICE}));
     connect(m_kwinServiceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this](const QString & serviceName) {
         if (serviceName == KWINSERVICE && !m_isKWinInterfaceAvailable) {
