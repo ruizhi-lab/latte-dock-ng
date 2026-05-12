@@ -36,6 +36,14 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(WriteBasicConfigVersionFile)
 
+# Some Plasma 6 environments include both lib/qml and lib/qt6/qml in the QML
+# import path. Install Latte QML modules to both locations when they differ so
+# stale user-level debug installs cannot shadow the freshly built files.
+set(LATTE_QT6_COMPAT_QMLDIR "${KDE_INSTALL_LIBDIR}/qt6/qml")
+if("${KDE_INSTALL_QMLDIR}" STREQUAL "${LATTE_QT6_COMPAT_QMLDIR}")
+    set(LATTE_QT6_COMPAT_QMLDIR "")
+endif()
+
 # KDEInstallDirs6 dropped KSERVICETYPESDIR; keep a deterministic install path for Latte service types.
 set(LATTE_KSERVICETYPES_INSTALL_DIR "${KDE_INSTALL_DATADIR}/kservicetypes6")
 if(DEFINED KDE_INSTALL_KSERVICETYPESDIR AND NOT KDE_INSTALL_KSERVICETYPESDIR STREQUAL "")

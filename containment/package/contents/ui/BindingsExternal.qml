@@ -86,14 +86,14 @@ Item {
         target: latteView
         property: "screenEdgeMargin"
         when: latteView
-        value: Math.max(0, plasmoid.configuration.screenEdgeMargin)
+        value: metrics.effectiveScreenEdgeMargin
     }
 
     Binding{
         target: latteView
         property: "screenEdgeMarginEnabled"
         when: latteView
-        value: root.screenEdgeMarginEnabled && !root.hideThickScreenGap
+        value: (root.screenEdgeMarginEnabled || root.isModernDockStyle) && !root.hideThickScreenGap
     }
 
     Binding{

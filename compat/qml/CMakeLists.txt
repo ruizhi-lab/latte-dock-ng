@@ -18,6 +18,11 @@ if(NOT EXISTS "${_compat_taskmanager_qmldir}" OR EXISTS "${_compat_taskmanager_m
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${_compat_taskmanager_relpath}/"
             DESTINATION "${KDE_INSTALL_QMLDIR}/${_compat_taskmanager_relpath}")
 
+    if(LATTE_QT6_COMPAT_QMLDIR)
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${_compat_taskmanager_relpath}/"
+                DESTINATION "${LATTE_QT6_COMPAT_QMLDIR}/${_compat_taskmanager_relpath}")
+    endif()
+
     install(CODE "
         file(WRITE \"\$ENV{DESTDIR}${_compat_taskmanager_marker}\"
              \"latte-dock-ng fallback module\\n\")

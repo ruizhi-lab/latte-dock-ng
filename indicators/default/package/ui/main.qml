@@ -16,16 +16,16 @@ LatteComponents.IndicatorItem{
     extraMaskThickness: reversedEnabled && glowEnabled ? 1.7 * (factor * indicator.maxIconSize) : 0
 
     enabledForApplets: indicator && indicator.configuration ? indicator.configuration.enabledForApplets : true
-    lengthPadding: indicator && indicator.configuration ? indicator.configuration.lengthPadding : 0.08
-    backgroundCornerMargin: indicator && indicator.configuration ? indicator.configuration.backgroundCornerMargin : 1.00
+    lengthPadding: modernDockStyle ? 0.05
+                                   : (indicator && indicator.configuration ? indicator.configuration.lengthPadding : 0.08)
+    backgroundCornerMargin: modernDockStyle ? 0.35
+                                            : (indicator && indicator.configuration ? indicator.configuration.backgroundCornerMargin : 1.00)
 
     readonly property real factor: indicator.configuration.size
     readonly property int size: factor * indicator.currentIconSize
     readonly property int thickLocalMargin: indicator.configuration.thickMargin * indicator.currentIconSize
 
     readonly property int screenEdgeMargin: plasmoid.location === PlasmaCore.Types.Floating || reversedEnabled ? 0 : indicator.screenEdgeMargin
-
-    readonly property int thicknessMargin: screenEdgeMargin + thickLocalMargin + (glowEnabled ? 1 : 0)
 
     property color textColorSafe: (indicator && indicator.palette && indicator.palette.textColor !== undefined)
                                  ? indicator.palette.textColor
@@ -54,6 +54,16 @@ LatteComponents.IndicatorItem{
     readonly property bool extraDotOnActive: indicator.configuration.extraDotOnActive
     readonly property bool minimizedTaskColoredDifferently: indicator.configuration.minimizedTaskColoredDifferently
     readonly property int activeStyle: indicator.configuration.activeStyle
+    readonly property bool modernDockStyle: {
+        var styleValue = plasmoid.configuration.dockStyle;
+        var configModern = styleValue === 1 || styleValue === "1" || styleValue === "Modern";
+        var apiModern = indicator && indicator.isModernDockStyle === true;
+
+        return configModern || apiModern;
+    }
+    readonly property int effectiveActiveStyle: modernDockStyle ? 1 /*Dot*/ : activeStyle
+    readonly property int modernDockIndicatorInset: modernDockStyle ? Math.max(4, Math.round(indicator.currentIconSize * 0.26)) : 0
+    readonly property int thicknessMargin: screenEdgeMargin + thickLocalMargin + modernDockIndicatorInset + (glowEnabled ? 1 : 0)
     //!glow options
     readonly property bool glowEnabled: indicator.configuration.glowEnabled
     readonly property bool glow3D: indicator.configuration.glow3D
@@ -150,7 +160,7 @@ LatteComponents.IndicatorItem{
             showBorder: glow3D
 
             property int stateWidth: {
-                if (!vertical && isActive && activeStyle === 0 /*Line*/) {
+                if (!vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/) {
                     return (indicator.isGroup ? root.width - secondPoint.width : root.width - spacer.width) - glowMargins;
                 }
 
@@ -158,7 +168,7 @@ LatteComponents.IndicatorItem{
             }
 
             property int stateHeight: {
-                if (vertical && isActive && activeStyle === 0 /*Line*/) {
+                if (vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/) {
                     return (indicator.isGroup ? root.height - secondPoint.height : root.height - spacer.height) - glowMargins;
                 }
 
@@ -179,10 +189,10 @@ LatteComponents.IndicatorItem{
 
             property bool isBindingBlocked: isAnimating
 
-            readonly property bool isActiveStateForAnimation: indicator.isActive && root.activeStyle === 0 /*Line*/
+            readonly property bool isActiveStateForAnimation: indicator.isActive && root.effectiveActiveStyle === 0 /*Line*/
 
             onIsActiveStateForAnimationChanged: {
-                if (root.activeStyle === 0 /*Line*/) {
+                if (root.effectiveActiveStyle === 0 /*Line*/) {
                     if (isActiveStateForAnimation) {
                         inGrowAnimation = true;
                         inShrinkAnimation = false;
@@ -255,9 +265,10 @@ LatteComponents.IndicatorItem{
             basicColor: state2Color
             roundCorners: true
             showGlow: glowEnabled  && glowApplyTo === 2 /*All*/
-            visible:  ( indicator.isGroup && ((extraDotOnActive && activeStyle === 0) /*Line*/
-                                              || activeStyle === 1 /*Dot*/
-                                              || !indicator.hasActive) ) ? true: false
+            visible: !root.modernDockStyle
+                     && (indicator.isGroup && ((extraDotOnActive && root.effectiveActiveStyle === 0) /*Line*/
+                                               || root.effectiveActiveStyle === 1 /*Dot*/
+                                               || !indicator.hasActive) ) ? true: false
 
             //when there is no active window
             property color state1Color: indicator.hasShown ? root.isActiveColor : root.minimizedColor

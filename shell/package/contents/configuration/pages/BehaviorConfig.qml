@@ -117,7 +117,7 @@ PlasmaComponents.Page {
 
                     Component.onCompleted: screenRow.updateScreens();
 
-                    onActivated: {
+                    onActivated: function(index) {
                         if (index === 0) { // primary
                             latteView.positioner.setNextLocation("", LatteCore.types.SingleScreenGroup, "{primary-screen}", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
                         } else if (index === 1) { // all screens

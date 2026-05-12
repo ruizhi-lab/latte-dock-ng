@@ -36,6 +36,9 @@ T.CheckDelegate {
     property string iconToolTip
     property bool iconOnlyWhenHovered
     property string toolTip
+    property color textColor: safeTheme.textColor
+    property color highlightedTextColor: safeTheme.highlightedTextColor
+    property color highlightColor: safeTheme.highlightColor
 
     property int textHorizontalAlignment: Text.AlignLeft
 
@@ -54,7 +57,7 @@ T.CheckDelegate {
             Layout.minimumHeight: parent.height
             Layout.maximumHeight: parent.height
             visible: !isSeparator && iconName && (!control.iconOnlyWhenHovered || (control.iconOnlyWhenHovered && control.isHovered))
-            color: control.iconToolTip && iconMouseArea.containsMouse ? safeTheme.highlightColor : "transparent"
+            color: control.iconToolTip && iconMouseArea.containsMouse ? control.highlightColor : "transparent"
 
             Kirigami.Icon {
                 id: iconElement
@@ -91,7 +94,7 @@ T.CheckDelegate {
             Layout.fillWidth: true
             text: control.text
             font: control.font
-            color: safeTheme.textColor
+            color: (control.highlighted || control.pressed) ? control.highlightedTextColor : control.textColor
             elide: Text.ElideRight
             visible: !isSeparator && control.text
             horizontalAlignment: control.textHorizontalAlignment
@@ -101,7 +104,7 @@ T.CheckDelegate {
         Rectangle {
             width: parent.width
             height: 1
-            color: safeTheme.textColor
+            color: control.textColor
             opacity: 0.25
             visible: isSeparator
         }
@@ -121,6 +124,6 @@ T.CheckDelegate {
             return 0;
         }
 
-        color: safeTheme.highlightColor
+        color: control.highlightColor
     }
 }

@@ -46,6 +46,10 @@ LatteComponents.IndicatorItem{
     readonly property bool extraDotOnActive: indicator.configuration.extraDotOnActive
     readonly property bool minimizedTaskColoredDifferently: indicator.configuration.minimizedTaskColoredDifferently
     readonly property int activeStyle: indicator.configuration.activeStyle
+    readonly property bool modernDockStyle: indicator && indicator.isModernDockStyle === true
+    readonly property int effectiveActiveStyle: modernDockStyle ? 1 /*Dot*/ : activeStyle
+    readonly property int modernDockIndicatorInset: modernDockStyle ? Math.max(4, Math.round(indicator.currentIconSize * 0.26)) : 0
+    readonly property int effectiveScreenEdgeMargin: screenEdgeMargin + modernDockIndicatorInset
     //!glow options
     readonly property bool glowEnabled: indicator.configuration.glowEnabled
     readonly property bool glow3D: indicator.configuration.glow3D
@@ -157,12 +161,12 @@ LatteComponents.IndicatorItem{
                         else
                             height = root.size;
 
-                        if(vertical && isActive && activeStyle === 0 /*Line*/)
+                        if(vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/)
                             height = stateHeight;
                         else
                             height = root.size;
 
-                        if(!vertical && isActive && activeStyle === 0 /*Line*/)
+                        if(!vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/)
                             width = stateWidth;
                         else
                             width = root.size;
@@ -171,26 +175,26 @@ LatteComponents.IndicatorItem{
 
 
                 onIsActiveChanged: {
-                    if (activeStyle === 0 /*Line*/)
+                    if (root.effectiveActiveStyle === 0 /*Line*/)
                         activeAndReverseAnimation.start();
                 }
 
                 onScaleFactorChanged: {
-                    if(!activeAndReverseAnimation.running && !vertical && isActive && activeStyle === 0 /*Line*/){
+                    if(!activeAndReverseAnimation.running && !vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/){
                         width = stateWidth;
                     }
-                    else if (!activeAndReverseAnimation.running && vertical && isActive && activeStyle === 0 /*Line*/){
+                    else if (!activeAndReverseAnimation.running && vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/){
                         height = stateHeight;
                     }
                 }
 
                 onStateWidthChanged:{
-                    if(!activeAndReverseAnimation.running && !vertical && isActive && activeStyle === 0 /*Line*/)
+                    if(!activeAndReverseAnimation.running && !vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/)
                         width = stateWidth;
                 }
 
                 onStateHeightChanged:{
-                    if(!activeAndReverseAnimation.running && vertical && isActive && activeStyle === 0 /*Line*/)
+                    if(!activeAndReverseAnimation.running && vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/)
                         height = stateHeight;
                 }
 
@@ -214,7 +218,7 @@ LatteComponents.IndicatorItem{
                     id: activeAndReverseAnimation
                     target: firstPoint
                     property: plasmoid.formFactor === PlasmaCore.Types.Vertical ? "height" : "width"
-                    to: indicator.hasActive && activeStyle === 0 /*Line*/
+                    to: indicator.hasActive && root.effectiveActiveStyle === 0 /*Line*/
                         ? (plasmoid.formFactor === PlasmaCore.Types.Vertical ? firstPoint.stateHeight : firstPoint.stateWidth) : root.size
                     duration: firstPoint.animationTime
                     easing.type: Easing.InQuad
@@ -245,8 +249,9 @@ LatteComponents.IndicatorItem{
                 basicColor: state2Color
                 roundCorners: true
                 showGlow: glowEnabled  && glowApplyTo === 2 /*All*/
-                visible:  ( indicator.isGroup && ((extraDotOnActive && activeStyle === 0) /*Line*/
-                                                  || activeStyle === 1 /*Dot*/
+                visible: !root.modernDockStyle
+                         && ( indicator.isGroup && ((extraDotOnActive && root.effectiveActiveStyle === 0) /*Line*/
+                                                  || root.effectiveActiveStyle === 1 /*Dot*/
                                                   || !indicator.hasActive) ) ? true: false
 
                 //when there is no active window
@@ -269,7 +274,7 @@ LatteComponents.IndicatorItem{
                 }
                 PropertyChanges{
                     target: mainIndicatorElement
-                    anchors.leftMargin: root.screenEdgeMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin:0;
+                    anchors.leftMargin: root.effectiveScreenEdgeMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin:0;
                     anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
                 }
             },
@@ -286,7 +291,7 @@ LatteComponents.IndicatorItem{
                 }
                 PropertyChanges{
                     target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: root.screenEdgeMargin;
+                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: root.effectiveScreenEdgeMargin;
                     anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
                 }
             },
@@ -302,7 +307,7 @@ LatteComponents.IndicatorItem{
                 }
                 PropertyChanges{
                     target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: root.screenEdgeMargin;    anchors.bottomMargin:0;
+                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: root.effectiveScreenEdgeMargin;    anchors.bottomMargin:0;
                     anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
                 }
             },
@@ -318,7 +323,7 @@ LatteComponents.IndicatorItem{
                 }
                 PropertyChanges{
                     target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: root.screenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
+                    anchors.leftMargin: 0;    anchors.rightMargin: root.effectiveScreenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
                     anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
                 }
             }

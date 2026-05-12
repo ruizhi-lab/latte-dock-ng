@@ -2538,6 +2538,24 @@ msgstr "关闭设置窗口"
 msgid "Items"
 msgstr "项目"
 
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:76
+#, kde-format
+msgctxt "dock visual style selector"
+msgid "Dock Style"
+msgstr "停靠栏样式"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:85
+#, kde-format
+msgctxt "classic dock visual style"
+msgid "Classic"
+msgstr "经典"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:89
+#, kde-format
+msgctxt "modern dock visual style"
+msgid "Modern"
+msgstr "现代"
+
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:66
 #, kde-format
 msgctxt "absolute size"

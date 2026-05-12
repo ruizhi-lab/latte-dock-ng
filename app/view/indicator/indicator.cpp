@@ -161,6 +161,10 @@ QString Indicator::type() const
 
 void Indicator::setType(QString type)
 {
+    if (type == QLatin1String("org.kde.latte.plasma")) {
+        type = QStringLiteral("org.kde.latte.default");
+    }
+
     if (m_type == type) {
         return;
     }
@@ -314,6 +318,14 @@ void Indicator::updateScheme()
         QFile file(m_pluginPath + "/package/" + xmlPath);
         m_configLoader = new KConfigLoader(m_view->containment()->config().group("Indicator").group(m_metadata.pluginId()), &file);
         m_configuration = new KDeclarative::ConfigPropertyMap(m_configLoader, this);
+
+        const QString dockStyle = m_view->containment()->config().group("General").readEntry("dockStyle", QStringLiteral("Classic"));
+        const bool modernDockStyle = (dockStyle == QLatin1String("Modern")) || (dockStyle == QLatin1String("1"));
+        if (modernDockStyle && m_metadata.pluginId() == QLatin1String("org.kde.latte.default")) {
+            // Modern is macOS-like: active/running state is always represented by a dot.
+            // Apply this before the QML indicator is instantiated to avoid a startup line frame.
+            m_configuration->setProperty("activeStyle", 1);
+        }
     } else {
         m_configLoader = nullptr;
         m_configuration = nullptr;
@@ -336,6 +348,9 @@ void Indicator::loadConfig()
     m_customType = config.readEntry("customType", QString());
     m_enabled = config.readEntry("enabled", true);
     m_type = config.readEntry("type", "org.kde.latte.default");
+    if (m_type == QLatin1String("org.kde.latte.plasma")) {
+        m_type = QStringLiteral("org.kde.latte.default");
+    }
 }
 
 void Indicator::saveConfig()

@@ -9,6 +9,14 @@
       <default>0</default>
       <label>introduced in v0.10, "0" stands for "Center"</label>      
     </entry>      
+    <entry name="dockStyle" type="Enum">
+      <choices>
+            <choice name="Classic"/>
+            <choice name="Modern"/>
+      </choices>
+      <default>0</default>
+      <label>dock visual style profile</label>
+    </entry>
     <entry name="appletOrder" type="String">
       <label>encoded order of items</label>
     </entry>

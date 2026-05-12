@@ -22,6 +22,7 @@ BackgroundProperties{
     id:barLine
 
     readonly property alias panelBackgroundSvg: solidBackground
+    readonly property bool modernDockStyle: root.isModernDockStyle
 
     //! Layer 0: Multi-Layer container in order to provide a consistent final element that acts
     //! as a single entity/background
@@ -39,6 +40,8 @@ BackgroundProperties{
     hasTopBorder: hasAllBorders || ((solidBackground.enabledBorders & KSvg.FrameSvg.TopBorder) > 0)
     hasBottomBorder: hasAllBorders || ((solidBackground.enabledBorders & KSvg.FrameSvg.BottomBorder) > 0)
 
+    readonly property int modernLengthEndPadding: Math.max(3, Math.round(metrics.iconSize * 0.04))
+
     shadows.left: hasLeftBorder ? (customShadowIsEnabled ? customShadow : shadowsSvgItem.margins.left) : 0
     shadows.right: hasRightBorder ? (customShadowIsEnabled ? customShadow : shadowsSvgItem.margins.right) : 0
     shadows.top: hasTopBorder ? (customShadowIsEnabled ? customShadow : shadowsSvgItem.margins.top) : 0
@@ -50,10 +53,16 @@ BackgroundProperties{
     shadows.fixedBottom: (customDefShadowIsEnabled || customUserShadowIsEnabled) ? customShadow : shadowsSvgItem.fixedMargins.bottom
 
     //! it can accept negative values in DockMode
-    screenEdgeMargin: root.screenEdgeMarginEnabled ? metrics.margin.screenEdge - shadows.tailThickness : -shadows.tailThickness
+    screenEdgeMargin: modernDockStyle
+                      ? (metrics.effectiveScreenEdgeMargin - shadows.tailThickness)
+                      : (root.screenEdgeMarginEnabled ? metrics.margin.screenEdge - shadows.tailThickness : -shadows.tailThickness)
 
     paddings.top: {
         if (hasTopBorder) {
+            if (modernDockStyle && root.isVertical) {
+                return modernLengthEndPadding;
+            }
+
             var customAppliedRadius = customRadiusIsEnabled ? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingTop : 0;
             var solidBackgroundPadding = solidBackground.margins.top;
@@ -71,6 +80,10 @@ BackgroundProperties{
     }
     paddings.bottom: {
         if (hasBottomBorder) {
+            if (modernDockStyle && root.isVertical) {
+                return modernLengthEndPadding;
+            }
+
             var customAppliedRadius = customRadiusIsEnabled ? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingBottom : 0;
             var solidBackgroundPadding = solidBackground.margins.bottom;
@@ -89,6 +102,10 @@ BackgroundProperties{
 
     paddings.left: {
         if (hasLeftBorder) {
+            if (modernDockStyle && root.isHorizontal) {
+                return modernLengthEndPadding;
+            }
+
             var customAppliedRadius = customRadiusIsEnabled ? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingLeft : 0;
             var solidBackgroundPadding = solidBackground.margins.left;
@@ -107,6 +124,10 @@ BackgroundProperties{
 
     paddings.right: {
         if (hasRightBorder) {
+            if (modernDockStyle && root.isHorizontal) {
+                return modernLengthEndPadding;
+            }
+
             var customAppliedRadius = customRadiusIsEnabled? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingRight : 0;
             var solidBackgroundPadding = solidBackground.margins.right;
@@ -155,6 +176,13 @@ BackgroundProperties{
     }
 
     totals.visualThickness: {
+        if (modernDockStyle) {
+            var shellPadding = Math.max(2, Math.round(metrics.iconSize * 0.045));
+            var modernPadding = Math.max(metrics.margin.tailThickness, shellPadding);
+            var wrappedThickness = metrics.iconSize + (2 * modernPadding);
+            return Math.max(totals.minThickness, wrappedThickness);
+        }
+
         var itemMargins = 2*metrics.margin.tailThickness;
         var maximumItem = metrics.iconSize + itemMargins;
 
@@ -167,6 +195,13 @@ BackgroundProperties{
     }
 
     totals.visualMaxThickness: {
+        if (modernDockStyle) {
+            var shellPadding = Math.max(2, Math.round(metrics.maxIconSize * 0.045));
+            var modernPadding = Math.max(metrics.margin.maxTailThickness, shellPadding);
+            var wrappedThickness = metrics.maxIconSize + (2 * modernPadding);
+            return Math.max(totals.minThickness, wrappedThickness);
+        }
+
         var itemMargins = 2*metrics.margin.maxTailThickness;
         var maximumItem = metrics.maxIconSize + itemMargins;
 
@@ -242,9 +277,14 @@ BackgroundProperties{
     readonly property bool customDefShadowIsEnabled: customShadowIsSupported && !customUserShadowIsEnabled && customRadiusIsEnabled
     readonly property bool customUserShadowIsEnabled: customShadowIsSupported && plasmoid.configuration.backgroundShadowSize >= 0
 
-    readonly property bool customRadiusIsEnabled: kirigamiLibraryIsFound && plasmoid.configuration.backgroundRadius >= 0
+    readonly property bool customRadiusIsEnabled: kirigamiLibraryIsFound && (modernDockStyle || plasmoid.configuration.backgroundRadius >= 0)
 
     readonly property int customRadius: {
+        if (modernDockStyle) {
+            var thickness = root.isHorizontal ? solidBackground.height : solidBackground.width;
+            return Math.max(10, Math.min(30, Math.round(thickness * 0.36)));
+        }
+
         if (customDefShadowIsEnabled && !customRadiusIsEnabled && themeExtendedBackground) {
             return themeExtendedBackground.roundness;
         }
@@ -360,7 +400,8 @@ BackgroundProperties{
         //! must be normalized to plasma theme maximum opacity
         readonly property real normalizedOpacity: Math.min(1, appliedOpacity / themeMaxOpacity)
 
-        readonly property real appliedOpacity: overlayedBackground.backgroundOpacity > 0 && !paintInstantly ? 0 : overlayedBackground.midOpacity
+        readonly property real appliedOpacity: modernDockStyle ? 0
+                                                               : (overlayedBackground.backgroundOpacity > 0 && !paintInstantly ? 0 : overlayedBackground.midOpacity)
         readonly property real themeMaxOpacity: themeExtendedBackground ? themeExtendedBackground.maxOpacity : 1
 
         //! When switching from overlaied background to regular one this must be done
@@ -505,7 +546,7 @@ BackgroundProperties{
                 return root.myView.backgroundStoredOpacity;
             }
 
-            if (coloredView || customShadowedRectangleIsEnabled) {
+            if (modernDockStyle || coloredView || customShadowedRectangleIsEnabled) {
                 return midOpacity;
             }
 
@@ -513,8 +554,12 @@ BackgroundProperties{
         }
 
         backgroundColor: colorizerManager.backgroundColor
-        shadowColor: customShadowColor
-        shadowSize: customShadowIsEnabled ? customShadow : 0
+        shadowColor: modernDockStyle ? Qt.rgba(0, 0, 0, 0.35) : customShadowColor
+        shadowSize: modernDockStyle ? Math.max(10, customShadow) : (customShadowIsEnabled ? customShadow : 0)
+        borderWidth: modernDockStyle ? 1 : 0
+        borderColor: modernDockStyle
+                     ? Qt.rgba(colorizerManager.outlineColor.r, colorizerManager.outlineColor.g, colorizerManager.outlineColor.b, 0.55)
+                     : "transparent"
 
         roundness: {
             if (customRadiusIsEnabled) {
@@ -529,6 +574,9 @@ BackgroundProperties{
                 return 1;
             } else if (!root.userShowPanelBackground || root.forcePanelForBusyBackground || root.forceTransparentPanel) {
                 return 0;
+            } else if (modernDockStyle) {
+                var storedOpacity = barLine.isDefaultOpacityEnabled ? 0.62 : root.myView.backgroundStoredOpacity;
+                return Math.max(0.50, storedOpacity);
             } else {
                 return root.myView.backgroundStoredOpacity;
             }

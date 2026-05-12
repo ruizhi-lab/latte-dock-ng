@@ -39,10 +39,17 @@ AbilityHost.Metrics {
     }
 
     readonly property bool autosizeEnabled: autosize !== undefined && autosize.isActive
+    readonly property bool modernDockStyle: (typeof root !== "undefined") && root.isModernDockStyle
 
     readonly property MetricsPrivateTypes.Fraction fraction: MetricsPrivateTypes.Fraction{
-        thicknessMargin: Math.max(indicators.info.minThicknessPadding, plasmoid.configuration.thickMargin / 100)
-        lengthMargin: plasmoid.configuration.lengthExtMargin / 100
+        thicknessMargin: {
+            var configured = Math.max(indicators.info.minThicknessPadding, plasmoid.configuration.thickMargin / 100);
+            return modernDockStyle ? Math.max(0.085, configured) : configured;
+        }
+        lengthMargin: {
+            var configured = plasmoid.configuration.lengthExtMargin / 100;
+            return modernDockStyle ? Math.max(0.04, configured) : configured;
+        }
         lengthPadding: indicators.isEnabled ? indicators.padding : 0
         lengthAppletPadding: indicators.isEnabled ? indicators.info.appletLengthPadding : -1
     }

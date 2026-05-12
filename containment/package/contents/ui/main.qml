@@ -53,6 +53,12 @@ ContainmentItem {
     readonly property bool viewIsAvailable: latteView && latteView.visibility && latteView.effects
 
     // Latte Dock NG intentionally supports only dock-style views.
+    // KConfig enum values can be exposed as integer indexes or enum names.
+    function dockStyleToIndex(styleValue) {
+        return (styleValue === 1 || styleValue === "1" || styleValue === "Modern") ? 1 : 0;
+    }
+    readonly property int currentDockStyleIndex: dockStyleToIndex(plasmoid.configuration.dockStyle)
+    readonly property bool isModernDockStyle: currentDockStyleIndex === 1
 
     property bool blurEnabled: plasmoid.configuration.blurEnabled && (!forceTransparentPanel || forcePanelForBusyBackground)
 

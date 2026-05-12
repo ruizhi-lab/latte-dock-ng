@@ -22,3 +22,8 @@ target_link_libraries(lattecontainmentplugin
 
 install(TARGETS lattecontainmentplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
 install(FILES plugin/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
+
+if(LATTE_QT6_COMPAT_QMLDIR)
+    install(TARGETS lattecontainmentplugin DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment)
+    install(FILES plugin/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment)
+endif()

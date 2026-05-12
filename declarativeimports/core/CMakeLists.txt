@@ -28,3 +28,8 @@ target_link_libraries(lattecoreplugin
 install(TARGETS lattecoreplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)
 
 install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)
+
+if(LATTE_QT6_COMPAT_QMLDIR)
+    install(TARGETS lattecoreplugin DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/core)
+    install(FILES qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/core)
+endif()

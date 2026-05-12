@@ -22,11 +22,19 @@ T.ComboBox {
 
     readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
-    readonly property color safeTextColor: (theme && theme.textColor !== undefined) ? theme.textColor : "white"
-    readonly property color safeHighlightedTextColor: (theme && theme.highlightedTextColor !== undefined) ? theme.highlightedTextColor : safeTextColor
-    readonly property color safeButtonTextColor: safeTextColor
-    readonly property color safeBackgroundColor: (theme && theme.backgroundColor !== undefined) ? theme.backgroundColor : "white"
-    readonly property color safeButtonColor: safeBackgroundColor
+    SystemPalette {
+        id: systemPalette
+        colorGroup: SystemPalette.Active
+    }
+
+    readonly property color safeBackgroundColor: systemPalette.window
+    readonly property color safeButtonColor: systemPalette.button
+    readonly property color safePopupHighlightColor: systemPalette.highlight
+    readonly property color safeTextColor: readableTextColor(safeBackgroundColor, systemPalette.windowText)
+    readonly property color safeHighlightedTextColor: readableTextColor(safePopupHighlightColor, systemPalette.highlightedText)
+    readonly property color safeButtonTextColor: readableTextColor(safeButtonColor, systemPalette.buttonText)
+    readonly property color safePopupTextColor: readableTextColor(safeBackgroundColor, systemPalette.windowText)
+    readonly property color safePopupHighlightedTextColor: readableTextColor(safePopupHighlightColor, systemPalette.highlightedText)
     readonly property color safeButtonBorderColor: Qt.rgba(safeTextColor.r, safeTextColor.g, safeTextColor.b, 0.35)
     readonly property color safePressedBorderColor: (theme && theme.highlightColor !== undefined)
                                                     ? theme.highlightColor
@@ -58,6 +66,20 @@ T.ComboBox {
         return item ? item[role] : "";
     }
 
+    function colorBrightness(colorValue) {
+        return ((colorValue.r * 255 * 299) + (colorValue.g * 255 * 587) + (colorValue.b * 255 * 114)) / 1000;
+    }
+
+    function readableTextColor(backgroundColor, preferredColor) {
+        if (Math.abs(colorBrightness(backgroundColor) - colorBrightness(preferredColor)) >= 80) {
+            return preferredColor;
+        }
+
+        return colorBrightness(backgroundColor) > 127.5
+                ? Qt.rgba(0.12, 0.13, 0.15, 1)
+                : Qt.rgba(0.95, 0.95, 0.95, 1);
+    }
+
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding) + indicator.implicitWidth + rightPadding
     implicitHeight: units.gridUnit * 1.6
@@ -79,6 +101,7 @@ T.ComboBox {
     property bool popUpAlignRight: true
     property bool buttonIsTransparent: false
     property int minimumPopUpWidth: 150
+    property int popUpItemHeight: Math.max(30, Math.round(units.gridUnit * 2.3))
     property int popUpRelativeX: 0
     property int popUpTextHorizontalAlignment: Text.AlignLeft
 
@@ -93,6 +116,7 @@ T.ComboBox {
 
     delegate: ItemDelegate {
         width: control.popup.width
+        height: isSeparator ? 1 : control.popUpItemHeight
         enabled: !isSeparator && (control.enabledRole.length>0 ? (isArray ? modelData[control.enabledRole] : model[control.enabledRole]) : true)
         text: control.textRole.length>0 ? (isArray ? modelData[control.textRole] : model[control.textRole]) : modelData
         iconName: control.iconRole.length>0 ? (isArray ? modelData[control.iconRole] : model[control.iconRole]) : ''
@@ -100,6 +124,9 @@ T.ComboBox {
         iconOnlyWhenHovered: control.iconOnlyWhenHoveredRole.length>0 ? (isArray ? modelData[control.iconOnlyWhenHoveredRole] : model[control.iconOnlyWhenHoveredRole]) : ''
         isSeparator: control.isSeparatorRole.length>0 ? (isArray ? modelData[control.isSeparatorRole] : model[control.isSeparatorRole]) : false
         toolTip: control.toolTipRole.length>0 ? (isArray ? modelData[control.toolTipRole] : model[control.toolTipRole]) : ''
+        textColor: control.safePopupTextColor
+        highlightedTextColor: control.safePopupHighlightedTextColor
+        highlightColor: control.safePopupHighlightColor
 
         highlighted: mouseArea.pressed ? listView.currentIndex == index : control.currentIndex == index
         blankSpaceForEmptyIcons: control.blankSpaceForEmptyIcons
@@ -171,7 +198,7 @@ T.ComboBox {
         onCanceled: {
             control.down = false;
         }
-        onPositionChanged: {
+        onPositionChanged: function(mouse) {
             var pos = listView.mapFromItem(this, mouse.x, mouse.y);
             indexUnderMouse = listView.indexAt(pos.x, pos.y);
             listView.currentIndex = indexUnderMouse;
@@ -229,8 +256,8 @@ T.ComboBox {
             spacing: 0
 
             anchors {
-                leftMargin: !control.mirrored ? 1 : 0
-                rightMargin: control.mirrored ? 1 : 0
+                leftMargin: control.leftPadding
+                rightMargin: control.rightPadding
             }
 
             Kirigami.Icon {
@@ -260,9 +287,7 @@ T.ComboBox {
 
                 text: control.displayText
                 font: control.font
-                color: control.pressed
-                       ? safeHighlightedTextColor
-                       : (control.buttonIsTransparent ? safeTextColor : safeButtonTextColor)
+                color: control.buttonIsTransparent ? safeTextColor : safeButtonTextColor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 opacity: control.enabled ? 1 : 0.6
@@ -383,12 +408,7 @@ T.ComboBox {
 
         x: {
             if (!control.mirrored) {
-                if (popUpRelativeX !== 0) {
-                    var adjustedX = exceedsContent && control.popUpAlignRight ? -(width - control.width) : popUpRelativeX;
-                    return  adjustedX;
-                } else {
-                    return 0;
-                }
+                return exceedsContent && control.popUpAlignRight ? control.width - width : popUpRelativeX;
             } else {
                 //! mirrored case
                 if (exceedsContent && control.popUpAlignRight) {
@@ -401,7 +421,10 @@ T.ComboBox {
         }
         y: control.height
         width: Math.max(control.width, control.minimumPopUpWidth)
-        implicitHeight: contentItem.implicitHeight
+        implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
+        height: implicitHeight
+        topPadding: 2
+        bottomPadding: 2
         topMargin: 6
         bottomMargin: 6
 
@@ -419,7 +442,7 @@ T.ComboBox {
         contentItem: ListView {
             id: listView
             clip: true
-            implicitHeight: contentHeight
+            implicitHeight: Math.max(contentHeight, control.count * control.popUpItemHeight)
             model: control.popup.visible ? control.delegateModel : null
             currentIndex: control.highlightedIndex
             highlightRangeMode: ListView.ApplyRange

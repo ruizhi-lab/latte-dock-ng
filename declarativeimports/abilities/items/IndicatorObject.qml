@@ -106,6 +106,15 @@ Item{
         readonly property alias progress: _indicator.progress
 
         readonly property alias screenEdgeMargin: _indicator.screenEdgeMargin
+        readonly property bool isModernDockStyle: {
+            var styleValue = plasmoid.configuration.dockStyle;
+            var configModern = styleValue === 1 || styleValue === "1" || styleValue === "Modern";
+            var metricsModern = _indicator.metrics
+                                && _indicator.metrics.modernDockStyle !== undefined
+                                && _indicator.metrics.modernDockStyle;
+
+            return configModern || metricsModern;
+        }
 
         readonly property QtObject palette: _indicator.palette ? _indicator.palette : theme
 

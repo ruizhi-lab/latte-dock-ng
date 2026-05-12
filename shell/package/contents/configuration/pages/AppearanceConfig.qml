@@ -6,10 +6,10 @@
 
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.15 as QQC2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kirigami 2.0 as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
@@ -37,6 +37,75 @@ PlasmaComponents.Page {
         anchors.horizontalCenter: parent.horizontalCenter
         Layout.leftMargin: units.smallSpacing * 2
 
+        function styleIndex(styleValue) {
+            if (styleValue === "Modern") {
+                return 1;
+            }
+
+            if (styleValue === "Classic") {
+                return 0;
+            }
+
+            var numericStyle = Number(styleValue);
+            return numericStyle === 1 ? 1 : 0;
+        }
+
+        function applyDockStylePreset(styleValue, previousStyleValue) {
+            if (!latteView || !latteView.indicator) {
+                return;
+            }
+
+            var targetStyle = styleIndex(styleValue);
+            var previousStyle = styleIndex(previousStyleValue);
+            var isModernToClassicSwitch = (targetStyle === 0 && previousStyle === 1);
+
+            // Recover from legacy oversized values introduced by older panel-mode experiments.
+            // Keep normal user tuning untouched, only clamp clearly out-of-range values.
+            var configuredIconSize = Number(plasmoid.configuration.iconSize);
+            if (!isNaN(configuredIconSize) && configuredIconSize > 160) {
+                plasmoid.configuration.iconSize = 64;
+            }
+
+            latteView.indicator.type = "org.kde.latte.default";
+
+            if (latteView.indicator.configuration && latteView.indicator.configuration.activeStyle !== undefined) {
+                latteView.indicator.configuration.activeStyle = targetStyle === 1 ? 1 : 0;
+            }
+
+            if (targetStyle === 1) { // Modern
+                // Modern keeps the default indicator but changes its geometry in the indicator QML.
+            } else { // Classic
+                var classicPanelSize = Number(plasmoid.configuration.panelSize);
+                if (isModernToClassicSwitch || isNaN(classicPanelSize) || classicPanelSize > 100 || classicPanelSize < 0) {
+                    plasmoid.configuration.panelSize = 6;
+                }
+
+                var classicZoomLevel = Number(plasmoid.configuration.zoomLevel);
+                if (isModernToClassicSwitch || isNaN(classicZoomLevel) || classicZoomLevel > 25 || classicZoomLevel < 0) {
+                    plasmoid.configuration.zoomLevel = 10;
+                }
+
+                if (isNaN(configuredIconSize) || configuredIconSize > 96 || configuredIconSize < 24) {
+                    plasmoid.configuration.iconSize = 64;
+                }
+
+                // Classic profile should behave as a non-floating dock by default.
+                if (isModernToClassicSwitch) {
+                    if (Number(plasmoid.configuration.proportionIconSize) > 0) {
+                        plasmoid.configuration.proportionIconSize = -1;
+                    }
+
+                    if (Number(plasmoid.configuration.screenEdgeMargin) >= 0) {
+                        plasmoid.configuration.screenEdgeMargin = -1;
+                    }
+                }
+            }
+        }
+
+        function dockStyleIndex(styleValue) {
+            return styleIndex(styleValue);
+        }
+
         //! BEGIN: Items
         ColumnLayout {
             Layout.fillWidth: true
@@ -52,6 +121,57 @@ PlasmaComponents.Page {
                 Layout.leftMargin: units.smallSpacing * 2
                 Layout.rightMargin: units.smallSpacing * 2
                 spacing: 0
+
+                PlasmaComponents.Label {
+                    id: dockStyleLabel
+                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.maximumWidth: Layout.minimumWidth
+                    text: i18nc("dock visual style selector", "Dock Style")
+                    horizontalAlignment: Text.AlignLeft
+                }
+
+                QQC2.ComboBox {
+                    id: dockStyleCombo
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: Math.max(dialog.optionsWidth, units.gridUnit * 16)
+                    Layout.preferredWidth: Layout.minimumWidth
+                    Layout.minimumHeight: Math.max(30, Math.round(units.gridUnit * 2.1))
+                    model: [
+                        {
+                            "name": i18nc("classic dock visual style", "Classic"),
+                            "value": 0
+                        },
+                        {
+                            "name": i18nc("modern dock visual style", "Modern"),
+                            "value": 1
+                        }
+                    ]
+                    textRole: "name"
+                    currentIndex: content.dockStyleIndex(plasmoid.configuration.dockStyle)
+
+                    delegate: QQC2.ItemDelegate {
+                        width: dockStyleCombo.popup.width
+                        height: Math.max(30, Math.round(units.gridUnit * 2.2))
+                        text: modelData.name
+                        highlighted: dockStyleCombo.highlightedIndex === index
+                    }
+
+                    Component.onCompleted: {
+                        content.applyDockStylePreset(plasmoid.configuration.dockStyle, plasmoid.configuration.dockStyle);
+                    }
+
+                    onCurrentIndexChanged: {
+                        if (currentIndex < 0 || content.dockStyleIndex(plasmoid.configuration.dockStyle) === currentIndex) {
+                            return;
+                        }
+
+                        var previousStyleValue = plasmoid.configuration.dockStyle;
+                        var styleValue = model[currentIndex]["value"];
+                        plasmoid.configuration.dockStyle = styleValue;
+                        content.applyDockStylePreset(styleValue, previousStyleValue);
+                        syncGeometry.restart();
+                    }
+                }
 
                 RowLayout {
                     Layout.minimumWidth: dialog.optionsWidth

@@ -21,6 +21,21 @@ Ability.MetricsPrivate {
     iconSize: _iconSize
     maxIconSize: _maxIconSize
     backgroundThickness: background.thickness
+    readonly property int styleDefaultScreenEdgeMargin: root.isModernDockStyle
+                                                      ? Math.max(6, Math.round(iconSize * 0.12))
+                                                      : 0
+    readonly property int configuredScreenEdgeMargin: Math.max(0, plasmoid.configuration.screenEdgeMargin)
+    readonly property int effectiveScreenEdgeMargin: {
+        if (root.hideThickScreenGap) {
+            return 0;
+        }
+
+        if (root.screenEdgeMarginEnabled) {
+            return configuredScreenEdgeMargin;
+        }
+
+        return styleDefaultScreenEdgeMargin;
+    }
 
     //! Margin
     margin.length: fraction.lengthMargin * iconSize
@@ -30,9 +45,7 @@ Ability.MetricsPrivate {
     margin.maxHeadThickness: (background.isGreaterThanItemThickness ? (background.totals.visualMaxThickness - _maxIconSize - margin.maxTailThickness) : margin.maxTailThickness)
     //margin.thickness: fraction.thicknessMargin * iconSize
    // margin.maxThickness: fraction.thicknessMargin * maxIconSize
-    margin.screenEdge: !root.screenEdgeMarginEnabled
-                       || root.hideThickScreenGap ?
-                           0 : plasmoid.configuration.screenEdgeMargin
+    margin.screenEdge: effectiveScreenEdgeMargin
 
     //! MarginsAra
     marginsArea.tailThickness: {
@@ -74,9 +87,9 @@ Ability.MetricsPrivate {
     }
 
     //! Mask
-    mask.maxScreenEdge : Math.max(0, plasmoid.configuration.screenEdgeMargin)
+    mask.maxScreenEdge : effectiveScreenEdgeMargin
       // window geometry is updated after the local screen margin animation was zeroed*/
-    mask.screenEdge: (!root.screenEdgeMarginEnabled || root.hideThickScreenGap) ? 0 : plasmoid.configuration.screenEdgeMargin
+    mask.screenEdge: effectiveScreenEdgeMargin
 
     mask.thickness.hidden: LatteCore.WindowSystem.compositingActive ?  2 : 1
     mask.thickness.normal: mask.screenEdge + Math.max(totals.thickness + extraThicknessForNormal, background.thickness + background.shadows.headThickness)
