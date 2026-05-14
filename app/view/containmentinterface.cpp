@@ -15,9 +15,12 @@
 
 // Qt
 #include <QJsonArray>
+#include <QFileInfo>
 #include <QDebug>
 #include <QDir>
 #include <QLatin1String>
+#include <QSet>
+#include <QStringList>
 
 // Plasma
 #include <Plasma/Applet>
@@ -25,10 +28,179 @@
 #include <PlasmaQuick/AppletQuickItem>
 
 // KDE
+#include <KConfigGroup>
 #include <KDesktopFile>
 #include <KLocalizedString>
 #include <KPluginMetaData>
 #include <KDeclarative/ConfigPropertyMap>
+
+namespace {
+constexpr const char kInternalViewSplitterPluginId[] = "org.kde.latte.splitter";
+constexpr const char kLatteSeparatorPluginId[] = "org.kde.latte.separator";
+constexpr const char kLegacySeparatorPluginId[] = "audoban.applet.separator";
+
+inline bool isSeparatorPluginId(const QString &pluginId)
+{
+    return pluginId == QLatin1String(kLatteSeparatorPluginId)
+            || pluginId == QLatin1String(kLegacySeparatorPluginId);
+}
+
+inline QString pluginIdFromMetaData(const KPluginMetaData &meta)
+{
+    QString pluginId = meta.pluginId();
+
+    if (!pluginId.isEmpty()) {
+        return pluginId;
+    }
+
+    const QJsonObject raw = meta.rawData();
+
+    if (raw.contains(QStringLiteral("KPlugin")) && raw.value(QStringLiteral("KPlugin")).isObject()) {
+        const QJsonObject kplugin = raw.value(QStringLiteral("KPlugin")).toObject();
+        pluginId = kplugin.value(QStringLiteral("Id")).toString();
+
+        if (!pluginId.isEmpty()) {
+            return pluginId;
+        }
+    }
+
+    pluginId = raw.value(QStringLiteral("Id")).toString();
+    if (!pluginId.isEmpty()) {
+        return pluginId;
+    }
+
+    // Some applets still expose legacy metadata keys.
+    pluginId = raw.value(QStringLiteral("X-KDE-PluginInfo-Name")).toString();
+    if (!pluginId.isEmpty()) {
+        return pluginId;
+    }
+
+    const QString fileName = meta.fileName();
+    if (!fileName.isEmpty()) {
+        const QFileInfo fileInfo(fileName);
+        const QString leaf = fileInfo.fileName();
+
+        // If metadata lives under <plugin-id>/metadata.json (or metadata.desktop),
+        // use the plugin directory name instead of the metadata file name.
+        if (leaf == QLatin1String("metadata.json")
+                || leaf == QLatin1String("metadata.desktop")) {
+            const QString dirName = fileInfo.dir().dirName();
+            if (!dirName.isEmpty()) {
+                return dirName;
+            }
+        }
+
+        return leaf;
+    }
+
+    return QString();
+}
+
+inline QList<int> bestOrderForApplet(const QList<int> &appletOrder,
+                                     const QList<int> &layoutOrder,
+                                     const int appletId)
+{
+    if (!layoutOrder.isEmpty() && layoutOrder.contains(appletId)) {
+        return layoutOrder;
+    }
+
+    if (!appletOrder.isEmpty() && appletOrder.contains(appletId)) {
+        return appletOrder;
+    }
+
+    if (!layoutOrder.isEmpty()) {
+        return layoutOrder;
+    }
+
+    return appletOrder;
+}
+
+inline QList<int> sanitizeSeparatorOrder(const QList<int> &order,
+                                         const QHash<int, Latte::ViewPart::AppletInterfaceData> &appletData,
+                                         const QHash<int, QString> &containmentPlugins)
+{
+    QList<int> sanitized;
+    sanitized.reserve(order.size());
+
+    auto hasAppletId = [&appletData, &containmentPlugins](const int appletId) -> bool {
+        return appletData.contains(appletId) || containmentPlugins.contains(appletId);
+    };
+
+    auto pluginIdFor = [&appletData, &containmentPlugins](const int appletId) -> QString {
+        auto it = appletData.constFind(appletId);
+        if (it != appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(appletId);
+    };
+
+    enum class ItemKind {
+        Separator,
+        Splitter,
+        Content,
+        Unknown
+    };
+
+    auto itemKind = [&pluginIdFor](const int appletId) -> ItemKind {
+        const QString pluginId = pluginIdFor(appletId);
+
+        if (pluginId.isEmpty()) {
+            return ItemKind::Unknown;
+        }
+
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            return ItemKind::Splitter;
+        }
+
+        if (isSeparatorPluginId(pluginId)) {
+            return ItemKind::Separator;
+        }
+
+        return ItemKind::Content;
+    };
+
+    bool seenRenderableApplet{false};
+    bool previousWasSeparator{false};
+
+    for (int i = 0; i < order.count(); ++i) {
+        const int appletId = order.at(i);
+        if (!hasAppletId(appletId)) {
+            // Drop stale ids only; keep existing applets even if plugin lookup is
+            // temporarily unresolved to avoid boundary separator drift.
+            continue;
+        }
+
+        const ItemKind kind = itemKind(appletId);
+
+        if (kind == ItemKind::Separator) {
+            if (!seenRenderableApplet || previousWasSeparator) {
+                continue;
+            }
+
+            sanitized << appletId;
+            previousWasSeparator = true;
+            continue;
+        }
+
+        sanitized << appletId;
+        seenRenderableApplet = true;
+        previousWasSeparator = false;
+    }
+
+    // Never keep trailing separators at containment edges.
+    while (!sanitized.isEmpty()) {
+        const ItemKind tailKind = itemKind(sanitized.constLast());
+        if (tailKind != ItemKind::Separator) {
+            break;
+        }
+
+        sanitized.removeLast();
+    }
+
+    return sanitized;
+}
+}
 
 namespace Latte {
 namespace ViewPart {
@@ -403,6 +575,38 @@ int ContainmentInterface::appletIdForVisualIndex(const int index)
     return appletId.toInt();
 }
 
+int ContainmentInterface::appletIdForAppletIndex(const int appletIndex) const
+{
+    if (appletIndex < 0) {
+        return -1;
+    }
+
+    if (appletIndex >= 0 && appletIndex < m_appletOrder.count()) {
+        const int appletId = m_appletOrder.at(appletIndex);
+        if (appletId > 0) {
+            return appletId;
+        }
+    }
+
+    for (auto it = m_appletData.constBegin(); it != m_appletData.constEnd(); ++it) {
+        if (it.value().lastValidIndex == appletIndex && it.key() > 0) {
+            return it.key();
+        }
+    }
+
+    if (m_layoutManager) {
+        const QList<int> layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+        if (appletIndex >= 0 && appletIndex < layoutOrder.count()) {
+            const int appletId = layoutOrder.at(appletIndex);
+            if (appletId > 0) {
+                return appletId;
+            }
+        }
+    }
+
+    return -1;
+}
+
 
 void ContainmentInterface::deactivateApplets()
 {
@@ -638,6 +842,437 @@ void ContainmentInterface::addApplet(QObject *metadata, int x, int y)
                          Q_ARG(int, y));
 }
 
+bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
+{
+    if (!m_view || !m_view->containment() || appletId < 0) {
+        return false;
+    }
+
+    QList<int> layoutOrder;
+    if (m_layoutManager) {
+        layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+    }
+    const QList<int> effectiveOrder = bestOrderForApplet(m_appletOrder, layoutOrder, appletId);
+
+    const int targetIndex = effectiveOrder.indexOf(appletId);
+    if (targetIndex < 0) {
+        return false;
+    }
+
+    QHash<int, QString> containmentPlugins;
+    if (m_view && m_view->containment()) {
+        const auto applets = m_view->containment()->applets();
+        containmentPlugins.reserve(applets.count());
+
+        for (const auto applet : applets) {
+            if (!applet) {
+                continue;
+            }
+
+            containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+        }
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    int leftNeighborId = -1;
+
+    for (int i = targetIndex - 1; i >= 0; --i) {
+        const int candidateId = effectiveOrder.at(i);
+        const QString pluginId = pluginIdForApplet(candidateId);
+
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            continue;
+        }
+
+        leftNeighborId = candidateId;
+        break;
+    }
+
+    // No real applet on the left means this would create a leading separator.
+    if (leftNeighborId < 0) {
+        return false;
+    }
+
+    if (isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
+        return true;
+    }
+
+    const QStringList separatorPlugins{QLatin1String(kLatteSeparatorPluginId)};
+
+    Plasma::Applet *separatorApplet{nullptr};
+
+    for (const QString &pluginId : separatorPlugins) {
+        separatorApplet = m_view->containment()->createApplet(pluginId);
+        if (separatorApplet && !separatorApplet->failedToLaunch()) {
+            break;
+        }
+
+        if (separatorApplet) {
+            separatorApplet->destroy();
+            separatorApplet = nullptr;
+        }
+    }
+
+    if (!separatorApplet) {
+        return false;
+    }
+
+    QList<int> newOrder = effectiveOrder;
+    const int separatorId = static_cast<int>(separatorApplet->id());
+
+    if (!newOrder.contains(appletId)) {
+        separatorApplet->destroy();
+        return false;
+    }
+
+    if (!newOrder.contains(separatorId)) {
+        newOrder << separatorId;
+    }
+
+    newOrder.removeAll(separatorId);
+    newOrder.insert(targetIndex, separatorId);
+
+    setAppletsOrder(newOrder);
+    // Separator applets can be added asynchronously by Plasma. Re-apply the
+    // same order shortly after creation so boundary separators stay anchored
+    // to the requested applet side instead of falling back to default side.
+    QTimer::singleShot(0, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(150, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(300, this, [this, newOrder]() {
+        saveAppletsOrder(newOrder);
+    });
+
+    return true;
+}
+
+bool ContainmentInterface::addInternalSeparatorAtLeftBoundaryOfApplet(const int appletId)
+{
+    if (!m_view || !m_view->containment() || appletId < 0) {
+        return false;
+    }
+
+    QList<int> layoutOrder;
+    if (m_layoutManager) {
+        layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+    }
+    const QList<int> effectiveOrder = bestOrderForApplet(m_appletOrder, layoutOrder, appletId);
+
+    QHash<int, QString> containmentPlugins;
+    if (m_view && m_view->containment()) {
+        const auto applets = m_view->containment()->applets();
+        containmentPlugins.reserve(applets.count());
+
+        for (const auto applet : applets) {
+            if (!applet) {
+                continue;
+            }
+
+            containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+        }
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    const int currentIndex = effectiveOrder.indexOf(appletId);
+    if (currentIndex <= 0) {
+        return false;
+    }
+
+    int leftNeighborId = -1;
+
+    for (int i = currentIndex - 1; i >= 0; --i) {
+        const int candidateId = effectiveOrder.at(i);
+
+        if (candidateId == appletId) {
+            continue;
+        }
+
+        const QString pluginId = pluginIdForApplet(candidateId);
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            continue;
+        }
+
+        if (isSeparatorPluginId(pluginId)) {
+            return true;
+        }
+
+        leftNeighborId = candidateId;
+        break;
+    }
+
+    if (leftNeighborId < 0) {
+        return false;
+    }
+
+    if (isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
+        return false;
+    }
+
+    return addInternalSeparatorBeforeApplet(appletId);
+}
+
+bool ContainmentInterface::addInternalSeparatorAtRightBoundaryOfApplet(const int appletId)
+{
+    if (!m_view || !m_view->containment() || appletId < 0) {
+        return false;
+    }
+
+    QList<int> layoutOrder;
+    if (m_layoutManager) {
+        layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+    }
+    const QList<int> effectiveOrder = bestOrderForApplet(m_appletOrder, layoutOrder, appletId);
+
+    QHash<int, QString> containmentPlugins;
+    if (m_view && m_view->containment()) {
+        const auto applets = m_view->containment()->applets();
+        containmentPlugins.reserve(applets.count());
+
+        for (const auto applet : applets) {
+            if (!applet) {
+                continue;
+            }
+
+            containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+        }
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    const int currentIndex = effectiveOrder.indexOf(appletId);
+    if (currentIndex < 0 || currentIndex >= (effectiveOrder.count() - 1)) {
+        return false;
+    }
+
+    int rightNeighborId = -1;
+
+    for (int i = currentIndex + 1; i < effectiveOrder.count(); ++i) {
+        const int candidateId = effectiveOrder.at(i);
+
+        if (candidateId == appletId) {
+            continue;
+        }
+
+        const QString pluginId = pluginIdForApplet(candidateId);
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            continue;
+        }
+
+        if (isSeparatorPluginId(pluginId)) {
+            return true;
+        }
+
+        rightNeighborId = candidateId;
+        break;
+    }
+
+    if (rightNeighborId < 0) {
+        return false;
+    }
+
+    if (isSeparatorPluginId(pluginIdForApplet(rightNeighborId))) {
+        return false;
+    }
+
+    return addInternalSeparatorBeforeApplet(rightNeighborId);
+}
+
+bool ContainmentInterface::removeInternalSeparatorAtLeftBoundaryOfApplet(const int appletId)
+{
+    if (!m_view || !m_view->containment() || appletId < 0) {
+        return false;
+    }
+
+    QList<int> layoutOrder;
+    if (m_layoutManager) {
+        layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+    }
+    const QList<int> effectiveOrder = bestOrderForApplet(m_appletOrder, layoutOrder, appletId);
+
+    const int currentIndex = effectiveOrder.indexOf(appletId);
+    if (currentIndex <= 0) {
+        return false;
+    }
+
+    QHash<int, QString> containmentPlugins;
+    QHash<int, Plasma::Applet *> containmentApplets;
+    const auto applets = m_view->containment()->applets();
+    containmentPlugins.reserve(applets.count());
+    containmentApplets.reserve(applets.count());
+
+    for (const auto applet : applets) {
+        if (!applet) {
+            continue;
+        }
+
+        const int id = static_cast<int>(applet->id());
+        containmentPlugins.insert(id, pluginIdFromMetaData(applet->pluginMetaData()));
+        containmentApplets.insert(id, applet);
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    int separatorId = -1;
+
+    for (int i = currentIndex - 1; i >= 0; --i) {
+        const int candidateId = effectiveOrder.at(i);
+        const QString pluginId = pluginIdForApplet(candidateId);
+
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            continue;
+        }
+
+        if (isSeparatorPluginId(pluginId)) {
+            separatorId = candidateId;
+        }
+        break;
+    }
+
+    if (separatorId < 0) {
+        return false;
+    }
+
+    QList<int> newOrder = effectiveOrder;
+    newOrder.removeAll(separatorId);
+    setAppletsOrder(newOrder);
+
+    if (m_appletData.contains(separatorId)) {
+        removeApplet(separatorId);
+    } else if (containmentApplets.contains(separatorId) && containmentApplets[separatorId]) {
+        containmentApplets[separatorId]->destroy();
+    }
+
+    QTimer::singleShot(0, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(120, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(250, this, [this, newOrder]() {
+        saveAppletsOrder(newOrder);
+    });
+
+    return true;
+}
+
+bool ContainmentInterface::removeInternalSeparatorAtRightBoundaryOfApplet(const int appletId)
+{
+    if (!m_view || !m_view->containment() || appletId < 0) {
+        return false;
+    }
+
+    QList<int> layoutOrder;
+    if (m_layoutManager) {
+        layoutOrder = m_layoutManager->property("order").value<QList<int>>();
+    }
+    const QList<int> effectiveOrder = bestOrderForApplet(m_appletOrder, layoutOrder, appletId);
+
+    const int currentIndex = effectiveOrder.indexOf(appletId);
+    if (currentIndex < 0 || currentIndex >= (effectiveOrder.count() - 1)) {
+        return false;
+    }
+
+    QHash<int, QString> containmentPlugins;
+    QHash<int, Plasma::Applet *> containmentApplets;
+    const auto applets = m_view->containment()->applets();
+    containmentPlugins.reserve(applets.count());
+    containmentApplets.reserve(applets.count());
+
+    for (const auto applet : applets) {
+        if (!applet) {
+            continue;
+        }
+
+        const int id = static_cast<int>(applet->id());
+        containmentPlugins.insert(id, pluginIdFromMetaData(applet->pluginMetaData()));
+        containmentApplets.insert(id, applet);
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    int separatorId = -1;
+
+    for (int i = currentIndex + 1; i < effectiveOrder.count(); ++i) {
+        const int candidateId = effectiveOrder.at(i);
+        const QString pluginId = pluginIdForApplet(candidateId);
+
+        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+            continue;
+        }
+
+        if (isSeparatorPluginId(pluginId)) {
+            separatorId = candidateId;
+        }
+        break;
+    }
+
+    if (separatorId < 0) {
+        return false;
+    }
+
+    QList<int> newOrder = effectiveOrder;
+    newOrder.removeAll(separatorId);
+    setAppletsOrder(newOrder);
+
+    if (m_appletData.contains(separatorId)) {
+        removeApplet(separatorId);
+    } else if (containmentApplets.contains(separatorId) && containmentApplets[separatorId]) {
+        containmentApplets[separatorId]->destroy();
+    }
+
+    QTimer::singleShot(0, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(120, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(250, this, [this, newOrder]() {
+        saveAppletsOrder(newOrder);
+    });
+
+    return true;
+}
+
 void ContainmentInterface::addExpandedApplet(PlasmaQuick::AppletQuickItem * appletQuickItem)
 {
     if (appletQuickItem && m_expandedAppletIds.contains(appletQuickItem) && appletIsExpandable(appletQuickItem)) {
@@ -711,6 +1346,125 @@ QList<int> ContainmentInterface::appletsOrder() const
     return m_appletOrder;
 }
 
+void ContainmentInterface::cleanupInvalidSeparatorApplets()
+{
+    if (m_cleaningSeparatorApplets || !m_layoutManager || !m_view || !m_view->containment()) {
+        return;
+    }
+
+    const QList<int> currentOrder = m_layoutManager->property("order").value<QList<int>>();
+    if (currentOrder.isEmpty()) {
+        return;
+    }
+
+    QHash<int, QString> containmentPlugins;
+    QHash<int, Plasma::Applet *> containmentApplets;
+    const auto applets = m_view->containment()->applets();
+    containmentPlugins.reserve(applets.count());
+    containmentApplets.reserve(applets.count());
+
+    for (auto *applet : applets) {
+        if (!applet) {
+            continue;
+        }
+
+        const int id = static_cast<int>(applet->id());
+        containmentPlugins.insert(id, pluginIdFromMetaData(applet->pluginMetaData()));
+        containmentApplets.insert(id, applet);
+    }
+
+    auto pluginIdForApplet = [this, &containmentPlugins](const int id) -> QString {
+        const auto it = m_appletData.constFind(id);
+        if (it != m_appletData.constEnd() && !it->plugin.isEmpty()) {
+            return it->plugin;
+        }
+
+        return containmentPlugins.value(id);
+    };
+
+    const QList<int> sanitizedOrder = sanitizeSeparatorOrder(currentOrder, m_appletData, containmentPlugins);
+    QSet<int> orderIds;
+    QSet<int> separatorIdsToDestroy;
+
+    for (const int id : currentOrder) {
+        if (id > 0) {
+            orderIds.insert(id);
+        }
+
+        if (!sanitizedOrder.contains(id) && isSeparatorPluginId(pluginIdForApplet(id))) {
+            separatorIdsToDestroy.insert(id);
+        }
+    }
+
+    for (auto it = containmentPlugins.constBegin(); it != containmentPlugins.constEnd(); ++it) {
+        if (!orderIds.contains(it.key()) && isSeparatorPluginId(it.value())) {
+            separatorIdsToDestroy.insert(it.key());
+        }
+    }
+
+    if (sanitizedOrder == currentOrder && separatorIdsToDestroy.isEmpty()) {
+        return;
+    }
+
+    m_cleaningSeparatorApplets = true;
+
+    if (sanitizedOrder != currentOrder) {
+        setAppletsOrder(sanitizedOrder);
+    }
+
+    for (const int id : separatorIdsToDestroy) {
+        if (m_appletData.contains(id)) {
+            removeApplet(id);
+        } else if (containmentApplets.contains(id) && containmentApplets.value(id)) {
+            containmentApplets.value(id)->destroy();
+        }
+    }
+
+    m_cleaningSeparatorApplets = false;
+
+    QTimer::singleShot(120, this, [this, sanitizedOrder]() {
+        setAppletsOrder(sanitizedOrder);
+    });
+    QTimer::singleShot(300, this, [this, sanitizedOrder]() {
+        saveAppletsOrder(sanitizedOrder);
+    });
+}
+
+void ContainmentInterface::saveAppletsOrder(const QList<int> &order)
+{
+    if (!m_layoutManager || !m_view || !m_view->containment()) {
+        return;
+    }
+
+    QHash<int, QString> containmentPlugins;
+    const auto applets = m_view->containment()->applets();
+    containmentPlugins.reserve(applets.count());
+
+    for (const auto applet : applets) {
+        if (!applet) {
+            continue;
+        }
+
+        containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+    }
+
+    const QList<int> sanitizedOrder = sanitizeSeparatorOrder(order, m_appletData, containmentPlugins);
+    setAppletsOrder(sanitizedOrder);
+
+    QStringList serializedOrder;
+    serializedOrder.reserve(sanitizedOrder.count());
+
+    for (const int appletId : sanitizedOrder) {
+        if (appletId > 0) {
+            serializedOrder << QString::number(appletId);
+        }
+    }
+
+    KConfigGroup generalConfig = m_view->containment()->config().group("General");
+    generalConfig.writeEntry("appletOrder", serializedOrder.join(QLatin1Char(';')));
+    generalConfig.sync();
+}
+
 void ContainmentInterface::updateAppletsOrder()
 {
     if (!m_layoutManager) {
@@ -718,6 +1472,29 @@ void ContainmentInterface::updateAppletsOrder()
     }
 
     QList<int> neworder = m_layoutManager->property("order").value<QList<int>>();
+
+    QHash<int, QString> containmentPlugins;
+    if (m_view && m_view->containment()) {
+        const auto applets = m_view->containment()->applets();
+        containmentPlugins.reserve(applets.count());
+
+        for (const auto applet : applets) {
+            if (!applet) {
+                continue;
+            }
+
+            containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+        }
+    }
+
+    const QList<int> sanitizedOrder = sanitizeSeparatorOrder(neworder, m_appletData, containmentPlugins);
+    const bool orderWasSanitized = sanitizedOrder != neworder;
+
+    if (orderWasSanitized) {
+        neworder = sanitizedOrder;
+        setAppletsOrder(neworder);
+        QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
+    }
 
     if (m_appletOrder == neworder) {
         return;
@@ -734,6 +1511,8 @@ void ContainmentInterface::updateAppletsOrder()
     }
 
     Q_EMIT appletsOrderChanged();
+
+    QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
 }
 
 void ContainmentInterface::updateAppletsInLockedZoom()
@@ -826,10 +1605,26 @@ void ContainmentInterface::removeApplet(const int &id)
 
 void ContainmentInterface::setAppletsOrder(const QList<int> &order)
 {
+    QHash<int, QString> containmentPlugins;
+    if (m_view && m_view->containment()) {
+        const auto applets = m_view->containment()->applets();
+        containmentPlugins.reserve(applets.count());
+
+        for (const auto applet : applets) {
+            if (!applet) {
+                continue;
+            }
+
+            containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+        }
+    }
+
+    const QList<int> sanitizedOrder = sanitizeSeparatorOrder(order, m_appletData, containmentPlugins);
+
     QMetaObject::invokeMethod(m_layoutManager,
                               "requestAppletsOrder",
                               Qt::DirectConnection,
-                              Q_ARG(QList<int>, order));
+                              Q_ARG(QList<int>, sanitizedOrder));
 
 }
 
@@ -895,6 +1690,8 @@ void ContainmentInterface::updateAppletsTracking()
     }
 
     Q_EMIT initializationCompleted();
+    QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
+    QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
 }
 
 void ContainmentInterface::updateAppletDelayedConfiguration()
@@ -1022,7 +1819,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         KPluginMetaData meta = applet->pluginMetaData();
         ViewPart::AppletInterfaceData data;
         data.id = currentAppletId;
-        data.plugin = meta.pluginId();
+        data.plugin = pluginIdFromMetaData(meta);
         data.applet = applet;
         data.plasmoid = ai;
         data.lastValidIndex = m_appletOrder.indexOf(data.id);
@@ -1054,6 +1851,9 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         m_appletData[data.id] = data;
         Q_EMIT appletDataCreated(data.id);
     }
+
+    QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
+    QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
 }
 
 QList<int> ContainmentInterface::toIntList(const QVariantList &list)

@@ -247,6 +247,7 @@ done
 managed_dirs=(
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.containment"
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid"
+    "${install_prefix}/share/plasma/plasmoids/org.kde.latte.separator"
     "${install_prefix}/share/plasma/shells/org.kde.latte.shell"
     "${install_prefix}/share/latte/indicators"
 )
@@ -278,6 +279,7 @@ if [[ "$install_mode" == "system" ]]; then
         for dir_path in \
                 "${prefix}/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid" \
+                "${prefix}/share/plasma/plasmoids/org.kde.latte.separator" \
                 "${prefix}/share/plasma/shells/org.kde.latte.shell" \
                 "${prefix}/share/latte/indicators"; do
             remove_tree "$dir_path"
@@ -322,6 +324,7 @@ for user_home in "${user_homes[@]:-}"; do
         for dir_path in \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
+                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
                 "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" \
                 "${user_home}/.local/share/latte/indicators"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }
@@ -341,6 +344,7 @@ for user_home in "${user_homes[@]:-}"; do
         for dir_path in \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
+                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
                 "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" \
                 "${user_home}/.local/share/latte/indicators"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }

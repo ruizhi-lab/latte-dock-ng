@@ -14,6 +14,7 @@
 #include <QMouseEvent>
 #include <QVersionNumber>
 #include <QLatin1String>
+#include <QIcon>
 
 // KDE
 #include <KAcceleratorManager>
@@ -29,6 +30,15 @@
 #include <PlasmaQuick/AppletQuickItem>
 
 namespace Latte {
+
+namespace {
+bool isSeparatorPluginId(const QString &pluginId)
+{
+    return pluginId == QLatin1String("org.kde.latte.separator")
+           || pluginId == QLatin1String("org.kde.latte.spacer")
+           || pluginId == QLatin1String("audoban.applet.separator");
+}
+}
 
 ContextMenuLayerQuickItem::ContextMenuLayerQuickItem(QQuickItem *parent) :
     QQuickItem(parent)
@@ -373,6 +383,36 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
     for (QAction *action : applet->contextualActions()) {
         if (action) {
             desktopMenu->addAction(action);
+        }
+    }
+
+    auto *iface = m_latteView->extendedInterface();
+    const int appletId = static_cast<int>(applet->id());
+    const QString appletPluginId = applet->pluginMetaData().pluginId();
+    const bool canEditContainment = m_latteView->containment()->immutability() == Plasma::Types::Mutable;
+
+    if (iface && canEditContainment && !isSeparatorPluginId(appletPluginId)) {
+        const QList<int> appletsOrder = iface->appletsOrder();
+        const int currentIndex = appletsOrder.indexOf(appletId);
+
+        if (currentIndex >= 0) {
+            bool hasLeftSeparator = false;
+
+            if (currentIndex > 0) {
+                const auto leftApplet = iface->appletDataForId(appletsOrder.at(currentIndex - 1));
+                hasLeftSeparator = isSeparatorPluginId(leftApplet.plugin);
+            }
+
+            QAction *addLeftSeparatorAction = desktopMenu->addAction(
+                m_latteView->formFactor() == Plasma::Types::Vertical
+                    ? i18n("Add Top Separator")
+                    : i18n("Add Left Separator"));
+            addLeftSeparatorAction->setIcon(QIcon::fromTheme(QStringLiteral("add")));
+            addLeftSeparatorAction->setEnabled(!hasLeftSeparator);
+
+            connect(addLeftSeparatorAction, &QAction::triggered, this, [iface, appletId]() {
+                iface->addInternalSeparatorBeforeApplet(appletId);
+            });
         }
     }
 

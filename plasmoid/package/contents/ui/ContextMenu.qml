@@ -124,6 +124,174 @@ PlasmaExtras.Menu {
         return !isStartupItem() && launcherUrlForPin() !== "";
     }
 
+    function supportsLauncherSeparators() {
+        if (!visualParent || !visualParent.hasShownLauncher) {
+            return false;
+        }
+
+        // Restrict separator actions to task/launcher entries only.
+        return isWindowItem()
+                || isStartupItem()
+                || get(atm.IsLauncher) === true
+                || launcherUrlForPin() !== "";
+    }
+
+    function hasLauncherAtLayoutIndex(index) {
+        if (!appletAbilities || !appletAbilities.launchers || typeof appletAbilities.launchers.childAtLayoutIndex !== "function") {
+            return false;
+        }
+
+        return appletAbilities.launchers.childAtLayoutIndex(index) !== undefined;
+    }
+
+    function currentSeparatorBoundaryAppletId() {
+        // Most reliable path: resolve the current tasks applet id from its
+        // containment applet index.
+        if (appletAbilities
+                && appletAbilities.myView
+                && typeof appletAbilities.myView.appletIdForAppletIndex === "function"
+                && appletAbilities.myView.bridge
+                && appletAbilities.myView.bridge.myView
+                && typeof appletAbilities.myView.bridge.myView.appletIndex === "number"
+                && appletAbilities.myView.bridge.myView.appletIndex >= 0) {
+            var indexAppletId = appletAbilities.myView.appletIdForAppletIndex(appletAbilities.myView.bridge.myView.appletIndex);
+            if (typeof indexAppletId === "number" && indexAppletId > 0) {
+                return indexAppletId;
+            }
+        }
+
+        if (appletAbilities
+                && appletAbilities.myView
+                && typeof appletAbilities.myView.appletIdForVisualIndex === "function"
+                && visualParent
+                && typeof visualParent.itemIndex === "number"
+                && visualParent.itemIndex >= 0) {
+            var visualAppletId = appletAbilities.myView.appletIdForVisualIndex(visualParent.itemIndex);
+            if (typeof visualAppletId === "number" && visualAppletId > 0) {
+                return visualAppletId;
+            }
+        }
+
+        if (typeof plasmoid !== "undefined"
+                && plasmoid
+                && typeof plasmoid.id === "number"
+                && plasmoid.id > 0) {
+            return plasmoid.id;
+        }
+
+        return -1;
+    }
+
+    function tryAddBoundarySeparator(atRightBoundary) {
+        if (!appletAbilities || !appletAbilities.myView) {
+            return false;
+        }
+
+        var appletId = currentSeparatorBoundaryAppletId();
+        if (appletId < 0) {
+            return false;
+        }
+
+        if (atRightBoundary && typeof appletAbilities.myView.addInternalSeparatorAtRightBoundaryOfApplet === "function") {
+            return appletAbilities.myView.addInternalSeparatorAtRightBoundaryOfApplet(appletId);
+        }
+
+        if (!atRightBoundary && typeof appletAbilities.myView.addInternalSeparatorAtLeftBoundaryOfApplet === "function") {
+            return appletAbilities.myView.addInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+        }
+
+        return false;
+    }
+
+    function tryRemoveBoundarySeparator(atRightBoundary) {
+        if (!appletAbilities || !appletAbilities.myView) {
+            return false;
+        }
+
+        var appletId = currentSeparatorBoundaryAppletId();
+        if (appletId < 0) {
+            return false;
+        }
+
+        if (atRightBoundary && typeof appletAbilities.myView.removeInternalSeparatorAtRightBoundaryOfApplet === "function") {
+            return appletAbilities.myView.removeInternalSeparatorAtRightBoundaryOfApplet(appletId);
+        }
+
+        if (!atRightBoundary && typeof appletAbilities.myView.removeInternalSeparatorAtLeftBoundaryOfApplet === "function") {
+            return appletAbilities.myView.removeInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+        }
+
+        return false;
+    }
+
+    function addHeadSeparatorAtAppletBoundary(taskIndex) {
+        if (!visualParent || !appletAbilities || !appletAbilities.myView) {
+            return false;
+        }
+
+        if (visualParent.headItemIsSeparator) {
+            return false;
+        }
+
+        // For task/launcher entries, separators are index-based inside the
+        // launchers model (not containment applet boundaries).
+        if (!appletAbilities.launchers
+                || typeof appletAbilities.launchers.addInternalSeparatorAtPos !== "function"
+                || typeof visualParent.itemIndex !== "number"
+                || visualParent.itemIndex < 0) {
+            return false;
+        }
+
+        var insertAt = visualParent.itemIndex + 1;
+
+        // For the right-most launcher in this applet, prefer a containment
+        // boundary separator only when there is no launcher item to the right
+        // (for example when a widget follows tasks).
+        if (appletAbilities.indexer
+                && typeof appletAbilities.indexer.lastVisibleItemIndex === "number"
+                && visualParent.itemIndex === appletAbilities.indexer.lastVisibleItemIndex
+                && !hasLauncherAtLayoutIndex(visualParent.itemIndex + 1)) {
+            if (tryAddBoundarySeparator(true)) {
+                return true;
+            }
+        }
+
+        return appletAbilities.launchers.addInternalSeparatorAtPos(insertAt);
+    }
+
+    function addTailSeparatorAtAppletBoundary(taskIndex) {
+        if (!visualParent || !appletAbilities || !appletAbilities.myView) {
+            return false;
+        }
+
+        if (visualParent.tailItemIsSeparator) {
+            return false;
+        }
+
+        if (!appletAbilities.launchers
+                || typeof appletAbilities.launchers.addInternalSeparatorAtPos !== "function"
+                || typeof visualParent.itemIndex !== "number"
+                || visualParent.itemIndex < 0) {
+            return false;
+        }
+
+        var insertAt = visualParent.itemIndex;
+
+        // For the left-most launcher in this applet, prefer a containment
+        // boundary separator only when there is no launcher item to the left
+        // (for example when a widget precedes tasks).
+        if (appletAbilities.indexer
+                && typeof appletAbilities.indexer.firstVisibleItemIndex === "number"
+                && visualParent.itemIndex === appletAbilities.indexer.firstVisibleItemIndex
+                && !hasLauncherAtLayoutIndex(visualParent.itemIndex - 1)) {
+            if (tryAddBoundarySeparator(false)) {
+                return true;
+            }
+        }
+
+        return appletAbilities.launchers.addInternalSeparatorAtPos(insertAt);
+    }
+
     function appletAction(name) {
         // Plasma 6: the JS-accessible Plasmoid.action(name) was replaced by
         // Plasmoid.internalAction(name); fall back to scanning
@@ -1023,47 +1191,77 @@ PlasmaExtras.Menu {
     //////END OF NEW ARCHITECTURE
 
     PlasmaExtras.MenuItem {
-        id: addInternalSeparatorItem
-        enabled: !visualParent.tailItemIsSeparator || !visualParent.headItemIsSeparator
-        visible: visualParent.hasShownLauncher
+        id: addTailInternalSeparatorItem
+        visible: supportsLauncherSeparators() && !visualParent.tailItemIsSeparator
         icon: "add"
-        text: !visualParent.tailItemIsSeparator ? i18nc("add separator","Add %1", tailSeparatorText) : i18nc("add separator","Add %1", headSeparatorText)
+        text: i18nc("add separator","Add %1", tailSeparatorText)
 
         onClicked: {
-            var pos=visualParent.itemIndex;
-
-            if (!visualParent.tailItemIsSeparator) {
-                appletAbilities.launchers.addInternalSeparatorAtPos(pos);
-            } else {
-                appletAbilities.launchers.addInternalSeparatorAtPos(pos+1);
+            if (!supportsLauncherSeparators()) {
+                return;
             }
+            var pos = visualParent.itemIndex;
+            addTailSeparatorAtAppletBoundary(pos);
+        }
+    }
+
+    PlasmaExtras.MenuItem {
+        id: addHeadInternalSeparatorItem
+        visible: supportsLauncherSeparators() && !visualParent.headItemIsSeparator
+        icon: "add"
+        text: i18nc("add separator","Add %1", headSeparatorText)
+
+        onClicked: {
+            if (!supportsLauncherSeparators()) {
+                return;
+            }
+            var pos = visualParent.itemIndex;
+            addHeadSeparatorAtAppletBoundary(pos);
         }
     }
 
     PlasmaExtras.MenuItem {
         id: removeFollowingInternalSeparatorItem
-        visible: visualParent && visualParent.headItemIsSeparator
+        visible: supportsLauncherSeparators() && visualParent.headItemIsSeparator
 
         icon: "remove"
         text: i18nc("remove separator", "Remove %1", headSeparatorText)
 
         onClicked: {
+            if (!supportsLauncherSeparators()) {
+                return;
+            }
             if (visualParent.headItemIsSeparator) {
-                appletAbilities.launchers.removeInternalSeparatorAtPos(visualParent.itemIndex + 1);
+                // Prefer launcher-local separator removal first.
+                var rightIndex = visualParent.itemIndex + 1;
+                if (!appletAbilities.launchers.removeInternalSeparatorAtPos(rightIndex)) {
+                    // Fall back to containment boundary separator for edge cases
+                    // where the separator belongs to applet boundaries.
+                    tryRemoveBoundarySeparator(true);
+                }
             }
         }
     }
 
     PlasmaExtras.MenuItem {
         id: removeTailInternalSeparatorItem
-        visible: visualParent && visualParent.tailItemIsSeparator
+        visible: supportsLauncherSeparators() && visualParent.tailItemIsSeparator
 
         icon: "remove"
         text: i18nc("remove separator", "Remove %1", tailSeparatorText)
 
         onClicked: {
+            if (!supportsLauncherSeparators()) {
+                return;
+            }
             if (visualParent.tailItemIsSeparator) {
-                appletAbilities.launchers.removeInternalSeparatorAtPos(visualParent.itemIndex - 1);
+                // Prefer launcher-local separator removal first.
+                var leftIndex = visualParent.itemIndex - 1;
+                if (!appletAbilities.launchers.removeInternalSeparatorAtPos(leftIndex)) {
+                    // Fall back to containment boundary separator for edge cases
+                    // where the separator belongs to applet boundaries.
+                    tryRemoveBoundarySeparator(false);
+                }
             }
         }
     }

@@ -40,7 +40,11 @@ BackgroundProperties{
     hasTopBorder: hasAllBorders || ((solidBackground.enabledBorders & KSvg.FrameSvg.TopBorder) > 0)
     hasBottomBorder: hasAllBorders || ((solidBackground.enabledBorders & KSvg.FrameSvg.BottomBorder) > 0)
 
-    readonly property int modernLengthEndPadding: Math.max(3, Math.round(metrics.iconSize * 0.04))
+    readonly property int modernThicknessPadding: {
+        var shellPadding = Math.max(2, Math.round(metrics.iconSize * 0.045));
+        return Math.max(metrics.margin.tailThickness, shellPadding);
+    }
+    readonly property int modernLengthEndPadding: modernThicknessPadding
 
     shadows.left: hasLeftBorder ? (customShadowIsEnabled ? customShadow : shadowsSvgItem.margins.left) : 0
     shadows.right: hasRightBorder ? (customShadowIsEnabled ? customShadow : shadowsSvgItem.margins.right) : 0

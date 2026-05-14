@@ -89,4 +89,60 @@ AbilityDefinition.MyView {
     function action(name) {
         return bridge && ref.myView.isReady ? ref.myView.action(name) : null;
     }
+
+    function appletIdForVisualIndex(index) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.appletIdForVisualIndex !== "function") {
+            return -1;
+        }
+
+        return ref.myView.appletIdForVisualIndex(index);
+    }
+
+    function appletIdForAppletIndex(index) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.appletIdForAppletIndex !== "function") {
+            return -1;
+        }
+
+        return ref.myView.appletIdForAppletIndex(index);
+    }
+
+    function addInternalSeparatorBeforeApplet(appletId) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.addInternalSeparatorBeforeApplet !== "function") {
+            return false;
+        }
+
+        return ref.myView.addInternalSeparatorBeforeApplet(appletId);
+    }
+
+    function addInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.addInternalSeparatorAtLeftBoundaryOfApplet !== "function") {
+            return false;
+        }
+
+        return ref.myView.addInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+    }
+
+    function addInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.addInternalSeparatorAtRightBoundaryOfApplet !== "function") {
+            return false;
+        }
+
+        return ref.myView.addInternalSeparatorAtRightBoundaryOfApplet(appletId);
+    }
+
+    function removeInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.removeInternalSeparatorAtLeftBoundaryOfApplet !== "function") {
+            return false;
+        }
+
+        return ref.myView.removeInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+    }
+
+    function removeInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+        if (!bridge || !ref.myView.isReady || typeof ref.myView.removeInternalSeparatorAtRightBoundaryOfApplet !== "function") {
+            return false;
+        }
+
+        return ref.myView.removeInternalSeparatorAtRightBoundaryOfApplet(appletId);
+    }
 }

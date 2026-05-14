@@ -259,6 +259,7 @@ run_as_root cmake --install .
 share_dir="${install_prefix}/share"
 sync_tree "${script_dir}/containment/package" "${share_dir}/plasma/plasmoids/org.kde.latte.containment"
 sync_tree "${script_dir}/plasmoid/package"    "${share_dir}/plasma/plasmoids/org.kde.latte.plasmoid"
+sync_tree "${script_dir}/separator/package"   "${share_dir}/plasma/plasmoids/org.kde.latte.separator"
 sync_tree "${script_dir}/shell/package"       "${share_dir}/plasma/shells/org.kde.latte.shell"
 sync_tree "${script_dir}/indicators"          "${share_dir}/latte/indicators"
 
@@ -267,6 +268,7 @@ if [[ "$install_mode" == "system" ]]; then
     for user_home in "${user_homes[@]:-}"; do
         sync_tree_if_exists "${script_dir}/containment/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment"
         sync_tree_if_exists "${script_dir}/plasmoid/package"    "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid"
+        sync_tree_if_exists "${script_dir}/separator/package"   "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator"
         sync_tree_if_exists "${script_dir}/shell/package"       "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"
         sync_tree_if_exists "${script_dir}/indicators"          "${user_home}/.local/share/latte/indicators"
     done

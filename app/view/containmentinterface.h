@@ -88,7 +88,8 @@ public:
     bool updateBadgeForLatteTask(const QString identifier, const QString value);
 
     int applicationLauncherId() const;
-    int appletIdForVisualIndex(const int index);
+    Q_INVOKABLE int appletIdForVisualIndex(const int index);
+    Q_INVOKABLE int appletIdForAppletIndex(const int appletIndex) const;
 
     int indexOfApplet(const int &id);
     QList<int> appletsOrder() const;
@@ -113,6 +114,11 @@ public Q_SLOTS:
     Q_INVOKABLE bool appletIsActivationTogglesExpanded(const int id) const;
 
     Q_INVOKABLE bool isApplication(const QUrl &url) const;
+    Q_INVOKABLE bool addInternalSeparatorBeforeApplet(const int appletId);
+    Q_INVOKABLE bool addInternalSeparatorAtLeftBoundaryOfApplet(const int appletId);
+    Q_INVOKABLE bool addInternalSeparatorAtRightBoundaryOfApplet(const int appletId);
+    Q_INVOKABLE bool removeInternalSeparatorAtLeftBoundaryOfApplet(const int appletId);
+    Q_INVOKABLE bool removeInternalSeparatorAtRightBoundaryOfApplet(const int appletId);
 
     void addApplet(const QString &pluginId);
     void addApplet(QObject *metadata, int x, int y);
@@ -169,6 +175,8 @@ private:
     void addExpandedApplet(PlasmaQuick::AppletQuickItem * appletQuickItem);
     void removeExpandedApplet(PlasmaQuick::AppletQuickItem *appletQuickItem);
     void initAppletConfigurationSignals(const int &id, QQmlPropertyMap *configuration);
+    void cleanupInvalidSeparatorApplets();
+    void saveAppletsOrder(const QList<int> &order);
 
     bool appletIsExpandable(PlasmaQuick::AppletQuickItem *appletQuickItem) const;
 
@@ -211,6 +219,7 @@ private:
     QList<int> m_appletsDisabledColoring;
     QHash<int, ViewPart::AppletInterfaceData> m_appletData;
     QTimer m_appletDelayedConfigurationTimer;
+    bool m_cleaningSeparatorApplets{false};
 };
 
 }

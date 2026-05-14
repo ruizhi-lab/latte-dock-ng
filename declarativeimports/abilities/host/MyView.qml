@@ -20,6 +20,62 @@ AbilityDefinition.MyView {
         return view ? view.action(name) : null;
     }
 
+    function appletIdForVisualIndex(index) {
+        if (!view || !view.extendedInterface || typeof index !== "number") {
+            return -1;
+        }
+
+        return view.extendedInterface.appletIdForVisualIndex(index);
+    }
+
+    function appletIdForAppletIndex(index) {
+        if (!view || !view.extendedInterface || typeof index !== "number") {
+            return -1;
+        }
+
+        return view.extendedInterface.appletIdForAppletIndex(index);
+    }
+
+    function addInternalSeparatorBeforeApplet(appletId) {
+        if (!view || !view.extendedInterface || typeof appletId !== "number") {
+            return false;
+        }
+
+        return view.extendedInterface.addInternalSeparatorBeforeApplet(appletId);
+    }
+
+    function addInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+        if (!view || !view.extendedInterface || typeof appletId !== "number") {
+            return false;
+        }
+
+        return view.extendedInterface.addInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+    }
+
+    function addInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+        if (!view || !view.extendedInterface || typeof appletId !== "number") {
+            return false;
+        }
+
+        return view.extendedInterface.addInternalSeparatorAtRightBoundaryOfApplet(appletId);
+    }
+
+    function removeInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+        if (!view || !view.extendedInterface || typeof appletId !== "number") {
+            return false;
+        }
+
+        return view.extendedInterface.removeInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+    }
+
+    function removeInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+        if (!view || !view.extendedInterface || typeof appletId !== "number") {
+            return false;
+        }
+
+        return view.extendedInterface.removeInternalSeparatorAtRightBoundaryOfApplet(appletId);
+    }
+
     readonly property Item publicApi: Item {
         readonly property alias isReady: apis.isReady
         readonly property alias groupId: apis.groupId
@@ -63,6 +119,34 @@ AbilityDefinition.MyView {
 
         function inCurrentLayout() {
             return apis.inCurrentLayout();
+        }
+
+        function appletIdForVisualIndex(index) {
+            return apis.appletIdForVisualIndex(index);
+        }
+
+        function appletIdForAppletIndex(index) {
+            return apis.appletIdForAppletIndex(index);
+        }
+
+        function addInternalSeparatorBeforeApplet(appletId) {
+            return apis.addInternalSeparatorBeforeApplet(appletId);
+        }
+
+        function addInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+            return apis.addInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+        }
+
+        function addInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+            return apis.addInternalSeparatorAtRightBoundaryOfApplet(appletId);
+        }
+
+        function removeInternalSeparatorAtLeftBoundaryOfApplet(appletId) {
+            return apis.removeInternalSeparatorAtLeftBoundaryOfApplet(appletId);
+        }
+
+        function removeInternalSeparatorAtRightBoundaryOfApplet(appletId) {
+            return apis.removeInternalSeparatorAtRightBoundaryOfApplet(appletId);
         }
     }
 }

@@ -352,6 +352,7 @@ add_subdirectory(app)
 add_subdirectory(containmentactions)
 add_subdirectory(containment)
 add_subdirectory(icons)
+add_subdirectory(separator)
 add_subdirectory(plasmoid)
 add_subdirectory(shell)
 

@@ -1429,6 +1429,23 @@ int LayoutManager::dndSpacerIndex()
 
 void LayoutManager::requestAppletsOrder(const QList<int> &order)
 {
+    // Keep internal order in sync immediately, even when some requested applet
+    // items are not created yet (e.g. freshly created separators). This lets
+    // repairAppletContainers() place late-created applets at the intended slot.
+    QList<int> requestedAppletOrder;
+    requestedAppletOrder.reserve(order.count());
+    for (const int id : order) {
+        if (id > 0) {
+            requestedAppletOrder << id;
+        }
+    }
+
+    const QList<int> dedupedRequestedOrder = dedupeAppletIdsPreserveSplitters(requestedAppletOrder);
+    if (dedupedRequestedOrder != m_appletOrder) {
+        setAppletOrder(dedupedRequestedOrder);
+        updateOrder();
+    }
+
     Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
     QQuickItem *nextlayout = alignment != Latte::Types::Justify ? m_mainLayout : m_startLayout;
     QQuickItem *previousitem = nullptr;
@@ -1445,6 +1462,11 @@ void LayoutManager::requestAppletsOrder(const QList<int> &order)
             addedsplitters++;
         }
 
+        // Newly created applets can be missing momentarily; do not reset the
+        // anchor item, otherwise later items drift to wrong boundaries.
+        if (!currentitem) {
+            continue;
+        }
 
         if (previousitem) {
             insertAfter(previousitem, currentitem);

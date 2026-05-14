@@ -141,18 +141,24 @@ Item {
     function addInternalSeparatorAtPos(pos) {
         var separatorName = freeAvailableSeparatorName();
 
-        if (separatorName !== "") {
-            _launchers.launcherInMoving(separatorName, Math.max(0,pos));
-            addLauncher(separatorName);
+        if (separatorName === "") {
+            return false;
         }
+
+        _launchers.launcherInMoving(separatorName, Math.max(0,pos));
+        addLauncher(separatorName);
+        return true;
     }
 
     function removeInternalSeparatorAtPos(pos) {
         var item = childAtLayoutIndex(pos);
 
-        if (item.isSeparator) {
+        if (item && item.isSeparator) {
             removeLauncher(item.launcherUrl);
+            return true;
         }
+
+        return false;
     }
 
     function removeLauncher(launcherUrl) {

@@ -40,25 +40,22 @@ Loader {
 
     sourceComponent: Item {
         ///Shadow for separator
-        Loader{
+        MultiEffect{
             anchors.fill: separatorItem
-            active: abilityItem.isSeparatorVisible
-                    && abilityItem.abilities.myView.itemShadow.isEnabled
-                    && abilityItem.abilities.environment.isGraphicsSystemAccelerated
-            opacity: 1.0
+            visible: abilityItem.isSeparatorVisible
+                     && abilityItem.abilities.myView.itemShadow.isEnabled
+                     && abilityItem.abilities.environment.isGraphicsSystemAccelerated
+            opacity: visible ? 1.0 : 0.0
 
             Behavior on opacity {
                 NumberAnimation { duration: abilityItem.abilities.animations.speedFactor.current * abilityItem.abilities.animations.duration.large }
             }
 
-            sourceComponent: MultiEffect{
-                anchors.fill: separatorItem
-                shadowEnabled: true
-                shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
-                source: separatorItem
-                shadowBlur: 0.5
-                shadowVerticalOffset: 2
-            }
+            shadowEnabled: true
+            shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
+            source: separatorItem
+            shadowBlur: 0.5
+            shadowVerticalOffset: 2
         }
 
         Item{
