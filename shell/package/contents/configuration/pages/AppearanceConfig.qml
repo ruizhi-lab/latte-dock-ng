@@ -291,7 +291,7 @@ PlasmaComponents.Page {
                     Layout.minimumWidth: dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
-                    enabled: LatteCore.WindowSystem.compositingActive && plasmoid.configuration.animationsEnabled
+                    enabled: plasmoid.configuration.animationsEnabled
 
                     PlasmaComponents.Label {
                         text: i18n("Zoom on hover")
@@ -878,8 +878,6 @@ PlasmaComponents.Page {
                 rowSpacing: units.smallSpacing
                 columns: 2
 
-                readonly property bool colorsScriptIsPresent: universalSettings.colorsScriptIsPresent
-
                 PlasmaComponents.Label {
                     text: i18n("Palette")
                 }
@@ -930,42 +928,7 @@ PlasmaComponents.Page {
                     }
                 }
 
-                PlasmaComponents.Label {
-                    text: i18n("From Window")
-                }
 
-                LatteComponents.ComboBox {
-                    Layout.fillWidth: true
-                    model: [
-                        {
-                            name:i18n("Disabled"),
-                            icon: "",
-                            toolTip: "Colors are not going to take into account any windows"
-                        },{
-                            name:i18n("Current Active Window"),
-                            icon: !colorsGridLayout.colorsScriptIsPresent ? "state-warning" : "",
-                            toolTip: colorsGridLayout.colorsScriptIsPresent ?
-                                         i18n("Colors are going to be based on the active window") :
-                                         i18n("Colors are going to be based on the active window.\nWarning: You need to install Colors KWin Script from KDE Store")
-                        },{
-                            name: i18n("Any Touching Window"),
-                            icon: !colorsGridLayout.colorsScriptIsPresent ? "state-warning" : "",
-                            toolTip: colorsGridLayout.colorsScriptIsPresent ?
-                                         i18n("Colors are going to be based on windows that are touching the view") :
-                                         i18n("Colors are going to be based on windows that are touching the view.\nWarning: You need to install Colors KWin Script from KDE Store")
-                        }
-                    ]
-
-
-                    textRole: "name"
-                    iconRole: "icon"
-                    toolTipRole: "toolTip"
-                    blankSpaceForEmptyIcons: !colorsGridLayout.colorsScriptIsPresent
-                    popUpAlignRight: Qt.application.layoutDirection !== Qt.RightToLeft
-
-                    currentIndex: plasmoid.configuration.windowColors
-                    onCurrentIndexChanged: plasmoid.configuration.windowColors = currentIndex
-                }
             }
         }
         //! END: Colors
@@ -981,8 +944,6 @@ PlasmaComponents.Page {
                 Layout.maximumWidth: Layout.minimumWidth
                 Layout.minimumHeight: implicitHeight
                 Layout.bottomMargin: units.smallSpacing
-                enabled: LatteCore.WindowSystem.compositingActive
-
                 checked: plasmoid.configuration.useThemePanel
                 text: i18n("Background")
                 tooltip: i18n("Enable/disable background")
@@ -1000,7 +961,6 @@ PlasmaComponents.Page {
                 RowLayout {
                     Layout.minimumWidth: dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
-                    enabled: LatteCore.WindowSystem.compositingActive
 
                     PlasmaComponents.Label {
                         enabled: showBackground.checked
@@ -1049,7 +1009,6 @@ PlasmaComponents.Page {
                 RowLayout {
                     Layout.minimumWidth: dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
-                    enabled: LatteCore.WindowSystem.compositingActive
 
                     PlasmaComponents.Label {
                         text: plasmoid.configuration.backgroundOnlyOnMaximized && plasmoid.configuration.solidBackgroundForMaximized ?
@@ -1141,7 +1100,6 @@ PlasmaComponents.Page {
                 RowLayout {
                     Layout.minimumWidth: dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
-                    enabled: LatteCore.WindowSystem.compositingActive
                     visible: dialog.advancedLevel && dialog.kirigamiLibraryIsFound
 
                     PlasmaComponents.Label {
@@ -1197,7 +1155,7 @@ PlasmaComponents.Page {
                         text: i18n("Blur")
                         tooltip: i18n("Background is blurred underneath")
                         checkable: true
-                        enabled: showBackground.checked && LatteCore.WindowSystem.compositingActive
+                        enabled: showBackground.checked
 
                         readonly property int blurEnabled: plasmoid.configuration.blurEnabled
 
@@ -1215,7 +1173,7 @@ PlasmaComponents.Page {
                         text: i18n("Shadows")
                         tooltip: i18n("Background shows its shadows")
                         checkable: true
-                        enabled: showBackground.checked && LatteCore.WindowSystem.compositingActive && themeExtended.hasShadow
+                        enabled: showBackground.checked && themeExtended.hasShadow
 
                         readonly property int panelShadows: plasmoid.configuration.panelShadows
 
@@ -1264,11 +1222,9 @@ PlasmaComponents.Page {
                 LatteComponents.SubHeader {
                     visible: dialog.advancedLevel
                     text: i18nc("dynamic visibility for background", "Dynamic Visibility")
-                    enabled: LatteCore.WindowSystem.compositingActive
                 }
 
                 LatteComponents.CheckBoxesColumn {
-                    enabled: LatteCore.WindowSystem.compositingActive
                     LatteComponents.CheckBox {
                         id: solidForMaximizedChk
                         Layout.maximumWidth: dialog.optionsWidth
@@ -1315,7 +1271,6 @@ PlasmaComponents.Page {
                 LatteComponents.SubHeader {
                     visible: dialog.advancedLevel
                     text: i18n("Exceptions")
-                    enabled: LatteCore.WindowSystem.compositingActive
                 }
 
                 LatteComponents.CheckBox {
