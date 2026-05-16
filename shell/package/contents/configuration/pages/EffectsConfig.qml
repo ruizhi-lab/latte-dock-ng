@@ -171,6 +171,7 @@ PlasmaComponents.Page {
                         Layout.fillWidth: true
 
                         text: i18nc("default shadow", "Default Color")
+                        tooltip: i18n("Default shadow for applets")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
 
@@ -181,10 +182,6 @@ PlasmaComponents.Page {
                                 plasmoid.configuration.shadowColorType = type;
                             }
                         }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Default shadow for applets")
-                        }
                     }
 
                     LatteComponents.Button {
@@ -192,6 +189,7 @@ PlasmaComponents.Page {
                         Layout.fillWidth: true
 
                         text: i18nc("theme shadow", "Theme Color")
+                        tooltip: i18n("Shadow from theme color palette")
                         checked: plasmoid.configuration.shadowColorType === type
                         checkable: false
 
@@ -202,10 +200,6 @@ PlasmaComponents.Page {
                                 plasmoid.configuration.shadowColorType = type;
                             }
                         }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Shadow from theme color palette")
-                        }
                     }
 
                     //overlayed button
@@ -215,6 +209,7 @@ PlasmaComponents.Page {
                         Layout.minimumWidth: shadowOpacityLbl.width
                         height: parent.height
                         text: " "
+                        tooltip: i18n("Use set shadow color")
 
                         checkable: false
                         checked: plasmoid.configuration.shadowColorType === type
@@ -225,10 +220,6 @@ PlasmaComponents.Page {
                             if (pressed) {
                                 plasmoid.configuration.shadowColorType = type;
                             }
-                        }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Use set shadow color")
                         }
 
                         Rectangle{

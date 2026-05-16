@@ -652,9 +652,9 @@ Loader {
                     Layout.fillWidth: true
                     enabled: dialog.advancedLevel
                     text: i18n("Remove")
+                    tooltip: i18n("Remove current dock")
                     icon.name: "delete"
                     opacity: enabled ? 1 : 0
-                    PlasmaComponents.ToolTip { text: i18n("Remove current dock") }
 
                     onClicked: latteView.removeView()
                 }
@@ -664,8 +664,8 @@ Loader {
                     Layout.fillWidth: true
 
                     text: i18n("Close")
+                    tooltip: i18n("Close settings window")
                     icon.name: "dialog-close"
-                    PlasmaComponents.ToolTip { text: i18n("Close settings window") }
 
                     onClicked: viewConfig.hideConfigWindow();
                 }

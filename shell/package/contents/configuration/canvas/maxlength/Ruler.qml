@@ -4,7 +4,7 @@
 */
 
 import QtQuick 2.7
-
+import QtQuick.Controls 2.15 as QQC2
 import QtQuick.Layouts 1.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -316,6 +316,11 @@ Item{
     PlasmaComponents.Button {
         anchors.fill: parent
         opacity: 0
-        PlasmaComponents.ToolTip { text: rulerItem.tooltip }
+        Kirigami.Theme.inherit: true
+        hoverEnabled: true
+
+        QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+        QQC2.ToolTip.visible: hovered && rulerItem.tooltip !== ""
+        QQC2.ToolTip.text: rulerItem.tooltip
     }
 }

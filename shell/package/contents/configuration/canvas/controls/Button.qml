@@ -5,6 +5,7 @@
 
 import QtQuick 2.7
 import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -103,9 +104,15 @@ Item{
         id: tooltipBtn
         anchors.fill: visibleButtonRoot
         opacity: 0
+        Kirigami.Theme.inherit: true
+        Kirigami.Theme.colorSet: Kirigami.Theme.Button
+        palette.buttonText: button.appliedTextColor
+        hoverEnabled: true
+
+        QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+        QQC2.ToolTip.visible: hovered && button.tooltip !== ""
+        QQC2.ToolTip.text: button.tooltip
 
         onPressedChanged: button.pressedChanged(pressed)
-
-        PlasmaComponents.ToolTip { text: button.tooltip }
     }
 }

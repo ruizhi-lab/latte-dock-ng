@@ -5,6 +5,7 @@
 
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -102,11 +103,12 @@ Item {
             anchors.fill: textElement
             opacity: 0
             Kirigami.Theme.inherit: true
-            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.colorSet: Kirigami.Theme.Button
+            hoverEnabled: true
 
-            PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
-            PlasmaComponents.ToolTip.visible: hovered && item.tooltip !== ""
-            PlasmaComponents.ToolTip.text: item.tooltip
+            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+            QQC2.ToolTip.visible: hovered && item.tooltip !== ""
+            QQC2.ToolTip.text: item.tooltip
 
             onPressedChanged: {
                 if (pressed) {
@@ -130,11 +132,12 @@ Item {
             anchors.fill: parent
             opacity: 0
             Kirigami.Theme.inherit: true
-            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.colorSet: Kirigami.Theme.Button
+            hoverEnabled: true
 
-            PlasmaComponents.ToolTip.delay: Kirigami.Units.toolTipDelay
-            PlasmaComponents.ToolTip.visible: hovered && item.tooltip !== ""
-            PlasmaComponents.ToolTip.text: item.tooltip
+            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+            QQC2.ToolTip.visible: hovered && item.tooltip !== ""
+            QQC2.ToolTip.text: item.tooltip
 
             onPressedChanged: {
                 if (pressed) {

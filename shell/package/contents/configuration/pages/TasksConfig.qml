@@ -367,6 +367,7 @@ PlasmaComponents.Page {
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("unique launchers group","Unique Group")
+                        tooltip: i18n("Use a unique set of launchers for this view which is independent from any other view")
                         checked: parent.group === group
                         checkable: false
 
@@ -377,10 +378,6 @@ PlasmaComponents.Page {
                                 tasks.configuration.launchersGroup = group;
                             }
                         }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Use a unique set of launchers for this view which is independent from any other view")
-                        }
                     }
 
                     LatteComponents.Button {
@@ -388,6 +385,7 @@ PlasmaComponents.Page {
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("layout launchers group","Layout Group")
+                        tooltip: i18n("Use the current layout set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views in the <b>same layout</b>")
                         checked: parent.group === group
                         checkable: false
                         //! it is shown only when the user has activated that option manually from the text layout file
@@ -400,16 +398,13 @@ PlasmaComponents.Page {
                                 tasks.configuration.launchersGroup = group;
                             }
                         }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Use the current layout set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views in the <b>same layout</b>")
-                        }
                     }
 
                     LatteComponents.Button {
                         Layout.minimumWidth: parent.buttonSize
                         Layout.maximumWidth: Layout.minimumWidth
                         text: i18nc("global launchers group","Global Group")
+                        tooltip: i18n("Use the global set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views and between <b>different layouts</b>")
                         checked: parent.group === group
                         checkable: false
 
@@ -419,10 +414,6 @@ PlasmaComponents.Page {
                             if (pressed) {
                                 tasks.configuration.launchersGroup = group;
                             }
-                        }
-
-                        PlasmaComponents.ToolTip {
-                            text: i18n("Use the global set of launchers for this latteView. This group provides launchers <b>synchronization</b> between different views and between <b>different layouts</b>")
                         }
                     }
                 }

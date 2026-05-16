@@ -4,6 +4,7 @@
 */
 
 import QtQuick 2.8
+import QtQuick.Controls 2.15 as QQC2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.0 as Kirigami
@@ -138,7 +139,12 @@ Loader {
         PlasmaComponents.Button {
             anchors.fill: editBackMouseArea
             opacity: 0
-            PlasmaComponents.ToolTip { text: editBackMouseArea.tooltip }
+            Kirigami.Theme.inherit: true
+            hoverEnabled: true
+
+            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+            QQC2.ToolTip.visible: hovered && editBackMouseArea.tooltip !== ""
+            QQC2.ToolTip.text: editBackMouseArea.tooltip
         }
 
         //! Settings Overlay
