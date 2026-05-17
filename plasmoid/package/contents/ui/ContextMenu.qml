@@ -689,6 +689,19 @@ PlasmaExtras.Menu {
     /// Sub Items
 
     PlasmaExtras.MenuItem {
+        id: widgetSectionHeader
+        section: true
+        text: plasmoid.title
+        visible: true
+    }
+
+    PlasmaExtras.MenuItem {
+        id: widgetTaskSeparator
+        separator: true
+        visible: true
+    }
+
+    PlasmaExtras.MenuItem {
         id: startNewInstanceItem
         visible: visualParent && canLaunchNewWindow()
 
