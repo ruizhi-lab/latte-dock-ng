@@ -684,7 +684,7 @@ PlasmaExtras.Menu {
 
             var item = newMenuItem(menu);
             item.action = action;
-            menu.addMenuItem(item, widgetTaskSeparator);
+            menu.addMenuItem(item, runAssociatedAppItem);
         }
     }
 
@@ -722,13 +722,7 @@ PlasmaExtras.Menu {
         id: widgetSectionHeader
         section: true
         text: plasmoid.title
-        visible: true
-    }
-
-    PlasmaExtras.MenuItem {
-        id: widgetTaskSeparator
-        separator: true
-        visible: true
+        visible: plasmoid.title !== ""
     }
 
     PlasmaExtras.MenuItem {
@@ -755,6 +749,27 @@ PlasmaExtras.Menu {
                 configureAction.trigger();
             }
         }
+    }
+
+    PlasmaExtras.MenuItem {
+        id: alternativesMenuItem
+        readonly property var alternativesAction: menu.appletAction("alternatives")
+        visible: alternativesAction && alternativesAction.enabled
+                 && plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
+        text: alternativesAction ? alternativesAction.text : i18n("Alternatives")
+        icon: alternativesAction ? alternativesAction.icon : ""
+
+        onClicked: {
+            if (alternativesAction) {
+                alternativesAction.trigger();
+            }
+        }
+    }
+
+    PlasmaExtras.MenuItem {
+        id: widgetTaskSeparator
+        separator: true
+        visible: true
     }
 
     PlasmaExtras.MenuItem {
@@ -1331,20 +1346,6 @@ PlasmaExtras.Menu {
                     // where the separator belongs to applet boundaries.
                     tryRemoveBoundarySeparator(false);
                 }
-            }
-        }
-    }
-
-    PlasmaExtras.MenuItem {
-        id: alternativesMenuItem
-        readonly property var alternativesAction: menu.appletAction("alternatives")
-        visible: alternativesAction && alternativesAction.enabled
-        text: alternativesAction ? alternativesAction.text : i18n("Alternatives")
-        icon: alternativesAction ? alternativesAction.icon : ""
-
-        onClicked: {
-            if (alternativesAction) {
-                alternativesAction.trigger();
             }
         }
     }
