@@ -1327,18 +1327,16 @@ PlasmaExtras.Menu {
 
     PlasmaExtras.MenuItem {
         separator: true
-        visible: removePlasmoidInMyViewEditMode.visible
+        visible: removePlasmoidItem.visible
     }
 
     PlasmaExtras.MenuItem {
-        id: removePlasmoidInMyViewEditMode
+        id: removePlasmoidItem
         readonly property var removeAction: menu.appletAction("remove")
-        //! Workaround: this is preferred compared to:
-        //!   action:plasmoid.action("remove")
-        //! which shows the action always and not dependent of myView.inEditMode flag
         text: removeAction ? removeAction.text : i18n("Remove")
         icon: removeAction ? removeAction.icon : ""
-        visible: appletAbilities.myView.isReady && appletAbilities.myView.inEditMode && !!removeAction
+        visible: removeAction && removeAction.enabled
+                && plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
 
         onClicked: {
             if (removeAction) {
