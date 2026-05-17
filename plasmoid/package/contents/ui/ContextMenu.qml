@@ -1308,8 +1308,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: alternativesMenuItem
         readonly property var alternativesAction: menu.appletAction("alternatives")
-        visible: (appletAbilities.myView.isReady && appletAbilities.myView.inEditMode)
-                 || (!appletAbilities.myView.isReady && plasmoid.userConfiguring /*normal plasmoid in the desktop*/)
+        visible: alternativesAction && alternativesAction.enabled
         text: alternativesAction ? alternativesAction.text : i18n("Alternatives")
         icon: alternativesAction ? alternativesAction.icon : ""
 
