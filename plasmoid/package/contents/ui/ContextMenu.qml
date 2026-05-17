@@ -702,6 +702,32 @@ PlasmaExtras.Menu {
     }
 
     PlasmaExtras.MenuItem {
+        id: runAssociatedAppItem
+        readonly property var runAssocAction: menu.appletAction("run associated application")
+        visible: runAssocAction && runAssocAction.enabled
+        text: runAssocAction ? runAssocAction.text : ""
+        icon: runAssocAction ? runAssocAction.icon : ""
+        onClicked: {
+            if (runAssocAction) {
+                runAssocAction.trigger();
+            }
+        }
+    }
+
+    PlasmaExtras.MenuItem {
+        id: configureWidgetItem
+        readonly property var configureAction: menu.appletAction("configure")
+        visible: configureAction && configureAction.enabled
+        text: configureAction && configureAction.text ? configureAction.text : i18n("Configure %1...", plasmoid.title)
+        icon: configureAction ? configureAction.icon : ""
+        onClicked: {
+            if (configureAction) {
+                configureAction.trigger();
+            }
+        }
+    }
+
+    PlasmaExtras.MenuItem {
         id: startNewInstanceItem
         visible: visualParent && canLaunchNewWindow()
 
