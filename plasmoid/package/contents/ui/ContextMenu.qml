@@ -332,6 +332,7 @@ PlasmaExtras.Menu {
             Plasmoid.contextualActionsAboutToShow();
         }
 
+        loadWidgetActions();
         loadDynamicLaunchActions(launcherUrlForPin());
         loadMyViewActions();
         // backend.ungrabMouse(visualParent);
@@ -655,6 +656,35 @@ PlasmaExtras.Menu {
                 return this.action.visible;
             });
             menu.addMenuItem(item, myViewActions);
+        }
+    }
+
+    function loadWidgetActions() {
+        if (typeof Plasmoid === "undefined" || !Plasmoid || !Plasmoid.contextualActions) {
+            return;
+        }
+
+        var skipNames = ["configure", "remove", "alternatives", "run associated application"];
+        var actions = Plasmoid.contextualActions;
+
+        for (var i = 0; i < actions.length; ++i) {
+            var action = actions[i];
+            if (!action || !action.enabled) {
+                continue;
+            }
+            if (action.separator) {
+                continue;
+            }
+
+            var objName = String(action.objectName || "");
+            var actionName = String(action.name || "");
+            if (skipNames.indexOf(objName) >= 0 || skipNames.indexOf(actionName) >= 0) {
+                continue;
+            }
+
+            var item = newMenuItem(menu);
+            item.action = action;
+            menu.addMenuItem(item, widgetTaskSeparator);
         }
     }
 
