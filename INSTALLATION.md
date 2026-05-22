@@ -43,7 +43,7 @@ sudo pacman -Syu
 sudo pacman -S \
   cmake extra-cmake-modules \
   qt6-base qt6-declarative qt6-wayland \
-  plasma-framework kactivities kcoreaddons kguiaddons kdbusaddons \
+  libplasma kactivities kcoreaddons kguiaddons kdbusaddons \
   kdeclarative kxmlgui kiconthemes kio ki18n knotifications \
   knewstuff karchive kglobalaccel kcrash kwindowsystem \
   plasma-wayland-protocols wayland \
