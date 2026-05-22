@@ -14,6 +14,8 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.latte.private.tasks 0.1 as LatteTasks
 
 Item {
+    id: mainItem
+
     width: childrenRect.width
     height: childrenRect.height
 
@@ -21,7 +23,7 @@ Item {
 
     property alias cfg_wheelEnabled: wheelEnabled.checked
     property alias cfg_middleClickAction: middleClickAction.currentIndex
-    property alias cfg_hoverAction: hoverActionCmb.currentIndex
+    property int cfg_hoverAction: LatteTasks.types.NoneAction
 
     property alias cfg_showOnlyCurrentScreen: showOnlyCurrentScreen.checked
     property alias cfg_showOnlyCurrentDesktop: showOnlyCurrentDesktop.checked
@@ -29,6 +31,34 @@ Item {
 
     property alias cfg_showInfoBadge: showInfoBadgeChk.checked
     property alias cfg_showWindowActions: windowActionsChk.checked
+
+    function hoverActionToIndex(action) {
+        switch(action) {
+        case LatteTasks.types.NoneAction:
+            return 0;
+        case LatteTasks.types.PreviewWindows:
+            return 1;
+        case LatteTasks.types.HighlightWindows:
+            return 2;
+        case LatteTasks.types.PreviewAndHighlightWindows:
+            return 3;
+        }
+
+        return 0;
+    }
+
+    function hoverIndexToAction(index) {
+        switch(index) {
+        case 1:
+            return LatteTasks.types.PreviewWindows;
+        case 2:
+            return LatteTasks.types.HighlightWindows;
+        case 3:
+            return LatteTasks.types.PreviewAndHighlightWindows;
+        }
+
+        return LatteTasks.types.NoneAction;
+    }
 
     ColumnLayout{
         spacing: 15
@@ -85,36 +115,10 @@ Item {
                             i18n("Preview and Highlight Windows"),
                         ]
 
-                        currentIndex: {
-                            switch(plasmoid.configuration.hoverAction) {
-                            case LatteTasks.types.NoneAction:
-                                return 0;
-                            case LatteTasks.types.PreviewWindows:
-                                return 1;
-                            case LatteTasks.types.HighlightWindows:
-                                return 2;
-                            case LatteTasks.types.PreviewAndHighlightWindows:
-                                return 3;
-                            }
-
-                            return 0;
-                        }
+                        currentIndex: mainItem.hoverActionToIndex(mainItem.cfg_hoverAction)
 
                         onCurrentIndexChanged: {
-                            switch(currentIndex) {
-                            case 0:
-                                plasmoid.configuration.hoverAction = LatteTasks.types.NoneAction;
-                                break;
-                            case 1:
-                                plasmoid.configuration.hoverAction = LatteTasks.types.PreviewWindows;
-                                break;
-                            case 2:
-                                plasmoid.configuration.hoverAction = LatteTasks.types.HighlightWindows;
-                                break;
-                            case 3:
-                                plasmoid.configuration.hoverAction = LatteTasks.types.PreviewAndHighlightWindows;
-                                break;
-                            }
+                            mainItem.cfg_hoverAction = mainItem.hoverIndexToAction(currentIndex);
                         }
                     }
 

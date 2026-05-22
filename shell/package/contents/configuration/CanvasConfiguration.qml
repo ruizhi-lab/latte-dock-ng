@@ -29,8 +29,7 @@ Loader {
         property int panelAlignment: plasmoid.configuration.alignment
 
         readonly property real appliedOpacity: imageTiler.opacity
-        readonly property real maxOpacity: universalSettings.inConfigureAppletsMode || !LatteCore.WindowSystem.compositingActive ?
-                                               1 : plasmoid.configuration.editBackgroundOpacity
+        readonly property real maxOpacity: 0
 
         property real offset: {
             if (root.isHorizontal) {
@@ -79,7 +78,7 @@ Loader {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 0.8 * root.animationSpeed
+                    duration: universalSettings.inConfigureAppletsMode ? 0 : 0.8 * root.animationSpeed
                     easing.type: Easing.OutCubic
                 }
             }

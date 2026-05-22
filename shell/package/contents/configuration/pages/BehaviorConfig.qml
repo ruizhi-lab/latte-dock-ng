@@ -245,44 +245,55 @@ PlasmaComponents.Page {
                 LayoutMirroring.enabled: false
                 spacing: 2
 
-                readonly property int configAlignment: plasmoid.configuration.alignment
+                readonly property int currentAlignment: latteView && latteView.alignment !== LatteCore.types.NoneAlignment ? latteView.alignment : plasmoid.configuration.alignment
                 readonly property int buttonSize: (dialog.optionsWidth - (spacing * 3)) / 4
+                function applyAlignment(alignment) {
+                    if (plasmoid.configuration.alignment !== alignment) {
+                        plasmoid.configuration.alignment = alignment;
+                    }
+
+                    if (latteView && latteView.alignment !== alignment) {
+                        latteView.alignment = alignment;
+                    }
+
+                    latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment);
+                }
 
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: panelIsVertical ? i18nc("top alignment", "Top") : i18nc("left alignment", "Left")
                     icon.name: panelIsVertical ? "format-align-vertical-top" : "format-justify-left"
-                    checked: parent.configAlignment === alignment
+                    checked: parent.currentAlignment === alignment
                     checkable: false
 
                     property int alignment: panelIsVertical ? LatteCore.types.Top : LatteCore.types.Left
 
-                    onClicked: latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment)
+                    onClicked: parent.applyAlignment(alignment)
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18nc("center alignment", "Center")
                     icon.name: panelIsVertical ? "format-align-vertical-center" : "format-justify-center"
-                    checked: parent.configAlignment === alignment
+                    checked: parent.currentAlignment === alignment
                     checkable: false
 
                     property int alignment: LatteCore.types.Center
 
-                    onClicked: latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment)
+                    onClicked: parent.applyAlignment(alignment)
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: panelIsVertical ? i18nc("bottom alignment", "Bottom") : i18nc("right alignment", "Right")
                     icon.name: panelIsVertical ? "format-align-vertical-bottom" : "format-justify-right"
-                    checked: parent.configAlignment === alignment
+                    checked: parent.currentAlignment === alignment
                     checkable: false
 
                     property int alignment: panelIsVertical ? LatteCore.types.Bottom : LatteCore.types.Right
 
-                    onClicked: latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment)
+                    onClicked: parent.applyAlignment(alignment)
                 }
 
                 LatteComponents.Button {
@@ -290,12 +301,12 @@ PlasmaComponents.Page {
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18nc("justify alignment", "Justify")
                     icon.name: "format-justify-fill"
-                    checked: parent.configAlignment === alignment
+                    checked: parent.currentAlignment === alignment
                     checkable: false
 
                     property int alignment: LatteCore.types.Justify
 
-                    onClicked: latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment)
+                    onClicked: parent.applyAlignment(alignment)
                 }
             }
         }
@@ -648,29 +659,43 @@ PlasmaComponents.Page {
                         LatteComponents.ComboBox {
                             id: scrollAction
                             Layout.fillWidth: true
-                            model: [i18nc("none scroll actions", "No Action"),
-                                i18n("Cycle Through Desktops"),
-                                i18n("Cycle Through Tasks"),
-                                i18n("Cycle And Minimize Tasks")
+                            model: [{
+                                    text: i18nc("none scroll actions", "No Action"),
+                                    value: LatteContainment.types.ScrollNone
+                                }, {
+                                    text: i18n("Cycle Through Desktops"),
+                                    value: LatteContainment.types.ScrollDesktops
+                                }, {
+                                    text: i18n("Cycle Through Tasks"),
+                                    value: LatteContainment.types.ScrollTasks
+                                }, {
+                                    text: i18n("Cycle And Minimize Tasks"),
+                                    value: LatteContainment.types.ScrollToggleMinimized
+                                }
                             ]
+                            textRole: "text"
 
-                            currentIndex: plasmoid.configuration.scrollAction
+                            currentIndex: indexForAction(plasmoid.configuration.scrollAction)
 
                             onCurrentIndexChanged: {
-                                switch(currentIndex) {
-                                case LatteContainment.types.ScrollNone:
-                                    plasmoid.configuration.scrollAction = LatteContainment.types.ScrollNone;
-                                    break;
-                                case LatteContainment.types.ScrollDesktops:
-                                    plasmoid.configuration.scrollAction = LatteContainment.types.ScrollDesktops;
-                                    break;
-                                case LatteContainment.types.ScrollTasks:
-                                    plasmoid.configuration.scrollAction = LatteContainment.types.ScrollTasks;
-                                    break;
-                                case LatteContainment.types.ScrollToggleMinimized:
-                                    plasmoid.configuration.scrollAction = LatteContainment.types.ScrollToggleMinimized;
-                                    break;
+                                if (currentIndex < 0 || !model[currentIndex]) {
+                                    return;
                                 }
+
+                                var action = model[currentIndex].value;
+                                if (plasmoid.configuration.scrollAction !== action) {
+                                    plasmoid.configuration.scrollAction = action;
+                                }
+                            }
+
+                            function indexForAction(action) {
+                                for (var i = 0; i < model.length; ++i) {
+                                    if (model[i].value === action) {
+                                        return i;
+                                    }
+                                }
+
+                                return 0;
                             }
                         }
                     }

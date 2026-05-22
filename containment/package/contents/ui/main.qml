@@ -528,6 +528,8 @@ ContainmentItem {
                 root.forceDestroyInternalSplittersNow();
             } else {
                 fastLayoutManager.joinLayoutsToMainLayout();
+                root.destroyInternalViewSplitters();
+                root.forceDestroyInternalSplittersNow();
             }
 
             layouter.appletsInParentChange = false;
@@ -563,6 +565,8 @@ ContainmentItem {
             root.forceDestroyInternalSplittersNow();
         } else {
             fastLayoutManager.joinLayoutsToMainLayout();
+            root.destroyInternalViewSplitters();
+            root.forceDestroyInternalSplittersNow();
         }
 
         layouter.appletsInParentChange = false;
