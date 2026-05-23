@@ -57,7 +57,6 @@ class UniversalSettings : public QObject
     Q_PROPERTY(QStringList launchers READ launchers WRITE setLaunchers NOTIFY launchersChanged)
     Q_PROPERTY(QStringList contextMenuActionsAlwaysShown READ contextMenuActionsAlwaysShown WRITE setContextMenuActionsAlwaysShown NOTIFY actionsChanged)
 
-    Q_PROPERTY(Latte::Settings::MouseSensitivity sensitivity READ sensitivity WRITE setSensitivity NOTIFY sensitivityChanged)
 
     Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens)
 
@@ -111,9 +110,6 @@ public:
     QStringList launchers() const;
     void setLaunchers(QStringList launcherList);
 
-    Settings::MouseSensitivity sensitivity();
-    void setSensitivity(Settings::MouseSensitivity sense);
-
     QQmlListProperty<QScreen> screens();
     static qsizetype countScreens(QQmlListProperty<QScreen> *property); //! is needed by screens()
     static QScreen *atScreens(QQmlListProperty<QScreen> *property, qsizetype index); //! is needed by screens()
@@ -144,7 +140,6 @@ Q_SIGNALS:
     void isAvailableGeometryBroadcastedToPlasmaChanged();
     void metaPressAndHoldEnabledChanged();
     void parabolicSpreadChanged();
-    void sensitivityChanged();
     void screensCountChanged();
     void screenScalesChanged();
     void screenTrackerIntervalChanged();
@@ -193,7 +188,6 @@ private:
     QStringList m_contextMenuActionsAlwaysShown;
 
     MemoryUsage::LayoutsMemory m_memoryUsage;
-    Settings::MouseSensitivity m_sensitivity{Settings::HighMouseSensitivity};
 
     //! ScreenName, <width_scale, height_scale>
     QHash<QString, ScreenScales> m_screenScales;

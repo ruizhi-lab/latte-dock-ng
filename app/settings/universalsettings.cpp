@@ -46,7 +46,6 @@ UniversalSettings::UniversalSettings(KSharedConfig::Ptr config, QObject *parent)
     connect(this, &UniversalSettings::layoutsMemoryUsageChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::metaPressAndHoldEnabledChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::parabolicSpreadChanged, this, &UniversalSettings::saveConfig);
-    connect(this, &UniversalSettings::sensitivityChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::screenTrackerIntervalChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::showInfoWindowChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::singleModeLayoutNameChanged, this, &UniversalSettings::saveConfig);
@@ -365,22 +364,6 @@ void UniversalSettings::setLayoutsMemoryUsage(MemoryUsage::LayoutsMemory layouts
     Q_EMIT layoutsMemoryUsageChanged();
 }
 
-Settings::MouseSensitivity UniversalSettings::sensitivity()
-{
-    //! return always default option as the users have not shown any interest in that option
-    return Latte::Settings::HighMouseSensitivity;
- //   return m_sensitivity;
-}
-
-void UniversalSettings::setSensitivity(Settings::MouseSensitivity sense)
-{
-    if (m_sensitivity == sense) {
-        return;
-    }
-
-    m_sensitivity = sense;
- //   Q_EMIT sensitivityChanged();
-}
 
 float UniversalSettings::screenWidthScale(QString screenName) const
 {
@@ -465,7 +448,6 @@ void UniversalSettings::loadConfig()
     m_parabolicSpread = m_universalGroup.readEntry("parabolicSpread", Data::Preferences::PARABOLICSPREAD);
     m_thicknessMarginInfluence = m_universalGroup.readEntry("parabolicThicknessMarginInfluence", Data::Preferences::THICKNESSMARGININFLUENCE);
     m_memoryUsage = static_cast<MemoryUsage::LayoutsMemory>(m_universalGroup.readEntry("memoryUsage", (int)MemoryUsage::SingleLayout));
-    //m_sensitivity = static_cast<Settings::MouseSensitivity>(m_universalGroup.readEntry("mouseSensitivity", (int)Settings::HighMouseSensitivity));
 
     loadScalesConfig();
 
@@ -490,7 +472,6 @@ void UniversalSettings::saveConfig()
     m_universalGroup.writeEntry("parabolicSpread", m_parabolicSpread);
     m_universalGroup.writeEntry("parabolicThicknessMarginInfluence", m_thicknessMarginInfluence);
     m_universalGroup.writeEntry("memoryUsage", (int)m_memoryUsage);
-    //m_universalGroup.writeEntry("mouseSensitivity", (int)m_sensitivity);
     syncSettings();
 }
 

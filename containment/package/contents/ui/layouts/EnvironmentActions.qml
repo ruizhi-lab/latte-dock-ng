@@ -39,6 +39,13 @@ Loader {
         return useAllLayouts ? root.maxLength : background.totals.visualLength;
     }
 
+    function activateWheelTask(next) {
+        var loaded = environmentLoader.item;
+        if (loaded && loaded.tasksLoader && loaded.tasksLoader.active) {
+            loaded.tasksLoader.item.activateNextPrevTask(next);
+        }
+    }
+
     sourceComponent: MouseArea{
         id: mainArea
         acceptedButtons: Qt.LeftButton | Qt.MidButton

@@ -5,16 +5,15 @@
 */
 
 function wheelActivateNextPrevTask(wheelDelta, eventDelta) {
-    // magic number 120 for common "one click"
-    // See: http://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
+    // Use a lower threshold (15 deg = one "click" on most mice)
     wheelDelta += eventDelta;
     var increment = 0;
-    while (wheelDelta >= 120) {
-        wheelDelta -= 120;
+    while (wheelDelta >= 15) {
+        wheelDelta -= 15;
         increment++;
     }
-    while (wheelDelta <= -120) {
-        wheelDelta += 120;
+    while (wheelDelta <= -15) {
+        wheelDelta += 15;
         increment--;
     }
     while (increment != 0) {
@@ -62,8 +61,8 @@ function activateNextPrevTask(next) {
         var task = taskList.children[i];
         var modelIndex = task.modelIndex(i);
 
-        if (task !== undefined){
-            if (task.IsLauncher !== true && task.IsStartup !== true) {
+        if (task !== undefined && task.m !== undefined){
+            if (task.m.IsLauncher !== true && task.m.IsStartup !== true) {
                 if (task.m.IsGroupParent === true) {
                     for (var j = 0; j < tasksModel.rowCount(modelIndex); ++j) {
                         taskIndexList.push(tasksModel.makeModelIndex(i, j));

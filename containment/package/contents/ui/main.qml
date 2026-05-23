@@ -1336,6 +1336,83 @@ ContainmentItem {
         }
     }
 
+    // Bridge to receive wheel events outside DragDrop.DropArea, which blocks them in Qt 6
+    MouseArea {
+        anchors.fill: parent
+        z: 10000
+        acceptedButtons: Qt.NoButton
+        property bool wheelIsBlocked: false
+
+        function rootWheelActivateTask(next) {
+            for (var ai = 0; ai < plasmoid.applets.length; ++ai) {
+                var applet = plasmoid.applets[ai];
+                if (applet.pluginName === "org.kde.latte.plasmoid") {
+                    var quickItem = fastLayoutManager.resolveAppletQuickItem(applet);
+                    if (quickItem && quickItem.activateWheelTask) {
+                        quickItem.activateWheelTask(next);
+                        return;
+                    }
+                }
+            }
+            layoutsContainer.activateWheelTask(next);
+        }
+
+        Timer {
+            id: rootWheelDelayer
+            interval: 200
+            repeat: false
+            onTriggered: parent.wheelIsBlocked = false
+        }
+
+        onWheel: function(wheel) {
+            if (wheelIsBlocked) return;
+            if (root.scrollAction === LatteContainment.types.ScrollNone) {
+                root.emptyAreasWheel(wheel);
+                return;
+            }
+
+            wheelIsBlocked = true;
+            rootWheelDelayer.start();
+
+            var delta = (wheel.angleDelta.y>=0 && wheel.angleDelta.x>=0)
+                ? Math.max(wheel.angleDelta.y, wheel.angleDelta.x)
+                : Math.min(wheel.angleDelta.y, wheel.angleDelta.x);
+            var angle = delta / 8;
+            var ctrlPressed = (wheel.modifiers & Qt.ControlModifier);
+
+            if (angle > 10) {
+                // Scroll UP = go LEFT (previous item in visual order)
+                if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
+                    latteView.windowsTracker.switchToPreviousVirtualDesktop();
+                } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
+                    latteView.windowsTracker.switchToPreviousActivity();
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
+                    if (!ctrlPressed) rootWheelActivateTask(false);
+                    else if (!selectedWindowsTracker.lastActiveWindow.isMaximized)
+                        selectedWindowsTracker.lastActiveWindow.requestToggleMaximized();
+                } else {
+                    rootWheelActivateTask(false);
+                }
+            } else if (angle < -10) {
+                // Scroll DOWN = go RIGHT (next item in visual order)
+                if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
+                    latteView.windowsTracker.switchToNextVirtualDesktop();
+                } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
+                    latteView.windowsTracker.switchToNextActivity();
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
+                    if (!ctrlPressed) rootWheelActivateTask(true);
+                    else {
+                        var lw = selectedWindowsTracker.lastActiveWindow;
+                        if (lw.isValid && !lw.isMinimized && lw.isMaximized) lw.requestToggleMaximized();
+                        else if (lw.isValid && !lw.isMinimized && !lw.isMaximized) lw.requestToggleMinimized();
+                    }
+                } else {
+                    rootWheelActivateTask(true);
+                }
+            }
+        }
+    }
+
     Colorizer.Manager {
         id: colorizerManager
     }

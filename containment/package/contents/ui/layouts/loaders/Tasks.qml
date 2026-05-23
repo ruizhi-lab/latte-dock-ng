@@ -30,6 +30,8 @@ Loader {
 
             groupMode: TaskManager.TasksModel.GroupApplications
             sortMode: TaskManager.TasksModel.SortManual
+            hideActivatedLaunchers: true
+            taskReorderingEnabled: true
         }
 
         TaskManager.VirtualDesktopInfo {
@@ -80,7 +82,8 @@ Loader {
             var target = taskIndexList[0];
 
             for (var i = 0; i < taskIndexList.length; ++i) {
-                if (taskIndexList[i] === activeTaskIndex)
+                var t1 = taskIndexList[i];
+                if (t1 && activeTaskIndex && t1.row === activeTaskIndex.row && t1.column === activeTaskIndex.column)
                 {
                     if (next && i < (taskIndexList.length - 1)) {
                         target = taskIndexList[i + 1];

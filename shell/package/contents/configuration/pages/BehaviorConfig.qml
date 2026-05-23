@@ -659,43 +659,18 @@ PlasmaComponents.Page {
                         LatteComponents.ComboBox {
                             id: scrollAction
                             Layout.fillWidth: true
-                            model: [{
-                                    text: i18nc("none scroll actions", "No Action"),
-                                    value: LatteContainment.types.ScrollNone
-                                }, {
-                                    text: i18n("Cycle Through Desktops"),
-                                    value: LatteContainment.types.ScrollDesktops
-                                }, {
-                                    text: i18n("Cycle Through Tasks"),
-                                    value: LatteContainment.types.ScrollTasks
-                                }, {
-                                    text: i18n("Cycle And Minimize Tasks"),
-                                    value: LatteContainment.types.ScrollToggleMinimized
+                            model: [i18nc("none scroll actions", "No Action"),
+                                i18n("Cycle Through Desktops"),
+                                i18n("Cycle Through Activities"),
+                                i18n("Cycle Through Tasks"),
+                                i18n("Cycle And Minimize Tasks")]
+
+                            currentIndex: plasmoid.configuration.scrollAction
+
+                            onActivated: {
+                                if (plasmoid.configuration.scrollAction !== currentIndex) {
+                                    plasmoid.configuration.scrollAction = currentIndex;
                                 }
-                            ]
-                            textRole: "text"
-
-                            currentIndex: indexForAction(plasmoid.configuration.scrollAction)
-
-                            onCurrentIndexChanged: {
-                                if (currentIndex < 0 || !model[currentIndex]) {
-                                    return;
-                                }
-
-                                var action = model[currentIndex].value;
-                                if (plasmoid.configuration.scrollAction !== action) {
-                                    plasmoid.configuration.scrollAction = action;
-                                }
-                            }
-
-                            function indexForAction(action) {
-                                for (var i = 0; i < model.length; ++i) {
-                                    if (model[i].value === action) {
-                                        return i;
-                                    }
-                                }
-
-                                return 0;
                             }
                         }
                     }

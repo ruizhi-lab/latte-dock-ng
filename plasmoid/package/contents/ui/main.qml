@@ -634,6 +634,23 @@ PlasmoidItem {
         }
     }
 
+    // Wheel task cycling support: taskList Repeater mirrors the visual ordering
+    Item {
+        id: taskList
+        Repeater {
+            model: tasksModel
+            Item {
+                readonly property var m: model
+                function modelIndex() { return tasksModel.makeModelIndex(index); }
+            }
+        }
+    }
+
+    // Called from containment's wheel handler to activate next/prev task in correct visual order
+    function activateWheelTask(next) {
+        TaskTools.activateNextPrevTask(next);
+    }
+
     //! TaskManagerBackend required a groupDialog setting otherwise it crashes. This patch
     //! sets one just in order not to crash TaskManagerBackend
     PlasmaCore.Dialog {

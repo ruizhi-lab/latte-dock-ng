@@ -116,9 +116,6 @@ public Q_SLOTS:
 
     void requestMove(Latte::View *fromView, int localX, int localY);
 
-    //! Debug
-    void printHistory();
-
 private Q_SLOTS:
     void updateInformationFromHistory();
 
@@ -159,8 +156,6 @@ Q_SIGNALS:
     void geometryChanged();
     void currentWinIdChanged();
 
-    //! Debug
-    void printRequested();
 
 private:
     void setActive(bool active);

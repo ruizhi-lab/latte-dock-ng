@@ -479,7 +479,6 @@ void LastActiveWindow::setInformation(const WindowInfoWrap &info)
     }
 
     appendInHistory(info.wid());
-    Q_EMIT printRequested();
 }
 
 //! PRIVATE SLOTS
@@ -540,12 +539,6 @@ void LastActiveWindow::cleanHistory()
     }
 }
 
-void LastActiveWindow::printHistory() {
-    for(int i=0; i<m_history.count(); ++i) {
-        WindowInfoWrap historyitem = m_windowsTracker->infoFor(m_history[i]);
-        qDebug() << "  " << i << ". " << historyitem.wid() << " -- " << historyitem.display();
-    }
-}
 
 void LastActiveWindow::appendInHistory(const WindowId &wid)
 {

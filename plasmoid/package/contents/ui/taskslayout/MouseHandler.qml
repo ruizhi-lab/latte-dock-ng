@@ -446,14 +446,20 @@ Item {
             }
         }
     }
-    /*
     MouseArea {
         id: wheelHandler
 
         anchors.fill: parent
         property int wheelDelta: 0;
-        enabled: plasmoid.configuration.wheelEnabled
+        readonly property bool canScroll: {
+            var c = plasmoid.containment;
+            if (!c || !c.configuration) return false;
+            var sa = c.configuration.scrollAction;
+            return sa === 3 || sa === 4;
+        }
+
+        enabled: canScroll
 
         onWheel: wheelDelta = TaskTools.wheelActivateNextPrevTask(wheelDelta, wheel.angleDelta.y);
-    } */
+    }
 }
