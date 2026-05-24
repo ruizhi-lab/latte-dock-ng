@@ -3,7 +3,7 @@ project(lattedock)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(VERSION 1.0.14)
+set(VERSION 1.1.3)
 set(AUTHOR "Ruizhi Zhong")
 set(EMAIL "ruizhi.zhong88@gmail.com")
 set(WEBSITE "https://github.com/ruizhi-lab/latte-dock-ng")
@@ -60,7 +60,7 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
 find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaActivities ${PLASMA_MIN_VERSION} REQUIRED)
-find_package(KWayland ${PLASMA_MIN_VERSION} REQUIRED)
+find_package(KWayland ${KF6_MIN_VERSION} REQUIRED)
 find_package(KF6Declarative ${KF6_MIN_VERSION} REQUIRED CONFIG)
 
 find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)

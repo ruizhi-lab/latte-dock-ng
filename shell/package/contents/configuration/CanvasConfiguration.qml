@@ -28,10 +28,6 @@ Loader {
         property int animationSpeed: LatteCore.WindowSystem.compositingActive ? 500 : 0
         property int panelAlignment: plasmoid.configuration.alignment
 
-        readonly property real appliedOpacity: imageTiler.opacity
-        readonly property real maxOpacity: universalSettings.inConfigureAppletsMode || !LatteCore.WindowSystem.compositingActive ?
-                                               1 : plasmoid.configuration.editBackgroundOpacity
-
         property real offset: {
             if (root.isHorizontal) {
                 return width * (plasmoid.configuration.offset/100);
@@ -70,21 +66,6 @@ Loader {
                                                   && (GraphicsInfo.api !== GraphicsInfo.Unknown)
         }
 
-        Image{
-            id: imageTiler
-            anchors.fill: parent
-            opacity: root.maxOpacity
-            fillMode: Image.Tile
-            source: latteView.layout ? latteView.layout.background : "../images/canvas/blueprint.jpg"
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 0.8 * root.animationSpeed
-                    easing.type: Easing.OutCubic
-                }
-            }
-        }
-
         LatteApp.ContextMenuLayer {
             id: contextMenuLayer
             anchors.fill: parent
@@ -93,46 +74,35 @@ Loader {
 
         MouseArea {
             id: editBackMouseArea
-            anchors.fill: imageTiler
+            anchors.fill: parent
             visible: !universalSettings.inConfigureAppletsMode
             hoverEnabled: true
 
-            property bool wheelIsBlocked: false;
-            readonly property double opacityStep: 0.1
-            readonly property string tooltip: i18nc("opacity for background under edit mode, %1 is opacity percentage",
-                                                    "You can use mouse wheel to change background opacity of %1%",Math.round(plasmoid.configuration.editBackgroundOpacity * 100))
+            property bool wheelIsBlocked: false
+            readonly property int opacityStep: 5
+            readonly property string tooltip: i18nc("opacity for dock background, %1 is opacity percentage",
+                                                    "You can use mouse wheel to change background opacity of %1%",
+                                                    plasmoid.configuration.panelTransparency < 0 ? 100 : plasmoid.configuration.panelTransparency)
 
-            onWheel: {
-                processWheel(wheel);
-            }
-
-
-            function processWheel(wheel) {
-                if (wheelIsBlocked) {
-                    return;
-                }
-
-                wheelIsBlocked = true;
-                scrollDelayer.start();
-
-                var angle = wheel.angleDelta.y / 8;
-
-                if (angle > 10) {
-                    plasmoid.configuration.editBackgroundOpacity = Math.min(100, plasmoid.configuration.editBackgroundOpacity + opacityStep)
-                } else if (angle < -10) {
-                    plasmoid.configuration.editBackgroundOpacity = Math.max(0, plasmoid.configuration.editBackgroundOpacity - opacityStep)
+            onWheel: function(wheel) {
+                if (wheelIsBlocked) return
+                wheelIsBlocked = true
+                scrollDelayer.start()
+                var angle = wheel.angleDelta.y / 8
+                var current = plasmoid.configuration.panelTransparency
+                if (current < 0) current = 100
+                var newVal = -1
+                if (angle > 10) newVal = Math.min(100, current + opacityStep)
+                else if (angle < -10) newVal = Math.max(0, current - opacityStep)
+                if (newVal >= 0) {
+                    plasmoid.configuration.panelTransparency = newVal
                 }
             }
 
-            //! A timer is needed in order to handle also touchpads that probably
-            //! send too many signals very fast. This way the signals per sec are limited.
-            //! The user needs to have a steady normal scroll in order to not
-            //! notice a annoying delay
-            Timer{
+            Timer {
                 id: scrollDelayer
-
                 interval: 80
-                onTriggered: editBackMouseArea.wheelIsBlocked = false;
+                onTriggered: editBackMouseArea.wheelIsBlocked = false
             }
         }
 

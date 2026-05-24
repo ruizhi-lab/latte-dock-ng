@@ -378,7 +378,7 @@ int main(int argc, char **argv)
 
     //! clear-cache option
     if (parser.isSet(QStringLiteral("clear-cache"))) {
-        QDir cacheDir(QDir::homePath() + "/.cache/lattedock/qmlcache");
+        QDir cacheDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QStringLiteral("/lattedock/qmlcache"));
 
         if (cacheDir.exists()) {
             cacheDir.removeRecursively();
@@ -556,7 +556,8 @@ inline void ensureUserLocalQmlImportPaths(int argc, char **argv)
     // on the dock loses its menu. Prepend the user-local plugin dirs.
     const QStringList pluginCandidates{
         userLocalPath + QStringLiteral("/lib/plugins"),
-        userLocalPath + QStringLiteral("/lib64/plugins")
+        userLocalPath + QStringLiteral("/lib64/plugins"),
+        userLocalPath + QStringLiteral("/lib/x86_64-linux-gnu/plugins")
     };
 
     for (const QString &candidate : pluginCandidates) {

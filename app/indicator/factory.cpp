@@ -386,9 +386,8 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
         }
 
         QProcess process;
-        process.start(QString("mv " +packagePath + " " + installPath));
+        process.start(QStringLiteral("mv"), {packagePath, installPath});
         process.waitForFinished();
-        QString output(process.readAllStandardOutput());
 
         showNotificationSucceed(metadata.name(), updated);
         return Latte::ImportExport::InstalledState;

@@ -127,9 +127,6 @@
     <entry name="blurEnabled" type="Bool">
       <default>true</default>
     </entry>
-    <entry name="autoDecreaseIconSize" type="Bool">
-      <default>true</default>
-    </entry>
     <entry name="smallAutomaticIconJumps" type="Bool">
       <default>true</default>
     </entry>
@@ -149,6 +146,7 @@
             <choice name="SmartThemeColors"/>
             <choice name="DarkThemeColors"/>
             <choice name="LightThemeColors"/>
+            <choice name="LayoutThemeColors"/>
       </choices>
       <default>0</default>
       <label>which theme color palette is going to be used</label>
@@ -185,9 +183,6 @@
     </entry>
     <entry name="shadowColor" type="String">
       <default>080808</default>
-    </entry>
-    <entry name="showGlow" type="Bool">
-       <default>false</default>
     </entry>
     <entry name="minLength" type="Double">
       <default>0</default>

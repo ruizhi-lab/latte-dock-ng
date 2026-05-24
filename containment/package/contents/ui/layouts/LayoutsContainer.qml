@@ -248,6 +248,10 @@ Item{
     onXChanged: root.updateEffectsArea();
     onYChanged: root.updateEffectsArea();
 
+    function activateWheelTask(next) {
+        environmentActions.activateWheelTask(next);
+    }
+
     EnvironmentActions {
         id: environmentActions
         active: root.scrollAction !== LatteContainment.types.ScrollNone || root.dragActiveWindowEnabled || root.closeActiveWindowEnabled

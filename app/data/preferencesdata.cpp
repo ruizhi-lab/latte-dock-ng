@@ -16,7 +16,6 @@ const bool Preferences::METAHOLDFORBADGES;
 const int Preferences::PARABOLICSPREAD;
 const int Preferences::SCREENSDELAY;
 const float Preferences::THICKNESSMARGININFLUENCE = 1.0f;
-const Settings::MouseSensitivity Preferences::MOUSESENSITIVITY;
 
 Preferences::Preferences()
 {
@@ -29,7 +28,6 @@ Preferences::Preferences(Preferences &&o)
       contextMenuAlwaysActions(o.contextMenuAlwaysActions),
       isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
       metaHoldForBadges(o.metaHoldForBadges),
-      mouseSensitivity(o.mouseSensitivity),
       parabolicSpread(o.parabolicSpread),
       thicknessMarginInfluence(o.thicknessMarginInfluence),
       screensDelay(o.screensDelay)
@@ -43,7 +41,6 @@ Preferences::Preferences(const Preferences &o)
       contextMenuAlwaysActions(o.contextMenuAlwaysActions),
       isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
       metaHoldForBadges(o.metaHoldForBadges),
-      mouseSensitivity(o.mouseSensitivity),
       parabolicSpread(o.parabolicSpread),
       thicknessMarginInfluence(o.thicknessMarginInfluence),
       screensDelay(o.screensDelay)
@@ -58,7 +55,6 @@ Preferences &Preferences::operator=(const Preferences &rhs)
     contextMenuAlwaysActions = rhs.contextMenuAlwaysActions;
     isAvailableGeometryBroadcastedToPlasma = rhs.isAvailableGeometryBroadcastedToPlasma;
     metaHoldForBadges = rhs.metaHoldForBadges;
-    mouseSensitivity = rhs.mouseSensitivity;
     parabolicSpread = rhs.parabolicSpread;
     thicknessMarginInfluence = rhs.thicknessMarginInfluence;
     screensDelay = rhs.screensDelay;
@@ -74,7 +70,6 @@ Preferences &Preferences::operator=(Preferences &&rhs)
     contextMenuAlwaysActions = rhs.contextMenuAlwaysActions;
     isAvailableGeometryBroadcastedToPlasma = rhs.isAvailableGeometryBroadcastedToPlasma;
     metaHoldForBadges = rhs.metaHoldForBadges;
-    mouseSensitivity = rhs.mouseSensitivity;
     parabolicSpread = rhs.parabolicSpread;
     thicknessMarginInfluence = rhs.thicknessMarginInfluence;
     screensDelay = rhs.screensDelay;
@@ -90,7 +85,6 @@ bool Preferences::operator==(const Preferences &rhs) const
             && (contextMenuAlwaysActions == rhs.contextMenuAlwaysActions)
             && (isAvailableGeometryBroadcastedToPlasma == rhs.isAvailableGeometryBroadcastedToPlasma)
             && (metaHoldForBadges == rhs.metaHoldForBadges)
-            && (mouseSensitivity == rhs.mouseSensitivity)
             && (parabolicSpread == rhs.parabolicSpread)
             && (thicknessMarginInfluence == rhs.thicknessMarginInfluence)
             && (screensDelay == rhs.screensDelay);
@@ -109,7 +103,6 @@ bool Preferences::inDefaultValues() const
             && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE)
             && (isAvailableGeometryBroadcastedToPlasma == ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA)
             && (metaHoldForBadges == METAHOLDFORBADGES)
-            && (mouseSensitivity == MOUSESENSITIVITY)
             && (parabolicSpread == PARABOLICSPREAD)
             && (thicknessMarginInfluence == THICKNESSMARGININFLUENCE)
             && (screensDelay == SCREENSDELAY);
@@ -123,7 +116,6 @@ void Preferences::setToDefaults()
     contextMenuAlwaysActions = Data::ContextMenu::ACTIONSALWAYSVISIBLE;
     isAvailableGeometryBroadcastedToPlasma = ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA;
     metaHoldForBadges = METAHOLDFORBADGES;
-    mouseSensitivity = MOUSESENSITIVITY;
     parabolicSpread = PARABOLICSPREAD;
     thicknessMarginInfluence = THICKNESSMARGININFLUENCE;
     screensDelay = SCREENSDELAY;

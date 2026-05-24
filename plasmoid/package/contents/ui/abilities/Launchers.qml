@@ -416,7 +416,7 @@ Item {
         }
 
         if (url === "preferred://email") {
-            return "applications:thunderbird-esr.desktop";
+            return "applications:thunderbird.desktop";
         }
 
         if (url === "preferred://terminal") {
@@ -424,11 +424,11 @@ Item {
         }
 
         if (url === "preferred://mailer") {
-            return "applications:thunderbird-esr.desktop";
+            return "applications:thunderbird.desktop";
         }
 
         if (url === "preferred://systemsettings") {
-            return "file:///usr/share/applications/systemsettings.desktop";
+            return "applications:systemsettings.desktop";
         }
 
         if (url === "applications:systemsettings.desktop"
@@ -437,7 +437,7 @@ Item {
                 || url === "systemsettings.desktop"
                 || url === "kdesystemsettings.desktop"
                 || url === "org.kde.systemsettings.desktop") {
-            return "file:///usr/share/applications/systemsettings.desktop";
+            return "applications:systemsettings.desktop";
         }
 
         return url;
@@ -485,8 +485,8 @@ Item {
             "preferred://browser",
             "preferred://filemanager",
             "applications:org.kde.konsole.desktop",
-            "applications:thunderbird-esr.desktop",
-            "file:///usr/share/applications/systemsettings.desktop"
+            "applications:thunderbird.desktop",
+            "applications:systemsettings.desktop"
         ];
 
         if (plainRecordsOnly && normalized.length >= 2 && normalized.length < defaultLaunchers.length) {

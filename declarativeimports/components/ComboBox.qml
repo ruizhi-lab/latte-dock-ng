@@ -285,7 +285,13 @@ T.ComboBox {
                 Layout.leftMargin: !selectedIcon.visible && !control.mirrored ? units.smallSpacing : 0
                 Layout.rightMargin: !selectedIcon.visible && control.mirrored ? units.smallSpacing : 0
 
-                text: control.displayText
+                text: {
+                    if (control.currentIndex < 0 || !control.textRole || control.textRole.length === 0) {
+                        return control.displayText;
+                    }
+                    var item = control.modelItemAt(control.currentIndex);
+                    return item ? (item[control.textRole] || "") : "";
+                }
                 font: control.font
                 color: control.buttonIsTransparent ? safeTextColor : safeButtonTextColor
                 horizontalAlignment: Text.AlignLeft

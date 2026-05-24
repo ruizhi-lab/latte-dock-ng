@@ -61,14 +61,6 @@ namespace Latte {
 namespace Settings {
 Q_NAMESPACE
 
-enum MouseSensitivity
-{
-    LowMouseSensitivity = 0,
-    MediumMouseSensitivity,
-    HighMouseSensitivity
-};
-Q_ENUM_NS(MouseSensitivity);
-
 }
 }
 

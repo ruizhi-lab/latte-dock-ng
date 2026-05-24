@@ -23,10 +23,7 @@ Item {
     property alias cfg_zoomHelper: zoomHelper.checked
     property alias cfg_zoomLevel: zoomLevel.value
     property alias cfg_showShadows: showShadows.checked
-    property alias cfg_showGlow: showGlow.checked
     property alias cfg_iconSize: iconSizeCmb.realValue
-    property alias cfg_threeColorsWindows: threeColorsWindows.checked
-    property alias cfg_dotsOnActive: dotsOnActive.checked
     property alias cfg_durationTime : durationTime.value
 
     property alias cfg_isInLatteDock: mainItem.isInLatteDock
@@ -136,24 +133,6 @@ Item {
                 CheckBox {
                     id: showShadows
                     text: i18n("Enable shadows for icons")
-                    enabled: true
-                }
-
-                CheckBox {
-                    id: showGlow
-                    text: i18n("Show glow around windows points")
-                    enabled: true
-                }
-
-                CheckBox {
-                    id: threeColorsWindows
-                    text: i18n("Different color for minimized windows")
-                    enabled: true
-                }
-
-                CheckBox {
-                    id: dotsOnActive
-                    text: i18n("Indicator for active window group")
                     enabled: true
                 }
             }

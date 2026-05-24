@@ -431,6 +431,11 @@ done
 # ── Remove containment actions plugin ─────────────────────────────────────────
 if [[ "$install_mode" == "system" ]]; then
     plugin_dirs=(
+        "/usr/lib/qt6/plugins/plasma/containmentactions"
+        "/usr/lib64/qt6/plugins/plasma/containmentactions"
+        "/usr/lib/x86_64-linux-gnu/qt6/plugins/plasma/containmentactions"
+        "/usr/local/lib/qt6/plugins/plasma/containmentactions"
+        "/usr/local/lib64/qt6/plugins/plasma/containmentactions"
         "/usr/lib/plugins/plasma/containmentactions"
         "/usr/lib64/plugins/plasma/containmentactions"
         "/usr/lib/x86_64-linux-gnu/plugins/plasma/containmentactions"

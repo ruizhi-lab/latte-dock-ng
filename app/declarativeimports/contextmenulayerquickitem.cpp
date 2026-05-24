@@ -244,6 +244,26 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     }
 
     if (!applet) {
+        QPointF sp = event->scenePosition();
+        std::function<QQuickItem*(QQuickItem*)> findApplet = [&](QQuickItem *p) -> QQuickItem* {
+            for (auto *c : p->childItems()) {
+                auto *ai = qobject_cast<PlasmaQuick::AppletQuickItem *>(c);
+                if (ai && ai->applet() && ai->applet() != m_latteView->containment()
+                    && ai->isVisible() && ai->contains(ai->mapFromScene(sp)))
+                    return c;
+                auto *f = findApplet(c);
+                if (f) return f;
+            }
+            return nullptr;
+        };
+        QQuickItem *found = findApplet(m_latteView->contentItem());
+        if (found) {
+            auto *ai = qobject_cast<PlasmaQuick::AppletQuickItem *>(found);
+            applet = const_cast<Plasma::Applet *>(ai->applet());
+        }
+    }
+
+    if (!applet) {
         applet = m_latteView->containment();
     }
 
@@ -386,47 +406,11 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         }
     }
 
-    auto *iface = m_latteView->extendedInterface();
-    const int appletId = static_cast<int>(applet->id());
-    const QString appletPluginId = applet->pluginMetaData().pluginId();
-    const bool canEditContainment = m_latteView->containment()->immutability() == Plasma::Types::Mutable;
-
-    if (iface && canEditContainment && !isSeparatorPluginId(appletPluginId)) {
-        const QList<int> appletsOrder = iface->appletsOrder();
-        const int currentIndex = appletsOrder.indexOf(appletId);
-
-        if (currentIndex >= 0) {
-            bool hasLeftSeparator = false;
-
-            if (currentIndex > 0) {
-                const auto leftApplet = iface->appletDataForId(appletsOrder.at(currentIndex - 1));
-                hasLeftSeparator = isSeparatorPluginId(leftApplet.plugin);
-            }
-
-            QAction *addLeftSeparatorAction = desktopMenu->addAction(
-                m_latteView->formFactor() == Plasma::Types::Vertical
-                    ? i18n("Add Top Separator")
-                    : i18n("Add Left Separator"));
-            addLeftSeparatorAction->setIcon(QIcon::fromTheme(QStringLiteral("add")));
-            addLeftSeparatorAction->setEnabled(!hasLeftSeparator);
-
-            connect(addLeftSeparatorAction, &QAction::triggered, this, [iface, appletId]() {
-                iface->addInternalSeparatorBeforeApplet(appletId);
-            });
-        }
-    }
-
     if (!applet->failedToLaunch()) {
         QAction *runAssociatedApplication = applet->internalAction(QStringLiteral("run associated application"));
 
         if (runAssociatedApplication && runAssociatedApplication->isEnabled()) {
             desktopMenu->addAction(runAssociatedApplication);
-        }
-
-        QAction *configureApplet = applet->internalAction(QStringLiteral("configure"));
-
-        if (configureApplet && configureApplet->isEnabled()) {
-            desktopMenu->addAction(configureApplet);
         }
 
         QAction *appletAlternatives = applet->internalAction(QStringLiteral("alternatives"));

@@ -114,5 +114,5 @@
     "Keywords[x-test]": "xxshellxx",
     "Keywords[zh_CN]": "shell",
     "Keywords[zh_TW]": "shell",
-    "X-KDE-ParentApp": "latte-dock"
+    "X-KDE-ParentApp": "latte-dock-ng"
 }

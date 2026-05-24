@@ -180,7 +180,6 @@
   <project_group>KDE</project_group>
   <provides>
     <binary>latte-dock-ng</binary>
-    <library>liblatte2plugin.so</library>
   </provides>
   <launchable type="desktop-id">org.kde.latte-dock.desktop</launchable>
   <releases>
