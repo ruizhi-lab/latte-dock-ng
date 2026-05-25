@@ -12,7 +12,7 @@ set(FAQS "https://github.com/ruizhi-lab/latte-dock-ng#readme")
 
 set(QT_MIN_VERSION "6.6.0")
 set(KF6_MIN_VERSION "6.0.0")
-set(PLASMA_MIN_VERSION "6.6.0")
+set(PLASMA_MIN_VERSION "6.5.0")
 set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 
 # Accepted from install.sh for compatibility with KDE-style build knobs.
@@ -76,6 +76,14 @@ message(STATUS "KF6 VERSION : ${KF6_VERSION}")
 message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+
+# Mageia KF6 headers live under /usr/include/KF6/<Module>/ but the cmake
+# config files export /usr/include/KF6/<Module> as INTERFACE_INCLUDE_DIRECTORIES,
+# so #include <KIconThemes/KIconLoader> (and similar KF6-style includes) fail.
+# Add /usr/include/KF6 when it exists to restore the expected include layout.
+if(EXISTS "/usr/include/KF6")
+    include_directories("/usr/include/KF6")
+endif()
 
 # Distros may expose KDEclarative targets with different names/casing.
 set(LATTE_DECLARATIVE_TARGET "")
