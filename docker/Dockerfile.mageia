@@ -26,7 +26,7 @@ RUN dnf upgrade -y --refresh && \
     lib64kf6kio-devel lib64kf6i18n-devel lib64kf6notifications-devel \
     lib64kf6newstuff-devel lib64kf6archive-devel lib64kf6globalaccel-devel \
     lib64kf6crash-devel lib64kf6windowsystem-devel lib64kf6package-devel lib64kf6svg-devel \
-    plasma-wayland-protocols-devel lib64wayland-devel \
+    plasma-wayland-protocols-devel lib64wayland-devel lib64glvnd-devel \
     gcc-c++ gettext git pkgconf-pkg-config \
     && dnf clean all
 
