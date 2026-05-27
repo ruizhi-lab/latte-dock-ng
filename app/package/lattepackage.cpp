@@ -51,9 +51,6 @@ void Package::initPackage(KPackage::Package *package)
     package->addFileDefinition("templates", QStringLiteral("templates"));
 
     package->addFileDefinition("preset1", QStringLiteral("presets/Default.layout.latte"));
-    package->addFileDefinition("preset2", QStringLiteral("presets/Plasma.layout.latte"));
-    package->addFileDefinition("preset3", QStringLiteral("presets/Unity.layout.latte"));
-    package->addFileDefinition("preset4", QStringLiteral("presets/Extended.layout.latte"));
     package->addFileDefinition("preset10", QStringLiteral("presets/multiple-layouts_hidden.layout.latte"));
 
     //! applets
