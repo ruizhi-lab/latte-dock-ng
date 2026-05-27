@@ -21,7 +21,6 @@ Item {
 
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
 
-    property alias cfg_wheelEnabled: wheelEnabled.checked
     property alias cfg_middleClickAction: middleClickAction.currentIndex
     property int cfg_hoverAction: LatteTasks.types.NoneAction
 
@@ -69,12 +68,6 @@ Item {
 
             ColumnLayout {
                 Layout.fillWidth: true
-
-                CheckBox {
-                    id: wheelEnabled
-                    text: i18n("Cycle through tasks with mouse wheel")
-                    enabled: false
-                }
 
                 CheckBox {
                     id: windowActionsChk

@@ -32,23 +32,27 @@ Item{
     readonly property color appliedBackgroundColor: checked ? checkedBackgroundColor : backgroundColor
     readonly property color appliedBorderColor: checked ? checkedBorderColor : borderColor
 
-    readonly property color textColor: containsMouse ? latteView.colorizer.buttonTextColor : settingsRoot.textColor
+    readonly property bool _hasColorizer: latteView && latteView.colorizer
+    readonly property color _fallbackText: settingsRoot.textColor
+    readonly property color _fallbackBg: "#2d2d2d"
+
+    readonly property color textColor: containsMouse && _hasColorizer ? latteView.colorizer.buttonTextColor : _fallbackText
     readonly property color backgroundColor: containsMouse ? hoveredBackground :  normalBackground
-    readonly property color borderColor: containsMouse ? hoveredBorder : normalBorder// "transparent"
+    readonly property color borderColor: containsMouse ? hoveredBorder : normalBorder
 
-    readonly property color checkedTextColor: latteView.colorizer.buttonTextColor
-    readonly property color checkedBackgroundColor: latteView.colorizer.buttonFocusColor
-    readonly property color checkedBorderColor: hoveredBorder //"transparent" //checkedTextColor
+    readonly property color checkedTextColor: _hasColorizer ? latteView.colorizer.buttonTextColor : _fallbackText
+    readonly property color checkedBackgroundColor: _hasColorizer ? latteView.colorizer.buttonFocusColor : _fallbackBg
+    readonly property color checkedBorderColor: hoveredBorder
 
-    readonly property color normalBackground: Qt.rgba(latteView.colorizer.buttonHoverColor.r,
-                                                      latteView.colorizer.buttonHoverColor.g,
-                                                      latteView.colorizer.buttonHoverColor.b,
-                                                      0.04)
+    readonly property color normalBackground: _hasColorizer ? Qt.rgba(latteView.colorizer.buttonHoverColor.r,
+                                                                       latteView.colorizer.buttonHoverColor.g,
+                                                                       latteView.colorizer.buttonHoverColor.b,
+                                                                       0.04) : _fallbackBg
 
-    readonly property color hoveredBackground: Qt.rgba(latteView.colorizer.buttonHoverColor.r,
-                                                       latteView.colorizer.buttonHoverColor.g,
-                                                       latteView.colorizer.buttonHoverColor.b,
-                                                       0.7)
+    readonly property color hoveredBackground: _hasColorizer ? Qt.rgba(latteView.colorizer.buttonHoverColor.r,
+                                                                        latteView.colorizer.buttonHoverColor.g,
+                                                                        latteView.colorizer.buttonHoverColor.b,
+                                                                        0.7) : _fallbackBg
 
     readonly property color normalBorder: Qt.rgba(settingsRoot.textColor.r,
                                                   settingsRoot.textColor.g,

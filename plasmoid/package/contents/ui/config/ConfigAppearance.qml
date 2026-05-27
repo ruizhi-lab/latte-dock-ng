@@ -22,7 +22,6 @@ Item {
 
     property alias cfg_zoomHelper: zoomHelper.checked
     property alias cfg_zoomLevel: zoomLevel.value
-    property alias cfg_showShadows: showShadows.checked
     property alias cfg_iconSize: iconSizeCmb.realValue
     property alias cfg_durationTime : durationTime.value
 
@@ -130,11 +129,6 @@ Item {
                 }
 
 
-                CheckBox {
-                    id: showShadows
-                    text: i18n("Enable shadows for icons")
-                    enabled: true
-                }
             }
         }
 

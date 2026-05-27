@@ -882,7 +882,7 @@ PlasmaComponents.Page {
                     text: i18n("Palette")
                 }
 
-                LatteComponents.ComboBox {
+                QQC2.ComboBox {
                     Layout.fillWidth: true
                     model: [
                         {
@@ -897,11 +897,10 @@ PlasmaComponents.Page {
                         },{
                             name: i18nc("layout custom colors", "Layout Custom Colors"),
                             value: LatteContainment.types.LayoutThemeColors
-                        },
-                        /*,{
+                        },{
                             name: i18nc("reverse plasma theme colors", "Reverse"),
                             value: LatteContainment.types.ReverseThemeColors
-                        }*/{
+                        },{
                             name: i18nc("smart theme colors", "Smart Colors Based On Desktop Background"),
                             value: LatteContainment.types.SmartThemeColors
                         }
@@ -919,11 +918,11 @@ PlasmaComponents.Page {
                         } else if (colors === LatteContainment.types.LightThemeColors) {
                             return 2;
                         } else if (colors === LatteContainment.types.ReverseThemeColors) {
-                            return 3;
+                            return 4;
                         } else if (colors === LatteContainment.types.LayoutThemeColors) {
                             return 3;
                         } else if (colors === LatteContainment.types.SmartThemeColors) {
-                            return 4;
+                            return 5;
                         }
                     }
                 }

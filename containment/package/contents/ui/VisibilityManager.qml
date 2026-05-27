@@ -85,8 +85,11 @@ Item{
 
     Connections{
         target: layoutsManager
-        function onCurrentLayoutIsSwitching() {
-            if (LatteCore.WindowSystem.compositingActive && latteView && latteView.layout && latteView.layout.name === layoutName) {
+        function onCurrentLayoutIsSwitching(layoutName) {
+            if (LatteCore.WindowSystem.compositingActive
+                && latteView && latteView.layout
+                && layoutName !== undefined
+                && latteView.layout.name === layoutName) {
                 parabolic.sglClearZoom();
             }
         }

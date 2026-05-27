@@ -32,10 +32,6 @@
     <entry name="iconSize" type="Int">
       <default>64</default>
     </entry>
-    <entry name="editBackgroundOpacity" type="Double">
-      <default>0.2</default>
-      <label>opacity value for edit mode background</label>
-    </entry>
     <entry name="lastWindowsVisibilityMode" type="Int">
       <default>5</default>
       <label>last windows visibility mode used, 5 stands for "Windows Go Below"</label>
@@ -125,9 +121,6 @@
       <label>override plasma theme background shadow; -1 stands for default plasma theme behavior and value represents pixels</label>
     </entry>
     <entry name="blurEnabled" type="Bool">
-      <default>true</default>
-    </entry>
-    <entry name="smallAutomaticIconJumps" type="Bool">
       <default>true</default>
     </entry>
     <entry name="backgroundOnlyOnMaximized" type="Bool">

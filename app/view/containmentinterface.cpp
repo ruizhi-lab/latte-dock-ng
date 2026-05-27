@@ -1655,14 +1655,28 @@ void ContainmentInterface::setAppletInScheduledDestruction(const int &id, const 
 
 void ContainmentInterface::updateContainmentConfigProperty(const QString &key, const QVariant &value)
 {
-    if (!m_configuration || !m_configuration->keys().contains(key)) {
-
+    if (!m_configuration) {
+        return;
     }
 
-    if (m_configuration->keys().contains(key)
-            && (*m_configuration)[key] != value) {
-        m_configuration->insert(key, value);
-        Q_EMIT m_configuration->valueChanged(key, value);
+    // Check if the key already exists with the same value
+    if (m_configuration->keys().contains(key) && (*m_configuration)[key] == value) {
+        return;
+    }
+
+    m_configuration->insert(key, value);
+    Q_EMIT m_configuration->valueChanged(key, value);
+}
+
+void ContainmentInterface::emitContainmentConfigProperties()
+{
+    if (!m_configuration) {
+        return;
+    }
+
+    const QStringList keys = m_configuration->keys();
+    for (const QString &key : keys) {
+        Q_EMIT containmentConfigPropertyChanged(key, (*m_configuration)[key]);
     }
 }
 

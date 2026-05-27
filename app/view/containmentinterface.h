@@ -128,7 +128,8 @@ public Q_SLOTS:
     void setAppletsDisabledColoring(const QList<int> &applets);
     void setAppletInScheduledDestruction(const int &id, const bool &enabled);
     void updateContainmentConfigProperty(const QString &key, const QVariant &value);
-    void updateAppletConfigProperty(const int &id, const QString &key, const QVariant &value);    
+    void updateAppletConfigProperty(const int &id, const QString &key, const QVariant &value);
+    void emitContainmentConfigProperties();    
 
 Q_SIGNALS:
     void expandedAppletStateChanged();

@@ -34,6 +34,13 @@ import "../code/ColorizerTools.js" as ColorizerTools
 
 PlasmoidItem {
     id:root
+
+    // Match the containment-level Kirigami override so audio badges
+    // and other symbolic icons use the same Window color set on
+    // every dock (original and clone) regardless of per-window palette.
+    Kirigami.Theme.inherit: false
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
     readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
 
@@ -747,7 +754,6 @@ PlasmoidItem {
         metrics.local.padding.length: 0.04 * metrics.iconSize
 
         myView.local.isHidingBlocked: root.contextMenu || root.windowPreviewIsShown
-        myView.local.itemShadow.isEnabled: plasmoid.configuration.showShadows
         myView.local.itemShadow.size: Math.ceil(0.12*appletAbilities.metrics.iconSize)
 
         // Avoid self-referential bindings between parabolic.isEnabled and

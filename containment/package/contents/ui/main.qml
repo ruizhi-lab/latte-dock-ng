@@ -32,6 +32,12 @@ ContainmentItem {
     id: root
     objectName: "containmentViewLayout"
 
+    // Decouple Kirigami theme from parent window to ensure every
+    // containment (original or clone) resolves colors from the
+    // same system palette regardless of per-window initialization.
+    Kirigami.Theme.inherit: false
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
     property real panelBgOpacity: 1.0
     property bool panelCustomTransparency: false
 

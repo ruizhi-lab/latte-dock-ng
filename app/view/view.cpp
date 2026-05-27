@@ -12,6 +12,7 @@
 #include "positioner.h"
 #include "visibilitymanager.h"
 #include "../wm/schemecolors.h"
+#include "../apptypes.h"
 #include "settings/primaryconfigview.h"
 #include "settings/viewsettingsfactory.h"
 #include "settings/widgetexplorerview.h"
@@ -86,6 +87,12 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
             | Qt::WindowDoesNotAcceptFocus;
 
     setFlags(flags);
+
+    // Pin color scheme before screen assignment
+    const QString appScheme = Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals"));
+    if (!appScheme.isEmpty()) {
+        setProperty("KDE_COLOR_SCHEME_PATH", appScheme);
+    }
 
     if (targetScreen) {
         m_positioner->setScreenToFollow(targetScreen);
@@ -240,16 +247,6 @@ View::~View()
 
 void View::init(Plasma::Containment *plasma_containment)
 {
-    // Pin the window's color scheme to kdeglobals so every view (original and
-    // clone alike) uses the same application-level palette. Without this, clone
-    // views on secondary screens inherit the Plasma panel theme's dark palette
-    // instead of the system palette, causing symbolic icons (e.g. audio badge)
-    // to render in white even when the dock background is light.
-    const QString defaultScheme = Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals"));
-    if (!defaultScheme.isEmpty()) {
-        setProperty("KDE_COLOR_SCHEME_PATH", defaultScheme);
-    }
-
     connect(this, &QQuickWindow::xChanged, this, &View::geometryChanged);
     connect(this, &QQuickWindow::yChanged, this, &View::geometryChanged);
     connect(this, &QQuickWindow::widthChanged, this, [this](int) { Q_EMIT geometryChanged(); });

@@ -25,6 +25,8 @@ ColumnLayout {
     readonly property color cfgTextColor: (typeof dialog !== "undefined" && dialog && dialog.tC !== undefined) ? dialog.tC : systemPalette.windowText
     readonly property color cfgHighlightColor: (typeof dialog !== "undefined" && dialog && dialog.hC !== undefined) ? dialog.hC : ((typeof dialog !== "undefined" && dialog && dialog.theme && dialog.theme.highlightColor !== undefined) ? dialog.theme.highlightColor : systemPalette.highlight)
     readonly property color cfgHighlightedTextColor: (typeof dialog !== "undefined" && dialog && dialog.htC !== undefined) ? dialog.htC : ((typeof dialog !== "undefined" && dialog && dialog.theme && dialog.theme.highlightedTextColor !== undefined) ? dialog.theme.highlightedTextColor : systemPalette.highlightedText)
+    readonly property int safeOptionsWidth: (typeof dialog !== "undefined" && dialog) ? dialog.optionsWidth : 400
+
     Kirigami.Theme.backgroundColor: cfgBackgroundColor
     Kirigami.Theme.textColor: cfgTextColor
     Kirigami.Theme.highlightColor: cfgHighlightColor
@@ -104,7 +106,7 @@ ColumnLayout {
         property int indicatorType: root.activeStyleValue
 
         readonly property int buttonsCount: 2
-        readonly property int buttonSize: (dialog.optionsWidth - (spacing * buttonsCount-1)) / buttonsCount
+        readonly property int buttonSize: (safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
@@ -303,7 +305,7 @@ ColumnLayout {
         property int option: root.glowApplyToValue
 
         readonly property int buttonsCount: 2
-        readonly property int buttonSize: (dialog.optionsWidth - (spacing * buttonsCount-1)) / buttonsCount
+        readonly property int buttonSize: (safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
@@ -382,7 +384,7 @@ ColumnLayout {
 
         LatteComponents.CheckBoxesColumn {
             LatteComponents.CheckBox {
-                Layout.maximumWidth: dialog.optionsWidth
+                Layout.maximumWidth: safeOptionsWidth
                 text: i18n("Different color for minimized windows")
                 value: root.minimizedTaskColoredDifferentlyValue
 
@@ -392,7 +394,7 @@ ColumnLayout {
             }
 
             LatteComponents.CheckBox {
-                Layout.maximumWidth: dialog.optionsWidth
+                Layout.maximumWidth: safeOptionsWidth
                 text: i18n("Show an extra dot for grouped windows when active")
                 tooltip: i18n("Grouped windows show both a line and a dot when one of them is active and the Line Active Indicator is enabled")
                 enabled: root.activeStyleValue === 0 /*Line*/
@@ -411,7 +413,7 @@ ColumnLayout {
     }
 
     LatteComponents.CheckBox {
-        Layout.maximumWidth: dialog.optionsWidth
+        Layout.maximumWidth: safeOptionsWidth
         text: i18n("Show indicators for applets")
         tooltip: i18n("Indicators are shown for applets")
         value: root.enabledForAppletsValue
@@ -422,7 +424,7 @@ ColumnLayout {
     }
 
     LatteComponents.CheckBox {
-        Layout.maximumWidth: dialog.optionsWidth
+        Layout.maximumWidth: safeOptionsWidth
         text: i18n("Reverse indicator style")
         value: root.reversedValue
 

@@ -391,6 +391,8 @@ void AbstractLayout::loadConfig()
 
     m_schemeFile = m_schemeFile.isEmpty() || !QFileInfo(m_schemeFile).exists() ? Data::Layout::DEFAULTSCHEMEFILE : m_schemeFile;
 
+    Q_EMIT schemeFileChanged();
+
     QString deprecatedTextColor = m_layoutGroup.readEntry("textColor", QString());
     QString deprecatedBackground = m_layoutGroup.readEntry("background", QString());
 

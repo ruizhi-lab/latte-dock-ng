@@ -73,6 +73,15 @@ void ClonedView::initSync()
         m_originalView->addApplet(data, x, y, containment()->id());
     });
 
+    //! When clone QML finishes initializing, re-sync all containment config
+    //! from the original to ensure consistency (catch up on changes that
+    //! arrived before the clone's m_configuration was available).
+    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::initializationCompleted, this, [&]() {
+        if (m_originalView && m_originalView->extendedInterface()) {
+            m_originalView->extendedInterface()->emitContainmentConfigProperties();
+        }
+    });
+
     //! Update Applets and Containment from OrigalView -> Clone
     connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::containmentConfigPropertyChanged, this, &ClonedView::updateContainmentConfigProperty);
     connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletConfigPropertyChanged, this, &ClonedView::onOriginalAppletConfigPropertyChanged);

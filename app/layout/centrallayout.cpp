@@ -18,6 +18,7 @@
 #include "../settings/universalsettings.h"
 #include "../view/view.h"
 #include "../wm/tracker/schemes.h"
+#include <QTimer>
 
 // KDE
 #include <KConfigGroup>
@@ -49,10 +50,13 @@ void CentralLayout::init()
 bool CentralLayout::initCorona()
 {
     if (GenericLayout::initCorona()) {
-        onSchemeFileChanged();
-
         connect(this, &Layout::AbstractLayout::schemeFileChanged, this, &CentralLayout::onSchemeFileChanged);
         connect(m_corona->wm()->schemesTracker(), &WindowSystem::Tracker::Schemes::defaultSchemeChanged, this, &CentralLayout::onSchemeFileChanged);
+
+        // Defer so loadConfig() has already set m_schemeFile from the
+        // layout file before we try to resolve the scheme object.
+        QTimer::singleShot(0, this, &CentralLayout::onSchemeFileChanged);
+
         return true;
     }
 

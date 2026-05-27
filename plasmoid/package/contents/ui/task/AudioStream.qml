@@ -109,13 +109,14 @@ Item {
             return "audio-volume-high-symbolic" + (Qt.application.layoutDirection === Qt.RightToLeft ? "-rtl" : "");
         }
 
-        // The Plasma 6 platform theme overrides the QPalette per-window, so
-        // every theme-derived colour (Kirigami.Theme, Qt.application.palette,
-        // colorizerManager) yields a different tone on the original vs the
-        // clone view. Use a fixed dark grey that matches the system's default
-        // text colour so the badge is identical on every dock.
+        // Use the containment-level colorizer palette so the audio badge
+        // follows the user's colour palette choice (Plasma Theme / Dark /
+        // Light / Reverse / etc.) rather than the global Kirigami theme.
         isMask: true
-        color: "#3c3c3c"
+        readonly property color contrastColor: (typeof latteBridge !== "undefined" && latteBridge && latteBridge.palette)
+                                               ? latteBridge.palette.textColor
+                                               : Kirigami.Theme.textColor
+        color: contrastColor
 
         height: Math.round(Math.min(parent.height * audioStreamIconBox.indicatorScale, Kirigami.Units.iconSizes.smallMedium))
         width: height

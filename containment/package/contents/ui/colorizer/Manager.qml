@@ -98,7 +98,7 @@ Loader{
                 return themeExtended.lightTheme;
             } else if (root.themeColors === LatteContainment.types.ReverseThemeColors) {
                 return themeExtended.isLightTheme ? themeExtended.darkTheme : themeExtended.lightTheme;
-            } else if (root.themeColors === LatteContainment.types.LayoutThemeColors && latteView && latteView.layout) {
+            } else if (root.themeColors === LatteContainment.types.LayoutThemeColors && latteView && latteView.layout && latteView.layout.scheme) {
                 return latteView.layout.scheme;
             }
 
