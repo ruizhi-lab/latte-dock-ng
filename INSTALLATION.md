@@ -163,6 +163,12 @@ docker compose run --rm debian     # Debian Testing
 ```
 
 Each command builds a container with all dependencies installed, then runs
-cmake configure + compile against the current source tree. A successful run
-ends with `=== <DISTRO>: BUILD SUCCESS ===`.
+the full verification pipeline:
+1. cmake configure + compile
+2. cmake --install (system install to /usr)
+3. Verify key installed files exist
+4. Uninstall dry-run + actual uninstall
+5. Verify files are removed
+
+A successful run ends with `=== <DISTRO>: BUILD + INSTALL + UNINSTALL SUCCESS ===`.
 ```

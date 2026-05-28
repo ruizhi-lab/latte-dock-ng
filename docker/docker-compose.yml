@@ -10,9 +10,21 @@ services:
     working_dir: /build
     command: >-
       bash -c "
-        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release 2>&1 &&
-        cmake --build . --parallel $(nproc) 2>&1 &&
-        echo '=== ARCH: BUILD SUCCESS ==='
+        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build . --parallel $(nproc) &&
+        cmake --install . &&
+        echo '--- Verifying installed files ---' &&
+        test -x /usr/bin/latte-dock-ng &&
+        test -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        test -d /usr/share/plasma/plasmoids/org.kde.latte.containment &&
+        test -d /usr/share/plasma/shells/org.kde.latte.shell &&
+        echo '--- Uninstall dry-run ---' &&
+        bash /src/uninstall.sh --system --no-purge-user-data --dry-run --manifest /build/install_manifest.txt &&
+        bash /src/uninstall.sh --system --no-purge-user-data --manifest /build/install_manifest.txt &&
+        echo '--- Verifying uninstall ---' &&
+        test ! -x /usr/bin/latte-dock-ng &&
+        test ! -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        echo '=== ARCH: BUILD + INSTALL + UNINSTALL SUCCESS ==='
       "
 
   fedora:
@@ -26,9 +38,21 @@ services:
     working_dir: /build
     command: >-
       bash -c "
-        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release 2>&1 &&
-        cmake --build . --parallel $(nproc) 2>&1 &&
-        echo '=== FEDORA: BUILD SUCCESS ==='
+        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build . --parallel $(nproc) &&
+        cmake --install . &&
+        echo '--- Verifying installed files ---' &&
+        test -x /usr/bin/latte-dock-ng &&
+        test -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        test -d /usr/share/plasma/plasmoids/org.kde.latte.containment &&
+        test -d /usr/share/plasma/shells/org.kde.latte.shell &&
+        echo '--- Uninstall dry-run ---' &&
+        bash /src/uninstall.sh --system --no-purge-user-data --dry-run --manifest /build/install_manifest.txt &&
+        bash /src/uninstall.sh --system --no-purge-user-data --manifest /build/install_manifest.txt &&
+        echo '--- Verifying uninstall ---' &&
+        test ! -x /usr/bin/latte-dock-ng &&
+        test ! -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        echo '=== FEDORA: BUILD + INSTALL + UNINSTALL SUCCESS ==='
       "
 
   opensuse:
@@ -42,9 +66,21 @@ services:
     working_dir: /build
     command: >-
       bash -c "
-        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release 2>&1 &&
-        cmake --build . --parallel $(nproc) 2>&1 &&
-        echo '=== OPENSUSE: BUILD SUCCESS ==='
+        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build . --parallel $(nproc) &&
+        cmake --install . &&
+        echo '--- Verifying installed files ---' &&
+        test -x /usr/bin/latte-dock-ng &&
+        test -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        test -d /usr/share/plasma/plasmoids/org.kde.latte.containment &&
+        test -d /usr/share/plasma/shells/org.kde.latte.shell &&
+        echo '--- Uninstall dry-run ---' &&
+        bash /src/uninstall.sh --system --no-purge-user-data --dry-run --manifest /build/install_manifest.txt &&
+        bash /src/uninstall.sh --system --no-purge-user-data --manifest /build/install_manifest.txt &&
+        echo '--- Verifying uninstall ---' &&
+        test ! -x /usr/bin/latte-dock-ng &&
+        test ! -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        echo '=== OPENSUSE: BUILD + INSTALL + UNINSTALL SUCCESS ==='
       "
 
   ubuntu:
@@ -58,9 +94,21 @@ services:
     working_dir: /build
     command: >-
       bash -c "
-        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release 2>&1 &&
-        cmake --build . --parallel $(nproc) 2>&1 &&
-        echo '=== UBUNTU: BUILD SUCCESS ==='
+        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build . --parallel $(nproc) &&
+        cmake --install . &&
+        echo '--- Verifying installed files ---' &&
+        test -x /usr/bin/latte-dock-ng &&
+        test -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        test -d /usr/share/plasma/plasmoids/org.kde.latte.containment &&
+        test -d /usr/share/plasma/shells/org.kde.latte.shell &&
+        echo '--- Uninstall dry-run ---' &&
+        bash /src/uninstall.sh --system --no-purge-user-data --dry-run --manifest /build/install_manifest.txt &&
+        bash /src/uninstall.sh --system --no-purge-user-data --manifest /build/install_manifest.txt &&
+        echo '--- Verifying uninstall ---' &&
+        test ! -x /usr/bin/latte-dock-ng &&
+        test ! -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        echo '=== UBUNTU: BUILD + INSTALL + UNINSTALL SUCCESS ==='
       "
 
   debian:
@@ -74,7 +122,19 @@ services:
     working_dir: /build
     command: >-
       bash -c "
-        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release 2>&1 &&
-        cmake --build . --parallel $(nproc) 2>&1 &&
-        echo '=== DEBIAN: BUILD SUCCESS ==='
+        cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build . --parallel $(nproc) &&
+        cmake --install . &&
+        echo '--- Verifying installed files ---' &&
+        test -x /usr/bin/latte-dock-ng &&
+        test -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        test -d /usr/share/plasma/plasmoids/org.kde.latte.containment &&
+        test -d /usr/share/plasma/shells/org.kde.latte.shell &&
+        echo '--- Uninstall dry-run ---' &&
+        bash /src/uninstall.sh --system --no-purge-user-data --dry-run --manifest /build/install_manifest.txt &&
+        bash /src/uninstall.sh --system --no-purge-user-data --manifest /build/install_manifest.txt &&
+        echo '--- Verifying uninstall ---' &&
+        test ! -x /usr/bin/latte-dock-ng &&
+        test ! -f /usr/share/applications/org.kde.latte-dock.desktop &&
+        echo '=== DEBIAN: BUILD + INSTALL + UNINSTALL SUCCESS ==='
       "
