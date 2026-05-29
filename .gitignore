@@ -46,7 +46,16 @@ CMakeLists.txt.user*
 
 .claude/worktrees/
 
-# IDE and tooling
+# AI and tooling
 .cache/
-.idea/
 .claude/
+AGENTS.md
+openspec/
+
+# IDE
+.idea/
+.vscode/
+.zed/
+.fleet/
+.cursor/
+.codebuddy/
