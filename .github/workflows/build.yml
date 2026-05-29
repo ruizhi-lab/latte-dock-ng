@@ -20,12 +20,8 @@ jobs:
           echo "deb https://archive.neon.kde.org/user noble main" > /etc/apt/sources.list.d/neon.list
           apt-get update
 
-      - name: Locate KF6 Svg package
-        run: apt-cache search ksvg | grep -i kf6 || true
-
       - name: Install build dependencies
         run: |
-          KSVG_PKG=$(apt-cache search ksvg 2>/dev/null | grep -i "kf6.*dev\|libkf6.*svg" | head -1 | awk '{print $1}')
           apt-get install -y --no-install-recommends \
             build-essential cmake extra-cmake-modules pkgconf \
             qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-tools-dev \
@@ -34,11 +30,11 @@ jobs:
             libkf6globalaccel-dev libkf6guiaddons-dev libkf6i18n-dev \
             libkf6iconthemes-dev libkf6kio-dev libkf6itemmodels-dev \
             libkf6newstuff-dev libkf6notifications-dev libkf6package-dev \
-            libkf6windowsystem-dev libkf6xmlgui-dev \
+            libkf6windowsystem-dev libkf6xmlgui-dev kf6-ksvg-dev \
             libplasma-dev libkpipewire-dev libkf6wayland-dev \
             plasma-activities-dev plasma-activities-stats-dev \
             plasma-workspace-dev plasma-wayland-protocols \
-            libwayland-dev ${KSVG_PKG}
+            libwayland-dev
 
       - uses: actions/checkout@v4
 
