@@ -336,12 +336,14 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
         }
 
         //! Layer to be applied
-        if (mode == Latte::Types::WindowsCanCover || mode == Latte::Types::WindowsAlwaysCover) {
-            setKeepBelow(winId, true);
-        } else if (mode == Latte::Types::NormalWindow) {
+        if (mode == Latte::Types::NormalWindow) {
             setKeepBelow(winId, false);
             setKeepAbove(winId, false);
+        } else if (!isPanelWindow && (mode == Latte::Types::WindowsCanCover || mode == Latte::Types::WindowsAlwaysCover)) {
+            setKeepAbove(winId, false);
+            setKeepBelow(winId, true);
         } else {
+            setKeepBelow(winId, false);
             setKeepAbove(winId, true);
         }
     }

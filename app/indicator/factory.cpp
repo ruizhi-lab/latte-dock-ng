@@ -10,6 +10,7 @@
 
 // Qt
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QDirIterator>
@@ -19,9 +20,9 @@
 #include <QTemporaryDir>
 #include <QTimer>
 #include <QLatin1String>
+#include <QUrl>
 
 // KDE
-#include <KNSWidgets/Dialog>
 #include <KDirWatch>
 #include <KLocalizedString>
 #include <KMessageBox>
@@ -31,7 +32,6 @@
 #include <KArchive/KZip>
 #include <KArchive/KArchiveEntry>
 #include <KArchive/KArchiveDirectory>
-#include <KNewStuff3/KNS3/QtQuickDialogWrapper>
 
 namespace Latte {
 namespace Indicator {
@@ -460,8 +460,7 @@ void Factory::removeIndicator(QString id)
 
 void Factory::downloadIndicator()
 {
-    KNSWidgets::Dialog dialog(QStringLiteral("latte-indicators.knsrc"), m_parentWidget);
-    dialog.exec();
+    QDesktopServices::openUrl(QUrl(QStringLiteral("https://store.kde.org/")));
 }
 
 }

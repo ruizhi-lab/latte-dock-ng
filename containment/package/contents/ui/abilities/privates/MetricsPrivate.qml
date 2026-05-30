@@ -44,7 +44,7 @@ AbilityHost.Metrics {
     readonly property MetricsPrivateTypes.Fraction fraction: MetricsPrivateTypes.Fraction{
         thicknessMargin: {
             var configured = Math.max(indicators.info.minThicknessPadding, plasmoid.configuration.thickMargin / 100);
-            return modernDockStyle ? Math.max(0.085, configured) : configured;
+            return modernDockStyle ? Math.max(0.19, configured) : Math.max(0.14, configured);
         }
         lengthMargin: {
             var configured = plasmoid.configuration.lengthExtMargin / 100;

@@ -188,6 +188,9 @@ void VisibilityManager::initViewFlags()
 {
     if ((m_mode == Types::WindowsCanCover || m_mode == Types::WindowsAlwaysCover) && (!m_latteView->inEditMode())) {
         setViewOnBackLayer();
+    } else if (isSidebar() && m_latteView->inEditMode()) {
+        m_wm->setViewExtraFlags(m_latteView, true, Types::AlwaysVisible);
+        setIsBelowLayer(false);
     } else {
         setViewOnFrontLayer();
     }
@@ -391,7 +394,7 @@ void VisibilityManager::updateSidebarState()
         return;
     }
 
-    m_isSidebar == cursidebarstate;
+    m_isSidebar = cursidebarstate;
     Q_EMIT isSidebarChanged();
 
 }
@@ -733,7 +736,7 @@ void VisibilityManager::toggleHiddenState()
                 if (m_isHidden) {
                     Q_EMIT mustBeShown();
                     startTimerHide(SIDEBARAUTOHIDEMINIMUMSHOW + m_timerHideInterval);
-                } else {
+                } else if (!hidingIsBlocked()) {
                     Q_EMIT mustBeHide();
                 }
             }
@@ -771,7 +774,7 @@ void VisibilityManager::updateHiddenState()
         break;
 
     case Types::SidebarOnDemand:
-        raiseView(m_isRequestedShownSidebarOnDemand);
+        raiseView(m_latteView->inEditMode() || m_isRequestedShownSidebarOnDemand);
         break;
 
     case Types::SidebarAutoHide:
@@ -914,6 +917,7 @@ void VisibilityManager::saveConfig()
     config.writeEntry("raiseOnActivityChange", m_raiseOnActivityChange);
     config.writeEntry("visibility", static_cast<int>(m_mode));
 
+    config.sync();
 }
 
 void VisibilityManager::restoreConfig()

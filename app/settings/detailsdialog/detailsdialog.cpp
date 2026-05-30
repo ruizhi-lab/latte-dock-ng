@@ -108,6 +108,7 @@ void DetailsDialog::loadConfig()
 void DetailsDialog::saveConfig()
 {
     m_storage.writeEntry("windowSize", size());
+    m_storage.sync();
 }
 
 }

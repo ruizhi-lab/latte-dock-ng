@@ -35,13 +35,6 @@ enum Type {
 };
 Q_ENUM_NS(Type);
 
-enum BackgroundStyle
-{
-    ColorBackgroundStyle = 0,
-    PatternBackgroundStyle
-};
-Q_ENUM_NS(BackgroundStyle);
-
 }
 }
 
@@ -82,35 +75,23 @@ public:
     void setPopUpMargin(const int &margin);
 
     QString lastUsedActivity() const;
-    void clearLastUsedActivity(); //!e.g. when we export a layout
+    void clearLastUsedActivity();
 
     QString name() const;
     QString file() const;
 
     virtual QString background() const;
 
-    QString color() const;
-    void setColor(QString color);
-
-    QString customBackground() const;
-    void setCustomBackground(const QString &background);
-
-    QString customTextColor() const;
-    void setCustomTextColor(const QString &customColor);
-
     QString icon() const;
     void setIcon(const QString &icon);
-
-    QString predefinedTextColor() const;
 
     QString schemeFile() const;
     void setSchemeFile(const QString &file);
 
-    virtual QString textColor() const;
-    void setTextColor(QString color);
+    QString customTextColor() const;
+    void setCustomTextColor(const QString &customColor);
 
-    BackgroundStyle backgroundStyle() const;
-    void setBackgroundStyle(const BackgroundStyle &style);
+    virtual QString textColor() const;
 
     QStringList launchers() const;
     void setLaunchers(QStringList launcherList);
@@ -120,19 +101,12 @@ public:
     void syncSettings();
 
 // STATIC
-    static QString defaultCustomTextColor();
-    static QString defaultCustomBackground();
-    static QString defaultTextColor(const QString &color);
     static QString layoutName(const QString &fileName);
     static QList<Plasma::Types::Location> combinedFreeEdges(const QList<Plasma::Types::Location> &edges1,
                                                             const QList<Plasma::Types::Location> &edges2);
 
 Q_SIGNALS:
     void backgroundChanged();
-    void backgroundStyleChanged();
-    void customBackgroundChanged();
-    void customTextColorChanged();
-    void colorChanged();
     void fileChanged();
     void iconChanged();
     void lastUsedActivityChanged();
@@ -157,19 +131,14 @@ protected:
     bool m_loadedCorrectly{false};
     bool m_preferredForShortcutsTouched{false};
 
-    //if version doesn't exist it is and old layout file
     int m_version{2};
 
-    int m_popUpMargin{-1}; //default
+    int m_popUpMargin{-1};
 
-    QString m_customBackground;
     QString m_customTextColor;
-    QString m_color;
-    QString m_lastUsedActivity; //the last used activity for this layout
+    QString m_lastUsedActivity;
     QString m_icon;
     QString m_schemeFile;
-
-    BackgroundStyle m_backgroundStyle{ColorBackgroundStyle};
 
     QString m_layoutFile;
     QString m_layoutName;

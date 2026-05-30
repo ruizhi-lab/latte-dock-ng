@@ -1,0 +1,45 @@
+name: Build
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:24.04
+    steps:
+      - name: Install KDE Neon repository
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates wget gnupg
+          wget -qO /etc/apt/trusted.gpg.d/neon.asc https://archive.neon.kde.org/public.key
+          echo "deb https://archive.neon.kde.org/user noble main" > /etc/apt/sources.list.d/neon.list
+          apt-get update
+
+      - name: Install build dependencies
+        run: |
+          apt-get install -y --no-install-recommends \
+            build-essential cmake extra-cmake-modules pkgconf \
+            qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-tools-dev \
+            libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
+            libkf6crash-dev libkf6dbusaddons-dev libkf6declarative-dev \
+            libkf6globalaccel-dev libkf6guiaddons-dev libkf6i18n-dev \
+            libkf6iconthemes-dev libkf6kio-dev libkf6itemmodels-dev \
+            libkf6newstuff-dev libkf6notifications-dev libkf6package-dev \
+            libkf6windowsystem-dev libkf6xmlgui-dev kf6-ksvg-dev \
+            libplasma-dev libkpipewire-dev libkf6wayland-dev \
+            plasma-activities-dev plasma-activities-stats-dev \
+            plasma-workspace-dev plasma-wayland-protocols \
+            libwayland-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)

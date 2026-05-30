@@ -1,0 +1,19 @@
+FROM opensuse/tumbleweed:latest
+
+# Use USTC mirror for zypper
+RUN zypper --non-interactive mr -d repo-oss repo-non-oss repo-update && \
+    zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/oss/' ustc-oss && \
+    zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/non-oss/' ustc-non-oss && \
+    zypper --non-interactive --gpg-auto-import-keys refresh && \
+    zypper --non-interactive install \
+      cmake extra-cmake-modules \
+      qt6-base-devel qt6-declarative-devel qt6-wayland-devel \
+      libplasma6-devel plasma6-activities-devel plasma6-activities-stats-devel plasma6-workspace-devel kwayland6-devel \
+      kf6-kconfig-devel kf6-kcoreaddons-devel kf6-kguiaddons-devel kf6-kdbusaddons-devel \
+      kf6-kdeclarative-devel kf6-kitemmodels-devel kf6-kxmlgui-devel kf6-kiconthemes-devel \
+      kf6-kio-devel kf6-ki18n-devel kf6-knotifications-devel \
+      kf6-knewstuff-devel kf6-karchive-devel kf6-kglobalaccel-devel \
+      kf6-kcrash-devel kf6-kwindowsystem-devel kf6-kpackage-devel kf6-ksvg-devel \
+      plasma-wayland-protocols wayland-devel \
+      gcc-c++ make gettext git pkgconf && \
+    zypper clean --all

@@ -1,0 +1,22 @@
+FROM debian:testing
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Use USTC mirror for apt
+RUN sed -i 's|//deb.debian.org|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list.d/*.sources 2>/dev/null || \
+    sed -i 's|//deb.debian.org|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
+    sed -i 's|//security.debian.org|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list.d/*.sources 2>/dev/null || \
+    sed -i 's|//security.debian.org|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      cmake extra-cmake-modules \
+      qt6-base-dev qt6-base-dev-tools qt6-declarative-dev qt6-wayland-dev \
+      libplasma-dev libplasmaactivities-dev libplasmaactivitiesstats-dev plasma-workspace-dev kwayland-dev \
+      libkf6config-dev libkf6coreaddons-dev libkf6guiaddons-dev libkf6dbusaddons-dev \
+      libkf6declarative-dev libkf6itemmodels-dev libkf6xmlgui-dev libkf6iconthemes-dev \
+      libkf6kio-dev libkf6i18n-dev libkf6notifications-dev \
+      libkf6newstuff-dev libkf6archive-dev libkf6globalaccel-dev \
+      libkf6crash-dev libkf6windowsystem-dev libkf6package-dev libkf6svg-dev \
+      plasma-wayland-protocols libwayland-dev \
+      gettext build-essential git pkgconf && \
+    rm -rf /var/lib/apt/lists/*

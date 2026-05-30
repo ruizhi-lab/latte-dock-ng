@@ -19,8 +19,6 @@ Layout::Layout()
 Layout::Layout(Layout &&o)
     : Generic(o),
       icon(o.icon),
-      color(o.color),
-      background(o.background),
       textColor(o.textColor),
       lastUsedActivity(o.lastUsedActivity),
       isActive(o.isActive),
@@ -28,11 +26,9 @@ Layout::Layout(Layout &&o)
       isLocked(o.isLocked),
       isShownInMenu(o.isShownInMenu),
       isTemplate(o.isTemplate),
-      hasDisabledBorders(o.hasDisabledBorders),
       popUpMargin(o.popUpMargin),
       schemeFile(o.schemeFile),
       activities(o.activities),
-      backgroundStyle(o.backgroundStyle),
       errors(o.errors),
       warnings(o.warnings),
       views(o.views)
@@ -42,8 +38,6 @@ Layout::Layout(Layout &&o)
 Layout::Layout(const Layout &o)
     : Generic(o),
       icon(o.icon),
-      color(o.color),
-      background(o.background),
       textColor(o.textColor),
       lastUsedActivity(o.lastUsedActivity),
       isActive(o.isActive),
@@ -51,11 +45,9 @@ Layout::Layout(const Layout &o)
       isLocked(o.isLocked),
       isShownInMenu(o.isShownInMenu),
       isTemplate(o.isTemplate),
-      hasDisabledBorders(o.hasDisabledBorders),
       popUpMargin(o.popUpMargin),
       schemeFile(o.schemeFile),
       activities(o.activities),
-      backgroundStyle(o.backgroundStyle),
       errors(o.errors),
       warnings(o.warnings),
       views(o.views)
@@ -67,8 +59,6 @@ Layout &Layout::operator=(Layout &&rhs)
     id = rhs.id;
     name = rhs.name;
     icon = rhs.icon;
-    color = rhs.color;
-    background = rhs.background;
     textColor = rhs.textColor;
     lastUsedActivity = rhs.lastUsedActivity;
     isActive = rhs.isActive;
@@ -76,11 +66,9 @@ Layout &Layout::operator=(Layout &&rhs)
     isLocked = rhs.isLocked;
     isShownInMenu = rhs.isShownInMenu;
     isTemplate = rhs.isTemplate;
-    hasDisabledBorders = rhs.hasDisabledBorders;
     popUpMargin = rhs.popUpMargin;
     schemeFile = rhs.schemeFile;
     activities = rhs.activities;
-    backgroundStyle = rhs.backgroundStyle;
     errors = rhs.errors;
     warnings = rhs.warnings;
     views = rhs.views;
@@ -93,8 +81,6 @@ Layout &Layout::operator=(const Layout &rhs)
     id = rhs.id;
     name = rhs.name;
     icon = rhs.icon;
-    color = rhs.color;
-    background = rhs.background;
     textColor = rhs.textColor;
     lastUsedActivity = rhs.lastUsedActivity;
     isActive = rhs.isActive;
@@ -102,11 +88,9 @@ Layout &Layout::operator=(const Layout &rhs)
     isLocked = rhs.isLocked;
     isShownInMenu = rhs.isShownInMenu;
     isTemplate = rhs.isTemplate;
-    hasDisabledBorders = rhs.hasDisabledBorders;
     popUpMargin = rhs.popUpMargin;
     schemeFile = rhs.schemeFile;
     activities = rhs.activities;
-    backgroundStyle = rhs.backgroundStyle;
     errors = rhs.errors;
     warnings = rhs.warnings;
     views = rhs.views;
@@ -119,8 +103,6 @@ bool Layout::operator==(const Layout &rhs) const
     return (id == rhs.id)
             && (name == rhs.name)
             && (icon == rhs.icon)
-            && (color == rhs.color)
-            && (background == rhs.background)
             && (textColor == rhs.textColor)
             //&& (lastUsedActivity == rhs.lastUsedActivity) /*Disabled because this is not needed in order to track layout changes for saving*/
             //&& (isActive == rhs.isActive) /*Disabled because this is not needed in order to track layout changes for saving*/
@@ -128,11 +110,9 @@ bool Layout::operator==(const Layout &rhs) const
             && (isLocked == rhs.isLocked)
             && (isShownInMenu == rhs.isShownInMenu)
             && (isTemplate == rhs.isTemplate)
-            && (hasDisabledBorders == rhs.hasDisabledBorders)
             && (popUpMargin == rhs.popUpMargin)
             && (schemeFile == rhs.schemeFile)
             && (activities == rhs.activities)
-            && (backgroundStyle == rhs.backgroundStyle)
             //&& (errors == rhs.errors) /*Disabled because this is not needed in order to track layout changes for saving*/
             //&& (warnings == rhs.warnings) /*Disabled because this is not needed in order to track layout changes for saving*/
             && (views == rhs.views);

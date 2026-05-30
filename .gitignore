@@ -45,3 +45,17 @@ CMakeLists.txt.user*
 /compile_commands.json
 
 .claude/worktrees/
+
+# AI and tooling
+.cache/
+.claude/
+AGENTS.md
+openspec/
+
+# IDE
+.idea/
+.vscode/
+.zed/
+.fleet/
+.cursor/
+.codebuddy/

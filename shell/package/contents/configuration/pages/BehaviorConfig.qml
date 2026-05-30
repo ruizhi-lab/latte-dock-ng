@@ -96,7 +96,6 @@ PlasmaComponents.Page {
                         screenCmb.currentIndex = screenCmb.findScreen(latteView.positioner.currentScreenName);
                     }
 
-                    console.log(latteView.positioner.currentScreenName);
                 }
 
                 Connections{
@@ -159,15 +158,15 @@ PlasmaComponents.Page {
                     text: i18nc("bottom location", "Bottom")
                     icon.name: "arrow-down"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.BottomEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -177,15 +176,15 @@ PlasmaComponents.Page {
                     text: i18nc("left location", "Left")
                     icon.name: "arrow-left"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.LeftEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -195,15 +194,15 @@ PlasmaComponents.Page {
                     text: i18nc("top location", "Top")
                     icon.name: "arrow-up"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.TopEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -213,15 +212,15 @@ PlasmaComponents.Page {
                     text: i18nc("right location", "Right")
                     icon.name: "arrow-right"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.RightEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
             }
@@ -265,11 +264,14 @@ PlasmaComponents.Page {
                     text: panelIsVertical ? i18nc("top alignment", "Top") : i18nc("left alignment", "Left")
                     icon.name: panelIsVertical ? "format-align-vertical-top" : "format-justify-left"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: panelIsVertical ? LatteCore.types.Top : LatteCore.types.Left
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
@@ -277,11 +279,14 @@ PlasmaComponents.Page {
                     text: i18nc("center alignment", "Center")
                     icon.name: panelIsVertical ? "format-align-vertical-center" : "format-justify-center"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: LatteCore.types.Center
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
@@ -289,11 +294,14 @@ PlasmaComponents.Page {
                     text: panelIsVertical ? i18nc("bottom alignment", "Bottom") : i18nc("right alignment", "Right")
                     icon.name: panelIsVertical ? "format-align-vertical-bottom" : "format-justify-right"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: panelIsVertical ? LatteCore.types.Bottom : LatteCore.types.Right
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
 
                 LatteComponents.Button {
@@ -302,11 +310,14 @@ PlasmaComponents.Page {
                     text: i18nc("justify alignment", "Justify")
                     icon.name: "format-justify-fill"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: LatteCore.types.Justify
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
             }
         }
@@ -339,33 +350,42 @@ PlasmaComponents.Page {
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Always Visible")
                     checked: parent.mode === mode
-                    checkable: false
+                    checkable: true
 
                     property int mode: LatteCore.types.AlwaysVisible
 
-                    onClicked: latteView.visibility.mode = mode
+                    onClicked: {
+                        latteView.visibility.mode = mode
+                        checked = Qt.binding(function() { return parent.mode === mode })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Auto Hide")
                     checked: parent.mode === mode
-                    checkable: false
+                    checkable: true
 
                     property int mode: LatteCore.types.AutoHide
 
-                    onClicked: latteView.visibility.mode = mode
+                    onClicked: {
+                        latteView.visibility.mode = mode
+                        checked = Qt.binding(function() { return parent.mode === mode })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Dodge Active")
                     checked: parent.mode === mode
-                    checkable: false
+                    checkable: true
 
                     property int mode: LatteCore.types.DodgeActive
 
-                    onClicked: latteView.visibility.mode = mode
+                    onClicked: {
+                        latteView.visibility.mode = mode
+                        checked = Qt.binding(function() { return parent.mode === mode })
+                    }
                 }
 
                 LatteExtraControls.CustomVisibilityModeButton {
@@ -375,7 +395,7 @@ PlasmaComponents.Page {
                     implicitWidth: alwaysVisibleBtn.implicitWidth
                     implicitHeight: alwaysVisibleBtn.implicitHeight
 
-                    checked: parent.mode === mode
+                    checked: containsActiveMode
 
                     mode: plasmoid.configuration.lastDodgeVisibilityMode
                     modes: [
@@ -401,7 +421,7 @@ PlasmaComponents.Page {
                     implicitWidth: alwaysVisibleBtn.implicitWidth
                     implicitHeight: alwaysVisibleBtn.implicitHeight
 
-                    checked: parent.mode === mode
+                    checked: containsActiveMode
 
                     mode: plasmoid.configuration.lastWindowsVisibilityMode
                     modes: [
@@ -423,32 +443,6 @@ PlasmaComponents.Page {
                     ]
 
                     onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastWindowsVisibilityMode = latteView.visibility.mode;
-                }
-
-                LatteExtraControls.CustomVisibilityModeButton {
-                    id: sidebarModeBtn
-                    Layout.minimumWidth: parent.buttonSize
-                    Layout.maximumWidth: Layout.minimumWidth
-                    implicitWidth: alwaysVisibleBtn.implicitWidth
-                    implicitHeight: alwaysVisibleBtn.implicitHeight
-
-                    checked: parent.mode === mode
-
-                    mode: plasmoid.configuration.lastSidebarVisibilityMode
-                    modes: [
-                        {
-                            pluginId: LatteCore.types.SidebarOnDemand,
-                            name: i18n("On Demand Sidebar"),
-                            tooltip: i18n("Sidebar can be shown and become hidden only through an external applet, shortcut or script")
-                        },
-                        {
-                            pluginId: LatteCore.types.SidebarAutoHide,
-                            name: i18n("Auto Hide Sidebar"),
-                            tooltip: i18n("Sidebar can be shown only through an external applet, shortcut or script but it can also autohide itself when it does not contain mouse")
-                        }
-                    ]
-
-                    onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastSidebarVisibilityMode = latteView.visibility.mode;
                 }
 
             }

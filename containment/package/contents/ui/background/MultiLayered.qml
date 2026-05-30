@@ -190,7 +190,8 @@ BackgroundProperties{
 
     totals.visualThickness: {
         if (modernDockStyle) {
-            var wrappedThickness = metrics.iconSize + (2 * modernThicknessPadding);
+            var thicknessPadding = Math.max(modernThicknessPadding, metrics.margin.tailThickness);
+            var wrappedThickness = metrics.iconSize + (2 * thicknessPadding);
             return Math.max(totals.minThickness, wrappedThickness);
         }
 
@@ -207,7 +208,8 @@ BackgroundProperties{
 
     totals.visualMaxThickness: {
         if (modernDockStyle) {
-            var wrappedThickness = metrics.maxIconSize + (2 * modernMaxThicknessPadding);
+            var thicknessPadding = Math.max(modernMaxThicknessPadding, metrics.margin.maxTailThickness);
+            var wrappedThickness = metrics.maxIconSize + (2 * thicknessPadding);
             return Math.max(totals.minThickness, wrappedThickness);
         }
 

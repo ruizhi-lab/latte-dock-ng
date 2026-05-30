@@ -1,0 +1,15 @@
+FROM archlinux:latest
+
+# Use USTC mirror for pacman
+RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist && \
+    pacman -Syu --noconfirm && \
+    printf '\n\n' | pacman -S --noconfirm --needed \
+      cmake extra-cmake-modules \
+      qt6-base qt6-declarative qt6-wayland \
+      libplasma plasma-activities plasma-activities-stats plasma-workspace kwayland \
+      kconfig kcoreaddons kguiaddons kdbusaddons \
+      kdeclarative kitemmodels kxmlgui kiconthemes kio ki18n knotifications \
+      knewstuff karchive kpackage kglobalaccel kcrash kwindowsystem ksvg \
+      plasma-wayland-protocols wayland \
+      gcc make gettext git pkgconf && \
+    pacman -Scc --noconfirm

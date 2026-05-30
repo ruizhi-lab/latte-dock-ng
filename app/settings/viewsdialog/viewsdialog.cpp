@@ -116,6 +116,7 @@ void ViewsDialog::loadConfig()
 void ViewsDialog::saveConfig()
 {
     m_storage.writeEntry("windowSize", size());
+    m_storage.sync();
 }
 
 }

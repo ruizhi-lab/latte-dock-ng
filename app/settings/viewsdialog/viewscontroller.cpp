@@ -1083,6 +1083,7 @@ void Views::saveConfig()
     m_storage.writeEntry("columnWidths", m_viewColumnWidths);
     m_storage.writeEntry("sortColumn", m_viewSortColumn);
     m_storage.writeEntry("sortOrder", (int)m_viewSortOrder);
+    m_storage.sync();
 }
 
 }

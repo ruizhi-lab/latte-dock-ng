@@ -1,0 +1,25 @@
+FROM fedora:44
+
+# Use USTC mirror for dnf, disable repos not available on mirrors
+RUN sed -i \
+      -e '/^metalink=/s|^|#|' \
+      -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/releases/44/Everything/$basearch/os/' \
+      /etc/yum.repos.d/fedora.repo && \
+    sed -i \
+      -e '/^metalink=/s|^|#|' \
+      -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/updates/44/Everything/$basearch/' \
+      /etc/yum.repos.d/fedora-updates.repo && \
+    rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo
+
+RUN dnf install -y --setopt=install_weak_deps=False \
+      cmake extra-cmake-modules \
+      qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtwayland-devel \
+      kf6-plasma-devel plasma-activities-devel plasma-activities-stats-devel plasma-workspace-devel kwayland-devel \
+      kf6-kconfig-devel kf6-kcoreaddons-devel kf6-kguiaddons-devel kf6-kdbusaddons-devel \
+      kf6-kdeclarative-devel kf6-kitemmodels-devel kf6-kxmlgui-devel kf6-kiconthemes-devel \
+      kf6-kio-devel kf6-ki18n-devel kf6-knotifications-devel \
+      kf6-knewstuff-devel kf6-karchive-devel kf6-kglobalaccel-devel \
+      kf6-kcrash-devel kf6-kwindowsystem-devel kf6-kpackage-devel kf6-ksvg-devel \
+      plasma-wayland-protocols-devel wayland-devel \
+      gcc-c++ make gettext git pkgconf-pkg-config && \
+    dnf clean all

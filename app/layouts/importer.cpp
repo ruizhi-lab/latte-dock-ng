@@ -172,14 +172,6 @@ bool Importer::importOldLayout(QString oldAppletsPath, QString newName, bool alt
     newLayout.setVersion(2);
     newLayout.setLaunchers(layoutLaunchers);
 
-    //newLayout.setShowInMenu(true);
-
-    if (alternative) {
-        newLayout.setColor("purple");
-    } else {
-        newLayout.setColor("blue");
-    }
-
     return true;
 }
 

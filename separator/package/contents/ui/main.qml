@@ -33,13 +33,23 @@ PlasmoidItem {
         id: separatorRepresentation
 
         Item {
-            implicitWidth: root.horizontal ? root.length : root.thickness
-            implicitHeight: root.horizontal ? root.thickness : root.length
+            implicitWidth: {
+                if (root.horizontal) {
+                    return root.length
+                }
+                return root.latteBridge ? root.latteBridge.iconSize : root.thickness
+            }
+            implicitHeight: {
+                if (root.horizontal) {
+                    return root.latteBridge ? root.latteBridge.iconSize : root.thickness
+                }
+                return root.length
+            }
 
             Rectangle {
                 anchors.centerIn: parent
-                width: root.horizontal ? 1 : parent.width
-                height: root.horizontal ? parent.height : 1
+                width: root.horizontal ? 1 : (root.latteBridge ? root.latteBridge.iconSize - 8 : parent.width)
+                height: root.horizontal ? (root.latteBridge ? root.latteBridge.iconSize - 8 : parent.height) : 1
                 radius: 1
                 color: root.separatorColor
                 opacity: root.separatorOpacity

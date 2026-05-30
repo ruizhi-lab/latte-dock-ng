@@ -431,13 +431,6 @@ void PrimaryConfigView::hideEvent(QHideEvent *ev)
         m_latteView->containment()->setUserConfiguring(false);
     }
 
-    const auto mode = m_latteView->visibility()->mode();
-
-    if ((mode == Types::AlwaysVisible || mode == Types::WindowsGoBelow)
-            && !(m_originalMode == Types::AlwaysVisible || m_originalMode == Types::WindowsGoBelow)) {
-        //! mode changed to AlwaysVisible OR WindowsGoBelow FROM Dodge mode
-        m_latteView->layout()->recreateView(m_latteView->containment());
-    }
 
     setVisible(false);
 }

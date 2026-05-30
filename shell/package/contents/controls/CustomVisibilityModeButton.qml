@@ -36,6 +36,15 @@ LatteComponents.ComboBoxButton{
         return 0;
     }
 
+    readonly property bool containsActiveMode: {
+        for (var i=0; i<modes.length; ++i) {
+            if (modes[i].pluginId === latteView.visibility.mode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     readonly property int firstVisibilityMode:  modes[0].pluginId
     readonly property int lastVisibilityMode: modes[modes.length - 1].pluginId
 
@@ -43,8 +52,12 @@ LatteComponents.ComboBoxButton{
 
     signal viewRelevantVisibilityModeChanged();
 
+    property bool _initializing: false
+
     Component.onCompleted: {
+        _initializing = true;
         reloadModel();
+        _initializing = false;
     }
 
     ListModel {
@@ -72,6 +85,7 @@ LatteComponents.ComboBoxButton{
         function onModeChanged() {
             for (var i=0; i<custom.modes.length; ++i) {
                 if (custom.modes[i].pluginId === latteView.visibility.mode) {
+                    custom.mode = latteView.visibility.mode;
                     custom.viewRelevantVisibilityModeChanged();
                     return;
                 }
@@ -86,6 +100,20 @@ LatteComponents.ComboBoxButton{
             if (index>=0) {
                 var item = actionsModel.get(index);
                 latteView.visibility.mode = item.pluginId;
+            }
+        }
+
+        function onCurrentIndexChanged() {
+            if (_initializing) {
+                return;
+            }
+
+            var idx = custom.comboBox.currentIndex;
+            if (idx >= 0 && idx < actionsModel.count) {
+                var item = actionsModel.get(idx);
+                if (item && item.pluginId !== latteView.visibility.mode) {
+                    latteView.visibility.mode = item.pluginId;
+                }
             }
         }
     }

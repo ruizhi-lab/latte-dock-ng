@@ -1651,6 +1651,7 @@ void View::saveConfig()
     config.writeEntry("isPreferredForShortcuts", isPreferredForShortcuts());
     config.writeEntry("name", m_name);
     config.writeEntry("viewType", (int)m_type);
+    config.sync();
 }
 
 void View::restoreConfig()

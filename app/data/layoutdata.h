@@ -9,7 +9,6 @@
 // local
 #include "genericdata.h"
 #include "viewstable.h"
-#include "../layout/abstractlayout.h"
 
 //Qt
 #include <QMetaType>
@@ -33,8 +32,6 @@ public:
 
     //! Layout data
     QString icon;
-    QString color;
-    QString background;
     QString textColor;
     QString lastUsedActivity;
     QString schemeFile{DEFAULTSCHEMEFILE};
@@ -43,13 +40,10 @@ public:
     bool isLocked{false};
     bool isShownInMenu{false};
     bool isTemplate{false};
-    bool hasDisabledBorders{false};
     int popUpMargin{-1};
     QStringList activities;
     int errors{0};
     int warnings{0};
-
-    Latte::Layout::BackgroundStyle backgroundStyle{Latte::Layout::ColorBackgroundStyle};
 
     ViewsTable views;
 

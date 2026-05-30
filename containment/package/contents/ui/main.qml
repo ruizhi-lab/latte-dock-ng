@@ -192,8 +192,6 @@ ContainmentItem {
     property bool plasmaBackgroundForPopups: plasmoid.configuration.plasmaBackgroundForPopups
 
     readonly property bool hasExpandedApplet: latteView && latteView.extendedInterface.hasExpandedApplet;
-    readonly property bool hasUserSpecifiedBackground: (latteView && latteView.layout && latteView.layout.background.startsWith("/")) ?
-                                                           true : false
 
     readonly property bool inConfigureAppletsMode: universalSettings && universalSettings.inConfigureAppletsMode
 

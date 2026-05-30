@@ -143,12 +143,10 @@ int Indicator::index(const QString &type)
 {
     if (type == QLatin1String("org.kde.latte.default")) {
         return 0;
-    } else if (type == QLatin1String("org.kde.latte.plasma")) {
-        return 1;
     } else if (type == QLatin1String("org.kde.latte.plasmatabstyle")) {
-        return 2;
+        return 1;
     } else if (customPluginIds().contains(type)){
-        return 3 + customPluginIds().indexOf(type);
+        return 2 + customPluginIds().indexOf(type);
     }
 
     return -1;
@@ -359,6 +357,7 @@ void Indicator::saveConfig()
     config.writeEntry("customType", m_customType);
     config.writeEntry("enabled", m_enabled);
     config.writeEntry("type", m_type);
+    config.sync();
 }
 
 }

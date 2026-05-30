@@ -4,6 +4,8 @@
 */
 
 import QtQuick 2.1
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -19,7 +21,7 @@ LatteComponents.ComboBoxButton{
                                                  i18n("Use %1 style for your indicators", buttonText)
 
     buttonIsTransparent: true
-    buttonIsTriggeringMenu: custom.type === "install:"
+    buttonIsTriggeringMenu: false
     comboBoxButtonIsTransparent: true
     comboBoxButtonIsVisible: latteView.indicator.customPluginsCount > 0
 
@@ -104,7 +106,9 @@ LatteComponents.ComboBoxButton{
     }
 
     function onButtonIsPressed() {
-        if (custom.type !== "install:") {
+        if (custom.type === "install:") {
+            installPopup.open();
+        } else {
             latteView.indicator.type = custom.type;
         }
     }
@@ -210,6 +214,46 @@ LatteComponents.ComboBoxButton{
             iconOnlyWhenHovered: false
         };
         actionsModel.append(downloadElement);
+    }
+
+    QQC2.Popup {
+        id: installPopup
+        y: parent.height + 4
+        x: Qt.application.layoutDirection === Qt.RightToLeft ? parent.width - width : 0
+        width: Math.max(200, parent.width)
+        closePolicy: QQC2.Popup.CloseOnEscape | QQC2.Popup.CloseOnPressOutside
+        padding: 2
+
+        contentItem: Item {
+            implicitWidth: installColumn.implicitWidth
+            implicitHeight: installColumn.implicitHeight
+
+            ColumnLayout {
+                id: installColumn
+                width: parent.width
+                spacing: 0
+
+                QQC2.ItemDelegate {
+                    Layout.fillWidth: true
+                    text: i18n("Add Indicator...")
+                    icon.name: "document-import"
+                    onClicked: {
+                        installPopup.close();
+                        viewConfig.indicatorUiManager.addIndicator();
+                    }
+                }
+
+                QQC2.ItemDelegate {
+                    Layout.fillWidth: true
+                    text: i18n("Get New Indicators...")
+                    icon.name: "get-hot-new-stuff"
+                    onClicked: {
+                        installPopup.close();
+                        viewConfig.indicatorUiManager.downloadIndicator();
+                    }
+                }
+            }
+        }
     }
 
 }

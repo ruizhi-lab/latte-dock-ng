@@ -521,6 +521,7 @@ void Theme::loadConfig()
 void Theme::saveConfig()
 {
     m_themeGroup.writeEntry("outlineWidth", m_outlineWidth);
+    m_themeGroup.sync();
 }
 
 void Theme::qmlRegisterTypes()

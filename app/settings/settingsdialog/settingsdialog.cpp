@@ -621,6 +621,7 @@ void SettingsDialog::saveConfig()
 {
     m_storage.writeEntry("windowSize", m_windowSize);
     m_storage.writeEntry("downloadWindowSize", m_downloadWindowSize);
+    m_storage.sync();
 }
 
 }

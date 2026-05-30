@@ -95,6 +95,14 @@ Rectangle {
             }
         }
 
+        onToggled: {
+            if (root.checkable) {
+                checked = Qt.binding(function() {
+                    return root.checked || (buttonIsTriggeringMenu && mainComboBox.popup.visible);
+                });
+            }
+        }
+
         //! WORKAROUND in order to miss one Clicked event from parent button,
         //! when combobox menu is shown and the user clicks the button in order to hide
         //! menu, this is enough in order to be dismissed. Without the workaround

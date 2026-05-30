@@ -168,26 +168,11 @@ void GenericLayout::setCorona(Latte::Corona *corona)
 
 QString GenericLayout::background() const
 {
-    QString colorsPath = m_corona->kPackage().path() + "../../shells/org.kde.latte.shell/contents/images/canvas/";
-
-    if (backgroundStyle() == Layout::PatternBackgroundStyle) {
-        if (customBackground().isEmpty()) {
-
-            return colorsPath + "defaultcustomprint.jpg";
-        } else {
-            return AbstractLayout::customBackground();
-        }
-    }
-
-    return colorsPath + AbstractLayout::color() + "print.jpg";
+    return QString();
 }
 
 QString GenericLayout::textColor() const
 {
-    if (backgroundStyle() == Layout::PatternBackgroundStyle && customBackground().isEmpty() && customTextColor().isEmpty()) {
-        return AbstractLayout::defaultCustomTextColor();
-    }
-
     return AbstractLayout::textColor();
 }
 

@@ -347,13 +347,6 @@ QVariant Layouts::headerData(int section, Qt::Orientation orientation, int role)
             return QVariant::fromValue(Qt::AlignHCenter | Qt::AlignVCenter);
         }*/
         break;
-    case BORDERSCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18nc("column for layout to hide borders for maximized windows", "Borderless"));
-        }/* else if (role == Qt::TextAlignmentRole ){
-            return QVariant::fromValue(Qt::AlignHCenter | Qt::AlignVCenter);
-        }*/
-        break;
     case ACTIVITYCOLUMN:
         if (role == Qt::DisplayRole) {
             return QString(i18nc("column for layout to show which activities is assigned to", "Activities"));
@@ -377,7 +370,7 @@ Qt::ItemFlags Layouts::flags(const QModelIndex &index) const
 
     auto flags = QAbstractTableModel::flags(index);
 
-    if (column == MENUCOLUMN || column == BORDERSCOLUMN) {
+    if (column == MENUCOLUMN) {
         flags |= Qt::ItemIsUserCheckable;
     }
 
@@ -507,7 +500,7 @@ QVariant Layouts::data(const QModelIndex &index, int role) const
         }
 
         if (role == Qt::DisplayRole) {
-            return m_layoutsTable[row].background;
+            return QVariant{};
         } else if (role == Qt::UserRole) {
             Latte::Data::LayoutIcon _icon = icon(row);
             QVariant iconVariant;
@@ -543,23 +536,6 @@ QVariant Layouts::data(const QModelIndex &index, int role) const
 
         if (role == Qt::UserRole) {
             return m_layoutsTable[row].isShownInMenu;
-        }
-        break;
-    case BORDERSCOLUMN:
-        if (role == SORTINGROLE) {
-            if (m_layoutsTable[row].hasDisabledBorders) {
-                return sortingPriority(HIGHESTPRIORITY, row);
-            }
-
-            return sortingPriority(NORMALPRIORITY, row);
-        }
-
-        if (role == ORIGINALHASBORDERSROLE) {
-            return isNewLayout ? false : original.hasDisabledBorders;
-        }
-
-        if (role == Qt::UserRole) {
-            return m_layoutsTable[row].hasDisabledBorders;
         }
         break;
     case ACTIVITYCOLUMN:
@@ -684,14 +660,7 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
         break;
     case BACKGROUNDCOLUMN:
         if (role == Qt::UserRole) {
-            QString back = value.toString();
-
-            if (back.startsWith("/")) {
-                m_layoutsTable[row].background = back;
-            } else {
-                m_layoutsTable[row].background = QString();
-                m_layoutsTable[row].color = back;
-            }
+            m_layoutsTable[row].icon = value.toString();
             Q_EMIT dataChanged(index, index, roles);
             return true;
         }
@@ -714,14 +683,6 @@ bool Layouts::setData(const QModelIndex &index, const QVariant &value, int role)
     case MENUCOLUMN:
         if (role == Qt::UserRole) {
             m_layoutsTable[row].isShownInMenu = value.toBool();
-            Q_EMIT dataChanged(index, index, roles);
-            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
-            return true;
-        }
-        break;
-    case BORDERSCOLUMN:
-        if (role == Qt::UserRole) {
-            m_layoutsTable[row].hasDisabledBorders = value.toBool();
             Q_EMIT dataChanged(index, index, roles);
             Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row,NAMECOLUMN), roles);
             return true;

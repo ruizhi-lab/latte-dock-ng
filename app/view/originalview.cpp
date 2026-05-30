@@ -263,6 +263,7 @@ void OriginalView::saveConfig()
 
     auto config = this->containment()->config();
     config.writeEntry("screensGroup", (int)m_screensGroup);
+    config.sync();
 }
 
 void OriginalView::restoreConfig()

@@ -146,7 +146,6 @@ void Layouts::initView()
     m_view->setItemDelegateForColumn(Model::Layouts::NAMECOLUMN, new Settings::Layout::Delegate::LayoutName(this));
     m_view->setItemDelegateForColumn(Model::Layouts::BACKGROUNDCOLUMN, new Settings::Layout::Delegate::BackgroundDelegate(this));
     m_view->setItemDelegateForColumn(Model::Layouts::MENUCOLUMN, new Settings::Layout::Delegate::CheckBox(this));
-    m_view->setItemDelegateForColumn(Model::Layouts::BORDERSCOLUMN, new Settings::Layout::Delegate::CheckBox(this));
     m_view->setItemDelegateForColumn(Model::Layouts::ACTIVITYCOLUMN, new Settings::Layout::Delegate::Activities(this));
 
     connect(m_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &Layouts::onCurrentRowChanged);
@@ -394,9 +393,8 @@ void Layouts::applyColumnWidths(bool storeValues)
     //! this line should be commented for debugging layouts window functionality
     m_view->setColumnHidden(Model::Layouts::IDCOLUMN, true);
     m_view->setColumnHidden(Model::Layouts::HIDDENTEXTCOLUMN, true);
-    m_view->setColumnHidden(Model::Layouts::BORDERSCOLUMN, true);
 
-    int maxColumns = Model::Layouts::ACTIVITYCOLUMN - Model::Layouts::BACKGROUNDCOLUMN; //4 - multiple
+    int maxColumns = Model::Layouts::ACTIVITYCOLUMN - Model::Layouts::BACKGROUNDCOLUMN; //3 - multiple
 
     if (m_model->inMultipleMode()) {
         m_view->setColumnHidden(Model::Layouts::MENUCOLUMN, true);
@@ -410,8 +408,7 @@ void Layouts::applyColumnWidths(bool storeValues)
         for (int i=0; i<qMin(m_viewColumnWidths.count(), maxColumns); ++i) {
             int currentColumn = Model::Layouts::BACKGROUNDCOLUMN+i;
 
-            if ((currentColumn == Model::Layouts::BORDERSCOLUMN)
-                    || (currentColumn == Model::Layouts::NAMECOLUMN && isLastModeMultiple)
+            if ((currentColumn == Model::Layouts::NAMECOLUMN && isLastModeMultiple)
                     || (currentColumn == Model::Layouts::MENUCOLUMN && !isLastModeMultiple)
                     || (currentColumn == Model::Layouts::ACTIVITYCOLUMN)) {
                 continue;
@@ -947,15 +944,11 @@ void Layouts::save()
         //! Custom Scheme
         central->setSchemeFile(iLayoutCurrentData.schemeFile);
 
-        //! Backgrounds
-        central->setBackgroundStyle(iLayoutCurrentData.backgroundStyle);
-        central->setColor(iLayoutCurrentData.color);
-        central->setCustomBackground(iLayoutCurrentData.background);
+        //! Custom Text Color
         central->setCustomTextColor(iLayoutCurrentData.textColor);
 
         //! Extra Properties
         central->setShowInMenu(iLayoutCurrentData.isShownInMenu);
-        central->setDisableBordersForMaximizedWindows(iLayoutCurrentData.hasDisabledBorders);
         central->setPopUpMargin(iLayoutCurrentData.popUpMargin);
         central->setActivities(iLayoutCurrentData.activities);
 
@@ -1059,7 +1052,7 @@ void Layouts::save()
 void Layouts::storeColumnWidths(bool inMultipleMode)
 {   
     if (m_viewColumnWidths.isEmpty()) {
-        m_viewColumnWidths << "" << "" << "" << "";
+        m_viewColumnWidths << "" << "" << "";
     }
 
     m_viewColumnWidths[0] = QString::number(m_view->columnWidth(Model::Layouts::BACKGROUNDCOLUMN));
@@ -1123,6 +1116,7 @@ void Layouts::saveConfig()
     m_storage.writeEntry("columnWidths", m_viewColumnWidths);
     m_storage.writeEntry("sortColumn", m_viewSortColumn);
     m_storage.writeEntry("sortOrder", (int)m_viewSortOrder);
+    m_storage.sync();
 }
 
 }

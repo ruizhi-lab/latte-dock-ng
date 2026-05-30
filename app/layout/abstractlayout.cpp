@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QLatin1String>
 
 // KDE
@@ -41,22 +42,11 @@ AbstractLayout::AbstractLayout(QObject *parent, QString layoutFile, QString assi
 }
 
 AbstractLayout::~AbstractLayout()
-{   
+{
 }
 
 void AbstractLayout::init()
 {
-    connect(this, &AbstractLayout::backgroundStyleChanged, this, &AbstractLayout::backgroundChanged);
-    connect(this, &AbstractLayout::backgroundStyleChanged, this, &AbstractLayout::textColorChanged);
-    connect(this, &AbstractLayout::customBackgroundChanged, this, &AbstractLayout::backgroundChanged);
-    connect(this, &AbstractLayout::customTextColorChanged, this, &AbstractLayout::textColorChanged);
-    connect(this, &AbstractLayout::colorChanged, this, &AbstractLayout::backgroundChanged);
-    connect(this, &AbstractLayout::colorChanged, this, &AbstractLayout::textColorChanged);
-
-    connect(this, &AbstractLayout::customBackgroundChanged, this, &AbstractLayout::saveConfig);
-    connect(this, &AbstractLayout::customTextColorChanged, this, &AbstractLayout::saveConfig);
-    connect(this, &AbstractLayout::colorChanged, this, &AbstractLayout::saveConfig);
-
     connect(this, &AbstractLayout::iconChanged, this, &AbstractLayout::saveConfig);
     connect(this, &AbstractLayout::lastUsedActivityChanged, this, &AbstractLayout::saveConfig);
     connect(this, &AbstractLayout::launchersChanged, this, &AbstractLayout::saveConfig);
@@ -115,11 +105,7 @@ void AbstractLayout::setPopUpMargin(const int &margin)
 
 QString AbstractLayout::background() const
 {
-    if (m_backgroundStyle == ColorBackgroundStyle) {
-        return m_color;
-    } else {
-        return m_customBackground;
-    }
+    return QString();
 }
 
 QString AbstractLayout::schemeFile() const
@@ -139,43 +125,7 @@ void AbstractLayout::setSchemeFile(const QString &file)
 
 QString AbstractLayout::textColor() const
 {
-    if (m_backgroundStyle == ColorBackgroundStyle) {
-        return predefinedTextColor();
-    } else {
-        return m_customTextColor;
-    }
-}
-
-BackgroundStyle AbstractLayout::backgroundStyle() const
-{
-    return m_backgroundStyle;
-}
-
-void AbstractLayout::setBackgroundStyle(const BackgroundStyle &style)
-{
-    if (m_backgroundStyle == style) {
-        return;
-    }
-
-    m_backgroundStyle = style;
-    Q_EMIT backgroundStyleChanged();
-}
-
-
-QString AbstractLayout::customBackground() const
-{
-    return m_customBackground;
-}
-
-void AbstractLayout::setCustomBackground(const QString &background)
-{
-    if (m_customBackground == background) {
-        return;
-    }
-
-    m_customBackground = background;
-
-    Q_EMIT customBackgroundChanged();
+    return m_customTextColor;
 }
 
 QString AbstractLayout::file() const
@@ -217,21 +167,6 @@ void AbstractLayout::setName(QString name)
     Q_EMIT nameChanged();
 }
 
-QString AbstractLayout::color() const
-{
-    return m_color;
-}
-
-void AbstractLayout::setColor(QString color)
-{
-    if (m_color == color) {
-        return;
-    }
-
-    m_color = color;
-    Q_EMIT colorChanged();
-}
-
 QString AbstractLayout::icon() const
 {
     return m_icon;
@@ -258,51 +193,6 @@ void AbstractLayout::clearLastUsedActivity()
     Q_EMIT lastUsedActivityChanged();
 }
 
-QString AbstractLayout::defaultCustomTextColor()
-{
-    return "#3C1C00";
-}
-
-QString AbstractLayout::defaultCustomBackground()
-{
-    return "defaultcustom";
-}
-
-QString AbstractLayout::defaultTextColor(const QString &color)
-{
-    //! the user is in default layout theme
-    if (color == QLatin1String("blue")) {
-        return "#D7E3FF";
-    } else if (color == QLatin1String("brown")) {
-        return "#F1DECB";
-    } else if (color == QLatin1String("darkgrey")) {
-        return "#ECECEC";
-    } else if (color == QLatin1String("gold")) {
-        return "#7C3636";
-    } else if (color == QLatin1String("green")) {
-        return "#4D7549";
-    } else if (color == QLatin1String("lightskyblue")) {
-        return "#0C2A43";
-    } else if (color == QLatin1String("orange")) {
-        return "#6F3902";
-    } else if (color == QLatin1String("pink")) {
-        return "#743C46";
-    } else if (color == QLatin1String("purple")) {
-        return "#ECD9FF";
-    }  else if (color == QLatin1String("red")) {
-        return "#F3E4E4";
-    }  else if (color == QLatin1String("wheat")) {
-        return "#6A4E25";
-    }  else {
-        return "#FCFCFC";
-    }
-}
-
-QString AbstractLayout::predefinedTextColor() const
-{
-    return AbstractLayout::defaultTextColor(m_color);
-}
-
 QString AbstractLayout::customTextColor() const
 {
     return m_customTextColor;
@@ -315,7 +205,7 @@ void AbstractLayout::setCustomTextColor(const QString &customColor)
     }
 
     m_customTextColor = customColor;
-    Q_EMIT customTextColorChanged();
+    Q_EMIT textColorChanged();
 }
 
 QStringList AbstractLayout::launchers() const
@@ -351,7 +241,6 @@ QList<Plasma::Types::Location> combinedFreeEdges(const QList<Plasma::Types::Loca
     return validFreeEdges;
 }
 
-
 QString AbstractLayout::layoutName(const QString &fileName)
 {
     int lastSlash = fileName.lastIndexOf("/");
@@ -379,9 +268,6 @@ void AbstractLayout::loadConfig()
     m_preferredForShortcutsTouched = m_layoutGroup.readEntry("preferredForShortcutsTouched", false);
     m_popUpMargin = m_layoutGroup.readEntry("popUpMargin", -1);
 
-    m_color = m_layoutGroup.readEntry("color", QString("blue"));
-    m_backgroundStyle = static_cast<BackgroundStyle>(m_layoutGroup.readEntry("backgroundStyle", (int)ColorBackgroundStyle));
-
     m_schemeFile = m_layoutGroup.readEntry("schemeFile", QString(Data::Layout::DEFAULTSCHEMEFILE));
 
     if (m_schemeFile.startsWith("~")) {
@@ -393,23 +279,7 @@ void AbstractLayout::loadConfig()
 
     Q_EMIT schemeFileChanged();
 
-    QString deprecatedTextColor = m_layoutGroup.readEntry("textColor", QString());
-    QString deprecatedBackground = m_layoutGroup.readEntry("background", QString());
-
-    if (deprecatedBackground.startsWith("/")) {
-        m_customBackground = deprecatedBackground;
-        m_customTextColor = deprecatedTextColor;
-        setBackgroundStyle(PatternBackgroundStyle);
-
-        m_layoutGroup.writeEntry("background", QString());
-        m_layoutGroup.writeEntry("textColor", QString());
-
-        saveConfig();
-    } else {
-        m_customBackground = m_layoutGroup.readEntry("customBackground", QString());
-        m_customTextColor = m_layoutGroup.readEntry("customTextColor", QString());
-    }
-
+    m_customTextColor = m_layoutGroup.readEntry("customTextColor", QString());
     m_icon = m_layoutGroup.readEntry("icon", QString());
 }
 
@@ -417,11 +287,7 @@ void AbstractLayout::saveConfig()
 {
     qDebug() << "abstract layout is saving... for layout:" << m_layoutName;
     m_layoutGroup.writeEntry("version", m_version);
-    m_layoutGroup.writeEntry("color", m_color);
     m_layoutGroup.writeEntry("launchers", m_launchers);
-    m_layoutGroup.writeEntry("backgroundStyle", (int)m_backgroundStyle);
-    m_layoutGroup.writeEntry("customBackground", m_customBackground);
-    m_layoutGroup.writeEntry("customTextColor", m_customTextColor);
     m_layoutGroup.writeEntry("icon", m_icon);
     m_layoutGroup.writeEntry("lastUsedActivity", m_lastUsedActivity);
     m_layoutGroup.writeEntry("popUpMargin", m_popUpMargin);

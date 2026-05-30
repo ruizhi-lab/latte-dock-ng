@@ -43,8 +43,6 @@ void CheckBox::paint(QPainter *painter, const QStyleOptionViewItem &option, cons
 
     if (index.column() == Model::Layouts::MENUCOLUMN) {
         originalChecked =  index.data(Model::Layouts::ORIGINALISSHOWNINMENUROLE).toBool();
-    } else if (index.column() == Model::Layouts::BORDERSCOLUMN) {
-        originalChecked =  index.data(Model::Layouts::ORIGINALHASBORDERSROLE).toBool();
     } else {
         originalChecked = currentChecked;
     }

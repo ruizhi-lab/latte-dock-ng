@@ -147,3 +147,28 @@ bash uninstall.sh --dry-run
 bash uninstall.sh --purge-user-data
 bash uninstall.sh --manifest build/install_manifest.txt --dry-run
 ```
+
+## Docker Build Verification
+
+Docker images are provided to verify the build on each supported distribution.
+All images use USTC mirrors for fast package downloads in China.
+
+```bash
+cd docker
+docker compose run --rm arch       # Arch Linux
+docker compose run --rm fedora     # Fedora 44
+docker compose run --rm opensuse   # openSUSE Tumbleweed
+docker compose run --rm ubuntu     # Ubuntu 26.04
+docker compose run --rm debian     # Debian Testing
+```
+
+Each command builds a container with all dependencies installed, then runs
+the full verification pipeline:
+1. cmake configure + compile
+2. cmake --install (system install to /usr)
+3. Verify key installed files exist
+4. Uninstall dry-run + actual uninstall
+5. Verify files are removed
+
+A successful run ends with `=== <DISTRO>: BUILD + INSTALL + UNINSTALL SUCCESS ===`.
+```

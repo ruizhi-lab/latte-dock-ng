@@ -43,9 +43,6 @@ public:
 
     bool initCorona() override;
 
-    bool disableBordersForMaximizedWindows() const;
-    void setDisableBordersForMaximizedWindows(bool disable);
-
     bool showInMenu() const;
     void setShowInMenu(bool show);
 
@@ -67,7 +64,6 @@ public:
     Q_INVOKABLE bool isCurrent() override;
 
 Q_SIGNALS:
-    void disableBordersForMaximizedWindowsChanged();
     void schemeChanged();
     void showInMenuChanged();
 
@@ -84,7 +80,6 @@ private:
     void setScheme(Latte::WindowSystem::SchemeColors *_scheme);
 
 private:
-    bool m_disableBordersForMaximizedWindows{false};
     bool m_showInMenu{false};
     QStringList m_activities;
 

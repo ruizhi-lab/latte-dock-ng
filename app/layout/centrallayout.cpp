@@ -43,7 +43,6 @@ CentralLayout::~CentralLayout()
 void CentralLayout::init()
 {
     connect(this, &GenericLayout::activitiesChanged, this, &CentralLayout::saveConfig);
-    connect(this, &CentralLayout::disableBordersForMaximizedWindowsChanged, this, &CentralLayout::saveConfig);
     connect(this, &CentralLayout::showInMenuChanged, this, &CentralLayout::saveConfig);
 }
 
@@ -61,22 +60,6 @@ bool CentralLayout::initCorona()
     }
 
     return false;
-}
-
-bool CentralLayout::disableBordersForMaximizedWindows() const
-{
-    return m_disableBordersForMaximizedWindows;
-}
-
-void CentralLayout::setDisableBordersForMaximizedWindows(bool disable)
-{
-    if (m_disableBordersForMaximizedWindows == disable) {
-        return;
-    }
-
-    m_disableBordersForMaximizedWindows = disable;
-
-    Q_EMIT disableBordersForMaximizedWindowsChanged();
 }
 
 bool CentralLayout::showInMenu() const
@@ -155,14 +138,10 @@ Data::Layout CentralLayout::data() const
     cdata.id = file();
     cdata.name = name();
     cdata.icon = icon();
-    cdata.backgroundStyle = backgroundStyle();
-    cdata.color = color();
-    cdata.background = customBackground();
     cdata.textColor = customTextColor();
     cdata.isActive = (m_corona != nullptr);
     cdata.isLocked = !isWritable();
     cdata.isShownInMenu = showInMenu();
-    cdata.hasDisabledBorders = disableBordersForMaximizedWindows();
     cdata.popUpMargin = popUpMargin();
     cdata.schemeFile = schemeFile();
     cdata.activities = activities();
@@ -181,8 +160,7 @@ void CentralLayout::onSchemeFileChanged()
 
 void CentralLayout::loadConfig()
 {
-    m_disableBordersForMaximizedWindows = m_layoutGroup.readEntry("disableBordersForMaximizedWindows", false);
-    m_showInMenu = m_layoutGroup.readEntry("showInMenu", false);     
+    m_showInMenu = m_layoutGroup.readEntry("showInMenu", false);
     m_activities = m_layoutGroup.readEntry("activities", QStringList());
 
     Q_EMIT activitiesChanged();
@@ -192,7 +170,6 @@ void CentralLayout::saveConfig()
 {
     qDebug() << "CENTRAL layout is saving... for layout:" << m_layoutName;
     m_layoutGroup.writeEntry("showInMenu", m_showInMenu);
-    m_layoutGroup.writeEntry("disableBordersForMaximizedWindows", m_disableBordersForMaximizedWindows);
     m_layoutGroup.writeEntry("activities", m_activities);
     m_layoutGroup.sync();
 }
