@@ -173,14 +173,13 @@ PlasmaComponents.Page {
                         text: i18nc("default shadow", "Default Color")
                         tooltip: i18n("Default shadow for applets")
                         checked: plasmoid.configuration.shadowColorType === type
-                        checkable: false
+                        checkable: true
 
                         readonly property int type: LatteContainment.types.DefaultColorShadow
 
-                        onPressedChanged: {
-                            if (pressed) {
-                                plasmoid.configuration.shadowColorType = type;
-                            }
+                        onClicked: {
+                            plasmoid.configuration.shadowColorType = type
+                            checked = Qt.binding(function() { return plasmoid.configuration.shadowColorType === type })
                         }
                     }
 
@@ -191,14 +190,13 @@ PlasmaComponents.Page {
                         text: i18nc("theme shadow", "Theme Color")
                         tooltip: i18n("Shadow from theme color palette")
                         checked: plasmoid.configuration.shadowColorType === type
-                        checkable: false
+                        checkable: true
 
                         readonly property int type: LatteContainment.types.ThemeColorShadow
 
-                        onPressedChanged: {
-                            if (pressed) {
-                                plasmoid.configuration.shadowColorType = type;
-                            }
+                        onClicked: {
+                            plasmoid.configuration.shadowColorType = type
+                            checked = Qt.binding(function() { return plasmoid.configuration.shadowColorType === type })
                         }
                     }
 
@@ -211,15 +209,14 @@ PlasmaComponents.Page {
                         text: " "
                         tooltip: i18n("Use set shadow color")
 
-                        checkable: false
+                        checkable: true
                         checked: plasmoid.configuration.shadowColorType === type
 
                         readonly property int type: LatteContainment.types.UserColorShadow
 
-                        onPressedChanged: {
-                            if (pressed) {
-                                plasmoid.configuration.shadowColorType = type;
-                            }
+                        onClicked: {
+                            plasmoid.configuration.shadowColorType = type
+                            checked = Qt.binding(function() { return plasmoid.configuration.shadowColorType === type })
                         }
 
                         Rectangle{
@@ -322,42 +319,39 @@ PlasmaComponents.Page {
                             Layout.fillWidth: true
                             text: i18n("x1")
                             checked: parent.duration === duration
-                            checkable: false
+                            checkable: true
 
                             readonly property int duration: 3
 
-                            onPressedChanged: {
-                                if (pressed) {
-                                    plasmoid.configuration.durationTime = duration;
-                                }
+                            onClicked: {
+                                plasmoid.configuration.durationTime = duration
+                                checked = Qt.binding(function() { return parent.duration === duration })
                             }
                         }
                         LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x2")
                             checked: parent.duration === duration
-                            checkable: false
+                            checkable: true
 
                             readonly property int duration: 2
 
-                            onPressedChanged: {
-                                if (pressed) {
-                                    plasmoid.configuration.durationTime = duration;
-                                }
+                            onClicked: {
+                                plasmoid.configuration.durationTime = duration
+                                checked = Qt.binding(function() { return parent.duration === duration })
                             }
                         }
                         LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x3")
                             checked: parent.duration === duration
-                            checkable: false
+                            checkable: true
 
                             readonly property int duration: 1
 
-                            onPressedChanged: {
-                                if (pressed) {
-                                    plasmoid.configuration.durationTime = duration;
-                                }
+                            onClicked: {
+                                plasmoid.configuration.durationTime = duration
+                                checked = Qt.binding(function() { return parent.duration === duration })
                             }
                         }
                     }

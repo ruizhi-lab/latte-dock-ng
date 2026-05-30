@@ -113,12 +113,15 @@ ColumnLayout {
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("line indicator","Line")
             checked: parent.indicatorType === indicatorType
-            checkable: false
+            checkable: true
             tooltip: i18n("Show a line indicator for active items")
 
             readonly property int indicatorType: 0 /*Line*/
 
-            onClicked: root.indicatorConfig.activeStyle = indicatorType
+            onClicked: {
+                root.indicatorConfig.activeStyle = indicatorType
+                checked = Qt.binding(function() { return parent.indicatorType === indicatorType })
+            }
         }
 
         LatteComponents.Button {
@@ -126,12 +129,15 @@ ColumnLayout {
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("dots indicator", "Dots")
             checked: parent.indicatorType === indicatorType
-            checkable: false
+            checkable: true
             tooltip: i18n("Show a dot indicator for active items")
 
             readonly property int indicatorType: 1 /*Dot*/
 
-            onClicked: root.indicatorConfig.activeStyle = indicatorType
+            onClicked: {
+                root.indicatorConfig.activeStyle = indicatorType
+                checked = Qt.binding(function() { return parent.indicatorType === indicatorType })
+            }
         }
     }
 
@@ -312,12 +318,15 @@ ColumnLayout {
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("glow only to active task/applet indicators","On Active")
             checked: parent.option === option
-            checkable: false
+            checkable: true
             tooltip: i18n("Add glow only to active task/applet indicator")
 
             readonly property int option: 1 /*OnActive*/
 
-            onClicked: root.indicatorConfig.glowApplyTo = option
+            onClicked: {
+                root.indicatorConfig.glowApplyTo = option
+                checked = Qt.binding(function() { return parent.option === option })
+            }
         }
 
         LatteComponents.Button {
@@ -325,12 +334,15 @@ ColumnLayout {
             Layout.maximumWidth: Layout.minimumWidth
             text: i18nc("glow to all task/applet indicators","All")
             checked: parent.option === option
-            checkable: false
+            checkable: true
             tooltip: i18n("Add glow to all task/applet indicators")
 
             readonly property int option: 2 /*All*/
 
-            onClicked: root.indicatorConfig.glowApplyTo = option
+            onClicked: {
+                root.indicatorConfig.glowApplyTo = option
+                checked = Qt.binding(function() { return parent.option === option })
+            }
         }
     }
 

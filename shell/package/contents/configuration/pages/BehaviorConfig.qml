@@ -159,15 +159,15 @@ PlasmaComponents.Page {
                     text: i18nc("bottom location", "Bottom")
                     icon.name: "arrow-down"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.BottomEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -177,15 +177,15 @@ PlasmaComponents.Page {
                     text: i18nc("left location", "Left")
                     icon.name: "arrow-left"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.LeftEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -195,15 +195,15 @@ PlasmaComponents.Page {
                     text: i18nc("top location", "Top")
                     icon.name: "arrow-up"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.TopEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
                 LatteComponents.Button {
@@ -213,15 +213,15 @@ PlasmaComponents.Page {
                     text: i18nc("right location", "Right")
                     icon.name: "arrow-right"
                     checked: plasmoid.location === edge
-                    checkable: false
+                    checkable: true
 
                     readonly property int edge: PlasmaCore.Types.RightEdge
 
                     onClicked: {
-                        //! clicked event is more wayland friendly because it release focus from the button before hiding the window
                         if (viewConfig.isReady && plasmoid.location !== edge) {
                             latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
+                        checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
                 }
             }
@@ -265,11 +265,14 @@ PlasmaComponents.Page {
                     text: panelIsVertical ? i18nc("top alignment", "Top") : i18nc("left alignment", "Left")
                     icon.name: panelIsVertical ? "format-align-vertical-top" : "format-justify-left"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: panelIsVertical ? LatteCore.types.Top : LatteCore.types.Left
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
@@ -277,11 +280,14 @@ PlasmaComponents.Page {
                     text: i18nc("center alignment", "Center")
                     icon.name: panelIsVertical ? "format-align-vertical-center" : "format-justify-center"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: LatteCore.types.Center
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
                 LatteComponents.Button {
                     Layout.minimumWidth: parent.buttonSize
@@ -289,11 +295,14 @@ PlasmaComponents.Page {
                     text: panelIsVertical ? i18nc("bottom alignment", "Bottom") : i18nc("right alignment", "Right")
                     icon.name: panelIsVertical ? "format-align-vertical-bottom" : "format-justify-right"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: panelIsVertical ? LatteCore.types.Bottom : LatteCore.types.Right
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
 
                 LatteComponents.Button {
@@ -302,11 +311,14 @@ PlasmaComponents.Page {
                     text: i18nc("justify alignment", "Justify")
                     icon.name: "format-justify-fill"
                     checked: parent.currentAlignment === alignment
-                    checkable: false
+                    checkable: true
 
                     property int alignment: LatteCore.types.Justify
 
-                    onClicked: parent.applyAlignment(alignment)
+                    onClicked: {
+                        parent.applyAlignment(alignment)
+                        checked = Qt.binding(function() { return parent.currentAlignment === alignment })
+                    }
                 }
             }
         }
