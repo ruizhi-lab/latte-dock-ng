@@ -3,7 +3,9 @@ project(lattedock)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(VERSION 1.1.11)
+if(NOT DEFINED VERSION)
+    set(VERSION 1.1.11)
+endif()
 set(AUTHOR "Ruizhi Zhong")
 set(EMAIL "ruizhi.zhong88@gmail.com")
 set(WEBSITE "https://github.com/ruizhi-lab/latte-dock-ng")
@@ -357,3 +359,42 @@ add_subdirectory(plasmoid)
 add_subdirectory(shell)
 
 ki18n_install(po)
+
+# ── CPack packaging ─────────────────────────────────────────────────────────────
+# Generates RPM (Fedora/openSUSE) or DEB (Debian/Ubuntu) packages.
+# Usage: cmake --build . && cpack -G RPM   (or -G DEB)
+set(CPACK_PACKAGE_NAME "latte-dock-ng")
+set(CPACK_PACKAGE_VERSION "${VERSION}")
+set(CPACK_PACKAGE_VENDOR "${AUTHOR}")
+set(CPACK_PACKAGE_CONTACT "${EMAIL}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Latte Dock NG - Plasma 6 desktop dock")
+set(CPACK_PACKAGE_HOMEPAGE_URL "${WEBSITE}")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSES/GPL-2.0-or-later.txt")
+
+# RPM
+set(CPACK_RPM_PACKAGE_NAME "latte-dock-ng")
+set(CPACK_RPM_PACKAGE_RELEASE "1")
+set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
+set(CPACK_RPM_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_RELEASE}.${CPACK_RPM_PACKAGE_ARCHITECTURE}.rpm")
+set(CPACK_RPM_PACKAGE_LICENSE "GPL-2.0-or-later")
+set(CPACK_RPM_PACKAGE_URL "${WEBSITE}")
+set(CPACK_RPM_PACKAGE_AUTOREQ ON)
+set(CPACK_RPM_PACKAGE_AUTOPROV ON)
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
+    /usr/share/applications
+    /usr/share/icons
+    /usr/share/latte
+    /usr/share/plasma
+)
+
+# DEB
+set(CPACK_DEBIAN_PACKAGE_NAME "latte-dock-ng")
+set(CPACK_DEBIAN_PACKAGE_RELEASE "1")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+set(CPACK_DEBIAN_FILE_NAME "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_RELEASE}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
+set(CPACK_DEBIAN_PACKAGE_SECTION "kde")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${WEBSITE}")
+set(CPACK_DEBIAN_PACKAGE_SHLIBS ON)
+set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
+
+include(CPack)

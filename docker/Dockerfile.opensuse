@@ -1,10 +1,14 @@
 FROM opensuse/tumbleweed:latest
 
-# Use USTC mirror for zypper
-RUN zypper --non-interactive mr -d repo-oss repo-non-oss repo-update && \
-    zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/oss/' ustc-oss && \
-    zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/non-oss/' ustc-non-oss && \
-    zypper --non-interactive --gpg-auto-import-keys refresh && \
+ARG USE_MIRRORS=true
+
+RUN if [ "$USE_MIRRORS" = "true" ]; then \
+      zypper --non-interactive mr -d repo-oss repo-non-oss repo-update && \
+      zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/oss/' ustc-oss && \
+      zypper --non-interactive ar -cfg 'https://mirrors.ustc.edu.cn/opensuse/tumbleweed/repo/non-oss/' ustc-non-oss ; \
+    fi
+
+RUN zypper --non-interactive --gpg-auto-import-keys refresh && \
     zypper --non-interactive install \
       cmake extra-cmake-modules \
       qt6-base-devel qt6-declarative-devel qt6-wayland-devel \
@@ -15,5 +19,5 @@ RUN zypper --non-interactive mr -d repo-oss repo-non-oss repo-update && \
       kf6-knewstuff-devel kf6-karchive-devel kf6-kglobalaccel-devel \
       kf6-kcrash-devel kf6-kwindowsystem-devel kf6-kpackage-devel kf6-ksvg-devel \
       plasma-wayland-protocols wayland-devel \
-      gcc-c++ make gettext git pkgconf && \
+      gcc-c++ make gettext git pkgconf rpm-build && \
     zypper clean --all

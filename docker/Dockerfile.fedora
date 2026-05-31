@@ -1,15 +1,18 @@
 FROM fedora:44
 
-# Use USTC mirror for dnf, disable repos not available on mirrors
-RUN sed -i \
-      -e '/^metalink=/s|^|#|' \
-      -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/releases/44/Everything/$basearch/os/' \
-      /etc/yum.repos.d/fedora.repo && \
-    sed -i \
-      -e '/^metalink=/s|^|#|' \
-      -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/updates/44/Everything/$basearch/' \
-      /etc/yum.repos.d/fedora-updates.repo && \
-    rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo
+ARG USE_MIRRORS=true
+
+RUN if [ "$USE_MIRRORS" = "true" ]; then \
+      sed -i \
+        -e '/^metalink=/s|^|#|' \
+        -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/releases/44/Everything/$basearch/os/' \
+        /etc/yum.repos.d/fedora.repo && \
+      sed -i \
+        -e '/^metalink=/s|^|#|' \
+        -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/updates/44/Everything/$basearch/' \
+        /etc/yum.repos.d/fedora-updates.repo && \
+      rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo ; \
+    fi
 
 RUN dnf install -y --setopt=install_weak_deps=False \
       cmake extra-cmake-modules \
@@ -21,5 +24,5 @@ RUN dnf install -y --setopt=install_weak_deps=False \
       kf6-knewstuff-devel kf6-karchive-devel kf6-kglobalaccel-devel \
       kf6-kcrash-devel kf6-kwindowsystem-devel kf6-kpackage-devel kf6-ksvg-devel \
       plasma-wayland-protocols-devel wayland-devel \
-      gcc-c++ make gettext git pkgconf-pkg-config && \
+      gcc-c++ make gettext git pkgconf-pkg-config rpm-build && \
     dnf clean all

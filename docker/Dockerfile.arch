@@ -1,8 +1,12 @@
 FROM archlinux:latest
 
-# Use USTC mirror for pacman
-RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist && \
-    pacman -Syu --noconfirm && \
+ARG USE_MIRRORS=true
+
+RUN if [ "$USE_MIRRORS" = "true" ]; then \
+      echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist ; \
+    fi
+
+RUN pacman -Syu --noconfirm && \
     printf '\n\n' | pacman -S --noconfirm --needed \
       cmake extra-cmake-modules \
       qt6-base qt6-declarative qt6-wayland \

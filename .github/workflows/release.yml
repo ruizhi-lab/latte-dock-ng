@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: ${{ matrix.distro }} (${{ matrix.format }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora
+            dockerfile: Dockerfile.fedora
+            format: rpm
+          - distro: debian
+            dockerfile: Dockerfile.debian
+            format: deb
+          - distro: arch
+            dockerfile: Dockerfile.arch
+            format: pkg.tar.zst
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Build Docker image (${{ matrix.distro }})
+        run: docker build -t latte-build-${{ matrix.distro }} --build-arg USE_MIRRORS=false -f docker/${{ matrix.dockerfile }} docker/
+
+      - name: Build and package (${{ matrix.distro }})
+        run: |
+          mkdir -p dist
+          docker run --rm \
+            -v ${{ github.workspace }}:/src:ro \
+            -v ${{ github.workspace }}/dist:/out \
+            -e VERSION="${{ env.VERSION }}" \
+            --tmpfs /build:exec \
+            -w /build \
+            latte-build-${{ matrix.distro }} \
+            bash -c "
+              set -e
+              if [ '${{ matrix.format }}' = 'pkg.tar.zst' ]; then
+                bash /src/docker/package-arch.sh \"\$VERSION\" /out
+              else
+                GEN=\$([ '${{ matrix.format }}' = 'rpm' ] && echo RPM || echo DEB)
+                cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\"
+                cmake --build . --parallel \$(nproc)
+                cpack -G \"\$GEN\"
+                cp /build/latte-dock-ng*.* /out/
+              fi
+            "
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.distro }}
+          path: dist/
+
+  release:
+    name: Create Release
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: package-*
+          merge-multiple: true
+          path: dist
+
+      - name: List packages
+        run: ls -la dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
