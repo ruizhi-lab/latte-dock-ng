@@ -689,7 +689,7 @@ inline void configureAboutData()
     KAboutData about(QStringLiteral("lattedock")
                      , QStringLiteral("Latte Dock NG")
                      , QStringLiteral(VERSION)
-                     , i18n("Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and "
+                     , i18n("Latte Dock NG is a Wayland-first dock for KDE Plasma 6.5+ that provides an elegant and "
                             "intuitive experience for your tasks and widgets. It animates its contents "
                             "using a parabolic zoom effect and stays out of the way when not needed."
                             "\n\nSpecial thanks to the original Latte Dock authors and contributors."

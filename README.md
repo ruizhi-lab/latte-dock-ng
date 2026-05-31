@@ -1,8 +1,8 @@
 # <img src="logo.png" width="48"/> Latte Dock NG
 
-> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.6+ on Wayland only**. X11 support has been intentionally removed.
+> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.5+ on Wayland only**. X11 support has been intentionally removed.
 
-Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.
+Latte Dock NG is a Wayland-first dock for KDE Plasma 6.5+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.
 
 **"Art in Coffee"**
 
@@ -35,7 +35,7 @@ Installation
 
 We need to use at least:
 
-- **Plasma >= 6.6.0**
+- **Plasma >= 6.5.0**
 - **PlasmaWaylandProtocols >= 1.6.0**
 - **Qt >= 6.6**
 - **Wayland session (X11 is not supported in this fork)**
@@ -59,11 +59,11 @@ Minimum requirements:
  Qt6Widgets >= 6.6.0
  Qt6WaylandClient >= 6.6.0
 
- Plasma >= 6.6.0
- PlasmaQuick >= 6.6.0
- PlasmaActivities >= 6.6.0
- KWayland >= 6.6.0
- LibTaskManager >= 6.6.0
+ Plasma >= 6.5.0
+ PlasmaQuick >= 6.5.0
+ PlasmaActivities >= 6.5.0
+ KWayland >= 6.0.0
+ LibTaskManager >= 6.5.0
 
  KF6CoreAddons >= 6.0.0
  KF6GuiAddons >= 6.0.0
@@ -131,7 +131,7 @@ or activating **Latte Dock NG** from the applications menu.
 
 Contributors
 ============
-- [Ruizhi Zhong](https://github.com/ruizhi-lab): Maintainer of this fork (Plasma 6.6+ / Wayland).
+- [Ruizhi Zhong](https://github.com/ruizhi-lab): Maintainer of this fork (Plasma 6.5+ / Wayland).
 - [Varlesh](https://github.com/varlesh): Logos and Icons.
 - Original Latte Dock authors and contributors: thank you for the upstream foundation.
 

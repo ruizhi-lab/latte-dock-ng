@@ -1,7 +1,7 @@
 Installation
 ============
 
-> This fork targets **KDE Plasma 6.6+ on Wayland only** (amd64/x86\_64 architecture). X11 and other architectures are not supported.
+> This fork targets **KDE Plasma 6.5+ on Wayland only** (amd64/x86\_64 architecture). X11 and other architectures are not supported.
 > All dependency packages below are Qt6 / KF6. Legacy Qt5/KF5 package names from upstream will not work.
 
 ## Kubuntu / KDE Neon (26.04+)
@@ -83,6 +83,25 @@ sudo zypper install \
   gcc-c++ gettext git pkgconf
 ```
 
+## Mageia (Cauldron)
+
+```bash
+sudo dnf install \
+  cmake extra-cmake-modules \
+  qtbase6-common-devel lib64qt6base6-devel \
+  lib64qt6qml-devel lib64qt6quick-devel lib64qt6quickwidgets-devel \
+  lib64qt6wayland-devel lib64qt6waylandclient-devel \
+  lib64plasma-devel lib64plasmaactivities-devel lib64plasmaactivitiesstats-devel \
+  lib64plasma-workspace-devel lib64kwayland-devel \
+  lib64kf6config-devel lib64kf6coreaddons-devel lib64kf6guiaddons-devel lib64kf6dbusaddons-devel \
+  lib64kf6declarative-devel lib64kf6itemmodels-devel lib64kf6xmlgui-devel lib64kf6iconthemes-devel \
+  lib64kf6kio-devel lib64kf6i18n-devel lib64kf6notifications-devel \
+  lib64kf6newstuff-devel lib64kf6archive-devel lib64kf6globalaccel-devel \
+  lib64kf6crash-devel lib64kf6windowsystem-devel lib64kf6package-devel lib64kf6svg-devel \
+  plasma-wayland-protocols-devel lib64wayland-devel lib64glvnd-devel \
+  gcc-c++ gettext git pkgconf-pkg-config
+```
+
 ## Building and Installing
 
 **Recommended: use the install script.** It auto-detects available memory to prevent
@@ -158,6 +177,7 @@ cd docker
 docker compose run --rm arch       # Arch Linux
 docker compose run --rm fedora     # Fedora 44
 docker compose run --rm opensuse   # openSUSE Tumbleweed
+docker compose run --rm mageia     # Mageia Cauldron
 docker compose run --rm ubuntu     # Ubuntu 26.04
 docker compose run --rm debian     # Debian Testing
 ```

@@ -1,0 +1,30 @@
+FROM mageia:cauldron
+
+ARG USE_MIRRORS=true
+
+RUN if [ "$USE_MIRRORS" = "true" ]; then \
+      sed -i 's|^mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/*.repo && \
+      sed -i 's|^#baseurl=https://mirrors.kernel.org/mageia/|baseurl=http://mirror.nju.edu.cn/mageia/|g' /etc/yum.repos.d/*.repo ; \
+    fi
+
+# Mageia package naming differs from Fedora/openSUSE:
+#   Fedora kf6-k<name>-devel          -> Mageia lib64kf6<name>-devel
+#   Fedora qt6-qtbase-devel           -> Mageia qtbase6-common-devel lib64qt6base6-devel
+#   Fedora qt6-qtdeclarative-devel    -> Mageia lib64qt6qml-devel lib64qt6quick-devel
+#   Fedora kf6-plasma-devel           -> Mageia lib64plasma-devel
+RUN dnf upgrade -y --refresh && \
+    dnf install -y --setopt=install_weak_deps=False \
+      cmake extra-cmake-modules \
+      qtbase6-common-devel lib64qt6base6-devel \
+      lib64qt6qml-devel lib64qt6quick-devel lib64qt6quickwidgets-devel \
+      lib64qt6wayland-devel lib64qt6waylandclient-devel \
+      lib64plasma-devel lib64plasmaactivities-devel lib64plasmaactivitiesstats-devel \
+      lib64plasma-workspace-devel lib64kwayland-devel \
+      lib64kf6config-devel lib64kf6coreaddons-devel lib64kf6guiaddons-devel lib64kf6dbusaddons-devel \
+      lib64kf6declarative-devel lib64kf6itemmodels-devel lib64kf6xmlgui-devel lib64kf6iconthemes-devel \
+      lib64kf6kio-devel lib64kf6i18n-devel lib64kf6notifications-devel \
+      lib64kf6newstuff-devel lib64kf6archive-devel lib64kf6globalaccel-devel \
+      lib64kf6crash-devel lib64kf6windowsystem-devel lib64kf6package-devel lib64kf6svg-devel \
+      plasma-wayland-protocols-devel lib64wayland-devel lib64glvnd-devel \
+      gcc-c++ make gettext git pkgconf-pkg-config rpm-build && \
+    dnf clean all

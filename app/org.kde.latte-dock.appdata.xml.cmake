@@ -39,7 +39,7 @@
   <name xml:lang="uk">Латте</name>
   <name xml:lang="zh-CN">Latte</name>
   <name xml:lang="zh-TW">Latte</name>
-  <summary>Wayland-first dock for KDE Plasma 6.6+</summary>
+  <summary>Wayland-first dock for KDE Plasma 6.5+</summary>
   <summary xml:lang="ar">رصيف للأمور الكبيرة</summary>
   <summary xml:lang="az">Hər kəs üçün Dok panel</summary>
   <summary xml:lang="ca">Acoblador per a les masses</summary>
@@ -48,7 +48,7 @@
   <summary xml:lang="da">Dok til masserne</summary>
   <summary xml:lang="de">Dock für die Massen</summary>
   <summary xml:lang="el">Πίνακες εφαρμογών για όλον τον κόσμο</summary>
-  <summary xml:lang="en-GB">Wayland-first dock for KDE Plasma 6.6+</summary>
+  <summary xml:lang="en-GB">Wayland-first dock for KDE Plasma 6.5+</summary>
   <summary xml:lang="eo">Doko por la amasoj</summary>
   <summary xml:lang="es">Un dock para las masas</summary>
   <summary xml:lang="et">Dokk massidele</summary>
@@ -75,7 +75,7 @@
   <summary xml:lang="zh-CN">符合大多数人使用习惯的停靠栏程序</summary>
   <summary xml:lang="zh-TW">給大眾使用的 Dock</summary>
   <description>
-    <p>Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.</p>
+    <p>Latte Dock NG is a Wayland-first dock for KDE Plasma 6.5+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.</p>
     <p>Special thanks to the original Latte Dock authors and all KDE contributors.</p>
     <p xml:lang="ar">«لاتيه» هو رصيف مبنيّ على أُطر عمل «بلازما» حيث يقدّم تجربة أنيقة وبدهيّة لمهامك والبلازمويد لديك. يعمل الرّصيف على إنشاء حركة للمحتويات باستخدام تأثير تقريب القطع المكافئ، ويحاول أن يكون بمتناول يديك عند حاجتك إليه فقط.</p>
     <p xml:lang="az">Latte, plasma iş çərçivələrinə əsaslanan, tapşırıq və plasmoid'ləriniz üçün rahat istifadə oluna bilən, zərif və intiutiv bir Dok Panelidir. O tərkibində yerləşən nişanları parabolik böyütmə effekti ilə canlandırır və yalnız lazım olduqda görünməyə çalışır.</p>
@@ -84,7 +84,7 @@
     <p xml:lang="da">Latte er en dok som er baseret på plasma-frameworks som giver en elegant og intuitiv oplevelse til dine opgaver og plasmoids. Den animerer dens indhold med parabolsk zoom og prøver på kun at være der når der er brug for det.</p>
     <p xml:lang="de">Latte-Dock ist ein auf Plasma-Framework-Technologie basierendes Dock für  Anwendungen und Plasmoide, das ein elegantes und intuitives Nutzererlebnis bietet.Seine Inhalte werden mithilfe parabolischer Zoom-Effekte animiert. Latte versucht, immer zur Stelle zu sein, wenn es benötigt wird.</p>
     <p xml:lang="el">Το Latte είναι ένας πίνακας εφαρμογών βασισμένος στις βιβλιοθήκες plasma που εστιάζει στην καλαισθησία και παρέχει ένα όμορφο περιβάλλον για τις εργασίες και τα γραφικά συστατικά σας. Χρησιμοποιεί το παραβολικό εφέ έτσι ώστε να απεικονίσει τα περιεχόμενα του και προσπαθεί να είναι εκεί μόνο όταν το χρειάζεστε.</p>
-    <p xml:lang="en-GB">Latte Dock NG is a Wayland-first dock for KDE Plasma 6.6+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.</p>
+    <p xml:lang="en-GB">Latte Dock NG is a Wayland-first dock for KDE Plasma 6.5+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.</p>
     <p xml:lang="en-GB">Special thanks to the original Latte Dock authors and all KDE contributors.</p>
     <p xml:lang="eo">Latte estas doko bazita sur plasma-frameworks kiu provizas elegantan kaj intuician sperton por viaj taskoj kaj plasmoidoj. Ĝi animas sian enhavon uzante parabolan zomefikon kaj provas esti tie nur kiam ĝi estas bezonata.</p>
     <p xml:lang="es">Latte es un dock basado en la infraestructura plasma que proporciona una experiencia intuitiva y elegante para sus tareas y plasmoides. Anima sus contenidos usando un efecto de zoom parabólico e intenta estar presente solo cuando se le necesita.</p>
