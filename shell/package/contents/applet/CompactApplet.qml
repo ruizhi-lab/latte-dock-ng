@@ -202,27 +202,31 @@ PlasmaCore.ToolTipArea {
             LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
             LayoutMirroring.childrenInherit: true
 
+            Layout.minimumWidth: root.fullRepresentation ? root.fullRepresentation.Layout.minimumWidth : 0
+            Layout.minimumHeight: root.fullRepresentation ? root.fullRepresentation.Layout.minimumHeight : 0
+
+            Layout.maximumWidth: root.fullRepresentation ? root.fullRepresentation.Layout.maximumWidth : Infinity
+            Layout.maximumHeight: root.fullRepresentation ? root.fullRepresentation.Layout.maximumHeight : Infinity
+
             implicitWidth: {
-                var result = Kirigami.Theme.defaultFont.pixelSize * 35;
                 if (root.fullRepresentation !== null) {
                     if (root.fullRepresentation.Layout.preferredWidth > 0) {
-                        result = root.fullRepresentation.Layout.preferredWidth;
+                        return root.fullRepresentation.Layout.preferredWidth;
                     } else if (root.fullRepresentation.implicitWidth > 0) {
-                        result = root.fullRepresentation.implicitWidth;
+                        return root.fullRepresentation.implicitWidth;
                     }
                 }
-                return result;
+                return Kirigami.Units.iconSizes.sizeForLabels * 35;
             }
             implicitHeight: {
-                var result = Kirigami.Theme.defaultFont.pixelSize * 25;
                 if (root.fullRepresentation !== null) {
                     if (root.fullRepresentation.Layout.preferredHeight > 0) {
-                        result = root.fullRepresentation.Layout.preferredHeight;
+                        return root.fullRepresentation.Layout.preferredHeight;
                     } else if (root.fullRepresentation.implicitHeight > 0) {
-                        result = root.fullRepresentation.implicitHeight;
+                        return root.fullRepresentation.implicitHeight;
                     }
                 }
-                return result;
+                return Kirigami.Units.iconSizes.sizeForLabels * 25;
             }
 
             onActiveFocusChanged: {

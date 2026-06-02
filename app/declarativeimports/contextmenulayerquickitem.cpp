@@ -407,6 +407,12 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
     }
 
     if (!applet->failedToLaunch()) {
+        QAction *configureApplet = applet->internalAction(QStringLiteral("configure"));
+
+        if (configureApplet && configureApplet->isEnabled()) {
+            desktopMenu->addAction(configureApplet);
+        }
+
         QAction *runAssociatedApplication = applet->internalAction(QStringLiteral("run associated application"));
 
         if (runAssociatedApplication && runAssociatedApplication->isEnabled()) {

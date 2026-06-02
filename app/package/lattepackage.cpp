@@ -35,6 +35,7 @@ void Package::initPackage(KPackage::Package *package)
     package->addFileDefinition("lattedockui", QStringLiteral("views/Panel.qml"));
     package->addFileDefinition("widgetexplorerui", QStringLiteral("views/WidgetExplorer.qml"));
     //Configuration
+    package->addFileDefinition("appletconfigurationui", QStringLiteral("configuration/AppletConfiguration.qml"));
     package->addFileDefinition("lattedockconfigurationui", QStringLiteral("configuration/LatteDockConfiguration.qml"));
     package->addFileDefinition("canvasconfigurationui", QStringLiteral("configuration/CanvasConfiguration.qml"));
     package->addFileDefinition("configmodel", QStringLiteral("configuration/config.qml"));

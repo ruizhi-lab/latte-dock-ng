@@ -362,7 +362,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                property alias globalToolBar: null
+                property var globalToolBar: null
                 property bool wideScreen: true
             }
 
