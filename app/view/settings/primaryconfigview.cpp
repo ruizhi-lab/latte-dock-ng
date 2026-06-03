@@ -430,9 +430,6 @@ void PrimaryConfigView::hideEvent(QHideEvent *ev)
     if (m_latteView->containment()) {
         m_latteView->containment()->setUserConfiguring(false);
     }
-
-
-    setVisible(false);
 }
 
 bool PrimaryConfigView::hasFocus() const
