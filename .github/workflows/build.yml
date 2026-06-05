@@ -34,7 +34,7 @@ jobs:
             libplasma-dev libkpipewire-dev libkf6wayland-dev \
             plasma-activities-dev plasma-activities-stats-dev \
             plasma-workspace-dev plasma-wayland-protocols \
-            libwayland-dev
+            libwayland-dev liblayershellqtinterface-dev
 
       - uses: actions/checkout@v4
 
