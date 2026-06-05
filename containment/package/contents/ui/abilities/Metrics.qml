@@ -22,7 +22,7 @@ Ability.MetricsPrivate {
     maxIconSize: _maxIconSize
     backgroundThickness: background.thickness
     readonly property int styleDefaultScreenEdgeMargin: root.isModernDockStyle
-                                                      ? Math.max(6, Math.round(iconSize * 0.12))
+                                                      ? Math.max(4, Math.round(iconSize * 0.08))
                                                       : 0
     readonly property int configuredScreenEdgeMargin: Math.max(0, plasmoid.configuration.screenEdgeMargin)
     readonly property int effectiveScreenEdgeMargin: {

@@ -50,8 +50,8 @@ public:
     ~WaylandInterface() override;
 
     void setViewExtraFlags(QObject *view, bool isPanelWindow = true, Latte::Types::Visibility mode = Latte::Types::WindowsGoBelow) override;
-    void setViewStruts(QWindow &view, const QRect &rect
-                       , Plasma::Types::Location location) override;
+    void setViewStruts(QWindow &view, const QRect &rect,
+                       Plasma::Types::Location location) override;
     void setWindowOnActivities(const WindowId &wid, const QStringList &nextactivities) override;
 
     void removeViewStruts(QWindow &view) override;

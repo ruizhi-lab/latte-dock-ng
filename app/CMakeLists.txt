@@ -96,6 +96,7 @@ target_link_libraries(latte-dock-ng
     KF6::WindowSystem
     KF6::XmlGui
     Wayland::Client
+    LayerShellQt::Interface
 )
 
 configure_file(org.kde.latte-dock.desktop.cmake org.kde.latte-dock.desktop)

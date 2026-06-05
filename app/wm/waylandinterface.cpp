@@ -27,6 +27,7 @@
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 #include <KWayland/Client/plasmavirtualdesktop.h>
+#include <LayerShellQt/window.h>
 
 
 using namespace KWayland::Client;
@@ -56,7 +57,6 @@ public:
     GhostWindow(WindowSystem::WaylandInterface *waylandInterface)
         : m_waylandInterface(waylandInterface) {
         setFlags(Qt::FramelessWindowHint
-                 | Qt::WindowStaysOnTopHint
                  | Qt::NoDropShadowWindowHint
                  | Qt::WindowDoesNotAcceptFocus
                  | Qt::WindowTransparentForInput);
@@ -64,51 +64,74 @@ public:
         setColor(QColor(Qt::transparent));
 
         connect(m_waylandInterface, &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &GhostWindow::identifyWinId);
-
-        setupWaylandIntegration();
-        show();
     }
 
     ~GhostWindow() {
         m_waylandInterface->unregisterIgnoredWindow(m_winId);
-        delete m_shellSurface;
     }
 
-    void setGeometry(const QRect &rect) {
-        if (geometry() == rect) {
+    //! Configure the layer-shell surface for struts reservation.
+    //! In Plasma 6, PanelBehavior is deprecated and ignored by KWin.
+    //! Struts must be set via zwlr_layer_shell_v1 exclusive_zone.
+    void configure(Plasma::Types::Location location, const QRect &rect) {
+        using Anchor = LayerShellQt::Window::Anchor;
+
+        auto *layerWindow = LayerShellQt::Window::get(this);
+
+        LayerShellQt::Window::Anchors anchors;
+        int exclusiveZone = 0;
+
+        switch (location) {
+        case Plasma::Types::BottomEdge:
+            anchors.setFlag(Anchor::AnchorBottom);
+            anchors.setFlag(Anchor::AnchorLeft);
+            anchors.setFlag(Anchor::AnchorRight);
+            exclusiveZone = rect.height();
+            break;
+        case Plasma::Types::TopEdge:
+            anchors.setFlag(Anchor::AnchorTop);
+            anchors.setFlag(Anchor::AnchorLeft);
+            anchors.setFlag(Anchor::AnchorRight);
+            exclusiveZone = rect.height();
+            break;
+        case Plasma::Types::LeftEdge:
+            anchors.setFlag(Anchor::AnchorLeft);
+            anchors.setFlag(Anchor::AnchorTop);
+            anchors.setFlag(Anchor::AnchorBottom);
+            exclusiveZone = rect.width();
+            break;
+        case Plasma::Types::RightEdge:
+            anchors.setFlag(Anchor::AnchorRight);
+            anchors.setFlag(Anchor::AnchorTop);
+            anchors.setFlag(Anchor::AnchorBottom);
+            exclusiveZone = rect.width();
+            break;
+        default:
             return;
+        }
+
+        layerWindow->setAnchors(anchors);
+        layerWindow->setExclusiveZone(exclusiveZone);
+        layerWindow->setLayer(LayerShellQt::Window::LayerTop);
+        layerWindow->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityNone);
+        layerWindow->setScope(QStringLiteral("latte-dock-struts"));
+
+        //! For layer-shell: anchored to 3 edges means the 4th dimension must be specified.
+        //! Width 0 = fill between left+right anchors; Height 0 = fill between top+bottom.
+        if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
+            layerWindow->setDesiredSize(QSize(0, exclusiveZone));
+        } else {
+            layerWindow->setDesiredSize(QSize(exclusiveZone, 0));
         }
 
         m_validGeometry = rect;
 
-        setMinimumSize(rect.size());
-        setMaximumSize(rect.size());
-        resize(rect.size());
-
-        m_shellSurface->setPosition(rect.topLeft());
+        if (!isVisible()) {
+            qDebug() << "wayland ghost window surface was created...";
+            show();
+        }
     }
 
-    void setupWaylandIntegration() {
-        using namespace KWayland::Client;
-
-        if (m_shellSurface)
-            return;
-
-        Surface *s{Surface::fromWindow(this)};
-
-        if (!s)
-            return;
-
-        m_shellSurface = m_waylandInterface->waylandCoronaInterface()->createSurface(s, this);
-        qDebug() << "wayland ghost window surface was created...";
-
-        m_shellSurface->setSkipTaskbar(true);
-        m_shellSurface->setPanelTakesFocus(false);
-        m_shellSurface->setRole(PlasmaShellSurface::Role::Panel);
-        m_shellSurface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AlwaysVisible);
-    }
-
-    KWayland::Client::PlasmaShellSurface *m_shellSurface{nullptr};
     WindowSystem::WaylandInterface *m_waylandInterface{nullptr};
 
     //! geometry() function under wayland does not return nice results
@@ -361,26 +384,20 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
 void WaylandInterface::setViewStruts(QWindow &view, const QRect &rect, Plasma::Types::Location location)
 {
-    if (!m_ghostWindows.contains(&view)) {
-        m_ghostWindows[&view] = new Private::GhostWindow(this);
+    //! Always recreate the ghost window when struts change.
+    //! LayerShellQt exclusive_zone updates on an existing surface may not be
+    //! picked up by KWin reliably (e.g. when switching dock styles).
+    if (m_ghostWindows.contains(&view)) {
+        delete m_ghostWindows.take(&view);
     }
 
-    auto w = m_ghostWindows[&view];
+    auto w = new Private::GhostWindow(this);
+    m_ghostWindows[&view] = w;
 
-    switch (location) {
-    case Plasma::Types::TopEdge:
-    case Plasma::Types::BottomEdge:
-        w->setGeometry({rect.x() + rect.width() / 2 - rect.height(), rect.y(), rect.height() + 1, rect.height()});
-        break;
-
-    case Plasma::Types::LeftEdge:
-    case Plasma::Types::RightEdge:
-        w->setGeometry({rect.x(), rect.y() + rect.height() / 2 - rect.width(), rect.width(), rect.width() + 1});
-        break;
-
-    default:
-        break;
-    }
+    //! In Plasma 6, PanelBehavior is deprecated and ignored by KWin.
+    //! Struts are now set via the zwlr_layer_shell_v1 protocol using
+    //! exclusive_zone (provided by LayerShellQt).
+    w->configure(location, rect);
 }
 
 void WaylandInterface::switchToNextVirtualDesktop()

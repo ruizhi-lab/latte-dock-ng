@@ -63,6 +63,7 @@ find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaActivities ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(KWayland ${KF6_MIN_VERSION} REQUIRED)
+find_package(LayerShellQt REQUIRED)
 find_package(KF6Declarative ${KF6_MIN_VERSION} REQUIRED CONFIG)
 
 find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)
