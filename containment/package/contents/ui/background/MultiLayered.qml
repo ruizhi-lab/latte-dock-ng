@@ -292,6 +292,13 @@ BackgroundProperties{
 
     readonly property int customRadius: {
         if (modernDockStyle) {
+            if (plasmoid.configuration.backgroundRadius >= 0) {
+                //! user explicitly set a radius — use percentage-based calculation
+                return root.isHorizontal ?
+                            (plasmoid.configuration.backgroundRadius/100) * solidBackground.height :
+                            (plasmoid.configuration.backgroundRadius/100) * solidBackground.width;
+            }
+            //! default Modern behavior: auto-compute from panel thickness
             var thickness = root.isHorizontal ? solidBackground.height : solidBackground.width;
             return Math.max(10, Math.min(30, Math.round(thickness * 0.36)));
         }
