@@ -288,9 +288,13 @@ BackgroundProperties{
     readonly property bool customDefShadowIsEnabled: customShadowIsSupported && !customUserShadowIsEnabled && customRadiusIsEnabled
     readonly property bool customUserShadowIsEnabled: customShadowIsSupported && plasmoid.configuration.backgroundShadowSize >= 0
 
-    readonly property bool customRadiusIsEnabled: kirigamiLibraryIsFound && (modernDockStyle || plasmoid.configuration.backgroundRadius >= 0)
+    readonly property bool customRadiusIsEnabled: kirigamiLibraryIsFound && (modernDockStyle || plasmoid.configuration.backgroundRadius >= 0 || !plasmoid.configuration.backgroundAllCorners)
 
     readonly property int customRadius: {
+        if (!plasmoid.configuration.backgroundAllCorners) {
+            return 0; //! all corners flat when All Corners disabled
+        }
+
         if (modernDockStyle) {
             if (plasmoid.configuration.backgroundRadius >= 0) {
                 //! user explicitly set a radius — use percentage-based calculation

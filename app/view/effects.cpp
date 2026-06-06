@@ -593,7 +593,7 @@ void Effects::updateEnabledBorders()
 
     Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::AllBorders;
 
-    if (!m_view->screenEdgeMarginEnabled() && !m_backgroundAllCorners) {
+    if (!m_view->screenEdgeMarginEnabled()) {
         switch (m_view->location()) {
         case Plasma::Types::TopEdge:
             borders &= ~Plasma::FrameSvg::TopBorder;
