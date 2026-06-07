@@ -16,6 +16,7 @@ import org.kde.latte.core 0.2 as LatteCore
 Item{
     id: rulerItem
 
+    Kirigami.Theme.inherit: true
     readonly property var theme: Kirigami.Theme
 
     width: root.isHorizontal ? userMaxLength : thickness

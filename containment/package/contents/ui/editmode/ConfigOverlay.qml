@@ -57,17 +57,40 @@ MouseArea {
         if (item && !item.isParabolicEdgeSpacer) {
             currentApplet = item;
             hideTimer.stop();
+            nullifyAppletTimer.stop();
             tooltip.visible = true;
             tooltip.raise();
         }
     }
 
-    onExited: hideTimer.restart();
+    onExited: {
+        // Don't start the hide timer if the cursor is already in the tooltip
+        // dialog (a separate window) — the tooltip should remain interactive.
+        if (tooltip.visible && tooltipMouseArea.containsMouse) {
+            return;
+        }
+        hideTimer.restart();
+    }
 
     onCurrentAppletChanged: {
-        if (!currentApplet) { hideTimer.restart(); return; }
+        if (!currentApplet) {
+            // Debounce nullification: a short delay prevents the tooltip
+            // from flickering when hover briefly lands between items or when
+            // the cursor passes over a ParabolicEdgeSpacer.
+            nullifyAppletTimer.start();
+            return;
+        }
+        nullifyAppletTimer.stop();
         lockButton.checked = currentApplet.lockZoom;
         colorizingButton.checked = !currentApplet.userBlocksColorizing;
+    }
+
+    Timer {
+        id: nullifyAppletTimer
+        interval: 80
+        onTriggered: {
+            hideTimer.restart();
+        }
     }
 
     Timer {
@@ -108,8 +131,11 @@ MouseArea {
 
             var labelText = "";
             if (currentApplet.isInternalViewSplitter) labelText = i18n("Justify Splitter");
-            else if (currentApplet.applet && currentApplet.applet.title) labelText = currentApplet.applet.title;
-            label.text = labelText || "";
+            else if (currentApplet.isSeparator) labelText = i18n("Separator");
+            else if (currentApplet.applet) {
+                labelText = currentApplet.applet.title || currentApplet.applet.pluginName || i18n("Applet");
+            }
+            label.text = labelText;
         }
 
         mainItem: MouseArea {
