@@ -19,10 +19,13 @@ Parabolic::Parabolic(Latte::View *parent)
     : QObject(parent),
       m_view(parent)
 {
-    //! Parabolic Item Nullifier does not need any big interval in order to avoid
-    //! nullifing currentParabolicItem too fast and as such send a false signal
-    //! that NO parabolic item is hovered currently
-    m_parabolicItemNullifier.setInterval(1);
+    //! Debounce interval for nullifying the current parabolic item.
+    //! When the cursor is positioned exactly between two icons, a too-short
+    //! interval (e.g. 1ms) causes rapid oscillation between the two items
+    //! as the nullifier fires before the next hover-move event can settle on
+    //! the correct target. A longer interval acts as hysteresis, preventing
+    //! the magnification effect from jittering between adjacent icons.
+    m_parabolicItemNullifier.setInterval(80);
     m_parabolicItemNullifier.setSingleShot(true);
     connect(&m_parabolicItemNullifier, &QTimer::timeout, this, [&]() {
         setCurrentParabolicItem(nullptr);
