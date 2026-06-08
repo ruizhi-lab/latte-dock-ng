@@ -9,6 +9,7 @@
 // local
 #include "config-latte.h"
 #include "apptypes.h"
+#include "knscompat.h"
 #include "lattecorona.h"
 #include "layouts/importer.h"
 #include "templates/templatesmanager.h"
@@ -40,6 +41,7 @@
 #include <KDBusService>
 #include <KQuickAddons/QtQuickSettings>
 #include <KWindowSystem>
+#include <plasmaquick/sharedqmlengine.h>
 
 //! COLORS
 #define CNORMAL  "\x1b[0m"
@@ -97,6 +99,23 @@ int main(int argc, char **argv)
     KQuickAddons::QtQuickSettings::init();
 
     KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+
+    //! Prime the Plasma global shared QML engine singleton early.
+    //! plasmashell creates a process-wide shared QQmlEngine via
+    //! SharedQmlEnginePrivate::engine() (a static weak_ptr).  When
+    //! KNSWidgets::Dialog later opens its internal QQuickWidget, the
+    //! engine singleton is already initialised and types resolved through
+    //! it take precedence, avoiding the incompatible AOT-compiled
+    //! DrawerHandle.qml path from libKirigamiTemplates.so.
+    static std::shared_ptr<PlasmaQuick::SharedQmlEngine> s_sharedEngine =
+        std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);
+
+    //! Set up user-local QML module overrides so the KNS download dialog
+    //! (opened by "Download New Plasma Widgets") renders correctly.  This
+    //! works around the Qt 6.10.3 incompatibility in Kirigami's
+    //! DrawerHandle.qml without modifying system files.
+    ensureKnsCompat();
+
     app.setWindowIcon(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);

@@ -2,10 +2,11 @@ set(lattedock-app_SRCS
     alternativeshelper.cpp
     apptypes.cpp
     infoview.cpp
+    knscompat.cpp
     lattecorona.cpp
     screenpool.cpp
     primaryoutputwatcher.cpp
-    main.cpp    
+    main.cpp
     coretypes.h
 )
 
