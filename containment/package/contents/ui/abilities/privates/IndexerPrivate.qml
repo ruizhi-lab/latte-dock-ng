@@ -218,7 +218,7 @@ AbilityDefinition.Indexer {
     Binding{
         target: indxr
         property: "clientsTrackingWindowsCount"
-        when: !(root.appletIsDragged || updateIsBlocked)
+        when: !updateIsBlocked
         value: {
             var cnts = 0;
             var grid;

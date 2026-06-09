@@ -45,7 +45,6 @@ class UniversalSettings : public QObject
     Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY autostartChanged)
     Q_PROPERTY(bool badges3DStyle READ badges3DStyle WRITE setBadges3DStyle NOTIFY badges3DStyleChanged)
     Q_PROPERTY(bool inAdvancedModeForEditSettings READ inAdvancedModeForEditSettings WRITE setInAdvancedModeForEditSettings NOTIFY inAdvancedModeForEditSettingsChanged)
-    Q_PROPERTY(bool inConfigureAppletsMode READ inConfigureAppletsMode WRITE setInConfigureAppletsMode NOTIFY inConfigureAppletsModeChanged)
     Q_PROPERTY(bool colorsScriptIsPresent READ colorsScriptIsPresent NOTIFY colorsScriptIsPresentChanged)
     Q_PROPERTY(bool showInfoWindow READ showInfoWindow WRITE setShowInfoWindow NOTIFY showInfoWindowChanged)
 
@@ -76,9 +75,6 @@ public:
 
     bool inAdvancedModeForEditSettings() const;
     void setInAdvancedModeForEditSettings(const bool &inAdvanced);
-
-    bool inConfigureAppletsMode() const;
-    void setInConfigureAppletsMode(const bool enabled);
 
     bool isAvailableGeometryBroadcastedToPlasma() const;
     void setIsAvailableGeometryBroadcastedToPlasma(const bool &isBroadcasted);
@@ -132,7 +128,6 @@ Q_SIGNALS:
     void colorsScriptIsPresentChanged();
     void downloadWindowSizeChanged();
     void inAdvancedModeForEditSettingsChanged();
-    void inConfigureAppletsModeChanged();
     void layoutsColumnWidthsChanged();
     void layoutsWindowSizeChanged();
     void launchersChanged();
@@ -170,7 +165,6 @@ private:
     bool m_badges3DStyle{false};
     bool m_colorsScriptIsPresent{false};
     bool m_inAdvancedModeForEditSettings{false};
-    bool m_inConfigureAppletsMode{false};
     bool m_isAvailableGeometryBroadcastedToPlasma{true};
     bool m_metaPressAndHoldEnabled{true};
     bool m_showInfoWindow{true};

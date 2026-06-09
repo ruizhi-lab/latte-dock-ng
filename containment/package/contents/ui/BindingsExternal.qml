@@ -201,7 +201,6 @@ Item {
         when: latteView && latteView.effects && !root.inStartup
         value: LatteCore.WindowSystem.compositingActive
                && !root.editMode
-               && !root.inConfigureAppletsMode
                && (((root.blurEnabled && root.useThemePanel) || (root.blurEnabled && root.forceSolidPanel))
                    && (!root.inStartup || visibilityManager.inRelocationHiding))
     }

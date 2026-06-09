@@ -29,27 +29,16 @@ Item{
         }
 
         if (appletItem.isInternalViewSplitter) {
-            if (!root.inConfigureAppletsMode) {
-                return 0;
-            } else {
-                return appletItem.inConfigureAppletsDragging && root.dragOverlay.currentApplet.isInternalViewSplitter && root.dragOverlay.currentApplet === appletItem ?
-                            appletMinimumLength : internalSplitterComputedLength;
-            }
+            return 0;
         }
 
         if ((isSeparator && appletItem.parabolic.isEnabled)
-                || (isMarginsAreaSeparator && (!root.inConfigureAppletsMode || appletItem.parabolic.isEnabled))) {
+                || (isMarginsAreaSeparator && appletItem.parabolic.isEnabled)) {
             return -1;
         }
 
         if (appletItem.isAutoFillApplet) {
-            if (appletItem.inConfigureAppletsDragging && root.dragOverlay.currentApplet === appletItem) {
-                return root.dragOverlay.draggedPlaceHolder.length;
-            }
-
-            //! dont miss 1pixel gap when the two internal splitters are met inConfigure and Justify mode
-            //! a good example is a big vertical right sidebar to observe that gap
-            if (appletItem.layouter.maxMetricsInHigherPriority) {                
+            if (appletItem.layouter.maxMetricsInHigherPriority) {
                 return isInternalViewSplitter ? appletItem.maxAutoFillLength + 1 : appletItem.maxAutoFillLength;
             }
 
@@ -57,11 +46,11 @@ Item{
             return isInternalViewSplitter? result + 1 : result;
         }
 
-        return root.inConfigureAppletsMode ? Math.max(Math.min(appletItem.metrics.iconSize, root.minAppletLengthInConfigure), scaledLength) : scaledLength;
+        return scaledLength;
     }
 
     readonly property real thickness: {
-        if (appletItem.isInternalViewSplitter && !root.inConfigureAppletsMode) {
+        if (appletItem.isInternalViewSplitter) {
             return 0;
         }
 
@@ -72,8 +61,6 @@ Item{
 
     property bool disableLengthScale: false
     property bool disableThicknessScale: false
-
-    property bool editMode: root.inConfigureAppletsMode
 
     property real appletWidth: applet ?  applet.width : -1
     property real appletHeight: applet ?  applet.height : -1
@@ -283,7 +270,7 @@ Item{
                   || appletItem.externalAppletUsesFixedSlotSizing)
         value: {
             if (appletItem.isInternalViewSplitter){
-                return !root.inConfigureAppletsMode ? 0 : proposedItemThickness;
+                return 0;
             }
 
             if (appletItem.externalAppletUsesFixedSlotSizing) {
@@ -705,33 +692,6 @@ Item{
 
         sourceComponent: EventsSink {
             destination: _wrapperContainer
-        }
-    }
-
-    //! InternalViewSplitter
-    Loader{
-        anchors.fill: parent //_wrapperContainer
-        anchors.topMargin: plasmoid.location === PlasmaCore.Types.TopEdge ? wrapper.appletScreenMargin : 0
-        anchors.leftMargin: plasmoid.location === PlasmaCore.Types.LeftEdge ? wrapper.appletScreenMargin : 0
-        anchors.bottomMargin: plasmoid.location === PlasmaCore.Types.BottomEdge ? wrapper.appletScreenMargin : 0
-        anchors.rightMargin: plasmoid.location === PlasmaCore.Types.RightEdge ? wrapper.appletScreenMargin : 0
-
-        active: appletItem.isInternalViewSplitter && root.inConfigureAppletsMode
-
-        sourceComponent: LatteComponents.SpriteRectangle {
-            isHorizontal: root.isHorizontal
-            color: appletItem.highlightColor
-            spriteSize: 8
-            spriteMargin: 4
-            spritePosition: {
-                if (root.isHorizontal) {
-                    return appletItem.parent === appletItem.layouts.startLayout ?
-                                PlasmaCore.Types.RightPositioned : PlasmaCore.Types.LeftPositioned;
-                } else {
-                    return appletItem.parent === appletItem.layouts.startLayout ?
-                                PlasmaCore.Types.BottomPositioned : PlasmaCore.Types.TopPositioned;
-                }
-            }
         }
     }
 

@@ -38,7 +38,7 @@ Item{
     readonly property bool textColorIsDark: textColorBrightness < 127.5
 
     readonly property color bestContrastedTextColor: {
-        if (!universalSettings.inConfigureAppletsMode && themeExtended) {
+        if (themeExtended) {
             return latteView.colorizer.currentBackgroundBrightness > 127.5 ?
                         themeExtended.lightTheme.textColor :
                         themeExtended.darkTheme.textColor;

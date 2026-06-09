@@ -13,7 +13,7 @@ import org.kde.latte.core 0.2 as LatteCore
 import "./privates" as Ability
 
 Ability.ParabolicEffectPrivate {
-    isEnabled: factor.zoom>1 && !root.inConfigureAppletsMode
+    isEnabled: factor.zoom>1
     factor.zoom: {
         var storedZoom = LatteCore.WindowSystem.compositingActive && animations.active ? ( 1 + (plasmoid.configuration.zoomLevel / 20) ) : 1;
         var maxSize = storedZoom * metrics.iconSize;

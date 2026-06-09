@@ -18,7 +18,6 @@ Item {
     readonly property bool isActive: plasmoid.configuration.autoSizeEnabled
                                      && !root.containsOnlyPlasmaTasks
                                      && layouter.fillApplets<=0
-                                     && !(root.inConfigureAppletsMode && plasmoid.configuration.alignment === LatteCore.types.Justify) /*block shrinking for justify splitters*/
                                      && latteView
                                      && latteView.visibility.mode !== LatteCore.types.SidebarOnDemand
                                      && latteView.visibility.mode !== LatteCore.types.SidebarAutoHide

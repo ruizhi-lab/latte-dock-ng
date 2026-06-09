@@ -75,7 +75,7 @@ Loader {
         MouseArea {
             id: editBackMouseArea
             anchors.fill: parent
-            visible: !universalSettings.inConfigureAppletsMode
+            visible: true
             hoverEnabled: true
 
             property bool wheelIsBlocked: false

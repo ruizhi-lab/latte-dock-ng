@@ -44,8 +44,6 @@ Loader {
         readonly property bool basicLevel: !advancedLevel
         readonly property bool advancedLevel: universalSettings.inAdvancedModeForEditSettings
 
-        readonly property bool inConfigureAppletsMode: universalSettings.inConfigureAppletsMode
-
         readonly property bool kirigamiLibraryIsFound: true
 
         //! max size based on screen resolution

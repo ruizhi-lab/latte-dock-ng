@@ -23,8 +23,8 @@ import "../debugger" as Debugger
 
 Item {
     id: appletItem
-    width: isInternalViewSplitter && !root.inConfigureAppletsMode ? 0 : computeWidth
-    height: isInternalViewSplitter && !root.inConfigureAppletsMode ? 0 : computeHeight
+    width: isInternalViewSplitter ? 0 : computeWidth
+    height: isInternalViewSplitter ? 0 : computeHeight
     z: isSortDragging ? 1600 : (externalAppletDrawsAboveTasks ? 1000 : 0)
 
     //any applets that exceed their limits should not take events from their surrounding applets
@@ -79,10 +79,6 @@ Item {
 
     property int maxAutoFillLength: -1 //it is used in calculations for fillWidth,fillHeight applets
     property int minAutoFillLength: -1 //it is used in calculations for fillWidth,fillHeight applets
-
-    readonly property bool inConfigureAppletsDragging: root.dragOverlay
-                                                       && root.dragOverlay.currentApplet
-                                                       && root.dragOverlay.pressed
 
     property bool appletBlocksColorizing: !communicator.requires.latteSideColoringEnabled || communicator.indexerIsSupported
     readonly property bool isExternalPlasmaApplet: pluginName !== ""
@@ -141,11 +137,10 @@ Item {
     property Item sortDragLastTarget: null
     property bool sortDragLastInsertBefore: false
     property real sortDragLastCommitTs: 0
-    property bool isHidden: (!root.inConfigureAppletsMode
-                             && (((applet
-                                   && applet.status === PlasmaCore.Types.HiddenStatus
-                                   && !keepVisibleOnHiddenStatus)
-                                  || isInternalViewSplitter)))
+    property bool isHidden: ((applet
+                             && applet.status === PlasmaCore.Types.HiddenStatus
+                             && !keepVisibleOnHiddenStatus)
+                            || isInternalViewSplitter)
                             || isScheduledForDestruction
     property bool isInternalViewSplitter: (internalSplitterId > 0)
     property bool isZoomed: false
@@ -421,11 +416,9 @@ Item {
             return;
         }
 
-        var draggingAppletInConfigure = root.dragOverlay && root.dragOverlay.currentApplet;
-        var isCurrentAppletInDragging = draggingAppletInConfigure && (root.dragOverlay.currentApplet === appletItem);
         var dropApplet = root.dragInfo.entered && root.dragInfo.isPlasmoid
 
-        if ((isCurrentAppletInDragging || !draggingAppletInConfigure) && !dropApplet) {
+        if (!dropApplet) {
             return;
         }
 
@@ -460,11 +453,9 @@ Item {
             return;
         }
 
-        var draggingAppletInConfigure = root.dragOverlay && root.dragOverlay.currentApplet;
-        var isCurrentAppletInDragging = draggingAppletInConfigure && (root.dragOverlay.currentApplet === appletItem);
         var dropApplet = root.dragInfo.entered && root.dragInfo.isPlasmoid
 
-        if ((isCurrentAppletInDragging || !draggingAppletInConfigure) && !dropApplet) {
+        if (!dropApplet) {
             return;
         }
         if (!root.isVertical) {
@@ -1332,7 +1323,6 @@ Item {
         target: null
         acceptedButtons: Qt.LeftButton
         enabled: appletItem.externalAppletDrawsAboveTasks
-                 && !root.inConfigureAppletsMode
                  && root.myView.isShownFully
                  && !plasmoid.immutable
 
@@ -1492,15 +1482,6 @@ Item {
                 //!icon colors
                 iconBackgroundColor: appletItem.wrapper.overlayIconLoader.backgroundColor
                 iconGlowColor: appletItem.wrapper.overlayIconLoader.glowColor
-            }
-
-            //! InConfigureApplets visual paddings
-            Loader {
-                anchors.fill: _wrapper
-                active: root.inConfigureAppletsMode && !isInternalViewSplitter
-                sourceComponent: PaddingsInConfigureApplets{
-                    color: appletItem.highlightColor
-                }
             }
 
             //! Indicator Back Layer

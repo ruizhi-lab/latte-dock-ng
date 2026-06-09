@@ -46,11 +46,7 @@ Loader{
         }
     }
 
-    readonly property bool editModeTextColorIsBright: ColorizerTools.colorBrightness(editModeTextColor) > 127.5
-    readonly property color editModeTextColor: latteView && latteView.layout ? latteView.layout.textColor : "white"
-
     readonly property bool mustBeShown: (applyTheme && applyTheme !== theme)
-                                        || (root.inConfigureAppletsMode && (root.themeColors === LatteContainment.types.SmartThemeColors))
 
     readonly property real currentBackgroundBrightness: item ? item.currentBrightness : -1000
 
@@ -140,17 +136,7 @@ Loader{
     property color applyColor: textColor
 
     readonly property color backgroundColor:applyTheme.backgroundColor
-    readonly property color textColor: {
-        if (latteView && latteView.layout
-                && root.inConfigureAppletsMode
-                && LatteCore.WindowSystem.compositingActive
-                && root.myView.backgroundStoredOpacity<0.40
-                && (root.themeColors === LatteContainment.types.SmartThemeColors)) {
-            return latteView.layout.textColor;
-        }
-
-        return applyTheme.textColor;
-    }
+    readonly property color textColor: applyTheme.textColor
 
     readonly property color inactiveBackgroundColor: applyTheme === theme ? theme.backgroundColor : applyTheme.inactiveBackgroundColor
     readonly property color inactiveTextColor: applyTheme === theme ? theme.textColor : applyTheme.inactiveTextColor
@@ -167,28 +153,6 @@ Loader{
     readonly property color buttonFocusColor: applyTheme && applyTheme.buttonFocusColor !== undefined ? applyTheme.buttonFocusColor : highlightColor
 
     readonly property string scheme: {
-        if (root.inConfigureAppletsMode && (root.themeColors === LatteContainment.types.SmartThemeColors)) {
-            if (!LatteCore.WindowSystem.compositingActive && applyTheme !== theme) {
-                return applyTheme.schemeFile;
-            }
-
-            //! in edit mode (that is shown the edit visual without opacity)
-            //! take care the applets that need a proper color scheme to paint themselves
-            if ((editModeTextColorIsBright && themeExtended.isLightTheme)
-                    || (!editModeTextColorIsBright && !themeExtended.isLightTheme)) {
-                if (themeExtended.darkTheme === themeExtended.defaultTheme) {
-                    console.log("light theme... : " + themeExtended.isLightTheme);
-                    return themeExtended.lightTheme.schemeFile;
-                } else {
-                    console.log("dark theme... : " + themeExtended.isDarkTheme);
-                    return themeExtended.darkTheme.schemeFile;
-                }
-            } else {
-                console.log("default theme... : " + themeExtended.isLightTheme);
-                return themeExtended.defaultTheme.schemeFile;
-            }
-        }
-
         if (applyTheme===theme || !mustBeShown) {
             if (themeExtended) {
                 return themeExtended.defaultTheme.schemeFile;

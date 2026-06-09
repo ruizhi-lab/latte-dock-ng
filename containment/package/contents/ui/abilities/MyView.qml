@@ -24,7 +24,6 @@ Ability.MyViewPrivate {
     isHidingBlocked: isHidingBlockedFromApplet || layouts.contextMenuIsShown
 
     inEditMode: root.editMode
-    inConfigureAppletsMode: root.inConfigureAppletsMode
 
     inSlidingIn: visibilityManager.inSlidingIn
     inSlidingOut: visibilityManager.inSlidingOut
