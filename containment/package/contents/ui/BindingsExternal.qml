@@ -308,16 +308,11 @@ Item {
 
             var edgeThickness = isCapableToHideScreenGap ? thicknessForIsCapableToHideScreenGap : metrics.mask.screenEdge * mirrorGapFactor;
 
-            if (root.isModernDockStyle) {
-                //! Modern: reserve current visible panel thickness + screen edge gap.
-                //! Using current values (not max) so the exclusive zone matches the
-                //! actual panel height rather than its maximum possible expansion.
-                return edgeThickness + metrics.iconSize + metrics.margin.tailThickness + metrics.margin.headThickness;
-            } else {
-                //! Classic: reserve up to icon visual top edge only (tail margin + icon),
-                //! not the full head margin which extends beyond the visible panel area.
-                return metrics.iconSize + metrics.margin.tailThickness;
-            }
+            //! Reserve the full visible panel thickness + screen edge gap
+            //! so windows cannot slide under any part of the dock background.
+            //! Both styles use the same formula: screen edge gap + full panel
+            //! thickness (head margin + icon + tail margin).
+            return edgeThickness + metrics.iconSize + metrics.margin.tailThickness + metrics.margin.headThickness;
         }
     }
 
