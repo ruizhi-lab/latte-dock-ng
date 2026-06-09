@@ -54,6 +54,7 @@ ContainmentItem {
         }
     }
 
+
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft && !root.isVertical
     LayoutMirroring.childrenInherit: true
 
@@ -889,8 +890,11 @@ ContainmentItem {
                 if (initAppletContainer(appletContainer, applet)) {
                     retryTimer.stop();
                     retryTimer.destroy();
-                    appletContainer.visible = Qt.binding(function() {
-                        return appletContainerShouldBeVisible(appletContainer);
+                    // Use opacity-based visibility instead of visible:false
+                    // to avoid triggering applet internal element state resets.
+                    // (Same WorkAround pattern as LayoutsContainer.qml:22)
+                    appletContainer.opacity = Qt.binding(function() {
+                        return appletContainerShouldBeVisible(appletContainer) ? 1 : 0;
                     });
                 } else if (retryCount >= 80) { // ~4s
                     retryTimer.stop();
@@ -902,9 +906,12 @@ ContainmentItem {
             return appletContainer;
         }
 
-        // don't show applet if it chooses to be hidden but still make it  accessible in the panelcontroller
-        appletContainer.visible = Qt.binding(function() {
-            return appletContainerShouldBeVisible(appletContainer);
+        // don't show applet if it chooses to be hidden but still make it accessible in the panelcontroller
+        // Use opacity-based visibility instead of visible:false
+        // to avoid triggering applet internal element state resets.
+        // (Same WorkAround pattern as LayoutsContainer.qml:22)
+        appletContainer.opacity = Qt.binding(function() {
+            return appletContainerShouldBeVisible(appletContainer) ? 1 : 0;
         });
         return appletContainer;
     }
@@ -1004,7 +1011,8 @@ ContainmentItem {
         appletContainer.applet = appletItem;
         appletItem.parent = appletContainer.appletWrapper;
         appletItem.anchors.fill = appletContainer.appletWrapper;
-        appletItem.visible = true;
+        // Don't override visible with imperative assignment;
+        // QQuickItem defaults to visible=true and the applet manages its own state.
         return true;
     }
 
