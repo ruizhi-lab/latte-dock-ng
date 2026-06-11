@@ -1463,6 +1463,17 @@ bool View::event(QEvent *e)
             break;
 
         case QEvent::Drop:
+            if (auto de = dynamic_cast<QDropEvent *>(e)) {
+                if (de->mimeData()->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
+                    const QString data = de->mimeData()->data(QStringLiteral("text/x-plasmoidservicename"));
+                    const QStringList names = data.split('\n', Qt::SkipEmptyParts);
+                    for (const QString &name : names) {
+                        if (auto *cont = containment()) {
+                            cont->createApplet(name);
+                        }
+                    }
+                }
+            }
             setContainsDrag(false);
             sinkableevent = true;
             break;
