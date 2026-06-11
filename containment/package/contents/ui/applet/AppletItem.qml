@@ -80,7 +80,7 @@ Item {
     property int maxAutoFillLength: -1 //it is used in calculations for fillWidth,fillHeight applets
     property int minAutoFillLength: -1 //it is used in calculations for fillWidth,fillHeight applets
 
-    property bool appletBlocksColorizing: !communicator.requires.latteSideColoringEnabled || communicator.indexerIsSupported
+    property bool appletBlocksColorizing: !communicator.requires.latteSideColoringEnabled || communicator.indexerIsSupported || isSystray
     readonly property bool isExternalPlasmaApplet: pluginName !== ""
                                                  && !isInternalViewSplitter
                                                  && !indexerIsSupported
@@ -1281,6 +1281,14 @@ Item {
         }
 
         function onWheelScrolled(pos, angleDelta, buttons) {
+            if (appletItem.isSystray) {
+                // System tray applets such as plasma-pa (volume) handle
+                // wheel events internally. Let them pass through so that
+                // volume adjustment and other wheel actions work correctly,
+                // matching the Plasma 6 panel behaviour.
+                return;
+            }
+
             if (!appletItem.applet || !root.mouseWheelActions || viewSignalsConnector.blockWheel || !appletItem.myView.isShownFully) {
                 return;
             }
@@ -1744,7 +1752,7 @@ Item {
     //END states
 
     //BEGIN animations
-    ///////Restore Zoom Animation/////
+    //! Restore Zoom Animation
     ParallelAnimation{
         id: _restoreAnimation
 
@@ -1756,4 +1764,5 @@ Item {
             easing.type: Easing.InCubic
         }
     }
+
 }
