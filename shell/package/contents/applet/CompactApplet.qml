@@ -78,6 +78,87 @@ PlasmaCore.ToolTipArea {
         return null;
     }
 
+    function findAppletItem() {
+        // Walk up the visual parent chain from CompactApplet's parent
+        // (_wrapperContainer) through ItemWrapper, Flow, to AppletItem.
+        // Returns the first ancestor that has externalAppletNaturalWidth.
+        var item = root.parent;
+        var depth = 0;
+        while (item && depth < 16) {
+            if ("externalAppletNaturalWidth" in item) {
+                return item;
+            }
+            item = item.parent;
+            depth++;
+        }
+        return null;
+    }
+
+    function findDeepImplicitWidth(item, depth) {
+        if (!item || depth > 12) return 0;
+        var best = item.implicitWidth > 0 ? item.implicitWidth : 0;
+        for (var i = 0; i < (item.children ? item.children.length : 0); i++) {
+            best = Math.max(best, findDeepImplicitWidth(item.children[i], depth + 1));
+        }
+        return best;
+    }
+
+    function findDeepImplicitHeight(item, depth) {
+        if (!item || depth > 12) return 0;
+        var best = item.implicitHeight > 0 ? item.implicitHeight : 0;
+        for (var i = 0; i < (item.children ? item.children.length : 0); i++) {
+            best = Math.max(best, findDeepImplicitHeight(item.children[i], depth + 1));
+        }
+        return best;
+    }
+
+    function captureNaturalSize() {
+        if (!compactRepresentation) {
+            return;
+        }
+        var target = appletItem || findAppletItem();
+        if (!target) {
+            return;
+        }
+        if (!target.externalAppletDrawsAboveTasks) {
+            return; // internal applet, nothing to do
+        }
+
+        // Only text-heavy applets (digital clock, etc.) need wider slots.
+        // Other external applets keep their existing fixed-slot behavior.
+        var plugin = target.pluginName || "";
+        var isTextApplet = plugin.indexOf("digitalclock") >= 0
+                        || plugin.indexOf("analogclock") >= 0;
+
+        if (!isTextApplet) {
+            return;
+        }
+
+        // Try compactRepresentation.implicitWidth first; if 0, recurse
+        // into children to find the deepest content item's implicit size.
+        var w = compactRepresentation.implicitWidth;
+        if (w <= 0) {
+            w = findDeepImplicitWidth(compactRepresentation, 0);
+        }
+        var h = compactRepresentation.implicitHeight;
+        if (h <= 0) {
+            h = findDeepImplicitHeight(compactRepresentation, 0);
+        }
+        target.externalAppletNaturalWidth = w;
+        target.externalAppletNaturalHeight = h;
+
+        // Assign a stable slot count (one-shot) so the wrapper does not
+        // oscillate. Using maxIconSize keeps the pixel width fixed across
+        // autosize adjustments, avoiding the autosize feedback loop.
+        var wrapper = target.wrapper;
+        if (wrapper && w > target.metrics.maxIconSize) {
+            var rawSlots = Math.ceil(w / target.metrics.maxIconSize);
+            if (rawSlots <= 4) {
+                wrapper.externalAppletForcedSlots = Math.min(3, rawSlots);
+            }
+        }
+    }
+
     onCompactRepresentationChanged: {
         if (compactRepresentation) {
             originalCompactRepresenationParent = compactRepresentation.parent;
@@ -87,8 +168,24 @@ PlasmaCore.ToolTipArea {
             compactRepresentation.parent = compactRepresentationParent;
             compactRepresentation.anchors.fill = compactRepresentationParent;
             compactRepresentation.visible = true;
+
+            // Capture the natural implicit size for text-based applets
+            // (digital clock) so the dock can allocate a wider slot.
+            // Deferred to avoid touching the hot anchoring path for other applets.
+            var pn = "";
+            if (typeof Plasmoid !== "undefined") { pn = Plasmoid.pluginName || ""; }
+            if (pn.indexOf("digitalclock") >= 0 || pn.indexOf("analogclock") >= 0) {
+                slotSizeCaptureTimer.start();
+            }
         }
         root.visible = true;
+    }
+
+    Timer {
+        id: slotSizeCaptureTimer
+        interval: 0 // defer to next event loop iteration
+        repeat: false
+        onTriggered: captureNaturalSize();
     }
 
     onFullRepresentationChanged: {

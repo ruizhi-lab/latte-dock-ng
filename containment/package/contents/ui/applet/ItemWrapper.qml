@@ -134,6 +134,7 @@ Item{
     property real zoomScaleThickness: disableThicknessScale ? 1 : zoomScale
 
     property real layoutLength: 0
+    property int externalAppletForcedSlots: 0 // number of icon cells (set once, scales with iconSize)
     property real layoutThickness: 0
 
     property real zoomScale: 1
@@ -290,10 +291,16 @@ Item{
         target: wrapper
         property: "layoutLength"
         when: latteView
-              && !appletItem.isAutoFillApplet
+              && (!appletItem.isAutoFillApplet || externalAppletForcedSlots > 0)
               && (wrapper.zoomScale === 1 || appletItem.externalAppletUsesFixedSlotSizing)
         value: {
             if (appletItem.externalAppletUsesFixedSlotSizing) {
+                // Text-based external applets (e.g. digital clock) may have
+                // a forced multi-cell slot while staying in fixed-slot mode
+                // so the smooth scale-based zoom transform is preserved.
+                if (externalAppletForcedSlots > 0) {
+                    return externalAppletForcedSlots * appletItem.metrics.maxIconSize;
+                }
                 return appletItem.metrics.iconSize;
             }
 
@@ -310,6 +317,14 @@ Item{
                            || (appletItem.originalAppletBehavior && appletPreferredLength > 0)){
                     return appletPreferredLength;
                 }
+            }
+
+            // External applets that don't set Layout.preferredWidth (e.g. digital
+            // clock) get a fixed slot width based on the stable maxIconSize.
+            // Using a fixed pixel value breaks the autosize feedback loop
+            // where the wider slot would otherwise rescale and induce oscillation.
+            if (externalAppletForcedSlots > 0) {
+                return externalAppletForcedSlots * appletItem.metrics.maxIconSize;
             }
 
             return appletItem.metrics.iconSize;

@@ -27,8 +27,9 @@ Item {
     height: isInternalViewSplitter ? 0 : computeHeight
     z: isSortDragging ? 1600 : (externalAppletDrawsAboveTasks ? 1000 : 0)
 
-    //any applets that exceed their limits should not take events from their surrounding applets
-    //clip: !isSeparator && !parabolicAreaLoader.active
+    // Prevent external applets from rendering beyond their allocated slot
+    // and overlapping neighboring icons (e.g., digital clock text).
+    //clip: externalAppletDrawsAboveTasks && !isSeparator && !parabolicAreaLoader.active
 
     signal mousePressed(int x, int y, int button);
     signal mouseReleased(int x, int y, int button);
@@ -95,6 +96,11 @@ Item {
                                                                && applet.Layout
                                                                && applet.Layout.preferredWidth > 0
                                                                && applet.Layout.preferredHeight > 0
+    // Cached natural size of the compact representation, captured before
+    // anchors.fill constrains it. Used to give external applets like the
+    // digital clock enough slot width for their text content.
+    property real externalAppletNaturalWidth: -1
+    property real externalAppletNaturalHeight: -1
     readonly property bool externalAppletUsesFixedSlotSizing: externalAppletDrawsAboveTasks
                                                              && !communicator.appletMainIconIsFound
                                                              && !externalAppletHasStableNativeSizing
