@@ -148,12 +148,19 @@ fi
 if [[ "$manifest_provided" == "false" ]]; then
     shopt -s nullglob
     declare -a raw_candidates=()
-    for candidate in \
-            "${build_dir_pattern}/install_manifest.txt" \
-            "${script_dir}/build/install_manifest.txt" \
-            "${script_dir}"/build-*/install_manifest.txt; do
-        [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
-    done
+
+    # Separate manifests by build directory convention (matches install.sh):
+    #   build/           → system installs
+    #   build-user-*/    → user installs
+    if [[ "$install_mode" == "user" ]]; then
+        for candidate in "${script_dir}"/build-user-*/install_manifest.txt; do
+            [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
+        done
+    else
+        for candidate in "${script_dir}/build/install_manifest.txt"; do
+            [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
+        done
+    fi
     shopt -u nullglob
 
     # Dedupe by canonical path
@@ -165,20 +172,6 @@ if [[ "$manifest_provided" == "false" ]]; then
         done
         [[ "$local_dup" == "false" ]] && manifest_paths+=("$canonical")
     done
-
-    # Keep only manifests matching the install mode (by prefix in paths)
-    if [[ ${#manifest_paths[@]} -gt 0 && "$install_mode" == "user" ]]; then
-        filtered=()
-        for mp in "${manifest_paths[@]}"; do
-            if grep -q "^${HOME}/" "$mp" 2>/dev/null || \
-               grep -q "^\\.local/" "$mp" 2>/dev/null; then
-                filtered+=("$mp")
-            elif ! grep -q "^/usr" "$mp" 2>/dev/null; then
-                filtered+=("$mp")
-            fi
-        done
-        [[ ${#filtered[@]} -gt 0 ]] && manifest_paths=("${filtered[@]}")
-    fi
 
     [[ ${#manifest_paths[@]} -eq 0 ]] && \
         manifest_paths=("${build_dir_pattern}/install_manifest.txt")
@@ -227,18 +220,17 @@ remove_dir_if_empty() {
     run_as_root rmdir --ignore-fail-on-non-empty -- "$path" 2>/dev/null || true
 }
 
-remove_tree_if_marked() {
-    local path="$1"; local marker="$2"
-    [[ -f "$marker" ]] || return 0
-    [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $path"; return; }
-    run_as_root rm -rf -- "$path"
-}
-
 # ── Remove manifest-listed files ─────────────────────────────────────────────
 for manifest_file in "${manifest_paths[@]}"; do
     [[ -f "$manifest_file" ]] || continue
     while IFS= read -r file; do
         [[ -z "$file" ]] && continue
+        # Skip old fallback taskmanager files that may still appear in
+        # manifests from previous builds. These are handled safely by
+        # the migration cleanup below (checks .latte-fallback-module).
+        if [[ "$file" == */org/kde/plasma/private/taskmanager/* ]]; then
+            continue
+        fi
         remove_file "$file"
     done < "$manifest_file"
 done
@@ -412,20 +404,18 @@ for qml_dir in "${qml_dirs[@]}"; do
             "${qml_dir}/org/kde/latte/components" \
             "${qml_dir}/org/kde/latte/abilities" \
             "${qml_dir}/org/kde/latte/private/tasks" \
-            "${qml_dir}/org/kde/latte/private/containment"; do
+            "${qml_dir}/org/kde/latte/private/containment" \
+            "${qml_dir}/org/kde/latte/compat/taskmanager"; do
         remove_tree "$qml_module_dir"
     done
 
     # Drop empty parent dirs left after module removal
     for parent_dir in \
             "${qml_dir}/org/kde/latte/private" \
+            "${qml_dir}/org/kde/latte/compat" \
             "${qml_dir}/org/kde/latte"; do
         remove_dir_if_empty "$parent_dir"
     done
-
-    fallback_dir="${qml_dir}/org/kde/plasma/private/taskmanager"
-    marker_file="${fallback_dir}/.latte-fallback-module"
-    remove_tree_if_marked "$fallback_dir" "$marker_file"
 done
 
 # ── Remove containment actions plugin ─────────────────────────────────────────

@@ -324,31 +324,9 @@ if [[ "$install_mode" == "system" ]]; then
     done
 fi
 
-# ── Compat QML module (fallback for missing org.kde.plasma.private.taskmanager) ──
-if [[ "$install_mode" == "user" ]]; then
-    qt_qml_dir="$kde_install_qmldir"
-else
-    qt_qml_dir=""
-    if command -v qtpaths6 >/dev/null 2>&1; then
-        qt_qml_dir="$(qtpaths6 --query QT_INSTALL_QML 2>/dev/null || true)"
-    elif command -v qtpaths >/dev/null 2>&1; then
-        qt_qml_dir="$(qtpaths --query QT_INSTALL_QML 2>/dev/null || true)"
-    fi
-    if [[ -z "$qt_qml_dir" ]]; then
-        for _probe in /usr/lib64/qt6/qml /usr/lib/qt6/qml /usr/lib/x86_64-linux-gnu/qt6/qml; do
-            [[ -d "$_probe" ]] && qt_qml_dir="$_probe" && break
-        done
-        [[ -z "$qt_qml_dir" ]] && qt_qml_dir="/usr/lib64/qt6/qml"
-    fi
-fi
-
-fallback_taskmanager_dir="${qt_qml_dir}/org/kde/plasma/private/taskmanager"
-fallback_marker_file="${fallback_taskmanager_dir}/.latte-fallback-module"
-
-if [[ ! -d "$fallback_taskmanager_dir" || -f "$fallback_marker_file" ]]; then
-    sync_tree "${script_dir}/compat/qml/org/kde/plasma/private/taskmanager" "$fallback_taskmanager_dir"
-    run_as_root touch "$fallback_marker_file"
-fi
+# ── Compat QML modules (org.kde.latte.compat.taskmanager) ──
+# Installed by cmake --install via compat/qml/CMakeLists.txt into latte's
+# own namespace — no Plasma system directories are touched.
 
 # ── Save install metadata ─────────────────────────────────────────────────────
 printf '%s\n' "$install_mode"   > "${build_dir}/.install-mode"

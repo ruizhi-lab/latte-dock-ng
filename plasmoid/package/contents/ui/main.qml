@@ -17,7 +17,7 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.private.mpris as Mpris
 
 import org.kde.taskmanager 0.1 as TaskManager
-import org.kde.plasma.private.taskmanager 0.1 as TaskManagerApplet
+import org.kde.latte.compat.taskmanager 0.1 as TaskManagerApplet
 
 import org.kde.latte.core 0.2 as LatteCore
 import org.kde.latte.components 1.0 as LatteComponents
