@@ -98,6 +98,14 @@ SubConfigView::~SubConfigView()
 {
     qDebug() << validTitle() << " deleting...";
 
+    // Unload QML content before the base QQuickView destructor runs.
+    // The PlasmaShell.WidgetExplorer component holds a KIO-backed model
+    // whose workers need a live KIO connection infrastructure to shut
+    // down cleanly. Clearing the source destroys the QML object tree
+    // while the engine and connections are still intact.
+    setSource(QUrl());
+    engine()->clearComponentCache();
+
     m_corona->dialogShadows()->removeWindow(this);
 
     if (!m_waylandWindowId.isNull()) {

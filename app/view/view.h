@@ -112,7 +112,7 @@ class View : public PlasmaQuick::ContainmentView
     Q_PROPERTY(Latte::ViewPart::Parabolic *parabolic READ parabolic NOTIFY parabolicChanged)
     Q_PROPERTY(Latte::ViewPart::Positioner *positioner READ positioner NOTIFY positionerChanged)
     Q_PROPERTY(Latte::ViewPart::EventsSink *sink READ sink NOTIFY sinkChanged)
-    Q_PROPERTY(Latte::ViewPart::VisibilityManager *visibility READ visibility NOTIFY visibilityChanged)
+    Q_PROPERTY(Latte::ViewPart::VisibilityManager *visibility READ visibility NOTIFY visibilityChanged FINAL)
     Q_PROPERTY(Latte::ViewPart::WindowsTracker *windowsTracker READ windowsTracker NOTIFY windowsTrackerChanged)
 
     Q_PROPERTY(Latte::Interfaces *interfacesGraphicObj READ interfacesGraphicObj WRITE setInterfacesGraphicObj NOTIFY interfacesGraphicObjChanged)

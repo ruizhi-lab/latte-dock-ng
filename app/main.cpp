@@ -651,7 +651,9 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
             && msg.contains("should be QList(\"ui/main.qml\")"))
         || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml")
         || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml")
-        || msg.startsWith("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0")) {
+        || msg.startsWith("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0")
+        || (msg.contains("QModelIndex(") && msg.contains("is not valid (expected valid)"))
+        || (msg.contains("Member palette of the object") && msg.contains("overrides a member of the base object"))) {
         //! block warnings from dependencies that still ship legacy QML snippets.
         //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
         //! this also filters a known Qt/Plasma startup warning from workspace calendar internals.
