@@ -42,7 +42,15 @@ Item{
                 return isInternalViewSplitter ? appletItem.maxAutoFillLength + 1 : appletItem.maxAutoFillLength;
             }
 
-            var result = Math.max(appletItem.minAutoFillLength,Math.min(appletPreferredLength,appletItem.maxAutoFillLength));
+            // Guard against uninitialized auto-fill lengths (-1 default).
+            // External C++ plasmoids (e.g. kweather_1x4) may request
+            // fillWidth but never receive explicit min/max from the
+            // layouter because they are not standard tasks or spacers.
+            var effectiveMin = appletItem.minAutoFillLength > 0
+                    ? appletItem.minAutoFillLength : appletItem.metrics.iconSize;
+            var effectiveMax = appletItem.maxAutoFillLength > 0
+                    ? appletItem.maxAutoFillLength : Math.max(appletPreferredLength, appletItem.metrics.iconSize);
+            var result = Math.max(effectiveMin, Math.min(appletPreferredLength, effectiveMax));
             return isInternalViewSplitter? result + 1 : result;
         }
 
@@ -532,7 +540,7 @@ Item{
             property: "_length"
             when: !visibilityManager.inRelocationHiding
             value: {
-                if (appletItem.isAutoFillApplet && (appletItem.maxAutoFillLength>-1)){
+                if (appletItem.isAutoFillApplet) {
                     return wrapper.length;
                 }
 
