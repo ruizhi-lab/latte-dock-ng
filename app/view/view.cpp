@@ -696,13 +696,19 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
     //! Fix for #443236, following setFlags(...) need to be added at all three cases
     //! but initViewFlags() should be called afterwards because setFlags(...) breaks
     //! the dock window default behavior during status transitions.
-    if (status == Plasma::Types::NeedsAttentionStatus || status == Plasma::Types::RequiresAttentionStatus) {
+    if (status == Plasma::Types::NeedsAttentionStatus) {
         m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
         m_visibility->initViewFlags();
         if (m_shellSurface) {
             m_shellSurface->setPanelTakesFocus(false);
         }
+    } else if (status == Plasma::Types::RequiresAttentionStatus) {
+        // When an applet popup opens, we must not reconfigure the window flags
+        // (e.g. WindowDoesNotAcceptFocus) because on Wayland this can invalidate
+        // child xdg_popup surfaces, causing the popup to close immediately.
+        // Only block hiding — the focus and layer flags stay as they were.
+        m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
     } else if (status == Plasma::Types::AcceptingInputStatus) {
         m_visibility->removeBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() & ~Qt::WindowDoesNotAcceptFocus);

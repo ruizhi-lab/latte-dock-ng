@@ -294,7 +294,7 @@ PlasmaCore.ToolTipArea {
         removeBorderStrategy: Plasmoid.location === PlasmaCore.Types.Floating
             ? PlasmaCore.AppletPopup.AtScreenEdges
             : PlasmaCore.AppletPopup.AtScreenEdges | PlasmaCore.AppletPopup.AtPanelEdges
-        hideOnWindowDeactivate: plasmoidItem && plasmoidItem.hideOnWindowDeactivate !== undefined ? plasmoidItem.hideOnWindowDeactivate : true
+        hideOnWindowDeactivate: plasmoidItem && plasmoidItem.hideOnWindowDeactivate !== undefined ? plasmoidItem.hideOnWindowDeactivate : false
         backgroundHints: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersOpaqueBackground) ? PlasmaCore.AppletPopup.SolidBackground : PlasmaCore.AppletPopup.StandardBackground
         appletInterface: plasmoidItem
 
