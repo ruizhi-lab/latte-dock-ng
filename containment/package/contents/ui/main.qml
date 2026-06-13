@@ -1286,9 +1286,17 @@ ContainmentItem {
             // Applets such as volume, brightness, media player, and the
             // system tray handle wheel events internally. Intercepting
             // them here would break all scroll-wheel actions on those icons.
+            //
+            // The latte plasmoid (org.kde.latte.plasmoid) must NOT be
+            // bypassed — its task area is where containment-level scroll
+            // actions (cycle through tasks, cycle and minimize tasks)
+            // need to intercept wheel events.
             var localPos = mapToItem(layoutsContainer, wheel.x, wheel.y);
             for (var ai = 0; ai < plasmoid.applets.length; ++ai) {
                 var a = plasmoid.applets[ai];
+                if (a.pluginName === "org.kde.latte.plasmoid") {
+                    continue;
+                }
                 var item = fastLayoutManager.resolveAppletQuickItem(a);
                 if (item) {
                     var mappedPos = mapToItem(item, wheel.x, wheel.y);

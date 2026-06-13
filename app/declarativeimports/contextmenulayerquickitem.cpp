@@ -12,6 +12,7 @@
 
 // Qt
 #include <QMouseEvent>
+#include <QPointer>
 #include <QVersionNumber>
 #include <QLatin1String>
 #include <QIcon>
@@ -475,7 +476,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
             // reclaimed, but do NOT destroy it — the user may undo via
             // the Plasma notification.  Final cleanup happens when the
             // applet is actually destroyed later.
-            QObject *layoutMgr = m_latteView->extendedInterface()->layoutManager();
+            QPointer<QObject> layoutMgr = m_latteView->extendedInterface()->layoutManager();
             connect(closeApplet, &QAction::triggered, this, [applet, layoutMgr]() mutable {
                 if (layoutMgr) {
                     QMetaObject::invokeMethod(layoutMgr,
@@ -504,10 +505,12 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                 // Final destruction: notification dismissed or timed out.
                 *destroyConn = QObject::connect(applet, &QObject::destroyed,
                     [applet, layoutMgr, undoConn, destroyConn]() {
-                        QMetaObject::invokeMethod(layoutMgr,
-                                                  "removeAppletItem",
-                                                  Qt::DirectConnection,
-                                                  Q_ARG(QObject *, applet));
+                        if (layoutMgr) {
+                            QMetaObject::invokeMethod(layoutMgr,
+                                                      "removeAppletItem",
+                                                      Qt::DirectConnection,
+                                                      Q_ARG(QObject *, applet));
+                        }
                         QObject::disconnect(*undoConn);
                         QObject::disconnect(*destroyConn);
                     });
