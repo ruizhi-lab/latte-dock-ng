@@ -210,6 +210,12 @@ QtObject {
         return streams;
     }
 
+    // Prime the SinkModel (output devices) so the Plasma volume applet gets
+    // correct initial state when first added after a cold boot.  Without this
+    // the sink subscription is only established on first consumer access,
+    // which races with the async PulseAudio server response.
+    property var _sinkModel: SinkModel {}
+
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     property var instantiator: Instantiator {
         model: PulseObjectFilterModel {

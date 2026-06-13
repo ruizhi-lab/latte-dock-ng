@@ -729,11 +729,9 @@ ContainmentItem {
             var order = fastLayoutManager.order;
             if (order && order.length > 0 && order.indexOf(applet.id) < 0) {
                 // New applet (e.g. double-click from Widget Explorer):
-                // Defer container creation so async backends (e.g. PulseAudio
-                // in the volume applet) have time to respond before the applet
-                // renders.  Without this delay, applets that query hardware
-                // state on init may show stale defaults (e.g. muted icon).
-                // The repair timer creates the container within 150 ms.
+                // place at end of left-side widgets (just before systray).
+                var defaultIdx = fastLayoutManager.defaultInsertionIndex();
+                fastLayoutManager.addAppletItem(applet, defaultIdx);
             }
             // else: startup saved applet — skip, the repair timer will
             // create containers at the correct positions from saved order.
