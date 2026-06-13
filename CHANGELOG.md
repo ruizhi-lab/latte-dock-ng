@@ -2,6 +2,11 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.1.24] - 2026-06-13
+
+### Fixed
+- Volume widget and systray volume icon no longer show false muted state when first added to a dock. The PulseAudio SinkModel is now driven by an Instantiator at startup, which triggers the actual data fetch and populates the sink list before any volume consumer queries it.
+
 ## [v1.1.23] - 2026-06-13
 
 ### Fixed
