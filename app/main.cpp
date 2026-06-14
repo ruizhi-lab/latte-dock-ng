@@ -449,9 +449,9 @@ int main(int argc, char **argv)
 
     //! memory usage option
     if (parser.isSet(QStringLiteral("multiple"))) {
-        memoryUsage = (int)(Latte::MemoryUsage::MultipleLayouts);
+        memoryUsage = static_cast<int>(Latte::MemoryUsage::MultipleLayouts);
     } else if (parser.isSet(QStringLiteral("single"))) {
-        memoryUsage = (int)(Latte::MemoryUsage::SingleLayout);
+        memoryUsage = static_cast<int>(Latte::MemoryUsage::SingleLayout);
     }
 
     //! add-dock usage option

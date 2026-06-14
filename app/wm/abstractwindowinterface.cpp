@@ -209,7 +209,7 @@ bool AbstractWindowInterface::isSidepanel(const QRect &wGeometry) const
 
     bool thicknessIsAcccepted = isVertical && ((thickness > MAXPLASMAPANELTHICKNESS) && (thickness < MAXSIDEPANELTHICKNESS));
     bool lengthIsAccepted = isVertical && !screenGeometry.isEmpty() && (length > 0.6 * screenGeometry.height());
-    float sideRatio = (float)wGeometry.width() / (float)wGeometry.height();
+    float sideRatio = static_cast<float>(wGeometry.width()) / static_cast<float>(wGeometry.height());
 
     return (thicknessIsAcccepted && lengthIsAccepted && sideRatio<0.4);
 }

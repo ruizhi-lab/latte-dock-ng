@@ -1130,7 +1130,7 @@ QStringList Corona::contextMenuData(const uint &containmentId)
         viewType = view->type();
     }
 
-    data << QString::number((int)m_layoutsManager->memoryUsage()); // Memory Usage
+    data << QString::number(static_cast<int>(m_layoutsManager->memoryUsage())); // Memory Usage
     data << m_layoutsManager->centralLayoutsNames().join(";;"); // All Active layouts
     data << m_layoutsManager->synchronizer()->currentLayoutsNames().join(";;"); // All Current layouts
     data << m_universalSettings->contextMenuActionsAlwaysShown().join(";;");
@@ -1153,7 +1153,7 @@ QStringList Corona::contextMenuData(const uint &containmentId)
     data << (view ? view->layout()->name() : QString());   //Selected View layout*/
 
     QStringList viewtype;
-    viewtype << QString::number((int)viewType); //Selected View type
+    viewtype << QString::number(static_cast<int>(viewType)); //Selected View type
 
     if (view && view->isOriginal()) { /*View*/
         auto originalview = qobject_cast<Latte::OriginalView *>(view);
@@ -1194,7 +1194,7 @@ void Corona::addView(const uint &containmentId, const QString &templateId)
             currentlayouts[0]->newView(templateId);
         }
     } else {
-        auto view = m_layoutsManager->synchronizer()->viewForContainment((int)containmentId);
+        auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
         if (view) {
             view->newView(templateId);
         }
@@ -1203,7 +1203,7 @@ void Corona::addView(const uint &containmentId, const QString &templateId)
 
 void Corona::duplicateView(const uint &containmentId)
 {
-    auto view = m_layoutsManager->synchronizer()->viewForContainment((int)containmentId);
+    auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
     if (view) {
         view->duplicateView();
     }
@@ -1211,7 +1211,7 @@ void Corona::duplicateView(const uint &containmentId)
 
 void Corona::exportViewTemplate(const uint &containmentId)
 {
-    auto view = m_layoutsManager->synchronizer()->viewForContainment((int)containmentId);
+    auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
     if (view) {
         view->exportTemplate();
     }
@@ -1219,7 +1219,7 @@ void Corona::exportViewTemplate(const uint &containmentId)
 
 void Corona::moveViewToLayout(const uint &containmentId, const QString &layoutName)
 {
-    auto view = m_layoutsManager->synchronizer()->viewForContainment((int)containmentId);
+    auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
     if (view && !layoutName.isEmpty() && view->layout()->name() != layoutName) {
         Latte::Types::ScreensGroup screensgroup{Latte::Types::SingleScreenGroup};
 
@@ -1234,7 +1234,7 @@ void Corona::moveViewToLayout(const uint &containmentId, const QString &layoutNa
 
 void Corona::removeView(const uint &containmentId)
 {
-    auto view = m_layoutsManager->synchronizer()->viewForContainment((int)containmentId);
+    auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
     if (view) {
         view->removeView();
     }

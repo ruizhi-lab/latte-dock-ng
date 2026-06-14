@@ -929,7 +929,7 @@ void VisibilityManager::restoreConfig()
     setRaiseOnDesktop(config.readEntry("raiseOnDesktopChange", false));
     setRaiseOnActivity(config.readEntry("raiseOnActivityChange", false));
 
-    setMode((Types::Visibility)(config.readEntry("visibility", (int)(Types::DodgeActive))));
+    setMode((Types::Visibility)(config.readEntry("visibility", static_cast<int>(Types::DodgeActive))));
 }
 
 bool VisibilityManager::containsMouse() const

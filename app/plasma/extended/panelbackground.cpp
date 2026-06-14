@@ -134,11 +134,11 @@ void PanelBackground::updateMaxOpacity(Plasma::Svg *svg)
 
         for (int col=0; col<CENTERWIDTH; ++col) {
             QRgb pixelData = line[col];
-            alphasum += ((float)qAlpha(pixelData)/(float)255);
+            alphasum += static_cast<float>(qAlpha(pixelData)) / 255.0f;
         }
     }
 
-    m_maxOpacity = alphasum / (float)(2 * CENTERWIDTH);
+    m_maxOpacity = alphasum / static_cast<float>(2 * CENTERWIDTH);
 
     //! minimum acceptable panel background opacity is 1%. Such is a case is when
     //! panel background is fully transparent but it provides a border. In such case

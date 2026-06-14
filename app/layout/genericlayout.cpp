@@ -429,7 +429,7 @@ bool GenericLayout::containsView(const int &containmentId) const
     }
 
     for(auto containment : m_containments) {
-        if ((int)containment->id() == containmentId && Layouts::Storage::self()->isLatteContainment(containment)) {
+        if (static_cast<int>(containment->id()) == containmentId && Layouts::Storage::self()->isLatteContainment(containment)) {
             return true;
         }
     }

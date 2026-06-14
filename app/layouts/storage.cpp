@@ -1322,7 +1322,7 @@ Data::AppletsTable Storage::plugins(const Layout::GenericLayout *layout, const i
 
         //! searching for specific containment and subcontainments and ignore all other containments
         for(auto containment : *layout->containments()) {
-            if (((int)containment->id()) != containmentid) {
+            if (static_cast<int>(containment->id()) != containmentid) {
                 //! ignore irrelevant containments
                 continue;
             }
@@ -1616,7 +1616,7 @@ Data::View Storage::view(const KConfigGroup &containmentGroup)
     int location = containmentGroup.readEntry("location", (int)Plasma::Types::BottomEdge);
     vdata.edge = (Plasma::Types::Location)location;
 
-    vdata.maxLength = containmentGroup.group("General").readEntry("maxLength", (float)100.0);
+    vdata.maxLength = containmentGroup.group("General").readEntry("maxLength", 100.0f);
 
     int alignment = containmentGroup.group("General").readEntry("alignment", (int)Latte::Types::Center) ;
     vdata.alignment = (Latte::Types::Alignment)alignment;
@@ -1634,14 +1634,14 @@ void Storage::updateView(KConfigGroup viewGroup, const Data::View &viewData)
     }
 
     viewGroup.writeEntry("name", viewData.name);
-    viewGroup.writeEntry("screensGroup", (int)viewData.screensGroup);
+    viewGroup.writeEntry("screensGroup", static_cast<int>(viewData.screensGroup));
     viewGroup.writeEntry("onPrimary", viewData.onPrimary);
     viewGroup.writeEntry("isClonedFrom", viewData.isClonedFrom);
     viewGroup.writeEntry("lastScreen", viewData.screen);
     viewGroup.group("General").writeEntry("screenEdgeMargin", viewData.screenEdgeMargin);
-    viewGroup.writeEntry("location", (int)viewData.edge);
+    viewGroup.writeEntry("location", static_cast<int>(viewData.edge));
     viewGroup.writeEntry("maxLength", viewData.maxLength);
-    viewGroup.group("General").writeEntry("alignment", (int)viewData.alignment);
+    viewGroup.group("General").writeEntry("alignment", static_cast<int>(viewData.alignment));
     viewGroup.sync();
 }
 

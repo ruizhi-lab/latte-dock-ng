@@ -420,7 +420,7 @@ QString Layouts::sortableText(const int &priority, const int &row) const
 
 QString Layouts::sortingPriority(const SortingPriority &priority, const int &row) const
 {
-    int iPriority = (int)priority;
+    int iPriority = static_cast<int>(priority);
 
     iPriority = (m_layoutsTable[row].isActive && inMultipleMode() ? iPriority - 1000 : iPriority);
 

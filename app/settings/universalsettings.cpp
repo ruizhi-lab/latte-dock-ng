@@ -453,7 +453,7 @@ void UniversalSettings::saveConfig()
     m_universalGroup.writeEntry("singleModeLayoutName", m_singleModeLayoutName);
     m_universalGroup.writeEntry("parabolicSpread", m_parabolicSpread);
     m_universalGroup.writeEntry("parabolicThicknessMarginInfluence", m_thicknessMarginInfluence);
-    m_universalGroup.writeEntry("memoryUsage", (int)m_memoryUsage);
+    m_universalGroup.writeEntry("memoryUsage", static_cast<int>(m_memoryUsage));
     syncSettings();
 }
 

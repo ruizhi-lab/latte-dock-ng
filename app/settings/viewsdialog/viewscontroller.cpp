@@ -1074,7 +1074,7 @@ void Views::loadConfig()
     defaultcolumnwidths << QString::number(59) << QString::number(256) << QString::number(142) << QString::number(135) << QString::number(131);
 
     m_viewColumnWidths = m_storage.readEntry("columnWidths", defaultcolumnwidths);
-    m_viewSortColumn = m_storage.readEntry("sortColumn", (int)Model::Views::SCREENCOLUMN);
+    m_viewSortColumn = m_storage.readEntry("sortColumn", static_cast<int>(Model::Views::SCREENCOLUMN));
     m_viewSortOrder = static_cast<Qt::SortOrder>(m_storage.readEntry("sortOrder", (int)Qt::AscendingOrder));
 }
 
@@ -1082,7 +1082,7 @@ void Views::saveConfig()
 {
     m_storage.writeEntry("columnWidths", m_viewColumnWidths);
     m_storage.writeEntry("sortColumn", m_viewSortColumn);
-    m_storage.writeEntry("sortOrder", (int)m_viewSortOrder);
+    m_storage.writeEntry("sortOrder", static_cast<int>(m_viewSortOrder));
     m_storage.sync();
 }
 

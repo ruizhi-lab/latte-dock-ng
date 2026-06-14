@@ -298,7 +298,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
         int tileWidth = !vertical ? tileLength : tileThickness;
         int tileHeight = !vertical ? tileThickness : tileLength;
 
-        float factor = ((float)100/tiles)/100;
+        float factor = 100.0f / tiles / 100.0f;
 
         QList<float> subBrightness;
 
@@ -318,7 +318,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         if (!vertical) {
             for (int i=1; i<=tiles; ++i) {
-                float subFactor = ((float)i) * factor;
+                float subFactor = static_cast<float>(i) * factor;
                 firstColumn = endColumn+1; endColumn = (subFactor*imageLength) - 1;
                 endColumn = qMin(endColumn, imageLength-1);
 
@@ -346,7 +346,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         if (vertical) {
             for (int i=1; i<=tiles; ++i) {
-                float subFactor = ((float)i) * factor;
+                float subFactor = static_cast<float>(i) * factor;
                 firstRow = endRow+1; endRow = (subFactor*imageLength) - 1;
                 endRow = qMin(endRow, imageLength-1);
 

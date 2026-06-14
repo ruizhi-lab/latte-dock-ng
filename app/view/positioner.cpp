@@ -532,7 +532,7 @@ void Positioner::immediateSyncGeometry()
             for (QRegion::const_iterator p_rect=availableRegion.begin(); p_rect!=availableRegion.end(); ++p_rect) {
                 //! the area of each rectangle in calculated in squares of 50x50
                 //! this is a way to avoid enormous numbers for area value
-                float tempArea = (float)((*p_rect).width() * (*p_rect).height()) / 2500;
+                float tempArea = static_cast<float>((*p_rect).width() * (*p_rect).height()) / 2500;
 
                 if (tempArea > area) {
                     availableScreenRect = (*p_rect);

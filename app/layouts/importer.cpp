@@ -104,7 +104,7 @@ bool Importer::importOldLayout(QString oldAppletsPath, QString newName, bool alt
         KConfigGroup containmentGroup = containments.group(containmentId);
 
         QString plugin = containmentGroup.readEntry("plugin", QString());
-        SessionType session = (SessionType)containmentGroup.readEntry("session", (int)DefaultSession);
+        SessionType session = (SessionType)containmentGroup.readEntry("session", static_cast<int>(DefaultSession));
 
         bool shouldImport = false;
 
@@ -770,7 +770,7 @@ void Importer::setMultipleLayoutsStatus(const Latte::MultipleLayouts::Status &st
 
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(linkedFilePath);
     KConfigGroup multipleSettings = KConfigGroup(filePtr, "MultipleLayoutsSettings");
-    multipleSettings.writeEntry("status", (int)(status));
+    multipleSettings.writeEntry("status", static_cast<int>(status));
     multipleSettings.sync();
 }
 
