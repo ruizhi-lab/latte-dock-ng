@@ -957,8 +957,11 @@ void Corona::showAlternativesForApplet(Plasma::Applet *applet)
         latteView->setAlternativesIsShown(false);
     });
 
-    connect(qmlObj->rootObject(), SIGNAL(visibleChanged(bool)),
-            this, SLOT(alternativesVisibilityChanged(bool)));
+    QWindow *rootWindow = qobject_cast<QWindow *>(qmlObj->rootObject());
+    if (rootWindow) {
+        connect(rootWindow, &QWindow::visibleChanged,
+                this, &Corona::alternativesVisibilityChanged);
+    }
 
     connect(applet, &Plasma::Applet::destroyedChanged, this, [this, qmlObj](bool destroyed) {
         if (!destroyed) {

@@ -74,18 +74,18 @@ IconItem::IconItem(QQuickItem *parent)
       m_lastValidSourceName(QString())
 {
     setFlag(ItemHasContents, true);
-    connect(KIconLoader::global(), SIGNAL(iconLoaderSettingsChanged()),
-            this, SIGNAL(implicitWidthChanged()));
-    connect(KIconLoader::global(), SIGNAL(iconLoaderSettingsChanged()),
-            this, SIGNAL(implicitHeightChanged()));
+    connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
+            this, &IconItem::implicitWidthChanged);
+    connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
+            this, &IconItem::implicitHeightChanged);
     connect(this, &QQuickItem::enabledChanged,
             this, &IconItem::enabledChanged);
     connect(this, &QQuickItem::windowChanged,
             this, &IconItem::schedulePixmapUpdate);
-    connect(this, SIGNAL(overlaysChanged()),
-            this, SLOT(schedulePixmapUpdate()));
-    connect(this, SIGNAL(providesColorsChanged()),
-            this, SLOT(schedulePixmapUpdate()));
+    connect(this, &IconItem::overlaysChanged,
+            this, &IconItem::schedulePixmapUpdate);
+    connect(this, &IconItem::providesColorsChanged,
+            this, &IconItem::schedulePixmapUpdate);
 
     //initialize implicit size to the Dialog size
     setImplicitWidth(KIconLoader::global()->currentSize(KIconLoader::Dialog));

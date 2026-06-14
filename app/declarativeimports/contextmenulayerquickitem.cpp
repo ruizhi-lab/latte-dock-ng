@@ -350,7 +350,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     m_lastContainmentStatus = m_latteView->containment()->status();
     m_latteView->containment()->setStatus(Plasma::Types::RequiresAttentionStatus);
 
-    connect(desktopMenu, SIGNAL(aboutToHide()), this, SLOT(onMenuAboutToHide()));
+    connect(desktopMenu, &QMenu::aboutToHide, this, &ContextMenuLayerQuickItem::onMenuAboutToHide);
 
     KAcceleratorManager::manage(desktopMenu);
 

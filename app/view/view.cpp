@@ -170,7 +170,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
             m_positioner->immediateSyncGeometry();
         }
 
-        connect(this->containment(), SIGNAL(statusChanged(Plasma::Types::ItemStatus)), SLOT(statusChanged(Plasma::Types::ItemStatus)));
+        connect(this->containment(), &Plasma::Applet::statusChanged, this, &View::statusChanged);
         connect(this->containment(), &Plasma::Containment::showAddWidgetsInterface, this, &View::showWidgetExplorer);
         connect(this->containment(), &Plasma::Containment::userConfiguringChanged, this, [&]() {
             Q_EMIT inEditModeChanged();
@@ -213,7 +213,7 @@ View::~View()
     }
 
     disconnectSensitiveSignals();
-    disconnect(containment(), SIGNAL(statusChanged(Plasma::Types::ItemStatus)), this, SLOT(statusChanged(Plasma::Types::ItemStatus)));
+    disconnect(containment(), &Plasma::Applet::statusChanged, this, &View::statusChanged);
 
     qDebug() << "dock view deleting...";
 
