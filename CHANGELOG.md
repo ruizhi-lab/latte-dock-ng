@@ -1,6 +1,23 @@
 # Changelog
 
 All notable changes to Latte Dock NG are documented in this file.
+## [v1.1.26] - 2026-06-14
+
+### Fixed
+- Analog clock widget no longer produces extra empty space on both sides when added to the dock. The clock was incorrectly classified as a text-heavy applet alongside the digital clock, causing an oversized slot allocation.
+
+### Changed
+- Wrap global-scope classes in namespace Latte to prevent symbol collisions
+- Replace string-based SIGNAL()/SLOT() macros with type-safe &Class::method syntax
+- Add override keyword to 46 virtual destructors for compiler-enforced signature checking
+- Replace [&] lambda captures with [this] in connect callbacks to prevent dangling references
+- Replace C-style casts with static_cast<> for type safety
+- Centralize scattered plugin name strings into shared app/pluginids.h header
+- Add required keyword to critical QML properties for clear runtime errors
+- Create Constants.qml documenting shared visual-proportion values
+- Replace const T return-by-value with T to enable move semantics in GenericTable
+- Use concrete QML types (point, Instantiator) instead of var where applicable
+
 
 ## [v1.1.23] - 2026-06-13
 
