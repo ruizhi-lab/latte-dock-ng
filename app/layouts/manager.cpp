@@ -8,6 +8,7 @@
 #include "manager.h"
 
 // local
+#include "pluginids.h"
 #include "importer.h"
 #include "syncedlaunchers.h"
 #include "../infoview.h"
@@ -352,7 +353,7 @@ void Manager::cleanupOnStartup(QString path)
         KConfigGroup containment = containmentGroups.group(cId);
         QString pluginId = containment.readEntry("plugin", "");
 
-        if (pluginId == QStringLiteral("org.kde.desktopcontainment")) { //!must remove ghost containments first
+        if (pluginId == QLatin1String(Latte::PluginId::kDesktopContainment)) { //!must remove ghost containments first
             removeContaimentsList << cId;
             continue;
         }
@@ -395,9 +396,9 @@ void Manager::cleanupOnStartup(QString path)
                 for (const auto &aId : orderedAppletIds) {
                     const QString appletPluginId = applets.group(aId).readEntry("plugin", QString());
 
-                    if (appletPluginId == QStringLiteral("org.kde.latte.plasmoid")) {
+                    if (appletPluginId == QLatin1String(Latte::PluginId::kPlasmoid)) {
                         tasksAppletId = aId;
-                    } else if (appletPluginId == QStringLiteral("org.kde.plasma.analogclock")) {
+                    } else if (appletPluginId == QLatin1String(Latte::PluginId::kAnalogClock)) {
                         analogClockAppletId = aId;
                     }
                 }

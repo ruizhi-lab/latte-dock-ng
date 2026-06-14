@@ -6,6 +6,7 @@
 #include "indicator.h"
 
 // local
+#include "pluginids.h"
 #include <coretypes.h>
 #include "indicatorinfo.h"
 #include "../containmentinterface.h"
@@ -141,9 +142,9 @@ void Indicator::setPluginIsReady(bool ready)
 
 int Indicator::index(const QString &type)
 {
-    if (type == QLatin1String("org.kde.latte.default")) {
+    if (type == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
         return 0;
-    } else if (type == QLatin1String("org.kde.latte.plasmatabstyle")) {
+    } else if (type == QLatin1String(Latte::PluginId::kPlasmaTabStyleIndicator)) {
         return 1;
     } else if (customPluginIds().contains(type)){
         return 2 + customPluginIds().indexOf(type);
@@ -159,7 +160,7 @@ QString Indicator::type() const
 
 void Indicator::setType(QString type)
 {
-    if (type == QLatin1String("org.kde.latte.plasma")) {
+    if (type == QLatin1String(Latte::PluginId::kPlasmaIndicator)) {
         type = QStringLiteral("org.kde.latte.default");
     }
 
@@ -319,7 +320,7 @@ void Indicator::updateScheme()
 
         const QString dockStyle = m_view->containment()->config().group("General").readEntry("dockStyle", QStringLiteral("Classic"));
         const bool modernDockStyle = (dockStyle == QLatin1String("Modern")) || (dockStyle == QLatin1String("1"));
-        if (modernDockStyle && m_metadata.pluginId() == QLatin1String("org.kde.latte.default")) {
+        if (modernDockStyle && m_metadata.pluginId() == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
             // Modern is macOS-like: active/running state is always represented by a dot.
             // Apply this before the QML indicator is instantiated to avoid a startup line frame.
             m_configuration->setProperty("activeStyle", 1);
@@ -346,7 +347,7 @@ void Indicator::loadConfig()
     m_customType = config.readEntry("customType", QString());
     m_enabled = config.readEntry("enabled", true);
     m_type = config.readEntry("type", "org.kde.latte.default");
-    if (m_type == QLatin1String("org.kde.latte.plasma")) {
+    if (m_type == QLatin1String(Latte::PluginId::kPlasmaIndicator)) {
         m_type = QStringLiteral("org.kde.latte.default");
     }
 }

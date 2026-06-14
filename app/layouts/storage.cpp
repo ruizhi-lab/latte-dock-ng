@@ -6,6 +6,7 @@
 #include "storage.h"
 
 // local
+#include "pluginids.h"
 #include <coretypes.h>
 #include "importer.h"
 #include "manager.h"
@@ -112,7 +113,7 @@ bool Storage::isLatteContainment(const Plasma::Containment *containment) const
 bool Storage::isLatteContainment(const KConfigGroup &group) const
 {
     QString pluginId = group.readEntry("plugin", "");
-    return pluginId == QLatin1String("org.kde.latte.containment");
+    return pluginId == QLatin1String(Latte::PluginId::kContainment);
 }
 
 bool Storage::isSubContainment(const Plasma::Corona *corona, const Plasma::Applet *applet) const

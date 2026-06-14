@@ -6,6 +6,7 @@
 #include "backgroundcache.h"
 
 // local
+#include "pluginids.h"
 #include "../../tools/commontools.h"
 
 // Qt
@@ -109,7 +110,7 @@ bool BackgroundCache::isDesktopContainment(const KConfigGroup &containment) cons
 {
     const auto type = containment.readEntry("plugin", QString());
 
-    if (type == QLatin1String("org.kde.desktopcontainment") || type == QLatin1String("org.kde.plasma.folder") ) {
+    if (type == QLatin1String(Latte::PluginId::kDesktopContainment) || type == QLatin1String(Latte::PluginId::kFolder) ) {
         return true;
     }
 

@@ -6,6 +6,7 @@
 #include "containmentinterface.h"
 
 // local
+#include "pluginids.h"
 #include "view.h"
 #include "../lattecorona.h"
 #include "../layout/genericlayout.h"
@@ -355,7 +356,7 @@ int ContainmentInterface::applicationLauncherId() const
     for (auto applet : applets) {
         const auto provides = applet->pluginMetaData().value(QStringLiteral("X-Plasma-Provides"));
 
-        if (provides.contains(QLatin1String("org.kde.plasma.launchermenu"))) {
+        if (provides.contains(QLatin1String(Latte::PluginId::kLauncherMenu))) {
             if (!applet->globalShortcut().isEmpty()) {
                 return applet->id();
             } else if (launcherId == -1) {
@@ -378,7 +379,7 @@ bool ContainmentInterface::updateBadgeForLatteTask(const QString identifier, con
     for (auto *applet : applets) {
         KPluginMetaData meta = applet->pluginMetaData();
 
-        if (meta.pluginId() == QLatin1String("org.kde.latte.plasmoid")) {
+        if (meta.pluginId() == QLatin1String(Latte::PluginId::kPlasmoid)) {
 
             if (QQuickItem *appletInterface = applet->property("_plasma_graphicObject").value<QQuickItem *>()) {
                 const auto &childItems = appletInterface->childItems();
@@ -427,7 +428,7 @@ bool ContainmentInterface::activatePlasmaTask(const int index)
     for (auto *applet : applets) {
         const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
-        if (provides.contains(QLatin1String("org.kde.plasma.multitasking"))) {
+        if (provides.contains(QLatin1String(Latte::PluginId::kMultiTasking))) {
             if (QQuickItem *appletInterface = applet->property("_plasma_graphicObject").value<QQuickItem *>()) {
                 const auto &childItems = appletInterface->childItems();
 
@@ -474,7 +475,7 @@ bool ContainmentInterface::newInstanceForPlasmaTask(const int index)
     for (auto *applet : applets) {
         const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
-        if (provides.contains(QLatin1String("org.kde.plasma.multitasking"))) {
+        if (provides.contains(QLatin1String(Latte::PluginId::kMultiTasking))) {
             if (QQuickItem *appletInterface = applet->property("_plasma_graphicObject").value<QQuickItem *>()) {
                 const auto &childItems = appletInterface->childItems();
 
@@ -1857,10 +1858,10 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         KPluginMetaData meta = applet->pluginMetaData();
         const auto &provides = [&meta]() -> QStringList { const auto v = meta.rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
-        if (meta.pluginId() == QLatin1String("org.kde.latte.plasmoid")) {
+        if (meta.pluginId() == QLatin1String(Latte::PluginId::kPlasmoid)) {
             //! populate latte tasks applet
             m_latteTasksModel->addTask(ai);
-        } else if (provides.contains(QLatin1String("org.kde.plasma.multitasking"))) {
+        } else if (provides.contains(QLatin1String(Latte::PluginId::kMultiTasking))) {
             //! populate plasma tasks applet
             m_plasmaTasksModel->addTask(ai);
         } else if (!m_appletsExpandedConnections.contains(ai)) {
@@ -1951,9 +1952,9 @@ int ContainmentInterface::calculateDefaultAppletInsertionIndex(const QList<int> 
                 continue;
             }
             const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
-            if (pluginId == QLatin1String("org.kde.plasma.systemtray")
+            if (pluginId == QLatin1String(Latte::PluginId::kSystemTray)
                 || pluginId == QLatin1String("org.nomad.systemtray")
-                || pluginId == QLatin1String("org.kde.latte.plasmoid")) {
+                || pluginId == QLatin1String(Latte::PluginId::kPlasmoid)) {
                 boundaryIds.insert(static_cast<int>(applet->id()));
             }
         }

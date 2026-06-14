@@ -8,6 +8,7 @@
 #include "importer.h"
 
 // local
+#include "pluginids.h"
 #include <coretypes.h>
 #include "manager.h"
 #include "../lattecorona.h"
@@ -108,10 +109,10 @@ bool Importer::importOldLayout(QString oldAppletsPath, QString newName, bool alt
 
         bool shouldImport = false;
 
-        if (plugin == QLatin1String("org.kde.latte.containment") && session == DefaultSession && !alternative) {
+        if (plugin == QLatin1String(Latte::PluginId::kContainment) && session == DefaultSession && !alternative) {
             qDebug() << containmentId << " - " << plugin << " - " << session;
             shouldImport = true;
-        } else if (plugin == QLatin1String("org.kde.latte.containment") && session == AlternativeSession && alternative) {
+        } else if (plugin == QLatin1String(Latte::PluginId::kContainment) && session == AlternativeSession && alternative) {
             qDebug() << containmentId << " - " << plugin << " - " << session;
             shouldImport = true;
         }

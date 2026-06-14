@@ -6,6 +6,7 @@
 #include "contextmenulayerquickitem.h"
 
 // local
+#include "pluginids.h"
 #include "../lattecorona.h"
 #include "../layouts/storage.h"
 #include "../view/view.h"
@@ -38,9 +39,9 @@ namespace Latte {
 namespace {
 bool isSeparatorPluginId(const QString &pluginId)
 {
-    return pluginId == QLatin1String("org.kde.latte.separator")
-           || pluginId == QLatin1String("org.kde.latte.spacer")
-           || pluginId == QLatin1String("audoban.applet.separator");
+    return pluginId == QLatin1String(Latte::PluginId::kSeparator)
+           || pluginId == QLatin1String(Latte::PluginId::kSpacer)
+           || pluginId == QLatin1String(Latte::PluginId::kLegacySeparator);
 }
 }
 
