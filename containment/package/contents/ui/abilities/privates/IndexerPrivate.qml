@@ -10,7 +10,7 @@ import org.kde.latte.abilities.definition 0.1 as AbilityDefinition
 
 AbilityDefinition.Indexer {
     id: indxr
-    property Item layouts: null
+    required property Item layouts
     property bool updateIsBlocked: false
 
     property var clients: []

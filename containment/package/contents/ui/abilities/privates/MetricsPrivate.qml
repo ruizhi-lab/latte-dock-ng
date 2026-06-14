@@ -13,10 +13,10 @@ import "./metrics" as MetricsPrivateTypes
 AbilityHost.Metrics {
     id: mets
     property Item animations: null
-    property Item autosize: null
-    property Item background: null
-    property Item indicators: null
-    property Item parabolic: null
+    required property Item autosize
+    required property Item background
+    required property Item indicators
+    required property Item parabolic
 
     //! private properties to avoid too many not needed animation calculations
     readonly property int _iconSize: autosizeEnabled && autosize.iconSize > 0 ? Math.min(autosize.iconSize, maxIconSize) : maxIconSize
