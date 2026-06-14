@@ -30,7 +30,7 @@ class Resources: public QObject
 
 public:
     Resources(Indicator *parent);
-    virtual ~Resources();
+    ~Resources() override;
 
     QList<QObject *> svgs() const;
 

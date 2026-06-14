@@ -30,7 +30,7 @@ class Parabolic: public QObject
 
 public:
     Parabolic(Latte::View *parent);
-    virtual ~Parabolic();
+    ~Parabolic() override;
 
     QQuickItem *currentParabolicItem() const;
     void setCurrentParabolicItem(QQuickItem *item);

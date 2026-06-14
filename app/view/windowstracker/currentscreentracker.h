@@ -50,7 +50,7 @@ class CurrentScreenTracker : public QObject {
 
 public:
     explicit CurrentScreenTracker(WindowsTracker *parent);
-    virtual ~CurrentScreenTracker();
+    ~CurrentScreenTracker() override;
 
     bool activeWindowMaximized() const;
     bool activeWindowTouching() const;

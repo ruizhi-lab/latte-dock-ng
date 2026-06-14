@@ -73,7 +73,7 @@ class Indicator: public QObject
 
 public:
     Indicator(Latte::View *parent);
-    virtual ~Indicator();
+    ~Indicator() override;
 
     bool enabled() const;
     void setEnabled(bool enabled);

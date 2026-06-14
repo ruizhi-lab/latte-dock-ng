@@ -39,7 +39,7 @@ class WindowsTracker : public QObject {
 
 public:
     explicit WindowsTracker(Latte::View *parent);
-    virtual ~WindowsTracker();
+    ~WindowsTracker() override;
 
     bool enabled() const;
     void setEnabled(bool active);

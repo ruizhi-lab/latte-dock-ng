@@ -123,7 +123,7 @@ class View : public PlasmaQuick::ContainmentView
 
 public:
     View(Plasma::Corona *corona, QScreen *targetScreen = nullptr);
-    virtual ~View();
+    ~View() override;
 
     void init(Plasma::Containment *plasma_containment = nullptr);
 

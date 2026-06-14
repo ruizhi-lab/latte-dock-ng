@@ -101,7 +101,7 @@ class IconItem : public QQuickItem
     Q_PROPERTY(QColor glowColor READ glowColor NOTIFY glowColorChanged)
 public:
     IconItem(QQuickItem *parent = nullptr);
-    virtual ~IconItem();
+    ~IconItem() override;
 
     void setSource(const QVariant &source);
     QVariant source() const;

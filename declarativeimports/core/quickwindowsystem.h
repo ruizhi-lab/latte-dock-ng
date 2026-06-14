@@ -27,7 +27,7 @@ class QuickWindowSystem final : public QObject
 
 public:
     explicit QuickWindowSystem(QObject *parent = nullptr);
-    virtual ~QuickWindowSystem();
+    ~QuickWindowSystem() override;
 
     bool compositingActive() const;
     bool isPlatformWayland() const;

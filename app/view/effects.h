@@ -57,7 +57,7 @@ class Effects: public QObject
 
 public:
     Effects(Latte::View *parent);
-    virtual ~Effects();
+    ~Effects() override;
 
     bool animationsBlocked() const;
     void setAnimationsBlocked(bool blocked);

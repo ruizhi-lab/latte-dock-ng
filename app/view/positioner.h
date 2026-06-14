@@ -54,7 +54,7 @@ class Positioner: public QObject
 
 public:
     Positioner(Latte::View *parent);
-    virtual ~Positioner();
+    ~Positioner() override;
 
     int currentScreenId() const;
     QString currentScreenName() const;

@@ -32,7 +32,7 @@ public:
     };
 
     explicit Schemes(QObject *parent = nullptr);
-    virtual ~Schemes();
+    ~Schemes() override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

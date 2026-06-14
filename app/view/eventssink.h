@@ -34,7 +34,7 @@ class EventsSink: public QObject
 
 public:
     EventsSink(Latte::View *parent);
-    virtual ~EventsSink();
+    ~EventsSink() override;
 
     bool isActive();
 

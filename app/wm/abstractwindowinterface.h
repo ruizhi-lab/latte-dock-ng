@@ -66,7 +66,7 @@ public:
     };
 
     explicit AbstractWindowInterface(QObject *parent = nullptr);
-    virtual ~AbstractWindowInterface();
+    ~AbstractWindowInterface() override;
 
     virtual void setViewExtraFlags(QObject *view,bool isPanelWindow = true, Latte::Types::Visibility mode = Latte::Types::WindowsGoBelow) = 0;
     virtual void setViewStruts(QWindow &view, const QRect &rect,

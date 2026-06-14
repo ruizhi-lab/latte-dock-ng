@@ -29,7 +29,7 @@ class BackgroundTracker: public QObject
 
 public:
     BackgroundTracker(QObject *parent = nullptr);
-    virtual ~BackgroundTracker();
+    ~BackgroundTracker() override;
 
     bool isBusy() const;
 

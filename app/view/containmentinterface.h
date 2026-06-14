@@ -63,7 +63,7 @@ class ContainmentInterface: public QObject
 
 public:
     ContainmentInterface(Latte::View *parent);
-    virtual ~ContainmentInterface();
+    ~ContainmentInterface() override;
 
     bool hasExpandedApplet() const;
     bool hasLatteTasks() const;

@@ -91,7 +91,7 @@ public:
                QString addViewTemplateName = QString(),
                int userSetMemoryUsage = -1,
                QObject *parent = nullptr);
-    virtual ~Corona();
+    ~Corona() override;
 
     bool inQuit() const;
 

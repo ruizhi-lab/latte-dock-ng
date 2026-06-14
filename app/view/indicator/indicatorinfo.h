@@ -39,7 +39,7 @@ class Info: public QObject
 
 public:
     Info(QObject *parent);
-    virtual ~Info();
+    ~Info() override;
 
     bool needsIconColors() const;
     void setNeedsIconColors(bool needs);

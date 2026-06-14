@@ -68,7 +68,7 @@ public:
     static const QRect ISHIDDENMASK;
 
     explicit VisibilityManager(PlasmaQuick::ContainmentView *view);
-    virtual ~VisibilityManager();
+    ~VisibilityManager() override;
 
     Latte::Types::Visibility mode() const;
     void setMode(Latte::Types::Visibility mode);

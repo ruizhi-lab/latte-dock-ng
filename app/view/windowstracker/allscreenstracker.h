@@ -44,7 +44,7 @@ class AllScreensTracker : public QObject {
 
 public:
     explicit AllScreensTracker(WindowsTracker *parent);
-    virtual ~AllScreensTracker();
+    ~AllScreensTracker() override;
 
     bool activeWindowMaximized() const;
     bool existsWindowActive() const;
