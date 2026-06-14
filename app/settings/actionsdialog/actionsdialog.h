@@ -35,7 +35,7 @@ class ActionsDialog : public GenericDialog
 
 public:
     ActionsDialog(QDialog *parent, Handler::TabPreferences *handler);
-    ~ActionsDialog();
+    ~ActionsDialog() override;
 
     Ui::ActionsDialog *ui() const;
     Handler::TabPreferences *preferencesHandler() const;

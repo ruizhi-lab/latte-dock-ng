@@ -48,7 +48,7 @@ public:
     };
 
     explicit Screens(QObject *parent);
-    ~Screens();
+    ~Screens() override;
 
     bool hasChangedData() const;
     bool hasChecked() const;

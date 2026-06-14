@@ -70,7 +70,7 @@ class Theme: public QObject
 
 public:
     Theme(KSharedConfig::Ptr config, QObject *parent);
-    ~Theme() override;;
+    ~Theme() override;
 
     bool hasShadow() const;
     bool isLightTheme() const;

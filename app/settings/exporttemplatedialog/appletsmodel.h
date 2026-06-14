@@ -39,7 +39,7 @@ public:
     };
 
     explicit Applets(QObject *parent);
-    ~Applets();
+    ~Applets() override;
 
     bool hasChangedData() const;
     bool inDefaultValues() const;

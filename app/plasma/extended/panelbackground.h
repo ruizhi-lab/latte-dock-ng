@@ -40,7 +40,7 @@ class PanelBackground: public QObject
 
 public:
     PanelBackground(Plasma::Types::Location edge, Theme *parent);
-    ~PanelBackground();
+    ~PanelBackground() override;
 
     int paddingTop() const;
     int paddingLeft() const;

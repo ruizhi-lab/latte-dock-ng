@@ -34,7 +34,7 @@ class TemplatesKeeper : public QObject
 
 public:
     explicit TemplatesKeeper(Settings::Controller::Layouts *parent, Latte::Corona *corona);
-    ~TemplatesKeeper();
+    ~TemplatesKeeper() override;
 
     QString storedView(const QString &layoutCurrentId, const QString &viewId);
 

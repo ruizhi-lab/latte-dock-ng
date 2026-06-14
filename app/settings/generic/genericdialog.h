@@ -28,7 +28,7 @@ class GenericDialog : public QDialog
 
 public:
     GenericDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    ~GenericDialog();
+    ~GenericDialog() override;
 
     void showInlineMessage(const QString &msg, const KMessageWidget::MessageType &type, const bool &isPersistent = false, QList<QAction *> actions = QList<QAction *>());
     void deleteInlineMessages();

@@ -50,7 +50,7 @@ class Views : public QObject
 
 public:
     explicit Views(Settings::Handler::ViewsHandler *parent);
-    ~Views();
+    ~Views() override;
 
     QAbstractItemModel *proxyModel() const;
     QAbstractItemModel *baseModel() const;

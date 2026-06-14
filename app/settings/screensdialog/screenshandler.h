@@ -38,7 +38,7 @@ class ScreensHandler : public Generic
     Q_OBJECT
 public:
     ScreensHandler(Dialog::ScreensDialog *dialog);
-    ~ScreensHandler();
+    ~ScreensHandler() override;
 
     bool hasChangedData() const override;
     bool inDefaultValues() const override;

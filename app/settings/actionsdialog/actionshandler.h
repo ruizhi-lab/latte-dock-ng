@@ -41,7 +41,7 @@ class ActionsHandler : public Generic
     Q_OBJECT
 public:
     ActionsHandler(Dialog::ActionsDialog *dialog);
-    ~ActionsHandler();
+    ~ActionsHandler() override;
 
     bool hasChangedData() const override;
     bool inDefaultValues() const override;

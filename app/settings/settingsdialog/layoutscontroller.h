@@ -48,7 +48,7 @@ class Layouts : public QObject
 
 public:
     explicit Layouts(Settings::Handler::TabLayouts *parent);
-    ~Layouts();
+    ~Layouts() override;
 
     QAbstractItemModel *proxyModel() const;
     QAbstractItemModel *baseModel() const;
