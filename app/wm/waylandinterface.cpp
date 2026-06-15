@@ -88,9 +88,10 @@ public:
         }
 
         auto *layerWindow = LayerShellQt::Window::get(this);
-        if (screen) {
-            layerWindow->setScreen(screen);
-        }
+        // Screen association is handled by QWindow::setScreen() above (line 87).
+        // LayerShellQt::Window reads the screen from the underlying QWindow;
+        // calling setScreen() on the layer window is redundant and was removed
+        // from newer LayerShellQt versions.
 
         LayerShellQt::Window::Anchors anchors;
         int exclusiveZone = 0;
