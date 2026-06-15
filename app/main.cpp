@@ -23,6 +23,7 @@
 // Qt
 #include <QApplication>
 #include <QDebug>
+#include <QElapsedTimer>
 #include <QQuickWindow>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -288,20 +289,23 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    //! Follow Plasma 6 plasmashell's shutdown pattern (KSignalHandler +
-    //! KCrash::AutoRestart).  KSignalHandler uses signalfd on Linux, which
-    //! integrates properly with the Qt event loop — unlike raw sigaction(2)
-    //! that can race with Wayland compositor teardown during logout.
+    //! Follow Plasma 6 plasmashell's shutdown pattern exactly:
+    //!   1. KSignalHandler (signalfd) watches SIGTERM → calls app.quit()
+    //!   2. setQuitLockEnabled(false) — prevents KJob from blocking quit
+    //!   3. setQuitOnLastWindowClosed(false) — already set above
     //!
     //! Reference: plasma-workspace/shell/main.cpp (bug 470604)
+    //! plasmashell also sets AA_DisableSessionManager to opt out of the
+    //! legacy XSMP-based Qt session protocol on Wayland.
     KSignalHandler::self()->watchSignal(SIGTERM);
     KSignalHandler::self()->watchSignal(SIGINT);
     KSignalHandler::self()->watchSignal(SIGHUP);
 
-    //! disable restore from session management
-    //! based on spectacle solution at:
-    //!   - https://bugs.kde.org/show_bug.cgi?id=430411
-    //!   - https://invent.kde.org/graphics/spectacle/-/commit/8db27170d63f8a4aaff09615e51e3cc0fb115c4d
+    //! Prevent KJob and friends from locking quit() — same as plasmashell.
+    //! Without this, an in-flight KJob can silently suppress QCoreApplication::quit(),
+    //! causing latte-dock to stay alive and trigger the KSMServer "wait or cancel" dialog.
+    QCoreApplication::setQuitLockEnabled(false);
+
     auto markSessionEnding = [&app]() {
         if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
             qputenv("LATTE_SESSION_ENDING", "1");
@@ -309,68 +313,84 @@ int main(int argc, char **argv)
 
         if (!app.property("latte_session_ending").toBool()) {
             app.setProperty("latte_session_ending", true);
-            qInfo() << "Session shutdown request received; enabling fast Latte teardown.";
+            qInfo() << "[shutdown] session-ending flag set; fast teardown enabled.";
         }
     };
 
-    //! commitDataRequest is the definitive signal that the session IS ending
-    //! (the user has confirmed logout/shutdown).  We must call quit() here —
-    //! relying on SIGTERM alone is unreliable because ksmserver may send
-    //! commitDataRequest first and only SIGTERM after a timeout, which triggers
-    //! the "Wait 2 minutes or Cancel" dialog.
-    auto commitDataHandler = [&app, &markSessionEnding](QSessionManager &sm) {
-        sm.setRestartHint(QSessionManager::RestartNever);
-        // Defer to main thread: set session-ending flag and trigger quit.
-        QMetaObject::invokeMethod(&app, [&app, &markSessionEnding]() {
-            markSessionEnding();
-            QCoreApplication::quit();
-        }, Qt::QueuedConnection);
-    };
-
-    //! saveStateRequest may fire during session checkpointing (not just
-    //! logout), so it only sets the session-ending flag without quitting.
-    auto saveStateHandler = [&app, &markSessionEnding](QSessionManager &sm) {
-        sm.setRestartHint(QSessionManager::RestartNever);
-        QMetaObject::invokeMethod(&app, markSessionEnding, Qt::QueuedConnection);
-    };
-
+    //! Signal handler: the primary shutdown trigger (matches plasmashell).
     QObject::connect(KSignalHandler::self(), &KSignalHandler::signalReceived,
-                     &app, [&markSessionEnding](int signal) {
-        qInfo() << "Received signal" << signal << "; triggering clean shutdown.";
+                     &app, [&app, &markSessionEnding](int signal) {
+        qInfo() << "[shutdown] KSignalHandler received signal" << signal << "→ calling quit()";
         markSessionEnding();
-        QCoreApplication::quit();
+        app.quit();
     });
 
-    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, commitDataHandler, Qt::DirectConnection);
-    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, saveStateHandler, Qt::DirectConnection);
+    //! commitDataRequest: legacy XSMP path (may not fire on pure Wayland).
+    //! When it does fire, treat it the same as SIGTERM — the session IS ending.
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, [&app, &markSessionEnding](QSessionManager &sm) {
+        qInfo() << "[shutdown] commitDataRequest received → RestartNever + quit()";
+        sm.setRestartHint(QSessionManager::RestartNever);
+        QMetaObject::invokeMethod(&app, [&app, &markSessionEnding]() {
+            markSessionEnding();
+            app.quit();
+        }, Qt::QueuedConnection);
+    }, Qt::DirectConnection);
 
-    //! Wayland sessions may skip Qt session-manager callbacks entirely.
-    //! Proactively watch ksmserver state via both DBus signals and polling
-    //! to trigger the fast shutdown path before the compositor disappears.
+    //! saveStateRequest: may fire during session checkpointing (not just
+    //! logout), so only set the flag – do NOT call quit().
+    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, [&app, &markSessionEnding](QSessionManager &sm) {
+        qInfo() << "[shutdown] saveStateRequest received → RestartNever (no quit)";
+        sm.setRestartHint(QSessionManager::RestartNever);
+        QMetaObject::invokeMethod(&app, markSessionEnding, Qt::QueuedConnection);
+    }, Qt::DirectConnection);
+
+    //! Polling fallback: on Wayland, ksmserver may not send commitDataRequest.
+    //! Poll isShuttingDown() via DBus with a SHORT timeout (1 s) to avoid
+    //! blocking the main thread during compositor teardown.
+    //!
+    //! Two-phase behaviour:
+    //!   Phase 1 (confirmation dialog): isShuttingDown() = true → set flag, do NOT quit.
+    //!     The user may still cancel the logout at this point.
+    //!   Phase 2 (committed): flag was set ≥ 5 s ago AND isShuttingDown() still true.
+    //!     The confirmation phase has passed; treat this as a committed logout and quit.
+    //!   Cancel: isShuttingDown() = false after flag was set → clear flag.
+    QElapsedTimer flagSetTimer;
+    flagSetTimer.invalidate();
+
     QTimer sessionShutdownPoll;
     sessionShutdownPoll.setInterval(500);
-    QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding]() {
+    QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding, &flagSetTimer]() {
         const bool shuttingDown = isKdeSessionShuttingDown();
 
         if (app.property("latte_session_ending").toBool()) {
             if (!shuttingDown) {
-                // The flag was set during a previous logout confirmation
-                // phase that the user cancelled.  Clear it so the next
-                // actual logout attempt is detected properly.
+                // User cancelled the logout confirmation.
+                qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
                 app.setProperty("latte_session_ending", false);
                 qunsetenv("LATTE_SESSION_ENDING");
+                flagSetTimer.invalidate();
+                return;
+            }
+
+            // Flag is set and ksmserver still reports shutting down.
+            // If the flag was set ≥ 5 seconds ago, the confirmation phase
+            // has almost certainly passed — treat this as a committed logout
+            // and call quit().  This is the fallback for Wayland sessions
+            // where commitDataRequest never fires.
+            if (flagSetTimer.isValid() && flagSetTimer.hasExpired(5000)) {
+                qInfo() << "[shutdown] session-ending flag active for 5+ s;"
+                        << "commitDataRequest did not fire, triggering quit() from poller.";
+                app.quit();
             }
             return;
         }
 
         if (shuttingDown) {
-            // Only flag the session as ending; do NOT call quit().
-            // ksmserver returns true during the "are you sure?" logout
-            // confirmation phase, and calling quit() here would kill
-            // latte-dock before the user confirms/cancels.
-            // The actual quit() is triggered by commitDataRequest (above).
+            // Phase 1: logout confirmation dialog is showing.
+            // Set the flag but do NOT quit — user may still cancel.
+            qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
             markSessionEnding();
-            qInfo() << "KSMServer shutdown detected; session flagged as ending.";
+            flagSetTimer.start();
         }
     });
     sessionShutdownPoll.start();
@@ -553,10 +573,19 @@ int main(int argc, char **argv)
         KDBusService service(KDBusService::Unique);
         result = app.exec();
     }
-    // Send deferred deletes posted by child destructors.
-    // sendPostedEvents() is NOT interrupted by quit(), unlike
-    // processEvents().  Loop to drain cascading deferred deletes.
-    for (int pass = 0; pass < 50; ++pass) {
+    // Detach the SharedQmlEngine from the QApplication before app is
+    // destroyed.  Without this, ~QApplication() → deleteChildren() deletes
+    // the SharedQmlEngine that is managed by a static shared_ptr, and the
+    // subsequent shared_ptr destructor double-frees it.
+    if (s_sharedEngine) {
+        s_sharedEngine->setParent(nullptr);
+    }
+
+    // Drain any remaining DeferredDelete events.  The Corona destructor
+    // already processes its own via deleteLater() + immediate flush, so
+    // this loop mainly handles events from KDBusService or other globals.
+    // Limit to a few passes to avoid spinning on cascading events.
+    for (int pass = 0; pass < 5; ++pass) {
         QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
     }
     return result;
@@ -730,12 +759,16 @@ inline void autoClearQmlCacheOnVersionChange()
 
 inline bool isKdeSessionShuttingDown()
 {
+    // Use a short timeout (1 s) to avoid blocking the main thread when
+    // ksmserver is unresponsive during compositor teardown.  The default
+    // DBus timeout is 25 s, which would stall the event loop and prevent
+    // quit() from being processed in time.
     QDBusMessage msg = QDBusMessage::createMethodCall(
         QStringLiteral("org.kde.ksmserver"),
         QStringLiteral("/KSMServer"),
         QStringLiteral("org.kde.KSMServerInterface"),
         QStringLiteral("isShuttingDown"));
-    QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
+    QDBusMessage reply = QDBusConnection::sessionBus().call(msg, QDBus::Block, 1000);
     return (reply.type() == QDBusMessage::ReplyMessage
             && !reply.arguments().isEmpty()
             && reply.arguments().first().toBool());

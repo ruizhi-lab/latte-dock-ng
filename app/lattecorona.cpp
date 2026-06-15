@@ -160,23 +160,32 @@ Corona::~Corona()
         kid->setParent(nullptr);
     }
 
-    // Delete in dependency order: LayoutsManager uses most other
-    // Corona members in its destructor (memoryUsage, screenPool, wm).
-    delete m_layoutsManager;
-    delete m_templatesManager;
-    delete m_viewSettingsFactory;
-    delete m_indicatorFactory;
-    delete m_globalShortcuts;
-    delete m_dialogShadows;
-    delete m_wm;
-    delete m_plasmaGeometries;
-    delete m_themeExtended;
-    delete m_plasmaScreenPool;
-    delete m_screenPool;
-    delete m_universalSettings;
+    // Delete in dependency order using deleteLater() + immediate flush.
+    // This ensures correct ordering (LayoutsManager before its deps)
+    // while avoiding the double-free that occurs when manual delete is
+    // mixed with DeferredDelete processing in main()'s post-exec loop.
+    auto flushDelete = [](QObject *obj) {
+        obj->deleteLater();
+        QCoreApplication::sendPostedEvents(obj, QEvent::DeferredDelete);
+    };
+
+    flushDelete(m_layoutsManager);
+    flushDelete(m_templatesManager);
+    flushDelete(m_viewSettingsFactory);
+    flushDelete(m_indicatorFactory);
+    flushDelete(m_globalShortcuts);
+    flushDelete(m_dialogShadows);
+    flushDelete(m_wm);
+    flushDelete(m_plasmaGeometries);
+    flushDelete(m_themeExtended);
+    flushDelete(m_plasmaScreenPool);
+    flushDelete(m_screenPool);
+    flushDelete(m_universalSettings);
 
     disconnect(m_activitiesConsumer, &KActivities::Consumer::serviceStatusChanged, this, &Corona::load);
     delete m_activitiesConsumer;
+    // Flush any deferred deletes posted by m_activitiesConsumer destructor.
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 
     qDebug() << "Latte Corona - deleted...";
 
