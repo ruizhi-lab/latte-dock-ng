@@ -132,10 +132,15 @@ public:
 
         //! For layer-shell: anchored to 3 edges means the 4th dimension must be specified.
         //! Width 0 = fill between left+right anchors; Height 0 = fill between top+bottom.
+        //! Set visual surface to 1px to minimize KWin blur rendering behind the exclusive zone.
+        //! The exclusive zone (set above) still reserves the full dock thickness for struts.
+        //! A 1px visual surface means KWin only renders blur on a 1px strip at the screen edge,
+        //! making the ghost window essentially invisible regardless of layer.
+        const int visualThickness = 1;
         if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
-            layerWindow->setDesiredSize(QSize(0, exclusiveZone));
+            layerWindow->setDesiredSize(QSize(0, visualThickness));
         } else {
-            layerWindow->setDesiredSize(QSize(exclusiveZone, 0));
+            layerWindow->setDesiredSize(QSize(visualThickness, 0));
         }
 
         m_validGeometry = rect;
