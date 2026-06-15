@@ -61,6 +61,9 @@ public:
                  | Qt::WindowDoesNotAcceptFocus
                  | Qt::WindowTransparentForInput);
 
+        QSurfaceFormat fmt = format();
+        fmt.setAlphaBufferSize(8);
+        setFormat(fmt);
         setColor(QColor(Qt::transparent));
 
         connect(m_waylandInterface, &WindowSystem::AbstractWindowInterface::latteWindowAdded, this, &GhostWindow::identifyWinId);
@@ -123,7 +126,7 @@ public:
 
         layerWindow->setAnchors(anchors);
         layerWindow->setExclusiveZone(exclusiveZone);
-        layerWindow->setLayer(LayerShellQt::Window::LayerTop);
+        layerWindow->setLayer(LayerShellQt::Window::LayerBackground);
         layerWindow->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityNone);
         layerWindow->setScope(QStringLiteral("latte-dock-struts"));
 
