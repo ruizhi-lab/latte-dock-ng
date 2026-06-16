@@ -5,6 +5,7 @@
 
 #include "environment.h"
 #include "extras.h"
+#include "quickwindowsystem.h"
 #include "tools.h"
 
 #include <QIcon>
@@ -23,6 +24,7 @@ private Q_SLOTS:
     void environmentExposesConstantsAndVersionEncoding();
     void environmentReturnsThemeIconNamesAsSources();
     void environmentDescribesIconAndStringSources();
+    void quickWindowSystemReportsWaylandCompositing();
     void singletonProvidersCreateExpectedObjects();
 };
 
@@ -84,6 +86,14 @@ void CoreUnitTest::environmentDescribesIconAndStringSources()
     QVERIFY(textDescriptor.contains(QStringLiteral("string=\"plain\"")));
 }
 
+void CoreUnitTest::quickWindowSystemReportsWaylandCompositing()
+{
+    Latte::QuickWindowSystem windowSystem;
+
+    QVERIFY(windowSystem.compositingActive());
+    QVERIFY(windowSystem.isPlatformWayland());
+}
+
 void CoreUnitTest::singletonProvidersCreateExpectedObjects()
 {
     std::unique_ptr<QObject> tools(Latte::tools_qobject_singletontype_provider(nullptr, nullptr));
@@ -91,6 +101,9 @@ void CoreUnitTest::singletonProvidersCreateExpectedObjects()
 
     std::unique_ptr<QObject> environment(Latte::environment_qobject_singletontype_provider(nullptr, nullptr));
     QVERIFY(qobject_cast<Latte::Environment *>(environment.get()));
+
+    std::unique_ptr<QObject> windowSystem(Latte::windowsystem_qobject_singletontype_provider(nullptr, nullptr));
+    QVERIFY(qobject_cast<Latte::QuickWindowSystem *>(windowSystem.get()));
 }
 
 QTEST_MAIN(CoreUnitTest)

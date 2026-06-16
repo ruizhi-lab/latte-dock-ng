@@ -3,8 +3,11 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include "actionlistwidgetitem.h"
 #include "generictools.h"
 #include "genericviewtools.h"
+#include "layoutscombobox.h"
+#include "schemescombobox.h"
 
 #include <QImage>
 #include <QStyleOptionViewItem>
@@ -15,6 +18,8 @@ class ToolsUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void actionListWidgetItemStoresIdAndSortOrder();
+    void customComboBoxesStoreDecorationState();
     void styleStatePredicatesReflectOptionState();
     void colorGroupFollowsEnabledActiveAndSelectedState();
     void horizontalAlignmentPrefersCenterThenRightThenLeft();
@@ -40,6 +45,37 @@ bool hasPaintedPixel(const QImage &image)
     return false;
 }
 
+}
+
+void ToolsUnitTest::actionListWidgetItemStoresIdAndSortOrder()
+{
+    using Latte::Settings::ActionsDialog::ActionListWidgetItem;
+
+    ActionListWidgetItem first(QIcon(), QStringLiteral("First"), 20, QStringLiteral("first"));
+    ActionListWidgetItem second(QIcon(), QStringLiteral("Second"), 10, QStringLiteral("second"));
+
+    QCOMPARE(first.data(ActionListWidgetItem::IDROLE).toString(), QStringLiteral("first"));
+    QCOMPARE(first.data(ActionListWidgetItem::ORDERROLE).toInt(), 20);
+    QVERIFY(second < first);
+    QVERIFY(!(first < second));
+}
+
+void ToolsUnitTest::customComboBoxesStoreDecorationState()
+{
+    Latte::Settings::LayoutsComboBox layoutsCombo;
+    Latte::Data::LayoutIcon icon;
+    icon.name = QStringLiteral("layout-icon");
+    icon.isBackgroundFile = true;
+
+    layoutsCombo.setLayoutIcon(icon);
+    QCOMPARE(layoutsCombo.layoutIcon().name, QStringLiteral("layout-icon"));
+    QCOMPARE(layoutsCombo.layoutIcon().isBackgroundFile, true);
+
+    Latte::Settings::SchemesComboBox schemesCombo;
+    schemesCombo.setBackgroundColor(Qt::black);
+    schemesCombo.setTextColor(Qt::white);
+    QCOMPARE(schemesCombo.backgroundColor(), QColor(Qt::black));
+    QCOMPARE(schemesCombo.textColor(), QColor(Qt::white));
 }
 
 void ToolsUnitTest::styleStatePredicatesReflectOptionState()

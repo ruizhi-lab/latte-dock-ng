@@ -82,6 +82,7 @@ set(coreunittest_SRCS
     coreunittest.cpp
     ../declarativeimports/core/environment.cpp
     ../declarativeimports/core/extras.cpp
+    ../declarativeimports/core/quickwindowsystem.cpp
     ../declarativeimports/core/tools.cpp
 )
 
@@ -105,6 +106,25 @@ target_link_libraries(coreunittest
 
 add_test(NAME coreunittest COMMAND coreunittest)
 set_tests_properties(coreunittest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+
+set(typesunittest_SRCS
+    typesunittest.cpp
+    ../containment/plugin/types.cpp
+    ../plasmoid/plugin/types.cpp
+)
+
+add_executable(typesunittest EXCLUDE_FROM_ALL ${typesunittest_SRCS})
+
+target_include_directories(typesunittest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_link_libraries(typesunittest
+    Qt6::Core
+    Qt6::Test
+)
+
+add_test(NAME typesunittest COMMAND typesunittest)
 
 set(wmunittest_SRCS
     wmunittest.cpp
@@ -151,8 +171,11 @@ set(toolsunittest_SRCS
     ../app/data/uniqueidinfo.cpp
     ../app/data/viewdata.cpp
     ../app/data/viewstable.cpp
+    ../app/settings/actionsdialog/actionlistwidgetitem.cpp
+    ../app/settings/detailsdialog/schemescombobox.cpp
     ../app/settings/generic/generictools.cpp
     ../app/settings/generic/genericviewtools.cpp
+    ../app/settings/generic/layoutscombobox.cpp
     ../app/tools/commontools.cpp
 )
 
@@ -162,6 +185,8 @@ target_include_directories(toolsunittest PRIVATE
     ${CMAKE_BINARY_DIR}/app
     ${CMAKE_CURRENT_SOURCE_DIR}/../app
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/data
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/actionsdialog
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/detailsdialog
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/generic
 )
 
