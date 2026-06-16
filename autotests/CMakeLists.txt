@@ -202,6 +202,34 @@ target_link_libraries(packageunittest
 add_test(NAME packageunittest COMMAND packageunittest)
 set_tests_properties(packageunittest PROPERTIES ENVIRONMENT "QT_PLUGIN_PATH=${CMAKE_BINARY_DIR}/bin")
 
+set(indicatorunittest_SRCS
+    indicatorunittest.cpp
+    ../app/indicator/factory.cpp
+)
+
+add_executable(indicatorunittest EXCLUDE_FROM_ALL ${indicatorunittest_SRCS})
+
+target_include_directories(indicatorunittest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/indicator
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/layouts
+)
+
+target_link_libraries(indicatorunittest
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Test
+    Qt6::Widgets
+    KF6::Archive
+    KF6::CoreAddons
+    KF6::I18n
+    KF6::Notifications
+    KF6::XmlGui
+)
+
+add_test(NAME indicatorunittest COMMAND indicatorunittest)
+set_tests_properties(indicatorunittest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+
 set(wmunittest_SRCS
     wmunittest.cpp
     ../app/wm/tasktools.cpp

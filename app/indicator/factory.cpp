@@ -394,7 +394,7 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
         process.waitForFinished();
 
         showNotificationSucceed(metadata.name(), updated);
-        return Latte::ImportExport::InstalledState;
+        return updated ? Latte::ImportExport::UpdatedState : Latte::ImportExport::InstalledState;
     }
 
     showNotificationError();
