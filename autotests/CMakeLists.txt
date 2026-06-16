@@ -201,13 +201,22 @@ set(toolsunittest_SRCS
     ../app/data/viewstable.cpp
     ../app/settings/actionsdialog/actionlistwidgetitem.cpp
     ../app/settings/exporttemplatedialog/delegates/normalcheckboxdelegate.cpp
+    ../app/settings/detailsdialog/delegates/schemecmbitemdelegate.cpp
     ../app/settings/detailsdialog/schemescombobox.cpp
     ../app/settings/generic/generictools.cpp
     ../app/settings/generic/genericviewtools.cpp
     ../app/settings/generic/layoutscombobox.cpp
+    ../app/settings/generic/persistentmenu.cpp
+    ../app/settings/settingsdialog/delegates/activitiesdelegate.cpp
+    ../app/settings/settingsdialog/delegates/backgrounddelegate.cpp
     ../app/settings/settingsdialog/delegates/checkboxdelegate.cpp
+    ../app/settings/settingsdialog/delegates/layoutcmbitemdelegate.cpp
     ../app/settings/settingsdialog/delegates/layoutnamedelegate.cpp
     ../app/settings/screensdialog/delegates/checkboxdelegate.cpp
+    ../app/settings/viewsdialog/delegates/custommenuitemwidget.cpp
+    ../app/settings/viewsdialog/delegates/namedelegate.cpp
+    ../app/settings/viewsdialog/delegates/singleoptiondelegate.cpp
+    ../app/settings/viewsdialog/delegates/singletextdelegate.cpp
     ../app/tools/commontools.cpp
 )
 
@@ -220,11 +229,14 @@ target_include_directories(toolsunittest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/actionsdialog
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/exporttemplatedialog/delegates
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/detailsdialog
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/detailsdialog/delegates
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/generic
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/settingsdialog
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/settingsdialog/delegates
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/screensdialog
     ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/screensdialog/delegates
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/viewsdialog
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/viewsdialog/delegates
 )
 
 target_link_libraries(toolsunittest
@@ -232,6 +244,7 @@ target_link_libraries(toolsunittest
     Qt6::Gui
     Qt6::Test
     Qt6::Widgets
+    KF6::I18n
     KF6::XmlGui
     ${LATTE_SVG_TARGET}
     Plasma::Activities
