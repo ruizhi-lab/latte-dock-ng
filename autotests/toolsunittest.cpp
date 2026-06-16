@@ -7,9 +7,21 @@
 #include "generictools.h"
 #include "genericviewtools.h"
 #include "layoutscombobox.h"
+#include "../app/settings/settingsdialog/delegates/layoutnamedelegate.h"
+#include "../app/settings/settingsdialog/layoutsmodel.h"
+#include "normalcheckboxdelegate.h"
+#include "screendata.h"
+#include "screensmodel.h"
+#include "../app/settings/settingsdialog/delegates/checkboxdelegate.h"
+#include "../app/settings/screensdialog/delegates/checkboxdelegate.h"
 #include "schemescombobox.h"
 
+#include <QAbstractTableModel>
 #include <QImage>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QStandardItemModel>
 #include <QStyleOptionViewItem>
 #include <QTest>
 
@@ -20,6 +32,10 @@ class ToolsUnitTest : public QObject
 private Q_SLOTS:
     void actionListWidgetItemStoresIdAndSortOrder();
     void customComboBoxesStoreDecorationState();
+    void layoutCheckBoxDelegateTogglesUserRole();
+    void layoutNameDelegateEditsUserRole();
+    void normalCheckBoxDelegateTogglesCheckState();
+    void screensCheckBoxDelegateOnlyTogglesRemovableScreens();
     void styleStatePredicatesReflectOptionState();
     void colorGroupFollowsEnabledActiveAndSelectedState();
     void horizontalAlignmentPrefersCenterThenRightThenLeft();
@@ -44,6 +60,48 @@ bool hasPaintedPixel(const QImage &image)
 
     return false;
 }
+
+class ScreenDelegateModel : public QAbstractTableModel
+{
+public:
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override
+    {
+        return parent.isValid() ? 0 : 1;
+    }
+
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override
+    {
+        return parent.isValid() ? 0 : 1;
+    }
+
+    QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (!index.isValid()) {
+            return {};
+        }
+
+        if (role == Qt::CheckStateRole) {
+            return m_checked ? Qt::Checked : Qt::Unchecked;
+        } else if (role == Latte::Settings::Model::Screens::SCREENDATAROLE) {
+            return QVariant::fromValue(m_screen);
+        }
+
+        return {};
+    }
+
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override
+    {
+        if (!index.isValid() || role != Qt::CheckStateRole) {
+            return false;
+        }
+
+        m_checked = value.toBool();
+        return true;
+    }
+
+    Latte::Data::Screen m_screen;
+    bool m_checked{false};
+};
 
 }
 
@@ -76,6 +134,135 @@ void ToolsUnitTest::customComboBoxesStoreDecorationState()
     schemesCombo.setTextColor(Qt::white);
     QCOMPARE(schemesCombo.backgroundColor(), QColor(Qt::black));
     QCOMPARE(schemesCombo.textColor(), QColor(Qt::white));
+}
+
+void ToolsUnitTest::layoutCheckBoxDelegateTogglesUserRole()
+{
+    Latte::Settings::Layout::Delegate::CheckBox delegate;
+    QStandardItemModel model(1, Latte::Settings::Model::Layouts::ACTIVITYCOLUMN + 1);
+    const QModelIndex index = model.index(0, Latte::Settings::Model::Layouts::MENUCOLUMN);
+    model.setData(index, false, Qt::UserRole);
+    model.setData(index, false, Latte::Settings::Model::Layouts::ORIGINALISSHOWNINMENUROLE);
+
+    QStyleOptionViewItem option;
+    option.rect = QRect(0, 0, 20, 20);
+
+    QMouseEvent release(QEvent::MouseButtonRelease,
+                        QPointF(10, 10),
+                        QPointF(10, 10),
+                        QPointF(10, 10),
+                        Qt::LeftButton,
+                        Qt::LeftButton,
+                        Qt::NoModifier);
+    QVERIFY(!delegate.editorEvent(&release, &model, option, index));
+    QCOMPARE(model.data(index, Qt::UserRole).toBool(), false);
+
+    QMouseEvent doubleClick(QEvent::MouseButtonDblClick,
+                            QPointF(10, 10),
+                            QPointF(10, 10),
+                            QPointF(10, 10),
+                            Qt::LeftButton,
+                            Qt::LeftButton,
+                            Qt::NoModifier);
+    QVERIFY(delegate.editorEvent(&doubleClick, &model, option, index));
+    QCOMPARE(model.data(index, Qt::UserRole).toBool(), true);
+
+    QKeyEvent selectKey(QEvent::KeyPress, Qt::Key_Select, Qt::NoModifier);
+    QVERIFY(delegate.editorEvent(&selectKey, &model, option, index));
+    QCOMPARE(model.data(index, Qt::UserRole).toBool(), false);
+}
+
+void ToolsUnitTest::layoutNameDelegateEditsUserRole()
+{
+    Latte::Settings::Layout::Delegate::LayoutName delegate;
+    QStandardItemModel model(1, 1);
+    const QModelIndex index = model.index(0, 0);
+    model.setData(index, QStringLiteral("Original"), Qt::UserRole);
+
+    QStyleOptionViewItem option;
+    QWidget *editor = delegate.createEditor(nullptr, option, index);
+    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+    QVERIFY(lineEdit);
+
+    delegate.setEditorData(editor, index);
+    QCOMPARE(lineEdit->text(), QStringLiteral("Original"));
+
+    lineEdit->setText(QStringLiteral("Updated"));
+    delegate.setModelData(editor, &model, index);
+    QCOMPARE(model.data(index, Qt::UserRole).toString(), QStringLiteral("Updated"));
+
+    delete editor;
+}
+
+void ToolsUnitTest::normalCheckBoxDelegateTogglesCheckState()
+{
+    Latte::Settings::Applets::Delegate::NormalCheckBox delegate;
+    QStandardItemModel model(1, 1);
+    const QModelIndex index = model.index(0, 0);
+    model.setData(index, Qt::Unchecked, Qt::CheckStateRole);
+
+    QStyleOptionViewItem option;
+    option.rect = QRect(0, 0, 20, 20);
+
+    QKeyEvent ignoredKey(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
+    QVERIFY(!delegate.editorEvent(&ignoredKey, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Unchecked);
+
+    QKeyEvent spaceKey(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier);
+    QVERIFY(delegate.editorEvent(&spaceKey, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Checked);
+
+    QMouseEvent outsideRelease(QEvent::MouseButtonRelease,
+                               QPointF(40, 40),
+                               QPointF(40, 40),
+                               QPointF(40, 40),
+                               Qt::LeftButton,
+                               Qt::LeftButton,
+                               Qt::NoModifier);
+    QVERIFY(!delegate.editorEvent(&outsideRelease, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Checked);
+
+    QMouseEvent insideRelease(QEvent::MouseButtonRelease,
+                              QPointF(10, 10),
+                              QPointF(10, 10),
+                              QPointF(10, 10),
+                              Qt::LeftButton,
+                              Qt::LeftButton,
+                              Qt::NoModifier);
+    QVERIFY(delegate.editorEvent(&insideRelease, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Unchecked);
+}
+
+void ToolsUnitTest::screensCheckBoxDelegateOnlyTogglesRemovableScreens()
+{
+    Latte::Settings::Screens::Delegate::CheckBox delegate;
+    ScreenDelegateModel model;
+    const QModelIndex index = model.index(0, 0);
+
+    model.m_screen.id = QStringLiteral("10");
+    model.m_screen.name = QStringLiteral("DP-1");
+    model.m_screen.isRemovable = false;
+
+    QStyleOptionViewItem option;
+    option.rect = QRect(0, 0, 40, 20);
+
+    QKeyEvent spaceKey(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier);
+    QVERIFY(!delegate.editorEvent(&spaceKey, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Unchecked);
+
+    model.m_screen.isRemovable = true;
+    QVERIFY(delegate.editorEvent(&spaceKey, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Checked);
+
+    QMouseEvent outsideRelease(QEvent::MouseButtonRelease,
+                               QPointF(80, 80),
+                               QPointF(80, 80),
+                               QPointF(80, 80),
+                               Qt::LeftButton,
+                               Qt::LeftButton,
+                               Qt::NoModifier);
+    QVERIFY(!delegate.editorEvent(&outsideRelease, &model, option, index));
+    QCOMPARE(model.data(index, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Checked);
 }
 
 void ToolsUnitTest::styleStatePredicatesReflectOptionState()
