@@ -260,7 +260,7 @@ QVariant Applets::data(const QModelIndex &index, int role) const
     const int row = index.row();
     int column = index.column();
 
-    if (row >= rowCount()) {
+    if (!index.isValid() || row < 0 || row >= rowCount() || column < 0 || column > NAMECOLUMN) {
         return QVariant{};
     }
 

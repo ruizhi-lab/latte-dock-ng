@@ -44,7 +44,9 @@ WindowInfoWrap::WindowInfoWrap(const WindowInfoWrap &o)
     , m_isVirtualDesktopsChangeable(o.m_isVirtualDesktopsChangeable)
     , m_desktops(o.m_desktops)
     , m_activities(o.m_activities)
+    , m_appName(o.m_appName)
     , m_display(o.m_display)
+    , m_icon(o.m_icon)
 {
 }
 
@@ -77,7 +79,9 @@ WindowInfoWrap::WindowInfoWrap(WindowInfoWrap &&o)
     , m_isVirtualDesktopsChangeable(o.m_isVirtualDesktopsChangeable)
     , m_desktops(o.m_desktops)
     , m_activities(o.m_activities)
+    , m_appName(o.m_appName)
     , m_display(o.m_display)
+    , m_icon(o.m_icon)
 {
 }
 
@@ -113,6 +117,8 @@ WindowInfoWrap &WindowInfoWrap::operator=(WindowInfoWrap &&rhs)
     m_isVirtualDesktopsChangeable = rhs.m_isVirtualDesktopsChangeable;
 
     m_display = rhs.m_display;
+    m_appName = rhs.m_appName;
+    m_icon = rhs.m_icon;
     m_desktops = rhs.m_desktops;
     m_activities = rhs.m_activities;
     return *this;
@@ -148,6 +154,8 @@ WindowInfoWrap &WindowInfoWrap::operator=(const WindowInfoWrap &rhs)
     m_isVirtualDesktopsChangeable = rhs.m_isVirtualDesktopsChangeable;
 
     m_display = rhs.m_display;
+    m_appName = rhs.m_appName;
+    m_icon = rhs.m_icon;
     m_desktops = rhs.m_desktops;
     m_activities = rhs.m_activities;
     return *this;

@@ -157,12 +157,12 @@ View::operator QString() const
     result +=" : ";
     result += isActive ? "Active" : "Inactive";
     result +=" : ";
-    if (m_state==OriginFromLayout && isMoveOrigin) {
+    if (m_state==OriginFromLayout && isMoveOrigin && isMoveDestination) {
+        result += " ↑↓ ";
+    } else if (m_state==OriginFromLayout && isMoveOrigin) {
         result += " ↑ ";
     } else if (m_state==OriginFromLayout && isMoveDestination) {
         result += " ↓ ";
-    } else if (m_state==OriginFromLayout && isMoveOrigin && isMoveDestination) {
-        result += " ↑↓ ";
     } else {
         result += " - ";
     }

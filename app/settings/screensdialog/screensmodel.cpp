@@ -210,6 +210,10 @@ Qt::ItemFlags Screens::flags(const QModelIndex &index) const
 
     auto flags = QAbstractTableModel::flags(index);
 
+    if (!index.isValid() || !c_screens.rowExists(row) || column < 0 || column > SCREENCOLUMN) {
+        return flags;
+    }
+
     if (c_screens[row].isRemovable) {
         flags |= Qt::ItemIsUserCheckable;
     } else {
@@ -273,7 +277,7 @@ QVariant Screens::data(const QModelIndex &index, int role) const
     const int row = index.row();
     int column = index.column();
 
-    if (row >= rowCount()) {
+    if (!index.isValid() || row < 0 || row >= rowCount() || column < 0 || column > SCREENCOLUMN) {
         return QVariant{};
     }
 

@@ -37,6 +37,7 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(WriteBasicConfigVersionFile)
+include(CTest)
 
 # Some Plasma 6 environments include both lib/qml and lib/qt6/qml in the QML
 # import path. Install Latte QML modules to both locations when they differ so
@@ -54,6 +55,9 @@ endif()
 
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
+if(BUILD_TESTING)
+    find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Test)
+endif()
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     Archive Config CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel
@@ -366,6 +370,10 @@ add_subdirectory(icons)
 add_subdirectory(separator)
 add_subdirectory(plasmoid)
 add_subdirectory(shell)
+
+if(BUILD_TESTING)
+    add_subdirectory(autotests)
+endif()
 
 ki18n_install(po)
 

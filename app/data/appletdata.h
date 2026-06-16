@@ -26,7 +26,7 @@ public:
     Applet(const Applet &o);
 
     //! Layout data
-    bool isSelected;
+    bool isSelected{false};
     QString description;
     QString icon;
     QString storageId;
