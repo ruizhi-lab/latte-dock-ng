@@ -809,6 +809,7 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg == QLatin1String("Failed to register Notification service on DBus")
         || msg == QLatin1String("Failed to register JobViewServer service on DBus, is kuiserver running?")
         || msg == QLatin1String("Failed to register JobViewServer DBus object")
+        || msg == QLatin1String("<Unknown File>: QML ToolTipDialog: location should be set before showing popup window")
         // Plasma digital clock Tooltip — internal TypeError, harmless.
         || msg.contains("digitalclock/Tooltip.qml:40: TypeError")
         // Plasma clipboard applet — QML type mismatch with Plasma 6 framework.

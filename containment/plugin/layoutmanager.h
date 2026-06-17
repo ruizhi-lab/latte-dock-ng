@@ -143,6 +143,9 @@ private Q_SLOTS:
     void updateOrder();
     void cleanupOptions();
     void reorderParabolicSpacers();
+    void rememberAppletRemovalIndex(const int &id);
+    void restoreAppletOrderForApplet(const int &id);
+    void forgetAppletRemovalIndex(const int &id);
     bool isModernDockStyle() const;
     bool usesLegacyJustifySplitters() const;
     QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
@@ -203,6 +206,7 @@ private:
     QList<int> m_lockedZoomApplets;
     QList<int> m_order;
     QList<int> m_userBlocksColorizingApplets;
+    QHash<int, int> m_appletRemovalIndexes;
 
     QQuickItem *m_rootItem{nullptr};
     QQuickItem *m_dndSpacer{nullptr};

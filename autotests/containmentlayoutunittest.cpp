@@ -15,6 +15,7 @@ class ContainmentLayoutUnitTest : public QObject
 private Q_SLOTS:
     void tracksRequestedAppletOptionLists();
     void tracksScheduledDestructionIds();
+    void restoresScheduledDestructionAppletAtOriginalIndex();
     void roundTripsMasqueradedIndexes();
 };
 
@@ -49,6 +50,27 @@ void ContainmentLayoutUnitTest::tracksScheduledDestructionIds()
     manager.setAppletInScheduledDestruction(9, false);
     QVERIFY(!manager.appletsInScheduledDestruction().contains(9));
     QCOMPARE(scheduledSpy.count(), 2);
+}
+
+void ContainmentLayoutUnitTest::restoresScheduledDestructionAppletAtOriginalIndex()
+{
+    Latte::Containment::LayoutManager manager;
+
+    manager.requestAppletsOrder(QList<int>{1, 2, 3, 4});
+
+    QVERIFY(QMetaObject::invokeMethod(&manager,
+                                      "rememberAppletRemovalIndex",
+                                      Qt::DirectConnection,
+                                      Q_ARG(int, 2)));
+
+    manager.requestAppletsOrder(QList<int>{1, 3, 4});
+
+    QVERIFY(QMetaObject::invokeMethod(&manager,
+                                      "restoreAppletOrderForApplet",
+                                      Qt::DirectConnection,
+                                      Q_ARG(int, 2)));
+
+    QCOMPARE(manager.appletOrder(), (QList<int>{1, 2, 3, 4}));
 }
 
 void ContainmentLayoutUnitTest::roundTripsMasqueradedIndexes()

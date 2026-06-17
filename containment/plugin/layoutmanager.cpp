@@ -289,8 +289,10 @@ void LayoutManager::setAppletInScheduledDestruction(const int &id, const bool &e
 {
     if (m_appletsInScheduledDestruction.contains(id) && !enabled) {
         m_appletsInScheduledDestruction.remove(id);
+        forgetAppletRemovalIndex(id);
         Q_EMIT appletsInScheduledDestructionChanged();
     } else if (!m_appletsInScheduledDestruction.contains(id) && enabled) {
+        rememberAppletRemovalIndex(id);
         m_appletsInScheduledDestruction[id] = appletItem(id);
         Q_EMIT appletsInScheduledDestructionChanged();
     }
@@ -426,6 +428,36 @@ void LayoutManager::updateOrder()
     }
 
     setOrder(nextorder);
+}
+
+void LayoutManager::rememberAppletRemovalIndex(const int &id)
+{
+    if (id <= 0 || m_appletRemovalIndexes.contains(id)) {
+        return;
+    }
+
+    const int originalIndex = m_appletOrder.indexOf(id);
+    if (originalIndex >= 0) {
+        m_appletRemovalIndexes.insert(id, originalIndex);
+    }
+}
+
+void LayoutManager::restoreAppletOrderForApplet(const int &id)
+{
+    if (id <= 0 || !m_appletRemovalIndexes.contains(id)) {
+        return;
+    }
+
+    const int originalIndex = m_appletRemovalIndexes.take(id);
+    QList<int> restoredOrder = m_appletOrder;
+    restoredOrder.removeAll(id);
+    restoredOrder.insert(qBound(0, originalIndex, restoredOrder.count()), id);
+    requestAppletsOrder(restoredOrder);
+}
+
+void LayoutManager::forgetAppletRemovalIndex(const int &id)
+{
+    m_appletRemovalIndexes.remove(id);
 }
 
 bool LayoutManager::isModernDockStyle() const
@@ -1167,8 +1199,10 @@ bool LayoutManager::isMasqueradedIndex(const int &x, const int &y)
     return (x==y && x<=MASQUERADEDINDEXTOPOINTBASE && y<=MASQUERADEDINDEXTOPOINTBASE);
 }
 
-int LayoutManager::masquearadedIndex(const int &x, const int &)
+int LayoutManager::masquearadedIndex(const int &x, const int &y)
 {
+    Q_UNUSED(y)
+
     return qAbs(x - MASQUERADEDINDEXTOPOINTBASE);
 }
 
@@ -1700,8 +1734,10 @@ void LayoutManager::requestAppletsDisabledColoring(const QList<int> &applets)
     setUserBlocksColorizingApplets(applets);
 }
 
-int LayoutManager::distanceFromTail(QQuickItem *, QPointF pos) const
+int LayoutManager::distanceFromTail(QQuickItem *layout, QPointF pos) const
 {
+    Q_UNUSED(layout)
+
     return (int)qSqrt(qPow(pos.x() - 0, 2) + qPow(pos.y() - 0, 2));
 }
 
@@ -1915,6 +1951,10 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         return;
     }
 
+    if (id > 0 && m_appletRemovalIndexes.contains(id)) {
+        index = m_appletRemovalIndexes.take(id);
+    }
+
     Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     QVariant appletItemVariant;
@@ -2102,6 +2142,7 @@ void LayoutManager::hideAppletItem(QObject *applet)
             }
 
             if (itemAppletId == id) {
+                rememberAppletRemovalIndex(id);
                 item->setVisible(false);
                 save();
                 return;
@@ -2141,6 +2182,7 @@ void LayoutManager::showAppletItem(QObject *applet)
 
             if (itemAppletId == id) {
                 item->setVisible(true);
+                restoreAppletOrderForApplet(id);
                 save();
                 return;
             }
@@ -2159,6 +2201,8 @@ void LayoutManager::destroyAppletContainer(QObject *applet)
         qDebug() << "org.kde.latte ::: destroying applet could not succeed, applet id unresolved";
         return;
     }
+
+    rememberAppletRemovalIndex(id);
 
     bool destroyed{false};
 
