@@ -61,6 +61,23 @@ inline bool shouldRespectExternalPanelsForVerticalDock(Types::Alignment alignmen
             || verticalDockTouchesBottomLengthEdge(alignment, maxLength, offset);
 }
 
+inline Plasma::Types::FormFactor dockFormFactorForLocation(Plasma::Types::Location location,
+                                                           Plasma::Types::FormFactor fallback)
+{
+    switch (location) {
+    case Plasma::Types::LeftEdge:
+    case Plasma::Types::RightEdge:
+        return Plasma::Types::Vertical;
+
+    case Plasma::Types::TopEdge:
+    case Plasma::Types::BottomEdge:
+        return Plasma::Types::Horizontal;
+
+    default:
+        return fallback;
+    }
+}
+
 inline QRect verticalDockExternalPanelGeometry(const QRect &screenGeometry, const QRect &availableGeometry)
 {
     if (!screenGeometry.isValid() || !availableGeometry.isValid()) {

@@ -27,6 +27,7 @@ private Q_SLOTS:
     void horizontalDockScreenEdgeCornerPolicy();
     void verticalDockExternalPanelAvoidancePolicy();
     void verticalDockExternalPanelGeometryKeepsScreenThicknessAxis();
+    void dockFormFactorFollowsEdgeLocation();
 };
 
 namespace {
@@ -246,6 +247,24 @@ void ToolsUnitTest::verticalDockExternalPanelGeometryKeepsScreenThicknessAxis()
     QCOMPARE(topPanelGeometry, QRect(0, 0, 1000, 36));
     QCOMPARE(Latte::ViewPart::verticalDockExternalPanelGeometry(screenGeometry, QList<QRect>{topPanelGeometry}),
              QRect(0, 36, 1000, 764));
+}
+
+void ToolsUnitTest::dockFormFactorFollowsEdgeLocation()
+{
+    using Latte::ViewPart::dockFormFactorForLocation;
+
+    QCOMPARE(dockFormFactorForLocation(Plasma::Types::LeftEdge, Plasma::Types::Horizontal),
+             Plasma::Types::Vertical);
+    QCOMPARE(dockFormFactorForLocation(Plasma::Types::RightEdge, Plasma::Types::Horizontal),
+             Plasma::Types::Vertical);
+
+    QCOMPARE(dockFormFactorForLocation(Plasma::Types::TopEdge, Plasma::Types::Vertical),
+             Plasma::Types::Horizontal);
+    QCOMPARE(dockFormFactorForLocation(Plasma::Types::BottomEdge, Plasma::Types::Vertical),
+             Plasma::Types::Horizontal);
+
+    QCOMPARE(dockFormFactorForLocation(Plasma::Types::Desktop, Plasma::Types::Vertical),
+             Plasma::Types::Vertical);
 }
 
 QTEST_MAIN(ToolsUnitTest)

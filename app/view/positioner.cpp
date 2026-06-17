@@ -33,6 +33,29 @@
 namespace Latte {
 namespace ViewPart {
 
+namespace {
+
+Plasma::Types::Location effectiveLocationForView(const Latte::View *view)
+{
+    if (!view) {
+        return Plasma::Types::Floating;
+    }
+
+    Plasma::Types::Location location = view->location();
+    if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && view->containment()) {
+        location = view->containment()->location();
+    }
+
+    return location;
+}
+
+Plasma::Types::FormFactor effectiveFormFactorForView(const Latte::View *view)
+{
+    return view ? dockFormFactorForLocation(effectiveLocationForView(view), view->formFactor()) : Plasma::Types::Planar;
+}
+
+}
+
 Positioner::Positioner(Latte::View *parent)
     : QObject(parent),
       m_view(parent)
@@ -107,19 +130,19 @@ void Positioner::init()
     });
 
     connect(this, &Positioner::isStickedOnTopEdgeChanged, this, [this]() {
-        if (m_view->formFactor() == Plasma::Types::Vertical) {
+        if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
             syncGeometry();
         }
     });
 
     connect(this, &Positioner::isStickedOnBottomEdgeChanged, this, [this]() {
-        if (m_view->formFactor() == Plasma::Types::Vertical) {
+        if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
             syncGeometry();
         }
     });
 
     connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, [this]() {
-        if (m_view->formFactor() == Plasma::Types::Vertical && m_view->layout() && m_view->layout()->isCurrent()) {
+        if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical && m_view->layout() && m_view->layout()->isCurrent()) {
             syncGeometry();
         }
     });
@@ -159,7 +182,7 @@ void Positioner::init()
     });
 
     connect(m_view, &View::layoutChanged, this, [this]() {
-        if (m_nextLayoutName.isEmpty() && m_view->layout() && m_view->formFactor() == Plasma::Types::Vertical) {
+        if (m_nextLayoutName.isEmpty() && m_view->layout() && effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
             syncGeometry();
         }
     });
@@ -487,7 +510,7 @@ void Positioner::immediateSyncGeometry()
             availableScreenRect = QRect(-9999, -9999, m_view->screen()->geometry().width(), m_view->screen()->geometry().height());
         }
 
-        if (m_view->formFactor() == Plasma::Types::Vertical) {
+        if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
             QString layoutName = m_view->layout() ? m_view->layout()->name() : QString();
             auto latteCorona = qobject_cast<Latte::Corona *>(m_view->corona());
             int fixedScreen = m_view->onPrimary() ? latteCorona->screenPool()->primaryScreenId() : m_view->containment()->screen();
@@ -684,7 +707,7 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
     QRect screenGeometry{m_view->screen()->geometry()};
     int thickness{m_view->editThickness()};
 
-    if (m_view->formFactor() == Plasma::Types::Vertical) {
+    if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
         canvas.setWidth(thickness);
         canvas.setHeight(availableScreenRect.height());
     } else {
@@ -692,10 +715,7 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
         canvas.setHeight(thickness);
     }
 
-    Plasma::Types::Location location = m_view->location();
-    if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && m_view->containment()) {
-        location = m_view->containment()->location();
-    }
+    Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
     case Plasma::Types::TopEdge:
@@ -743,10 +763,7 @@ void Positioner::updatePosition(QRect availableScreenRect)
     QPoint position;
     position = {0, 0};
 
-    Plasma::Types::Location location = m_view->location();
-    if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && m_view->containment()) {
-        location = m_view->containment()->location();
-    }
+    Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
     case Plasma::Types::TopEdge:
@@ -793,7 +810,7 @@ void Positioner::updatePosition(QRect availableScreenRect)
         //! when sliding in/out update only the relevant axis for the screen_edge in
         //! to not mess the calculations and the automatic geometry checkers that
         //! View::Positioner is using.
-        if (m_view->formFactor() == Plasma::Types::Horizontal) {
+        if (effectiveFormFactorForView(m_view) == Plasma::Types::Horizontal) {
             m_validGeometry.moveLeft(position.x());
         } else {
             m_validGeometry.moveTop(position.y());
@@ -826,7 +843,9 @@ void Positioner::setSlideOffset(int offset)
 void Positioner::resizeWindow(QRect availableScreenRect)
 {
     QSize screenSize = m_view->screen()->size();
-    QSize size = (m_view->formFactor() == Plasma::Types::Vertical) ? QSize(m_view->maxThickness(), availableScreenRect.height()) : QSize(screenSize.width(), m_view->maxThickness());
+    QSize size = (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical)
+            ? QSize(m_view->maxThickness(), availableScreenRect.height())
+            : QSize(screenSize.width(), m_view->maxThickness());
 
     //! protect from invalid window size under wayland
     size.setWidth(qMax(1, size.width()));
@@ -838,7 +857,7 @@ void Positioner::resizeWindow(QRect availableScreenRect)
     m_view->setMaximumSize(size);
     m_view->resize(size);
 
-    if (m_view->formFactor() == Plasma::Types::Horizontal) {
+    if (effectiveFormFactorForView(m_view) == Plasma::Types::Horizontal) {
         Q_EMIT windowSizeChanged();
     }
 }
@@ -848,10 +867,7 @@ void Positioner::updateFormFactor()
     if (!m_view->containment())
         return;
 
-    Plasma::Types::Location location = m_view->location();
-    if (location == Plasma::Types::Desktop || location == Plasma::Types::Floating) {
-        location = m_view->containment()->location();
-    }
+    Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
     case Plasma::Types::TopEdge:
