@@ -633,3 +633,31 @@ target_link_libraries(shortcutunittest
 )
 
 add_test(NAME shortcutunittest COMMAND shortcutunittest)
+
+set(declarativecoreunittest_SRCS
+    declarativecoreunittest.cpp
+    ../declarativeimports/core/dialog.cpp
+    ../declarativeimports/core/iconitem.cpp
+)
+
+add_executable(declarativecoreunittest EXCLUDE_FROM_ALL ${declarativecoreunittest_SRCS})
+
+target_include_directories(declarativecoreunittest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../declarativeimports/core
+    ${CMAKE_BINARY_DIR}/declarativeimports/core
+)
+
+target_link_libraries(declarativecoreunittest
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Quick
+    Qt6::Test
+    ${LATTE_SVG_TARGET}
+    KF6::GuiAddons
+    KF6::IconThemes
+    Plasma::Plasma
+    Plasma::PlasmaQuick
+)
+
+add_test(NAME declarativecoreunittest COMMAND declarativecoreunittest)
+set_tests_properties(declarativecoreunittest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
