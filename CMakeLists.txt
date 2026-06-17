@@ -330,13 +330,20 @@ ecm_find_qmlmodule(org.kde.plasma.components 3.0)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/app/config-latte.h)
 
-#hide warnings
-string(REPLACE "-Wall" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-string(REPLACE "-Wdeprecated-declarations" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-string(REPLACE "-Wreorder" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-string(REPLACE "-Wunused-variable" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-string(REPLACE "-Wunused-parameter" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-string(REPLACE "-Wsuggest-final-types" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+# Keep the Plasma 6 port buildable across distro-patched KDECompilerSettings
+# while preserving a single explicit checklist for future warning cleanup.
+set(LATTE_RELAXED_WARNING_FLAGS
+    -Wall
+    -Wdeprecated-declarations
+    -Wreorder
+    -Wunused-variable
+    -Wunused-parameter
+    -Wsuggest-final-types
+)
+foreach(_latte_warning_flag IN LISTS LATTE_RELAXED_WARNING_FLAGS)
+    string(REPLACE "${_latte_warning_flag}" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+endforeach()
+message(STATUS "Latte relaxed warning flags pending cleanup: ${LATTE_RELAXED_WARNING_FLAGS}")
 
 #add format security check
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security")
