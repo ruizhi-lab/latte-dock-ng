@@ -20,6 +20,7 @@ private Q_SLOTS:
     void pulseAudioBootstrapIsBounded();
     void compactAppletUsesLargerDefaultForVolumePopup();
     void compactAppletKeepsApplicationMenuPopupResizable();
+    void applicationLauncherUsesFixedExternalSlot();
 };
 
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()
@@ -91,12 +92,24 @@ void QmlSmokeTest::compactAppletKeepsApplicationMenuPopupResizable()
     QVERIFY(compactApplet.open(QFile::ReadOnly));
 
     const QString source = QString::fromUtf8(compactApplet.readAll());
+    QVERIFY(source.contains(QStringLiteral("function popupMenuMinimumWidth")));
     QVERIFY(source.contains(QStringLiteral("function popupMenuMinimumHeight")));
     QVERIFY(source.contains(QStringLiteral("function popupMaximumWidth")));
     QVERIFY(source.contains(QStringLiteral("function popupMaximumHeight")));
     QVERIFY(source.contains(QStringLiteral("org.kde.plasma.kicker")));
     QVERIFY(source.contains(QStringLiteral("isApplicationMenuApplet()")));
     QVERIFY(source.contains(QStringLiteral("return Infinity;")));
+}
+
+void QmlSmokeTest::applicationLauncherUsesFixedExternalSlot()
+{
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+
+    const QString source = QString::fromUtf8(appletItem.readAll());
+    QVERIFY(source.contains(QStringLiteral("isApplicationLauncherApplet")));
+    QVERIFY(source.contains(QStringLiteral("org.kde.plasma.kickoff")));
+    QVERIFY(source.contains(QStringLiteral("|| (!communicator.appletMainIconIsFound")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

@@ -95,15 +95,17 @@ Item {
                                                                && applet.Layout
                                                                && applet.Layout.preferredWidth > 0
                                                                && applet.Layout.preferredHeight > 0
+    readonly property bool isApplicationLauncherApplet: pluginName === "org.kde.plasma.kickoff"
     // Cached natural size of the compact representation, captured before
     // anchors.fill constrains it. Used to give external applets like the
     // digital clock enough slot width for their text content.
     property real externalAppletNaturalWidth: -1
     property real externalAppletNaturalHeight: -1
     readonly property bool externalAppletUsesFixedSlotSizing: externalAppletDrawsAboveTasks
-                                                             && !communicator.appletMainIconIsFound
-                                                             && !externalAppletHasStableNativeSizing
                                                              && !isSystray
+                                                             && (isApplicationLauncherApplet
+                                                                 || (!communicator.appletMainIconIsFound
+                                                                     && !externalAppletHasStableNativeSizing))
     property bool appletBlocksParabolicEffect: communicator.requires.parabolicEffectLocked
     readonly property bool lockZoom: !parabolicEffectIsSupported
                                      || appletBlocksParabolicEffect

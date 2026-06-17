@@ -127,7 +127,22 @@ PlasmaCore.ToolTipArea {
         return Kirigami.Units.iconSizes.sizeForLabels * 25;
     }
 
+    function popupMenuMinimumWidth() {
+        var minimum = representationMinimumWidth();
+        var resizableMinimum = Kirigami.Units.gridUnit * 18;
+
+        if (minimum > 0) {
+            return Math.min(minimum, resizableMinimum);
+        }
+
+        return resizableMinimum;
+    }
+
     function popupMinimumWidth() {
+        if (isApplicationMenuApplet()) {
+            return popupMenuMinimumWidth();
+        }
+
         var minimum = representationMinimumWidth();
         if (isVolumeApplet()) {
             minimum = Math.max(minimum, Kirigami.Units.gridUnit * 27);
