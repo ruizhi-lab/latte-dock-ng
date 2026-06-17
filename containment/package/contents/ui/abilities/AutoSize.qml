@@ -24,8 +24,8 @@ Item {
 
     property int iconSize: -1 //it is not set, this is the default
 
-    readonly property bool inCalculatedIconSize: ((metrics.iconSize === sizer.iconSize) || (metrics.iconSize === metrics.maxIconSize))
-    readonly property bool inAutoSizeAnimation: !inCalculatedIconSize
+    property bool inCalculatedIconSize: true
+    property bool inAutoSizeAnimation: false
 
     readonly property int automaticStep: 8
     readonly property int historyMaxSize: 10
@@ -50,6 +50,10 @@ Item {
         }
     }
 
+    onIconSizeChanged: updateCalculatedIconSize()
+
+    Component.onCompleted: updateCalculatedIconSize()
+
     onIsActiveChanged: {
         clearHistory();
         updateIconSize();
@@ -72,6 +76,14 @@ Item {
             if (metrics.portionIconSize!==-1) {
                 sizer.updateIconSize();
             }
+        }
+
+        function onIconSizeChanged() {
+            sizer.updateCalculatedIconSize();
+        }
+
+        function onMaxIconSizeChanged() {
+            sizer.updateCalculatedIconSize();
         }
     }
 
@@ -109,6 +121,15 @@ Item {
     }
 
     //! Prediction History Functions
+    function updateCalculatedIconSize() {
+        if (!metrics) {
+            return;
+        }
+
+        inCalculatedIconSize = ((metrics.iconSize === sizer.iconSize) || (metrics.iconSize === metrics.maxIconSize));
+        inAutoSizeAnimation = !inCalculatedIconSize;
+    }
+
     function clearHistory() {
         history.length = 0;
     }

@@ -804,6 +804,11 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || (msg.contains("Member implicitHeight of the object Button_QMLTYPE") && msg.contains("overrides"))
         || (msg.contains("Member implicitWidth of the object HeaderSwitch_QMLTYPE") && msg.contains("overrides"))
         || (msg.contains("Member implicitHeight of the object HeaderSwitch_QMLTYPE") && msg.contains("overrides"))
+        // Plasma notifications applet in Latte's system tray may race plasmashell
+        // for system-level DBus names. plasmashell owning them is expected.
+        || msg == QLatin1String("Failed to register Notification service on DBus")
+        || msg == QLatin1String("Failed to register JobViewServer service on DBus, is kuiserver running?")
+        || msg == QLatin1String("Failed to register JobViewServer DBus object")
         // Plasma digital clock Tooltip — internal TypeError, harmless.
         || msg.contains("digitalclock/Tooltip.qml:40: TypeError")
         // Plasma clipboard applet — QML type mismatch with Plasma 6 framework.
