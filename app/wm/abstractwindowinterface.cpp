@@ -219,6 +219,11 @@ bool AbstractWindowInterface::hasBlockedTracking(const WindowId &wid) const
     return (!isWhitelistedWindow(wid) && (isRegisteredPlasmaIgnoredWindow(wid) || isIgnored(wid)));
 }
 
+QList<QRect> AbstractWindowInterface::plasmaPanelGeometries()
+{
+    return {};
+}
+
 bool AbstractWindowInterface::isRegisteredPlasmaIgnoredWindow(const WindowId &wid) const
 {
     return m_plasmaIgnoredWindows.contains(wid);

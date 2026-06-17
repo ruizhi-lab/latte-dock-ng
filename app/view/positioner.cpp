@@ -11,6 +11,7 @@
 #include "effects.h"
 #include "originalview.h"
 #include "view.h"
+#include "viewgeometryhelpers.h"
 #include "visibilitymanager.h"
 #include "../lattecorona.h"
 #include "../screenpool.h"
@@ -422,8 +423,10 @@ void Positioner::reconsiderScreen()
     qDebug() << "reconsiderScreen() ended...";
 }
 
-void Positioner::onScreenChanged(QScreen *)
+void Positioner::onScreenChanged(QScreen *scr)
 {
+    Q_UNUSED(scr)
+
     m_screenSyncTimer.start();
 
     //! this is needed in order to update the struts on screen change
@@ -515,7 +518,18 @@ void Positioner::immediateSyncGeometry()
                 //! paint out-of-screen
                 freeRegion = availableScreenRect;
             } else {
+                const bool respectExternalPanels = shouldRespectExternalPanelsForVerticalDock(static_cast<Types::Alignment>(m_view->alignment()),
+                                                                                              m_view->maxLength(),
+                                                                                              m_view->offset());
                 freeRegion = latteCorona->availableScreenRegionWithCriteria(fixedScreen, activityid, ignoreModes, ignoreEdges);
+
+                if (respectExternalPanels) {
+                    const QList<QRect> panelGeometries = m_corona->wm()->plasmaPanelGeometries();
+                    const QRect externalPanelGeometry = panelGeometries.isEmpty()
+                            ? verticalDockExternalPanelGeometry(m_view->screen()->geometry(), m_view->screen()->availableGeometry())
+                            : verticalDockExternalPanelGeometry(m_view->screen()->geometry(), panelGeometries);
+                    freeRegion = freeRegion.intersected(externalPanelGeometry);
+                }
             }
 
             //! On startup when offscreen use offscreen screen geometry.

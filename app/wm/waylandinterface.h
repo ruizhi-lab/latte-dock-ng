@@ -59,6 +59,7 @@ public:
     WindowId activeWindow() override;
     WindowInfoWrap requestInfo(WindowId wid) override;
     WindowInfoWrap requestInfoActive() override;
+    QList<QRect> plasmaPanelGeometries() override;
 
     void skipTaskBar(const QDialog &dialog) override;
     void slideWindow(QWindow &view, Slide location) override;

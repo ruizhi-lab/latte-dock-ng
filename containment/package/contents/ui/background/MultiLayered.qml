@@ -58,15 +58,19 @@ BackgroundProperties{
     shadows.fixedBottom: (customDefShadowIsEnabled || customUserShadowIsEnabled) ? customShadow : shadowsSvgItem.fixedMargins.bottom
 
     //! it can accept negative values in DockMode
-    screenEdgeMargin: modernDockStyle
-                      ? (metrics.effectiveScreenEdgeMargin - shadows.tailThickness)
-                      : (root.screenEdgeMarginEnabled ? metrics.margin.screenEdge - shadows.tailThickness : -shadows.tailThickness)
-
-    paddings.top: {
+    screenEdgeMargin: {
         if (modernDockStyle && root.isVertical) {
-            return modernLengthEndPadding;
+            return -shadows.tailThickness;
         }
 
+        if (modernDockStyle) {
+            return metrics.effectiveScreenEdgeMargin - shadows.tailThickness;
+        }
+
+        return root.screenEdgeMarginEnabled ? metrics.margin.screenEdge - shadows.tailThickness : -shadows.tailThickness;
+    }
+
+    paddings.top: {
         if (hasTopBorder) {
             var customAppliedRadius = customRadiusIsEnabled ? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingTop : 0;
@@ -84,10 +88,6 @@ BackgroundProperties{
         return 0;
     }
     paddings.bottom: {
-        if (modernDockStyle && root.isVertical) {
-            return modernLengthEndPadding;
-        }
-
         if (hasBottomBorder) {
             var customAppliedRadius = customRadiusIsEnabled ? customRadius : 0;
             var themePadding = themeExtendedBackground ? themeExtendedBackground.paddingBottom : 0;

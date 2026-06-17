@@ -12,6 +12,7 @@
 #include <coretypes.h>
 #include "../view/positioner.h"
 #include "../view/view.h"
+#include "../view/viewgeometryhelpers.h"
 #include "../view/settings/subconfigview.h"
 #include "../view/helpers/screenedgeghostwindow.h"
 #include "../lattecorona.h"
@@ -22,6 +23,7 @@
 #include <QApplication>
 #include <QQuickView>
 // KDE
+#include <KConfigGroup>
 #include <KWindowSystem>
 #include <KWayland/Client/plasmawindowmanagement.h>
 #include <KWayland/Client/plasmashell.h>
@@ -43,6 +45,44 @@ inline bool appIdMatches(const QString &windowAppId, const QString &requestedApp
     }
 
     return windowAppId == requestedAppId;
+}
+
+QList<QRect> plasmaPanelGeometriesFromConfig()
+{
+    QList<QRect> geometries;
+
+    const KSharedConfig::Ptr desktopConfig = KSharedConfig::openConfig(QStringLiteral("plasma-org.kde.plasma.desktop-appletsrc"));
+    const KSharedConfig::Ptr shellConfig = KSharedConfig::openConfig(QStringLiteral("plasmashellrc"));
+
+    const KConfigGroup containmentsGroup(desktopConfig, QStringLiteral("Containments"));
+    const KConfigGroup plasmaViewsGroup(shellConfig, QStringLiteral("PlasmaViews"));
+    const QList<QScreen *> screens = qGuiApp->screens();
+
+    for (const QString &containmentId : containmentsGroup.groupList()) {
+        const KConfigGroup containment = containmentsGroup.group(containmentId);
+
+        if (containment.readEntry("plugin") != QLatin1String("org.kde.panel")) {
+            continue;
+        }
+
+        const int screenIndex = containment.readEntry("lastScreen", -1);
+        if (screenIndex < 0 || screenIndex >= screens.count()) {
+            continue;
+        }
+
+        const KConfigGroup panelGroup = plasmaViewsGroup.group(QStringLiteral("Panel %1").arg(containmentId));
+        const KConfigGroup defaultsGroup = panelGroup.group(QStringLiteral("Defaults"));
+        const int thickness = defaultsGroup.readEntry("thickness", 0);
+
+        const auto location = static_cast<Plasma::Types::Location>(containment.readEntry("location", int(Plasma::Types::Floating)));
+        const QRect geometry = Latte::ViewPart::screenEdgePanelGeometry(screens.at(screenIndex)->geometry(), location, thickness);
+
+        if (geometry.isValid()) {
+            geometries << geometry;
+        }
+    }
+
+    return geometries;
 }
 
 }
@@ -252,8 +292,10 @@ void WaylandInterface::initVirtualDesktopManagement(KWayland::Client::PlasmaVirt
     });
 }
 
-void WaylandInterface::addDesktop(const QString &id, quint32)
+void WaylandInterface::addDesktop(const QString &id, quint32 position)
 {
+    Q_UNUSED(position)
+
     if (m_desktops.contains(id)) {
         return;
     }
@@ -606,13 +648,19 @@ void WaylandInterface::setActiveEdge(QWindow *view, bool active)
     }
 }
 
-void WaylandInterface::setFrameExtents(QWindow *, const QMargins &)
+void WaylandInterface::setFrameExtents(QWindow *view, const QMargins &extents)
 {
+    Q_UNUSED(view)
+    Q_UNUSED(extents)
+
     //! do nothing until there is a wayland way to provide this
 }
 
-void WaylandInterface::setInputMask(QWindow *, const QRect &)
+void WaylandInterface::setInputMask(QWindow *window, const QRect &rect)
 {
+    Q_UNUSED(window)
+    Q_UNUSED(rect)
+
     //! do nothins, QWindow::mask() is sufficient enough in order to define Window input mask
 }
 
@@ -722,6 +770,21 @@ QList<KWayland::Client::PlasmaWindow *> WaylandInterface::managedWindows() const
     return m_windowManagement->windows();
 }
 
+QList<QRect> WaylandInterface::plasmaPanelGeometries()
+{
+    QList<QRect> geometries;
+
+    for (const WindowId &wid : std::as_const(m_plasmaIgnoredWindows)) {
+        const auto w = windowFor(wid);
+
+        if (isPlasmaPanel(w)) {
+            geometries << w->geometry();
+        }
+    }
+
+    return geometries.isEmpty() ? plasmaPanelGeometriesFromConfig() : geometries;
+}
+
 QIcon WaylandInterface::iconFor(WindowId wid)
 {
     auto window = windowFor(wid);
@@ -813,8 +876,10 @@ void WaylandInterface::requestClose(WindowId wid)
 }
 
 
-void WaylandInterface::requestMoveWindow(WindowId wid, QPoint)
+void WaylandInterface::requestMoveWindow(WindowId wid, QPoint from)
 {
+    Q_UNUSED(from)
+
     WindowInfoWrap wInfo = requestInfo(wid);
 
     if (windowCanBeDragged(wid) && inCurrentDesktopActivity(wInfo)) {

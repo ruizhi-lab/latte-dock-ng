@@ -10,6 +10,7 @@
 #include <coretypes.h>
 #include "panelshadows_p.h"
 #include "view.h"
+#include "viewgeometryhelpers.h"
 #include "../lattecorona.h"
 #include "../wm/abstractwindowinterface.h"
 
@@ -616,27 +617,31 @@ void Effects::updateEnabledBorders()
         }
     }
 
-    if (!m_backgroundAllCorners) {
-        if ((m_view->location() == Plasma::Types::LeftEdge || m_view->location() == Plasma::Types::RightEdge)) {
-            if (m_view->maxLength() == 1 && m_view->alignment() == Latte::Types::Justify) {
-                if (!m_forceTopBorder) {
-                    borders &= ~Plasma::FrameSvg::TopBorder;
-                }
+    if ((m_view->location() == Plasma::Types::LeftEdge || m_view->location() == Plasma::Types::RightEdge)) {
+        const auto alignment = static_cast<Latte::Types::Alignment>(m_view->alignment());
 
-                if (!m_forceBottomBorder) {
-                    borders &= ~Plasma::FrameSvg::BottomBorder;
-                }
-            }
-
-            if (m_view->alignment() == Latte::Types::Top && !m_forceTopBorder && m_view->offset() == 0) {
-                borders &= ~Plasma::FrameSvg::TopBorder;
-            }
-
-            if (m_view->alignment() == Latte::Types::Bottom && !m_forceBottomBorder && m_view->offset() == 0) {
-                borders &= ~Plasma::FrameSvg::BottomBorder;
-            }
+        if (verticalDockTouchesTopLengthEdge(alignment, m_view->maxLength(), m_view->offset()) && !m_forceTopBorder) {
+            borders &= ~Plasma::FrameSvg::TopBorder;
         }
 
+        if (verticalDockTouchesBottomLengthEdge(alignment, m_view->maxLength(), m_view->offset()) && !m_forceBottomBorder) {
+            borders &= ~Plasma::FrameSvg::BottomBorder;
+        }
+    }
+
+    if ((m_view->location() == Plasma::Types::TopEdge || m_view->location() == Plasma::Types::BottomEdge)) {
+        const auto alignment = static_cast<Latte::Types::Alignment>(m_view->alignment());
+
+        if (horizontalDockTouchesLeftLengthEdge(alignment, m_view->maxLength(), m_view->offset())) {
+            borders &= ~Plasma::FrameSvg::LeftBorder;
+        }
+
+        if (horizontalDockTouchesRightLengthEdge(alignment, m_view->maxLength(), m_view->offset())) {
+            borders &= ~Plasma::FrameSvg::RightBorder;
+        }
+    }
+
+    if (!m_backgroundAllCorners) {
         if (m_view->location() == Plasma::Types::TopEdge || m_view->location() == Plasma::Types::BottomEdge) {
             if (m_view->maxLength() == 1 && m_view->alignment() == Latte::Types::Justify) {
                 borders &= ~Plasma::FrameSvg::LeftBorder;
