@@ -30,6 +30,7 @@ private Q_SLOTS:
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
+    void itemsAlignmentConfigDefaultsToCenter();
     void appearancePaletteExposesLayoutCustomColors();
     void layoutDetailsExposeCustomColorSchemeSelector();
 };
@@ -337,6 +338,22 @@ void QmlSmokeTest::itemsAlignmentNormalizesDirectionsByFormFactor()
     QVERIFY(layoutsSource.contains(QStringLiteral("if (effectiveItemsAlignment === LatteCore.types.Bottom) return LatteCore.types.LeftEdgeBottomAlign;")));
     QVERIFY(layoutsSource.contains(QStringLiteral("if ((effectiveItemsAlignment === LatteCore.types.Left && !reversed)")));
     QVERIFY(layoutsSource.contains(QStringLiteral("|| (effectiveItemsAlignment === LatteCore.types.Right && reversed))")));
+}
+
+void QmlSmokeTest::itemsAlignmentConfigDefaultsToCenter()
+{
+    QFile config(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/config/main.xml"));
+    QVERIFY(config.open(QFile::ReadOnly));
+    const QString configSource = QString::fromUtf8(config.readAll());
+
+    const int entryStart = configSource.indexOf(QStringLiteral("<entry name=\"itemsAlignment\" type=\"Int\">"));
+    QVERIFY(entryStart >= 0);
+    const int entryEnd = configSource.indexOf(QStringLiteral("</entry>"), entryStart);
+    QVERIFY(entryEnd > entryStart);
+
+    const QString entry = configSource.mid(entryStart, entryEnd - entryStart);
+    QVERIFY(entry.contains(QStringLiteral("<default>0</default>")));
+    QVERIFY(entry.contains(QStringLiteral("dock icons/items alignment used only when alignment is Justify")));
 }
 
 void QmlSmokeTest::appearancePaletteExposesLayoutCustomColors()

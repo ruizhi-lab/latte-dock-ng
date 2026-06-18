@@ -68,6 +68,7 @@ private Q_SLOTS:
     void layoutActivityPredicatesReflectActivitySet();
     void layoutDiagnosticPredicatesReflectCounts();
     void layoutEqualityIgnoresRuntimeState();
+    void layoutEqualityTracksColorConfiguration();
     void layoutTemplatePredicatesRespectUserAndTempPaths();
     void layoutColorSetDataPopulatesAllFields();
     void layoutIconDetectsEmptyAndComparesFields();
@@ -398,6 +399,25 @@ void DataUnitTest::layoutEqualityIgnoresRuntimeState()
     QVERIFY(first == second);
 
     second.isLocked = !first.isLocked;
+    QVERIFY(first != second);
+}
+
+void DataUnitTest::layoutEqualityTracksColorConfiguration()
+{
+    Layout first;
+    first.id = QStringLiteral("layout-id");
+    first.name = QStringLiteral("Layout");
+    first.textColor = QStringLiteral("#fefefe");
+    first.schemeFile = QStringLiteral("/tmp/light.colors");
+
+    Layout second(first);
+    QVERIFY(first == second);
+
+    second.textColor = QStringLiteral("#202020");
+    QVERIFY(first != second);
+
+    second = first;
+    second.schemeFile = QStringLiteral("/tmp/dark.colors");
     QVERIFY(first != second);
 }
 
