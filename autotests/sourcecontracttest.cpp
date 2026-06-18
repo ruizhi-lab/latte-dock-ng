@@ -28,6 +28,7 @@ private Q_SLOTS:
     void appearancePaletteExposesLayoutCustomColors();
     void layoutDetailsExposeCustomColorSchemeSelector();
     void autotestAggregateTargetDocumentsFullSuiteBuild();
+    void coverageEstimateUsesReusableScript();
 };
 
 void SourceContractTest::pulseAudioBootstrapIsBounded()
@@ -385,6 +386,22 @@ void SourceContractTest::autotestAggregateTargetDocumentsFullSuiteBuild()
     const QString guideSource = QString::fromUtf8(testingGuide.readAll());
     QVERIFY(guideSource.contains(QStringLiteral("cmake --build build-autotests-gcc --target latte-autotests --parallel 8")));
     QVERIFY(guideSource.contains(QStringLiteral("cmake --build build-autotests-clang --target latte-autotests --parallel 8")));
+}
+
+void SourceContractTest::coverageEstimateUsesReusableScript()
+{
+    QFile coverageScript(QStringLiteral(LATTE_SOURCE_DIR "/autotests/coverageestimate.py"));
+    QVERIFY(coverageScript.open(QFile::ReadOnly));
+    const QString scriptSource = QString::fromUtf8(coverageScript.readAll());
+    QVERIFY(scriptSource.contains(QStringLiteral("\"ls-files\"")));
+    QVERIFY(scriptSource.contains(QStringLiteral("git_files(\"*.cpp\")")));
+    QVERIFY(scriptSource.contains(QStringLiteral("lattecoreplugin.cpp")));
+
+    QFile testingGuide(QStringLiteral(LATTE_SOURCE_DIR "/docs/development-testing-guide.md"));
+    QVERIFY(testingGuide.open(QFile::ReadOnly));
+    const QString guideSource = QString::fromUtf8(testingGuide.readAll());
+    QVERIFY(guideSource.contains(QStringLiteral("python3 autotests/coverageestimate.py")));
+    QVERIFY(!guideSource.contains(QStringLiteral("python3 - <<'PY'")));
 }
 
 QTEST_MAIN(SourceContractTest)

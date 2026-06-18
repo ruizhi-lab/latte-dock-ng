@@ -72,24 +72,7 @@ The project currently tracks a coarse file-level coverage estimate: count produc
 Use this quick estimate from the repository root:
 
 ```bash
-python3 - <<'PY'
-import pathlib, re, subprocess
-
-all_cpp = subprocess.check_output(["git", "ls-files", "*.cpp"], text=True).splitlines()
-prod_cpp = [p for p in all_cpp if not p.startswith("autotests/")]
-cmake = pathlib.Path("autotests/CMakeLists.txt").read_text()
-
-covered = set()
-for match in re.finditer(r"\.\./([^\s)]+\.cpp)", cmake):
-    path = match.group(1)
-    if pathlib.Path(path).exists():
-        covered.add(path)
-
-if pathlib.Path("declarativeimports/core/lattecoreplugin.cpp").exists():
-    covered.add("declarativeimports/core/lattecoreplugin.cpp")
-
-print(f"{len(covered)}/{len(prod_cpp)} = {len(covered) / len(prod_cpp) * 100:.1f}%")
-PY
+python3 autotests/coverageestimate.py
 ```
 
 Report this estimate after each test commit. It is not a line or branch coverage metric, but it is useful for tracking which production compilation units now have direct regression coverage.
