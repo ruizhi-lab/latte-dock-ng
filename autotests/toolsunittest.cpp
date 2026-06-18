@@ -204,6 +204,10 @@ void ToolsUnitTest::horizontalDockScreenEdgeCornerPolicy()
 
     QVERIFY(!horizontalDockTouchesLeftLengthEdge(Latte::Types::Center, 0.5f, 0.0f));
     QVERIFY(!horizontalDockTouchesRightLengthEdge(Latte::Types::Center, 0.5f, 0.0f));
+    QVERIFY(!horizontalDockTouchesLeftLengthEdge(Latte::Types::Center, 1.0f, 0.0f));
+    QVERIFY(!horizontalDockTouchesRightLengthEdge(Latte::Types::Center, 1.0f, 0.0f));
+    QVERIFY(!horizontalDockTouchesRightLengthEdge(Latte::Types::Left, 1.0f, 0.0f));
+    QVERIFY(!horizontalDockTouchesLeftLengthEdge(Latte::Types::Right, 1.0f, 0.0f));
     QVERIFY(!horizontalDockTouchesLeftLengthEdge(Latte::Types::Left, 0.5f, 0.1f));
     QVERIFY(!horizontalDockTouchesRightLengthEdge(Latte::Types::Right, 0.5f, 0.1f));
     QVERIFY(!horizontalDockTouchesLeftLengthEdge(Latte::Types::Justify, 0.9f, 0.0f));

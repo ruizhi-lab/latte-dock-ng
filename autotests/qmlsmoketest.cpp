@@ -29,6 +29,9 @@ private Q_SLOTS:
     void launcherRestoreCoversGeometryTransitionSettling();
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void itemsAlignmentIsSeparateAndJustifyOnly();
+    void itemsAlignmentNormalizesDirectionsByFormFactor();
+    void appearancePaletteExposesLayoutCustomColors();
+    void layoutDetailsExposeCustomColorSchemeSelector();
 };
 
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()
@@ -293,6 +296,7 @@ void QmlSmokeTest::itemsAlignmentIsSeparateAndJustifyOnly()
     const QString behaviorSource = QString::fromUtf8(behavior.readAll());
     QVERIFY(behaviorSource.contains(QStringLiteral("text: i18n(\"Items alignment\")")));
     QVERIFY(behaviorSource.contains(QStringLiteral("enabled: alignmentRow.currentAlignment === LatteCore.types.Justify")));
+    QVERIFY(behaviorSource.contains(QStringLiteral("opacity: enabled ? 1 : 0.45")));
     QVERIFY(behaviorSource.contains(QStringLiteral("readonly property int currentItemsAlignment: normalizedItemsAlignment(plasmoid.configuration.itemsAlignment)")));
     QVERIFY(behaviorSource.contains(QStringLiteral("plasmoid.configuration.itemsAlignment = alignment")));
 
@@ -308,6 +312,75 @@ void QmlSmokeTest::itemsAlignmentIsSeparateAndJustifyOnly()
     QVERIFY(scrollableList.open(QFile::ReadOnly));
     const QString scrollableSource = QString::fromUtf8(scrollableList.readAll());
     QVERIFY(scrollableSource.contains(QStringLiteral("readonly property bool centered: root.alignment === LatteCore.types.Center")));
+}
+
+void QmlSmokeTest::itemsAlignmentNormalizesDirectionsByFormFactor()
+{
+    QFile containmentHost(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/host/Containment.qml"));
+    QVERIFY(containmentHost.open(QFile::ReadOnly));
+    const QString containmentHostSource = QString::fromUtf8(containmentHost.readAll());
+
+    QVERIFY(containmentHostSource.contains(QStringLiteral("if (plasmoid.formFactor === PlasmaCore.Types.Vertical)")));
+    QVERIFY(containmentHostSource.contains(QStringLiteral("return alignment === LatteCore.types.Top || alignment === LatteCore.types.Bottom ? alignment : LatteCore.types.Center;")));
+    QVERIFY(containmentHostSource.contains(QStringLiteral("return alignment === LatteCore.types.Left || alignment === LatteCore.types.Right ? alignment : LatteCore.types.Center;")));
+    QVERIFY(!containmentHostSource.contains(QStringLiteral("return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.types.Left : LatteCore.types.Top;")));
+    QVERIFY(!containmentHostSource.contains(QStringLiteral("return plasmoid.formFactor === PlasmaCore.Types.Horizontal ? LatteCore.types.Right : LatteCore.types.Bottom;")));
+
+    QFile layoutsContainer(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/layouts/LayoutsContainer.qml"));
+    QVERIFY(layoutsContainer.open(QFile::ReadOnly));
+    const QString layoutsSource = QString::fromUtf8(layoutsContainer.readAll());
+
+    QVERIFY(layoutsSource.contains(QStringLiteral("if (root.isVertical)")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("return alignment === LatteCore.types.Top || alignment === LatteCore.types.Bottom ? alignment : LatteCore.types.Center;")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("return alignment === LatteCore.types.Left || alignment === LatteCore.types.Right ? alignment : LatteCore.types.Center;")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("if (effectiveItemsAlignment === LatteCore.types.Top) return LatteCore.types.LeftEdgeTopAlign;")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("if (effectiveItemsAlignment === LatteCore.types.Bottom) return LatteCore.types.LeftEdgeBottomAlign;")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("if ((effectiveItemsAlignment === LatteCore.types.Left && !reversed)")));
+    QVERIFY(layoutsSource.contains(QStringLiteral("|| (effectiveItemsAlignment === LatteCore.types.Right && reversed))")));
+}
+
+void QmlSmokeTest::appearancePaletteExposesLayoutCustomColors()
+{
+    QFile appearance(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/pages/AppearanceConfig.qml"));
+    QVERIFY(appearance.open(QFile::ReadOnly));
+    const QString appearanceSource = QString::fromUtf8(appearance.readAll());
+
+    QVERIFY(appearanceSource.contains(QStringLiteral("text: i18n(\"Colors\")")));
+    QVERIFY(appearanceSource.contains(QStringLiteral("text: i18n(\"Palette\")")));
+    QVERIFY(appearanceSource.contains(QStringLiteral("name: i18nc(\"layout custom colors\", \"Layout Custom Colors\")")));
+    QVERIFY(appearanceSource.contains(QStringLiteral("value: LatteContainment.types.LayoutThemeColors")));
+    QVERIFY(appearanceSource.contains(QStringLiteral("currentIndex: colorsToIndex(plasmoid.configuration.themeColors)")));
+    QVERIFY(appearanceSource.contains(QStringLiteral("onCurrentIndexChanged: plasmoid.configuration.themeColors = model[currentIndex].value")));
+
+    QFile containmentTypes(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/types.h"));
+    QVERIFY(containmentTypes.open(QFile::ReadOnly));
+    const QString typesSource = QString::fromUtf8(containmentTypes.readAll());
+    QVERIFY(typesSource.contains(QStringLiteral("LayoutThemeColors")));
+
+    QFile colorizer(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/colorizer/Manager.qml"));
+    QVERIFY(colorizer.open(QFile::ReadOnly));
+    const QString colorizerSource = QString::fromUtf8(colorizer.readAll());
+    QVERIFY(colorizerSource.contains(QStringLiteral("root.themeColors === LatteContainment.types.LayoutThemeColors")));
+    QVERIFY(colorizerSource.contains(QStringLiteral("latteView && latteView.layout && latteView.layout.scheme")));
+    QVERIFY(colorizerSource.contains(QStringLiteral("return latteView.layout.scheme;")));
+}
+
+void QmlSmokeTest::layoutDetailsExposeCustomColorSchemeSelector()
+{
+    QFile detailsUi(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/detailsdialog/detailsdialog.ui"));
+    QVERIFY(detailsUi.open(QFile::ReadOnly));
+    const QString uiSource = QString::fromUtf8(detailsUi.readAll());
+    QVERIFY(uiSource.contains(QStringLiteral("<string>Custom Colors:</string>")));
+    QVERIFY(uiSource.contains(QStringLiteral("Latte::Settings::SchemesComboBox")));
+    QVERIFY(uiSource.contains(QStringLiteral("name=\"customSchemeCmb\"")));
+
+    QFile detailsHandler(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/detailsdialog/detailshandler.cpp"));
+    QVERIFY(detailsHandler.open(QFile::ReadOnly));
+    const QString handlerSource = QString::fromUtf8(detailsHandler.readAll());
+    QVERIFY(handlerSource.contains(QStringLiteral("m_ui->customSchemeCmb->setModel(m_schemesModel);")));
+    QVERIFY(handlerSource.contains(QStringLiteral("connect(m_ui->customSchemeCmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DetailsHandler::onCurrentSchemeIndexChanged);")));
+    QVERIFY(handlerSource.contains(QStringLiteral("QString selectedScheme = m_ui->customSchemeCmb->itemData(row, Model::Schemes::IDROLE).toString();")));
+    QVERIFY(handlerSource.contains(QStringLiteral("c_data.schemeFile = file;")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

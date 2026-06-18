@@ -23,6 +23,7 @@ private Q_SLOTS:
     void abstractLayoutUsesAssignedNameWhenProvided();
     void abstractLayoutLoadsSettingsFromFile();
     void abstractLayoutSettersPersistSettings();
+    void abstractLayoutPersistsCustomSchemeFile();
 };
 
 void LayoutUnitTest::layoutNameStripsPathAndLatteSuffix()
@@ -124,6 +125,32 @@ void LayoutUnitTest::abstractLayoutSettersPersistSettings()
     QCOMPARE(group.readEntry("popUpMargin", -1), 22);
     QCOMPARE(group.readEntry("preferredForShortcutsTouched", false), true);
     QCOMPARE(group.readEntry("lastUsedActivity", QStringLiteral("not-cleared")), QString());
+}
+
+void LayoutUnitTest::abstractLayoutPersistsCustomSchemeFile()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    const QString layoutFile = dir.path() + QStringLiteral("/Scheme.layout.latte");
+    const QString schemeFile = dir.path() + QStringLiteral("/Custom.colors");
+    QVERIFY(QFile(layoutFile).open(QIODevice::WriteOnly));
+    QVERIFY(QFile(schemeFile).open(QIODevice::WriteOnly));
+
+    Latte::Layout::AbstractLayout layout(nullptr, layoutFile);
+    QSignalSpy schemeSpy(&layout, &Latte::Layout::AbstractLayout::schemeFileChanged);
+
+    layout.setSchemeFile(schemeFile);
+
+    QCOMPARE(schemeSpy.count(), 1);
+    QCOMPARE(layout.schemeFile(), schemeFile);
+
+    KSharedConfigPtr config = KSharedConfig::openConfig(layoutFile);
+    KConfigGroup group(config, "LayoutSettings");
+    QCOMPARE(group.readEntry("schemeFile", QString()), schemeFile);
+
+    Latte::Layout::AbstractLayout reloaded(nullptr, layoutFile);
+    QCOMPARE(reloaded.schemeFile(), schemeFile);
 }
 
 QTEST_GUILESS_MAIN(LayoutUnitTest)
