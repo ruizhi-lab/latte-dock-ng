@@ -87,7 +87,7 @@ Item {
     Kirigami.Icon {
         id: taskIconItem
         anchors.fill: parent
-        //roundToIconSize: false
+        roundToIconSize: false
         source: LatteCore.Environment.iconSourceForTheme(decoration)
         visible: !badgesLoader.active
 
