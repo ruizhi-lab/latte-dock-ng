@@ -37,6 +37,7 @@ private Q_SLOTS:
     void cmakePackagingConfigLivesInModule();
     void cmakeWarningRelaxationLivesInModule();
     void cmakeFindsQtCoreToolsBeforeKdeInstallDirs();
+    void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -184,6 +185,46 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(coronaSource.contains(QStringLiteral("qApp->property(\"latte_session_ending\").toBool()")));
     QVERIFY(coronaSource.contains(QStringLiteral("m_layoutsManager->synchronizer()->hideAllViews();")));
     QVERIFY(coronaSource.contains(QStringLiteral("fast shutdown path for session logout")));
+}
+
+void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()
+{
+    QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainSourceFile.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
+
+    QVERIFY(mainSource.contains(QStringLiteral("#include <QSGRendererInterface>")));
+    QVERIFY(mainSource.contains(QStringLiteral("inline void configureQtQuickGraphicsPreference();")));
+    QVERIFY(mainSource.contains(QStringLiteral("void configureQtQuickGraphicsPreference()")));
+    QVERIFY(mainSource.contains(QStringLiteral("qEnvironmentVariableIsSet(\"QT_QUICK_BACKEND\")")));
+    QVERIFY(mainSource.contains(QStringLiteral("qEnvironmentVariableIsSet(\"QSG_RHI_BACKEND\")")));
+    QVERIFY(mainSource.contains(QStringLiteral("QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL)")));
+    QVERIFY(mainSource.contains(QStringLiteral("requested Qt Quick OpenGL rendering")));
+    QVERIFY(mainSource.contains(QStringLiteral("respecting explicit Qt Quick graphics override")));
+
+    const int gpuPreferenceCall = mainSource.indexOf(QStringLiteral("configureQtQuickGraphicsPreference();"));
+    const int applicationCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
+    QVERIFY(gpuPreferenceCall >= 0);
+    QVERIFY(applicationCreation > gpuPreferenceCall);
+
+    QFile environmentQml(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/client/Environment.qml"));
+    QVERIFY(environmentQml.open(QFile::ReadOnly));
+    const QString environmentSource = QString::fromUtf8(environmentQml.readAll());
+    QVERIFY(environmentSource.contains(QStringLiteral("GraphicsInfo.api !== GraphicsInfo.Software")));
+    QVERIFY(environmentSource.contains(QStringLiteral("GraphicsInfo.api !== GraphicsInfo.Unknown")));
+    QVERIFY(environmentSource.contains(QStringLiteral("isGraphicsSystemAccelerated: ref.environment.isGraphicsSystemAccelerated")));
+
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString viewSource = QString::fromUtf8(viewSourceFile.readAll());
+    QVERIFY(viewSource.contains(QStringLiteral("#include <QSGRendererInterface>")));
+    QVERIFY(viewSource.contains(QStringLiteral("actualQtQuickGraphicsApiName")));
+    QVERIFY(viewSource.contains(QStringLiteral("isActualQtQuickGraphicsApiAccelerated")));
+    QVERIFY(viewSource.contains(QStringLiteral("&QQuickWindow::sceneGraphInitialized")));
+    QVERIFY(viewSource.contains(QStringLiteral("rendererInterface()")));
+    QVERIFY(viewSource.contains(QStringLiteral("graphicsApi()")));
+    QVERIFY(viewSource.contains(QStringLiteral("Latte Dock actual Qt Quick scene graph graphics API")));
+    QVERIFY(viewSource.contains(QStringLiteral("GPU accelerated")));
 }
 
 void SourceContractTest::itemsAlignmentIsSeparateAndJustifyOnly()

@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QQuickWindow>
+#include <QSGRendererInterface>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QDBusConnection>
@@ -65,6 +66,7 @@ inline void ensureUserLocalQmlImportPaths(int argc, char **argv);
 inline void ensureKdeSessionEnvironment();
 inline bool isKdeSessionShuttingDown();
 inline void autoClearQmlCacheOnVersionChange();
+inline void configureQtQuickGraphicsPreference();
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -80,6 +82,7 @@ int main(int argc, char **argv)
     }
 
     QQuickWindow::setDefaultAlphaBuffer(true);
+    configureQtQuickGraphicsPreference();
     ensureUserLocalQmlImportPaths(argc, argv);
 
     qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
@@ -709,6 +712,21 @@ inline void ensureUserLocalQmlImportPaths(int argc, char **argv)
 
         prependEnvironmentPath("QT_PLUGIN_PATH", candidate);
     }
+}
+
+inline void configureQtQuickGraphicsPreference()
+{
+    const bool hasExplicitGraphicsOverride = qEnvironmentVariableIsSet("QT_QUICK_BACKEND")
+            || qEnvironmentVariableIsSet("QSG_RHI_BACKEND")
+            || qEnvironmentVariableIsSet("QT_OPENGL");
+
+    if (hasExplicitGraphicsOverride) {
+        qInfo() << "Latte Dock respecting explicit Qt Quick graphics override";
+        return;
+    }
+
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    qInfo() << "Latte Dock requested Qt Quick OpenGL rendering";
 }
 
 inline void ensureKdeSessionEnvironment()

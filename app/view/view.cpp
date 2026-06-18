@@ -42,6 +42,7 @@
 #include <QQmlEngine>
 #include <QQmlProperty>
 #include <QQuickItem>
+#include <QSGRendererInterface>
 #include <QMenu>
 
 // KDe
@@ -67,6 +68,43 @@ constexpr int kEditThicknessSmallSpacing = 4;
 constexpr int kVisibleHackTimer1Ms = 400;
 constexpr int kVisibleHackTimer2Ms = 2500;
 
+namespace {
+
+QString actualQtQuickGraphicsApiName(QSGRendererInterface::GraphicsApi api)
+{
+    switch (api) {
+    case QSGRendererInterface::Unknown:
+        return QStringLiteral("Unknown");
+    case QSGRendererInterface::Software:
+        return QStringLiteral("Software");
+    case QSGRendererInterface::OpenVG:
+        return QStringLiteral("OpenVG");
+    case QSGRendererInterface::OpenGL:
+        return QStringLiteral("OpenGL");
+    case QSGRendererInterface::Direct3D11:
+        return QStringLiteral("Direct3D11");
+    case QSGRendererInterface::Vulkan:
+        return QStringLiteral("Vulkan");
+    case QSGRendererInterface::Metal:
+        return QStringLiteral("Metal");
+    case QSGRendererInterface::Null:
+        return QStringLiteral("Null");
+    case QSGRendererInterface::Direct3D12:
+        return QStringLiteral("Direct3D12");
+    }
+
+    return QStringLiteral("Unknown(%1)").arg(static_cast<int>(api));
+}
+
+bool isActualQtQuickGraphicsApiAccelerated(QSGRendererInterface::GraphicsApi api)
+{
+    return api != QSGRendererInterface::Unknown
+            && api != QSGRendererInterface::Software
+            && api != QSGRendererInterface::Null;
+}
+
+}
+
 namespace Latte {
 
 View::View(Plasma::Corona *corona, QScreen *targetScreen)
@@ -80,6 +118,14 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     //setVisible(false);
 
     m_corona = qobject_cast<Latte::Corona *>(corona);
+
+    connect(this, &QQuickWindow::sceneGraphInitialized, this, [this]() {
+        const QSGRendererInterface *renderer = rendererInterface();
+        const QSGRendererInterface::GraphicsApi api = renderer ? renderer->graphicsApi() : QSGRendererInterface::Unknown;
+        qInfo().noquote() << QStringLiteral("Latte Dock actual Qt Quick scene graph graphics API: %1 (GPU accelerated: %2)")
+                                     .arg(actualQtQuickGraphicsApiName(api),
+                                          isActualQtQuickGraphicsApiAccelerated(api) ? QStringLiteral("true") : QStringLiteral("false"));
+    }, Qt::DirectConnection);
 
     //! needs to be created after Effects because it catches some of its signals
     //! and avoid a crash from View::winId() at the same time
