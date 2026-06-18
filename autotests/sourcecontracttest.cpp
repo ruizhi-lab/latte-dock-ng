@@ -11,7 +11,7 @@ class SourceContractTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
-    void pulseAudioBootstrapIsBounded();
+    void pulseAudioBootstrapContractMovedToQmlSmokeTest();
     void compactAppletPopupSizingContractMovedToQmlSmokeTest();
     void applicationLauncherUsesFixedExternalSlot();
     void latteTasksExposesPlasmaLauncherApi();
@@ -38,18 +38,21 @@ private Q_SLOTS:
     void cmakeWarningRelaxationLivesInModule();
 };
 
-void SourceContractTest::pulseAudioBootstrapIsBounded()
+void SourceContractTest::pulseAudioBootstrapContractMovedToQmlSmokeTest()
 {
-    QFile pulseAudio(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/PulseAudio.qml"));
-    QVERIFY(pulseAudio.open(QFile::ReadOnly));
+    QFile qmlSmoke(QStringLiteral(LATTE_SOURCE_DIR "/autotests/qmlsmoketest.cpp"));
+    QVERIFY(qmlSmoke.open(QFile::ReadOnly));
+    const QString qmlSmokeSource = QString::fromUtf8(qmlSmoke.readAll());
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("pulseAudioBootstrapLoadsFromSource")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("LATTE_PULSEAUDIO_QML")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("bootstrapMaxAttempts")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("paFixTimer")));
 
-    // Regression lock: the PulseAudio refresh must be a bounded startup
-    // bootstrap, not a long-running periodic fix timer.
-    const QString source = QString::fromUtf8(pulseAudio.readAll());
-    QVERIFY(source.contains(QStringLiteral("bootstrapAttempts")));
-    QVERIFY(source.contains(QStringLiteral("bootstrapMaxAttempts")));
-    QVERIFY(source.contains(QStringLiteral("paFixTimer.stop()")));
-    QVERIFY(!source.contains(QStringLiteral("interval = 30000")));
+    QFile sourceContracts(QStringLiteral(LATTE_SOURCE_DIR "/autotests/sourcecontracttest.cpp"));
+    QVERIFY(sourceContracts.open(QFile::ReadOnly));
+    const QString sourceContractSource = QString::fromUtf8(sourceContracts.readAll());
+    const QString oldSourceLock = QStringLiteral("QFile ") + QStringLiteral("pulseAudio");
+    QVERIFY(!sourceContractSource.contains(oldSourceLock));
 }
 
 void SourceContractTest::compactAppletPopupSizingContractMovedToQmlSmokeTest()

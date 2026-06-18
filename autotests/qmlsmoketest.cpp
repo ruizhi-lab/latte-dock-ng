@@ -29,6 +29,7 @@ private Q_SLOTS:
     void parabolicItemZoomRecoveryLoadsFromSource();
     void compactAppletPopupSizingLoadsFromSource();
     void launchersGeometryRestoreSchedulingLoadsFromSource();
+    void pulseAudioBootstrapLoadsFromSource();
 };
 
 class ParabolicTargetStub : public QObject
@@ -718,6 +719,72 @@ static std::unique_ptr<QObject> createQmlObject(QQmlEngine &engine, const QByteA
     return object;
 }
 
+static bool writeTextFile(const QString &path, const QByteArray &contents)
+{
+    QFile file(path);
+    if (!file.open(QFile::WriteOnly | QFile::Truncate)) {
+        return false;
+    }
+
+    return file.write(contents) == contents.size();
+}
+
+static void addFakePulseAudioImport(QQmlEngine &engine, QTemporaryDir &importRoot)
+{
+    QVERIFY(importRoot.isValid());
+
+    const QString modulePath = importRoot.path() + QStringLiteral("/org/kde/plasma/private/volume");
+    QVERIFY(QDir().mkpath(modulePath));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/qmldir"), R"(
+module org.kde.plasma.private.volume
+singleton PulseAudio 0.1 PulseAudio.qml
+singleton Server 0.1 Server.qml
+singleton PreferredDevice 0.1 PreferredDevice.qml
+SinkModel 0.1 SinkModel.qml
+SinkInputModel 0.1 SinkInputModel.qml
+PulseObjectFilterModel 0.1 PulseObjectFilterModel.qml
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/PulseAudio.qml"), R"(
+pragma Singleton
+import QtQml 2.15
+QtObject {
+    enum Volume {
+        MinimalVolume = 0,
+        NormalVolume = 65536
+    }
+}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/Server.qml"), R"(
+pragma Singleton
+import QtQml 2.15
+QtObject {
+    property var defaultSink: ({})
+}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/PreferredDevice.qml"), R"(
+pragma Singleton
+import QtQml 2.15
+QtObject {}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/SinkModel.qml"), R"(
+import QtQml.Models 2.15
+ListModel {}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/SinkInputModel.qml"), R"(
+import QtQml.Models 2.15
+ListModel {}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/PulseObjectFilterModel.qml"), R"(
+import QtQml.Models 2.15
+ListModel {
+    property var filters
+    property var sourceModel
+}
+)"));
+
+    engine.addImportPath(importRoot.path());
+}
+
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()
 {
     QTemporaryDir importRoot;
@@ -1014,6 +1081,29 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
                                       Q_ARG(QVariant, QStringLiteral("manual"))));
     QCOMPARE(tasksModel.launcherList(), normalizedLaunchers);
     QCOMPARE(tasksModel.syncCount(), 1);
+}
+
+void QmlSmokeTest::pulseAudioBootstrapLoadsFromSource()
+{
+    QTemporaryDir importRoot;
+    QQmlEngine engine;
+    addFakePulseAudioImport(engine, importRoot);
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_PULSEAUDIO_QML)));
+    std::unique_ptr<QObject> object(component.create());
+    if (!object) {
+        qWarning() << component.errors();
+    }
+
+    QVERIFY(object);
+    QCOMPARE(object->property("bootstrapAttempts").toInt(), 0);
+    QCOMPARE(object->property("bootstrapMaxAttempts").toInt(), 5);
+
+    QObject *paFixTimer = object->property("paFixTimer").value<QObject *>();
+    QVERIFY(paFixTimer);
+    QCOMPARE(paFixTimer->property("interval").toInt(), 1000);
+    QCOMPARE(paFixTimer->property("repeat").toBool(), true);
+    QCOMPARE(paFixTimer->property("running").toBool(), true);
 }
 
 QTEST_MAIN(QmlSmokeTest)
