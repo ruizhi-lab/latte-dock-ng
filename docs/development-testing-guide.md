@@ -30,19 +30,11 @@ Both GCC and Clang builds must remain error-free. Use separate build directories
 
 ```bash
 cmake -S . -B build-autotests-gcc -DBUILD_TESTING=ON
-cmake --build build-autotests-gcc --target \
-  dataunittest modelunittest coreunittest qmlsmoketest sourcecontracttest \
-  packagingcontracttest typesunittest taskpluginunittest packageunittest \
-  indicatorunittest layoutunittest schemecolorsunittest wmunittest \
-  toolsunittest --parallel 8
+cmake --build build-autotests-gcc --target latte-autotests --parallel 8
 ctest --test-dir build-autotests-gcc --output-on-failure
 
 CC=clang CXX=clang++ cmake -S . -B build-autotests-clang -DBUILD_TESTING=ON
-cmake --build build-autotests-clang --target \
-  dataunittest modelunittest coreunittest qmlsmoketest sourcecontracttest \
-  packagingcontracttest typesunittest taskpluginunittest packageunittest \
-  indicatorunittest layoutunittest schemecolorsunittest wmunittest \
-  toolsunittest --parallel 8
+cmake --build build-autotests-clang --target latte-autotests --parallel 8
 ctest --test-dir build-autotests-clang --output-on-failure
 ```
 

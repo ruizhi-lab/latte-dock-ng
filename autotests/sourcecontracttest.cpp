@@ -27,6 +27,7 @@ private Q_SLOTS:
     void itemsAlignmentConfigDefaultsToCenter();
     void appearancePaletteExposesLayoutCustomColors();
     void layoutDetailsExposeCustomColorSchemeSelector();
+    void autotestAggregateTargetDocumentsFullSuiteBuild();
 };
 
 void SourceContractTest::pulseAudioBootstrapIsBounded()
@@ -366,6 +367,22 @@ void SourceContractTest::layoutDetailsExposeCustomColorSchemeSelector()
     QVERIFY(handlerSource.contains(QStringLiteral("connect(m_ui->customSchemeCmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DetailsHandler::onCurrentSchemeIndexChanged);")));
     QVERIFY(handlerSource.contains(QStringLiteral("QString selectedScheme = m_ui->customSchemeCmb->itemData(row, Model::Schemes::IDROLE).toString();")));
     QVERIFY(handlerSource.contains(QStringLiteral("c_data.schemeFile = file;")));
+}
+
+void SourceContractTest::autotestAggregateTargetDocumentsFullSuiteBuild()
+{
+    QFile autotestsCMake(QStringLiteral(LATTE_SOURCE_DIR "/autotests/CMakeLists.txt"));
+    QVERIFY(autotestsCMake.open(QFile::ReadOnly));
+    const QString cmakeSource = QString::fromUtf8(autotestsCMake.readAll());
+    QVERIFY(cmakeSource.contains(QStringLiteral("add_custom_target(latte-autotests")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("sourcecontracttest")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("packagingcontracttest")));
+
+    QFile testingGuide(QStringLiteral(LATTE_SOURCE_DIR "/docs/development-testing-guide.md"));
+    QVERIFY(testingGuide.open(QFile::ReadOnly));
+    const QString guideSource = QString::fromUtf8(testingGuide.readAll());
+    QVERIFY(guideSource.contains(QStringLiteral("cmake --build build-autotests-gcc --target latte-autotests --parallel 8")));
+    QVERIFY(guideSource.contains(QStringLiteral("cmake --build build-autotests-clang --target latte-autotests --parallel 8")));
 }
 
 QTEST_MAIN(SourceContractTest)
