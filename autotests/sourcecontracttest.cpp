@@ -12,8 +12,7 @@ class SourceContractTest : public QObject
 
 private Q_SLOTS:
     void pulseAudioBootstrapIsBounded();
-    void compactAppletUsesLargerDefaultForVolumePopup();
-    void compactAppletKeepsApplicationMenuPopupResizable();
+    void compactAppletPopupSizingContractMovedToQmlSmokeTest();
     void applicationLauncherUsesFixedExternalSlot();
     void latteTasksExposesPlasmaLauncherApi();
     void latteDockDbusExportsLauncherApi();
@@ -53,38 +52,21 @@ void SourceContractTest::pulseAudioBootstrapIsBounded()
     QVERIFY(!source.contains(QStringLiteral("interval = 30000")));
 }
 
-void SourceContractTest::compactAppletUsesLargerDefaultForVolumePopup()
+void SourceContractTest::compactAppletPopupSizingContractMovedToQmlSmokeTest()
 {
-    QFile compactApplet(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
-    QVERIFY(compactApplet.open(QFile::ReadOnly));
+    QFile qmlSmoke(QStringLiteral(LATTE_SOURCE_DIR "/autotests/qmlsmoketest.cpp"));
+    QVERIFY(qmlSmoke.open(QFile::ReadOnly));
+    const QString qmlSmokeSource = QString::fromUtf8(qmlSmoke.readAll());
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("compactAppletPopupSizingLoadsFromSource")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("LATTE_COMPACT_APPLET_QML")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("popupPreferredWidth")));
+    QVERIFY(qmlSmokeSource.contains(QStringLiteral("popupMaximumWidth")));
 
-    // Regression lock: the Plasma volume applet needs Latte's wrapper to keep
-    // a Plasma-panel-like initial popup size instead of reusing stale tiny
-    // persisted popup dimensions.
-    const QString source = QString::fromUtf8(compactApplet.readAll());
-    QVERIFY(source.contains(QStringLiteral("function popupPreferredWidth")));
-    QVERIFY(source.contains(QStringLiteral("function popupPreferredHeight")));
-    QVERIFY(source.contains(QStringLiteral("org.kde.plasma.volume")));
-    QVERIFY(source.contains(QStringLiteral("Kirigami.Units.gridUnit * 27")));
-}
-
-void SourceContractTest::compactAppletKeepsApplicationMenuPopupResizable()
-{
-    QFile compactApplet(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
-    QVERIFY(compactApplet.open(QFile::ReadOnly));
-
-    // Regression lock: application menu popups should keep their preferred
-    // initial size while advertising a smaller minimum and unbounded maximum
-    // so the user can resize both width and height.
-    const QString source = QString::fromUtf8(compactApplet.readAll());
-    QVERIFY(source.contains(QStringLiteral("function popupMenuMinimumWidth")));
-    QVERIFY(source.contains(QStringLiteral("function popupMenuMinimumHeight")));
-    QVERIFY(source.contains(QStringLiteral("function popupMaximumWidth")));
-    QVERIFY(source.contains(QStringLiteral("function popupMaximumHeight")));
-    QVERIFY(source.contains(QStringLiteral("org.kde.plasma.kicker")));
-    QVERIFY(source.contains(QStringLiteral("isApplicationMenuApplet()")));
-    QVERIFY(source.contains(QStringLiteral("Kirigami.Units.gridUnit * 18")));
-    QVERIFY(source.contains(QStringLiteral("return Infinity;")));
+    QFile sourceContracts(QStringLiteral(LATTE_SOURCE_DIR "/autotests/sourcecontracttest.cpp"));
+    QVERIFY(sourceContracts.open(QFile::ReadOnly));
+    const QString sourceContractSource = QString::fromUtf8(sourceContracts.readAll());
+    const QString oldSourceLock = QStringLiteral("QFile ") + QStringLiteral("compactApplet");
+    QVERIFY(!sourceContractSource.contains(oldSourceLock));
 }
 
 void SourceContractTest::applicationLauncherUsesFixedExternalSlot()

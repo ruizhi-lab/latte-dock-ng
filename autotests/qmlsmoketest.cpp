@@ -14,6 +14,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 
+#include <cmath>
 #include <memory>
 
 class QmlSmokeTest : public QObject
@@ -25,6 +26,7 @@ private Q_SLOTS:
     void restoreAnimationLoadsFromSource();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void parabolicItemZoomRecoveryLoadsFromSource();
+    void compactAppletPopupSizingLoadsFromSource();
 };
 
 class ParabolicTargetStub : public QObject
@@ -529,6 +531,17 @@ static void addLatteComponentsImport(QQmlEngine &engine, QTemporaryDir &importRo
     engine.addImportPath(importRoot.path());
 }
 
+static std::unique_ptr<QObject> createQmlObject(QQmlEngine &engine, const QByteArray &source, const QUrl &url)
+{
+    QQmlComponent component(&engine);
+    component.setData(source, url);
+    std::unique_ptr<QObject> object(component.create());
+    if (!object) {
+        qWarning() << component.errors();
+    }
+    return object;
+}
+
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()
 {
     QTemporaryDir importRoot;
@@ -690,6 +703,75 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
     QVERIFY(!object->property("isZoomed").toBool());
     QCOMPARE(abilityItem.needBothAxisRemoveCount(), removedBefore + 1);
     QVERIFY(abilityItem.needBothAxisAddCount() > 0);
+}
+
+void QmlSmokeTest::compactAppletPopupSizingLoadsFromSource()
+{
+    QQmlEngine engine;
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_COMPACT_APPLET_QML)));
+    std::unique_ptr<QObject> object(component.create());
+    if (!object) {
+        qWarning() << component.errors();
+    }
+
+    QVERIFY(object);
+
+    std::unique_ptr<QObject> fullRepresentation = createQmlObject(
+        engine,
+        R"(
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+
+Item {
+    implicitWidth: 1
+    implicitHeight: 1
+    Layout.minimumWidth: 12
+    Layout.minimumHeight: 14
+    Layout.preferredWidth: 0
+    Layout.preferredHeight: 0
+    Layout.maximumWidth: 400
+    Layout.maximumHeight: 300
+}
+)",
+        QUrl(QStringLiteral("qrc:/compact-full-representation.qml")));
+    QVERIFY(fullRepresentation);
+    QVERIFY(object->setProperty("fullRepresentation", QVariant::fromValue(fullRepresentation.get())));
+
+    std::unique_ptr<QObject> appletItem = createQmlObject(
+        engine,
+        R"(
+import QtQuick 2.15
+
+Item {
+    property string pluginName: ""
+}
+)",
+        QUrl(QStringLiteral("qrc:/compact-applet-item.qml")));
+    QVERIFY(appletItem);
+    QVERIFY(object->setProperty("appletItem", QVariant::fromValue(appletItem.get())));
+
+    QVariant volumeMinimumWidth;
+    QVariant volumeMinimumHeight;
+    appletItem->setProperty("pluginName", QStringLiteral("org.kde.plasma.volume"));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupMinimumWidth", Q_RETURN_ARG(QVariant, volumeMinimumWidth)));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupMinimumHeight", Q_RETURN_ARG(QVariant, volumeMinimumHeight)));
+    QVERIFY(volumeMinimumWidth.toReal() > 12);
+    QVERIFY(volumeMinimumHeight.toReal() > 14);
+
+    QVariant preferredWidth;
+    QVariant preferredHeight;
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupPreferredWidth", Q_RETURN_ARG(QVariant, preferredWidth)));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupPreferredHeight", Q_RETURN_ARG(QVariant, preferredHeight)));
+    QCOMPARE(preferredWidth.toReal(), volumeMinimumWidth.toReal());
+    QCOMPARE(preferredHeight.toReal(), volumeMinimumHeight.toReal());
+
+    appletItem->setProperty("pluginName", QStringLiteral("org.kde.plasma.kicker"));
+    QVariant menuMaximumWidth;
+    QVariant menuMaximumHeight;
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupMaximumWidth", Q_RETURN_ARG(QVariant, menuMaximumWidth)));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "popupMaximumHeight", Q_RETURN_ARG(QVariant, menuMaximumHeight)));
+    QVERIFY(std::isinf(menuMaximumWidth.toDouble()));
+    QVERIFY(std::isinf(menuMaximumHeight.toDouble()));
 }
 
 QTEST_MAIN(QmlSmokeTest)
