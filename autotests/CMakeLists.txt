@@ -865,36 +865,39 @@ target_link_libraries(settingsviewunittest
 add_test(NAME settingsviewunittest COMMAND settingsviewunittest)
 set_tests_properties(settingsviewunittest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 
+set(latte_autotest_targets
+    dataunittest
+    modelunittest
+    coreunittest
+    corecomponentstest
+    qmlsmoketest
+    sourcecontracttest
+    packagingcontracttest
+    typesunittest
+    taskpluginunittest
+    packageunittest
+    indicatorunittest
+    layoutunittest
+    launcherunittest
+    genericsettingstest
+    schemecolorsunittest
+    wmunittest
+    toolsunittest
+    knscompatunittest
+    interfacesunittest
+    viewpartunittest
+    panelshadowunittest
+    contextmenuunittest
+    shortcutunittest
+    declarativecoreunittest
+    containmentlayoutunittest
+    pluginregistrationunittest
+    plasmaextendedunittest
+    taskspluginunittest
+    containmentactionmenuunittest
+    settingsviewunittest
+)
+
 add_custom_target(latte-autotests
-    DEPENDS
-        dataunittest
-        modelunittest
-        coreunittest
-        corecomponentstest
-        qmlsmoketest
-        sourcecontracttest
-        packagingcontracttest
-        typesunittest
-        taskpluginunittest
-        packageunittest
-        indicatorunittest
-        layoutunittest
-        launcherunittest
-        genericsettingstest
-        schemecolorsunittest
-        wmunittest
-        toolsunittest
-        knscompatunittest
-        interfacesunittest
-        viewpartunittest
-        panelshadowunittest
-        contextmenuunittest
-        shortcutunittest
-        declarativecoreunittest
-        containmentlayoutunittest
-        pluginregistrationunittest
-        plasmaextendedunittest
-        taskspluginunittest
-        containmentactionmenuunittest
-        settingsviewunittest
+    DEPENDS ${latte_autotest_targets}
 )

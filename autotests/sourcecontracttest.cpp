@@ -374,7 +374,9 @@ void SourceContractTest::autotestAggregateTargetDocumentsFullSuiteBuild()
     QFile autotestsCMake(QStringLiteral(LATTE_SOURCE_DIR "/autotests/CMakeLists.txt"));
     QVERIFY(autotestsCMake.open(QFile::ReadOnly));
     const QString cmakeSource = QString::fromUtf8(autotestsCMake.readAll());
+    QVERIFY(cmakeSource.contains(QStringLiteral("set(latte_autotest_targets")));
     QVERIFY(cmakeSource.contains(QStringLiteral("add_custom_target(latte-autotests")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("DEPENDS ${latte_autotest_targets}")));
     QVERIFY(cmakeSource.contains(QStringLiteral("sourcecontracttest")));
     QVERIFY(cmakeSource.contains(QStringLiteral("packagingcontracttest")));
 
