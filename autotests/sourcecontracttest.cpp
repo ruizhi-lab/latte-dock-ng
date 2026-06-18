@@ -40,6 +40,7 @@ private Q_SLOTS:
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
     void knsCompatImportsAreAvailableForSystemInstall();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
+    void widgetExplorerUsesPlasmaTranslationContexts();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -301,6 +302,26 @@ void SourceContractTest::widgetExplorerLaunchesKnsDialogOutOfProcess()
     QVERIFY(cppSource.contains(QStringLiteral("#include <QStandardPaths>")));
     QVERIFY(cppSource.contains(QStringLiteral("QStandardPaths::findExecutable(QStringLiteral(\"knewstuff-dialog6\"))")));
     QVERIFY(cppSource.contains(QStringLiteral("QProcess::startDetached(executable, {QStringLiteral(\"plasmoids.knsrc\")})")));
+}
+
+void SourceContractTest::widgetExplorerUsesPlasmaTranslationContexts()
+{
+    QFile widgetExplorer(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/views/WidgetExplorer.qml"));
+    QVERIFY(widgetExplorer.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(widgetExplorer.readAll());
+
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@title:group for widget grid\", \"Widgets\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@action:button The word 'new' refers to widgets\", \"Get New…\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@action:button\", \"Get New Widgets…\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@action:button like listbox, switches category to all widgets\", \"All Widgets\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@action:button tooltip only\", \"Categories\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@info placeholdermessage\", \"No widgets available\")")));
+    QVERIFY(source.contains(QStringLiteral("i18ndc(\"plasma_shell_org.kde.plasma.desktop\", \"@info placeholdermessage\", \"No widgets matched the search terms\")")));
+
+    QVERIFY(!source.contains(QStringLiteral("i18nd(\"plasma_shell_org.kde.plasma.desktop\", \"Widgets\")")));
+    QVERIFY(!source.contains(QStringLiteral("i18nd(\"plasma_shell_org.kde.plasma.desktop\", \"Get New Widgets…\")")));
+    QVERIFY(!source.contains(QStringLiteral("i18nd(\"plasma_shell_org.kde.plasma.desktop\", \"All Widgets\")")));
+    QVERIFY(!source.contains(QStringLiteral("i18n(\"No widgets available\")")));
 }
 
 void SourceContractTest::itemsAlignmentIsSeparateAndJustifyOnly()

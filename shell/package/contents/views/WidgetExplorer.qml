@@ -302,7 +302,7 @@ PC3.Page {
         onClicked: {
             list.contentX = 0
             list.contentY = 0
-            categoryButton.text = (model.filterData ? model.display : i18nd("plasma_shell_org.kde.plasma.desktop", "All Widgets"))
+            categoryButton.text = (model.filterData ? model.display : i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button like listbox, switches category to all widgets", "All Widgets"))
             if (widgetExplorer && widgetExplorer.widgetsModel) {
                 widgetExplorer.widgetsModel.filterQuery = model.filterData
                 widgetExplorer.widgetsModel.filterType = model.filterType
@@ -360,7 +360,7 @@ PC3.Page {
                 PlasmaExtras.Heading {
                     id: heading
                     level: 1
-                    text: i18nd("plasma_shell_org.kde.plasma.desktop", "Widgets")
+                    text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@title:group for widget grid", "Widgets")
                     elide: Text.ElideRight
                     Kirigami.Theme.colorSet: (themeExtended && themeExtended.isDarkTheme)
                         ? Kirigami.Theme.Complementary
@@ -376,7 +376,8 @@ PC3.Page {
                         ? Kirigami.Theme.Complementary
                         : Kirigami.Theme.Button
                     Kirigami.Theme.inherit: false
-                    text: i18nd("plasma_shell_org.kde.plasma.desktop", "Get New Widgets…")
+                    text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button The word 'new' refers to widgets", "Get New…")
+                    Accessible.name: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Get New Widgets…")
                     onClicked: {
                         if (!widgetExplorer) return
                         getWidgetsDialog.model = widgetExplorer.widgetsMenuActions
@@ -403,7 +404,7 @@ PC3.Page {
                     Kirigami.Theme.inherit: false
                     Layout.fillWidth: true
                     clearButtonShown: true
-                    placeholderText: i18nd("plasma_shell_org.kde.plasma.desktop", "Search…")
+                    placeholderText: i18ndc("plasma_shell_org.kde.plasma.desktop", "@label:textbox accessible", "Search through widgets")
 
                     inputMethodHints: Qt.ImhNoPredictiveText
 
@@ -427,7 +428,7 @@ PC3.Page {
                         ? Kirigami.Theme.Complementary
                         : Kirigami.Theme.Button
                     Kirigami.Theme.inherit: false
-                    text: i18nd("plasma_shell_org.kde.plasma.desktop", "All Widgets")
+                    text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button like listbox, switches category to all widgets", "All Widgets")
                     icon.name: "view-filter"
                     onClicked: {
                         if (widgetExplorer && widgetExplorer.filterModel) {
@@ -437,7 +438,7 @@ PC3.Page {
                     }
 
                     PC3.ToolTip {
-                        text: i18nd("plasma_shell_org.kde.plasma.desktop", "Categories")
+                        text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button tooltip only", "Categories")
                     }
                 }
             }
@@ -519,7 +520,9 @@ PC3.Page {
     PlasmaExtras.PlaceholderMessage {
         anchors.centerIn: parent
         width: parent.width - (Kirigami.Units.largeSpacing * 4)
-        text: searchInput.text.length > 0 ? i18n("No widgets matched the search terms") : i18n("No widgets available")
+        text: searchInput.text.length > 0
+            ? i18ndc("plasma_shell_org.kde.plasma.desktop", "@info placeholdermessage", "No widgets matched the search terms")
+            : i18ndc("plasma_shell_org.kde.plasma.desktop", "@info placeholdermessage", "No widgets available")
         visible: list.count == 0
     }
 
