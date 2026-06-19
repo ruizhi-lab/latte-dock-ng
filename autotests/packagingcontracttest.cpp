@@ -21,6 +21,8 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     const QString uninstallSource = QString::fromUtf8(uninstallScript.readAll());
     QVERIFY(uninstallSource.contains(QStringLiteral("org.kde.latte.contextmenu.so")));
     QVERIFY(uninstallSource.contains(QStringLiteral("plasma_containmentactions_lattecontextmenu.so")));
+    QVERIFY(uninstallSource.contains(QStringLiteral("latte-dock-ng-add-launcher")));
+    QVERIFY(uninstallSource.contains(QStringLiteral("org.kde.latte-dock.kickeractions.desktop")));
     QVERIFY(uninstallSource.contains(QStringLiteral("lib/x86_64-linux-gnu/qt6/qml")));
 
     QFile installScript(QStringLiteral(LATTE_SOURCE_DIR "/install.sh"));
@@ -29,6 +31,10 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(installSource.contains(QStringLiteral("--build-dir <path>")));
     QVERIFY(installSource.contains(QStringLiteral("LATTE_BUILD_DIR")));
     QVERIFY(installSource.contains(QStringLiteral("lib/x86_64-linux-gnu/qt6/qml")));
+    QVERIFY(installSource.contains(QStringLiteral("refresh_service_caches()")));
+    QVERIFY(installSource.contains(QStringLiteral("update-desktop-database \"${install_prefix}/share/applications\"")));
+    QVERIFY(installSource.contains(QStringLiteral("kbuildsycoca6")));
+    QVERIFY(installSource.contains(QStringLiteral("--noincremental")));
 
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
     QVERIFY(mainSourceFile.open(QFile::ReadOnly));
@@ -56,6 +62,11 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(dockerVerifySource.contains(QStringLiteral("install.sh --system --build-dir")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("install.sh --user --build-dir")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("manifestless uninstall fallback")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("system helper binary")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("system kicker action")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("user helper binary")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("user kicker action")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("-perm -111")));
 
     QFile archPackage(QStringLiteral(LATTE_SOURCE_DIR "/docker/package-arch.sh"));
     QVERIFY(archPackage.open(QFile::ReadOnly));
@@ -127,9 +138,11 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QFile releaseWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/release.yml"));
     QVERIFY(releaseWorkflow.open(QFile::ReadOnly));
     const QString releaseWorkflowSource = QString::fromUtf8(releaseWorkflow.readAll());
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("gentoo-ebuild:")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("verify-ebuild-gentoo.sh")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.fedora")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.debian")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.arch")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("verify-ebuild-gentoo.sh")));
 
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));
     QVERIFY(packagingCMake.open(QFile::ReadOnly));

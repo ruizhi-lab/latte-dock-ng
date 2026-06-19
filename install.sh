@@ -269,6 +269,37 @@ run_as_root() {
     "${sudo_cmd[@]}" "$@"
 }
 
+run_as_user() {
+    local target_user="$1"
+    shift
+
+    if [[ "${EUID}" -eq 0 && "$target_user" != "root" ]]; then
+        if command -v runuser >/dev/null 2>&1; then
+            runuser -l "$target_user" -c "$*" 2>/dev/null || true
+        else
+            su -l "$target_user" -c "$*" 2>/dev/null || true
+        fi
+    else
+        "$@" 2>/dev/null || true
+    fi
+}
+
+resolve_username() {
+    local user_home="$1"
+
+    if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+        local sudo_home=""
+
+        if command -v getent >/dev/null 2>&1; then
+            sudo_home="$(getent passwd "${SUDO_USER}" | cut -d: -f6 2>/dev/null || true)"
+        fi
+
+        [[ "$sudo_home" == "$user_home" ]] && echo "$SUDO_USER" && return
+    fi
+
+    stat -c '%U' "$user_home" 2>/dev/null || basename "$user_home"
+}
+
 sync_tree() {
     local src="$1"
     local dst="$2"
@@ -301,6 +332,35 @@ sync_tree_if_exists() {
         rsync -a --delete "$src"/ "$dst"/
     else
         rm -rf "$dst"; mkdir -p "$dst"; cp -a "$src"/. "$dst"/
+    fi
+}
+
+refresh_service_caches() {
+    if command -v update-desktop-database >/dev/null 2>&1; then
+        run_as_root update-desktop-database "${install_prefix}/share/applications" >/dev/null 2>&1 || true
+    fi
+
+    local sycoca_tool=""
+
+    if command -v kbuildsycoca6 >/dev/null 2>&1; then
+        sycoca_tool="kbuildsycoca6"
+    elif command -v kbuildsycoca5 >/dev/null 2>&1; then
+        sycoca_tool="kbuildsycoca5"
+    elif command -v kbuildsycoca >/dev/null 2>&1; then
+        sycoca_tool="kbuildsycoca"
+    fi
+
+    [[ -n "$sycoca_tool" ]] || return 0
+
+    if [[ "$install_mode" == "system" ]]; then
+        local user_home
+
+        for user_home in "${user_homes[@]:-}"; do
+            [[ -d "$user_home" ]] || continue
+            run_as_user "$(resolve_username "$user_home")" "$sycoca_tool" --noincremental
+        done
+    else
+        "$sycoca_tool" --noincremental >/dev/null 2>&1 || true
     fi
 }
 
@@ -356,6 +416,9 @@ if [[ "$install_mode" == "system" ]]; then
     done
 fi
 
+# Ensure desktop files and Plasma kicker action services are visible right away.
+refresh_service_caches
+
 # ── Compat QML modules (org.kde.latte.compat.taskmanager) ──
 # Installed by cmake --install via compat/qml/CMakeLists.txt into latte's
 # own namespace — no Plasma system directories are touched.
@@ -380,18 +443,6 @@ ENVEOF
     # Keep desktop Exec as direct latte binary path. KWin resolves privileged
     # Wayland interfaces from desktop files by comparing the executable path
     # against the first Exec token; wrapping with `env ...` breaks that lookup.
-
-    if command -v update-desktop-database >/dev/null 2>&1; then
-        update-desktop-database "${install_prefix}/share/applications" >/dev/null 2>&1 || true
-    fi
-
-    if command -v kbuildsycoca6 >/dev/null 2>&1; then
-        kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
-    elif command -v kbuildsycoca5 >/dev/null 2>&1; then
-        kbuildsycoca5 --noincremental >/dev/null 2>&1 || true
-    elif command -v kbuildsycoca >/dev/null 2>&1; then
-        kbuildsycoca --noincremental >/dev/null 2>&1 || true
-    fi
 
     cat <<EOF
 Info: User-local installation complete.

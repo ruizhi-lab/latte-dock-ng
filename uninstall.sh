@@ -246,7 +246,9 @@ managed_dirs=(
 
 managed_files=(
     "${install_prefix}/bin/latte-dock-ng"
+    "${install_prefix}/bin/latte-dock-ng-add-launcher"
     "${install_prefix}/share/applications/org.kde.latte-dock.desktop"
+    "${install_prefix}/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"
     "${install_prefix}/share/metainfo/org.kde.latte-dock.appdata.xml"
     "${install_prefix}/share/dbus-1/interfaces/org.kde.LatteDock.xml"
     "${install_prefix}/share/knotifications6/lattedock.notifyrc"
@@ -278,7 +280,9 @@ if [[ "$install_mode" == "system" ]]; then
         done
         for file_path in \
                 "${prefix}/bin/latte-dock-ng" \
+                "${prefix}/bin/latte-dock-ng-add-launcher" \
                 "${prefix}/share/applications/org.kde.latte-dock.desktop" \
+                "${prefix}/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
                 "${prefix}/share/metainfo/org.kde.latte-dock.appdata.xml"; do
             remove_file "$file_path"
         done
@@ -324,8 +328,10 @@ for user_home in "${user_homes[@]:-}"; do
         done
 
         for file_path in \
+                "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
+                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
                 "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
                 "${user_home}/.config/autostart/latte-dock.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
@@ -344,8 +350,10 @@ for user_home in "${user_homes[@]:-}"; do
         done
 
         for file_path in \
+                "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
+                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
                 "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
                 "${user_home}/.config/autostart/latte-dock.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }

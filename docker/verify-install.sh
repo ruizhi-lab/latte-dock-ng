@@ -55,6 +55,30 @@ forbid_path() {
     fi
 }
 
+require_executable_file() {
+    local description="$1"
+    local path="$2"
+
+    require_path "$description" "$path"
+
+    if ! find "$path" -maxdepth 0 -perm -111 | grep -q .; then
+        echo "${description} is not executable: ${path}" >&2
+        exit 1
+    fi
+}
+
+require_non_executable_file() {
+    local description="$1"
+    local path="$2"
+
+    require_path "$description" "$path"
+
+    if find "$path" -maxdepth 0 -perm -111 | grep -q .; then
+        echo "${description} should not be executable: ${path}" >&2
+        exit 1
+    fi
+}
+
 system_qml_module_patterns() {
     printf '%s\n' \
         "/usr/lib/qt6/qml/org/kde/latte/core/qmldir" \
@@ -79,7 +103,9 @@ verify_system_installed() {
     mapfile -t plugin_patterns < <(system_contextmenu_plugin_patterns)
 
     require_path "system binary" /usr/bin/latte-dock-ng
+    require_path "system helper binary" /usr/bin/latte-dock-ng-add-launcher
     require_path "desktop file" /usr/share/applications/org.kde.latte-dock.desktop
+    require_non_executable_file "system kicker action" /usr/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop
     require_path "containment package" /usr/share/plasma/plasmoids/org.kde.latte.containment
     require_path "shell package" /usr/share/plasma/shells/org.kde.latte.shell
     require_path "Latte core QML module" "${qml_patterns[@]}"
@@ -93,7 +119,9 @@ verify_system_removed() {
     mapfile -t plugin_patterns < <(system_contextmenu_plugin_patterns)
 
     forbid_path "system binary" /usr/bin/latte-dock-ng
+    forbid_path "system helper binary" /usr/bin/latte-dock-ng-add-launcher
     forbid_path "desktop file" /usr/share/applications/org.kde.latte-dock.desktop
+    forbid_path "system kicker action" /usr/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop
     forbid_path "containment package" /usr/share/plasma/plasmoids/org.kde.latte.containment
     forbid_path "shell package" /usr/share/plasma/shells/org.kde.latte.shell
     forbid_path "Latte core QML module" "${qml_patterns[@]}"
@@ -104,7 +132,9 @@ verify_user_installed() {
     local home_dir="$1"
 
     require_path "user binary" "${home_dir}/.local/bin/latte-dock-ng"
+    require_path "user helper binary" "${home_dir}/.local/bin/latte-dock-ng-add-launcher"
     require_path "user desktop file" "${home_dir}/.local/share/applications/org.kde.latte-dock.desktop"
+    require_executable_file "user kicker action" "${home_dir}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"
     require_path "user containment package" "${home_dir}/.local/share/plasma/plasmoids/org.kde.latte.containment"
     require_path "user shell package" "${home_dir}/.local/share/plasma/shells/org.kde.latte.shell"
     require_path "user Latte core QML module" \
@@ -117,7 +147,9 @@ verify_user_removed() {
     local home_dir="$1"
 
     forbid_path "user binary" "${home_dir}/.local/bin/latte-dock-ng"
+    forbid_path "user helper binary" "${home_dir}/.local/bin/latte-dock-ng-add-launcher"
     forbid_path "user desktop file" "${home_dir}/.local/share/applications/org.kde.latte-dock.desktop"
+    forbid_path "user kicker action" "${home_dir}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"
     forbid_path "user containment package" "${home_dir}/.local/share/plasma/plasmoids/org.kde.latte.containment"
     forbid_path "user shell package" "${home_dir}/.local/share/plasma/shells/org.kde.latte.shell"
     forbid_path "user Latte core QML module" \
