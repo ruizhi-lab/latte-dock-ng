@@ -41,6 +41,7 @@ private Q_SLOTS:
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
     void knsCompatImportsAreAvailableForSystemInstall();
     void taskIconsRefreshAfterIconThemeChanges();
+    void taskAudioBadgesScaleWithParabolicZoom();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
     void widgetExplorerUsesPlasmaTranslationContexts();
 };
@@ -326,6 +327,25 @@ void SourceContractTest::taskIconsRefreshAfterIconThemeChanges()
     QVERIFY(environmentSource.contains(QStringLiteral("QIcon::setThemeName(currentIconTheme())")));
     QVERIFY(environmentSource.contains(QStringLiteral("QPixmapCache::clear()")));
     QVERIFY(!environmentSource.contains(QStringLiteral("if (!iconTheme.isEmpty())")));
+}
+
+void SourceContractTest::taskAudioBadgesScaleWithParabolicZoom()
+{
+    QFile audioStream(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/AudioStream.qml"));
+    QVERIFY(audioStream.open(QFile::ReadOnly));
+
+    const QString source = QString::fromUtf8(audioStream.readAll());
+    QVERIFY(source.contains(QStringLiteral("readonly property real parabolicZoom: taskItem.parabolicItem.zoom")));
+    QVERIFY(source.contains(QStringLiteral("readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium * parabolicZoom")));
+    QVERIFY(source.contains(QStringLiteral("compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)")));
+    QVERIFY(source.contains(QStringLiteral("Math.min(parent.height * audioStreamIconBox.indicatorScale, audioStreamIconBox.maximumBadgeSize)")));
+
+    const int zoomProperty = source.indexOf(QStringLiteral("readonly property real parabolicZoom"));
+    const int maximumSize = source.indexOf(QStringLiteral("readonly property real maximumBadgeSize"), zoomProperty);
+    const int compactSize = source.indexOf(QStringLiteral("compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)"), maximumSize);
+    QVERIFY(zoomProperty >= 0);
+    QVERIFY(maximumSize > zoomProperty);
+    QVERIFY(compactSize > maximumSize);
 }
 
 void SourceContractTest::widgetExplorerLaunchesKnsDialogOutOfProcess()

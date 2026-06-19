@@ -18,7 +18,9 @@ Item {
     readonly property real iconBoxWidth: parent ? parent.width : 0
     readonly property real iconBoxHeight: parent ? parent.height : 0
     readonly property real iconBoxSize: Math.min(iconBoxWidth, iconBoxHeight)
-    readonly property real compactBadgeSize: Math.min(iconBoxSize * 0.4, Kirigami.Units.iconSizes.smallMedium)
+    readonly property real parabolicZoom: taskItem.parabolicItem.zoom
+    readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium * parabolicZoom
+    readonly property real compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)
     readonly property int outerMargin: Math.round(Math.max(1, iconBoxSize * 0.04))
     readonly property real requiredSpace: iconBoxSize + compactBadgeSize * 2
     readonly property bool badgeHovered: {
@@ -118,7 +120,7 @@ Item {
                                                : Kirigami.Theme.textColor
         color: contrastColor
 
-        height: Math.round(Math.min(parent.height * audioStreamIconBox.indicatorScale, Kirigami.Units.iconSizes.smallMedium))
+        height: Math.round(Math.min(parent.height * audioStreamIconBox.indicatorScale, audioStreamIconBox.maximumBadgeSize))
         width: height
 
         anchors {
@@ -149,7 +151,7 @@ Item {
 
                 PropertyChanges {
                     target: audioStreamIconBox
-                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, Kirigami.Units.iconSizes.smallMedium))
+                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
                 }
 
                 PropertyChanges {
@@ -172,7 +174,7 @@ Item {
                 PropertyChanges {
                     target: audioStreamIconBox
                     anchors.topMargin: audioStreamIconBox.outerMargin
-                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, Kirigami.Units.iconSizes.smallMedium))
+                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
                 }
 
                 PropertyChanges {
