@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to Latte Dock NG are documented in this file.
+
+## [v1.2.9] - 2026-06-19
+
+### Fixed
+- Task icons now refresh immediately when the system icon theme changes, including switching back to the default Breeze icon theme.
+- Audio stream badges now scale with task icon zoom while preserving their relative position.
+
 ## [v1.1.26] - 2026-06-14
 
 ### Fixed

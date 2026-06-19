@@ -183,7 +183,7 @@
   </provides>
   <launchable type="desktop-id">org.kde.latte-dock.desktop</launchable>
   <releases>
-    <release version="@VERSION@" date="2026-06-18"/>
+    <release version="@VERSION@" date="2026-06-19"/>
     <release version="0.9.1" date="2019-08-04"/>
     <release version="0.9.0" date="2019-07-28"/>
     <release version="0.8.9" date="2019-06-28"/>
