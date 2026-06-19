@@ -233,6 +233,12 @@ cmake_args=(
     -DCMAKE_BUILD_TYPE="${build_type}"
 )
 
+if [[ "$install_mode" == "user" ]]; then
+    cmake_args+=(-DLATTE_INSTALL_USER_KICKERACTION_EXECUTABLE=ON)
+else
+    cmake_args+=(-DLATTE_INSTALL_USER_KICKERACTION_EXECUTABLE=OFF)
+fi
+
 if [[ -n "$kde_install_qmldir" ]]; then
     cmake_args+=(-DKDE_INSTALL_QMLDIR="${kde_install_qmldir}")
 fi

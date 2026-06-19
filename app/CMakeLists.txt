@@ -65,6 +65,7 @@ ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
 )
 
 add_executable(latte-dock-ng ${lattedock-app_SRCS})
+add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)
 
 include(FakeTarget.cmake)
 
@@ -100,11 +101,23 @@ target_link_libraries(latte-dock-ng
     LayerShellQt::Interface
 )
 
+target_link_libraries(latte-dock-ng-add-launcher Qt6::Core Qt6::DBus)
+
 configure_file(org.kde.latte-dock.desktop.cmake org.kde.latte-dock.desktop)
+configure_file(org.kde.latte-dock.kickeractions.desktop.cmake org.kde.latte-dock.kickeractions.desktop)
 configure_file(org.kde.latte-dock.appdata.xml.cmake org.kde.latte-dock.appdata.xml)
 
+set(latte_kickeraction_permissions OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+if(LATTE_INSTALL_USER_KICKERACTION_EXECUTABLE)
+    list(APPEND latte_kickeraction_permissions OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
+endif()
+
 install(TARGETS latte-dock-ng ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS latte-dock-ng-add-launcher ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.latte-dock.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.latte-dock.kickeractions.desktop
+        DESTINATION ${KDE_INSTALL_DATADIR}/plasma/kickeractions
+        PERMISSIONS ${latte_kickeraction_permissions})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.latte-dock.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 install(FILES dbus/org.kde.LatteDock.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
 install(FILES lattedock.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFYRCDIR})

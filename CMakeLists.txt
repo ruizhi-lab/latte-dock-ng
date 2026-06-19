@@ -21,6 +21,7 @@ set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 # Latte Dock NG does not currently auto-fetch translations at configure time.
 option(KDE_L10N_AUTO_TRANSLATIONS "Compatibility flag for external install scripts." OFF)
 set(KDE_L10N_BRANCH "" CACHE STRING "Compatibility translation branch name from external scripts.")
+option(LATTE_INSTALL_USER_KICKERACTION_EXECUTABLE "Install user-local Plasma kicker action as trusted executable desktop file." OFF)
 
 set(KF6_LOCALE_PREFIX "")
 set(QT_MAJOR_VERSION 6)

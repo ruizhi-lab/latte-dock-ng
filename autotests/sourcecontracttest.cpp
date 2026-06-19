@@ -16,6 +16,7 @@ private Q_SLOTS:
     void applicationLauncherUsesFixedExternalSlot();
     void latteTasksExposesPlasmaLauncherApi();
     void latteDockDbusExportsLauncherApi();
+    void plasmaKickerActionAddsLaunchersToLatteDock();
     void containmentClearsParabolicStateWhenEdgeChanges();
     void launchersRestoreContractMovedToQmlSmokeTest();
     void sessionShutdownHandlingMatchesStableWaylandPath();
@@ -124,6 +125,49 @@ void SourceContractTest::latteDockDbusExportsLauncherApi()
     QVERIFY(header.contains(QStringLiteral("bool hasLauncher(QString launcherUrl, QString screenName);")));
     QVERIFY(header.contains(QStringLiteral("bool addLauncher(QString launcherUrl, QString screenName);")));
     QVERIFY(header.contains(QStringLiteral("bool removeLauncher(QString launcherUrl, QString screenName);")));
+}
+
+void SourceContractTest::plasmaKickerActionAddsLaunchersToLatteDock()
+{
+    QFile kickerAction(QStringLiteral(LATTE_SOURCE_DIR "/app/org.kde.latte-dock.kickeractions.desktop.cmake"));
+    QVERIFY(kickerAction.open(QFile::ReadOnly));
+    const QString desktop = QString::fromUtf8(kickerAction.readAll());
+    QVERIFY(desktop.contains(QStringLiteral("Type=Service")));
+    QVERIFY(desktop.contains(QStringLiteral("Actions=addToLatteDock")));
+    QVERIFY(desktop.contains(QStringLiteral("[Desktop Action addToLatteDock]")));
+    QVERIFY(desktop.contains(QStringLiteral("Exec=@CMAKE_INSTALL_PREFIX@/bin/latte-dock-ng-add-launcher %u")));
+    QVERIFY(desktop.contains(QStringLiteral("Name=Add to Latte Dock")));
+    QVERIFY(desktop.contains(QStringLiteral("Name[zh_CN]=添加到 Latte 停靠栏")));
+    QVERIFY(desktop.contains(QStringLiteral("Name[fr]=Ajouter au dock Latte")));
+
+    QFile appCMake(QStringLiteral(LATTE_SOURCE_DIR "/app/CMakeLists.txt"));
+    QVERIFY(appCMake.open(QFile::ReadOnly));
+    const QString cmake = QString::fromUtf8(appCMake.readAll());
+    QVERIFY(cmake.contains(QStringLiteral("add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)")));
+    QVERIFY(cmake.contains(QStringLiteral("target_link_libraries(latte-dock-ng-add-launcher Qt6::Core Qt6::DBus)")));
+    QVERIFY(cmake.contains(QStringLiteral("install(TARGETS latte-dock-ng-add-launcher ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})")));
+    QVERIFY(cmake.contains(QStringLiteral("configure_file(org.kde.latte-dock.kickeractions.desktop.cmake org.kde.latte-dock.kickeractions.desktop)")));
+    QVERIFY(cmake.contains(QStringLiteral("DESTINATION ${KDE_INSTALL_DATADIR}/plasma/kickeractions")));
+    QVERIFY(cmake.contains(QStringLiteral("LATTE_INSTALL_USER_KICKERACTION_EXECUTABLE")));
+    QVERIFY(cmake.contains(QStringLiteral("set(latte_kickeraction_permissions OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)")));
+    QVERIFY(cmake.contains(QStringLiteral("OWNER_EXECUTE")));
+    QVERIFY(cmake.contains(QStringLiteral("GROUP_EXECUTE")));
+    QVERIFY(cmake.contains(QStringLiteral("WORLD_EXECUTE")));
+
+    QFile installScript(QStringLiteral(LATTE_SOURCE_DIR "/install.sh"));
+    QVERIFY(installScript.open(QFile::ReadOnly));
+    const QString installSource = QString::fromUtf8(installScript.readAll());
+    QVERIFY(installSource.contains(QStringLiteral("-DLATTE_INSTALL_USER_KICKERACTION_EXECUTABLE=ON")));
+    QVERIFY(installSource.contains(QStringLiteral("-DLATTE_INSTALL_USER_KICKERACTION_EXECUTABLE=OFF")));
+
+    QFile helperSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/launcherhelper.cpp"));
+    QVERIFY(helperSourceFile.open(QFile::ReadOnly));
+    const QString helperSource = QString::fromUtf8(helperSourceFile.readAll());
+    QVERIFY(helperSource.contains(QStringLiteral("QCoreApplication app(argc, argv);")));
+    QVERIFY(helperSource.contains(QStringLiteral("QStringLiteral(\"addLauncher\")")));
+    QVERIFY(helperSource.contains(QStringLiteral("org.kde.lattedock")));
+    QVERIFY(helperSource.contains(QStringLiteral("/Latte")));
+    QVERIFY(!helperSource.contains(QStringLiteral("QApplication")));
 }
 
 void SourceContractTest::containmentClearsParabolicStateWhenEdgeChanges()
