@@ -34,9 +34,11 @@
 
 // Qt
 #include <QAction>
+#include <QCoreApplication>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
+#include <QGuiApplication>
 #include <QMouseEvent>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -1616,6 +1618,14 @@ bool View::event(QEvent *e)
         bool sinkableevent{false};
 
         switch (e->type()) {
+        case QEvent::Close:
+            if (qApp->property("latte_session_ending").toBool()
+                    || qEnvironmentVariableIntValue("LATTE_SESSION_ENDING") == 1) {
+                qInfo() << "[shutdown] Latte view close requested by compositor; quitting session shell.";
+                QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);
+            }
+            break;
+
         case QEvent::Enter:
             m_containsMouse = true;
             break;

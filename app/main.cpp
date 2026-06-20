@@ -13,6 +13,7 @@
 #include "lattecorona.h"
 #include "layouts/importer.h"
 #include "templates/templatesmanager.h"
+#include "wm/abstractwindowinterface.h"
 
 // C
 #include <csignal>
@@ -23,7 +24,6 @@
 // Qt
 #include <QApplication>
 #include <QDebug>
-#include <QElapsedTimer>
 #include <QQuickWindow>
 #include <QSGRendererInterface>
 #include <QCommandLineParser>
@@ -93,6 +93,7 @@ int main(int argc, char **argv)
     // from the earliest possible point for privileged interface checks.
     QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
     ensureKdeSessionEnvironment();
+    QCoreApplication::setAttribute(Qt::AA_DisableSessionManager);
     QApplication app(argc, argv);
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
 
@@ -331,75 +332,16 @@ int main(int argc, char **argv)
         app.quit();
     });
 
-    //! commitDataRequest: legacy XSMP path (may not fire on pure Wayland).
-    //! When it does fire, treat it the same as SIGTERM — the session IS ending.
-    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, [&app, &markSessionEnding](QSessionManager &sm) {
-        qInfo() << "[shutdown] commitDataRequest received → RestartNever + quit()";
+    //! Match plasmashell: disable Qt session restoration, but do not quit from
+    //! commitDataRequest/saveStateRequest.  Those requests can happen while
+    //! the logout confirmation is still cancellable.
+    auto disableSessionManagement = [](QSessionManager &sm) {
+        qInfo() << "[shutdown] session management disabled → RestartNever.";
         sm.setRestartHint(QSessionManager::RestartNever);
-        QMetaObject::invokeMethod(&app, [&app, &markSessionEnding]() {
-            markSessionEnding();
-            app.quit();
-        }, Qt::QueuedConnection);
-    }, Qt::DirectConnection);
+    };
 
-    //! saveStateRequest: may fire during session checkpointing (not just
-    //! logout), so only set the flag – do NOT call quit().
-    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, [&app, &markSessionEnding](QSessionManager &sm) {
-        qInfo() << "[shutdown] saveStateRequest received → RestartNever (no quit)";
-        sm.setRestartHint(QSessionManager::RestartNever);
-        QMetaObject::invokeMethod(&app, markSessionEnding, Qt::QueuedConnection);
-    }, Qt::DirectConnection);
-
-    //! Polling fallback: on Wayland, ksmserver may not send commitDataRequest.
-    //! Poll isShuttingDown() via DBus with a SHORT timeout (1 s) to avoid
-    //! blocking the main thread during compositor teardown.
-    //!
-    //! Two-phase behaviour:
-    //!   Phase 1 (confirmation dialog): isShuttingDown() = true → set flag, do NOT quit.
-    //!     The user may still cancel the logout at this point.
-    //!   Phase 2 (committed): flag was set ≥ 5 s ago AND isShuttingDown() still true.
-    //!     The confirmation phase has passed; treat this as a committed logout and quit.
-    //!   Cancel: isShuttingDown() = false after flag was set → clear flag.
-    QElapsedTimer flagSetTimer;
-    flagSetTimer.invalidate();
-
-    QTimer sessionShutdownPoll;
-    sessionShutdownPoll.setInterval(500);
-    QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding, &flagSetTimer]() {
-        const bool shuttingDown = isKdeSessionShuttingDown();
-
-        if (app.property("latte_session_ending").toBool()) {
-            if (!shuttingDown) {
-                // User cancelled the logout confirmation.
-                qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
-                app.setProperty("latte_session_ending", false);
-                qunsetenv("LATTE_SESSION_ENDING");
-                flagSetTimer.invalidate();
-                return;
-            }
-
-            // Flag is set and ksmserver still reports shutting down.
-            // If the flag was set ≥ 5 seconds ago, the confirmation phase
-            // has almost certainly passed — treat this as a committed logout
-            // and call quit().  This is the fallback for Wayland sessions
-            // where commitDataRequest never fires.
-            if (flagSetTimer.isValid() && flagSetTimer.hasExpired(5000)) {
-                qInfo() << "[shutdown] session-ending flag active for 5+ s;"
-                        << "commitDataRequest did not fire, triggering quit() from poller.";
-                app.quit();
-            }
-            return;
-        }
-
-        if (shuttingDown) {
-            // Phase 1: logout confirmation dialog is showing.
-            // Set the flag but do NOT quit — user may still cancel.
-            qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
-            markSessionEnding();
-            flagSetTimer.start();
-        }
-    });
-    sessionShutdownPoll.start();
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, disableSessionManagement, Qt::DirectConnection);
+    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, disableSessionManagement, Qt::DirectConnection);
 
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
@@ -576,6 +518,50 @@ int main(int argc, char **argv)
     int result;
     {
         Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
+
+        //! Session shutdown observer.  On Wayland, ksmserver may expose the
+        //! logout confirmation phase only through isShuttingDown().  Use that
+        //! state to prepare the fast teardown path, but never quit from the
+        //! poller because the user can still cancel the confirmation dialog.
+        QTimer sessionShutdownPoll;
+        sessionShutdownPoll.setInterval(500);
+        bool sessionShutdownSawBlockingWindows = false;
+        QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding, &corona, &sessionShutdownSawBlockingWindows]() {
+            const bool shuttingDown = isKdeSessionShuttingDown();
+            const bool hasBlockingWindows = corona.wm()->hasSessionBlockingWindows();
+
+            if (shuttingDown && hasBlockingWindows) {
+                sessionShutdownSawBlockingWindows = true;
+            }
+
+            if (app.property("latte_session_ending").toBool()) {
+                if (!shuttingDown) {
+                    // User cancelled the logout confirmation.
+                    qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
+                    app.setProperty("latte_session_ending", false);
+                    qunsetenv("LATTE_SESSION_ENDING");
+                    sessionShutdownSawBlockingWindows = false;
+                    return;
+                }
+
+                if (sessionShutdownSawBlockingWindows && !hasBlockingWindows) {
+                    qInfo() << "[shutdown] session blocking windows closed; quitting.";
+                    app.quit();
+                    return;
+                }
+
+                return;
+            }
+
+            if (shuttingDown) {
+                // Phase 1: logout confirmation dialog is showing.
+                // Set the flag but do NOT quit — user may still cancel.
+                qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
+                markSessionEnding();
+            }
+        });
+        sessionShutdownPoll.start();
+
         KDBusService service(KDBusService::Unique);
         result = app.exec();
     }
@@ -594,6 +580,12 @@ int main(int argc, char **argv)
     for (int pass = 0; pass < 5; ++pass) {
         QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
     }
+
+    // Destroy the shared engine while QApplication and QtGui globals are
+    // still alive.  Leaving it to static destruction can crash when QQC2
+    // popups owned by the engine tear down after QApplication has gone away.
+    s_sharedEngine.reset();
+
     return result;
 }
 

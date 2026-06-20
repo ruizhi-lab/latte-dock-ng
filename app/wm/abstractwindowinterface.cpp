@@ -132,6 +132,11 @@ Tracker::Windows *AbstractWindowInterface::windowsTracker() const
     return m_windowsTracker;
 }
 
+bool AbstractWindowInterface::hasSessionBlockingWindows() const
+{
+    return false;
+}
+
 bool AbstractWindowInterface::isIgnored(const WindowId &wid) const
 {
     return m_ignoredWindows.contains(wid);

@@ -59,6 +59,7 @@ public:
     WindowId activeWindow() override;
     WindowInfoWrap requestInfo(WindowId wid) override;
     WindowInfoWrap requestInfoActive() override;
+    bool hasSessionBlockingWindows() const override;
     QList<QRect> plasmaPanelGeometries() override;
 
     void skipTaskBar(const QDialog &dialog) override;

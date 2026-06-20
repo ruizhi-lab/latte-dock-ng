@@ -78,6 +78,7 @@ public:
     virtual WindowId activeWindow() = 0;
     virtual WindowInfoWrap requestInfo(WindowId wid) = 0;
     virtual WindowInfoWrap requestInfoActive() = 0;
+    virtual bool hasSessionBlockingWindows() const;
 
     virtual void skipTaskBar(const QDialog &dialog) = 0;
     virtual void slideWindow(QWindow &view, Slide location) = 0;

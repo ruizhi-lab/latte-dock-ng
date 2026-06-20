@@ -730,6 +730,34 @@ WindowInfoWrap WaylandInterface::requestInfo(WindowId wid)
     return winfoWrap;
 }
 
+bool WaylandInterface::hasSessionBlockingWindows() const
+{
+    const auto windows = managedWindows();
+
+    for (const PlasmaWindow *w : windows) {
+        if (!w || !w->isValid()) {
+            continue;
+        }
+
+        if (App::matchesSelfAppId(w->appId())) {
+            continue;
+        }
+
+        if (w->appId() == QLatin1String("org.kde.plasmashell")
+                || w->appId().startsWith(QLatin1String("ksmserver"))) {
+            continue;
+        }
+
+        if (w->skipTaskbar() && w->skipSwitcher()) {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 AppData WaylandInterface::appDataFor(WindowId wid)
 {
     auto window = windowFor(wid);
