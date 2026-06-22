@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QTest>
 
+#include "../app/session/shutdownstate.h"
+
 class SourceContractTest : public QObject
 {
     Q_OBJECT
@@ -19,6 +21,8 @@ private Q_SLOTS:
     void plasmaKickerActionAddsLaunchersToLatteDock();
     void containmentClearsParabolicStateWhenEdgeChanges();
     void launchersRestoreContractMovedToQmlSmokeTest();
+    void sessionShutdownQuitDecisionMatrix_data();
+    void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
@@ -201,6 +205,31 @@ void SourceContractTest::launchersRestoreContractMovedToQmlSmokeTest()
     QVERIFY(!sourceContractSource.contains(oldSourceLock));
 }
 
+void SourceContractTest::sessionShutdownQuitDecisionMatrix_data()
+{
+    QTest::addColumn<bool>("sawBlockingWindows");
+    QTest::addColumn<bool>("shutdownServiceActive");
+    QTest::addColumn<bool>("hasBlockingWindows");
+    QTest::addColumn<bool>("shouldQuit");
+
+    QTest::newRow("initial-confirmation-cancellable") << false << false << false << false;
+    QTest::newRow("sleep-lock-or-idle-session") << false << false << true << false;
+    QTest::newRow("ordinary-window-still-blocking") << true << true << true << false;
+    QTest::newRow("ordinary-window-cancelled-close") << true << false << true << false;
+    QTest::newRow("ordinary-window-closed-after-commit") << true << true << false << true;
+    QTest::newRow("no-ordinary-windows-after-commit") << false << true << false << true;
+}
+
+void SourceContractTest::sessionShutdownQuitDecisionMatrix()
+{
+    QFETCH(bool, sawBlockingWindows);
+    QFETCH(bool, shutdownServiceActive);
+    QFETCH(bool, hasBlockingWindows);
+    QFETCH(bool, shouldQuit);
+
+    QCOMPARE(Latte::Session::shouldQuitForCommittedShutdown(sawBlockingWindows, shutdownServiceActive, hasBlockingWindows), shouldQuit);
+}
+
 void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
 {
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
@@ -214,6 +243,7 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(mainSource.contains(QStringLiteral("QCoreApplication::setQuitLockEnabled(false);")));
     QVERIFY(mainSource.contains(QStringLiteral("qputenv(\"LATTE_SESSION_ENDING\", \"1\");")));
     QVERIFY(mainSource.contains(QStringLiteral("app.setProperty(\"latte_session_ending\", true);")));
+    QVERIFY(mainSource.contains(QStringLiteral("#include \"session/shutdownstate.h\"")));
     QVERIFY(mainSource.contains(QStringLiteral("inline bool isPlasmaShutdownServiceActive();")));
     QVERIFY(mainSource.contains(QStringLiteral("auto disableSessionManagement = [](QSessionManager &sm)")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::commitDataRequest")));
@@ -267,10 +297,9 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(pollerBody.contains(QStringLiteral("const bool shutdownServiceActive = isPlasmaShutdownServiceActive();")));
     QVERIFY(pollerBody.contains(QStringLiteral("sessionShutdownSawBlockingWindows = true;")));
     QVERIFY(pollerBody.contains(QStringLiteral("if (app.property(\"latte_session_ending\").toBool()")));
-    QVERIFY(pollerBody.contains(QStringLiteral("(sessionShutdownSawBlockingWindows || shutdownServiceActive) && !hasBlockingWindows")));
+    QVERIFY(pollerBody.contains(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")));
     QVERIFY(pollerBody.contains(QStringLiteral("app.quit();")));
-    QVERIFY(pollerBody.indexOf(QStringLiteral("(sessionShutdownSawBlockingWindows || shutdownServiceActive) && !hasBlockingWindows")) < pollerBody.indexOf(QStringLiteral("app.quit();")));
-    QVERIFY(pollerBody.indexOf(QStringLiteral("!hasBlockingWindows")) < pollerBody.indexOf(QStringLiteral("app.quit();")));
+    QVERIFY(pollerBody.indexOf(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")) < pollerBody.indexOf(QStringLiteral("app.quit();")));
 
     QFile abstractWmHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.h"));
     QVERIFY(abstractWmHeaderFile.open(QFile::ReadOnly));

@@ -12,6 +12,7 @@
 #include "knscompat.h"
 #include "lattecorona.h"
 #include "layouts/importer.h"
+#include "session/shutdownstate.h"
 #include "templates/templatesmanager.h"
 #include "wm/abstractwindowinterface.h"
 
@@ -548,7 +549,7 @@ int main(int argc, char **argv)
                     return;
                 }
 
-                if ((sessionShutdownSawBlockingWindows || shutdownServiceActive) && !hasBlockingWindows) {
+                if (Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)) {
                     qInfo() << "[shutdown] session blocking windows closed; quitting.";
                     app.quit();
                     return;
