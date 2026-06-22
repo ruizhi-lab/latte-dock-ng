@@ -226,6 +226,7 @@ DragDrop.DropArea {
             }
 
             if (typeof root.processMimeData === "function") {
+                latteView.extendedInterface.suppressNextAppletCreatedSignal();
                 root.processMimeData(event.mimeData, eventx, eventy);
             }
             //! inform others what plasmoid was drag n' dropped to be added

@@ -12,6 +12,9 @@
 #include "indicator/indicator.h"
 #include "view.h"
 
+// Qt
+#include <QSet>
+
 namespace Latte {
 
 class ClonedView : public View
@@ -41,6 +44,12 @@ protected:
 
 private Q_SLOTS:
     void initSync();
+    void onCloneAppletInScheduledDestructionChanged(const int &id, const bool &enabled);
+    void onCloneAppletRemoved(const int &id);
+    void onCloneAppletsOrderChanged();
+    void onCloneAppletsInLockedZoomChanged(const QList<int> &clonedapplets);
+    void onCloneAppletsDisabledColoringChanged(const QList<int> &clonedapplets);
+
     void onOriginalAppletConfigPropertyChanged(const int &id, const QString &key, const QVariant &value);
     void onOriginalAppletInScheduledDestructionChanged(const int &id, const bool &enabled);
     void onOriginalAppletRemoved(const int &id);
@@ -53,18 +62,28 @@ private Q_SLOTS:
 
     void updateAppletIdsHash();
 private:
+    bool refreshAppletIdsHash();
     bool isTranslatableToClonesOrder(const QList<int> &originalOrder);
+    bool isTranslatableToOriginalsOrder(const QList<int> &clonedOrder);
 
     bool hasOriginalAppletId(const int &clonedid);
     int originalAppletId(const int &clonedid);
 
     QList<int> translateToClonesOrder(const QList<int> &originalIds);
+    QList<int> translateToOriginalsOrder(const QList<int> &clonedIds);
+    QList<int> orderWithUnmappedAppletsPreserved(const QList<int> &sourceOrder, const QList<int> &targetOrder, const bool toClones);
+    bool structuralSyncReady() const;
+    void debugSyncState(const QString &where) const;
 
 private:
     static QStringList CONTAINMENTMANUALSYNCEDPROPERTIES;
 
     QPointer<Latte::OriginalView> m_originalView;
     QHash<int, int> m_currentAppletIds;
+    QSet<int> m_cloneRemovalsFromOriginal;
+    bool m_cloneInitialized{false};
+    bool m_originalInitialized{false};
+    bool m_syncingFromOriginal{false};
 };
 
 }

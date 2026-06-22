@@ -15,6 +15,8 @@
 #include <QObject>
 #include <QPointer>
 #include <QQuickItem>
+#include <QSet>
+#include <QStringList>
 #include <QTimer>
 #include <QUrl>
 
@@ -40,6 +42,7 @@ struct AppletInterfaceData
 {
     int id{-1};
     QString plugin;
+    QStringList provides;
     int lastValidIndex{-1};
     Plasma::Applet *applet{nullptr};
     PlasmaQuick::AppletQuickItem *plasmoid{nullptr};
@@ -68,6 +71,7 @@ public:
     bool hasExpandedApplet() const;
     bool hasLatteTasks() const;
     bool hasPlasmaTasks() const;
+    bool isInitialized() const;
 
     bool applicationLauncherInPopup() const;
     bool applicationLauncherHasGlobalShortcut() const;
@@ -121,6 +125,7 @@ public Q_SLOTS:
     Q_INVOKABLE bool removeInternalSeparatorAtRightBoundaryOfApplet(const int appletId);
 
     Q_INVOKABLE void addApplet(const QString &pluginId);
+    Q_INVOKABLE void suppressNextAppletCreatedSignal();
     void addApplet(QObject *metadata, int x, int y);
     void removeApplet(const int &id);
     void setAppletsOrder(const QList<int> &order);
@@ -221,6 +226,9 @@ private:
     QList<int> m_appletsDisabledColoring;
     QHash<int, ViewPart::AppletInterfaceData> m_appletData;
     QTimer m_appletDelayedConfigurationTimer;
+    QSet<int> m_handledRuntimeAppletCreations;
+    int m_suppressedAppletCreations{0};
+    bool m_initializationCompleted{false};
     bool m_cleaningSeparatorApplets{false};
 };
 

@@ -20,6 +20,8 @@ private Q_SLOTS:
     void latteDockDbusExportsLauncherApi();
     void plasmaKickerActionAddsLaunchersToLatteDock();
     void containmentClearsParabolicStateWhenEdgeChanges();
+    void allScreensCloneAppletSyncContracts();
+    void waylandStrutGhostWindowBindsLayerShellScreen();
     void launchersRestoreContractMovedToQmlSmokeTest();
     void sessionShutdownQuitDecisionMatrix_data();
     void sessionShutdownQuitDecisionMatrix();
@@ -186,6 +188,72 @@ void SourceContractTest::containmentClearsParabolicStateWhenEdgeChanges()
     QVERIFY(source.contains(QStringLiteral("function onLocationChanged() {\n            root.resetModernParabolicOffsets();")));
     QVERIFY(source.contains(QStringLiteral("function onFormFactorChanged() {\n            root.resetModernParabolicOffsets();")));
     QVERIFY(source.contains(QStringLiteral("function onShowingAfterRelocationFinished() {\n            root.resetModernParabolicOffsets();")));
+}
+
+void SourceContractTest::allScreensCloneAppletSyncContracts()
+{
+    QFile interfaceHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.h"));
+    QVERIFY(interfaceHeader.open(QFile::ReadOnly));
+    const QString interfaceHeaderSource = QString::fromUtf8(interfaceHeader.readAll());
+    QVERIFY(interfaceHeaderSource.contains(QStringLiteral("Q_INVOKABLE void suppressNextAppletCreatedSignal();")));
+    QVERIFY(interfaceHeaderSource.contains(QStringLiteral("int m_suppressedAppletCreations{0};")));
+    QVERIFY(interfaceHeaderSource.contains(QStringLiteral("bool m_initializationCompleted{false};")));
+    QVERIFY(interfaceHeaderSource.contains(QStringLiteral("bool isInitialized() const;")));
+    QVERIFY(interfaceHeaderSource.contains(QStringLiteral("QStringList provides;")));
+
+    QFile interfaceSource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(interfaceSource.open(QFile::ReadOnly));
+    const QString interfaceCpp = QString::fromUtf8(interfaceSource.readAll());
+    QVERIFY(interfaceCpp.contains(QStringLiteral("suppressNextAppletCreatedSignal();\n    Plasma::Applet *createdApplet = m_view->containment()->createApplet(pluginId);")));
+    QVERIFY(!interfaceCpp.contains(QStringLiteral("Latte::Layouts::Importer::standardPaths();\n    QString pluginpath;")));
+    QVERIFY(interfaceCpp.contains(QStringLiteral("Q_EMIT appletCreated(currentPluginId);")));
+    QVERIFY(interfaceCpp.contains(QStringLiteral("if (!ai) {\n        return nullptr;\n    }")));
+
+    const int trackAllAppletsComment = interfaceCpp.indexOf(QStringLiteral("//! Track all applets, for example to support syncing between different docks"));
+    const int trackAllAppletsData = interfaceCpp.indexOf(QStringLiteral("ViewPart::AppletInterfaceData data;"), trackAllAppletsComment);
+    const int previousAiOnlyBlock = interfaceCpp.lastIndexOf(QStringLiteral("if (ai) {"), trackAllAppletsData);
+    QVERIFY(trackAllAppletsComment >= 0);
+    QVERIFY(trackAllAppletsData > trackAllAppletsComment);
+    QVERIFY(previousAiOnlyBlock < trackAllAppletsComment);
+
+    QFile dragDropArea(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/DragDropArea.qml"));
+    QVERIFY(dragDropArea.open(QFile::ReadOnly));
+    const QString dragDropSource = QString::fromUtf8(dragDropArea.readAll());
+    const int suppressSync = dragDropSource.indexOf(QStringLiteral("latteView.extendedInterface.suppressNextAppletCreatedSignal();"));
+    const int droppedSync = dragDropSource.indexOf(QStringLiteral("latteView.extendedInterface.appletDropped(event.mimeData, eventx, eventy);"), suppressSync);
+    QVERIFY(suppressSync >= 0);
+    QVERIFY(droppedSync > suppressSync);
+
+    QFile clonedView(QStringLiteral(LATTE_SOURCE_DIR "/app/view/clonedview.cpp"));
+    QVERIFY(clonedView.open(QFile::ReadOnly));
+    const QString clonedViewSource = QString::fromUtf8(clonedView.readAll());
+    QVERIFY(clonedViewSource.contains(QStringLiteral("onCloneAppletRemoved")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("onCloneAppletsOrderChanged")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("translateToOriginalsOrder")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("orderWithUnmappedAppletsPreserved")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("structuralSyncReady")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("bool ClonedView::refreshAppletIdsHash()")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("if (refreshAppletIdsHash()) {\n            onOriginalAppletsOrderChanged();\n        }")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("extendedInterface()->addApplet(pluginId);\n        m_syncingFromOriginal = false;\n        onOriginalAppletsOrderChanged();")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("m_originalView->addApplet(data, x, y, containment()->id());\n        onCloneAppletsOrderChanged();")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("extendedInterface()->addApplet(data, x, y);\n        m_syncingFromOriginal = false;\n        onOriginalAppletsOrderChanged();")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("data.provides.contains(QLatin1String(Latte::PluginId::kLauncherMenu))")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("m_cloneRemovalsFromOriginal")));
+}
+
+void SourceContractTest::waylandStrutGhostWindowBindsLayerShellScreen()
+{
+    QFile waylandSource(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(waylandSource.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(waylandSource.readAll());
+
+    const int qwindowScreen = source.indexOf(QStringLiteral("setScreen(screen);"));
+    const int layerWindow = source.indexOf(QStringLiteral("auto *layerWindow = LayerShellQt::Window::get(this);"), qwindowScreen);
+    const int layerScreen = source.indexOf(QStringLiteral("layerWindow->setScreen(screen);"), layerWindow);
+
+    QVERIFY(qwindowScreen >= 0);
+    QVERIFY(layerWindow > qwindowScreen);
+    QVERIFY(layerScreen > layerWindow);
 }
 
 void SourceContractTest::launchersRestoreContractMovedToQmlSmokeTest()
