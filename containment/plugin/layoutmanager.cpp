@@ -288,12 +288,27 @@ QList<int> LayoutManager::appletsInScheduledDestruction() const
 void LayoutManager::setAppletInScheduledDestruction(const int &id, const bool &enabled)
 {
     if (m_appletsInScheduledDestruction.contains(id) && !enabled) {
+        // Undo: re-show the item that was hidden when destruction was
+        // scheduled (both the local hideAppletItem and the synced hide
+        // from setAppletInScheduledDestruction(id, true)).
+        if (auto *item = m_appletsInScheduledDestruction.value(id)) {
+            item->setVisible(true);
+        }
         m_appletsInScheduledDestruction.remove(id);
         forgetAppletRemovalIndex(id);
         Q_EMIT appletsInScheduledDestructionChanged();
     } else if (!m_appletsInScheduledDestruction.contains(id) && enabled) {
         rememberAppletRemovalIndex(id);
-        m_appletsInScheduledDestruction[id] = appletItem(id);
+        QQuickItem *item = appletItem(id);
+        m_appletsInScheduledDestruction[id] = item;
+        // Immediately hide the item so that the widget disappears on
+        // ALL screens when the user removes it from any one screen.
+        // Without this, a clone (secondary screen) still shows the
+        // widget at full size until the Plasma undo timeout expires,
+        // and subsequent order syncs can re-position it to the end.
+        if (item) {
+            item->setVisible(false);
+        }
         Q_EMIT appletsInScheduledDestructionChanged();
     }
 }
@@ -1835,6 +1850,31 @@ void LayoutManager::repairAppletContainers()
 
         if (id <= 0) {
             continue;
+        }
+
+        // Never repair applets that are being destroyed (e.g. during
+        // the Plasma undo-notification timeout).  Re-creating a UI
+        // container for a dying applet places it at the default
+        // insertion position — making it appear to jump to the end
+        // of the dock on secondary screens when the user removes it
+        // from the primary screen.
+        if (m_appletsInScheduledDestruction.contains(id)) {
+            continue;
+        }
+
+        // Additionally guard against applets whose container was
+        // already removed by destroyAppletContainer() but whose
+        // Plasma::Applet is still alive (destroyed() == true).
+        {
+            Plasma::Applet *backendApplet = nullptr;
+            if (auto *quickItem = qobject_cast<PlasmaQuick::AppletQuickItem *>(applet)) {
+                backendApplet = quickItem->applet();
+            } else if (auto *directApplet = qobject_cast<Plasma::Applet *>(applet)) {
+                backendApplet = directApplet;
+            }
+            if (backendApplet && backendApplet->destroyed()) {
+                continue;
+            }
         }
 
         if (QQuickItem *existingItem = appletItem(id)) {

@@ -403,21 +403,34 @@ QList<int> ClonedView::orderWithUnmappedAppletsPreserved(const QList<int> &sourc
         return {};
     }
 
-    QList<int> result = targetOrder;
+    // Build the result by walking the target order.  Mapped applets that
+    // still exist in the source are placed according to the source order;
+    // mapped applets that were REMOVED from the source are dropped (they
+    // will be destroyed by the removal sync separately).  Unmapped items
+    // (e.g. internal separators) keep their original positions.  Any
+    // remaining translated items are appended — this handles newly added
+    // applets that don't yet appear in the target order.
+    QList<int> result;
     int translatedIndex{0};
 
-    for (int i=0; i<result.count() && translatedIndex<translated.count(); ++i) {
-        const int targetId = result[i];
+    for (int i = 0; i < targetOrder.count(); ++i) {
+        const int targetId = targetOrder[i];
         const bool mappedTarget = toClones ? hasOriginalAppletId(targetId) : m_currentAppletIds.contains(targetId);
 
         if (!mappedTarget) {
-            continue;
+            // Unmapped: keep it in place (e.g. internal separators).
+            result << targetId;
+        } else if (translatedIndex < translated.count()) {
+            // Mapped and there is a translated source entry: adopt the
+            // source's ordering.
+            result << translated[translatedIndex];
+            ++translatedIndex;
         }
-
-        result[i] = translated[translatedIndex];
-        ++translatedIndex;
+        // Mapped but no translated source entry: the applet was removed
+        // on the source side — drop it from the result.
     }
 
+    // Append any remaining translated entries (newly added applets).
     while (translatedIndex < translated.count()) {
         result << translated[translatedIndex];
         ++translatedIndex;
@@ -504,7 +517,9 @@ void ClonedView::onOriginalAppletRemoved(const int &id)
 
     const int clonedid = m_currentAppletIds[id];
     m_cloneRemovalsFromOriginal.insert(clonedid);
+    m_syncingFromOriginal = true;
     extendedInterface()->removeApplet(clonedid);
+    m_syncingFromOriginal = false;
     m_currentAppletIds.remove(id);
 }
 
