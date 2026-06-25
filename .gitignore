@@ -51,6 +51,7 @@ CMakeLists.txt.user*
 .claude/
 AGENTS.md
 openspec/
+.codegraph/
 
 # IDE
 .idea/
