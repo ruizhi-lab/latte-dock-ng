@@ -10,6 +10,9 @@
 #include "../lattecorona.h"
 #include "../layouts/storage.h"
 #include "../view/view.h"
+#include "../view/windowstracker/currentscreentracker.h"
+#include "../view/windowstracker/allscreenstracker.h"
+#include "../wm/tracker/lastactivewindow.h"
 
 // Qt
 #include <QMouseEvent>
@@ -160,13 +163,38 @@ QPoint ContextMenuLayerQuickItem::popUpTopLeft(Plasma::Applet *applet, const QRe
 }
 
 
-void ContextMenuLayerQuickItem::mouseReleaseEvent(QMouseEvent *event)
+bool ContextMenuLayerQuickItem::closeActiveWindowEnabled() const
 {
-    if (!event || !m_latteView) {
+    return m_closeActiveWindowEnabled;
+}
+
+void ContextMenuLayerQuickItem::setCloseActiveWindowEnabled(bool enabled)
+{
+    if (m_closeActiveWindowEnabled == enabled) {
         return;
     }
 
-    event->setAccepted(m_latteView->containment()->containmentActions().contains(Plasma::ContainmentActions::eventToString(event)));
+    m_closeActiveWindowEnabled = enabled;
+    Q_EMIT closeActiveWindowEnabledChanged();
+}
+
+void ContextMenuLayerQuickItem::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!event || !m_latteView || !m_latteView->containment()) {
+        return;
+    }
+
+    const QString trigger = Plasma::ContainmentActions::eventToString(event);
+    Plasma::ContainmentActions *plugin = m_latteView->containment()->containmentActions().value(trigger);
+
+    // Only consume the release event when there is a real plugin with
+    // contextual actions registered for this trigger.  Otherwise let the
+    // event propagate so that lower MouseArea items (e.g. the middle-click
+    // "Close Active Window" handler in EnvironmentActions) can receive it.
+    // Only consume the release event when there is a real plugin with
+    // contextual actions registered for this trigger.  Otherwise let the
+    // event propagate so that lower MouseArea items can receive it.
+    event->setAccepted(plugin && !plugin->contextualActions().isEmpty());
     Q_EMIT menuChanged();
 }
 
@@ -194,6 +222,17 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     Plasma::ContainmentActions *plugin = m_latteView->containment()->containmentActions().value(trigger);
 
     if (!plugin || plugin->contextualActions().isEmpty()) {
+        // Middle-click "Close Active Window" from empty areas.
+        // The EnvironmentActions MouseArea sits below us in z-order and
+        // cannot receive middle-button events that this layer accepts,
+        // so handle this action directly.
+        if (m_closeActiveWindowEnabled && event->button() == Qt::MiddleButton) {
+            auto *tracker = m_latteView->windowsTracker()->currentScreen();
+            if (tracker && tracker->lastActiveWindow()) {
+                tracker->lastActiveWindow()->requestClose();
+            }
+        }
+
         event->setAccepted(false);
         return;
     }

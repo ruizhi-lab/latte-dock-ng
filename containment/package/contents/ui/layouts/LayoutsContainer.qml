@@ -277,6 +277,7 @@ Item{
         id: contextMenuLayer
         anchors.fill: parent
         view: latteView
+        closeActiveWindowEnabled: root.closeActiveWindowEnabled
     }
 
     AppletsContainer {

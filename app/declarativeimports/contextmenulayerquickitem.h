@@ -36,6 +36,7 @@ class ContextMenuLayerQuickItem : public QQuickItem
     Q_OBJECT
     Q_PROPERTY(bool menuIsShown READ menuIsShown NOTIFY menuChanged)
     Q_PROPERTY(QObject *view READ view WRITE setView NOTIFY viewChanged)
+    Q_PROPERTY(bool closeActiveWindowEnabled READ closeActiveWindowEnabled WRITE setCloseActiveWindowEnabled NOTIFY closeActiveWindowEnabledChanged)
 
 public:
     ContextMenuLayerQuickItem(QQuickItem *parent = nullptr);
@@ -46,9 +47,13 @@ public:
 
     bool menuIsShown() const;
 
+    bool closeActiveWindowEnabled() const;
+    void setCloseActiveWindowEnabled(bool enabled);
+
 Q_SIGNALS:
     void menuChanged();
     void viewChanged();
+    void closeActiveWindowEnabledChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -78,6 +83,7 @@ private:
     QQuickItem *m_appletContainsMethodItem{nullptr};
 
     Latte::View *m_latteView{nullptr};
+    bool m_closeActiveWindowEnabled{false};
 
     friend class Latte::View;
 };
