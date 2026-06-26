@@ -2,6 +2,20 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.2.15] - 2026-06-27
+
+### Fixed
+- Fixed systemsettings and other KDE applications crashing on startup due to KNS compat QML import paths leaking into child processes via environment variables. All QML and plugin import paths are now engine-scoped using `addImportPath()` and `addLibraryPath()` instead of `qputenv()`.
+- Fixed `uninstall.sh` to clean up KNS compat QML overrides from both old (`~/.local/lib*/qt6/qml/`) and new private paths during uninstall.
+
+## [v1.2.14] - 2026-06-26
+
+### Fixed
+- Fixed middle-click close active window not working on empty dock areas.
+- Fixed scroll-down minimize not working for ScrollToggleMinimized action.
+- Fixed auto-pin when dragging non-pinned tasks into launcher area.
+- Fixed drag-and-drop icon reordering stability and visual feedback.
+
 ## [v1.2.13] - 2026-06-26
 
 ### Fixed
