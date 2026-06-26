@@ -159,6 +159,56 @@ Item {
         dragParabolicItem = null;
     }
 
+    // Find the visible child nearest to (x,y) inside `container`, excluding
+    // `excludeItem`. Used as a fallback when childAtPos returns null because
+    // the pointer is in a gap between two delegates.
+    // Recursively collect all TaskItem descendants from a container item.
+    function collectTaskDescendants(item, excludeItem, result) {
+        if (!item || !item.children) {
+            return;
+        }
+        for (var i = 0; i < item.children.length; ++i) {
+            var child = item.children[i];
+            if (!child || child === excludeItem || child.visible === false) {
+                continue;
+            }
+            if (child.objectName === "TaskItem") {
+                result.push(child);
+            }
+            // Recurse into non-TaskItem children (they may contain TaskItems)
+            if (child.objectName !== "TaskItem" && child.children && child.children.length > 0) {
+                collectTaskDescendants(child, excludeItem, result);
+            }
+        }
+    }
+
+    // Find the visible TaskItem child (or descendant) nearest to (x,y),
+    // excluding `excludeItem`.
+    function nearestChildInContainer(container, x, y, excludeItem) {
+        var bestItem = null;
+        var bestDistSq = Number.POSITIVE_INFINITY;
+
+        // Collect all TaskItem descendants (not just direct children)
+        var candidates = [];
+        collectTaskDescendants(container, excludeItem, candidates);
+
+        for (var i = 0; i < candidates.length; ++i) {
+            var child = candidates[i];
+            var cx = child.x + child.width / 2;
+            var cy = child.y + child.height / 2;
+            var dx = x - cx;
+            var dy = y - cy;
+            var distSq = dx * dx + dy * dy;
+
+            if (distSq < bestDistSq) {
+                bestDistSq = distSq;
+                bestItem = child;
+            }
+        }
+
+        return bestItem;
+    }
+
     // Public entry point used by task delegates while dragging. Keep this on
     // the MouseHandler root item so callers can reliably access it.
     function reorderFromDragPosition(sourceItem, rootX, rootY) {
@@ -172,40 +222,34 @@ Item {
 
         var eventToTarget = mapToItem(target, rootX, rootY);
         var above = target.childAtPos(eventToTarget.x, eventToTarget.y, sourceItem);
+
+        // When the pointer lands in a gap between two delegates childAtPos
+        // returns null. Find the nearest visible child instead so the
+        // placeholder indicator tracks the correct insertion slot.
+        if (!above) {
+            above = nearestChildInContainer(target, eventToTarget.x, eventToTarget.y, sourceItem);
+        }
+
         updateDragParabolic(above, rootX, rootY);
         var insertAt = TaskTools.insertIndexAt(above, eventToTarget.x, eventToTarget.y);
+
+        // insertIndexAt defaults to "before" (above.itemIndex). Determine
+        // whether to insert before or after based on mouse position relative
+        // to the found item's center. This is needed both for gap fallback
+        // and for the common case where childAtPos hits an item near its edge.
+        if (above && insertAt >= 0 && insertAt < tasksModel.count) {
+            var mainPos = root.vertical ? eventToTarget.y : eventToTarget.x;
+            var aboveCenter = root.vertical ? (above.y + above.height / 2) : (above.x + above.width / 2);
+            if (mainPos > aboveCenter) {
+                insertAt = Math.min(tasksModel.count - 1, insertAt + 1);
+            }
+        }
 
         if (insertAt < 0 || insertAt >= tasksModel.count) {
             return;
         }
 
         if (sourceItem === above || sourceItem.itemIndex === insertAt) {
-            return;
-        }
-
-        var sourceIsLauncher = isLauncherTask(sourceItem);
-        var targetTask = above ? above : (target.childAtIndex ? target.childAtIndex(insertAt) : null);
-        var targetIsLauncher = isLauncherTask(targetTask);
-
-        // Keep pinned launchers inside the launcher area.
-        if (sourceIsLauncher && targetTask && !targetIsLauncher) {
-            return;
-        }
-
-        // Allow dragging a non-pinned running app into launcher area by pinning it first.
-        if (!sourceIsLauncher && targetTask && targetIsLauncher) {
-            var launcherUrl = launcherUrlForTask(sourceItem);
-            if (launcherUrl.length <= 0) {
-                return;
-            }
-
-            if (tasksModel.launcherPosition(launcherUrl) === -1) {
-                appletAbilities.launchers.addLauncher(launcherUrl);
-            }
-
-            schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl);
-            ignoredItem = targetTask;
-            ignoreItemTimer.restart();
             return;
         }
 
@@ -306,11 +350,11 @@ Item {
             inDroppingSeparator = !inMovingTask && isDroppingSeparator(event);
             inDroppingFiles = !inDroppingOnlyLaunchers && event.mimeData.hasUrls;
 
-            /*console.log(" tasks moving task :: " + inMovingTask);
-            console.log(" tasks only launchers :: " + inDroppingOnlyLaunchers);
-            console.log(" tasks separator :: " + inDroppingSeparator);
-            console.log(" tasks only files :: " + inDroppingFiles);
-            console.log(" tasks event accepted :: " + eventIsAccepted);*/
+            /*console.warn(" tasks moving task :: " + inMovingTask);
+            console.warn(" tasks only launchers :: " + inDroppingOnlyLaunchers);
+            console.warn(" tasks separator :: " + inDroppingSeparator);
+            console.warn(" tasks only files :: " + inDroppingFiles);
+            console.warn(" tasks event accepted :: " + eventIsAccepted);*/
 
             if (!eventIsAccepted) {
                 clearDroppingFlags();
@@ -366,9 +410,12 @@ Item {
 
             if (tasksModel.sortMode == TaskManager.TasksModel.SortManual
                     && root.dragSource
-                    && above !== ignoredItem) {
+                    && (above === null || above !== ignoredItem)) {
+                // When above is null the pointer is in a gap between delegates;
+                // always allow reorder so the nearest-child fallback can run.
                 dArea.reorderFromDragPosition(root.dragSource, event.x, event.y);
-            } else if (!root.dragSource && above && hoveredItem != above) {
+            }
+             else if (!root.dragSource && above && hoveredItem != above) {
                 hoveredItem = above;
                 activationTimer.restart();
             } else if (!above) {

@@ -853,7 +853,11 @@ Item {
         return mainPosition < (mainLength / 2) ? layoutsContainer.startLayout : layoutsContainer.endLayout;
     }
 
-    function insertAtSideLayoutEdge(layout) {
+    function insertAtSideLayoutEdge(layout, item) {
+        if (!item) {
+            item = appletItem;
+        }
+
         if (!layout) {
             return false;
         }
@@ -863,30 +867,30 @@ Item {
         if (layout === layoutsContainer.startLayout) {
             for (var i = children.length - 1; i >= 0; --i) {
                 if (children[i].isInternalViewSplitter) {
-                    fastLayoutManager.insertBefore(children[i], appletItem);
+                    fastLayoutManager.insertBefore(children[i], item);
                     return true;
                 }
             }
 
             if (children.length > 0) {
-                fastLayoutManager.insertAfter(children[children.length - 1], appletItem);
+                fastLayoutManager.insertAfter(children[children.length - 1], item);
                 return true;
             }
         } else if (layout === layoutsContainer.endLayout) {
             for (var j = 0; j < children.length; ++j) {
                 if (children[j].isInternalViewSplitter) {
-                    fastLayoutManager.insertAfter(children[j], appletItem);
+                    fastLayoutManager.insertAfter(children[j], item);
                     return true;
                 }
             }
 
             if (children.length > 0) {
-                fastLayoutManager.insertBefore(children[0], appletItem);
+                fastLayoutManager.insertBefore(children[0], item);
                 return true;
             }
         }
 
-        appletItem.parent = layout;
+        item.parent = layout;
         return true;
     }
 
@@ -1058,17 +1062,17 @@ Item {
         var wrapperContainsMouse = choords.x>=0 && choords.y>=0 && choords.x<appletItem.appletWrapper.width && choords.y<appletItem.appletWrapper.height;
         var appletItemContainsMouse = mouse.x>=0 && mouse.y>=0 && mouse.x<width && mouse.y<height;
 
-        //console.log(" APPLET :: " + mouse.x +  " _ " + mouse.y);
-        //console.log(" WRAPPER :: " + choords.x + " _ " + choords.y);
+        //console.warn(" APPLET :: " + mouse.x +  " _ " + mouse.y);
+        //console.warn(" WRAPPER :: " + choords.x + " _ " + choords.y);
 
         var inThicknessNeutralArea = !wrapperContainsMouse && (appletItem.metrics.margin.screenEdge>0);
         var appletNeutralAreaEnabled = !(inThicknessNeutralArea && root.dragActiveWindowEnabled);
 
         if (appletItemContainsMouse && !wrapperContainsMouse && appletNeutralAreaEnabled) {
-            //console.log("PASSED");
+            //console.warn("PASSED");
             latteView.extendedInterface.toggleAppletExpanded(applet.id);
         } else {
-            //console.log("REJECTED");
+            //console.warn("REJECTED");
         }
     }
 
@@ -1347,11 +1351,13 @@ Item {
                 appletItem.sortDragMoved = false;
                 appletItem.resetSortDragHistory();
                 appletItem.thinTooltip.hide(appletItem.tooltipVisualParent);
+                appletItem.opacity = 0.4;
                 appletSortDragPoller.restart();
             } else {
                 appletSortDragPoller.stop();
                 appletItem.finishSortDrag();
                 appletItem.resetSortDragHistory();
+                appletItem.opacity = 1.0;
             }
         }
     }
