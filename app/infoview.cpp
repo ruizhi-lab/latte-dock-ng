@@ -18,6 +18,7 @@
 #include <QQuickItem>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include "knscompat.h"
 #include <QRandomGenerator>
 #include <QScreen>
 
@@ -77,6 +78,11 @@ InfoView::~InfoView()
 void InfoView::init()
 {
     rootContext()->setContextProperty(QStringLiteral("infoWindow"), this);
+
+    const QString knsQmlRoot = knsCompatUserQmlRoot();
+    if (!knsQmlRoot.isEmpty() && !engine()->importPathList().contains(knsQmlRoot)) {
+        engine()->addImportPath(knsQmlRoot);
+    }
 
     KDeclarative::KDeclarative kdeclarative;
     kdeclarative.setDeclarativeEngine(engine());

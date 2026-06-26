@@ -50,6 +50,7 @@
 #include <KDBusService>
 #include <KQuickAddons/QtQuickSettings>
 #include <KWindowSystem>
+#include <QQmlEngine>
 #include <plasmaquick/sharedqmlengine.h>
 
 //! COLORS
@@ -66,7 +67,6 @@ inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv);
 inline void ensureUserLocalQmlImportPaths(int argc, char **argv);
-inline void ensureKnsCompatQmlImportPaths();
 inline void ensureKdeSessionEnvironment();
 inline bool isKdeSessionShuttingDown();
 inline bool isPlasmaShutdownServiceActive();
@@ -125,7 +125,6 @@ int main(int argc, char **argv)
     //! works around the Qt 6.10.3 incompatibility in Kirigami's
     //! DrawerHandle.qml without modifying system files.
     ensureKnsCompat();
-    ensureKnsCompatQmlImportPaths();
 
     app.setWindowIcon(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
     //protect from closing app when changing to "alternative session" and back
@@ -512,6 +511,12 @@ int main(int argc, char **argv)
     std::shared_ptr<PlasmaQuick::SharedQmlEngine> sharedEngine =
         std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);
 
+    // Add KNS compat QML import path to the shared engine (scoped, not env var)
+    const QString knsQmlRoot = knsCompatUserQmlRoot();
+    if (!knsQmlRoot.isEmpty()) {
+        sharedEngine->engine()->addImportPath(knsQmlRoot);
+    }
+
     int result;
     {
         Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
@@ -704,26 +709,6 @@ inline void ensureUserLocalQmlImportPaths(int argc, char **argv)
 
         prependEnvironmentPath("QT_PLUGIN_PATH", candidate);
     }
-}
-
-inline void ensureKnsCompatQmlImportPaths()
-{
-    const QString qmlRoot = knsCompatUserQmlRoot();
-
-    if (qmlRoot.isEmpty()) {
-        return;
-    }
-
-    const QFileInfo info(qmlRoot);
-
-    if (!info.exists() || !info.isDir()) {
-        return;
-    }
-
-    prependEnvironmentPath("QML2_IMPORT_PATH", qmlRoot);
-    prependEnvironmentPath("QML_IMPORT_PATH", qmlRoot);
-    prependEnvironmentPath("QT_QML_IMPORT_PATH", qmlRoot);
-    qDebug() << "KnsCompat: QML import root enabled" << qmlRoot;
 }
 
 inline void configureQtQuickGraphicsPreference()

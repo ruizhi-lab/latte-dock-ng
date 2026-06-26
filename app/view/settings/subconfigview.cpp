@@ -16,6 +16,7 @@
 #include "../../shortcuts/globalshortcuts.h"
 #include "../../shortcuts/shortcutstracker.h"
 #include "../../wm/abstractwindowinterface.h"
+#include "../../knscompat.h"
 
 // KDE
 #include <KLocalizedContext>
@@ -124,6 +125,11 @@ SubConfigView::~SubConfigView()
 void SubConfigView::init()
 {
     qDebug() << validTitle() << " : initialization started...";
+
+    const QString knsQmlRoot = knsCompatUserQmlRoot();
+    if (!knsQmlRoot.isEmpty() && !engine()->importPathList().contains(knsQmlRoot)) {
+        engine()->addImportPath(knsQmlRoot);
+    }
 
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);

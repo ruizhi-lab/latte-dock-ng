@@ -43,6 +43,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlProperty>
+#include "../knscompat.h"
 #include <QQuickItem>
 #include <QSGRendererInterface>
 #include <QMenu>
@@ -241,6 +242,12 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
 
     if (m_corona) {
         connect(m_corona, &Latte::Corona::viewLocationChanged, this, &View::dockLocationChanged);
+    }
+
+    // Add KNS compat QML import path to this view's engine (scoped, not env var).
+    const QString knsQmlRoot = knsCompatUserQmlRoot();
+    if (!knsQmlRoot.isEmpty() && !engine()->importPathList().contains(knsQmlRoot)) {
+        engine()->addImportPath(knsQmlRoot);
     }
 }
 
