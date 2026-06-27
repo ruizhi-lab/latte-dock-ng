@@ -57,6 +57,16 @@ private Q_SLOTS:
     void taskAudioBadgesScaleWithParabolicZoom();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
     void widgetExplorerUsesPlasmaTranslationContexts();
+    void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
+    void contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly();
+    void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
+    void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
+    void systrayGuardsInAppletItemPreventLayoutAndInteractionBreakage();
+    void volumeAndAppMenuPopupSizingUsesLargerMinimumInCompactApplet();
+    void clipboardAndDigitalClockErrorSuppressionInMainCpp();
+    void systemTrayAndPlasmoidActAsAppletInsertionBoundary();
+    void separatorAndSpacerDetectionAndBehaviorInAppletItem();
+    void separatorGuardsAcrossLayoutAndDragDropFiles();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -1193,6 +1203,353 @@ void SourceContractTest::cmakeFindsQtCoreToolsBeforeKdeInstallDirs()
     QVERIFY(qtCoreToolsIndex >= 0);
     QVERIFY(kdeInstallDirsIndex >= 0);
     QVERIFY(qtCoreToolsIndex < kdeInstallDirsIndex);
+}
+
+void SourceContractTest::compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow()
+{
+    QFile appletFile(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
+    QVERIFY(appletFile.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(appletFile.readAll());
+
+    // Both captureNaturalSize and updateNaturalWidth must cap at 5×
+    // maxIconSize to leave room for long date formats (e.g. "Saturday,
+    // June 27, 2026 10:30 AM") that exceed the original 3× cap.
+    QVERIFY(source.contains(QStringLiteral("maxIconSize * 5")));
+
+    // Regression guard: the old 3× cap must not reappear.
+    QVERIFY(!source.contains(QStringLiteral("maxIconSize * 3")));
+
+    // Both sizing functions must still exist.
+    QVERIFY(source.contains(QStringLiteral("function captureNaturalSize()")));
+    QVERIFY(source.contains(QStringLiteral("function updateNaturalWidth()")));
+
+    // The "digitalclock" string must remain — it gates the entire
+    // special-cased slot sizing so only clock widgets are affected.
+    QVERIFY(source.contains(QStringLiteral("digitalclock")));
+
+    // "analogclock" must NOT appear — it was intentionally removed from
+    // the isTextApplet check (commit ad0d2c2e5) because analog clocks are
+    // square clock faces, not text-heavy widgets, and the wide slot
+    // produced extra empty space on both sides.
+    QVERIFY(!source.contains(QStringLiteral("analogclock")));
+
+    // externalAppletDrawsAboveTasks must guard both functions so
+    // internal applets never receive the wider slot treatment.
+    QVERIFY(source.contains(QStringLiteral("externalAppletDrawsAboveTasks")));
+
+    // findDeepImplicitWidth fallback must exist — the digital clock's
+    // compactRepresentation has implicitWidth=0 and relies on child
+    // recursion to discover the actual content width.
+    QVERIFY(source.contains(QStringLiteral("function findDeepImplicitWidth")));
+
+    // The 2 s polling timer must exist to keep the slot width in sync
+    // when clock text content changes (e.g. "1:00" → "12:34").
+    QVERIFY(source.contains(QStringLiteral("naturalWidthPollTimer")));
+
+    // The deferred capture timer must exist to avoid touching the hot
+    // anchoring path for non-clock applets.
+    QVERIFY(source.contains(QStringLiteral("slotSizeCaptureTimer")));
+
+    // The cap must appear inside captureNaturalSize (the first occurrence)
+    // and inside updateNaturalWidth (the second occurrence).
+    const int captureFn = source.indexOf(QStringLiteral("function captureNaturalSize()"));
+    const int updateFn = source.indexOf(QStringLiteral("function updateNaturalWidth()"));
+    const int firstCap = source.indexOf(QStringLiteral("maxIconSize * 5"), captureFn);
+    const int secondCap = source.indexOf(QStringLiteral("maxIconSize * 5"), firstCap + QStringLiteral("maxIconSize * 5").length());
+    QVERIFY(captureFn >= 0);
+    QVERIFY(updateFn > captureFn);
+    QVERIFY(firstCap > captureFn);
+    QVERIFY(firstCap < updateFn);
+    QVERIFY(secondCap > updateFn);
+}
+
+void SourceContractTest::contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly()
+{
+    QFile implFile(QStringLiteral(LATTE_SOURCE_DIR "/app/declarativeimports/contextmenulayerquickitem.cpp"));
+    QVERIFY(implFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(implFile.readAll());
+
+    QFile headerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/declarativeimports/contextmenulayerquickitem.h"));
+    QVERIFY(headerFile.open(QFile::ReadOnly));
+    const QString hdr = QString::fromUtf8(headerFile.readAll());
+
+    // The middle-click close-active-window action must be guarded by both
+    // the Q_PROPERTY toggle and an explicit Qt::MiddleButton check inside
+    // mousePressEvent.  Without the MiddleButton check the handler would
+    // intercept middle clicks even when no plugin is registered (commit
+    // 14c98b9cc).
+    QVERIFY(src.contains(QStringLiteral("m_closeActiveWindowEnabled && event->button() == Qt::MiddleButton")));
+
+    // Middle-click guard must be inside mousePressEvent, not elsewhere.
+    const int mpe = src.indexOf(QStringLiteral("ContextMenuLayerQuickItem::mousePressEvent"));
+    const int midGuard = src.indexOf(QStringLiteral("m_closeActiveWindowEnabled && event->button() == Qt::MiddleButton"));
+    QVERIFY(mpe >= 0);
+    QVERIFY(midGuard > mpe);
+
+    // The close action must call requestClose() on the last active window.
+    const int requestClose = src.indexOf(QStringLiteral("requestClose()"), midGuard);
+    QVERIFY(requestClose > midGuard);
+
+    // Q_PROPERTY declaration must exist so QML can bridge the config value.
+    QVERIFY(hdr.contains(QStringLiteral("Q_PROPERTY(bool closeActiveWindowEnabled")));
+
+    // The C++ setter must exist.
+    QVERIFY(hdr.contains(QStringLiteral("setCloseActiveWindowEnabled")));
+    QVERIFY(src.contains(QStringLiteral("ContextMenuLayerQuickItem::setCloseActiveWindowEnabled")));
+}
+
+void SourceContractTest::mouseHandlerAutoPinOnDragPromotesNonLauncherTasks()
+{
+    QFile mouseHandler(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/MouseHandler.qml"));
+    QVERIFY(mouseHandler.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(mouseHandler.readAll());
+
+    // schedulePromoteToLauncherAndMove must exist — it is the auto-pin
+    // promotion path for non-launcher tasks dragged between pinned
+    // launchers (commit 4386dfd9d).
+    QVERIFY(source.contains(QStringLiteral("function schedulePromoteToLauncherAndMove")));
+
+    // The function must actually be called from drop handling.
+    QVERIFY(source.contains(QStringLiteral("schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl)")));
+
+    // The call site must be inside the drop handler, not orphaned.
+    const int fnDef = source.indexOf(QStringLiteral("function schedulePromoteToLauncherAndMove"));
+    const int callSite = source.indexOf(QStringLiteral("schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl)"));
+    QVERIFY(callSite > fnDef);
+}
+
+void SourceContractTest::scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing()
+{
+    QFile mainQml(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(mainQml.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(mainQml.readAll());
+
+    // The downward scroll handler (scrollDown case) for
+    // ScrollToggleMinimized must check the window state and choose
+    // between un-maximize and minimize, NOT just cycle tasks
+    // (commit a72c7e582).
+    QVERIFY(source.contains(QStringLiteral("ScrollToggleMinimized")));
+
+    // The second ScrollToggleMinimized occurrence is the downward handler.
+    const int first = source.indexOf(QStringLiteral("ScrollToggleMinimized"));
+    const int second = source.indexOf(QStringLiteral("ScrollToggleMinimized"), first + QStringLiteral("ScrollToggleMinimized").length());
+    QVERIFY(first >= 0);
+    QVERIFY(second > first);
+
+    // The downward handler must attempt requestToggleMaximized before
+    // requestToggleMinimized, matching the intended behaviour from
+    // EnvironmentActions.qml.
+    const int downBlock = source.indexOf(QStringLiteral("requestToggleMaximized"), second);
+    const int downMinimize = source.indexOf(QStringLiteral("requestToggleMinimized"), second);
+    QVERIFY(downBlock > second);
+    QVERIFY(downMinimize > downBlock);
+}
+
+void SourceContractTest::systrayGuardsInAppletItemPreventLayoutAndInteractionBreakage()
+{
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(appletItem.readAll());
+
+    // The isSystray property must detect both KDE and Nomad system trays.
+    QVERIFY(src.contains(QStringLiteral("isSystray: pluginName === \"org.kde.plasma.systemtray\" || pluginName === \"org.nomad.systemtray\"")));
+
+    // z-order: systray must NOT be promoted above tasks like other external
+    // applets; the z=1000 path excludes systray.
+    QVERIFY(src.contains(QStringLiteral("externalAppletDrawsAboveTasks && !isSystray")));
+
+    // Colorizing: systray must block latte-side colorization to preserve
+    // the native appearance of tray icons.
+    QVERIFY(src.contains(QStringLiteral("appletBlocksColorizing")));
+    const int colorizingLine = src.indexOf(QStringLiteral("appletBlocksColorizing"));
+    QVERIFY(src.indexOf(QStringLiteral("isSystray"), colorizingLine) > colorizingLine);
+
+    // Fixed slot sizing: systray excluded so it follows its own sizing.
+    QVERIFY(src.contains(QStringLiteral("externalAppletUsesFixedSlotSizing")));
+    const int fixedSlotLine = src.indexOf(QStringLiteral("externalAppletUsesFixedSlotSizing"));
+    QVERIFY(src.indexOf(QStringLiteral("!isSystray"), fixedSlotLine) > fixedSlotLine);
+
+    // Parabolic effect: systray disables parabolic zoom.
+    QVERIFY(src.contains(QStringLiteral("isSystray\n                    || appletItem.isAutoFillApplet")));
+
+    // Wheel events: systray must receive wheel events for volume/brightness
+    // controls; the onWheelScrolled handler returns early for systray.
+    QVERIFY(src.contains(QStringLiteral("if (appletItem.isSystray) {\n                // System tray applets")));
+}
+
+void SourceContractTest::volumeAndAppMenuPopupSizingUsesLargerMinimumInCompactApplet()
+{
+    QFile appletFile(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
+    QVERIFY(appletFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(appletFile.readAll());
+
+    // Volume applet detection must exist.
+    QVERIFY(src.contains(QStringLiteral("function isVolumeApplet()")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.volume\"")));
+
+    // Volume popup minimum width ≥ gridUnit * 27 so controls fit.
+    const int volW = src.indexOf(QStringLiteral("isVolumeApplet()"));
+    const int volMinW = src.indexOf(QStringLiteral("Kirigami.Units.gridUnit * 27"), volW);
+    QVERIFY(volMinW > volW);
+
+    // Volume popup minimum height similarly sized.
+    const int volH = src.indexOf(QStringLiteral("isVolumeApplet()"), volMinW);
+    const int volMinH = src.indexOf(QStringLiteral("Kirigami.Units.gridUnit * 27"), volH);
+    QVERIFY(volMinH > volH);
+
+    // Application menu detection must exist.
+    QVERIFY(src.contains(QStringLiteral("function isApplicationMenuApplet()")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.kicker\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.kickoff\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.kickerdash\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.appmenu\"")));
+
+    // Application menu popup maximum width/height must be Infinity so the
+    // menu can fill the screen.
+    QVERIFY(src.contains(QStringLiteral("return Infinity;")));
+}
+
+void SourceContractTest::clipboardAndDigitalClockErrorSuppressionInMainCpp()
+{
+    QFile mainCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(mainCpp.readAll());
+
+    // Digital clock tooltip TypeError from Plasma framework is harmless
+    // and must be suppressed to keep the log clean.
+    QVERIFY(src.contains(QStringLiteral("digitalclock/Tooltip.qml:40: TypeError")));
+
+    // Clipboard applet QML type mismatch with Plasma 6 framework must be
+    // suppressed — the clipboard still functions despite the warning.
+    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.clipboard")));
+    QVERIFY(src.contains(QStringLiteral("error when loading")));
+
+    // Both suppressions must appear inside the message filter block.
+    const int digitalClockSuppress = src.indexOf(QStringLiteral("digitalclock/Tooltip.qml:40: TypeError"));
+    const int clipboardSuppress = src.indexOf(QStringLiteral("org.kde.plasma.clipboard"));
+    const int filterReturn = src.indexOf(QStringLiteral("//! block warnings from dependencies"), digitalClockSuppress);
+    QVERIFY(digitalClockSuppress > 0);
+    QVERIFY(clipboardSuppress > 0);
+    QVERIFY(filterReturn > digitalClockSuppress);
+    QVERIFY(filterReturn > clipboardSuppress);
+}
+
+void SourceContractTest::systemTrayAndPlasmoidActAsAppletInsertionBoundary()
+{
+    QFile containmentInterfaceCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(containmentInterfaceCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(containmentInterfaceCpp.readAll());
+
+    // System tray (both KDE and Nomad) and latte plasmoid act as insertion
+    // boundaries: newly created applets are inserted before them.
+    QVERIFY(src.contains(QStringLiteral("kSystemTray")));
+    QVERIFY(src.contains(QStringLiteral("\"org.nomad.systemtray\"")));
+    QVERIFY(src.contains(QStringLiteral("kPlasmoid")));
+
+    // All three must be in the same boundary-check block.
+    const int blockStart = src.indexOf(QStringLiteral("kSystemTray"));
+    const int nomadInBlock = src.indexOf(QStringLiteral("\"org.nomad.systemtray\""), blockStart);
+    const int plasmoidInBlock = src.indexOf(QStringLiteral("kPlasmoid"), blockStart);
+    QVERIFY(nomadInBlock > blockStart);
+    QVERIFY(plasmoidInBlock > nomadInBlock);
+
+    // The boundary check must be followed by boundaryIds.insert.
+    const int insertCall = src.indexOf(QStringLiteral("boundaryIds.insert"), plasmoidInBlock);
+    QVERIFY(insertCall > plasmoidInBlock);
+}
+
+void SourceContractTest::separatorAndSpacerDetectionAndBehaviorInAppletItem()
+{
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(appletItem.readAll());
+
+    // isSeparator must recognize both the legacy separator and the latte
+    // separator so that layouts from older Latte versions continue to work.
+    QVERIFY(src.contains(QStringLiteral("isSeparator: pluginName === \"audoban.applet.separator\"\n                               || pluginName === \"org.kde.latte.separator\"")));
+
+    // isSpacer must recognize the latte spacer.
+    QVERIFY(src.contains(QStringLiteral("isSpacer: pluginName === \"org.kde.latte.spacer\"")));
+
+    // isMarginsAreaSeparator must use the Plasma constraint hint; it
+    // identifies separators that live in the margin areas at dock edges.
+    QVERIFY(src.contains(QStringLiteral("isMarginsAreaSeparator: applet")));
+    QVERIFY(src.contains(QStringLiteral("MarginAreasSeparator")));
+
+    // externalAppletDrawsAboveTasks must exclude separators and spacers
+    // so they don't get elevated z-order or text-applet sizing.
+    const int extDrawsAbove = src.indexOf(QStringLiteral("externalAppletDrawsAboveTasks: isExternalPlasmaApplet"));
+    QVERIFY(extDrawsAbove >= 0);
+    const int exclSeparatorInExt = src.indexOf(QStringLiteral("!isSeparator"), extDrawsAbove);
+    const int exclSpacerInExt = src.indexOf(QStringLiteral("!isSpacer"), exclSeparatorInExt);
+    QVERIFY(exclSeparatorInExt > extDrawsAbove);
+    QVERIFY(exclSpacerInExt > exclSeparatorInExt);
+
+    // Applet number badge must not render on separators, margins area
+    // separators, or spacers — they are not user-interactive applets.
+    const int badgeLine = src.indexOf(QStringLiteral("canShowAppletNumberBadge"));
+    QVERIFY(badgeLine >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("!isSeparator"), badgeLine) > badgeLine);
+    QVERIFY(src.indexOf(QStringLiteral("!isMarginsAreaSeparator"), badgeLine) > badgeLine);
+    QVERIFY(src.indexOf(QStringLiteral("!isSpacer"), badgeLine) > badgeLine);
+
+    // latteStyleApplet must resolve the first child for separator and
+    // spacer so that custom indicators operate on the visual item rather
+    // than the bare applet wrapper.
+    QVERIFY(src.contains(QStringLiteral("latteStyleApplet: applet && ((pluginName === \"org.kde.latte.spacer\") || (pluginName === \"org.kde.latte.separator\"))")));
+}
+
+void SourceContractTest::separatorGuardsAcrossLayoutAndDragDropFiles()
+{
+    // Separators during parabolic effect must return length = -1 so the
+    // layout engine can skip them during zoom calculations.
+    {
+        QFile itemWrapper(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ItemWrapper.qml"));
+        QVERIFY(itemWrapper.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(itemWrapper.readAll());
+        QVERIFY(src.contains(QStringLiteral("(isSeparator && appletItem.parabolic.isEnabled)\n                || (isMarginsAreaSeparator && appletItem.parabolic.isEnabled)")));
+        QVERIFY(src.contains(QStringLiteral("return -1;")));
+
+        // localLengthMargins must be 0 for separators/margins separators
+        // so they don't add extra spacing.
+        QVERIFY(src.contains(QStringLiteral("localLengthMargins: isSeparator\n                                     || appletItem.isMarginsAreaSeparator")));
+    }
+
+    // Indicator level must not draw on separators or margins area
+    // separators — they are visual dividers, not hoverable items.
+    {
+        QFile indicatorLevel(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/IndicatorLevel.qml"));
+        QVERIFY(indicatorLevel.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(indicatorLevel.readAll());
+        QVERIFY(src.contains(QStringLiteral("isDrawn: !appletItem.isSeparator\n                   && !appletItem.isMarginsAreaSeparator")));
+    }
+
+    // Drag-and-drop must detect separators from both the legacy and latte
+    // plugin IDs so that dragged applets can correctly detect gaps.
+    {
+        QFile dragDropArea(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/DragDropArea.qml"));
+        QVERIFY(dragDropArea.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(dragDropArea.readAll());
+        QVERIFY(src.contains(QStringLiteral("\"audoban.applet.separator\"")));
+        QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
+    }
+
+    // Parabolic area signal acceptance must skip separators and margins
+    // area separators so they don't consume or block parabolic zoom.
+    {
+        QFile parabolicArea(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ParabolicArea.qml"));
+        QVERIFY(parabolicArea.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(parabolicArea.readAll());
+        QVERIFY(src.contains(QStringLiteral("!appletItem.isSeparator && !appletItem.isMarginsAreaSeparator")));
+    }
+
+    // Hidden spacer must return 0 length for separators.
+    {
+        QFile hiddenSpacer(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/HiddenSpacer.qml"));
+        QVERIFY(hiddenSpacer.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(hiddenSpacer.readAll());
+        QVERIFY(src.contains(QStringLiteral("if (isSeparator || !communicator.requires.lengthMarginsEnabled) {\n            return 0;")));
+    }
 }
 
 QTEST_MAIN(SourceContractTest)
