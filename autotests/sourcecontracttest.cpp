@@ -1253,6 +1253,13 @@ void SourceContractTest::compactAppletDigitalClockWidthCapPreventsLongDateFormat
     // anchoring path for non-clock applets.
     QVERIFY(source.contains(QStringLiteral("slotSizeCaptureTimer")));
 
+    // An immediate signal-driven update must supplement the polling timer
+    // so that the slot width shrinks immediately when the user switches
+    // from long to short date format (e.g. in clock settings).
+    QVERIFY(source.contains(QStringLiteral("onImplicitWidthChanged")));
+    QVERIFY(source.contains(QStringLiteral("onChildrenRectChanged")));
+    QVERIFY(source.contains(QStringLiteral("updateNaturalWidth();")));
+
     // The cap must appear inside captureNaturalSize (the first occurrence)
     // and inside updateNaturalWidth (the second occurrence).
     const int captureFn = source.indexOf(QStringLiteral("function captureNaturalSize()"));

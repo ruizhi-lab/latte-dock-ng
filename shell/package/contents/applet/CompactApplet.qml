@@ -297,7 +297,18 @@ PlasmaCore.ToolTipArea {
         }
     }
 
-    // Keep the slot width in sync when clock text changes (e.g. "1:00" → "12:34").
+    // Keep the slot width in sync when clock text changes (e.g. "1:00" → "12:34"),
+    // or when the user switches between long and short date formats.
+    // React to implicit width changes on the compact representation and its
+    // children so resizes are applied immediately instead of waiting for the
+    // next poll cycle.
+    Connections {
+        target: compactRepresentation
+        enabled: compactRepresentation && naturalWidthPollTimer.running
+        function onImplicitWidthChanged() { updateNaturalWidth(); }
+        function onChildrenRectChanged() { updateNaturalWidth(); }
+    }
+
     Timer {
         id: naturalWidthPollTimer
         interval: 2000
