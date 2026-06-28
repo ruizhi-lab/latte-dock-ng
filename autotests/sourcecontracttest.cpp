@@ -68,6 +68,20 @@ private Q_SLOTS:
     void separatorAndSpacerDetectionAndBehaviorInAppletItem();
     void separatorGuardsAcrossLayoutAndDragDropFiles();
     void myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined();
+    void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
+    void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
+    void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
+    void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
+    void containmentInterfaceHasSeparatorPluginConstantsAndHelper();
+    void appletsModelHasNoPersonalDataAppletList();
+    void lattePackageShellPluginNameBranchingIsCorrect();
+    void indicatorPlasmaTypeIsRemappedToDefault();
+    void mainCppMessageSuppressionCoversFrameworkWarnings();
+    void appletItemInternalViewSplitterAndSortDragGuards();
+    void appletItemFallbackTrackedWindowsAndConstraintHints();
+    void plasmoidLaunchersAndDragDropHavePluginDetectionGuards();
+    void containmentMainQmlHasPlasmoidWheelBypassGuards();
+    void compactAppletFallbackSizingAndMinimumDimensionGuards();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -1589,6 +1603,226 @@ void SourceContractTest::myViewClientIntPropertiesUseSafeIntGuardAgainstUndefine
     QVERIFY(!src.contains(QStringLiteral("alignment: ref.myView.alignment")));
     QVERIFY(!src.contains(QStringLiteral("itemsAlignment: ref.myView.itemsAlignment")));
     QVERIFY(!src.contains(QStringLiteral("visibilityMode: ref.myView.visibilityMode")));
+}
+
+void SourceContractTest::indicatorFactoryExcludesBuiltinPluginsFromCustomLists()
+{
+    QFile factoryCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/indicator/factory.cpp"));
+    QVERIFY(factoryCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(factoryCpp.readAll());
+
+    // Built-in indicators must be excluded from custom-plugin lists so
+    // the user-facing "custom indicators" UI only shows user-installed ones.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.default\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasma\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmatabstyle\"")));
+
+    // isCustomType must blacklist the same three plugin IDs.
+    QVERIFY(src.contains(QStringLiteral("isCustomType")));
+}
+
+void SourceContractTest::waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist()
+{
+    QFile waylandCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(waylandCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(waylandCpp.readAll());
+
+    // isAcceptableWindow must whitelist yakuake and krunner by app ID
+    // so they remain tracked even when both skipTaskbar and skipSwitcher are set.
+    QVERIFY(src.contains(QStringLiteral("yakuake")));
+    QVERIFY(src.contains(QStringLiteral("krunner")));
+
+    // Plasmashell windows must be handled specially: sidepanels are
+    // whitelisted, panel/fullscreen windows are ignored.
+    QVERIFY(src.contains(QStringLiteral("org.kde.plasmashell")));
+}
+
+void SourceContractTest::genericLayoutReassertsDefaultContextMenuOnContainmentWiring()
+{
+    QFile layoutCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(layoutCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(layoutCpp.readAll());
+
+    // Every containment wiring must reassert the default right-click
+    // context menu action so it is never accidentally lost.
+    QVERIFY(src.contains(QStringLiteral("org.kde.latte.contextmenu")));
+    QVERIFY(src.contains(QStringLiteral("RightButton;NoModifier")));
+}
+
+void SourceContractTest::layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets()
+{
+    QFile managerCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/manager.cpp"));
+    QVERIFY(managerCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(managerCpp.readAll());
+
+    // Startup cleanup must remove the legacy org.kde.contextmenu action group.
+    QVERIFY(src.contains(QStringLiteral("org.kde.contextmenu")));
+
+    // Startup cleanup must remove ghost desktop containments.
+    QVERIFY(src.contains(QStringLiteral("kDesktopContainment")));
+
+    // Legacy "Default Dock" migration must detect analog clock applets
+    // by their clashing plugin IDs and remove them.
+    QVERIFY(src.contains(QStringLiteral("kAnalogClock")));
+}
+
+void SourceContractTest::containmentInterfaceHasSeparatorPluginConstantsAndHelper()
+{
+    QFile interfaceCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(interfaceCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(interfaceCpp.readAll());
+
+    // The anonymous-namespace separator constants must recognise both
+    // the latte separator and the legacy audoban separator.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
+    QVERIFY(src.contains(QStringLiteral("\"audoban.applet.separator\"")));
+
+    // The internal view splitter plugin ID must be defined.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.splitter\"")));
+}
+
+void SourceContractTest::appletsModelHasNoPersonalDataAppletList()
+{
+    QFile modelCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/exporttemplatedialog/appletsmodel.cpp"));
+    QVERIFY(modelCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(modelCpp.readAll());
+
+    // The export-template dialog must pre-select applets that contain
+    // no personal data so users can share layouts safely.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.spacer\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmoid\"")));
+}
+
+void SourceContractTest::lattePackageShellPluginNameBranchingIsCorrect()
+{
+    QFile packageCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/package/lattepackage.cpp"));
+    QVERIFY(packageCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(packageCpp.readAll());
+
+    // The shell plugin name must gate fallback package assignment so
+    // the latte shell package inherits from the correct fallback.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.shell\"")));
+}
+
+void SourceContractTest::indicatorPlasmaTypeIsRemappedToDefault()
+{
+    QFile indicatorCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/view/indicator/indicator.cpp"));
+    QVERIFY(indicatorCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(indicatorCpp.readAll());
+
+    // The "org.kde.latte.plasma" indicator type must be transparently
+    // remapped to "org.kde.latte.default" for backwards compatibility.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.default\"")));
+    QVERIFY(src.contains(QStringLiteral("kPlasmaIndicator")));
+}
+
+void SourceContractTest::mainCppMessageSuppressionCoversFrameworkWarnings()
+{
+    QFile mainCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(mainCpp.readAll());
+
+    // The framework warning filter must suppress:
+    // - PlasmaQuick::Dialog and DeclarativeDropArea/DragArea member overrides
+    QVERIFY(src.contains(QStringLiteral("PlasmaQuick::Dialog")));
+    QVERIFY(src.contains(QStringLiteral("DeclarativeDropArea")));
+    QVERIFY(src.contains(QStringLiteral("DeclarativeDragArea")));
+    // - QFont setPointSizeF warnings
+    QVERIFY(src.contains(QStringLiteral("setPointSizeF")));
+    // - DBus notification/job registration failures (expected in latte's context)
+    QVERIFY(src.contains(QStringLiteral("Failed to register Notification")));
+    QVERIFY(src.contains(QStringLiteral("Failed to register JobViewServer")));
+    // - ToolTipDialog location warning
+    QVERIFY(src.contains(QStringLiteral("ToolTipDialog: location")));
+}
+
+void SourceContractTest::appletItemInternalViewSplitterAndSortDragGuards()
+{
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(appletItem.readAll());
+
+    // isInternalViewSplitter must force width/height to 0.
+    QVERIFY(src.contains(QStringLiteral("isInternalViewSplitter ? 0")));
+
+    // pluginName must return org.kde.latte.splitter for internal splitters.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.splitter\"")));
+
+    // isSortDragging must elevate z to 1600.
+    QVERIFY(src.contains(QStringLiteral("isSortDragging ? 1600")));
+
+    // isExpandedIndicatorActive must exclude activeWindowControl and appmenu.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.activeWindowControl\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.appmenu\"")));
+}
+
+void SourceContractTest::appletItemFallbackTrackedWindowsAndConstraintHints()
+{
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(appletItem.readAll());
+
+    // fallbackTrackedWindowAppIdsByPlugin must map trash and folder
+    // applets to Dolphin so window tracking works correctly.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.trash\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.folder\"")));
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.dolphin\"")));
+
+    // canFillThickness must use the Plasma constraintHints bitflag.
+    QVERIFY(src.contains(QStringLiteral("canFillThickness")));
+    QVERIFY(src.contains(QStringLiteral("constraintHints")));
+    QVERIFY(src.contains(QStringLiteral("CanFillArea")));
+
+    // canFillScreenEdge must exist.
+    QVERIFY(src.contains(QStringLiteral("canFillScreenEdge")));
+
+    // isRequestingFill must bail out for modern dock style with indexer.
+    QVERIFY(src.contains(QStringLiteral("isModernDockStyle && indexerIsSupported")));
+}
+
+void SourceContractTest::plasmoidLaunchersAndDragDropHavePluginDetectionGuards()
+{
+    // Launchers.qml must detect latte-internal separators by URL pattern.
+    {
+        QFile lncFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+        QVERIFY(lncFile.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(lncFile.readAll());
+        QVERIFY(src.contains(QStringLiteral("latte-separator")));
+    }
+
+    // DragDropArea must detect the latte plasmoid and latte tasks.
+    {
+        QFile dragQml(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/DragDropArea.qml"));
+        QVERIFY(dragQml.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(dragQml.readAll());
+        QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmoid\"")));
+    }
+}
+
+void SourceContractTest::containmentMainQmlHasPlasmoidWheelBypassGuards()
+{
+    QFile mainQml(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(mainQml.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(mainQml.readAll());
+
+    // Wheel event activation must target the Tasks plasmoid specifically.
+    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmoid\"")));
+}
+
+void SourceContractTest::compactAppletFallbackSizingAndMinimumDimensionGuards()
+{
+    QFile caFile(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
+    QVERIFY(caFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(caFile.readAll());
+
+    // representationPreferredWidth must fall back to implicitWidth,
+    // then to a hardcoded icon-based minimum.
+    QVERIFY(src.contains(QStringLiteral("Kirigami.Units.iconSizes.sizeForLabels")));
+
+    // Popup menu minimum dimensions must be capped at gridUnit * 18
+    // for resizable applet popups.
+    QVERIFY(src.contains(QStringLiteral("Kirigami.Units.gridUnit * 18")));
 }
 
 QTEST_MAIN(SourceContractTest)
