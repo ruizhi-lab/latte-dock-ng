@@ -1369,6 +1369,11 @@ PlasmoidItem {
     }
 
     Component.onCompleted:  {
+        console.log("latte-diag: plasmoid main.qml loaded, LatteCore="
+                    + (typeof LatteCore !== "undefined" ? "OK" : "MISSING")
+                    + " LatteComponents=" + (typeof LatteComponents !== "undefined" ? "OK" : "MISSING")
+                    + " LatteTasks=" + (typeof LatteTasks !== "undefined" ? "OK" : "MISSING"));
+
         root.activateWindowView.connect(backend.activateWindowView);
         root.windowsHovered.connect(backend.windowsHovered);
         updateListViewParent();

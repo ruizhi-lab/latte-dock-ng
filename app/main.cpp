@@ -635,16 +635,20 @@ void addLatteQmlImportPaths(QQmlEngine *engine)
     }
 
     const QStringList currentPaths = engine->importPathList();
+    qDebug() << "latte-diag: addLatteQmlImportPaths engine=" << engine
+             << "currentPaths=" << currentPaths;
 
     for (const QString &path : s_userLocalQmlPaths) {
         if (!currentPaths.contains(path)) {
             engine->addImportPath(path);
+            qDebug() << "latte-diag:   added user-local path:" << path;
         }
     }
 
     const QString knsRoot = knsCompatUserQmlRoot();
     if (!knsRoot.isEmpty() && !currentPaths.contains(knsRoot)) {
         engine->addImportPath(knsRoot);
+        qDebug() << "latte-diag:   added KNS compat path:" << knsRoot;
     }
 }
 

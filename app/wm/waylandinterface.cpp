@@ -30,7 +30,9 @@
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 #include <KWayland/Client/plasmavirtualdesktop.h>
+#ifdef HAS_LAYERSHELL
 #include <LayerShellQt/window.h>
+#endif
 
 
 using namespace KWayland::Client;
@@ -162,27 +164,20 @@ public:
     //! In Plasma 6, PanelBehavior is deprecated and ignored by KWin.
     //! Struts must be set via zwlr_layer_shell_v1 exclusive_zone.
     void configure(Plasma::Types::Location location, const QRect &rect, QScreen *screen) {
-        using Anchor = LayerShellQt::Window::Anchor;
-
         //! Associate the ghost window with the correct screen before LayerShell setup.
-        //! Without this, the compositor may attach the layer surface to the wrong
-        //! wl_output, causing struts to be reserved on an incorrect monitor in
-        //! multi-screen setups.
         if (screen) {
             setScreen(screen);
         }
 
+#ifdef HAS_LAYERSHELL
+        using Anchor = LayerShellQt::Window::Anchor;
+
         auto *layerWindow = LayerShellQt::Window::get(this);
-        // Bind the layer-shell surface to the same output as the backing QWindow.
-        // Relying only on QWindow::setScreen() can leave the compositor to place
-        // cloned strut surfaces on the primary output, stacking reservations there.
-        // setScreen() was introduced in LayerShellQt 6.6 and later removed;
-        // conditional availability is detected at CMake time.
-#ifdef LATTE_LAYERSHELL_HAS_SET_SCREEN
+# ifdef LATTE_LAYERSHELL_HAS_SET_SCREEN
         if (screen) {
             layerWindow->setScreen(screen);
         }
-#endif
+# endif
 
         LayerShellQt::Window::Anchors anchors;
         int exclusiveZone = 0;
@@ -222,18 +217,13 @@ public:
         layerWindow->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityNone);
         layerWindow->setScope(QStringLiteral("latte-dock-struts"));
 
-        //! For layer-shell: anchored to 3 edges means the 4th dimension must be specified.
-        //! Width 0 = fill between left+right anchors; Height 0 = fill between top+bottom.
-        //! Set visual surface to 1px to minimize KWin blur rendering behind the exclusive zone.
-        //! The exclusive zone (set above) still reserves the full dock thickness for struts.
-        //! A 1px visual surface means KWin only renders blur on a 1px strip at the screen edge,
-        //! making the ghost window essentially invisible regardless of layer.
         const int visualThickness = 1;
         if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
             layerWindow->setDesiredSize(QSize(0, visualThickness));
         } else {
             layerWindow->setDesiredSize(QSize(visualThickness, 0));
         }
+#endif // HAS_LAYERSHELL
 
         m_validGeometry = rect;
 
