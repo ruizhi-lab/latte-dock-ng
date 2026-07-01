@@ -81,7 +81,7 @@ PlasmaComponents.ScrollView {
                 windowsPreviewDlg.hide(9.9);
             }
 
-            function onDragMove(event) {
+            onDragMove: (event) => {
                 var current = mainToolTip.instanceAtPos(event.x, event.y);
 
                 if (current && currentWindow !== current && current.submodelIndex) {
