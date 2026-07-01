@@ -940,7 +940,7 @@ PlasmoidItem {
                 });
             }
 
-            function onUrlsDropped(urls) {
+            onUrlsDropped: (urls) => {
                 //! inform synced docks for new dropped launchers
                 if (onlyLaunchersInDroppedList(urls)) {
                     appletAbilities.launchers.addDroppedLaunchers(urls);
