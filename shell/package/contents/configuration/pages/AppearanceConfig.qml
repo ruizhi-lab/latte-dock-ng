@@ -81,7 +81,7 @@ PlasmaComponents.Page {
                 }
 
                 var classicZoomLevel = Number(plasmoid.configuration.zoomLevel);
-                if (isModernToClassicSwitch || isNaN(classicZoomLevel) || classicZoomLevel > 25 || classicZoomLevel < 0) {
+                if (isModernToClassicSwitch || isNaN(classicZoomLevel) || classicZoomLevel > 40 || classicZoomLevel < 0) {
                     plasmoid.configuration.zoomLevel = 10;
                 }
 
@@ -303,7 +303,7 @@ PlasmaComponents.Page {
                         Layout.fillWidth: true
                         value: Number(1 + plasmoid.configuration.zoomLevel / 20).toFixed(2)
                         from: 1
-                        to: 2.25
+                        to: 3.0
                         stepSize: 0.05
                         wheelEnabled: false
 

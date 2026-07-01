@@ -195,7 +195,7 @@ Item {
                 enabled: !mainItem.isInLatteDock
                 Layout.fillWidth: true
                 from: 0
-                to: 20
+                to: 40
                 stepSize: 1
             }
 
