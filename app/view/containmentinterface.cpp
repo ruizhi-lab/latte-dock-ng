@@ -1887,7 +1887,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         }
     }
 
-    PlasmaQuick::AppletQuickItem *ai = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
+    PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
     bool isSubContainment = Layouts::Storage::self()->isSubContainment(m_view->corona(), applet); //we use corona() to make sure that returns true even when it is first created from user
     int currentAppletId = applet->id();
     KPluginMetaData appletMeta = applet->pluginMetaData();
