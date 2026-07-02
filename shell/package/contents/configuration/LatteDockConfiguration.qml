@@ -510,7 +510,9 @@ Loader {
 
                     Repeater {
                         id: tasksRepeater
-                        model: plasmoid && plasmoid.configuration && latteView ? latteView.extendedInterface.latteTasksModel : 0
+                        // Tasks config tab is the original author's unfinished feature —
+                        // the configuration UI does not apply any changes. Hidden for now.
+                        model: 0
 
                         Pages.TasksConfig {
                             readonly property int pageIndex: tabBar.visibleStaticPages+index
