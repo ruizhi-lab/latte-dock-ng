@@ -2594,6 +2594,9 @@ void SourceContractTest::dragDropHandlersUseFunctionSyntaxNotBindingSyntax()
 {
     // Property-binding syntax (onDragEnter: function(event) / (event) =>)
     // causes duplicate signal invocation in DragDrop.DropArea.
+    // Widget Explorer drops (text/x-plasmoidservicename) are handled by
+    // the C++ path; QML onDrop returns early for this mime to avoid
+    // double-creation with View::event() → handlePlasmoidDrop().
     QFile dnd(QStringLiteral(LATTE_SOURCE_DIR
         "/containment/package/contents/ui/DragDropArea.qml"));
     QVERIFY(dnd.open(QFile::ReadOnly));
@@ -2604,6 +2607,8 @@ void SourceContractTest::dragDropHandlersUseFunctionSyntaxNotBindingSyntax()
     QVERIFY(!dndSource.contains(QStringLiteral("onDragEnter:")));
     QVERIFY(!dndSource.contains(QStringLiteral("onDragMove:")));
     QVERIFY(!dndSource.contains(QStringLiteral("onDrop:")));
+    // Mime split guard: prevents QML from double-handling Widget Explorer drops
+    QVERIFY(dndSource.contains(QStringLiteral("text/x-plasmoidservicename")));
 }
 
 QTEST_MAIN(SourceContractTest)

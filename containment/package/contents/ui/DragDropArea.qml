@@ -213,6 +213,15 @@ DragDrop.DropArea {
             return;
         }
 
+        // Widget Explorer drops (text/x-plasmoidservicename) are handled
+        // by the native C++ path (View::event() → handlePlasmoidDrop()).
+        // Letting both C++ and QML paths process this mime creates two
+        // applets per drop.  File/URL drops (text/uri-list) continue
+        // through this QML path as before.
+        if (event.mimeData.formats.indexOf("text/x-plasmoidservicename") >= 0) {
+            return;
+        }
+
         if (root.launchers.hasStealingApplet && dragInfo.onlyLaunchers) {
             root.launchers.addDroppedLaunchersInStealingApplet(event.mimeData.urls);
         } else {
