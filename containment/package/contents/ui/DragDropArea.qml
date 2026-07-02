@@ -122,7 +122,7 @@ DragDrop.DropArea {
         }
     }
 
-    onDragEnter: (event) => {
+    function onDragEnter(event) {
         containsDrag = true;
         clearInfoTimer.stop();
         var isTask = isInternalTaskSource(event) || hasTaskMime(event);
@@ -170,7 +170,7 @@ DragDrop.DropArea {
         dndSpacer.opacity = 1;
     }
 
-    onDragMove: (event) => {
+    function onDragMove(event) {
         containsDrag = true;
         clearInfoTimer.stop();
         if (dragInfo.isTask) {
@@ -200,7 +200,7 @@ DragDrop.DropArea {
         dndSpacer.parent = root;
     }
 
-    onDrop: (event) => {
+    function onDrop(event) {
         containsDrag = false;
         animations.needLength.removeEvent(dragArea);
 
