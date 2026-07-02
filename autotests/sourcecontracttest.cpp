@@ -1837,6 +1837,8 @@ void SourceContractTest::mainCppMessageSuppressionCoversFrameworkWarnings()
     // - DBus notification/job registration failures (expected in latte's context)
     QVERIFY(src.contains(QStringLiteral("Failed to register Notification")));
     QVERIFY(src.contains(QStringLiteral("Failed to register JobViewServer")));
+    // - Qt 6 internal Drag.imageSource grabToImage warning (harmless)
+    QVERIFY(src.contains(QStringLiteral("sourceSize request for image url that came from grabToImage")));
     // - ToolTipDialog location warning
     QVERIFY(src.contains(QStringLiteral("ToolTipDialog: location")));
 }

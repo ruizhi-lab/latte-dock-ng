@@ -382,7 +382,7 @@ AbilityItem.BasicItem {
     onIsDraggedChanged: {
         if (isDragged){
             const requestToken = ++dragRequestToken;
-            taskItem.contentItem.monochromizedItem.grabToImage((result) => {
+            taskItem.contentItem.monochromizedItem.grabToImage(Qt.size(taskItem.width, taskItem.height), (result) => {
                 // grabToImage is async; ignore stale callbacks after drag ended.
                 if (!taskItem.isDragged || requestToken !== dragRequestToken) {
                     return;
