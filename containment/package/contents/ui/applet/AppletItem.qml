@@ -509,9 +509,20 @@ Item {
 
     /// BEGIN functions
     function isSortCandidate(item) {
-        return item
-                && item !== appletItem
-                && item.externalAppletDrawsAboveTasks
+        if (!item || item === appletItem) {
+            return false;
+        }
+
+        // In edit mode, all visible applets (except splitters and spacers) are sort candidates.
+        if (root.editMode) {
+            return !item.isParabolicEdgeSpacer
+                    && !item.isPlaceHolder
+                    && !item.isScheduledForDestruction
+                    && !item.isHidden
+                    && !item.isInternalViewSplitter;
+        }
+
+        return item.externalAppletDrawsAboveTasks
                 && !item.isParabolicEdgeSpacer
                 && !item.isPlaceHolder
                 && !item.isScheduledForDestruction
@@ -520,14 +531,27 @@ Item {
     }
 
     function isSortBoundaryItem(item) {
-        return item
-                && item !== appletItem
+        if (!item || item === appletItem) {
+            return false;
+        }
+
+        var isBoundary = item.pluginName === "org.kde.latte.plasmoid" || item.indexerIsSupported;
+
+        // In edit mode, treat all non-hidden items as potential boundaries for side-layout placement.
+        if (root.editMode) {
+            return !item.isParabolicEdgeSpacer
+                    && !item.isPlaceHolder
+                    && !item.isScheduledForDestruction
+                    && !item.isHidden
+                    && !item.isInternalViewSplitter;
+        }
+
+        return isBoundary
                 && !item.isParabolicEdgeSpacer
                 && !item.isPlaceHolder
                 && !item.isScheduledForDestruction
                 && !item.isHidden
-                && !item.isInternalViewSplitter
-                && (item.pluginName === "org.kde.latte.plasmoid" || item.indexerIsSupported);
+                && !item.isInternalViewSplitter;
     }
 
     function normalizeTrackedAppId(rawId) {
@@ -1342,7 +1366,10 @@ Item {
         id: appletSortDragHandler
         target: null
         acceptedButtons: Qt.LeftButton
-        enabled: appletItem.externalAppletDrawsAboveTasks
+        // In edit mode, indexer-supported applets (Latte Tasks plasmoid) and internal
+        // splitters are excluded from container-level sort-drag. The plasmoid handles
+        // its own internal task reorder via TaskMouseArea.qml.
+        enabled: (appletItem.externalAppletDrawsAboveTasks || (root.editMode && !appletItem.indexerIsSupported && !appletItem.isInternalViewSplitter))
                  && root.myView.isShownFully
                  && !plasmoid.immutable
 
