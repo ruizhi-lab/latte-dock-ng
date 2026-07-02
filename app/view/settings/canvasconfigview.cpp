@@ -29,6 +29,11 @@ CanvasConfigView::CanvasConfigView(Latte::View *view, PrimaryConfigView *parent)
 {
     setResizeMode(QQuickView::SizeRootObjectToView);
 
+    // Allow pointer events to pass through to the dock beneath during edit
+    // mode so that drag-to-reorder and other interactions on applet icons
+    // work while the containment is in user-configuring state.
+    setFlags(flags() | Qt::WindowTransparentForInput);
+
     setParentView(view);
     init();
 }
