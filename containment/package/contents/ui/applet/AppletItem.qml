@@ -145,6 +145,8 @@ Item {
     property Item sortDragLastTarget: null
     property bool sortDragLastInsertBefore: false
     property real sortDragLastCommitTs: 0
+    property real sortDragLastX: 0
+    property real sortDragLastY: 0
     property bool isHidden: ((applet
                              && applet.status === PlasmaCore.Types.HiddenStatus
                              && !keepVisibleOnHiddenStatus)
@@ -246,8 +248,9 @@ Item {
     property int maxWidth: root.isHorizontal ? root.height : root.width
     property int maxHeight: root.isHorizontal ? root.height : root.width
     property int internalSplitterId: 0
-    property int sortDragCommitCooldownMs: 90
-    property real sortDragCenterDeadZoneRatio: 0.18
+    property int sortDragCommitCooldownMs: 180
+    property real sortDragCenterDeadZoneRatio: 0.30
+    property real sortDragMinDistance: 12
 
     property int previousIndex: -1
     property int spacersMaxSize: Math.max(0,Math.ceil(0.55 * metrics.iconSize) - metrics.totals.lengthEdges)
@@ -730,8 +733,22 @@ Item {
         trackedActiveWindowsCount = activeCount;
     }
 
-    function shouldDelaySortCommit(targetItem, insertBefore) {
+    function shouldDelaySortCommit(targetItem, insertBefore, rootX, rootY) {
         var now = Date.now();
+
+        // Spatial hysteresis: skip commits when the pointer has not moved
+        // far enough since the last commit, preventing rapid toggling across
+        // adjacent item midpoints during drag.
+        if (sortDragLastTarget !== null) {
+            var dx = rootX - sortDragLastX;
+            var dy = rootY - sortDragLastY;
+            if (Math.abs(dx) + Math.abs(dy) < sortDragMinDistance) {
+                return true;
+            }
+        }
+
+        // Temporal cooldown: skip commits to the same target+position combo
+        // within the cooldown window.
         if (targetItem === sortDragLastTarget
                 && insertBefore === sortDragLastInsertBefore
                 && (now - sortDragLastCommitTs) < sortDragCommitCooldownMs) {
@@ -741,6 +758,8 @@ Item {
         sortDragLastTarget = targetItem;
         sortDragLastInsertBefore = insertBefore;
         sortDragLastCommitTs = now;
+        sortDragLastX = rootX;
+        sortDragLastY = rootY;
         return false;
     }
 
@@ -748,6 +767,8 @@ Item {
         sortDragLastTarget = null;
         sortDragLastInsertBefore = false;
         sortDragLastCommitTs = 0;
+        sortDragLastX = 0;
+        sortDragLastY = 0;
     }
 
     function bestSortCandidateInLayout(layout, rootX, rootY) {
@@ -997,7 +1018,7 @@ Item {
             }
 
             var insertBeforeTarget = targetMainRatio < 0.5;
-            if (shouldDelaySortCommit(target, insertBeforeTarget)) {
+            if (shouldDelaySortCommit(target, insertBeforeTarget, rootX, rootY)) {
                 return;
             }
 
@@ -1021,7 +1042,7 @@ Item {
                 }
 
                 var insertBeforeBoundary = boundaryMainRatio < 0.5;
-                if (shouldDelaySortCommit(boundary, insertBeforeBoundary)) {
+                if (shouldDelaySortCommit(boundary, insertBeforeBoundary, rootX, rootY)) {
                     return;
                 }
 
@@ -1039,7 +1060,7 @@ Item {
                     return;
                 }
 
-                if (shouldDelaySortCommit(sideLayout, sideLayout === layoutsContainer.startLayout)) {
+                if (shouldDelaySortCommit(sideLayout, sideLayout === layoutsContainer.startLayout, rootX, rootY)) {
                     return;
                 }
 
