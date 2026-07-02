@@ -132,6 +132,12 @@ private Q_SLOTS:
     void mainQmlCreateAppletItemRetryCeilingAt80();
     void mainQmlPanelCfgSyncTransparencySevenInputClasses();
     void mainQmlOnInStartupChangedMustCheckLatteViewExists();
+    // itemForApplet migration — safe contexts vs regression-prone exclusions
+    void appletItemForAppletInSafeContextsUsesPublicApi();
+    void appletItemForAppletExcludedContextsPreservePropertyAccess();
+    // Qt5→Qt6 migration guards — patterns that cause regressions
+    void mouseButtonEnumUsesMidButtonNotMiddleButton();
+    void dragDropHandlersUseFunctionSyntaxNotBindingSyntax();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -2487,6 +2493,115 @@ void SourceContractTest::mainQmlOnInStartupChangedMustCheckLatteViewExists()
     // latteView.positioner.
     QVERIFY(src.contains(QStringLiteral("onInStartupChanged")));
     QVERIFY(src.contains(QStringLiteral("latteView && latteView.positioner")));
+}
+
+void SourceContractTest::appletItemForAppletInSafeContextsUsesPublicApi()
+{
+    // Safe contexts: verified through testing that itemForApplet works correctly.
+    QFile contextMenu(QStringLiteral(LATTE_SOURCE_DIR "/app/declarativeimports/contextmenulayerquickitem.cpp"));
+    QVERIFY(contextMenu.open(QFile::ReadOnly));
+    const QString ctxSource = QString::fromUtf8(contextMenu.readAll());
+    // popUpTopLeft: direct itemForApplet call (non-const)
+    QVERIFY(ctxSource.contains(QStringLiteral("PlasmaQuick::AppletQuickItem::itemForApplet(applet)")));
+    QVERIFY(!ctxSource.contains(QStringLiteral("applet->property(\"_plasma_graphicObject\")")));
+    // mousePressEvent loop: itemForApplet with const_cast for const applet pointer
+    QVERIFY(ctxSource.contains(QStringLiteral("itemForApplet(const_cast<Plasma::Applet *>(appletTemp))")));
+
+    QFile ci(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(ci.open(QFile::ReadOnly));
+    const QString ciSource = QString::fromUtf8(ci.readAll());
+
+    // applicationLauncherInPopup — itemForApplet with const_cast (launcher lookup)
+    QVERIFY(ciSource.contains(QStringLiteral("appLauncherItem = PlasmaQuick::AppletQuickItem::itemForApplet(const_cast<Plasma::Applet *>(applet))")));
+
+    // updateBadgeForLatteTask — itemForApplet (non-const auto *applet)
+    QVERIFY(ciSource.contains(QStringLiteral("appletInterface = PlasmaQuick::AppletQuickItem::itemForApplet(applet)")));
+
+    // collapseAllApplets / appletIsExpandable / appletIsActivationTogglesExpanded
+    // — itemForApplet with const_cast (const auto from applets())
+    QVERIFY(ciSource.contains(QStringLiteral("itemForApplet(const_cast<Plasma::Applet *>(applet))")));
+
+    // appletConfiguration — itemForApplet with const_cast (const param)
+    QVERIFY(ciSource.contains(QStringLiteral("itemForApplet(const_cast<Plasma::Applet *>(applet))")));
+}
+
+void SourceContractTest::appletItemForAppletExcludedContextsPreservePropertyAccess()
+{
+    // Excluded contexts: itemForApplet returns nullptr — keep _plasma_graphicObject.
+
+    // alternativeshelper.cpp: applet() getter and loadAlternative (applet not registered yet)
+    QFile alt(QStringLiteral(LATTE_SOURCE_DIR "/app/alternativeshelper.cpp"));
+    QVERIFY(alt.open(QFile::ReadOnly));
+    const QString altSource = QString::fromUtf8(alt.readAll());
+    QVERIFY(altSource.contains(QStringLiteral("_plasma_graphicObject")));
+    QVERIFY(!altSource.contains(QStringLiteral("itemForApplet")));
+
+    // view.cpp: containment-level lookups (containment graphic item positioning)
+    QFile view(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(view.open(QFile::ReadOnly));
+    const QString viewSource = QString::fromUtf8(view.readAll());
+    QVERIFY(viewSource.contains(QStringLiteral("_plasma_graphicObject")));
+
+    // subconfigview.cpp: findGraphicContextObject (container-level lookup)
+    QFile subconfig(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings/subconfigview.cpp"));
+    QVERIFY(subconfig.open(QFile::ReadOnly));
+    const QString subconfigSource = QString::fromUtf8(subconfig.readAll());
+    QVERIFY(subconfigSource.contains(QStringLiteral("_plasma_graphicObject")));
+
+    // containmentinterface.cpp: onAppletAdded (applet not fully initialized yet)
+    // and toggleAppletExpanded (activation path) — must still use property access.
+    QFile ci(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(ci.open(QFile::ReadOnly));
+    const QString ciSource = QString::fromUtf8(ci.readAll());
+    // onAppletAdded: keep property access
+    QVERIFY(ciSource.contains(QStringLiteral("applet->property(\"_plasma_graphicObject\")")));
+    // toggleAppletExpanded: keep property access
+    const int toggleIdx = ciSource.indexOf(QStringLiteral("toggleAppletExpanded"));
+    QVERIFY(toggleIdx >= 0);
+    const int propIdx = ciSource.indexOf(QStringLiteral("_plasma_graphicObject"), toggleIdx);
+    QVERIFY(propIdx >= 0);
+}
+
+void SourceContractTest::mouseButtonEnumUsesMidButtonNotMiddleButton()
+{
+    // Qt.MiddleButton causes double-handling with C++ Qt::MiddleButton
+    // handlers — keep Qt.MidButton in QML.
+    QFile env(QStringLiteral(LATTE_SOURCE_DIR
+        "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
+    QVERIFY(env.open(QFile::ReadOnly));
+    const QString envSource = QString::fromUtf8(env.readAll());
+    QVERIFY(envSource.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(!envSource.contains(QStringLiteral("Qt.MiddleButton")));
+
+    QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
+        "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
+    QVERIFY(taskMouse.open(QFile::ReadOnly));
+    const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
+    QVERIFY(taskMouseSource.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(!taskMouseSource.contains(QStringLiteral("Qt.MiddleButton")));
+
+    QFile clickedAnim(QStringLiteral(LATTE_SOURCE_DIR
+        "/plasmoid/package/contents/ui/task/animations/ClickedAnimation.qml"));
+    QVERIFY(clickedAnim.open(QFile::ReadOnly));
+    const QString clickedAnimSource = QString::fromUtf8(clickedAnim.readAll());
+    QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(!clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
+}
+
+void SourceContractTest::dragDropHandlersUseFunctionSyntaxNotBindingSyntax()
+{
+    // Property-binding syntax (onDragEnter: function(event) / (event) =>)
+    // causes duplicate signal invocation in DragDrop.DropArea.
+    QFile dnd(QStringLiteral(LATTE_SOURCE_DIR
+        "/containment/package/contents/ui/DragDropArea.qml"));
+    QVERIFY(dnd.open(QFile::ReadOnly));
+    const QString dndSource = QString::fromUtf8(dnd.readAll());
+    QVERIFY(dndSource.contains(QStringLiteral("function onDragEnter(event)")));
+    QVERIFY(dndSource.contains(QStringLiteral("function onDragMove(event)")));
+    QVERIFY(dndSource.contains(QStringLiteral("function onDrop(event)")));
+    QVERIFY(!dndSource.contains(QStringLiteral("onDragEnter:")));
+    QVERIFY(!dndSource.contains(QStringLiteral("onDragMove:")));
+    QVERIFY(!dndSource.contains(QStringLiteral("onDrop:")));
 }
 
 QTEST_MAIN(SourceContractTest)
