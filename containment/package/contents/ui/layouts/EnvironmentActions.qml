@@ -56,14 +56,18 @@ Loader {
         property int lastPressX: -1
         property int lastPressY: -1
 
+        readonly property bool selectedTrackerReady: selectedWindowsTracker !== null
+                && selectedWindowsTracker.lastActiveWindow !== null
+                && selectedWindowsTracker.lastActiveWindow.isValid
+
         onClicked: (mouse) => {
-            if (root.closeActiveWindowEnabled && mouse.button === Qt.MidButton) {
+            if (root.closeActiveWindowEnabled && mouse.button === Qt.MidButton && selectedTrackerReady) {
                 selectedWindowsTracker.lastActiveWindow.requestClose();
             }
         }
 
         onPressed: (mouse) => {
-            if (!root.dragActiveWindowEnabled) {
+            if (!root.dragActiveWindowEnabled || !selectedTrackerReady) {
                 return;
             }
 
@@ -80,7 +84,7 @@ Loader {
         }
 
         onPositionChanged: (mouse) => {
-            if (!root.dragActiveWindowEnabled || !(mainArea.pressedButtons & Qt.LeftButton)) {
+            if (!root.dragActiveWindowEnabled || !selectedTrackerReady || !(mainArea.pressedButtons & Qt.LeftButton)) {
                 return;
             }
 
@@ -97,7 +101,7 @@ Loader {
         }
 
         onDoubleClicked: {
-            if (!root.dragActiveWindowEnabled) {
+            if (!root.dragActiveWindowEnabled || !selectedTrackerReady) {
                 return;
             }
 
@@ -188,7 +192,7 @@ Loader {
             id: dragWindowTimer
             interval: 500
             onTriggered: {
-                if (mainArea.pressed && selectedWindowsTracker.lastActiveWindow.canBeDragged()) {
+                if (mainArea.pressed && mainArea.selectedTrackerReady && selectedWindowsTracker.lastActiveWindow.canBeDragged()) {
                     mainArea.activateDragging();
                 }
             }
