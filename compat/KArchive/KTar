@@ -1,0 +1,17 @@
+#pragma once
+
+// See compat/KIconThemes/KIconLoader for why this shim exists: nixpkgs
+// (NixOS) builds each KF6 framework into its own isolated store path, which
+// breaks the fully-qualified <KArchive/KTar> spelling even though
+// find_package(KF6Archive) succeeds there.
+#if __has_include(<KTar>)
+#include <KTar>
+#elif __has_include(<KArchive/ktar.h>)
+#include <KArchive/ktar.h>
+#elif __has_include(<ktar.h>)
+#include <ktar.h>
+#elif __has_include_next(<KArchive/KTar>)
+#include_next <KArchive/KTar>
+#else
+#error "Could not find a usable KTar header"
+#endif
