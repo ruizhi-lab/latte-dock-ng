@@ -1376,24 +1376,43 @@ ContainmentItem {
         }
     }
 
-    // In edit mode, block all mouse interactions on dock applets so only
-    // drag-to-reorder works. DragHandler uses Qt Quick's pointer handler
-    // delivery which bypasses MouseArea, so applet sort-drag is not affected.
-    // Task-internal reorder (MouseArea-based) is not available in edit mode;
-    // the tasks plasmoid can be reordered as a whole unit via DragHandler.
+    // In edit mode, block mouse interactions on external applets so only
+    // drag-to-reorder works. Events over the tasks plasmoid area are passed
+    // through so internal task drag (MouseArea-based) continues to function.
+    // Task clicks/scrolls are blocked by guards in TaskMouseArea.qml which
+    // check inEditMode (backed by a polling timer for reliability).
     MouseArea {
         anchors.fill: parent
         z: 20000
         enabled: root.editMode
         hoverEnabled: true
         acceptedButtons: Qt.AllButtons
-        onPressed: function(mouse) { mouse.accepted = true; }
-        onReleased: function(mouse) { mouse.accepted = true; }
-        onClicked: function(mouse) { mouse.accepted = true; }
-        onDoubleClicked: function(mouse) { mouse.accepted = true; }
-        onPressAndHold: function(mouse) { mouse.accepted = true; }
-        onWheel: function(wheel) { wheel.accepted = true; }
-        onPositionChanged: function(mouse) { mouse.accepted = true; }
+
+        function eventIsOverTasksPlasmoid(x, y) {
+            var layouts = [layoutsContainer.startLayout, layoutsContainer.mainLayout, layoutsContainer.endLayout];
+            for (var li = 0; li < layouts.length; ++li) {
+                var children = layouts[li].children;
+                for (var i = 0; i < children.length; ++i) {
+                    var child = children[i];
+                    if (child && child.indexerIsSupported && !child.isHidden) {
+                        var local = mapToItem(child, x, y);
+                        if (local.x >= 0 && local.x <= child.width
+                                && local.y >= 0 && local.y <= child.height) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        onPressed: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
+        onReleased: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
+        onClicked: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
+        onDoubleClicked: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
+        onPressAndHold: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
+        onWheel: function(wheel) { wheel.accepted = !eventIsOverTasksPlasmoid(wheel.x, wheel.y); }
+        onPositionChanged: function(mouse) { mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y); }
     }
 
     Colorizer.Manager {

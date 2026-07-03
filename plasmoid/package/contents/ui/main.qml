@@ -245,10 +245,23 @@ PlasmoidItem {
 
     //END Latte Dock Panel properties
 
-    // Track containment edit mode explicitly via signal so it works
-    // regardless of bridge connection timing.
-    property bool containmentUserConfiguring: false
-    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentUserConfiguring
+    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || _containmentEditMode
+
+    // Plasmoid containment's userConfiguring property may not emit change
+    // notifications via QML bindings. Poll it on a timer as a fallback so
+    // the task reorder guards in TaskMouseArea always see the correct state.
+    property bool _containmentEditMode: false
+    Timer {
+        id: containmentEditModePoller
+        interval: 250
+        repeat: true
+        running: true
+        onTriggered: {
+            if (plasmoid.containment) {
+                _containmentEditMode = plasmoid.containment.userConfiguring;
+            }
+        }
+    }
 
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
@@ -295,13 +308,6 @@ PlasmoidItem {
         function onFormFactorChanged() {
             iconGeometryTimer.start();
             refreshTaskLayoutAfterEdgeChange("formFactorChanged");
-        }
-    }
-
-    Connections {
-        target: plasmoid.containment
-        function onUserConfiguringChanged() {
-            containmentUserConfiguring = plasmoid.containment.userConfiguring;
         }
     }
 
