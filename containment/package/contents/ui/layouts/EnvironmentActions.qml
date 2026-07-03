@@ -56,13 +56,13 @@ Loader {
         property int lastPressX: -1
         property int lastPressY: -1
 
-        onClicked: function(mouse) {
+        onClicked: (mouse) => {
             if (root.closeActiveWindowEnabled && mouse.button === Qt.MidButton) {
                 selectedWindowsTracker.lastActiveWindow.requestClose();
             }
         }
 
-        onPressed: function(mouse) {
+        onPressed: (mouse) => {
             if (!root.dragActiveWindowEnabled) {
                 return;
             }
@@ -79,7 +79,7 @@ Loader {
             lastPressY = -1;
         }
 
-        onPositionChanged: function(mouse) {
+        onPositionChanged: (mouse) => {
             if (!root.dragActiveWindowEnabled || !(mainArea.pressedButtons & Qt.LeftButton)) {
                 return;
             }
@@ -105,7 +105,7 @@ Loader {
             selectedWindowsTracker.lastActiveWindow.requestToggleMaximized();
         }
 
-        onWheel: function(wheel) {
+        onWheel: (wheel) => {
             if (wheelIsBlocked) {
                 return;
             }
