@@ -110,8 +110,16 @@ sudo dnf install \
 
 ## NixOS
 
-This repo ships a `default.nix` at the repository root, so no separate
-packaging is needed — `callPackage` handles all Qt6/KF6 dependencies.
+### Prerequisites
+
+Unlike the distros above, there's no separate dependency-install step.
+`default.nix` declares every Qt6/KF6 dependency, and Nix builds the whole
+thing as one reproducible closure. Just have Nix installed (or be on
+NixOS) and go straight to building — there's no per-package list to
+install first.
+
+For getting it installed on your system rather than building it locally,
+see the [README](./README.md#nixos) for flake integration.
 
 ### Ad hoc, without cloning
 
@@ -128,34 +136,6 @@ cd latte-dock-ng
 nix-build
 ./result/bin/latte-dock-ng
 ```
-
-### Adding it to your NixOS flake
-
-Add it as a non-flake input, then build it with `callPackage` in an overlay:
-
-```nix
-# flake.nix
-inputs.latte-dock-ng-src = {
-  url = "github:ruizhi-lab/latte-dock-ng";
-  flake = false;
-};
-```
-
-```nix
-# in a NixOS module, e.g. configuration.nix
-{ inputs, pkgs, ... }: {
-  nixpkgs.overlays = [
-    (final: prev: {
-      latte-dock-ng = final.callPackage inputs.latte-dock-ng-src { };
-    })
-  ];
-
-  environment.systemPackages = [ pkgs.latte-dock-ng ];
-}
-```
-
-Pin to a specific commit for reproducibility by using
-`github:ruizhi-lab/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
 
 ## Building and Installing
 

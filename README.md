@@ -93,6 +93,36 @@ emaint sync -r ruizhi-overlay
 emerge -av kde-misc/latte-dock-ng
 ```
 
+### NixOS
+
+Add it as a non-flake input, then build it with `callPackage` in an overlay:
+
+```nix
+# flake.nix
+inputs.latte-dock-ng-src = {
+  url = "github:ruizhi-lab/latte-dock-ng";
+  flake = false;
+};
+```
+
+```nix
+# in a NixOS module, e.g. configuration.nix
+{ inputs, pkgs, ... }: {
+  nixpkgs.overlays = [
+    (final: prev: {
+      latte-dock-ng = final.callPackage inputs.latte-dock-ng-src { };
+    })
+  ];
+
+  environment.systemPackages = [ pkgs.latte-dock-ng ];
+}
+```
+
+Pin to a specific commit for reproducibility by using
+`github:ruizhi-lab/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
+
+See the [installation instructions](./INSTALLATION.md#nixos) for building from source instead.
+
 ### From source
 
 ```bash
