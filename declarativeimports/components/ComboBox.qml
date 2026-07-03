@@ -198,7 +198,7 @@ T.ComboBox {
         onCanceled: {
             control.down = false;
         }
-        onPositionChanged: function(mouse) {
+        onPositionChanged: (mouse) => {
             var pos = listView.mapFromItem(this, mouse.x, mouse.y);
             indexUnderMouse = listView.indexAt(pos.x, pos.y);
             listView.currentIndex = indexUnderMouse;
