@@ -157,14 +157,6 @@ inputs.latte-dock-ng-src = {
 Pin to a specific commit for reproducibility by using
 `github:whimbree/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
 
-To autostart it with your Plasma session, drop its `.desktop` file into the
-system XDG autostart directory:
-
-```nix
-environment.etc."xdg/autostart/org.kde.latte-dock.desktop".source =
-  "${pkgs.latte-dock-ng}/share/applications/org.kde.latte-dock.desktop";
-```
-
 ## Building and Installing
 
 **Recommended: use the install script.** It auto-detects available memory to prevent
