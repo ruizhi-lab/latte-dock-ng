@@ -6,7 +6,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "latte-dock-ng";
-  version = "1.2.3";
+  version = "1.2.21";
 
   src = ./.;
 
@@ -57,5 +57,6 @@ stdenv.mkDerivation {
     license = licenses.gpl3Plus;
     platforms = [ "x86_64-linux" ];
     maintainers = [ ];
+    mainProgram = "latte-dock-ng";
   };
 }

@@ -108,6 +108,63 @@ sudo dnf install \
   gcc-c++ gettext git pkgconf-pkg-config
 ```
 
+## NixOS
+
+This repo ships a `default.nix` at the repository root, so no separate
+packaging is needed — `callPackage` handles all Qt6/KF6 dependencies.
+
+### Ad hoc, without cloning
+
+```bash
+nix-build -E 'with import <nixpkgs> {}; callPackage (fetchTarball "https://github.com/whimbree/latte-dock-ng/archive/refs/heads/main.tar.gz") {}'
+./result/bin/latte-dock-ng
+```
+
+### From a local clone
+
+```bash
+git clone https://github.com/whimbree/latte-dock-ng.git
+cd latte-dock-ng
+nix-build
+./result/bin/latte-dock-ng
+```
+
+### Adding it to your NixOS flake
+
+Add it as a non-flake input, then build it with `callPackage` in an overlay:
+
+```nix
+# flake.nix
+inputs.latte-dock-ng-src = {
+  url = "github:whimbree/latte-dock-ng";
+  flake = false;
+};
+```
+
+```nix
+# in a NixOS module, e.g. configuration.nix
+{ inputs, pkgs, ... }: {
+  nixpkgs.overlays = [
+    (final: prev: {
+      latte-dock-ng = final.callPackage inputs.latte-dock-ng-src { };
+    })
+  ];
+
+  environment.systemPackages = [ pkgs.latte-dock-ng ];
+}
+```
+
+Pin to a specific commit for reproducibility by using
+`github:whimbree/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
+
+To autostart it with your Plasma session, drop its `.desktop` file into the
+system XDG autostart directory:
+
+```nix
+environment.etc."xdg/autostart/org.kde.latte-dock.desktop".source =
+  "${pkgs.latte-dock-ng}/share/applications/org.kde.latte-dock.desktop";
+```
+
 ## Building and Installing
 
 **Recommended: use the install script.** It auto-detects available memory to prevent
