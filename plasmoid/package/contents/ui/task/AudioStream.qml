@@ -199,11 +199,11 @@ Item {
         preventStealing: true
         property bool wheelIsBlocked: false
 
-        onPressed: function(mouse) {
+        onPressed: (mouse) => {
             audioStreamIconBox.badgePressed = true;
         }
 
-        onReleased: function(_mouse) {
+        onReleased: (_mouse) => {
             audioStreamIconBox.badgePressed = false;
         }
 
@@ -215,11 +215,11 @@ Item {
             audioStreamIconBox.badgePressed = false;
         }
 
-        onClicked: function(_mouse) {
+        onClicked: (_mouse) => {
             taskItem.toggleMuted();
         }
 
-        onWheel: function(wheel) {
+        onWheel: (wheel) => {
             wheel.accepted = true;
             if (wheelIsBlocked) {
                 return;
