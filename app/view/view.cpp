@@ -1685,6 +1685,13 @@ bool View::event(QEvent *e)
 
         case QEvent::MouseButtonPress:
             if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                // In edit mode, swallow middle-button events so they never
+                // reach QML (TaskMouseArea in plasmoid). Left-button drag
+                // for applet reorder still works via DragHandler.
+                if (inEditMode() && me->button() == Qt::MiddleButton) {
+                    e->accept();
+                    return true;
+                }
                 Q_EMIT mousePressed(me->pos(), me->button());
                 sinkableevent = true;
                 verticalUnityViewHasFocus();
@@ -1693,6 +1700,10 @@ bool View::event(QEvent *e)
 
         case QEvent::MouseButtonRelease:
             if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                if (inEditMode() && me->button() == Qt::MiddleButton) {
+                    e->accept();
+                    return true;
+                }
                 Q_EMIT mouseReleased(me->pos(), me->button());
                 sinkableevent = true;
             }
