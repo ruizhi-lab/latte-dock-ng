@@ -1,0 +1,17 @@
+#pragma once
+
+// See compat/KIconThemes/KIconLoader for why this shim exists: nixpkgs
+// (NixOS) builds each KF6 framework into its own isolated store path, which
+// breaks the fully-qualified <KArchive/KArchiveEntry> spelling even though
+// find_package(KF6Archive) succeeds there.
+#if __has_include(<KArchiveEntry>)
+#include <KArchiveEntry>
+#elif __has_include(<KArchive/karchiveentry.h>)
+#include <KArchive/karchiveentry.h>
+#elif __has_include(<karchiveentry.h>)
+#include <karchiveentry.h>
+#elif __has_include_next(<KArchive/KArchiveEntry>)
+#include_next <KArchive/KArchiveEntry>
+#else
+#error "Could not find a usable KArchiveEntry header"
+#endif

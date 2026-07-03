@@ -1,0 +1,17 @@
+#pragma once
+
+// See compat/KIconThemes/KIconLoader for why this shim exists: nixpkgs
+// (NixOS) builds each KF6 framework into its own isolated store path, which
+// breaks the fully-qualified <KGuiAddons/KIconUtils> spelling even though
+// find_package(KF6GuiAddons) succeeds there.
+#if __has_include(<KIconUtils>)
+#include <KIconUtils>
+#elif __has_include(<KGuiAddons/kiconutils.h>)
+#include <KGuiAddons/kiconutils.h>
+#elif __has_include(<kiconutils.h>)
+#include <kiconutils.h>
+#elif __has_include_next(<KGuiAddons/KIconUtils>)
+#include_next <KGuiAddons/KIconUtils>
+#else
+#error "Could not find a usable KIconUtils header"
+#endif

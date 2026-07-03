@@ -1,0 +1,17 @@
+#pragma once
+
+// See compat/KIconThemes/KIconLoader for why this shim exists: nixpkgs
+// (NixOS) builds each KF6 framework into its own isolated store path, which
+// breaks the fully-qualified <KCoreAddons/KSignalHandler> spelling even
+// though find_package(KF6CoreAddons) succeeds there.
+#if __has_include(<KSignalHandler>)
+#include <KSignalHandler>
+#elif __has_include(<KCoreAddons/ksignalhandler.h>)
+#include <KCoreAddons/ksignalhandler.h>
+#elif __has_include(<ksignalhandler.h>)
+#include <ksignalhandler.h>
+#elif __has_include_next(<KCoreAddons/KSignalHandler>)
+#include_next <KCoreAddons/KSignalHandler>
+#else
+#error "Could not find a usable KSignalHandler header"
+#endif

@@ -1,0 +1,20 @@
+#pragma once
+
+// NixOS/nixpkgs builds each KF6 framework into its own isolated store path,
+// so the include dir it exports covers only that module's own headers
+// rather than a shared KF6 include root. That breaks the fully-qualified
+// <KIconThemes/KIconLoader> spelling used elsewhere in this file, even
+// though find_package(KF6IconThemes) succeeds. Fall back to the unprefixed
+// header, which resolves correctly there; distros with a merged
+// /usr/include/KF6 (Arch, Fedora, Debian, ...) hit the normal path first.
+#if __has_include(<KIconLoader>)
+#include <KIconLoader>
+#elif __has_include(<KIconThemes/kiconloader.h>)
+#include <KIconThemes/kiconloader.h>
+#elif __has_include(<kiconloader.h>)
+#include <kiconloader.h>
+#elif __has_include_next(<KIconThemes/KIconLoader>)
+#include_next <KIconThemes/KIconLoader>
+#else
+#error "Could not find a usable KIconLoader header"
+#endif
