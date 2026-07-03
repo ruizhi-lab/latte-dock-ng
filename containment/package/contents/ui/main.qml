@@ -133,18 +133,17 @@ ContainmentItem {
     property bool drawShadowsExternal: false
 
     // plasmoid.userConfiguring (C++ property) does not reliably notify QML
-    // bindings. Poll via timer and assign directly so onEditModeChanged
-    // and downstream bindings (bridge, plasmoid) always see the correct state.
+    // bindings. Use onEditModeChanged (reliable C++ signal) for entry, and a
+    // polling timer during edit mode to catch the exit transition.
     property bool editMode: false
     Timer {
         id: editModePoller
-        interval: 150
+        interval: 200
         repeat: true
-        running: true
+        running: editMode
         onTriggered: {
-            var actual = plasmoid.userConfiguring;
-            if (editMode !== actual) {
-                editMode = actual;
+            if (!plasmoid.userConfiguring) {
+                editMode = false;
             }
         }
     }
@@ -439,6 +438,10 @@ ContainmentItem {
 
     //////////////START OF CONNECTIONS
     onEditModeChanged: {
+        // Sync editMode from C++ property — the signal is reliable even
+        // though QML bindings on this property do not always update.
+        editMode = plasmoid.userConfiguring;
+
         if (!editMode) {
             layouter.updateSizeForAppletsInFill();
         }
