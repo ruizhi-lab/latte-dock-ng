@@ -122,7 +122,9 @@ DragDrop.DropArea {
         }
     }
 
-    function onDragEnter(event) {
+    // Qt6 handler-binding syntax — function form does not connect to
+    // DragDrop.DropArea signals in Qt 6.
+    onDragEnter: (event) => {
         containsDrag = true;
         clearInfoTimer.stop();
         var isTask = isInternalTaskSource(event) || hasTaskMime(event);
@@ -170,7 +172,7 @@ DragDrop.DropArea {
         dndSpacer.opacity = 1;
     }
 
-    function onDragMove(event) {
+    onDragMove: (event) => {
         containsDrag = true;
         clearInfoTimer.stop();
         if (dragInfo.isTask) {
@@ -201,7 +203,7 @@ DragDrop.DropArea {
         dndSpacer.parent = root;
     }
 
-    function onDrop(event) {
+    onDrop: (event) => {
         containsDrag = false;
         animations.needLength.removeEvent(dragArea);
 
