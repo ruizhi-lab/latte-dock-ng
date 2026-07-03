@@ -1405,25 +1405,25 @@ ContainmentItem {
         }
 
         onPressed: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
         onReleased: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
         onClicked: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
         onDoubleClicked: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
         onPressAndHold: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
         onWheel: function(wheel) {
-            if (!eventIsOverTasksPlasmoid(wheel.x, wheel.y)) wheel.accepted = true;
+            wheel.accepted = !eventIsOverTasksPlasmoid(wheel.x, wheel.y);
         }
         onPositionChanged: function(mouse) {
-            if (!eventIsOverTasksPlasmoid(mouse.x, mouse.y)) mouse.accepted = true;
+            mouse.accepted = !eventIsOverTasksPlasmoid(mouse.x, mouse.y);
         }
     }
 
