@@ -245,7 +245,7 @@ PlasmoidItem {
 
     //END Latte Dock Panel properties
 
-    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring
+    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || (plasmoid.containment && plasmoid.containment.userConfiguring)
 
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
