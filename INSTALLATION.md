@@ -116,14 +116,14 @@ packaging is needed — `callPackage` handles all Qt6/KF6 dependencies.
 ### Ad hoc, without cloning
 
 ```bash
-nix-build -E 'with import <nixpkgs> {}; callPackage (fetchTarball "https://github.com/whimbree/latte-dock-ng/archive/refs/heads/main.tar.gz") {}'
+nix-build -E 'with import <nixpkgs> {}; callPackage (fetchTarball "https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/heads/main.tar.gz") {}'
 ./result/bin/latte-dock-ng
 ```
 
 ### From a local clone
 
 ```bash
-git clone https://github.com/whimbree/latte-dock-ng.git
+git clone https://github.com/ruizhi-lab/latte-dock-ng.git
 cd latte-dock-ng
 nix-build
 ./result/bin/latte-dock-ng
@@ -136,7 +136,7 @@ Add it as a non-flake input, then build it with `callPackage` in an overlay:
 ```nix
 # flake.nix
 inputs.latte-dock-ng-src = {
-  url = "github:whimbree/latte-dock-ng";
+  url = "github:ruizhi-lab/latte-dock-ng";
   flake = false;
 };
 ```
@@ -155,7 +155,7 @@ inputs.latte-dock-ng-src = {
 ```
 
 Pin to a specific commit for reproducibility by using
-`github:whimbree/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
+`github:ruizhi-lab/latte-dock-ng/<commit-sha>` as the `url` instead of `main`.
 
 ## Building and Installing
 
