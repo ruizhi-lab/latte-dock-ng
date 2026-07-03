@@ -84,7 +84,7 @@ Loader {
                                                     "You can use mouse wheel to change background opacity of %1%",
                                                     plasmoid.configuration.panelTransparency < 0 ? 100 : plasmoid.configuration.panelTransparency)
 
-            onWheel: function(wheel) {
+            onWheel: (wheel) => {
                 if (wheelIsBlocked) return
                 wheelIsBlocked = true
                 scrollDelayer.start()
