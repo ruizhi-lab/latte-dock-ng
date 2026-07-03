@@ -173,6 +173,33 @@ bash uninstall.sh --purge-user-data
 bash uninstall.sh --manifest build/install_manifest.txt --dry-run
 ```
 
+## NixOS
+
+### Prerequisites
+
+Unlike the distros above, there's no dependency-install step. `default.nix`
+lists every Qt6/KF6 dependency and Nix builds them all in one derivation.
+Have Nix installed and skip straight to building.
+
+For getting it installed on your system rather than building it locally,
+see the [README](./README.md#nixos) for flake integration.
+
+### Ad hoc, without cloning
+
+```bash
+nix-build -E 'with import <nixpkgs> {}; callPackage (fetchTarball "https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/heads/main.tar.gz") {}'
+./result/bin/latte-dock-ng
+```
+
+### From a local clone
+
+```bash
+git clone https://github.com/ruizhi-lab/latte-dock-ng.git
+cd latte-dock-ng
+nix-build
+./result/bin/latte-dock-ng
+```
+
 ## Docker Build Verification
 
 Docker images are provided to verify the build on each supported distribution.
@@ -186,6 +213,7 @@ docker compose run --rm opensuse   # openSUSE Tumbleweed
 docker compose run --rm mageia     # Mageia Cauldron
 docker compose run --rm ubuntu     # Ubuntu 26.04
 docker compose run --rm debian     # Debian Testing
+docker compose run --rm nixos      # NixOS (nixos-unstable)
 ```
 
 Each command builds a container with all dependencies installed, then runs
@@ -197,4 +225,9 @@ the full verification pipeline:
 5. Verify files are removed
 
 A successful run ends with `=== <DISTRO>: BUILD + INSTALL + UNINSTALL SUCCESS ===`.
-```
+
+`nixos` follows a different pipeline, since there's no apt/cmake step: it
+builds `default.nix` with `nix-build`, then installs and uninstalls it with
+`nix-env` instead of `install.sh`/`uninstall.sh`. `Dockerfile.nixos` points
+at `nixos-unstable` explicitly and refreshes it at build time, rather than
+relying on whatever channel ships with the base image.
