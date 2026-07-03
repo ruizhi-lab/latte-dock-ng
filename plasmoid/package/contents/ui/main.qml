@@ -245,7 +245,10 @@ PlasmoidItem {
 
     //END Latte Dock Panel properties
 
-    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || (plasmoid.containment && plasmoid.containment.userConfiguring)
+    // Track containment edit mode explicitly via signal so it works
+    // regardless of bridge connection timing.
+    property bool containmentUserConfiguring: false
+    readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentUserConfiguring
 
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
@@ -292,6 +295,13 @@ PlasmoidItem {
         function onFormFactorChanged() {
             iconGeometryTimer.start();
             refreshTaskLayoutAfterEdgeChange("formFactorChanged");
+        }
+    }
+
+    Connections {
+        target: plasmoid.containment
+        function onUserConfiguringChanged() {
+            containmentUserConfiguring = plasmoid.containment.userConfiguring;
         }
     }
 
