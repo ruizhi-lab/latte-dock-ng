@@ -54,3 +54,10 @@ services:
       context: .
       dockerfile: Dockerfile.gentoo
     command: bash /src/docker/verify-ebuild-gentoo.sh
+
+  nixos:
+    <<: *latte-verify
+    build:
+      context: .
+      dockerfile: Dockerfile.nixos
+    command: bash /src/docker/verify-nix-nixos.sh
