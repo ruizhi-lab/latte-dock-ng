@@ -121,6 +121,10 @@ MouseArea {
         }
     }
 
+    function isContainmentEditing() {
+        return (plasmoid.containment && plasmoid.containment.userConfiguring === true);
+    }
+
     onPressed: function(mouse) {
         //console.log("Pressed Task Delegate..");
         slotPublishGeometries();
@@ -137,7 +141,7 @@ MouseArea {
             if(!modAccepted){
                 _resistanerTimer.start();
             }
-        } else if (mouse.button === Qt.RightButton && !modAccepted && !root.inEditMode) {
+        } else if (mouse.button === Qt.RightButton && !modAccepted && !isContainmentEditing()) {
             // When we're a launcher, there's no window controls, so we can show all
             // places without the menu getting super huge.
             if (model.IsLauncher === true && !isSeparator) {
@@ -153,7 +157,7 @@ MouseArea {
         _resistanerTimer.stop();
         dragReady = false;
 
-        if (!root.inEditMode
+        if (!isContainmentEditing()
                 && pressed
                 && !isSeparator
                 && !(taskItem.isDragged || dragHelper.Drag.active || root.dragSource === taskItem)) {
@@ -255,7 +259,7 @@ MouseArea {
     onWheel: function(wheel) {
         var wheelActionsEnabled = (root.taskScrollAction !== LatteTasks.types.ScrollNone || root.manualScrollTasksEnabled);
 
-        if (root.inEditMode
+        if (isContainmentEditing()
                 || isSeparator
                 || wheelIsBlocked
                 || !wheelActionsEnabled
