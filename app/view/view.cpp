@@ -1612,7 +1612,29 @@ void View::setInterfacesGraphicObj(Latte::Interfaces *ifaces)
 }
 
 bool View::event(QEvent *e)
-{   
+{
+    // In edit mode, swallow all middle-button events so the plasmoid's
+    // TaskMouseArea cannot process them. Check MouseButtonPress (Qt 5
+    // compatibility) and Pointer (native Qt 6 path).
+    if (inEditMode()) {
+        if (e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease) {
+            auto *me = static_cast<QMouseEvent *>(e);
+            if (me->button() == Qt::MiddleButton) {
+                e->accept();
+                return true;
+            }
+        }
+        // Qt 6 delivers pointer events natively.  QSinglePointEvent is the
+        // common base for mouse / touch / tablet single-point events.
+        if (e->type() == QEvent::Pointer) {
+            auto *spt = dynamic_cast<QSinglePointEvent *>(e);
+            if (spt && spt->button() == Qt::MiddleButton) {
+                e->accept();
+                return true;
+            }
+        }
+    }
+
     QEvent *sunkevent = e;
 
     if (!m_inDelete) {
@@ -1685,13 +1707,6 @@ bool View::event(QEvent *e)
 
         case QEvent::MouseButtonPress:
             if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-                // In edit mode, swallow middle-button events so they never
-                // reach QML (TaskMouseArea in plasmoid). Left-button drag
-                // for applet reorder still works via DragHandler.
-                if (inEditMode() && me->button() == Qt::MiddleButton) {
-                    e->accept();
-                    return true;
-                }
                 Q_EMIT mousePressed(me->pos(), me->button());
                 sinkableevent = true;
                 verticalUnityViewHasFocus();
@@ -1700,10 +1715,6 @@ bool View::event(QEvent *e)
 
         case QEvent::MouseButtonRelease:
             if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-                if (inEditMode() && me->button() == Qt::MiddleButton) {
-                    e->accept();
-                    return true;
-                }
                 Q_EMIT mouseReleased(me->pos(), me->button());
                 sinkableevent = true;
             }
