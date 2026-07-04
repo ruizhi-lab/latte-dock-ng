@@ -25,11 +25,21 @@ Item {
         id: parabolicMouseArea
         anchors.fill: parent
         enabled: visible
+        // Do NOT accept button presses — this area exists only for hover /
+        // parabolic tracking.  Accepting clicks would swallow them before
+        // they reach the underlying applet.
+        acceptedButtons: Qt.NoButton
         hoverEnabled: true
         visible: appletItem.parabolicEffectIsSupported
                  && !communicator.indexerIsSupported
-                 && appletItem.parabolic.currentParabolicItem !== _parabolicArea
 
+        // Keep the MouseArea always visible (matching ParabolicEventsArea
+        // for tasks) so that onPositionChanged delivers synchronous parabolic
+        // updates.  The C++ Parabolic class still owns enter/exit arbitration
+        // and applies a 150 ms switch-interval lock; local position tracking
+        // avoids the QueuedConnection round-trip and keeps the wave animation
+        // smooth during rapid cross-icon mouse movement.
+        //
         // VisibilityManager.qml tries to workaround faulty onEntered() signals from this MouseArea
         // by specifying inputThickness when ParabolicEffect is applied. (inputThickness->animated scenario)
         //
@@ -48,8 +58,39 @@ Item {
                 appletItem.parabolic.setCurrentParabolicItemIndex(vIndex);
             }
 
-            //! mouseX/Y can be trusted in that case in comparison to tasks that the relevant ParabolicAreaMouseArea does not
-            _parabolicArea.parabolicEntered(mouseX, mouseY);
+            if (isThinTooltipEnabled && !(isSeparator || isSpacer || isMarginsAreaSeparator)) {
+                appletItem.thinTooltip.show(appletItem.tooltipVisualParent, applet.title);
+            }
+
+            if (restoreAnimation.running) {
+                restoreAnimation.stop();
+            }
+        }
+
+        onPositionChanged: {
+            if (appletItem.parabolic.currentParabolicItem !== _parabolicArea) {
+                appletItem.parabolic.setCurrentParabolicItem(_parabolicArea);
+
+                if (isParabolicEnabled) {
+                    var pvIndex = appletItem.indexer.visibleIndex(index);
+                    appletItem.parabolic.setCurrentParabolicItemIndex(pvIndex);
+                }
+            }
+
+            if (isParabolicEnabled) {
+                _parabolicArea.parabolicMove(mouseX, mouseY);
+            }
+        }
+
+        onExited: {
+            if (isThinTooltipEnabled) {
+                appletItem.thinTooltip.hide(appletItem.tooltipVisualParent);
+            }
+
+            if (appletItem.parabolic.currentParabolicItem === _parabolicArea) {
+                appletItem.parabolic.setCurrentParabolicItem(null);
+            }
+            _parabolicArea.parabolicExited();
         }
     }
 
