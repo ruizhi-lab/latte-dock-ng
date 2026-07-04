@@ -34,6 +34,7 @@
 #include <KLocalizedString>
 #include <KPluginMetaData>
 #include <KDeclarative/ConfigPropertyMap>
+#include <KConfigLoader>
 
 namespace {
 constexpr const char kInternalViewSplitterPluginId[] = "org.kde.latte.splitter";
@@ -1783,8 +1784,6 @@ void ContainmentInterface::updateAppletsTracking()
 
 void ContainmentInterface::updateAppletDelayedConfiguration()
 {
-    bool pendingPlasmoid = false;
-
     for (const auto id : m_appletData.keys()) {
         if (!m_appletData[id].configuration) {
             m_appletData[id].configuration = appletConfiguration(m_appletData[id].applet);
@@ -1803,14 +1802,8 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
             if (ai) {
                 m_appletData[id].plasmoid = ai;
                 m_latteTasksModel->addTask(ai);
-            } else {
-                pendingPlasmoid = true;
             }
         }
-    }
-
-    if (pendingPlasmoid) {
-        m_appletDelayedConfigurationTimer.start();
     }
 }
 
@@ -1838,30 +1831,41 @@ QQmlPropertyMap *ContainmentInterface::appletConfiguration(const Plasma::Applet 
     int currentAppletId = applet->id();
     QQmlPropertyMap *configuration{nullptr};
 
-    if (!ai) {
-        return nullptr;
-    }
+    if (ai) {
+        //! set configuration object properly for applets and subcontainments
+        // In Plasma 6 the "configuration" property is a dynamic property set
+        // by the QML engine rather than a static Q_PROPERTY — use property()
+        // directly instead of requiring indexOfProperty >= 0.
+        if (!isSubContainment) {
+            QVariant configVar = ai->property("configuration");
+            if (configVar.isValid() && !configVar.isNull()) {
+                configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
+            }
+        } else {
+            Plasma::Containment *subcontainment = Layouts::Storage::self()->subContainmentOf(m_view->corona(), applet);
+            if (subcontainment) {
+                PlasmaQuick::AppletQuickItem *subcai = subcontainment->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
 
-    //! set configuration object properly for applets and subcontainments
-    // In Plasma 6 the "configuration" property is a dynamic property set
-    // by the QML engine rather than a static Q_PROPERTY — use property()
-    // directly instead of requiring indexOfProperty >= 0.
-    if (!isSubContainment) {
-        QVariant configVar = ai->property("configuration");
-        if (configVar.isValid() && !configVar.isNull()) {
-            configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
-        }
-    } else {
-        Plasma::Containment *subcontainment = Layouts::Storage::self()->subContainmentOf(m_view->corona(), applet);
-        if (subcontainment) {
-            PlasmaQuick::AppletQuickItem *subcai = subcontainment->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
-
-            if (subcai) {
-                QVariant configVar = subcai->property("configuration");
-                if (configVar.isValid() && !configVar.isNull()) {
-                    configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
+                if (subcai) {
+                    QVariant configVar = subcai->property("configuration");
+                    if (configVar.isValid() && !configVar.isNull()) {
+                        configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
+                    }
                 }
             }
+        }
+    }
+
+    // Plasma 6 plasmoid AppletQuickItem has no "configuration" property;
+    // build a ConfigPropertyMap from the plasmoid's KConfig XT main.xml.
+    if (!configuration && applet->pluginMetaData().pluginId() == QLatin1String(Latte::PluginId::kPlasmoid)) {
+        const QString metaPath = applet->pluginMetaData().fileName();
+        const QString configXml = QFileInfo(metaPath).dir().filePath(QStringLiteral("contents/config/main.xml"));
+
+        if (QFile::exists(configXml)) {
+            QFile file(configXml);
+            auto *loader = new KConfigLoader(applet->config(), &file, this);
+            configuration = new KDeclarative::ConfigPropertyMap(loader, this);
         }
     }
 
@@ -1985,6 +1989,30 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                 removeExpandedApplet(ai);
             });
         }
+    }
+
+    //! When the QML graphic object is not yet available for a latte
+    //! plasmoid, defer populating the tasks model until it is created
+    if (!ai && appletMeta.pluginId() == QLatin1String(Latte::PluginId::kPlasmoid)) {
+        QPointer<Plasma::Applet> appletPtr(applet);
+        QTimer::singleShot(2000, this, [this, appletPtr]() {
+            if (!appletPtr) {
+                return;
+            }
+            PlasmaQuick::AppletQuickItem *deferredAi = PlasmaQuick::AppletQuickItem::itemForApplet(appletPtr.data());
+            if (deferredAi) {
+                // In Plasma 6 the AppletQuickItem has no static "configuration"
+                // property.  Set it as a dynamic property so QML bindings like
+                // tasks.configuration.showAudioBadge resolve correctly.
+                if (!deferredAi->property("configuration").isValid()) {
+                    QObject *config = appletConfiguration(appletPtr.data());
+                    if (config) {
+                        deferredAi->setProperty("configuration", QVariant::fromValue(config));
+                    }
+                }
+                m_latteTasksModel->addTask(deferredAi);
+            }
+        });
     }
 
     //! Track all applets, for example to support syncing between different docks.
