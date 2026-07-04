@@ -38,6 +38,7 @@ private Q_SLOTS:
     void tasksConfigClickActionModelOrderMatchesEnum();
     void configInteractionHoverActionNotHardcoded();
     void typesTaskActionEnumCompleteness();
+    void parabolicAreaMouseAreaStructuralGuardsPresent();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1379,6 +1380,52 @@ void QmlSmokeTest::typesTaskActionEnumCompleteness()
     QVERIFY(source.contains(QStringLiteral("ScrollNone")));
     QVERIFY(source.contains(QStringLiteral("ScrollTasks")));
     QVERIFY(source.contains(QStringLiteral("ScrollToggleMinimized")));
+}
+
+void QmlSmokeTest::parabolicAreaMouseAreaStructuralGuardsPresent()
+{
+    // Verify the ParabolicArea.qml MouseArea has the guards that keep the
+    // wave (parabolic) animation smooth and clicks working for widget applets:
+    //   1. acceptedButtons: Qt.NoButton — clicks pass through to the applet
+    //   2. onPositionChanged handler — synchronous local position tracking
+    //   3. onExited handler — immediate cleanup, no 80 ms C++ nullifier delay
+    //   4. Visible condition does NOT hide when item is current (no longer
+    //      depends on currentParabolicItem !== _parabolicArea)
+    QFile file(QStringLiteral(LATTE_PARABOLICAREA_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // Must not consume button presses — clicks reach the underlying applet
+    QVERIFY(source.contains(QStringLiteral("acceptedButtons: Qt.NoButton")));
+
+    // Must have local onPositionChanged for synchronous parabolic updates
+    QVERIFY(source.contains(QStringLiteral("onPositionChanged:")));
+
+    // Must have local onExited for immediate cleanup
+    QVERIFY(source.contains(QStringLiteral("onExited:")));
+
+    // MouseArea must be always visible when parabolic is supported.
+    // The old guard "currentParabolicItem !== _parabolicArea" that hid the
+    // MouseArea when the item was the current parabolic target must be gone
+    // from the visible: binding specifically.
+    //
+    // Find the MouseArea visible: line and verify it does not include the
+    // old currentParabolicItem guard.
+    int mouseAreaIndex = source.indexOf(QStringLiteral("id: parabolicMouseArea"));
+    QVERIFY(mouseAreaIndex > 0);
+    int visibleLine = source.indexOf(QStringLiteral("\n        visible:"), mouseAreaIndex);
+    QVERIFY(visibleLine > 0);
+    int visibleEnd = source.indexOf(QLatin1Char('\n'), visibleLine + 1);
+    QVERIFY(visibleEnd > 0);
+    const QString visibleBinding = source.mid(visibleLine, visibleEnd - visibleLine);
+    QVERIFY2(!visibleBinding.contains(QStringLiteral("currentParabolicItem")),
+             "MouseArea visible: must not hide when item is current. "
+             "visible binding should only gate on parabolicEffectIsSupported "
+             "and !indexerIsSupported.");
+
+    // Visible must still gate on parabolic support (not indexer-supported aka tasks)
+    QVERIFY(source.contains(QStringLiteral("parabolicEffectIsSupported")));
+    QVERIFY(source.contains(QStringLiteral("!communicator.indexerIsSupported")));
 }
 
 QTEST_MAIN(QmlSmokeTest)
