@@ -663,6 +663,66 @@ PlasmoidItem {
         TaskTools.activateNextPrevTask(next);
     }
 
+    // Called from containment's wheel bridge with raw containment-local
+    // coordinates and the containment root item.  Uses mapFromItem to
+    // transform into plasmoid-local, then into badge-local for hit testing.
+    // Returns true if volume was adjusted, false otherwise.
+    function adjustVolumeForAudioBadge(containmentX, containmentY, delta, containmentItem) {
+        // Transform containment-local → plasmoid-root-local
+        var plasmoidLocal = mapFromItem(containmentItem, containmentX, containmentY);
+
+        var tasks = icList.contentItem.children;
+        for (var i = 0; i < tasks.length; ++i) {
+            var task = tasks[i];
+            if (!task || !task.visible || !task.hasAudioStream) {
+                continue;
+            }
+
+            var badge = findAudioStreamFromItem(task);
+            if (!badge || !badge.visible) {
+                continue;
+            }
+
+            // Transform plasmoid-root-local → badge-local for hit test
+            var pos = badge.mapFromItem(root, plasmoidLocal.x, plasmoidLocal.y);
+            if (pos.x >= -badge.hitPadding && pos.x <= badge.width + badge.hitPadding
+                    && pos.y >= -badge.hitPadding && pos.y <= badge.height + badge.hitPadding) {
+                if (delta > 0) {
+                    task.increaseVolume();
+                } else {
+                    task.decreaseVolume();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Recursively search an item's subtree for an AudioStream badge (matched by objectName).
+    function findAudioStreamFromItem(item) {
+        if (!item) {
+            return null;
+        }
+
+        if (item.objectName === "audioStreamBadge") {
+            return item;
+        }
+
+        var children = item.children;
+        if (!children) {
+            return null;
+        }
+
+        for (var i = 0; i < children.length; ++i) {
+            var found = findAudioStreamFromItem(children[i]);
+            if (found) {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
     //! TaskManagerBackend required a groupDialog setting otherwise it crashes. This patch
     //! sets one just in order not to crash TaskManagerBackend
     PlasmaCore.Dialog {
