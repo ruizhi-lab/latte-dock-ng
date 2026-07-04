@@ -47,7 +47,6 @@ struct AppletInterfaceData
     Plasma::Applet *applet{nullptr};
     PlasmaQuick::AppletQuickItem *plasmoid{nullptr};
     QQmlPropertyMap *configuration{nullptr};
-    bool configIsFallback{false};
 };
 
 class ContainmentInterface: public QObject

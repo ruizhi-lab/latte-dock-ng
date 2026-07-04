@@ -733,10 +733,12 @@ int ContainmentInterface::indexOfApplet(const int &id)
 
 QObject *ContainmentInterface::configurationForAppletVisualIndex(const int visualIndex)
 {
-    // Walk all known applets in order and return the Nth plasmoid config.
-    // (Cannot rely on m_appletData[].plasmoid pointer matching the AI from
-    // latteTasksModel — they may differ when the QML engine instantiates a
-    // wrapper object.)
+    // Walk m_appletOrder to find the Nth plasmoid applet, then resolve its
+    // configuration through the QQmlContext.  This gives us the exact same
+    // KConfigPropertyMap that the plasmoid's QML bindings
+    // (plasmoid.configuration.*) read from.  We defer the QQmlContext lookup
+    // to here — rather than during early init — so it runs after the
+    // PlasmoidItem is fully set up.
     int plasmoidIndex = 0;
     for (const int id : m_appletOrder) {
         if (!m_appletData.contains(id)) {
@@ -746,16 +748,57 @@ QObject *ContainmentInterface::configurationForAppletVisualIndex(const int visua
             continue;
         }
         if (plasmoidIndex == visualIndex) {
+            // Get the AppletQuickItem — try cached pointer first,
+            // then fall back to resolving from the applet.
+            auto *ai = m_appletData[id].plasmoid;
+            if (!ai) {
+                ai = PlasmaQuick::AppletQuickItem::itemForApplet(m_appletData[id].applet);
+            }
+
+            // Try to get the real config via QQmlContext (most reliable —
+            // gives the exact same KConfigPropertyMap the plasmoid uses)
+            if (ai) {
+                QQmlEngine *engine = qmlEngine(ai);
+                if (engine) {
+                    // Walk the context hierarchy; "plasmoid" may be on a
+                    // parent context, not directly on the AI's context.
+                    QQmlContext *ctx = engine->contextForObject(ai);
+                    while (ctx) {
+                        QVariant plasmoidVar = ctx->contextProperty(QStringLiteral("plasmoid"));
+                        if (plasmoidVar.isValid() && !plasmoidVar.isNull()) {
+                            QObject *plasmoidObj = plasmoidVar.value<QObject *>();
+                            if (plasmoidObj) {
+                                QVariant configVar = plasmoidObj->property("configuration");
+                                if (configVar.isValid() && !configVar.isNull()) {
+                                    auto *realConfig = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
+                                    if (realConfig) {
+                                        return realConfig;
+                                    }
+                                }
+                            }
+                            break; // Found plasmoid but couldn't get config
+                        }
+                        ctx = ctx->parentContext();
+                    }
+                }
+
+                // Fallback: search child items for a "configuration" property
+                const auto children = ai->childItems();
+                for (auto *child : children) {
+                    QVariant configVar = child->property("configuration");
+                    if (configVar.isValid() && !configVar.isNull()) {
+                        auto *childConfig = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
+                        if (childConfig) {
+                            return childConfig;
+                        }
+                    }
+                }
+            }
+
+            // Fallback — return whatever appletConfiguration() gave us
             if (!m_appletData[id].configuration) {
                 m_appletData[id].configuration = appletConfiguration(m_appletData[id].applet);
             }
-            // Ensure the dynamic property is set on the plasmoid AI if available.
-            if (m_appletData[id].configuration && m_appletData[id].plasmoid) {
-                m_appletData[id].plasmoid->setProperty("configuration",
-                    QVariant::fromValue(static_cast<QObject *>(m_appletData[id].configuration)));
-            }
-            qDebug() << "org.kde.sync configForVisualIndex" << visualIndex << "→ id" << id
-                     << (m_appletData[id].configuration ? "OK" : "NULL");
             return m_appletData[id].configuration;
         }
         plasmoidIndex++;
@@ -1825,9 +1868,6 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
             if (m_appletData[id].configuration) {
                 qDebug() << "org.kde.sync delayed applet configuration was successful for : " << id;
                 initAppletConfigurationSignals(id, m_appletData[id].configuration);
-                if (m_appletData[id].plugin == QLatin1String(Latte::PluginId::kPlasmoid)) {
-                    m_appletData[id].configIsFallback = true;
-                }
             }
         }
 
@@ -1839,39 +1879,6 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
             if (ai) {
                 m_appletData[id].plasmoid = ai;
                 m_latteTasksModel->addTask(ai);
-                // Ensure the configuration is exposed as a dynamic property
-                // on the AI so QML tasks.configuration resolves.
-                if (m_appletData[id].configuration) {
-                    ai->setProperty("configuration",
-                        QVariant::fromValue(static_cast<QObject *>(m_appletData[id].configuration)));
-                }
-            }
-        }
-
-        //! For plasmoid applets, try to upgrade from a fallback config
-        //! (KDeclarative::ConfigPropertyMap) to the real PlasmoidItem
-        //! configuration so config writes from the Tasks page propagate
-        //! into the plasmoid's own KConfigLoader.
-        if (m_appletData[id].configIsFallback
-            && m_appletData[id].plugin == QLatin1String(Latte::PluginId::kPlasmoid)) {
-            auto *newConfig = appletConfiguration(m_appletData[id].applet);
-            if (newConfig && newConfig != m_appletData[id].configuration) {
-                if (m_appletData[id].configuration) {
-                    m_appletData[id].configuration->disconnect(this);
-                }
-                m_appletData[id].configuration = newConfig;
-                m_appletData[id].configIsFallback = false;
-                initAppletConfigurationSignals(id, newConfig);
-                // Update the dynamic property on the AppletQuickItem so
-                // QML tasks.configuration picks up the real config.
-                if (m_appletData[id].plasmoid) {
-                    m_appletData[id].plasmoid->setProperty("configuration",
-                        QVariant::fromValue(static_cast<QObject *>(newConfig)));
-                }
-                qDebug() << "org.kde.sync upgraded fallback config to real for : " << id;
-            } else {
-                // PlasmoidItem not ready yet — keep trying
-                m_appletDelayedConfigurationTimer.start();
             }
         }
     }
@@ -1926,58 +1933,21 @@ QQmlPropertyMap *ContainmentInterface::appletConfiguration(const Plasma::Applet 
         }
     }
 
-    // Plasma 6 plasmoid AppletQuickItem has no "configuration" property
-    // directly on itself; the configuration is exposed through the
-    // "plasmoid" QML context property.  Resolve it from the QQmlContext so
-    // we get the EXACT SAME KConfigPropertyMap object that QML bindings
-    // like `plasmoid.configuration.showAudioBadge` read from.
+    // Plasma 6 plasmoid AppletQuickItem has no "configuration" property;
+    // build a ConfigPropertyMap from the plasmoid's KConfig XT main.xml.
+    // This fallback is replaced at QML-access time by
+    // configurationForAppletVisualIndex() which returns the real
+    // KConfigPropertyMap exposed through the QQmlContext — doing it here
+    // during early init would access the QML engine before the
+    // PlasmoidItem is ready and can cause subtle side-effects.
     if (!configuration && applet->pluginMetaData().pluginId() == QLatin1String(Latte::PluginId::kPlasmoid)) {
-        if (ai) {
-            // Try child items first (fast path)
-            const auto children = ai->childItems();
-            for (auto *child : children) {
-                QVariant configVar = child->property("configuration");
-                if (configVar.isValid() && !configVar.isNull()) {
-                    auto *childConfig = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
-                    if (childConfig) {
-                        configuration = childConfig;
-                        break;
-                    }
-                }
-            }
+        const QString metaPath = applet->pluginMetaData().fileName();
+        const QString configXml = QFileInfo(metaPath).dir().filePath(QStringLiteral("contents/config/main.xml"));
 
-            // If not found on children, try QQmlContext (most reliable —
-            // gives us the exact same "plasmoid.configuration" the QML sees)
-            if (!configuration) {
-                QQmlEngine *engine = qmlEngine(ai);
-                if (engine) {
-                    QQmlContext *ctx = engine->contextForObject(ai);
-                    if (ctx) {
-                        QVariant plasmoidVar = ctx->contextProperty(QStringLiteral("plasmoid"));
-                        if (plasmoidVar.isValid() && !plasmoidVar.isNull()) {
-                            QObject *plasmoidObj = plasmoidVar.value<QObject *>();
-                            if (plasmoidObj) {
-                                QVariant configVar = plasmoidObj->property("configuration");
-                                if (configVar.isValid() && !configVar.isNull()) {
-                                    configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Still no config available — last-resort fallback.
-        if (!configuration) {
-            const QString metaPath = applet->pluginMetaData().fileName();
-            const QString configXml = QFileInfo(metaPath).dir().filePath(QStringLiteral("contents/config/main.xml"));
-
-            if (QFile::exists(configXml)) {
-                QFile file(configXml);
-                auto *loader = new KConfigLoader(applet->config(), &file, this);
-                configuration = new KDeclarative::ConfigPropertyMap(loader, this);
-            }
+        if (QFile::exists(configXml)) {
+            QFile file(configXml);
+            auto *loader = new KConfigLoader(applet->config(), &file, this);
+            configuration = new KDeclarative::ConfigPropertyMap(loader, this);
         }
     }
 
@@ -2140,15 +2110,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         data.lastValidIndex = m_appletOrder.indexOf(data.id);
         //! set configuration object properly for applets and subcontainments
         data.configuration = appletConfiguration(applet);
-        if (data.plugin == QLatin1String(Latte::PluginId::kPlasmoid)) {
-            data.configIsFallback = true; // will be cleared on upgrade in updateAppletDelayedConfiguration
-        }
-
-        // Plasma 6 AppletQuickItem has no "configuration" Q_PROPERTY;
-        // set it as a dynamic property so QML tasks.configuration works.
-        if (data.configuration && ai) {
-            ai->setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(data.configuration)));
-        }
 
         //! track property changes in applets
         if (data.configuration) {
