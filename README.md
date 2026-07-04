@@ -93,6 +93,45 @@ emaint sync -r ruizhi-overlay
 emerge -av kde-misc/latte-dock-ng
 ```
 
+### NixOS
+
+Add it as a flake input, then put its module in your `nixosSystem`'s
+`modules` list:
+
+```nix
+# flake.nix
+inputs.latte-dock-ng.url = "github:ruizhi-lab/latte-dock-ng";
+
+# in your nixosSystem call
+nixpkgs.lib.nixosSystem {
+  system = "x86_64-linux";
+  modules = [
+    inputs.latte-dock-ng.nixosModules.default
+    ./configuration.nix
+  ];
+};
+```
+
+That module just applies the package overlay. It doesn't install anything
+on its own, but every other module in the list now sees `pkgs.latte-dock-ng`
+with no further wiring, so add it wherever you list system packages:
+
+```nix
+# configuration.nix
+{ pkgs, ... }: {
+  environment.systemPackages = [ pkgs.latte-dock-ng ];
+}
+```
+
+Or build/run it directly without adding it as an input:
+
+```bash
+nix build github:ruizhi-lab/latte-dock-ng
+nix run github:ruizhi-lab/latte-dock-ng
+```
+
+See the [installation instructions](./INSTALLATION.md#nixos) for building from source instead.
+
 ### From source
 
 ```bash

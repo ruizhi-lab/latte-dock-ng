@@ -1,0 +1,7 @@
+FROM nixos/nix:latest
+
+# Point at nixos-unstable explicitly and refresh it, rather than trusting
+# whatever channel happens to be bundled with the base image. Matches the
+# nixpkgs branch pinned by this repo's own flake.nix.
+RUN nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs && \
+    nix-channel --update
