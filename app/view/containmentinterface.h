@@ -47,6 +47,7 @@ struct AppletInterfaceData
     Plasma::Applet *applet{nullptr};
     PlasmaQuick::AppletQuickItem *plasmoid{nullptr};
     QQmlPropertyMap *configuration{nullptr};
+    bool configIsFallback{false};
 };
 
 class ContainmentInterface: public QObject
@@ -96,6 +97,7 @@ public:
     Q_INVOKABLE int appletIdForAppletIndex(const int appletIndex) const;
 
     int indexOfApplet(const int &id);
+    Q_INVOKABLE QObject *configurationForAppletVisualIndex(const int visualIndex);
     QList<int> appletsOrder() const;
     ViewPart::AppletInterfaceData appletDataAtIndex(const int &index);
     ViewPart::AppletInterfaceData appletDataForId(const int &id);

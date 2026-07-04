@@ -22,7 +22,7 @@ Item {
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
 
     property alias cfg_middleClickAction: middleClickAction.currentIndex
-    property int cfg_hoverAction: LatteTasks.types.NoneAction
+    property int cfg_hoverAction: plasmoid.configuration.hoverAction
 
     property alias cfg_showOnlyCurrentScreen: showOnlyCurrentScreen.checked
     property alias cfg_showOnlyCurrentDesktop: showOnlyCurrentDesktop.checked

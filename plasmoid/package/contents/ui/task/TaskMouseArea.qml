@@ -182,29 +182,45 @@ MouseArea {
 
             if (modifierAccepted(mouse) && !root.disableAllWindowsFunctionality){
                 if( !taskItem.isLauncher ){
-                    if (root.modifierClickAction == LatteTasks.types.NewInstance) {
-                        tasksModel.requestNewInstance(modelIndex());
-                    } else if (root.modifierClickAction == LatteTasks.types.Close) {
+                    if (root.modifierClickAction == LatteTasks.types.Close) {
                         tasksModel.requestClose(modelIndex());
+                    } else if (root.modifierClickAction == LatteTasks.types.NewInstance) {
+                        tasksModel.requestNewInstance(modelIndex());
                     } else if (root.modifierClickAction == LatteTasks.types.ToggleMinimized) {
                         tasksModel.requestToggleMinimized(modelIndex());
-                    } else if ( root.modifierClickAction == LatteTasks.types.CycleThroughTasks) {
+                    } else if (root.modifierClickAction == LatteTasks.types.CycleThroughTasks) {
                         if (isGroupParent)
                             subWindows.activateNextTask();
                         else
                             activateTask();
                     } else if (root.modifierClickAction == LatteTasks.types.ToggleGrouping) {
                         tasksModel.requestToggleGrouping(modelIndex());
+                    } else if (root.modifierClickAction == LatteTasks.types.PresentWindows) {
+                        activateTask();
+                    } else if (root.modifierClickAction == LatteTasks.types.PreviewWindows) {
+                        if (isGroupParent)
+                            subWindows.activateNextTask();
+                        else
+                            activateTask();
+                    } else if (root.modifierClickAction == LatteTasks.types.HighlightWindows) {
+                        root.windowsHovered(model.WinIdList, true);
+                    } else if (root.modifierClickAction == LatteTasks.types.PreviewAndHighlightWindows) {
+                        if (isGroupParent)
+                            subWindows.activateNextTask();
+                        else
+                            activateTask();
+                        root.windowsHovered(model.WinIdList, true);
                     }
+                    // NoneAction: do nothing
                 } else {
                     activateTask();
                 }
             } else if (mouse.button == Qt.MidButton && !root.disableAllWindowsFunctionality){
                 if( !taskItem.isLauncher ){
-                    if (root.middleClickAction == LatteTasks.types.NewInstance) {
-                        tasksModel.requestNewInstance(modelIndex());
-                    } else if (root.middleClickAction == LatteTasks.types.Close) {
+                    if (root.middleClickAction == LatteTasks.types.Close) {
                         tasksModel.requestClose(modelIndex());
+                    } else if (root.middleClickAction == LatteTasks.types.NewInstance) {
+                        tasksModel.requestNewInstance(modelIndex());
                     } else if (root.middleClickAction == LatteTasks.types.ToggleMinimized) {
                         tasksModel.requestToggleMinimized(modelIndex());
                     } else if ( root.middleClickAction == LatteTasks.types.CycleThroughTasks) {
@@ -214,41 +230,68 @@ MouseArea {
                             activateTask();
                     } else if (root.middleClickAction == LatteTasks.types.ToggleGrouping) {
                         tasksModel.requestToggleGrouping(modelIndex());
+                    } else if (root.middleClickAction == LatteTasks.types.PresentWindows) {
+                        activateTask();
+                    } else if (root.middleClickAction == LatteTasks.types.PreviewWindows) {
+                        if (isGroupParent)
+                            subWindows.activateNextTask();
+                        else
+                            activateTask();
+                    } else if (root.middleClickAction == LatteTasks.types.HighlightWindows) {
+                        root.windowsHovered(model.WinIdList, true);
+                    } else if (root.middleClickAction == LatteTasks.types.PreviewAndHighlightWindows) {
+                        if (isGroupParent)
+                            subWindows.activateNextTask();
+                        else
+                            activateTask();
+                        root.windowsHovered(model.WinIdList, true);
                     }
+                    // NoneAction: do nothing
                 } else {
                     activateTask();
                 }
             } else if (mouse.button == Qt.LeftButton){
                 var canPresentWindowsIsSupported = LatteCore.WindowSystem.compositingActive && backend.windowViewAvailable;
 
-                if( !taskItem.isLauncher && !root.disableAllWindowsFunctionality ){
-                    if ( (root.leftClickAction === LatteTasks.types.PreviewWindows && isGroupParent)
-                            || ( !canPresentWindowsIsSupported
-                                && root.leftClickAction === LatteTasks.types.PresentWindows
-                                && isGroupParent) ) {
-                        // The legacy path here was showPreviewWindow(), but
-                        // window-preview thumbnails are unstable on Plasma 6 /
-                        // Wayland (see TaskItem.showPreviewWindow comment) so
-                        // that function was neutered. Without a fallback the
-                        // click felt frozen for grouped tasks whenever KWin's
-                        // WindowView/Overview effect wasn't available.
-                        // Cycle through real windows instead — matches the
-                        // subWindows.activateNextTask path used by
-                        // CycleThroughTasks and skips phantom toplevels.
-                        subWindows.activateNextTask();
-                    } else if ( (root.leftClickAction === LatteTasks.types.PresentWindows && !(isGroupParent && !LatteCore.WindowSystem.compositingActive))
-                               || ((root.leftClickAction === LatteTasks.types.PreviewWindows && !isGroupParent)) ) {
-                        activateTask();
-                    } else if (root.leftClickAction === LatteTasks.types.CycleThroughTasks) {
-                        if (isGroupParent) {
-                            subWindows.activateNextTask();
-                        } else {
-                            activateTask();
-                        }
-                    }
-                } else {
+                if (taskItem.isLauncher || root.disableAllWindowsFunctionality) {
                     activateTask();
+                } else if (root.leftClickAction === LatteTasks.types.Close) {
+                    tasksModel.requestClose(modelIndex());
+                } else if (root.leftClickAction === LatteTasks.types.NewInstance) {
+                    tasksModel.requestNewInstance(modelIndex());
+                } else if (root.leftClickAction === LatteTasks.types.ToggleMinimized) {
+                    tasksModel.requestToggleMinimized(modelIndex());
+                } else if (root.leftClickAction === LatteTasks.types.CycleThroughTasks) {
+                    if (isGroupParent) {
+                        subWindows.activateNextTask();
+                    } else {
+                        activateTask();
+                    }
+                } else if (root.leftClickAction === LatteTasks.types.ToggleGrouping) {
+                    tasksModel.requestToggleGrouping(modelIndex());
+                } else if (root.leftClickAction === LatteTasks.types.PresentWindows) {
+                    if (!canPresentWindowsIsSupported && isGroupParent) {
+                        subWindows.activateNextTask();
+                    } else {
+                        activateTask();
+                    }
+                } else if (root.leftClickAction === LatteTasks.types.PreviewWindows) {
+                    if (isGroupParent) {
+                        subWindows.activateNextTask();
+                    } else {
+                        activateTask();
+                    }
+                } else if (root.leftClickAction === LatteTasks.types.HighlightWindows) {
+                    root.windowsHovered(model.WinIdList, true);
+                } else if (root.leftClickAction === LatteTasks.types.PreviewAndHighlightWindows) {
+                    if (isGroupParent) {
+                        subWindows.activateNextTask();
+                    } else {
+                        activateTask();
+                    }
+                    root.windowsHovered(model.WinIdList, true);
                 }
+                // NoneAction or any unhandled action: do nothing
             }
 
             backend.cancelHighlightWindows();
