@@ -31,7 +31,10 @@ private Q_SLOTS:
     void launchersGeometryRestoreSchedulingLoadsFromSource();
     void plasmaVolumeBootstrapLoadsFromSource();
     void taskMouseAreaAllClickActionsPresent();
+    void taskMouseAreaRegressionGuardsPresent();
     void tasksConfigComboModelsComplete();
+    void tasksConfigCfgPropertyAndNoStaleTasksConfig();
+    void configInteractionHoverActionNotHardcoded();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1194,6 +1197,65 @@ void QmlSmokeTest::tasksConfigComboModelsComplete()
     const int presentWindowsCount = source.count(QStringLiteral("Present Windows"));
     QVERIFY2(presentWindowsCount >= 3,
              qPrintable(QStringLiteral("TasksConfig.qml should have Present Windows in all 3 click-action combos, found %1").arg(presentWindowsCount)));
+}
+
+void QmlSmokeTest::taskMouseAreaRegressionGuardsPresent()
+{
+    // Verify that existing behaviour (right-click context menu, wheel
+    // handler, highlight cancellation) was not accidentally removed.
+    QFile file(QStringLiteral(LATTE_TASKMOUSEAREA_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // Right-click must still show context menu (not replaced by an action)
+    QVERIFY(source.contains(QStringLiteral("RightButton")));
+    QVERIFY(source.contains(QStringLiteral("showContextMenu")));
+
+    // Wheel handler must still check taskScrollAction and ScrollToggleMinimized
+    QVERIFY(source.contains(QStringLiteral("taskScrollAction")));
+    QVERIFY(source.contains(QStringLiteral("ScrollToggleMinimized")));
+
+    // Highlight cancellation must still run after all click handlers
+    QVERIFY(source.contains(QStringLiteral("cancelHighlightWindows")));
+
+    // canPresentWindowsIsSupported guard must still exist for PresentWindows fallback
+    QVERIFY(source.contains(QStringLiteral("canPresentWindowsIsSupported")));
+
+    // preventStealing must still be set (Qt6 drag regression guard)
+    QVERIFY(source.contains(QStringLiteral("preventStealing: true")));
+}
+
+void QmlSmokeTest::tasksConfigCfgPropertyAndNoStaleTasksConfig()
+{
+    // The cfg property (latteView.extendedInterface.configurationForAppletVisualIndex)
+    // must be the config source.  No stale tasks.configuration references
+    // should remain.
+    QFile file(QStringLiteral(LATTE_TASKSCONFIG_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // cfg property must exist
+    QVERIFY(source.contains(QStringLiteral("configurationForAppletVisualIndex")));
+
+    // No stale tasks.configuration references (all replaced with cfg)
+    QVERIFY2(!source.contains(QStringLiteral("tasks.configuration")),
+             "TasksConfig.qml still contains stale tasks.configuration references — replace with cfg");
+}
+
+void QmlSmokeTest::configInteractionHoverActionNotHardcoded()
+{
+    // cfg_hoverAction must read from plasmoid.configuration.hoverAction,
+    // not be hardcoded to LatteTasks.types.NoneAction.
+    QFile file(QStringLiteral(LATTE_CONFIG_INTERACTION_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // Must read from real config (not hardcoded)
+    QVERIFY(source.contains(QStringLiteral("plasmoid.configuration.hoverAction")));
+
+    // The old hardcoded value must be gone
+    QVERIFY2(!source.contains(QStringLiteral("cfg_hoverAction: LatteTasks.types.NoneAction")),
+             "ConfigInteraction.qml cfg_hoverAction is still hardcoded to NoneAction");
 }
 
 QTEST_MAIN(QmlSmokeTest)

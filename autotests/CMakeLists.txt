@@ -201,6 +201,7 @@ target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_PULSEAUDIO_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/PulseAudio.qml"
     LATTE_TASKMOUSEAREA_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/task/TaskMouseArea.qml"
     LATTE_TASKSCONFIG_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/configuration/pages/TasksConfig.qml"
+    LATTE_CONFIG_INTERACTION_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/config/ConfigInteraction.qml"
 )
 
 target_link_libraries(qmlsmoketest
