@@ -32,9 +32,12 @@ private Q_SLOTS:
     void plasmaVolumeBootstrapLoadsFromSource();
     void taskMouseAreaAllClickActionsPresent();
     void taskMouseAreaRegressionGuardsPresent();
+    void taskMouseAreaStructuralGuardsPresent();
     void tasksConfigComboModelsComplete();
     void tasksConfigCfgPropertyAndNoStaleTasksConfig();
+    void tasksConfigClickActionModelOrderMatchesEnum();
     void configInteractionHoverActionNotHardcoded();
+    void typesTaskActionEnumCompleteness();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1256,6 +1259,126 @@ void QmlSmokeTest::configInteractionHoverActionNotHardcoded()
     // The old hardcoded value must be gone
     QVERIFY2(!source.contains(QStringLiteral("cfg_hoverAction: LatteTasks.types.NoneAction")),
              "ConfigInteraction.qml cfg_hoverAction is still hardcoded to NoneAction");
+}
+
+void QmlSmokeTest::taskMouseAreaStructuralGuardsPresent()
+{
+    // Verify structural guards that prevent accidental event handling
+    // in edit mode, during drag, or when all-windows functionality is
+    // disabled.
+    QFile file(QStringLiteral(LATTE_TASKMOUSEAREA_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // Edit-mode guard must be checked before any click action
+    QVERIFY(source.contains(QStringLiteral("isContainmentEditing()")));
+    QVERIFY(source.contains(QStringLiteral("!isSeparator")));
+    QVERIFY(source.contains(QStringLiteral("!taskItem.isDragged")));
+
+    // modifierAccepted function must exist (used by modifier-click path)
+    QVERIFY(source.contains(QStringLiteral("modifierAccepted")));
+
+    // disableAllWindowsFunctionality guard must be present on modifier
+    // and middle-click paths
+    QVERIFY(source.contains(QStringLiteral("!root.disableAllWindowsFunctionality")));
+
+    // LeftClick must be checked by mouse.button
+    QVERIFY(source.contains(QStringLiteral("Qt.LeftButton")));
+    QVERIFY(source.contains(QStringLiteral("Qt.MidButton")));
+
+    // highlightedWindows signal integration
+    QVERIFY(source.contains(QStringLiteral("windowsHovered")));
+}
+
+void QmlSmokeTest::tasksConfigClickActionModelOrderMatchesEnum()
+{
+    // The combo box models for click actions use direct index-to-enum
+    // mapping (currentIndex ↔ plasmoid.configuration value).  Verify
+    // the model array order matches the TaskAction enum order defined
+    // in types.h:
+    //   0=NoneAction  1=Close  2=NewInstance  3=ToggleMinimized
+    //   4=CycleThroughTasks  5=ToggleGrouping  6=PresentWindows
+    //   7=PreviewWindows  8=HighlightWindows  9=PreviewAndHighlightWindows
+    QFile file(QStringLiteral(LATTE_TASKSCONFIG_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // Find the leftClickAction model block
+    // Items must appear in enum order: None(0), Close(1), NewInstance(2),
+    // Minimize/Restore(3), CycleThroughTasks(4), ToggleGrouping(5),
+    // PresentWindows(6), PreviewWindows(7), HighlightWindows(8),
+    // PreviewAndHighlightWindows(9)
+    const QStringList orderedActions{
+        QStringLiteral("None"),
+        QStringLiteral("Close Window or Group"),
+        QStringLiteral("New Instance"),
+        QStringLiteral("Minimize/Restore Window or Group"),
+        QStringLiteral("Cycle Through Tasks"),
+        QStringLiteral("Toggle Task Grouping"),
+        QStringLiteral("Present Windows"),
+        QStringLiteral("Preview Windows"),
+        QStringLiteral("Highlight Windows"),
+        QStringLiteral("Preview and Highlight Windows"),
+    };
+
+    // Extract the leftClickAction model section
+    int leftClickStart = source.indexOf(QStringLiteral("id: leftClickAction"));
+    QVERIFY(leftClickStart > 0);
+
+    // Find the model array within the leftClickAction block
+    int modelStart = source.indexOf(QStringLiteral("model:"), leftClickStart);
+    QVERIFY(modelStart > 0);
+    int modelBracket = source.indexOf(QStringLiteral("["), modelStart);
+    QVERIFY(modelBracket > 0);
+    int modelEnd = source.indexOf(QStringLiteral("]"), modelBracket);
+    QVERIFY(modelEnd > 0);
+
+    // Verify items appear in the correct order within the model array
+    int lastPos = modelBracket;
+    for (const auto &action : orderedActions) {
+        int pos = source.indexOf(action, lastPos);
+        QVERIFY2(pos > 0 && pos < modelEnd,
+                 qPrintable(QStringLiteral("leftClickAction model: '%1' missing or out of order").arg(action)));
+        lastPos = pos;
+    }
+
+    // Verify direct index mapping is used (no switch-case conversion)
+    int afterModel = source.indexOf(QStringLiteral("currentIndex:"), modelEnd);
+    QVERIFY(afterModel > 0);
+    QVERIFY(source.indexOf(QStringLiteral("cfg.leftClickAction"), afterModel) > 0
+            || source.indexOf(QStringLiteral("tasks.configuration.leftClickAction"), afterModel) > 0);
+}
+
+void QmlSmokeTest::typesTaskActionEnumCompleteness()
+{
+    // Verify the TaskAction enum in types.h has all 10 values (0-9).
+    QFile file(QStringLiteral(LATTE_TYPES_H));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    const QStringList requiredEnumValues{
+        QStringLiteral("NoneAction"),
+        QStringLiteral("Close"),
+        QStringLiteral("NewInstance"),
+        QStringLiteral("ToggleMinimized"),
+        QStringLiteral("CycleThroughTasks"),
+        QStringLiteral("ToggleGrouping"),
+        QStringLiteral("PresentWindows"),
+        QStringLiteral("PreviewWindows"),
+        QStringLiteral("HighlightWindows"),
+        QStringLiteral("PreviewAndHighlightWindows"),
+    };
+
+    // All enum values must be present in the TaskAction enum block
+    for (const auto &value : requiredEnumValues) {
+        QVERIFY2(source.contains(value),
+                 qPrintable(QStringLiteral("types.h TaskAction enum missing: %1").arg(value)));
+    }
+
+    // TaskScrollAction must include ScrollNone, ScrollTasks, ScrollToggleMinimized
+    QVERIFY(source.contains(QStringLiteral("ScrollNone")));
+    QVERIFY(source.contains(QStringLiteral("ScrollTasks")));
+    QVERIFY(source.contains(QStringLiteral("ScrollToggleMinimized")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

@@ -202,6 +202,7 @@ target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_TASKMOUSEAREA_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/task/TaskMouseArea.qml"
     LATTE_TASKSCONFIG_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/configuration/pages/TasksConfig.qml"
     LATTE_CONFIG_INTERACTION_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/config/ConfigInteraction.qml"
+    LATTE_TYPES_H="${CMAKE_SOURCE_DIR}/plasmoid/plugin/types.h"
 )
 
 target_link_libraries(qmlsmoketest
