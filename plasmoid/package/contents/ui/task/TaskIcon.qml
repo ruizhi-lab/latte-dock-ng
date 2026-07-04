@@ -89,7 +89,10 @@ Item {
         anchors.fill: parent
         roundToIconSize: false
         source: LatteCore.Environment.iconSourceForTheme(decoration)
-        visible: !badgesLoader.active
+        // Always visible — badges render as overlays on top (z:30).
+        // Previously hidden when badges were active, which forced the icon
+        // through a MultiEffect pipeline that produced subtly different
+        // sizing (issue #27).
 
         readonly property real size: Math.min(width,height)
 
@@ -155,10 +158,21 @@ Item {
     Loader{
         id: badgesLoader
         anchors.fill: taskIconContainer
-        active: (activateProgress > 0) && taskItem.abilities.environment.isGraphicsSystemAccelerated
+        // Only activate when info/progress badges need the corner punch-out
+        // mask or when monochrome icon forcing is active.  Audio badges are
+        // translucent overlays that render directly on top of the native icon
+        // without needing a mask (issue #27 — activating the MultiEffect
+        // pipeline for audio-only subtly changed icon sizing).
+        active: (showInfo || showProgress || plasmoid.configuration.forceMonochromaticIcons)
+                && taskItem.abilities.environment.isGraphicsSystemAccelerated
         asynchronous: true
         opacity: stateColorizer.opacity > 0 ? 0 : 1
 
+        // activateProgress drives the opacity of badge overlays.  When an
+        // audio badge is active we still pass 1 here so the overlay fades in
+        // smoothly; the badgesLoader itself (mask + icon overlay) only
+        // activates for info/progress/monochrome to avoid the MultiEffect
+        // pipeline changing icon sizing (issue #27).
         property real activateProgress: showInfo || showProgress || showAudio ? 1 : 0
 
         property bool showInfo: (root.showInfoBadge
