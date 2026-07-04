@@ -8,7 +8,7 @@ stdenv.mkDerivation {
   pname = "latte-dock-ng";
   version = "1.2.21";
 
-  src = ./.;
+  src = lib.cleanSource ./.;
 
   nativeBuildInputs = [
     cmake
