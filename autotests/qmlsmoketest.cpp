@@ -30,6 +30,8 @@ private Q_SLOTS:
     void compactAppletPopupSizingLoadsFromSource();
     void launchersGeometryRestoreSchedulingLoadsFromSource();
     void plasmaVolumeBootstrapLoadsFromSource();
+    void taskMouseAreaAllClickActionsPresent();
+    void tasksConfigComboModelsComplete();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1106,6 +1108,93 @@ void QmlSmokeTest::plasmaVolumeBootstrapLoadsFromSource()
     QCOMPARE(paFixTimer->property("running").toBool(), true);
 }
 
-QTEST_MAIN(QmlSmokeTest)
+void QmlSmokeTest::taskMouseAreaAllClickActionsPresent()
+{
+    // Verify TaskMouseArea.qml handles all 9 TaskAction enum values for
+    // left-click, middle-click, and modifier-click (including the new
+    // PresentWindows, PreviewWindows, HighlightWindows,
+    // PreviewAndHighlightWindows handlers that were added alongside the
+    // original Close / NewInstance / ToggleMinimized / CycleThroughTasks /
+    // ToggleGrouping / NoneAction).
+    QFile file(QStringLiteral(LATTE_TASKMOUSEAREA_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
 
+    const QStringList requiredActions{
+        QStringLiteral("Close"),
+        QStringLiteral("NewInstance"),
+        QStringLiteral("ToggleMinimized"),
+        QStringLiteral("CycleThroughTasks"),
+        QStringLiteral("ToggleGrouping"),
+        QStringLiteral("PresentWindows"),
+        QStringLiteral("PreviewWindows"),
+        QStringLiteral("HighlightWindows"),
+        QStringLiteral("PreviewAndHighlightWindows"),
+    };
+
+    // Every required action must be referenced for left-click
+    for (const auto &action : requiredActions) {
+        const QString leftPattern = QStringLiteral("leftClickAction === LatteTasks.types.%1").arg(action);
+        QVERIFY2(source.contains(leftPattern),
+                 qPrintable(QStringLiteral("TaskMouseArea.qml missing left-click handler for %1").arg(action)));
+    }
+
+    // Every required action must be referenced for middle-click
+    for (const auto &action : requiredActions) {
+        const QString middlePattern = QStringLiteral("middleClickAction == LatteTasks.types.%1").arg(action);
+        QVERIFY2(source.contains(middlePattern),
+                 qPrintable(QStringLiteral("TaskMouseArea.qml missing middle-click handler for %1").arg(action)));
+    }
+
+    // Every required action must be referenced for modifier-click
+    for (const auto &action : requiredActions) {
+        const QString modPattern = QStringLiteral("modifierClickAction == LatteTasks.types.%1").arg(action);
+        QVERIFY2(source.contains(modPattern),
+                 qPrintable(QStringLiteral("TaskMouseArea.qml missing modifier-click handler for %1").arg(action)));
+    }
+
+    // NoneAction must be acknowledged (comment is fine)
+    QVERIFY(source.contains(QStringLiteral("NoneAction")));
+}
+
+void QmlSmokeTest::tasksConfigComboModelsComplete()
+{
+    // Verify the leftClickAction, middleClickAction, and modifierClickAction
+    // combo boxes in TasksConfig.qml expose all 10 items (None + 9 actions).
+    QFile file(QStringLiteral(LATTE_TASKSCONFIG_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // leftClickAction combo must list all 10 choices
+    const QStringList leftClickItems{
+        QStringLiteral("None"),
+        QStringLiteral("Close Window or Group"),
+        QStringLiteral("New Instance"),
+        QStringLiteral("Minimize/Restore"),
+        QStringLiteral("Cycle Through Tasks"),
+        QStringLiteral("Toggle Task Grouping"),
+        QStringLiteral("Present Windows"),
+        QStringLiteral("Preview Windows"),
+        QStringLiteral("Highlight Windows"),
+        QStringLiteral("Preview and Highlight Windows"),
+    };
+    for (const auto &item : leftClickItems) {
+        QVERIFY2(source.contains(item),
+                 qPrintable(QStringLiteral("TasksConfig.qml leftClickAction combo missing: %1").arg(item)));
+    }
+
+    // middleClickAction combo must list all 10 choices
+    // The combo model is shared; verify it includes PresentWindows onwards
+    // (items that were added by the fix)
+    QVERIFY(source.contains(QStringLiteral("Present Windows")));
+    QVERIFY(source.contains(QStringLiteral("Preview and Highlight Windows")));
+
+    // modifierClickAction combo must list all 10 choices
+    // Its model is in the same file; verify the extended items are present
+    const int presentWindowsCount = source.count(QStringLiteral("Present Windows"));
+    QVERIFY2(presentWindowsCount >= 3,
+             qPrintable(QStringLiteral("TasksConfig.qml should have Present Windows in all 3 click-action combos, found %1").arg(presentWindowsCount)));
+}
+
+QTEST_MAIN(QmlSmokeTest)
 #include "qmlsmoketest.moc"

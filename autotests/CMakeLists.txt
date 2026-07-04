@@ -199,6 +199,8 @@ target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_COMPACT_APPLET_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/applet/CompactApplet.qml"
     LATTE_LAUNCHERS_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/abilities/Launchers.qml"
     LATTE_PULSEAUDIO_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/PulseAudio.qml"
+    LATTE_TASKMOUSEAREA_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/task/TaskMouseArea.qml"
+    LATTE_TASKSCONFIG_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/configuration/pages/TasksConfig.qml"
 )
 
 target_link_libraries(qmlsmoketest
