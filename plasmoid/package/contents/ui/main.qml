@@ -692,6 +692,8 @@ PlasmoidItem {
                 } else {
                     task.decreaseVolume();
                 }
+                // Flash the volume level indicator on the badge
+                badge.flashVolumeLevel();
                 return true;
             }
         }

@@ -43,6 +43,12 @@ Item {
     }
     readonly property int hitPadding: Math.max(4, Math.round(width * 0.12))
     property bool badgePressed: false
+    property bool showVolumeLevel: false
+
+    function flashVolumeLevel() {
+        showVolumeLevel = true;
+        volumeLevelTimer.restart();
+    }
 
     onBadgeHoveredChanged: {
         if (!badgeHovered) {
@@ -235,6 +241,74 @@ Item {
             } else if (angle < -2) {
                 taskItem.decreaseVolume();
             }
+        }
+    }
+
+    // Volume level indicator — bar + percentage label above the badge.
+    // Appears briefly when volume is adjusted via mouse wheel.
+    Item {
+        id: volumeLevelIndicator
+        anchors {
+            bottom: audioStreamIcon.top
+            bottomMargin: 3
+            horizontalCenter: audioStreamIcon.horizontalCenter
+        }
+        width: Math.max(36, audioStreamIconBox.maximumBadgeSize * 2)
+        height: childrenRect.height
+        opacity: showVolumeLevel ? 1 : 0
+        visible: opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: 200 }
+        }
+
+        // Volume level text (e.g. "75%")
+        Text {
+            id: volumeLabel
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+            }
+            text: Math.round(Math.min(taskItem.volume, 100)) + "%"
+            color: audioStreamIcon.contrastColor
+            font.pixelSize: Math.max(10, Math.round(audioStreamIconBox.height * 0.38))
+            font.weight: Font.DemiBold
+        }
+
+        // Volume bar background
+        Rectangle {
+            id: volumeBar
+            anchors {
+                top: volumeLabel.bottom
+                topMargin: 1
+                left: parent.left
+                right: parent.right
+            }
+            height: Math.max(3, Math.round(audioStreamIcon.height * 0.18))
+            radius: height / 2
+            color: audioStreamIcon.contrastColor
+            opacity: 0.25
+        }
+
+        // Volume bar fill
+        Rectangle {
+            anchors {
+                left: volumeBar.left
+                top: volumeBar.top
+                bottom: volumeBar.bottom
+            }
+            width: Math.round(volumeBar.width * Math.min(taskItem.volume, 100) / 100)
+            radius: volumeBar.radius
+            color: audioStreamIcon.contrastColor
+        }
+    }
+
+    Timer {
+        id: volumeLevelTimer
+        interval: 1500
+        repeat: false
+        onTriggered: {
+            console.log("volumeLevelTimer triggered, hiding bar");
+            audioStreamIconBox.showVolumeLevel = false;
         }
     }
 
