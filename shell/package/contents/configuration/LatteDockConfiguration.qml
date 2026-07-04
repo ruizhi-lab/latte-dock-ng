@@ -510,9 +510,7 @@ Loader {
 
                     Repeater {
                         id: tasksRepeater
-                        // Tasks config tab is the original author's unfinished feature —
-                        // the configuration UI does not apply any changes. Hidden for now.
-                        model: 0
+                        model: latteView.extendedInterface.latteTasksModel
 
                         Pages.TasksConfig {
                             readonly property int pageIndex: tabBar.visibleStaticPages+index
