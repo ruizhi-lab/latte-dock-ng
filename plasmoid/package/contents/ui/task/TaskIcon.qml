@@ -312,6 +312,7 @@ Item {
 
             AudioStream{
                 id: audioStreamBadge
+                objectName: "audioStreamBadge"
                 opacity: badgesLoader.activateProgress
                 visible: badgesLoader.showAudio
             }

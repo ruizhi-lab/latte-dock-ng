@@ -1355,6 +1355,28 @@ ContainmentItem {
                 }
             }
 
+            // Check for audio stream badge hover before running the normal
+            // containment scroll action. If the cursor is over a task icon's
+            // audio badge the event adjusts volume instead of switching tasks.
+            // (The high-z DragDropArea blocks wheel events in Qt 6, so the
+            // audio badge's own MouseArea.onWheel never fires — we route the
+            // event here instead.)
+            for (var bi = 0; bi < plasmoid.applets.length; ++bi) {
+                var b = plasmoid.applets[bi];
+                if (b.pluginName !== "org.kde.latte.plasmoid") continue;
+                var quickItem = fastLayoutManager.resolveAppletQuickItem(b);
+                if (quickItem && quickItem.adjustVolumeForAudioBadge) {
+                    var audioDelta = (wheel.angleDelta.y >= 0 && wheel.angleDelta.x >= 0)
+                        ? Math.max(wheel.angleDelta.y, wheel.angleDelta.x)
+                        : Math.min(wheel.angleDelta.y, wheel.angleDelta.x);
+                    if (Math.abs(audioDelta) > 20) {
+                        if (quickItem.adjustVolumeForAudioBadge(wheel.x, wheel.y, audioDelta, parent)) {
+                            return;
+                        }
+                    }
+                }
+            }
+
             if (root.scrollAction === LatteContainment.types.ScrollNone) {
                 root.emptyAreasWheel(wheel);
                 return;
