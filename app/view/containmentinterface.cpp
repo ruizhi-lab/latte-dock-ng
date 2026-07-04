@@ -21,6 +21,7 @@
 #include <QLatin1String>
 #include <QSet>
 #include <QStringList>
+#include <QTimer>
 
 // Plasma
 #include <Plasma/Applet>
@@ -1614,6 +1615,7 @@ void ContainmentInterface::onLatteTasksCountChanged()
     }
 
     m_hasLatteTasks = (m_latteTasksModel->count() > 0);
+    qDebug() << "org.kde.sync hasLatteTasks changed, count" << m_latteTasksModel->count();
     Q_EMIT hasLatteTasksChanged();
 }
 
@@ -1781,6 +1783,8 @@ void ContainmentInterface::updateAppletsTracking()
 
 void ContainmentInterface::updateAppletDelayedConfiguration()
 {
+    bool pendingPlasmoid = false;
+
     for (const auto id : m_appletData.keys()) {
         if (!m_appletData[id].configuration) {
             m_appletData[id].configuration = appletConfiguration(m_appletData[id].applet);
@@ -1790,6 +1794,23 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
                 initAppletConfigurationSignals(id, m_appletData[id].configuration);
             }
         }
+
+        //! populate latte tasks model for plasmoid applets whose
+        //! AppletQuickItem was not available during onAppletAdded
+        if (!m_appletData[id].plasmoid && m_appletData[id].applet
+            && m_appletData[id].plugin == QLatin1String(Latte::PluginId::kPlasmoid)) {
+            PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(m_appletData[id].applet);
+            if (ai) {
+                m_appletData[id].plasmoid = ai;
+                m_latteTasksModel->addTask(ai);
+            } else {
+                pendingPlasmoid = true;
+            }
+        }
+    }
+
+    if (pendingPlasmoid) {
+        m_appletDelayedConfigurationTimer.start();
     }
 }
 
@@ -1822,10 +1843,13 @@ QQmlPropertyMap *ContainmentInterface::appletConfiguration(const Plasma::Applet 
     }
 
     //! set configuration object properly for applets and subcontainments
+    // In Plasma 6 the "configuration" property is a dynamic property set
+    // by the QML engine rather than a static Q_PROPERTY — use property()
+    // directly instead of requiring indexOfProperty >= 0.
     if (!isSubContainment) {
-        int metaconfigindex = ai->metaObject()->indexOfProperty("configuration");
-        if (metaconfigindex >=0 ){
-            configuration = dynamic_cast<QQmlPropertyMap *>((ai->property("configuration")).value<QObject *>());
+        QVariant configVar = ai->property("configuration");
+        if (configVar.isValid() && !configVar.isNull()) {
+            configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
         }
     } else {
         Plasma::Containment *subcontainment = Layouts::Storage::self()->subContainmentOf(m_view->corona(), applet);
@@ -1833,9 +1857,9 @@ QQmlPropertyMap *ContainmentInterface::appletConfiguration(const Plasma::Applet 
             PlasmaQuick::AppletQuickItem *subcai = subcontainment->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
 
             if (subcai) {
-                int metaconfigindex = subcai->metaObject()->indexOfProperty("configuration");
-                if (metaconfigindex >=0 ){
-                    configuration = dynamic_cast<QQmlPropertyMap *>((subcai->property("configuration")).value<QObject *>());
+                QVariant configVar = subcai->property("configuration");
+                if (configVar.isValid() && !configVar.isNull()) {
+                    configuration = dynamic_cast<QQmlPropertyMap *>(configVar.value<QObject *>());
                 }
             }
         }
