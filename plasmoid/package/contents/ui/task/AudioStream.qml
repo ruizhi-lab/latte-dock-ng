@@ -274,7 +274,7 @@ Item {
             font.weight: Font.DemiBold
         }
 
-        // Volume bar background
+        // Volume bar (background + fill)
         Rectangle {
             id: volumeBar
             anchors {
@@ -287,18 +287,20 @@ Item {
             radius: height / 2
             color: audioStreamIcon.contrastColor
             opacity: 0.25
-        }
 
-        // Volume bar fill
-        Rectangle {
-            anchors {
-                left: volumeBar.left
-                top: volumeBar.top
-                bottom: volumeBar.bottom
+            // Volume bar fill — clipped to the parent radius via clip.
+            // Using a child rectangle ensures the fill is always positioned
+            // correctly regardless of binding evaluation order.
+            clip: true
+            Rectangle {
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: Math.round(parent.width * Math.min(taskItem.volume, 100) / 100)
+                color: audioStreamIcon.contrastColor
             }
-            width: Math.round(volumeBar.width * Math.min(taskItem.volume, 100) / 100)
-            radius: volumeBar.radius
-            color: audioStreamIcon.contrastColor
         }
     }
 
@@ -306,10 +308,7 @@ Item {
         id: volumeLevelTimer
         interval: 1500
         repeat: false
-        onTriggered: {
-            console.log("volumeLevelTimer triggered, hiding bar");
-            audioStreamIconBox.showVolumeLevel = false;
-        }
+        onTriggered: audioStreamIconBox.showVolumeLevel = false
     }
 
     // Limit wheel volume events for high-frequency touchpad scrolling.
