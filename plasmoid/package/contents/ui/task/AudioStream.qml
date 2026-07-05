@@ -18,8 +18,10 @@ Item {
     readonly property real iconBoxWidth: parent ? parent.width : 0
     readonly property real iconBoxHeight: parent ? parent.height : 0
     readonly property real iconBoxSize: Math.min(iconBoxWidth, iconBoxHeight)
-    readonly property real parabolicZoom: taskItem.parabolicItem.zoom
-    readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium * parabolicZoom
+    // iconBoxSize already reflects the zoomed parent size — don't
+    // multiply by parabolicZoom again, which causes the badge to
+    // distort (double-scaling) during zoom animation.
+    readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium
     readonly property real compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)
     readonly property int outerMargin: Math.round(Math.max(1, iconBoxSize * 0.04))
     readonly property real requiredSpace: iconBoxSize + compactBadgeSize * 2
