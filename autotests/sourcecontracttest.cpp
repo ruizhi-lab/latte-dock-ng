@@ -136,8 +136,11 @@ private Q_SLOTS:
     void appletItemForAppletInSafeContextsUsesPublicApi();
     void appletItemForAppletExcludedContextsPreservePropertyAccess();
     // Qt5→Qt6 migration guards — patterns that cause regressions
-    void mouseButtonEnumUsesMidButtonNotMiddleButton();
+    void mouseButtonEnumUsesMiddleButtonNotMidButton();
     void dragDropHandlersUseBindingSyntaxForQt6();
+    void environmentActionsDoesNotAcceptMiddleButton();
+    void upgraderQmlUsesPlasmoidConfiguration();
+    void middleClickActionDefaultIsClose();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -2567,7 +2570,7 @@ void SourceContractTest::appletItemForAppletExcludedContextsPreservePropertyAcce
     QVERIFY(ciSource.contains(QStringLiteral("_plasma_graphicObject")));
 }
 
-void SourceContractTest::mouseButtonEnumUsesMidButtonNotMiddleButton()
+void SourceContractTest::mouseButtonEnumUsesMiddleButtonNotMidButton()
 {
     // Qt.MidButton was removed in Qt 6. QML must use Qt.MiddleButton
     // to avoid evaluating to undefined and silently breaking middle-click
@@ -2580,6 +2583,7 @@ void SourceContractTest::mouseButtonEnumUsesMidButtonNotMiddleButton()
     // EnvironmentActions only accepts LeftButton (middle-click handled by C++)
     QVERIFY(envSource.contains(QStringLiteral("acceptedButtons: Qt.LeftButton")));
     QVERIFY(!envSource.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(!envSource.contains(QStringLiteral("Qt.MiddleButton")));
 
     QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
         "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
@@ -2594,6 +2598,53 @@ void SourceContractTest::mouseButtonEnumUsesMidButtonNotMiddleButton()
     const QString clickedAnimSource = QString::fromUtf8(clickedAnim.readAll());
     QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
     QVERIFY(!clickedAnimSource.contains(QStringLiteral("Qt.MidButton")));
+}
+
+void SourceContractTest::environmentActionsDoesNotAcceptMiddleButton()
+{
+    // EnvironmentActions delegates middle-click to the C++
+    // ContextMenuLayerQuickItem handler and must not accept MiddleButton
+    // in its MouseArea — doing so would swallow the event before it
+    // reaches the C++ layer.
+    QFile env(QStringLiteral(LATTE_SOURCE_DIR
+        "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
+    QVERIFY(env.open(QFile::ReadOnly));
+    const QString envSource = QString::fromUtf8(env.readAll());
+    QVERIFY(envSource.contains(QStringLiteral("acceptedButtons: Qt.LeftButton")));
+    QVERIFY(!envSource.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(!envSource.contains(QStringLiteral("Qt.MiddleButton")));
+}
+
+void SourceContractTest::upgraderQmlUsesPlasmoidConfiguration()
+{
+    // In Plasma 6, tasks is an AppletQuickItem wrapper.  Accessing
+    // tasks.configuration directly returns undefined.  The correct
+    // path is tasks.plasmoid.configuration.
+    QFile upgrader(QStringLiteral(LATTE_SOURCE_DIR
+        "/containment/package/contents/ui/Upgrader.qml"));
+    QVERIFY(upgrader.open(QFile::ReadOnly));
+    const QString upgraderSource = QString::fromUtf8(upgrader.readAll());
+    QVERIFY(upgraderSource.contains(QStringLiteral("tasks.plasmoid.configuration")));
+    QVERIFY(!upgraderSource.contains(QStringLiteral("tasks.configuration")));
+}
+
+void SourceContractTest::middleClickActionDefaultIsClose()
+{
+    // The default middleClickAction should be Close (1), not NewInstance (2).
+    // Middle-click on a task icon should close the task window by default.
+    QFile configXml(QStringLiteral(LATTE_SOURCE_DIR
+        "/plasmoid/package/contents/config/main.xml"));
+    QVERIFY(configXml.open(QFile::ReadOnly));
+    const QString xmlSource = QString::fromUtf8(configXml.readAll());
+
+    // Find the middleClickAction entry and verify its default
+    const int entryIdx = xmlSource.indexOf(QStringLiteral("middleClickAction"));
+    QVERIFY(entryIdx >= 0);
+    const int defaultIdx = xmlSource.indexOf(QStringLiteral("<default>"), entryIdx);
+    QVERIFY(defaultIdx >= 0);
+    QVERIFY(xmlSource.indexOf(QStringLiteral("<default>1</default>"), entryIdx) >= 0);
+    QVERIFY(!(xmlSource.indexOf(QStringLiteral("<default>2</default>"), entryIdx) >= 0
+              && xmlSource.indexOf(QStringLiteral("<default>2</default>"), entryIdx) < xmlSource.indexOf(QStringLiteral("</entry>"), entryIdx)));
 }
 
 	void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
