@@ -1721,7 +1721,7 @@ void ContainmentInterface::toggleAppletExpanded(const int id)
 
     for (const auto applet : m_view->containment()->applets()) {
         if (applet->id() == (uint)id && !Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)/*block for sub-containments*/) {
-            PlasmaQuick::AppletQuickItem *ai = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
+            PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
 
             if (ai) {
                 Q_EMIT applet->activated();
@@ -1997,7 +1997,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         }
     }
 
-    PlasmaQuick::AppletQuickItem *ai = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
+    PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
     bool isSubContainment = Layouts::Storage::self()->isSubContainment(m_view->corona(), applet); //we use corona() to make sure that returns true even when it is first created from user
     int currentAppletId = applet->id();
     KPluginMetaData appletMeta = applet->pluginMetaData();
@@ -2045,7 +2045,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         }
 
         for (const auto internalApplet : subContainment->applets()) {
-            PlasmaQuick::AppletQuickItem *ai = internalApplet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
+            PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(internalApplet);
 
             if (ai && !m_appletsExpandedConnections.contains(ai) ){
                 m_appletsExpandedConnections[ai] = connect(ai, &PlasmaQuick::AppletQuickItem::expandedChanged, this, &ContainmentInterface::onAppletExpandedChanged);

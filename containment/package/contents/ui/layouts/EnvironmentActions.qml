@@ -48,7 +48,11 @@ Loader {
 
     sourceComponent: MouseArea{
         id: mainArea
-        acceptedButtons: Qt.LeftButton | Qt.MidButton
+        // Only accept LeftButton. Middle-click on empty area is handled by
+        // the C++ ContextMenuLayerQuickItem::mousePressEvent (Qt::MiddleButton).
+        // Including MiddleButton here would swallow the event before it
+        // reaches the C++ handler, breaking close-active-window.
+        acceptedButtons: Qt.LeftButton
         hoverEnabled: true
 
         property bool wheelIsBlocked: false
@@ -61,9 +65,8 @@ Loader {
                 && selectedWindowsTracker.lastActiveWindow.isValid
 
         onClicked: (mouse) => {
-            if (root.closeActiveWindowEnabled && mouse.button === Qt.MidButton && selectedTrackerReady) {
-                selectedWindowsTracker.lastActiveWindow.requestClose();
-            }
+            // Middle-click on empty area is handled by
+            // ContextMenuLayerQuickItem::mousePressEvent (C++, Qt::MiddleButton).
         }
 
         onPressed: (mouse) => {

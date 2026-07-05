@@ -1285,7 +1285,7 @@ void QmlSmokeTest::taskMouseAreaStructuralGuardsPresent()
 
     // LeftClick must be checked by mouse.button
     QVERIFY(source.contains(QStringLiteral("Qt.LeftButton")));
-    QVERIFY(source.contains(QStringLiteral("Qt.MidButton")));
+    QVERIFY(source.contains(QStringLiteral("Qt.MiddleButton")));
 
     // highlightedWindows signal integration
     QVERIFY(source.contains(QStringLiteral("windowsHovered")));

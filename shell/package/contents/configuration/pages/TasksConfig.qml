@@ -28,7 +28,7 @@ PlasmaComponents.Page {
 
     onIsCurrentPageChanged: {
         if (isCurrentPage && latteView.extendedInterface.latteTasksModel.count>1) {
-            latteView.extendedInterface.appletRequestedVisualIndicator(tasks.id);
+            latteView.extendedInterface.appletRequestedVisualIndicator(tasks.plasmoid.id);
         }
     }
 

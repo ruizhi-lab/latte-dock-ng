@@ -2550,44 +2550,50 @@ void SourceContractTest::appletItemForAppletExcludedContextsPreservePropertyAcce
     const QString subconfigSource = QString::fromUtf8(subconfig.readAll());
     QVERIFY(subconfigSource.contains(QStringLiteral("_plasma_graphicObject")));
 
-    // containmentinterface.cpp: onAppletAdded (applet not fully initialized yet)
-    // and toggleAppletExpanded (activation path) — must still use property access.
+    // containmentinterface.cpp: containment-level lookups (containment graphic item
+    // for view, subcontainment configuration) — keep _plasma_graphicObject.
+    // onAppletAdded and toggleAppletExpanded now use itemForApplet (Plasma 6 API).
     QFile ci(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
     QVERIFY(ci.open(QFile::ReadOnly));
     const QString ciSource = QString::fromUtf8(ci.readAll());
-    // onAppletAdded: keep property access
-    QVERIFY(ciSource.contains(QStringLiteral("applet->property(\"_plasma_graphicObject\")")));
-    // toggleAppletExpanded: keep property access
+    // onAppletAdded: uses itemForApplet (Plasma 6)
+    QVERIFY(ciSource.contains(QStringLiteral("itemForApplet(applet)")));
+    // toggleAppletExpanded: uses itemForApplet (Plasma 6)
     const int toggleIdx = ciSource.indexOf(QStringLiteral("toggleAppletExpanded"));
     QVERIFY(toggleIdx >= 0);
-    const int propIdx = ciSource.indexOf(QStringLiteral("_plasma_graphicObject"), toggleIdx);
-    QVERIFY(propIdx >= 0);
+    const int itemForAppletIdx = ciSource.indexOf(QStringLiteral("itemForApplet"), toggleIdx);
+    QVERIFY(itemForAppletIdx >= 0);
+    // Still has _plasma_graphicObject for containment-level lookups
+    QVERIFY(ciSource.contains(QStringLiteral("_plasma_graphicObject")));
 }
 
 void SourceContractTest::mouseButtonEnumUsesMidButtonNotMiddleButton()
 {
-    // Qt.MiddleButton causes double-handling with C++ Qt::MiddleButton
-    // handlers — keep Qt.MidButton in QML.
+    // Qt.MidButton was removed in Qt 6. QML must use Qt.MiddleButton
+    // to avoid evaluating to undefined and silently breaking middle-click
+    // handling. EnvironmentActions delegates middle-click to the C++
+    // ContextMenuLayerQuickItem handler and only accepts Qt.LeftButton.
     QFile env(QStringLiteral(LATTE_SOURCE_DIR
         "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
     QVERIFY(env.open(QFile::ReadOnly));
     const QString envSource = QString::fromUtf8(env.readAll());
-    QVERIFY(envSource.contains(QStringLiteral("Qt.MidButton")));
-    QVERIFY(!envSource.contains(QStringLiteral("Qt.MiddleButton")));
+    // EnvironmentActions only accepts LeftButton (middle-click handled by C++)
+    QVERIFY(envSource.contains(QStringLiteral("acceptedButtons: Qt.LeftButton")));
+    QVERIFY(!envSource.contains(QStringLiteral("Qt.MidButton")));
 
     QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
         "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
     QVERIFY(taskMouse.open(QFile::ReadOnly));
     const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
-    QVERIFY(taskMouseSource.contains(QStringLiteral("Qt.MidButton")));
-    QVERIFY(!taskMouseSource.contains(QStringLiteral("Qt.MiddleButton")));
+    QVERIFY(taskMouseSource.contains(QStringLiteral("Qt.MiddleButton")));
+    QVERIFY(!taskMouseSource.contains(QStringLiteral("Qt.MidButton")));
 
     QFile clickedAnim(QStringLiteral(LATTE_SOURCE_DIR
         "/plasmoid/package/contents/ui/task/animations/ClickedAnimation.qml"));
     QVERIFY(clickedAnim.open(QFile::ReadOnly));
     const QString clickedAnimSource = QString::fromUtf8(clickedAnim.readAll());
-    QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MidButton")));
-    QVERIFY(!clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
+    QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
+    QVERIFY(!clickedAnimSource.contains(QStringLiteral("Qt.MidButton")));
 }
 
 	void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()

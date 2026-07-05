@@ -177,7 +177,7 @@
             <choice name="HighlightWindows"/>
             <choice name="PreviewAndHighlightWindows"/>
       </choices>
-      <default>2</default>
+      <default>1</default>
     </entry>
     <entry name="hoverAction" type="Enum">
       <choices>
