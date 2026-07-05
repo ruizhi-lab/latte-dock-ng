@@ -791,16 +791,19 @@ void SourceContractTest::taskAudioBadgesScaleWithParabolicZoom()
     QVERIFY(audioStream.open(QFile::ReadOnly));
 
     const QString source = QString::fromUtf8(audioStream.readAll());
-    QVERIFY(source.contains(QStringLiteral("readonly property real parabolicZoom: taskItem.parabolicItem.zoom")));
-    QVERIFY(source.contains(QStringLiteral("readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium * parabolicZoom")));
+    // parabolicZoom property was removed — iconBoxSize already reflects the
+    // zoomed parent size; multiplying again caused double-scaling distortion.
+    QVERIFY(!source.contains(QStringLiteral("readonly property real parabolicZoom")));
+    // maximumBadgeSize is a fixed cap, not zoom-dependent
+    QVERIFY(source.contains(QStringLiteral("readonly property real maximumBadgeSize: Kirigami.Units.iconSizes.smallMedium")));
     QVERIFY(source.contains(QStringLiteral("compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)")));
     QVERIFY(source.contains(QStringLiteral("Math.min(parent.height * audioStreamIconBox.indicatorScale, audioStreamIconBox.maximumBadgeSize)")));
 
-    const int zoomProperty = source.indexOf(QStringLiteral("readonly property real parabolicZoom"));
-    const int maximumSize = source.indexOf(QStringLiteral("readonly property real maximumBadgeSize"), zoomProperty);
+    const int iconBoxSize = source.indexOf(QStringLiteral("readonly property real iconBoxSize"));
+    const int maximumSize = source.indexOf(QStringLiteral("readonly property real maximumBadgeSize"), iconBoxSize);
     const int compactSize = source.indexOf(QStringLiteral("compactBadgeSize: Math.min(iconBoxSize * 0.4, maximumBadgeSize)"), maximumSize);
-    QVERIFY(zoomProperty >= 0);
-    QVERIFY(maximumSize > zoomProperty);
+    QVERIFY(iconBoxSize >= 0);
+    QVERIFY(maximumSize > iconBoxSize);
     QVERIFY(compactSize > maximumSize);
 }
 
