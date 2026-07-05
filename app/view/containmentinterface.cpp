@@ -2115,7 +2115,12 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         if (data.configuration) {
             initAppletConfigurationSignals(data.id, data.configuration);
         } else {
-            qDebug() << "org.kde.sync Unfortunately configuration syncing for :: " << currentAppletId << " was not established, configuration object was missing!";
+            // During initial startup the QML engine may not be ready yet;
+            // the delayed timer will retry.  Only warn when this happens
+            // outside of initialization (e.g. runtime applet creation).
+            if (m_initializationCompleted) {
+                qDebug() << "org.kde.sync configuration syncing delayed for ::" << currentAppletId;
+            }
             m_appletDelayedConfigurationTimer.start();
         }
 
