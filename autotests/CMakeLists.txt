@@ -874,6 +874,33 @@ target_link_libraries(settingsviewunittest
 
 latte_add_offscreen_test(settingsviewunittest)
 
+set(positionergeometrytest_SRCS positionergeometrytest.cpp)
+add_executable(positionergeometrytest EXCLUDE_FROM_ALL ${positionergeometrytest_SRCS})
+target_include_directories(positionergeometrytest PRIVATE ${CMAKE_BINARY_DIR}/app ${CMAKE_CURRENT_SOURCE_DIR}/../app)
+target_link_libraries(positionergeometrytest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
+latte_add_test(positionergeometrytest)
+
+set(parabolicmathtest_SRCS parabolicmathtest.cpp)
+add_executable(parabolicmathtest EXCLUDE_FROM_ALL ${parabolicmathtest_SRCS})
+target_link_libraries(parabolicmathtest Qt6::Core Qt6::Test)
+latte_add_test(parabolicmathtest)
+
+set(visibilitylogictest_SRCS visibilitylogictest.cpp)
+add_executable(visibilitylogictest EXCLUDE_FROM_ALL ${visibilitylogictest_SRCS})
+target_link_libraries(visibilitylogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
+latte_add_test(visibilitylogictest)
+
+set(storagelogictest_SRCS storagelogictest.cpp)
+add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
+target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data)
+target_link_libraries(storagelogictest Qt6::Core Qt6::Test KF6::ConfigCore)
+latte_add_test(storagelogictest)
+
+set(synchronizerlogictest_SRCS synchronizerlogictest.cpp)
+add_executable(synchronizerlogictest EXCLUDE_FROM_ALL ${synchronizerlogictest_SRCS})
+target_link_libraries(synchronizerlogictest Qt6::Core Qt6::Test)
+latte_add_test(synchronizerlogictest)
+
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
