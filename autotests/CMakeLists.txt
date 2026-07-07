@@ -907,6 +907,11 @@ target_include_directories(effectslogictest PRIVATE ${CMAKE_BINARY_DIR}/app ${CM
 target_link_libraries(effectslogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
 latte_add_test(effectslogictest)
 
+set(importerlogictest_SRCS importerlogictest.cpp)
+add_executable(importerlogictest EXCLUDE_FROM_ALL ${importerlogictest_SRCS})
+target_link_libraries(importerlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
+latte_add_test(importerlogictest)
+
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
