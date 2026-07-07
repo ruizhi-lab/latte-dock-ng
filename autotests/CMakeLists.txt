@@ -901,6 +901,12 @@ add_executable(synchronizerlogictest EXCLUDE_FROM_ALL ${synchronizerlogictest_SR
 target_link_libraries(synchronizerlogictest Qt6::Core Qt6::Test)
 latte_add_test(synchronizerlogictest)
 
+set(effectslogictest_SRCS effectslogictest.cpp)
+add_executable(effectslogictest EXCLUDE_FROM_ALL ${effectslogictest_SRCS})
+target_include_directories(effectslogictest PRIVATE ${CMAKE_BINARY_DIR}/app ${CMAKE_CURRENT_SOURCE_DIR}/../app)
+target_link_libraries(effectslogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
+latte_add_test(effectslogictest)
+
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
