@@ -50,10 +50,10 @@ PlasmaComponents.ScrollView {
     //
     readonly property bool isVerticalPanel: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
-    Layout.minimumWidth: contentItem.width
+    Layout.minimumWidth: Math.max(200, contentItem.width)
     Layout.maximumWidth: Layout.minimumWidth
 
-    Layout.minimumHeight: contentItem.height
+    Layout.minimumHeight: Math.max(100, contentItem.height)
     Layout.maximumHeight: Layout.minimumHeight
 
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
@@ -93,7 +93,7 @@ PlasmaComponents.ScrollView {
 
         Loader {
             id: contentItem
-            active: !isLauncher
+            active: true  // Always pre-create to avoid creation jank on hover
             sourceComponent: Grid {
                 rows: !isVerticalPanel
                 columns: isVerticalPanel

@@ -21,11 +21,20 @@ PipeWire.PipeWireSourceItem {
 
     readonly property alias hasThumbnail: pipeWireSourceItem.ready
 
+    // Accept window UUID from parent context or as explicit property.
+    // When loaded inside ToolTipInstance the parent provides
+    // thumbnailSourceItem.winId; when loaded standalone the caller
+    // can bind this property directly.
+    property string windowUuid: (typeof thumbnailSourceItem !== 'undefined'
+                                  && thumbnailSourceItem
+                                  && thumbnailSourceItem.winId)
+                                 ? String(thumbnailSourceItem.winId) : ""
+
     anchors.fill: parent
     nodeId: waylandItem.nodeId
 
     TaskManager.ScreencastingRequest {
         id: waylandItem
-        uuid: thumbnailSourceItem.winId
+        uuid: pipeWireSourceItem.windowUuid
     }
 }

@@ -8,6 +8,7 @@
 // local
 #include "contextmenuactionsbackend.h"
 #include "types.h"
+#include "windowscreenshotprovider.h"
 
 // Qt
 #include <QtQml>
@@ -19,4 +20,5 @@ void LatteTasksPlugin::registerTypes(const char *uri)
     Q_ASSERT(QLatin1StringView(uri) == QLatin1StringView("org.kde.latte.private.tasks"));
     qmlRegisterUncreatableType<Latte::Tasks::Types>(uri, 0, 1, "types", QStringLiteral("Latte Tasks Types uncreatable"));
     qmlRegisterType<Latte::Tasks::ContextMenuActionsBackend>(uri, 0, 1, "ContextMenuActionsBackend");
+    qmlRegisterType<Latte::Tasks::WindowScreenshotProvider>(uri, 0, 1, "WindowScreenshotProvider");
 }

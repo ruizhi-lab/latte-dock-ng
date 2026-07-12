@@ -22,6 +22,8 @@ import org.kde.plasma.private.mpris as Mpris
 
 import org.kde.latte.core 0.2 as LatteCore
 
+import org.kde.latte.private.tasks 0.1 as LatteTasks
+
 import org.kde.draganddrop 2.0
 
 import org.kde.taskmanager 0.1 as TaskManager
@@ -91,13 +93,17 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        // launcher icon
-        LatteCore.IconItem {
+        // launcher icon — wrapped in fixed-size Item to prevent
+        // LatteCore.IconItem polish() recursion triggered by RowLayout
+        // size negotiation.
+        Item {
             Layout.preferredWidth: units.iconSizes.medium
             Layout.preferredHeight: units.iconSizes.medium
-            source: icon
-            usesPlasmaTheme: false
-            visible: !isWin
+            LatteCore.IconItem {
+                anchors.fill: parent
+                source: icon
+                usesPlasmaTheme: false
+            }
         }
         // all textlabels
         Column {
@@ -164,11 +170,8 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         width: header.width
-        // similar to 0.5625 = 1 / (16:9) as most screens are
-        // round necessary, otherwise shadow mask for players has gap!
-        height: Math.round(screenGeometryHeightRatio * width) + (!winTitle.visible? Math.round(winTitle.height) : 0) + activeTaskLine.height
-
-        visible: isWin
+        height: 0
+        visible: false
 
         readonly property real screenGeometryHeightRatio: appletAbilities.myView.screenGeometry.height / appletAbilities.myView.screenGeometry.width
 
@@ -178,7 +181,6 @@ Column {
             anchors.bottomMargin: 2
 
             readonly property bool isMinimized: isGroup ? instance.isMinimized : mainToolTip.isMinimizedParent
-            // TODO: investigate first-show backend warning when thumbnail becomes visible
             readonly property var winId: isWin && windows[flatIndex] !== undefined ? windows[flatIndex] : 0
 
             PlasmaExtras.Highlight {
@@ -187,61 +189,16 @@ Column {
                 pressed: hoverHandler.containsPress
             }
 
-            Loader{
-                id:previewThumbLoader
-                anchors.fill: parent
-                anchors.margins: Math.max(2, previewShadow.radius)
-                // Disabled together with TaskItem.showPreviewWindow(): the
-                // preview popup itself is suppressed under Plasma 6 / Wayland,
-                // so we don't need to keep PipeWire ScreencastingRequest
-                // objects alive for every task — they would otherwise emit
-                // "无法找到窗口 ID 0" / "No QSGTexture provided" warnings
-                // continuously while the delegate tree is preloaded as
-                // mainItem of the (always-hidden) dialog.
-                active: false
-                // Async load matches plasma-desktop's taskmanager pattern;
-                // synchronous loading was blocking the dock UI on every
-                // hover and producing visible jank.
-                asynchronous: true
-                // Only show once PipeWire actually has frames. Prior to that
-                // the source has no texture, which triggers periodic
-                // "No QSGTexture provided from updateSampledImage()" warnings
-                // and (under DodgeActive) crashes during the dock's
-                // configure-driven re-render.
-                visible: !albumArtImage.visible
-                         && !thumbnailSourceItem.isMinimized
-                         && (item ? (item.hasThumbnail ?? false) : false)
-                onStatusChanged: {
-                    if (status === Loader.Error && source !== "PlasmaCoreThumbnail.qml") {
-                        source = "PlasmaCoreThumbnail.qml";
-                    }
-                }
-                source:  {
-                    // On Wayland, PlasmaCore.WindowThumbnail can't accept the
-                    // QString UUIDs the tasks model provides on Wayland —
-                    // assignment fails, the resulting null QSGTexture leaks
-                    // warnings, and DodgeActive's configure cycle dereferences
-                    // the freed texture and crashes. Use the PipeWire-backed
-                    // thumbnail; onStatusChanged falls back to
-                    // PlasmaCoreThumbnail if org.kde.pipewire isn't installed.
-                    if (LatteCore.WindowSystem.isPlatformWayland) {
-                        return "PipeWireThumbnail.5.26.qml";
-                    }
-
-                    return "PlasmaCoreThumbnail.qml";
-                }
-
-                MultiEffect {
-                    id: previewShadow
-                    anchors.fill: previewThumbLoader.item
-                    visible: previewThumbLoader.item ? previewThumbLoader.item.visible : false
-                    source: previewThumbLoader.item
-                    shadowEnabled: true
-                    shadowColor: "Black"
-                    shadowBlur: 0.5
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: Math.round(3 * Screen.devicePixelRatio)
-                }
+            // No thumbnail — PipeWire streaming is too slow in a separate
+            // process.  The header above (app icon + name + window title +
+            // close button) is the most useful information and causes zero
+            // jank.  Thumbnails can be re-enabled once the C++ worker thread
+            // capture path is stable.
+            //
+            // Placeholder for future thumbnail support
+            Item {
+                id: dummyThumb
+                visible: false
             }
 
             ToolTipWindowMouseArea {
@@ -281,15 +238,15 @@ Column {
                 visible: available
             }
 
-            // when minimized, we don't have a preview, so show the icon
-            LatteCore.IconItem {
-                width: parent.width
-                height: thumbnail.height - playbackLoader.realHeight
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: icon
-                usesPlasmaTheme: false
+            // Placeholder while waiting for PipeWire thumbnail
+            Rectangle {
+                anchors.centerIn: parent
+                width: Math.min(parent.width, parent.height) * 0.25
+                height: width
+                radius: width / 2
+                color: Qt.rgba(1, 1, 1, 0.08)
                 visible: (thumbnailSourceItem.isMinimized && !albumArtImage.visible)
-                         || (!previewThumbLoader.active && !albumArtImage.visible) //Wayland case
+                         && !albumArtImage.visible
             }
         }
 

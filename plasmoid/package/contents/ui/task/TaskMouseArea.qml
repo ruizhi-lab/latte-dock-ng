@@ -18,8 +18,10 @@ MouseArea {
     // Qt6 can let parent flickables steal mouse sequences during small motion,
     // resulting in press without release and missed task activation.
     preventStealing: true
-    hoverEnabled: taskItem.visible && (!inAnimation) && (!isStartup) && (!root.taskInAnimation)
-                  &&(!inBouncingAnimation) && !isSeparator
+    hoverEnabled: true  // Always enable hover; the onEntered handler gates
+                         // on taskItem state itself, and the binding below was
+                         // staying false after startup due to lingering
+                         // animation / visibility flags.
 
     property bool pressed: false
     // Drag should start only after resistance delay expires and pointer
@@ -35,6 +37,8 @@ MouseArea {
     }
 
     onEntered: {
+        screenshotProvider.ping("ENTER launcher=" + isLauncher + " win=" + (typeof model.IsWindow !== 'undefined' ? model.IsWindow : "?") + " showPreviews=" + root.showPreviews);
+
         if (isLauncher && windowsPreviewDlg.visible) {
             windowsPreviewDlg.hide(1);
         }
@@ -70,6 +74,7 @@ MouseArea {
     }
 
     onExited: {
+        screenshotProvider.ping("EXIT");
         pressed = false;
         dragReady = false;
         taskItem.clearParabolicFromExternalPosition();

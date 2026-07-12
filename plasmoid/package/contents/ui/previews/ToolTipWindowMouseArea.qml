@@ -10,7 +10,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 
 MouseArea {
     property var modelIndex
-    property int winId // FIXME Legacy
+    property var winId
     property Item rootTask
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton

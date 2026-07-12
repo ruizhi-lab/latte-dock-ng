@@ -41,6 +41,17 @@ AbilityItem.BasicItem {
     readonly property bool visualContainsMouse: hasParabolicTrackingArea
                                                 ? (parabolicAreaDirectContainsMouse || parabolicAreaIsCurrent)
                                                 : taskMouseArea.containsMouse
+
+    // Trigger preview on hover via the parabolic tracking area (which reliably
+    // receives hover events), since TaskMouseArea.hoverEnabled may stay false
+    // after startup due to lingering animation flags.
+    onVisualContainsMouseChanged: {
+        if (visualContainsMouse && !isLauncher && root.showPreviews
+                && !windowsPreviewDlg.visible
+                && taskItem.isAbleToShowPreview) {
+            hoveredTimer.start();
+        }
+    }
     thinTooltipText: {
         // Keep tooltips focused on application identity (app name), not window title.
         // This matches dock-style behavior and avoids noisy dynamic titles.
@@ -529,14 +540,13 @@ AbilityItem.BasicItem {
     }
 
     function showPreviewWindow() {
-        // Window-preview thumbnails are broken on Plasma 6 / Wayland: the
-        // legacy WindowThumbnail can't accept QString UUIDs, the PipeWire
-        // path is slow, leaks "No QSGTexture provided from updateSampledImage()"
-        // warnings, and the dock crashes under DodgeActive's configure cycle.
-        // Until upstream PipeWireSourceItem behavior stabilizes here, suppress
-        // the preview popup entirely. The thin tooltip (app name) still works
-        // and is enough.
-        return;
+        if (root.disableAllWindowsFunctionality) {
+            return;
+        }
+
+        windowsPreviewDlg.visualParent = tooltipVisualParent;
+        preparePreviewWindow(false);
+        windowsPreviewDlg.show(taskItem);
     }
 
     function hidePreviewWindow() {
@@ -552,52 +562,25 @@ AbilityItem.BasicItem {
 
         toolTipDelegate.hideCloseButtons = hideClose;
 
-        toolTipDelegate.appName = Qt.binding(function() {
-            return model.AppName;
-        });
+        toolTipDelegate.appName = model.AppName;
 
         if (!isLauncher) {
-            toolTipDelegate.pidParent = Qt.binding(function() {
-                return model.AppPid;
-            });
+            toolTipDelegate.pidParent = model.AppPid;
         } else {
             toolTipDelegate.pidParent = -1;
         }
 
-        toolTipDelegate.windows = Qt.binding(function() {
-            return model.WinIdList;
-        });
-        toolTipDelegate.isGroup = Qt.binding(function() {
-            return model.IsGroupParent == true;
-        });
-        toolTipDelegate.icon = Qt.binding(function() {
-            const _iconThemeVersion = LatteCore.Environment.iconThemeVersion;
-            return LatteCore.Environment.iconSourceForTheme(model.decoration);
-        });
-        toolTipDelegate.launcherUrl = Qt.binding(function() {
-            return model.LauncherUrlWithoutIcon;
-        });
-        toolTipDelegate.isLauncher = Qt.binding(function() {
-            return model.IsLauncher == true;
-        });
-        toolTipDelegate.isMinimizedParent = Qt.binding(function() {
-            return model.IsMinimized == true;
-        });
-        toolTipDelegate.displayParent = Qt.binding(function() {
-            return model.display;
-        });
-        toolTipDelegate.genericName = Qt.binding(function() {
-            return model.GenericName;
-        });
-        toolTipDelegate.virtualDesktopParent = Qt.binding(function() {
-            return (model.VirtualDesktops !== undefined && model.VirtualDesktops.length > 0) ? model.VirtualDesktops : [0];
-        });
-        toolTipDelegate.isOnAllVirtualDesktopsParent = Qt.binding(function() {
-            return model.IsOnAllVirtualDesktops == true;
-        });
-        toolTipDelegate.activitiesParent = Qt.binding(function() {
-            return model.Activities;
-        });
+        toolTipDelegate.windows = model.WinIdList;
+        toolTipDelegate.isGroup = model.IsGroupParent == true;
+        toolTipDelegate.icon = LatteCore.Environment.iconSourceForTheme(model.decoration);
+        toolTipDelegate.launcherUrl = model.LauncherUrlWithoutIcon;
+        toolTipDelegate.isLauncher = model.IsLauncher == true;
+        toolTipDelegate.isMinimizedParent = model.IsMinimized == true;
+        toolTipDelegate.displayParent = model.display;
+        toolTipDelegate.genericName = model.GenericName;
+        toolTipDelegate.virtualDesktopParent = (model.VirtualDesktops !== undefined && model.VirtualDesktops.length > 0) ? model.VirtualDesktops : [0];
+        toolTipDelegate.isOnAllVirtualDesktopsParent = model.IsOnAllVirtualDesktops == true;
+        toolTipDelegate.activitiesParent = model.Activities;
     }
 
     ///window previews///
@@ -689,9 +672,13 @@ AbilityItem.BasicItem {
     }
 
     function slotShowPreviewForTasks(group) {
-        // Same rationale as showPreviewWindow(): suppressed while the
-        // Plasma 6 / Wayland thumbnail story is unstable.
-        return;
+        if (root.disableAllWindowsFunctionality) {
+            return;
+        }
+
+        windowsPreviewDlg.visualParent = tooltipVisualParent;
+        preparePreviewWindow(false);
+        windowsPreviewDlg.show(group);
     }
 
     function slotPublishGeometries() {
