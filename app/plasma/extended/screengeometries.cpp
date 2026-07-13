@@ -62,48 +62,58 @@ ScreenGeometries::~ScreenGeometries()
 void ScreenGeometries::init()
 {
     qDebug() << " PLASMA STRUTS MANAGER :: checking availability....";
-    bool serviceavailable{false};
 
-    // Use org.freedesktop.DBus.NameHasOwner instead of
-    // QDBusConnectionInterface::isServiceRegistered() which internally
-    // connects to the deprecated serviceOwnerChanged(QString,QString,QString)
-    // signal in Qt 6.8+.
+    // Use asyncCall() to avoid blocking the event loop.
     QDBusMessage ping = QDBusMessage::createMethodCall(
         QStringLiteral("org.freedesktop.DBus"),
         QStringLiteral("/"),
         QStringLiteral("org.freedesktop.DBus"),
         QStringLiteral("NameHasOwner"));
     ping.setArguments({QStringLiteral(PLASMASERVICE)});
-    QDBusMessage reply = QDBusConnection::sessionBus().call(ping);
-    serviceavailable = (reply.type() == QDBusMessage::ReplyMessage
-                        && !reply.arguments().isEmpty()
-                        && reply.arguments().first().toBool());
 
-    qDebug() << "PLASMA STRUTS MANAGER :: interface availability :: " << serviceavailable;
+    auto *watcher = new QDBusPendingCallWatcher(
+        QDBusConnection::sessionBus().asyncCall(ping), this);
 
-    connect(m_corona->universalSettings(), &Latte::UniversalSettings::isAvailableGeometryBroadcastedToPlasmaChanged, this, &ScreenGeometries::onBroadcastToPlasmaChanged);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this,
+            [this](QDBusPendingCallWatcher *w) {
+        w->deleteLater();
+        QDBusMessage reply = w->reply();
+        bool serviceavailable = (reply.type() == QDBusMessage::ReplyMessage
+                                 && !reply.arguments().isEmpty()
+                                 && reply.arguments().first().toBool());
 
-    if (serviceavailable) {
-        m_plasmaInterfaceAvailable = true;
+        qDebug() << "PLASMA STRUTS MANAGER :: interface availability :: " << serviceavailable;
 
-        qDebug() << " PLASMA STRUTS MANAGER :: is available...";
+        connect(m_corona->universalSettings(),
+                &Latte::UniversalSettings::isAvailableGeometryBroadcastedToPlasmaChanged,
+                this, &ScreenGeometries::onBroadcastToPlasmaChanged);
 
-        connect(m_corona, &Latte::Corona::availableScreenRectChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
-        connect(m_corona, &Latte::Corona::availableScreenRegionChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
+        if (serviceavailable) {
+            m_plasmaInterfaceAvailable = true;
+            onPlasmaInterfaceAvailable();
+        }
+    });
+}
 
-        connect(m_corona->layoutsManager()->synchronizer(), &Latte::Layouts::Synchronizer::centralLayoutsChanged, this, [this]() {
-            m_publishTimer.start();
-        });
+void ScreenGeometries::onPlasmaInterfaceAvailable()
+{
+    qDebug() << " PLASMA STRUTS MANAGER :: is available...";
 
-        connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, [this]() {
-            if (m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma()) {
-                m_publishTimer.start();
-            }
-        });
+    connect(m_corona, &Latte::Corona::availableScreenRectChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
+    connect(m_corona, &Latte::Corona::availableScreenRegionChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
 
+    connect(m_corona->layoutsManager()->synchronizer(), &Latte::Layouts::Synchronizer::centralLayoutsChanged, this, [this]() {
+        m_publishTimer.start();
+    });
+
+    connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, [this]() {
         if (m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma()) {
             m_publishTimer.start();
         }
+    });
+
+    if (m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma()) {
+        m_publishTimer.start();
     }
 }
 

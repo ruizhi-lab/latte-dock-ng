@@ -36,6 +36,7 @@ private Q_SLOTS:
     void availableScreenGeometryChangedFrom(Latte::View *origin);
 
     void init();
+    void onPlasmaInterfaceAvailable();
     void updateGeometries();
     void clearGeometries();
 

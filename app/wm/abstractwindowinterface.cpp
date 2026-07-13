@@ -252,8 +252,9 @@ bool AbstractWindowInterface::isKWinRunning() const
 
 void AbstractWindowInterface::initKWinInterface()
 {
-    // Avoid QDBusInterface (deprecated serviceOwnerChanged signal in Qt 6.8+).
-    // Use org.freedesktop.DBus.Properties.Get to check availability and read property.
+    // Use org.freedesktop.DBus.Properties.Get to check availability and read
+    // property.  asyncCall() avoids blocking the event loop — the reply is
+    // delivered via QDBusPendingCallWatcher when the DBus daemon responds.
     if (!m_isKWinInterfaceAvailable) {
         QDBusMessage msg = QDBusMessage::createMethodCall(
             QStringLiteral(KWINSERVICE),
@@ -262,33 +263,40 @@ void AbstractWindowInterface::initKWinInterface()
             QStringLiteral("Get"));
         msg.setArguments({QStringLiteral(KWINVIRTUALDESKTOPMANAGERNAMESPACE),
                           QStringLiteral("navigationWrappingAround")});
-        QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
 
-        if (reply.type() != QDBusMessage::ReplyMessage) {
-            return;
-        }
+        auto *watcher = new QDBusPendingCallWatcher(
+            QDBusConnection::sessionBus().asyncCall(msg), this);
 
-        m_isKWinInterfaceAvailable = true;
-        qDebug() << " KWIN SERVICE :: is available...";
+        connect(watcher, &QDBusPendingCallWatcher::finished, this,
+                [this](QDBusPendingCallWatcher *w) {
+            w->deleteLater();
+            QDBusMessage reply = w->reply();
+            if (reply.type() != QDBusMessage::ReplyMessage) {
+                return;
+            }
 
-        // Extract the property value from the variant-encoded reply.
-        if (!reply.arguments().isEmpty()) {
-            QVariant arg = reply.arguments().first();
-            // Properties.Get returns the value inside a variant container
-            m_isVirtualDesktopNavigationWrappingAround = arg.value<QDBusVariant>().variant().toBool();
-        }
+            m_isKWinInterfaceAvailable = true;
+            qDebug() << " KWIN SERVICE :: is available...";
 
-        bool signalconnected = QDBusConnection::sessionBus().connect(
-            QStringLiteral(KWINSERVICE),
-            QStringLiteral("/VirtualDesktopManager"),
-            QStringLiteral(KWINVIRTUALDESKTOPMANAGERNAMESPACE),
-            QStringLiteral("navigationWrappingAroundChanged"),
-            this,
-            SLOT(onVirtualDesktopNavigationWrappingAroundChanged(bool)));
+            if (!reply.arguments().isEmpty()) {
+                QVariant arg = reply.arguments().first();
+                m_isVirtualDesktopNavigationWrappingAround =
+                    arg.value<QDBusVariant>().variant().toBool();
+            }
 
-        if (!signalconnected) {
-            qDebug() << " KWIN SERVICE :: Virtual Desktop Manager :: navigationsWrappingSignal is not connected...";
-        }
+            bool signalconnected = QDBusConnection::sessionBus().connect(
+                QStringLiteral(KWINSERVICE),
+                QStringLiteral("/VirtualDesktopManager"),
+                QStringLiteral(KWINVIRTUALDESKTOPMANAGERNAMESPACE),
+                QStringLiteral("navigationWrappingAroundChanged"),
+                this,
+                SLOT(onVirtualDesktopNavigationWrappingAroundChanged(bool)));
+
+            if (!signalconnected) {
+                qDebug() << " KWIN SERVICE :: Virtual Desktop Manager ::"
+                         << "navigationsWrappingSignal is not connected...";
+            }
+        });
     }
 }
 
