@@ -200,24 +200,18 @@ void ContextMenuLayerQuickItem::mouseReleaseEvent(QMouseEvent *event)
 
 void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
 {
-    //qDebug() << "Step -1 ...";
-
     if (!event || !m_latteView || !m_latteView->containment()) {
         return;
     }
 
-    //qDebug() << "Step 0...";
-
     //even if the menu is executed synchronously, other events may be processed
     //by the qml incubator when plasma is loading, so we need to guard there
     if (m_contextMenu) {
-        //qDebug() << "Step 0.5 ...";
         m_contextMenu->close();
         m_contextMenu = nullptr;
         return;
     }
 
-    //qDebug() << "1 ...";
     const QString trigger = Plasma::ContainmentActions::eventToString(event);
     Plasma::ContainmentActions *plugin = m_latteView->containment()->containmentActions().value(trigger);
 
@@ -493,17 +487,11 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         desktopMenu->addSeparator();
 
         if (enabled) {
-            //if there is only one, don't create a submenu
-            // if (enabled < 2) {
             for (QAction *action : containmentAction->menu()->actions()) {
                 if (action && action->isVisible()) {
                     desktopMenu->addAction(action);
                 }
             }
-
-            // } else {
-            //     desktopMenu->addMenu(containmentMenu);
-            // }
         }
     }
 

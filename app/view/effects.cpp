@@ -104,6 +104,7 @@ void Effects::setBackgroundAllCorners(bool allcorners)
     }
 
     m_backgroundAllCorners = allcorners;
+    m_bordersCacheValid = false;
     Q_EMIT backgroundAllCornersChanged();
 }
 
@@ -161,6 +162,7 @@ void Effects::setForceBottomBorder(bool draw)
     }
 
     m_forceBottomBorder = draw;
+    m_bordersCacheValid = false;
     updateEnabledBorders();
 }
 
@@ -171,6 +173,7 @@ void Effects::setForceTopBorder(bool draw)
     }
 
     m_forceTopBorder = draw;
+    m_bordersCacheValid = false;
     updateEnabledBorders();
 }
 
@@ -592,6 +595,30 @@ void Effects::updateEnabledBorders()
         return;
     }
 
+    //! Cache check: skip expensive recomputation when inputs are unchanged.
+    //! updateEnabledBorders is called on every geometry sync (often 60fps
+    //! during animations), but alignment/maxLength/offset rarely change.
+    if (m_bordersCacheValid
+        && m_cacheLocation == static_cast<int>(m_view->location())
+        && m_cacheAlignment == m_view->alignment()
+        && qFuzzyCompare(m_cacheMaxLength, m_view->maxLength())
+        && qFuzzyCompare(m_cacheOffset, m_view->offset())
+        && m_cacheScreenEdgeMargin == m_view->screenEdgeMarginEnabled()
+        && m_cacheAllCorners == m_backgroundAllCorners
+        && m_cacheForceTop == m_forceTopBorder
+        && m_cacheForceBottom == m_forceBottomBorder) {
+        return;
+    }
+
+    m_cacheLocation = static_cast<int>(m_view->location());
+    m_cacheAlignment = m_view->alignment();
+    m_cacheMaxLength = m_view->maxLength();
+    m_cacheOffset = m_view->offset();
+    m_cacheScreenEdgeMargin = m_view->screenEdgeMarginEnabled();
+    m_cacheAllCorners = m_backgroundAllCorners;
+    m_cacheForceTop = m_forceTopBorder;
+    m_cacheForceBottom = m_forceBottomBorder;
+
     Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::AllBorders;
 
     if (!m_view->screenEdgeMarginEnabled()) {
@@ -666,9 +693,10 @@ void Effects::updateEnabledBorders()
     if (m_enabledBorders != borders) {
         m_enabledBorders = borders;
         Q_EMIT enabledBordersChanged();
+        PanelShadows::self()->removeWindow(m_view);
     }
 
-    PanelShadows::self()->removeWindow(m_view);
+    m_bordersCacheValid = true;
 }
 //!END draw panel shadows outside the dock window
 

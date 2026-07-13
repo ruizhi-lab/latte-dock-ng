@@ -13,6 +13,7 @@
 // Qt
 #include <QDir>
 #include <QLatin1String>
+#include <QSet>
 
 // KDE
 #include <KDirWatch>
@@ -88,6 +89,22 @@ void Schemes::updateDefaultScheme()
 
     if (!m_schemes.contains("kdeglobals") || m_schemes["kdeglobals"]->schemeFile() != defaultSchemePath) {
         m_schemes["kdeglobals"] = dScheme;
+    }
+
+    //! Clean up scheme files no longer referenced by any window or the default.
+    QSet<QString> referencedFiles;
+    referencedFiles.insert(defaultSchemePath);
+    referencedFiles.insert(QStringLiteral("kdeglobals"));
+    for (auto it = m_windowScheme.constBegin(); it != m_windowScheme.constEnd(); ++it) {
+        referencedFiles.insert(it.value());
+    }
+    for (auto it = m_schemes.begin(); it != m_schemes.end(); ) {
+        if (!referencedFiles.contains(it.key())) {
+            delete it.value();
+            it = m_schemes.erase(it);
+        } else {
+            ++it;
+        }
     }
 
     Q_EMIT defaultSchemeChanged();

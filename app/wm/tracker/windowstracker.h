@@ -128,6 +128,7 @@ private:
 
     void updateAllHints();
     void updateAllHintsAfterTimer();
+    void updateLayoutHintsFromViews();
 
     //! Views
     void updateHints(Latte::View *view);
@@ -167,19 +168,6 @@ private:
     AbstractWindowInterface *m_wm;
     QHash<Latte::View *, TrackedViewInfo *> m_views;
     QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *> m_layouts;
-
-    //! Accept only ALWAYSVISIBLE visibility mode
-    QList<Latte::Types::Visibility> m_ignoreModes{
-        Latte::Types::AutoHide,
-        Latte::Types::DodgeActive,
-        Latte::Types::DodgeMaximized,
-        Latte::Types::DodgeAllWindows,
-        Latte::Types::WindowsGoBelow,
-        Latte::Types::WindowsCanCover,
-        Latte::Types::WindowsAlwaysCover,
-        Latte::Types::SidebarOnDemand,
-        Latte::Types::SidebarAutoHide
-    };
 
     QMap<WindowId, WindowInfoWrap> m_windows;
 

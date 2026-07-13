@@ -315,6 +315,12 @@ void Theme::updateBackgrounds()
 
 void Theme::updateHasShadow()
 {
+    //! Cache the shadow check per theme name to avoid costly QImage pixel
+    //! scanning on every theme reload (it's O(n_pixels) for shadow corner).
+    if (m_hasShadowCacheValid && m_hasShadowCachedTheme == m_theme.themeName()) {
+        return;
+    }
+
     Plasma::Svg *svg = new Plasma::Svg(this);
     svg->setImagePath(QStringLiteral("widgets/panel-background"));
     svg->resize();
@@ -341,6 +347,9 @@ void Theme::updateHasShadow()
     Q_EMIT hasShadowChanged();
 
     qDebug() << "  PLASMA THEME TOPLEFT SHADOW :: pixels : " << pixels << "  transparent pixels" << fullTransparentPixels << " | HAS SHADOWS :" << m_hasShadow;
+
+    m_hasShadowCacheValid = true;
+    m_hasShadowCachedTheme = m_theme.themeName();
 
     svg->deleteLater();
 }

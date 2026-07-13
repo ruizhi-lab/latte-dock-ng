@@ -104,6 +104,8 @@ public:
 
 private Q_SLOTS:
     void updateWindow();
+    void updateWindowGeometry();
+    void updateWindowCache();
     void windowUnmapped();
 
 private:
@@ -129,6 +131,15 @@ private:
 private:
     friend class Private::GhostWindow;
     mutable QMap<QWindow *, Private::GhostWindow *> m_ghostWindows;
+
+    //! Cache last strut parameters per view to avoid recreating GhostWindow
+    //! (a heavy QQuickView with Wayland layer-shell surface) when nothing changed.
+    struct StrutCacheEntry {
+        QRect rect;
+        Plasma::Types::Location location{Plasma::Types::Floating};
+        QString screenName;
+    };
+    mutable QHash<QWindow *, StrutCacheEntry> m_strutCache;
 
     QPointer<KWayland::Client::PlasmaWindowManagement> m_windowManagement;
 

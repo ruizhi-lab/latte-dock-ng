@@ -145,6 +145,10 @@ private:
 
     QHash<int, CornerRegions> m_cornerRegions;
 
+    //! Cache hasShadow result per theme name to avoid O(n_pixels) QImage scan
+    bool m_hasShadowCacheValid{false};
+    QString m_hasShadowCachedTheme;
+
     std::array<QMetaObject::Connection, 2> m_kdeConnections;
 
     QTemporaryDir m_extendedThemeDir;

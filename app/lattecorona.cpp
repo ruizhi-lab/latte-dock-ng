@@ -525,8 +525,8 @@ void Corona::load()
         m_templatesManager->init();
         m_layoutsManager->init();
 
-        connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRectChanged(-1); });
-        connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { Q_EMIT availableScreenRegionChanged(-1); });
+        connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { m_availableCacheValid = false; Q_EMIT availableScreenRectChanged(-1); });
+        connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { m_availableCacheValid = false; Q_EMIT availableScreenRegionChanged(-1); });
         connect(m_screenPool, &ScreenPool::primaryScreenChanged, this, &Corona::onScreenCountChanged, Qt::UniqueConnection);
 
         QString loadLayoutName = "";
@@ -850,6 +850,15 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
                                                   bool ignoreExternalPanels,
                                                   bool desktopUse) const
 {
+    //! Use cached value when available for simple/common queries.
+    if (m_availableCacheValid && activityid.isEmpty() && !desktopUse
+        && ignoreModes.isEmpty() && ignoreEdges.isEmpty()) {
+        auto it = m_availableRegionCache.constFind(id);
+        if (it != m_availableRegionCache.constEnd()) {
+            return *it;
+        }
+    }
+
     const QScreen *screen = m_screenPool->screenForId(id);
     bool inCurrentActivity{activityid.isEmpty()};
 
@@ -981,6 +990,10 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
 
     qDebug() << "::::: END OF FREE AREAS :::::";*/
 
+    if (m_availableCacheValid && activityid.isEmpty() && !desktopUse && ignoreModes.isEmpty() && ignoreEdges.isEmpty()) {
+        m_availableRegionCache[id] = available;
+    }
+
     return available;
 }
 
@@ -1004,6 +1017,15 @@ QRect Corona::availableScreenRectWithCriteria(int id,
                                               bool ignoreExternalPanels,
                                               bool desktopUse) const
 {
+    //! Use cached value when available and inputs are "simple"
+    //! (current activity, default ignore modes). Most callers use this path.
+    if (m_availableCacheValid && activityid.isEmpty() && !desktopUse) {
+        auto it = m_availableRectCache.constFind(id);
+        if (it != m_availableRectCache.constEnd()) {
+            return *it;
+        }
+    }
+
     const QScreen *screen = m_screenPool->screenForId(id);
     bool inCurrentActivity{activityid.isEmpty()};
 
@@ -1073,6 +1095,10 @@ QRect Corona::availableScreenRectWithCriteria(int id,
         }
     }
 
+    if (m_availableCacheValid && activityid.isEmpty() && !desktopUse && ignoreModes.isEmpty() && ignoreEdges.isEmpty()) {
+        m_availableRectCache[id] = available;
+    }
+
     return available;
 }
 
@@ -1118,6 +1144,7 @@ void Corona::onScreenGeometryChanged(const QRect &geometry)
     const int id = m_screenPool->id(screen->name());
 
     if (id >= 0) {
+        m_availableCacheValid = false;
         Q_EMIT screenGeometryChanged(id);
         Q_EMIT availableScreenRegionChanged(-1);
         Q_EMIT availableScreenRectChanged(-1);

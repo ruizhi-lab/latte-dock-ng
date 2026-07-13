@@ -134,7 +134,6 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     //! and avoid a crash from View::winId() at the same time
     m_positioner = new ViewPart::Positioner(this);
 
-    // setTitle(corona->kPackage().metadata().name());
     setIcon(qGuiApp->windowIcon());
     setResizeMode(QuickViewSharedEngine::SizeRootObjectToView);
     setColor(QColor(Qt::transparent));
@@ -454,10 +453,6 @@ void View::init(Plasma::Containment *plasma_containment)
 void View::reloadSource()
 {
     if (m_layout && containment()) {
-        // if (settingsWindowIsShown()) {
-        //     m_configView->deleteLater();
-        // }
-
         engine()->clearComponentCache();
         m_layout->recreateView(containment(), settingsWindowIsShown());
     }

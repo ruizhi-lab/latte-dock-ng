@@ -50,6 +50,11 @@ private:
     QPointer<Latte::View> m_view;
     QPointer<QQuickItem> m_currentParabolicItem;
 
+    //! Cache drag tree-walk result to avoid O(tree_depth) metaObject
+    //! lookups per DragMove frame.
+    QPointF m_cachedDragPos;
+    QPointer<QQuickItem> m_cachedDragParabolicItem;
+
     QPointF m_lastOrphanParabolicMove;
 
     QTimer m_parabolicItemNullifier;

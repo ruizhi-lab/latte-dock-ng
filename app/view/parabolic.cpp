@@ -83,10 +83,12 @@ void Parabolic::onEvent(QEvent *e)
 
             if (m_currentParabolicItem->contains(internal)) {
                 m_parabolicItemNullifier.stop();
-                //! sending move event to parabolic item
+                //! sending move event to parabolic item.
+                //! Use DirectConnection since the QML item is in the same
+                //! thread — avoids event queue overhead per mouse move frame.
                 QMetaObject::invokeMethod(m_currentParabolicItem,
                                           "parabolicMove",
-                                          Qt::QueuedConnection,
+                                          Qt::DirectConnection,
                                           Q_ARG(qreal, internal.x()),
                                           Q_ARG(qreal, internal.y()));
             } else {
@@ -104,6 +106,7 @@ void Parabolic::onEvent(QEvent *e)
     case QEvent::Leave:
     case QEvent::DragLeave:
         setCurrentParabolicItem(nullptr);
+        m_cachedDragParabolicItem = nullptr;
         break;
     case QEvent::MouseMove:
         if (auto me = dynamic_cast<QMouseEvent *>(e)) {
@@ -121,16 +124,23 @@ void Parabolic::onEvent(QEvent *e)
             // ParabolicArea item is set as current.  Walk the visual item tree
             // from the cursor position to find an item that accepts parabolic
             // enter/move signals (identified by the "parabolicEntered" method).
+            // Cache the result per drag position to avoid redundant tree walks.
             if (!m_currentParabolicItem && m_view) {
                 QPointF pos = de->position();
-                QQuickItem *child = m_view->contentItem()->childAt(pos.x(), pos.y());
-                while (child) {
-                    int enterIdx = child->metaObject()->indexOfMethod("parabolicEntered(real,real)");
-                    if (enterIdx >= 0) {
-                        setCurrentParabolicItem(child);
-                        break;
+                if (m_cachedDragPos != pos || !m_cachedDragParabolicItem) {
+                    m_cachedDragPos = pos;
+                    QQuickItem *child = m_view->contentItem()->childAt(pos.x(), pos.y());
+                    while (child) {
+                        int enterIdx = child->metaObject()->indexOfMethod("parabolicEntered(real,real)");
+                        if (enterIdx >= 0) {
+                            m_cachedDragParabolicItem = child;
+                            break;
+                        }
+                        child = child->parentItem();
                     }
-                    child = child->parentItem();
+                }
+                if (m_cachedDragParabolicItem) {
+                    setCurrentParabolicItem(m_cachedDragParabolicItem);
                 }
             }
             handlePointerMove(de->position());
@@ -150,10 +160,12 @@ void Parabolic::onCurrentParabolicItemChanged()
         QPointF internal = m_currentParabolicItem->mapFromItem(m_view->contentItem(), m_lastOrphanParabolicMove);
 
         if (m_currentParabolicItem->contains(internal)) {
-            //! sending enter event to parabolic item
+            //! sending enter event to parabolic item.
+            //! Use DirectConnection since the QML item is in the same
+            //! thread — avoids event queue overhead.
             QMetaObject::invokeMethod(m_currentParabolicItem,
                                       "parabolicEntered",
-                                      Qt::QueuedConnection,
+                                      Qt::DirectConnection,
                                       Q_ARG(qreal, internal.x()),
                                       Q_ARG(qreal, internal.y()));
         }

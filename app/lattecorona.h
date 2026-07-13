@@ -235,6 +235,12 @@ private:
 
     QTimer m_viewsScreenSyncTimer;
 
+    //! Cache for availableScreenRectWithCriteria to avoid recomputing
+    //! expensive QRegion subtractions when inputs are unchanged.
+    mutable QHash<int, QRect> m_availableRectCache;
+    mutable QHash<int, QRegion> m_availableRegionCache;
+    mutable bool m_availableCacheValid{false};
+
     KActivities::Consumer *m_activitiesConsumer;
     QPointer<KAboutApplicationDialog> aboutDialog;
 

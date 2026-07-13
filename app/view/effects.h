@@ -207,6 +207,20 @@ private:
     //! Subtracted and United Mask regions
     QHash<QString, QRegion> m_subtractedMaskRegions;
     QHash<QString, QRegion> m_unitedMaskRegions;
+
+    //! Cache enabledBorders inputs to avoid redundant recomputation and
+    //! shadow removal IPC on every geometry sync.
+    bool m_bordersCacheValid{false};
+    Plasma::FrameSvg::EnabledBorders m_cachedEnabledBorders{Plasma::FrameSvg::AllBorders};
+    //! Inputs that produced m_cachedEnabledBorders
+    int m_cacheLocation{0};
+    int m_cacheAlignment{0};
+    float m_cacheMaxLength{0};
+    float m_cacheOffset{0};
+    bool m_cacheScreenEdgeMargin{false};
+    bool m_cacheAllCorners{false};
+    bool m_cacheForceTop{false};
+    bool m_cacheForceBottom{false};
 };
 
 }

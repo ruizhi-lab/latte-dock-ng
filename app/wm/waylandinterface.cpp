@@ -497,7 +497,19 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
 void WaylandInterface::setViewStruts(QWindow &view, const QRect &rect, Plasma::Types::Location location)
 {
-    //! Always recreate the ghost window when struts change.
+    //! Cache check: skip expensive GhostWindow (QQuickView + LayerShell
+    //! surface) recreate when strut parameters are unchanged.
+    const QString screenName = view.screen() ? view.screen()->name() : QString();
+    auto it = m_strutCache.find(&view);
+    if (it != m_strutCache.end()
+        && it->rect == rect
+        && it->location == location
+        && it->screenName == screenName) {
+        return;
+    }
+    m_strutCache[&view] = {rect, location, screenName};
+
+    //! Recreate the ghost window only when parameters actually changed.
     //! LayerShellQt exclusive_zone updates on an existing surface may not be
     //! picked up by KWin reliably (e.g. when switching dock styles).
     if (m_ghostWindows.contains(&view)) {
@@ -608,6 +620,7 @@ void WaylandInterface::setWindowOnActivities(const WindowId &wid, const QStringL
 void WaylandInterface::removeViewStruts(QWindow &view)
 {
     delete m_ghostWindows.take(&view);
+    m_strutCache.remove(&view);
 }
 
 WindowId WaylandInterface::activeWindow()
@@ -1140,6 +1153,26 @@ void WaylandInterface::updateWindow()
     }
 }
 
+void WaylandInterface::updateWindowGeometry()
+{
+    //! Called for geometry-relevant changes (geometry, maximized, minimized,
+    //! fullscreen, active, activity changes). These affect view intersection
+    //! calculations and must trigger the full window tracking cascade.
+    updateWindow();
+}
+
+void WaylandInterface::updateWindowCache()
+{
+    //! Called for cosmetic changes (title, skipTaskbar, skipSwitcher,
+    //! onAllDesktops, parentWindow). These do NOT affect view intersection
+    //! or visibility, so we skip the expensive O(n_windows×n_views) scan.
+    PlasmaWindow *pW = qobject_cast<PlasmaWindow*>(QObject::sender());
+    if (pW && isValidWindow(pW)) {
+        //! Only update internal cached info — no need to trigger updateAllHints
+        Q_EMIT windowChanged(pW->uuid());
+    }
+}
+
 void WaylandInterface::windowUnmapped()
 {
     PlasmaWindow *pW = qobject_cast<PlasmaWindow*>(QObject::sender());
@@ -1156,20 +1189,26 @@ void WaylandInterface::trackWindow(KWayland::Client::PlasmaWindow *w)
         return;
     }
 
-    connect(w, &PlasmaWindow::activeChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::fullscreenChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::maximizedChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::minimizedChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::shadedChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::plasmaActivityEntered, this, &WaylandInterface::updateWindow);
-    connect(w, &PlasmaWindow::plasmaActivityLeft, this, &WaylandInterface::updateWindow);
+    //! Geometry-relevant signals: these affect view intersection/touching
+    //! calculations and must trigger the full window tracking cascade.
+    connect(w, &PlasmaWindow::activeChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::fullscreenChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::maximizedChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::minimizedChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::shadedChanged, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::plasmaActivityEntered, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::plasmaActivityLeft, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindowGeometry);
+    connect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindowGeometry);
+
+    //! Cosmetic signals: these do not affect view intersection calculations.
+    //! Only update cached info — skip the expensive O(n_windows×n_views) scan.
+    connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache);
+    connect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindowCache);
+    connect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindowCache);
+    connect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindowCache);
+
     connect(w, &PlasmaWindow::unmapped, this, &WaylandInterface::windowUnmapped);
 }
 
@@ -1179,20 +1218,22 @@ void WaylandInterface::untrackWindow(KWayland::Client::PlasmaWindow *w)
         return;
     }
 
-    disconnect(w, &PlasmaWindow::activeChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::fullscreenChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::maximizedChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::minimizedChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::shadedChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::plasmaActivityEntered, this, &WaylandInterface::updateWindow);
-    disconnect(w, &PlasmaWindow::plasmaActivityLeft, this, &WaylandInterface::updateWindow);
+    disconnect(w, &PlasmaWindow::activeChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::fullscreenChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::maximizedChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::minimizedChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::shadedChanged, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::plasmaActivityEntered, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::plasmaActivityLeft, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindowGeometry);
+    disconnect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindowGeometry);
+
+    disconnect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache);
+    disconnect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindowCache);
+    disconnect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindowCache);
+    disconnect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindowCache);
+
     disconnect(w, &PlasmaWindow::unmapped, this, &WaylandInterface::windowUnmapped);
 }
 

@@ -445,11 +445,19 @@ bool BackgroundCache::busyForFile(QString imageFile, Plasma::Types::Location loc
 
 void BackgroundCache::cleanupHashes()
 {
-    if (m_hintsCache.count() <= MAXHASHSIZE) {
+    if (m_hintsCache.size() <= MAXHASHSIZE) {
         return;
     }
 
-    m_hintsCache.clear();
+    //! LRU eviction: remove oldest entries until under limit, rather than
+    //! clearing the entire cache. This avoids thrashing when wallpaper
+    //! changes push the cache just over MAXHASHSIZE.
+    int toRemove = m_hintsCache.size() - MAXHASHSIZE / 2;
+    auto it = m_hintsCache.begin();
+    while (toRemove > 0 && it != m_hintsCache.end()) {
+        it = m_hintsCache.erase(it);
+        --toRemove;
+    }
 }
 
 void BackgroundCache::setBackgroundFromBroadcast(QString activity, QString screen, QString filename)

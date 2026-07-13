@@ -69,7 +69,7 @@ void Windows::init()
 {
     connect(m_wm, &AbstractWindowInterface::windowChanged, this, [this](WindowId wid) {
         m_windows[wid] = m_wm->requestInfo(wid);
-        updateAllHints();
+        updateAllHintsAfterTimer();
 
         Q_EMIT windowChanged(wid);
     });
@@ -90,7 +90,7 @@ void Windows::init()
         if (!m_windows.contains(wid)) {
             m_windows.insert(wid, m_wm->requestInfo(wid));
         }
-        updateAllHints();
+        updateAllHintsAfterTimer();
     });
 
     connect(m_wm, &AbstractWindowInterface::activeWindowChanged, this, [this](WindowId wid) {
@@ -109,9 +109,9 @@ void Windows::init()
         Q_EMIT activeWindowChanged(wid);
     });
 
-    connect(m_wm, &AbstractWindowInterface::currentDesktopChanged, this, &Windows::updateAllHints);
-    connect(m_wm, &AbstractWindowInterface::currentActivityChanged,  this, &Windows::updateAllHints);    
-    connect(m_wm, &AbstractWindowInterface::isShowingDesktopChanged,  this, &Windows::updateAllHints);
+    connect(m_wm, &AbstractWindowInterface::currentDesktopChanged, this, &Windows::updateAllHintsAfterTimer);
+    connect(m_wm, &AbstractWindowInterface::currentActivityChanged,  this, &Windows::updateAllHintsAfterTimer);
+    connect(m_wm, &AbstractWindowInterface::isShowingDesktopChanged,  this, &Windows::updateAllHintsAfterTimer);
 }
 
 void Windows::initLayoutHints(Latte::Layout::GenericLayout *layout)
@@ -802,24 +802,67 @@ void Windows::updateScreenGeometries()
 
 void Windows::updateAllHintsAfterTimer()
 {
-    if (!m_updateAllHintsTimer.isActive()) {
-        updateAllHints();
-        m_updateAllHintsTimer.start();
-    }
+    //! Defer the update — the timer will call updateAllHints() after the
+    //! debounce interval. This prevents redundant O(n_windows×n_views)
+    //! scans during rapid geometry changes (e.g. window drag/resize).
+    m_updateAllHintsTimer.start();
 }
 
 void Windows::updateAllHints()
 {
+    //! Pre-filter: only update views that are enabled and tracking the
+    //! current activity. Disabled/inactive views are skipped entirely.
+    bool hasActiveView{false};
     for (const auto view : m_views.keys()) {
-        updateHints(view);
+        if (m_views[view]->enabled() && m_views[view]->isTrackingCurrentActivity()) {
+            updateHints(view);
+            hasActiveView = true;
+        }
     }
 
-    for (const auto layout : m_layouts.keys()) {
-        updateHints(layout);
+    //! Derive layout hints from their constituent view hints instead of
+    //! running a second full O(n_windows) scan per layout.
+    if (hasActiveView) {
+        updateLayoutHintsFromViews();
     }
 
     if (!m_extraViewHintsTimer.isActive()) {
         m_extraViewHintsTimer.start();
+    }
+}
+
+void Windows::updateLayoutHintsFromViews()
+{
+    for (const auto layout : m_layouts.keys()) {
+        if (!m_layouts[layout]->enabled() || !m_layouts[layout]->isTrackingCurrentActivity()) {
+            initLayoutHints(layout);
+            continue;
+        }
+
+        bool foundActive{false};
+        bool foundActiveMaximized{false};
+        bool foundMaximized{false};
+
+        for (const auto view : m_views.keys()) {
+            if (view->layout() != layout || !m_views[view]->enabled()
+                || !m_views[view]->isTrackingCurrentActivity()) {
+                continue;
+            }
+
+            if (m_views[view]->existsWindowActive()) {
+                foundActive = true;
+            }
+            if (m_views[view]->existsWindowMaximized()) {
+                foundMaximized = true;
+            }
+            if (m_views[view]->activeWindowMaximized()) {
+                foundActiveMaximized = true;
+            }
+        }
+
+        setExistsWindowActive(layout, foundActive);
+        setActiveWindowMaximized(layout, foundActiveMaximized);
+        setExistsWindowMaximized(layout, foundActiveMaximized || foundMaximized);
     }
 }
 
@@ -905,9 +948,6 @@ void Windows::updateHints(Latte::View *view)
             continue;
         }
 
-        //qDebug() << " _ _ _ ";
-        //qDebug() << "TRACKING | WINDOW INFO :: " << winfo.wid() << " _ " << winfo.appName() << " _ " << winfo.geometry() << " _ " << winfo.display();
-
         if (isActive(winfo)) {
             foundActive = true;
         }
@@ -948,9 +988,6 @@ void Windows::updateHints(Latte::View *view)
                 touchEdgeWinId = winfo.wid();
             }
         }
-
-        //qDebug() << "TRACKING |       ACTIVE:"<< foundActive <<  " ACT_TOUCH_CUR_SCR:" << foundActiveTouchInCurScreen << " MAXIM:"<<foundMaximizedInCurScreen;
-        //qDebug() << "TRACKING |       TOUCHING VIEW EDGE:"<< touchingViewEdge << " TOUCHING VIEW:" << foundTouchInCurScreen;
     }
 
     if (existsFaultyWindow) {
@@ -960,12 +997,6 @@ void Windows::updateHints(Latte::View *view)
     //! PASS 2
     if (!m_wm->isShowingDesktop() && foundActiveInCurScreen && !foundActiveTouchInCurScreen) {
         //! Second Pass to track also Child windows if needed
-
-        //qDebug() << "Windows Array...";
-        //for (const auto &winfo : m_windows) {
-        //    qDebug() << " - " << winfo.wid() << " - " << winfo.isValid() << " - " << winfo.display() << " - " << winfo.geometry() << " parent : " << winfo.parentId();
-        //}
-        //qDebug() << " - - - - - ";
 
         WindowInfoWrap activeInfo = m_windows[activeWinId];
         WindowId mainWindowId = activeInfo.isChildWindow() ? activeInfo.parentId() : activeWinId;
@@ -1033,15 +1064,6 @@ void Windows::updateHints(Latte::View *view)
     if (foundActiveInCurScreen) {
         m_views[view]->setActiveWindow(activeWinId);
     }
-
-    //! Debug
-    //qDebug() << "TRACKING |      _________ FINAL RESULTS ________";
-    //qDebug() << "TRACKING | SCREEN: " << view->positioner()->currentScreenId() << " , EDGE:" << view->location() << " , ENABLED:" << enabled(view);
-    //qDebug() << "TRACKING | activeWindowTouching: " << foundActiveTouchInCurScreen << " ,activeWindowMaximized: " << activeWindowMaximized(view);
-    //qDebug() << "TRACKING | existsWindowActive: " << foundActiveInCurScreen << " , existsWindowMaximized:" << existsWindowMaximized(view)
-    //         << " , existsWindowTouching:"<<existsWindowTouching(view);
-    //qDebug() << "TRACKING | activeEdgeWindowTouch: " <<  activeWindowTouchingEdge(view) << " , existsEdgeWindowTouch:" << existsWindowTouchingEdge(view);
-    //qDebug() << "TRACKING | existsActiveGroupTouching: " << foundActiveGroupTouchInCurScreen;
 }
 
 void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
@@ -1119,12 +1141,6 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
     if (foundActive) {
         m_layouts[layout]->setActiveWindow(activeWinId);
     }
-
-    //! Debug
-    //qDebug() << " -- TRACKING REPORT (LAYOUT) --";
-    //qDebug() << "TRACKING | LAYOUT: " << layout->name() << " , ENABLED:" << enabled(layout);
-    //qDebug() << "TRACKING | existsActiveWindow: " << foundActive << " ,activeWindowMaximized: " << foundActiveMaximized;
-    //qDebug() << "TRACKING | existsWindowMaximized: " << existsWindowMaximized(layout);
 }
 
 }

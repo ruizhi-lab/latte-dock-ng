@@ -732,10 +732,6 @@ void VisibilityManager::toggleHiddenState()
 {
     if (!m_latteView->inEditMode()) {
         if (isSidebar()) {
-            // if (m_blockHidingEvents.contains(Q_FUNC_INFO)) {
-            //    removeBlockHidingEvent(Q_FUNC_INFO);
-            // }
-
             if (m_mode == Latte::Types::SidebarOnDemand) {
                 m_isRequestedShownSidebarOnDemand = !m_isRequestedShownSidebarOnDemand;
                 updateHiddenState();
@@ -748,11 +744,6 @@ void VisibilityManager::toggleHiddenState()
                 }
             }
         } else {
-            /*    if (!m_isHidden && !m_blockHidingEvents.contains(Q_FUNC_INFO)) {
-                addBlockHidingEvent(Q_FUNC_INFO);
-            } else if (m_isHidden) {
-                removeBlockHidingEvent(Q_FUNC_INFO);
-            }*/
         }
     }
 }
