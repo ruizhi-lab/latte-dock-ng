@@ -14,7 +14,6 @@ set(tasks_SRCS
     plugin/types.cpp
     plugin/lattetasksplugin.cpp
     plugin/windowscreenshotprovider.cpp
-    plugin/pipecaptureworker.cpp
 )
 
 add_library(lattetasksplugin SHARED ${tasks_SRCS})

@@ -189,7 +189,7 @@ SequentialAnimation {
                 tasksExtendedManager.removeToBeRemovedLauncher(taskItem.launcherUrl);
             }
 
-            if (windowsPreviewDlg.visible && windowsPreviewDlg.mainItem.parentTask === taskItem
+            if (windowsPreviewDlg.visible && windowsPreviewDlg.toolTipDelegate.parentTask === taskItem
                     && isWindow && !isGroupParent){
                 hidePreview();
             }

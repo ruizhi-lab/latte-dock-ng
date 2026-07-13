@@ -4,14 +4,11 @@
 */
 
 #include "windowscreenshotprovider.h"
-#include "pipecaptureworker.h"
 
-// Qt
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusPendingCall>
 #include <QDBusPendingCallWatcher>
-#include <QDBusObjectPath>
 #include <QDBusPendingReply>
 #include <QDBusUnixFileDescriptor>
 #include <QDebug>
@@ -20,16 +17,13 @@
 #include <QImage>
 #include <QSocketNotifier>
 #include <QStandardPaths>
-#include <QTimer>
 
-// POSIX
-#include <sys/socket.h>
+#include <fcntl.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
-namespace Latte
-{
-namespace Tasks
-{
+namespace Latte {
+namespace Tasks {
 
 WindowScreenshotProvider::WindowScreenshotProvider(QObject *parent)
     : QObject(parent)
@@ -41,7 +35,6 @@ WindowScreenshotProvider::WindowScreenshotProvider(QObject *parent)
 
 WindowScreenshotProvider::~WindowScreenshotProvider()
 {
-    // Close all pending capture FDs
     for (auto it = m_pendingByFd.begin(); it != m_pendingByFd.end(); ++it) {
         delete it.value().notifier;
         ::close(it.key());
@@ -49,125 +42,24 @@ WindowScreenshotProvider::~WindowScreenshotProvider()
     m_pendingByFd.clear();
 }
 
-void WindowScreenshotProvider::cacheFrame(const QString &windowUuid, const QVariant &image)
-{
-    if (windowUuid.isEmpty() || !image.isValid()) return;
-
-    // Evict old entry
-    if (m_cache.contains(windowUuid)) {
-        QFile::remove(m_cache.value(windowUuid));
-        m_lruOrder.removeAll(windowUuid);
-    }
-
-    while (m_cache.size() >= m_maxCacheSize) {
-        evictLru();
-    }
-
-    QString filePath = m_cacheDir + QLatin1Char('/') + windowUuid + QLatin1String(".png");
-    filePath.replace(QLatin1Char('/'), QLatin1Char('_'));
-
-    QImage img = image.value<QImage>();
-    if (img.isNull()) {
-        qWarning() << "WindowScreenshotProvider: cacheFrame got null image for" << windowUuid;
-        return;
-    }
-
-    QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly)) {
-        img.save(&file, "PNG");
-        file.close();
-        m_cache.insert(windowUuid, filePath);
-        m_lruOrder.append(windowUuid);
-        emit cacheSizeChanged();
-        emit screenshotReady(windowUuid, filePath);
-    }
-}
-
-bool WindowScreenshotProvider::hasPending(const QString &windowUuid) const
-{
-    return m_pendingUuids.contains(windowUuid);
-}
-
-void WindowScreenshotProvider::captureViaPipeWire(uint nodeId, const QString &windowUuid)
-{
-    if (windowUuid.isEmpty() || nodeId == 0) {
-        emit screenshotFailed(windowUuid);
-        return;
-    }
-
-    // Return cached entry immediately if we already have one
-    if (m_cache.contains(windowUuid)) {
-        m_lruOrder.removeAll(windowUuid);
-        m_lruOrder.append(windowUuid);
-        emit screenshotReady(windowUuid, m_cache.value(windowUuid));
-        return;
-    }
-
-    if (m_pendingUuids.contains(windowUuid)) {
-        return;
-    }
-    m_pendingUuids.insert(windowUuid);
-
-    // Build output path
-    QString filePath = m_cacheDir + QLatin1Char('/') + windowUuid + QLatin1String(".png");
-    filePath.replace(QLatin1Char('/'), QLatin1Char('_'));
-
-    auto *worker = new PipeWireCaptureWorker(this);
-    QObject::connect(worker, &PipeWireCaptureWorker::captured,
-                     this, [this](const QString &uuid, const QString &path) {
-        m_pendingUuids.remove(uuid);
-        // Evict old entry if it exists
-        if (m_cache.contains(uuid)) {
-            QFile::remove(m_cache.value(uuid));
-            m_lruOrder.removeAll(uuid);
-        }
-        while (m_cache.size() >= m_maxCacheSize) {
-            evictLru();
-        }
-        m_cache.insert(uuid, path);
-        m_lruOrder.append(uuid);
-        emit cacheSizeChanged();
-        emit screenshotReady(uuid, path);
-    });
-    QObject::connect(worker, &PipeWireCaptureWorker::failed,
-                     this, [this, worker](const QString &uuid) {
-        m_pendingUuids.remove(uuid);
-        emit screenshotFailed(uuid);
-        worker->deleteLater();
-    });
-    QObject::connect(worker, &PipeWireCaptureWorker::captured,
-                     worker, &QObject::deleteLater);
-
-    worker->capture(nodeId, windowUuid, filePath);
-}
-
-void WindowScreenshotProvider::ping(const QString &msg)
-{
-    qDebug() << "WindowScreenshotProvider::ping:" << msg;
-}
-
 void WindowScreenshotProvider::captureWindow(const QString &windowUuid)
 {
-    if (windowUuid.isEmpty()) {
+    if (windowUuid.isEmpty())
         return;
-    }
 
-    // Return cached entry immediately if we already have one
+    // Fast path: cached
     if (m_cache.contains(windowUuid)) {
-        // Update LRU: move to end
         m_lruOrder.removeAll(windowUuid);
         m_lruOrder.append(windowUuid);
-        qDebug() << "WindowScreenshotProvider: cache hit for" << windowUuid;
         emit screenshotReady(windowUuid, m_cache.value(windowUuid));
         return;
     }
 
-    // Don't capture the same window again while a capture is pending
-    if (m_pendingUuids.contains(windowUuid)) {
+    // Don't duplicate
+    if (m_pendingUuids.contains(windowUuid))
         return;
-    }
 
-    qDebug() << "WindowScreenshotProvider: captureWindow called for" << windowUuid;
+    m_pendingUuids.insert(windowUuid);
     doCaptureWindow(windowUuid);
 }
 
@@ -178,17 +70,23 @@ QString WindowScreenshotProvider::cachedScreenshot(const QString &windowUuid) co
 
 bool WindowScreenshotProvider::hasScreenshot(const QString &windowUuid) const
 {
-    if (!m_cache.contains(windowUuid)) {
-        return false;
-    }
-    return QFile::exists(m_cache.value(windowUuid));
+    return m_cache.contains(windowUuid) && QFile::exists(m_cache.value(windowUuid));
+}
+
+bool WindowScreenshotProvider::hasPending(const QString &windowUuid) const
+{
+    return m_pendingUuids.contains(windowUuid);
+}
+
+void WindowScreenshotProvider::ping(const QString &msg)
+{
+    qDebug() << "WindowScreenshotProvider::ping:" << msg;
 }
 
 void WindowScreenshotProvider::clearCache()
 {
-    for (auto it = m_cache.begin(); it != m_cache.end(); ++it) {
+    for (auto it = m_cache.begin(); it != m_cache.end(); ++it)
         QFile::remove(it.value());
-    }
     m_cache.clear();
     m_lruOrder.clear();
     emit cacheSizeChanged();
@@ -219,152 +117,156 @@ void WindowScreenshotProvider::setMaxCacheSize(int size)
     if (m_maxCacheSize != size) {
         m_maxCacheSize = size;
         emit maxCacheSizeChanged();
-        while (m_cache.size() > m_maxCacheSize) {
+        while (m_cache.size() > m_maxCacheSize)
             evictLru();
-        }
     }
 }
 
+// ---------------------------------------------------------------------------
+// KWin ScreenShot2 D-Bus capture
+// ---------------------------------------------------------------------------
+
 void WindowScreenshotProvider::doCaptureWindow(const QString &windowUuid)
 {
-    // Use the XDG Desktop Portal Screenshot API instead of KWin ScreenShot2.
-    // The portal runs in a separate process (xdg-desktop-portal-kde) and
-    // handles all the PipeWire/Wayland complexity; latte-dock's UI thread
-    // is never blocked.
+    // Use KWin's ScreenShot2 D-Bus API for fast, per-window screenshots.
+    // The caller provides a pipe; KWin writes the image data into it.
+    //
+    // D-Bus signature:
+    //   CaptureWindow(s handle, a{sv} options, h pipe) → a{sv} results
 
-    qDebug() << "WindowScreenshotProvider: portal capture for" << windowUuid;
+    // Use socketpair instead of pipe — larger buffer, no blocking issues
+    int fds[2];
+    if (::socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0, fds) < 0) {
+        qWarning() << "WindowScreenshotProvider: socketpair failed for" << windowUuid;
+        m_pendingUuids.remove(windowUuid);
+        emit screenshotFailed(windowUuid);
+        return;
+    }
+
+    int readFd = fds[0];
+    int writeFd = fds[1];
 
     QDBusMessage msg = QDBusMessage::createMethodCall(
-        QStringLiteral("org.freedesktop.portal.Desktop"),
-        QStringLiteral("/org/freedesktop/portal/desktop"),
-        QStringLiteral("org.freedesktop.portal.Screenshot"),
-        QStringLiteral("Screenshot"));
+        QStringLiteral("org.kde.KWin"),
+        QStringLiteral("/org/kde/KWin/ScreenShot2"),
+        QStringLiteral("org.kde.KWin.ScreenShot2"),
+        QStringLiteral("CaptureWindow"));
 
-    // parent_window: empty string (no parent)
-    msg << QString();
-
-    // options: interactive=false, modal=false
     QVariantMap options;
-    options[QStringLiteral("interactive")] = false;
-    options[QStringLiteral("modal")] = false;
-    msg << options;
+    options[QStringLiteral("include-cursor")] = false;
+    options[QStringLiteral("include-decoration")] = true;
 
-    auto pendingCall = QDBusConnection::sessionBus().asyncCall(msg);
-    auto *watcher = new QDBusPendingCallWatcher(pendingCall, this);
-    watcher->setProperty("screenshotUuid", windowUuid);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this,
-                     [this](QDBusPendingCallWatcher *w) {
-        QDBusPendingReply<QDBusObjectPath> reply = *w;
+    // QDBusUnixFileDescriptor duplicates writeFd during D-Bus marshalling.
+    // Keep writeFd alive until the reply confirms KWin has its copy.
+    msg << windowUuid << options;
+    msg << QVariant::fromValue(QDBusUnixFileDescriptor(writeFd));
+
+    auto *pending = new QDBusPendingCallWatcher(
+        QDBusConnection::sessionBus().asyncCall(msg), this);
+    pending->setProperty("screenshotUuid", windowUuid);
+    pending->setProperty("screenshotReadFd", readFd);
+    pending->setProperty("screenshotWriteFd", writeFd);
+
+    QObject::connect(pending, &QDBusPendingCallWatcher::finished,
+                     this, [this](QDBusPendingCallWatcher *w) {
+        QDBusPendingReply<QVariantMap> reply = *w;
         const QString uuid = w->property("screenshotUuid").toString();
+        int rfd = w->property("screenshotReadFd").toInt();
+        int wfd = w->property("screenshotWriteFd").toInt();
         w->deleteLater();
 
+        // Close our write end — KWin has its own dup.  This lets the
+        // read end see EOF once KWin finishes writing.
+        ::close(wfd);
+
         if (reply.isError()) {
-            qWarning() << "WindowScreenshotProvider: portal call failed for" << uuid
+            qWarning() << "KWin ScreenShot2 D-Bus error for" << uuid
                        << ":" << reply.error().message();
             m_pendingUuids.remove(uuid);
+            ::close(rfd);
             emit screenshotFailed(uuid);
             return;
         }
 
-        QDBusObjectPath requestPath = reply.value();
-        qDebug() << "WindowScreenshotProvider: portal request path" << requestPath.path() << "for" << uuid;
+        // KWin has written the screenshot into our socket; start reading
+        PendingCapture pc;
+        pc.uuid = uuid;
+        pc.readFd = rfd;
+        pc.notifier = new QSocketNotifier(rfd, QSocketNotifier::Read, this);
+        QObject::connect(pc.notifier, &QSocketNotifier::activated,
+                         this, [this](int f) { onReadData(f); });
 
-        // Listen for the Response signal on the request object
-        QDBusConnection::sessionBus().connect(
-            QStringLiteral("org.freedesktop.portal.Desktop"),
-            requestPath.path(),
-            QStringLiteral("org.freedesktop.portal.Request"),
-            QStringLiteral("Response"),
-            this,
-            SLOT(onPortalResponse(uint, QVariantMap)));
+        m_pendingByFd.insert(rfd, pc);
 
-        // Store mapping from request path to uuid
-        m_portalRequests.insert(requestPath.path(), uuid);
+        qDebug() << "WindowScreenshotProvider: KWin capture started for" << uuid;
     });
 }
 
 void WindowScreenshotProvider::onReadData(int fd)
 {
     auto it = m_pendingByFd.find(fd);
-    if (it == m_pendingByFd.end()) {
+    if (it == m_pendingByFd.end())
         return;
-    }
 
-    PendingCapture &pending = it.value();
-
+    PendingCapture &pc = it.value();
     char buf[65536];
-    qint64 bytesRead = ::read(fd, buf, sizeof(buf));
+    qint64 n = ::read(fd, buf, sizeof(buf));
 
-    if (bytesRead > 0) {
-        pending.buffer.append(buf, static_cast<int>(bytesRead));
+    if (n > 0) {
+        pc.buffer.append(buf, static_cast<int>(n));
     } else {
-        // EOF (0) or error (<0): transfer complete or failed
-        pending.notifier->setEnabled(false);
+        // EOF or error
+        pc.notifier->setEnabled(false);
 
-        if (bytesRead == 0 && !pending.buffer.isEmpty()) {
-            qDebug() << "WindowScreenshotProvider: received" << pending.buffer.size() << "bytes for" << pending.uuid;
-            finishCapture(pending.uuid, pending.buffer);
+        if (n == 0 && !pc.buffer.isEmpty()) {
+            qDebug() << "WindowScreenshotProvider: received"
+                     << pc.buffer.size() << "bytes for" << pc.uuid;
+            finishCapture(pc.uuid, pc.buffer);
         } else {
-            qWarning() << "WindowScreenshotProvider: capture failed for" << pending.uuid << "bytesRead:" << bytesRead;
-            m_pendingUuids.remove(pending.uuid);
-            emit screenshotFailed(pending.uuid);
+            qWarning() << "WindowScreenshotProvider: read failed for"
+                       << pc.uuid << "ret:" << n;
+            m_pendingUuids.remove(pc.uuid);
+            emit screenshotFailed(pc.uuid);
         }
 
-        delete pending.notifier;
+        delete pc.notifier;
         ::close(fd);
-        m_pendingByFd.remove(fd);
+        m_pendingByFd.erase(it);
     }
 }
 
-void WindowScreenshotProvider::onDbusReply(QDBusPendingCallWatcher *watcher)
-{
-    QDBusPendingReply<QVariantMap> reply = *watcher;
-
-    const QString uuid = watcher->property("screenshotUuid").toString();
-    int readFd = watcher->property("screenshotReadFd").toInt();
-
-    if (reply.isError()) {
-        qWarning() << "WindowScreenshotProvider: D-Bus error for" << uuid << ":" << reply.error().message();
-        auto it = m_pendingByFd.find(readFd);
-        if (it != m_pendingByFd.end()) {
-            delete it.value().notifier;
-            ::close(readFd);
-            m_pendingByFd.remove(readFd);
-        }
-        m_pendingUuids.remove(uuid);
-        emit screenshotFailed(uuid);
-    } else {
-        qDebug() << "WindowScreenshotProvider: D-Bus call succeeded for" << uuid;
-    }
-
-    watcher->deleteLater();
-}
-
-void WindowScreenshotProvider::finishCapture(const QString &uuid, const QByteArray &imageData)
+void WindowScreenshotProvider::finishCapture(const QString &uuid,
+                                              const QByteArray &imageData)
 {
     m_pendingUuids.remove(uuid);
 
-    // Evict old entry if it exists
+    // Evict old
     if (m_cache.contains(uuid)) {
         QFile::remove(m_cache.value(uuid));
         m_lruOrder.removeAll(uuid);
     }
-
-    // Ensure we don't exceed max cache size
-    while (m_cache.size() >= m_maxCacheSize) {
+    while (m_cache.size() >= m_maxCacheSize)
         evictLru();
-    }
 
-    // Write to a file in the cache directory
+    // Write PNG to cache
     QString filePath = m_cacheDir + QLatin1Char('/') + uuid + QLatin1String(".png");
-    // Sanitize the filename: UUIDs from KWin may contain '/' characters
     filePath.replace(QLatin1Char('/'), QLatin1Char('_'));
+
+    // Try to decode + re-encode as PNG (KWin may send raw pixel data or a
+    // complete image format — try QImage loading first).
+    QImage img = QImage::fromData(imageData);
+    if (img.isNull()) {
+        // If it's raw BGRA, try to interpret it as a common resolution
+        qWarning() << "WindowScreenshotProvider: QImage::fromData failed for"
+                   << uuid << "size:" << imageData.size();
+        emit screenshotFailed(uuid);
+        return;
+    }
 
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
-        file.write(imageData);
+        img.save(&file, "PNG");
         file.close();
-
         m_cache.insert(uuid, filePath);
         m_lruOrder.append(uuid);
         emit cacheSizeChanged();
@@ -374,19 +276,10 @@ void WindowScreenshotProvider::finishCapture(const QString &uuid, const QByteArr
     }
 }
 
-void WindowScreenshotProvider::onPortalResponse(uint response, const QVariantMap &results)
-{
-    Q_UNUSED(response);
-    Q_UNUSED(results);
-    qDebug() << "WindowScreenshotProvider::onPortalResponse" << response << results;
-}
-
 void WindowScreenshotProvider::evictLru()
 {
-    if (m_lruOrder.isEmpty()) {
+    if (m_lruOrder.isEmpty())
         return;
-    }
-
     const QString oldest = m_lruOrder.takeFirst();
     if (m_cache.contains(oldest)) {
         QFile::remove(m_cache.value(oldest));

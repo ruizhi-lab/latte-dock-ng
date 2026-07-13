@@ -1,12 +1,17 @@
 /*
     SPDX-FileCopyrightText: 2026 Latte Dock Contributors
     SPDX-License-Identifier: GPL-2.0-or-later
+
+    On-demand window screenshots via KWin's ScreenShot2 D-Bus API.
+
+    KWin renders the window internally and returns the image as a Unix
+    file descriptor — zero PipeWire, zero worker threads, zero jank.
+    The result is cached as a PNG and delivered via screenshotReady().
 */
 
 #ifndef WINDOWSCREENSHOTPROVIDER_H
 #define WINDOWSCREENSHOTPROVIDER_H
 
-// Qt
 #include <QObject>
 #include <QMap>
 #include <QSet>
@@ -15,21 +20,9 @@
 class QSocketNotifier;
 class QDBusPendingCallWatcher;
 
-namespace Latte
-{
-namespace Tasks
-{
+namespace Latte {
+namespace Tasks {
 
-/**
- * @brief Provides on-demand window screenshots via KWin's ScreenShot2 D-Bus API.
- *
- * Screenshots are taken asynchronously and cached to temporary files.
- * When a screenshot is ready, the screenshotReady() signal is emitted.
- *
- * This avoids the performance issues of PipeWire live streaming for
- * window previews — each hover triggers a lightweight D-Bus screenshot
- * instead of a continuous PipeWire connection.
- */
 class WindowScreenshotProvider : public QObject
 {
     Q_OBJECT
@@ -42,52 +35,26 @@ public:
     ~WindowScreenshotProvider() override;
 
 public Q_SLOTS:
-    /// Called when the XDG Desktop Portal responds to a Screenshot request.
-    void onPortalResponse(uint response, const QVariantMap &results);
-
-    /**
-     * Request a screenshot for the given window UUID.
-     * The result is delivered asynchronously via screenshotReady() signal.
-     */
+    /// Request a screenshot from KWin for the given window UUID.
+    /// Result is delivered asynchronously via screenshotReady().
     Q_INVOKABLE void captureWindow(const QString &windowUuid);
 
-    /**
-     * Request a screenshot via PipeWire (worker thread).
-     * PipeWire stream creation runs in a background thread so the UI
-     * never blocks.
-     */
-    Q_INVOKABLE void captureViaPipeWire(uint nodeId, const QString &windowUuid);
-
-    /**
-     * Cache a frame image for a window UUID.
-     * The image is saved as PNG and can be retrieved via cachedScreenshot().
-     */
-    Q_INVOKABLE void cacheFrame(const QString &windowUuid, const QVariant &image);
-
-    /**
-     * Returns the cached screenshot file path for a window, or empty string.
-     */
+    /// Returns the cached screenshot file path for a window, or "".
     Q_INVOKABLE QString cachedScreenshot(const QString &windowUuid) const;
 
-    /**
-     * Returns true if a cached screenshot exists for this window.
-     */
+    /// Returns true if a cached screenshot exists for this window.
     Q_INVOKABLE bool hasScreenshot(const QString &windowUuid) const;
 
-    /// Returns true if a capture is currently in progress for this window.
+    /// Returns true if a capture is currently in progress.
     Q_INVOKABLE bool hasPending(const QString &windowUuid) const;
 
     /// Diagnostic
     Q_INVOKABLE void ping(const QString &msg);
 
-    /**
-     * Clear all cached screenshots.
-     */
+    /// Clear all cached screenshots.
     Q_INVOKABLE void clearCache();
 
-    /**
-     * Remove screenshot for a specific window.
-     */
+    /// Remove screenshot for a specific window.
     Q_INVOKABLE void evictWindow(const QString &windowUuid);
 
     int cacheSize() const;
@@ -101,7 +68,7 @@ Q_SIGNALS:
     void maxCacheSizeChanged();
 
 private Q_SLOTS:
-    void onDbusReply(QDBusPendingCallWatcher *watcher);
+    void onReadData(int fd);
 
 private:
     struct PendingCapture {
@@ -112,17 +79,15 @@ private:
     };
 
     void doCaptureWindow(const QString &windowUuid);
-    void onReadData(int fd);
     void finishCapture(const QString &uuid, const QByteArray &imageData);
     void evictLru();
 
     QString m_cacheDir;
-    QMap<QString, QString> m_cache;       // uuid → file path
-    QSet<QString> m_pendingUuids;          // uuids currently being captured
-    QMap<int, PendingCapture> m_pendingByFd; // fd → pending capture
-    QStringList m_lruOrder;                // LRU eviction order
+    QMap<QString, QString> m_cache;        // uuid → file path
+    QSet<QString> m_pendingUuids;           // uuids being captured
+    QMap<int, PendingCapture> m_pendingByFd; // fd → capture
+    QStringList m_lruOrder;
     int m_maxCacheSize = 20;
-    QMap<QString, QString> m_portalRequests; // request path → uuid
 };
 
 } // namespace Tasks

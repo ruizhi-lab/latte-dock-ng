@@ -18,10 +18,7 @@ MouseArea {
     // Qt6 can let parent flickables steal mouse sequences during small motion,
     // resulting in press without release and missed task activation.
     preventStealing: true
-    hoverEnabled: true  // Always enable hover; the onEntered handler gates
-                         // on taskItem state itself, and the binding below was
-                         // staying false after startup due to lingering
-                         // animation / visibility flags.
+    hoverEnabled: !inAnimation && !inBlockingAnimation
 
     property bool pressed: false
     // Drag should start only after resistance delay expires and pointer
