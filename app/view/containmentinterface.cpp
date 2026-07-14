@@ -1737,6 +1737,11 @@ void ContainmentInterface::removeApplet(const int &id)
     }
 
     auto applet = m_appletData[id].applet;
+    if (!applet) {
+        m_appletData.remove(id);
+        return;
+    }
+
     Q_EMIT applet->appletDeleted(applet); //! this signal should be part of Plasma Frameworks AppletPrivate::destroy() function...
     applet->destroy();
 }
