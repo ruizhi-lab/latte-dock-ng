@@ -1161,7 +1161,7 @@ bool ContainmentInterface::addInternalSeparatorAtLeftBoundaryOfApplet(const int 
         return false;
     }
 
-    return addInternalSeparatorBeforeApplet(appletId);
+    return addInternalSeparatorBeforeApplet(leftNeighborId);
 }
 
 bool ContainmentInterface::addInternalSeparatorAtRightBoundaryOfApplet(const int appletId)
