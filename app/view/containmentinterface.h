@@ -184,6 +184,7 @@ private:
     void initAppletConfigurationSignals(const int &id, QQmlPropertyMap *configuration);
     void cleanupInvalidSeparatorApplets();
     void saveAppletsOrder(const QList<int> &order);
+    void persistAppletsOrder(const QList<int> &order);
     int calculateDefaultAppletInsertionIndex(const QList<int> &order);
 
     bool appletIsExpandable(PlasmaQuick::AppletQuickItem *appletQuickItem) const;

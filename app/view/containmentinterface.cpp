@@ -1041,6 +1041,20 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
 
     const QStringList separatorPlugins{QLatin1String(kLatteSeparatorPluginId)};
 
+    //! Set pending insertion index so that onAppletAdded (fired synchronously
+    //! during createApplet) places the separator at the correct target position
+    //! immediately, avoiding the default "end of left-side widgets" fallback
+    //! and the jitter from multiple asynchronous setAppletsOrder repositionings.
+    //!
+    //! Also suppress the reorderParabolicSpacers() call inside save() during
+    //! this operation.  It moves parabolic edge spacers which causes a second
+    //! Grid recalculation within addAppletItem, producing the visible
+    //! back-and-forth icon oscillation perceived as jitter.
+    if (m_layoutManager) {
+        m_layoutManager->setProperty("_latte_pendingInsertionIndex", targetIndex);
+        m_layoutManager->setProperty("_latte_skipSpacerReorder", true);
+    }
+
     Plasma::Applet *separatorApplet{nullptr};
 
     for (const QString &pluginId : separatorPlugins) {
@@ -1053,6 +1067,14 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
             separatorApplet->destroy();
             separatorApplet = nullptr;
         }
+    }
+
+    // Clear the pending index and spacer-reorder suppression if they were
+    // not consumed (e.g. applet creation raced or a different code path
+    // cleared them already).
+    if (m_layoutManager) {
+        m_layoutManager->setProperty("_latte_pendingInsertionIndex", QVariant());
+        m_layoutManager->setProperty("_latte_skipSpacerReorder", QVariant());
     }
 
     if (!separatorApplet) {
@@ -1074,25 +1096,20 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     newOrder.removeAll(separatorId);
     newOrder.insert(targetIndex, separatorId);
 
-    //! Prevent deferred cleanupInvalidSeparatorApplets from racing with
-    //! the multi-timer setAppletsOrder chain that follows.
+    //! Prevent deferred cleanupInvalidSeparatorApplets from racing.
     m_cleaningSeparatorApplets = true;
 
-    setAppletsOrder(newOrder);
-    // Separator applets can be added asynchronously by Plasma. Re-apply the
-    // same order shortly after creation so boundary separators stay anchored
-    // to the requested applet side instead of falling back to default side.
-    QTimer::singleShot(0, this, [this, newOrder]() {
+    //! Apply the new order once after a brief delay to give the separator
+    //! QQuickItem (placed by addAppletItem via _latte_pendingInsertionIndex)
+    //! time to initialize, then persist to config.
+    QTimer::singleShot(30, this, [this, newOrder]() {
         setAppletsOrder(newOrder);
-    });
-    QTimer::singleShot(150, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
-    QTimer::singleShot(300, this, [this, newOrder]() {
-        saveAppletsOrder(newOrder);
-        m_cleaningSeparatorApplets = false;
     });
 
+    QTimer::singleShot(300, this, [this, newOrder]() {
+        persistAppletsOrder(newOrder);
+        m_cleaningSeparatorApplets = false;
+    });
     return true;
 }
 
@@ -1166,7 +1183,7 @@ bool ContainmentInterface::addInternalSeparatorAtLeftBoundaryOfApplet(const int 
         return false;
     }
 
-    return addInternalSeparatorBeforeApplet(leftNeighborId);
+    return addInternalSeparatorBeforeApplet(appletId);
 }
 
 bool ContainmentInterface::addInternalSeparatorAtRightBoundaryOfApplet(const int appletId)
@@ -1598,6 +1615,44 @@ void ContainmentInterface::saveAppletsOrder(const QList<int> &order)
     generalConfig.sync();
 }
 
+void ContainmentInterface::persistAppletsOrder(const QList<int> &order)
+{
+    if (!m_layoutManager || !m_view || !m_view->containment()) {
+        return;
+    }
+
+    // The order has already been applied to the layout by addAppletItem
+    // → save().  Just sanitize and persist to config — do NOT call
+    // setAppletsOrder() which would trigger a full requestAppletsOrder
+    // layout recalculation and cause visible icon oscillation.
+    QHash<int, QString> containmentPlugins;
+    const auto applets = m_view->containment()->applets();
+    containmentPlugins.reserve(applets.count());
+
+    for (const auto applet : applets) {
+        if (!applet) {
+            continue;
+        }
+
+        containmentPlugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
+    }
+
+    const QList<int> sanitizedOrder = sanitizeSeparatorOrder(order, m_appletData, containmentPlugins);
+
+    QStringList serializedOrder;
+    serializedOrder.reserve(sanitizedOrder.count());
+
+    for (const int appletId : sanitizedOrder) {
+        if (appletId > 0) {
+            serializedOrder << QString::number(appletId);
+        }
+    }
+
+    KConfigGroup generalConfig = m_view->containment()->config().group("General");
+    generalConfig.writeEntry("appletOrder", serializedOrder.join(QLatin1Char(';')));
+    generalConfig.sync();
+}
+
 void ContainmentInterface::updateAppletsOrder()
 {
     if (!m_layoutManager) {
@@ -1961,6 +2016,9 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
     if (!m_view->containment() || !applet) {
         return;
     }
+
+    const int addedAppletId = applet->id();
+    const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
 
     // Check for a pending insertion index set by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler cannot match the Plasma 6

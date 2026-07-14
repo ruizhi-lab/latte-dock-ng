@@ -725,6 +725,25 @@ PlasmoidItem {
         return null;
     }
 
+    // Called from containment wheel bridge when ScrollToggleMinimized is
+    // configured.  Hit-tests task items at containment-local coordinates
+    // and toggles minimize/restore on the task under the cursor.
+    function wheelToggleMinimizeTask(containmentX, containmentY, containmentItem) {
+        var plasmoidLocal = mapFromItem(containmentItem, containmentX, containmentY);
+        var listLocal = icList.mapFromItem(root, plasmoidLocal.x, plasmoidLocal.y);
+        var task = icList.itemAt(listLocal.x, listLocal.y);
+        if (task) {
+            var idx = task.modelIndex();
+            if (typeof idx === "number" && idx >= 0) {
+                // Called from containment bridge which already verified
+                // scrollAction === ScrollToggleMinimized.
+                tasksModel.requestToggleMinimized(idx);
+                return true;
+            }
+        }
+        return false;
+    }
+
     //! TaskManagerBackend required a groupDialog setting otherwise it crashes. This patch
     //! sets one just in order not to crash TaskManagerBackend
     PlasmaCore.Dialog {

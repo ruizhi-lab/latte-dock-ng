@@ -32,6 +32,8 @@ Item {
         hoverEnabled: true
         visible: appletItem.parabolicEffectIsSupported
                  && !communicator.indexerIsSupported
+                 && !appletItem.isSeparator
+                 && !appletItem.isMarginsAreaSeparator
 
         // Keep the MouseArea always visible (matching ParabolicEventsArea
         // for tasks) so that onPositionChanged delivers synchronous parabolic

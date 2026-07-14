@@ -1235,15 +1235,20 @@ ContainmentItem {
         property int remainingRuns: 0
 
         function schedule() {
-            remainingRuns = 40;
+            remainingRuns = 5;
             restart();
         }
 
         onTriggered: {
-            fastLayoutManager.repairAppletContainers();
+            var didWork = fastLayoutManager.repairAppletContainers();
             root.updateIndexes();
 
-            remainingRuns--;
+            if (!didWork) {
+                remainingRuns = 0;
+            } else {
+                remainingRuns--;
+            }
+
             if (remainingRuns <= 0) {
                 stop();
             }
@@ -1398,9 +1403,7 @@ ContainmentItem {
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToPreviousActivity();
                 } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
-                    if (!ctrlPressed) rootWheelActivateTask(false);
-                    else if (!latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized)
-                        latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();
+                    rootWheelActivateTask(false);
                 } else {
                     rootWheelActivateTask(false);
                 }
@@ -1411,13 +1414,14 @@ ContainmentItem {
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToNextActivity();
                 } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
-                    if (!ctrlPressed) {
-                        var lw = latteView.windowsTracker.allScreens.lastActiveWindow;
-                        if (lw.isValid && !lw.isMinimized && lw.isMaximized) lw.requestToggleMaximized();
-                        else if (lw.isValid && !lw.isMinimized && !lw.isMaximized) lw.requestToggleMinimized();
-                    } else if (latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized) {
-                        latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();
+                    for (var ti = 0; ti < plasmoid.applets.length; ++ti) {
+                        var tp = plasmoid.applets[ti];
+                        if (tp.pluginName !== "org.kde.latte.plasmoid") continue;
+                        var qp = fastLayoutManager.resolveAppletQuickItem(tp);
+                        if (qp && qp.wheelToggleMinimizeTask && qp.wheelToggleMinimizeTask(wheel.x, wheel.y, parent)) return;
+                        break;
                     }
+                    rootWheelActivateTask(true);
                 } else {
                     rootWheelActivateTask(true);
                 }

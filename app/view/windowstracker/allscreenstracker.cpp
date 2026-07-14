@@ -5,6 +5,8 @@
 
 #include "allscreenstracker.h"
 
+// Qt
+
 // local
 #include "../view.h"
 #include "../../layout/genericlayout.h"
@@ -104,7 +106,8 @@ WindowSystem::SchemeColors *AllScreensTracker::activeWindowScheme() const
 
 WindowSystem::Tracker::LastActiveWindow *AllScreensTracker::lastActiveWindow()
 {
-    return m_wm->windowsTracker()->lastActiveWindow(m_latteView->layout());
+    auto *law = m_wm->windowsTracker()->lastActiveWindow(m_latteView->layout());
+    return law;
 }
 
 

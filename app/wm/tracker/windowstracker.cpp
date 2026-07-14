@@ -157,6 +157,7 @@ void Windows::addView(Latte::View *view)
     }
 
     m_views[view] = new TrackedViewInfo(this, view);
+    m_views[view]->setEnabled(true);
 
     updateScreenGeometries();
 
@@ -863,6 +864,21 @@ void Windows::updateLayoutHintsFromViews()
         setExistsWindowActive(layout, foundActive);
         setActiveWindowMaximized(layout, foundActiveMaximized);
         setExistsWindowMaximized(layout, foundActiveMaximized || foundMaximized);
+
+        // Propagate the active window from any view belonging to this layout
+        // so that lastActiveWindow.isValid is true for all-screens queries.
+        if (foundActive) {
+            for (const auto view : m_views.keys()) {
+                if (view->layout() == layout && m_views[view]->enabled()
+                    && m_views[view]->isTrackingCurrentActivity()
+                    && m_views[view]->lastActiveWindow()
+                    && m_views[view]->lastActiveWindow()->isValid()) {
+                    auto winId = m_views[view]->lastActiveWindow()->currentWinId();
+                    m_layouts[layout]->setActiveWindow(winId);
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -1140,6 +1156,7 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
     //! update LastActiveWindow
     if (foundActive) {
         m_layouts[layout]->setActiveWindow(activeWinId);
+    } else {
     }
 }
 

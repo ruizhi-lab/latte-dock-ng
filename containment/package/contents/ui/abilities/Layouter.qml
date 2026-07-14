@@ -28,11 +28,16 @@ Ability.LayouterPrivate {
         }
     }
 
-    onInNormalFillCalculationsStateChanged: {
-        if (inNormalFillCalculationsState) {
-            _layouter.updateSizeForAppletsInFill();
-        }
-    }
+    // Do NOT trigger fill recalculation on inNormalFillCalculationsState
+    // transitions.  needLength is added on every contentsWidth change and
+    // removed 300 ms later by delayUpdateMaskArea.  Calling
+    // updateSizeForAppletsInFill on the removal changes fill sizes, which
+    // changes contentsWidth, which adds needLength again — a permanent
+    // oscillation feedback loop that manifests as visible icon jitter.
+    //
+    // Fill recalculation is already triggered by: onContentsLengthChanged,
+    // onIconSizeChanged, onMaxLengthChanged, onFormFactorChanged,
+    // visibilityManager.onInNormalStateChanged, and the 75 ms debounce timer.
 
     onMaxLengthChanged: {
         _layouter.updateSizeForAppletsInFill();

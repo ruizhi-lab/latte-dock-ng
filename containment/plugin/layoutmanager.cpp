@@ -1243,7 +1243,17 @@ void LayoutManager::save()
 {
     QList<int> appletIds;
 
-    reorderParabolicSpacers();
+
+    // When a separator is being created programmatically (signalled by
+    // _latte_skipSpacerReorder), skip reorderParabolicSpacers().  It
+    // moves the parabolic edge spacers which forces a second Grid
+    // recalculation within addAppletItem, causing visible icon oscillation.
+    const bool skipSpacerReorder = property("_latte_skipSpacerReorder").toBool();
+    if (!skipSpacerReorder) {
+        reorderParabolicSpacers();
+    } else {
+        setProperty("_latte_skipSpacerReorder", QVariant());
+    }
 
     auto collectLayoutAppletIds = [this](QQuickItem *layout, QList<int> &appletIds) {
         int childCount = 0;
@@ -1833,16 +1843,19 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
     }
 }
 
-void LayoutManager::repairAppletContainers()
+bool LayoutManager::repairAppletContainers()
 {
+    static int repairCallCount = 0;
+    repairCallCount++;
+    bool didWork = false;
     if (!m_startLayout || !m_mainLayout || !m_endLayout || !m_rootItem || !m_plasmoid) {
-        return;
+        return false;
     }
 
     QList<QObject *> applets = plasmoidApplets();
 
     if (applets.isEmpty()) {
-        return;
+        return false;
     }
 
     for (QObject *applet : applets) {
@@ -1881,6 +1894,7 @@ void LayoutManager::repairAppletContainers()
             const bool hasResolvedAppletItem = existingItem->property("applet").value<QObject *>() != nullptr;
 
             if (!hasResolvedAppletItem) {
+                didWork = true;
                 QVariant appletContainerVariant;
                 appletContainerVariant.setValue(existingItem);
 
@@ -1895,6 +1909,7 @@ void LayoutManager::repairAppletContainers()
             continue;
         }
 
+        didWork = true;
         int preferredIndex = m_order.indexOf(id);
         if (preferredIndex < 0) {
             // Place new applets at the end of left-side widgets (just
@@ -1905,6 +1920,8 @@ void LayoutManager::repairAppletContainers()
 
         addAppletItem(applet, preferredIndex);
     }
+
+    return didWork;
 }
 
 int LayoutManager::defaultInsertionIndex() const
@@ -1971,6 +1988,8 @@ void LayoutManager::cleanupOptions()
 
 void LayoutManager::addAppletItem(QObject *applet, int index)
 {
+    const int id = appletId(applet);
+
     // Check for a pending insertion index set by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler resolves to this overload
     // (not the (x,y) overload) because the signal passes a QRectF, not (int,int).
@@ -1986,7 +2005,6 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         return;
     }
 
-    const int id = appletId(applet);
     if (id > 0 && appletItem(id)) {
         return;
     }

@@ -34,6 +34,25 @@ AbilityItem.BasicItem {
     isMonochromaticForcedContentItem: plasmoid.configuration.forceMonochromaticIcons
     monochromizedItem: taskIcon.monochromizedItem
 
+    // modelLauncherUrl is set twice for new entries (insert then async
+    // reposition via launchersToBeMovedTimer), resetting to empty midway.
+    // launcherUrl retains the previous non-empty value across the reset.
+    // Brand-new delegates with no URL yet default to true (thin) — if this
+    // turns out to be a regular task, the next binding evaluation (same
+    // frame) sets it to the correct value with no visible glitch.
+    property bool _sepUrlReceived: false
+
+    isSeparator: {
+        var url = modelLauncherUrl;
+        if (url === "") {
+            return _sepUrlReceived
+                ? taskItem.abilities.launchers.isSeparator(launcherUrl)
+                : true;
+        }
+        _sepUrlReceived = true;
+        return taskItem.abilities.launchers.isSeparator(url);
+    }
+
     isSeparatorHidden: isSeparator && (lastValidIndex > taskItem.abilities.indexer.lastVisibleItemIndex)
     isSeparatorInRealLength: isSeparator && root.dragSource
 
@@ -242,11 +261,8 @@ AbilityItem.BasicItem {
             }
         }
 
-        if (taskItem.abilities.launchers.isSeparator(modelLauncherUrl)){
-            isSeparator = true;
-        } else {
-            isSeparator = false;
-        }
+        // isSeparator is now a binding to modelLauncherUrl — no
+        // imperative assignment needed here.
     }
 
     onModelLauncherUrlWithIconChanged: {
