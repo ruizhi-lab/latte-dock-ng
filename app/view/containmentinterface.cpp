@@ -1075,15 +1075,9 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     newOrder.insert(targetIndex, separatorId);
 
     setAppletsOrder(newOrder);
-    // Separator applets can be added asynchronously by Plasma. Re-apply the
-    // same order shortly after creation so boundary separators stay anchored
-    // to the requested applet side instead of falling back to default side.
-    QTimer::singleShot(0, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
-    QTimer::singleShot(150, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
+    //! Deferred persist only: a single save at 300ms allows Plasma's async
+    //! applet creation to settle, avoiding the multi-timer jitter that causes
+    //! icon oscillation when adding separators.
     QTimer::singleShot(300, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
     });
@@ -1303,18 +1297,18 @@ bool ContainmentInterface::removeInternalSeparatorAtLeftBoundaryOfApplet(const i
     newOrder.removeAll(separatorId);
     setAppletsOrder(newOrder);
 
+    m_cleaningSeparatorApplets = true;
+
     if (m_appletData.contains(separatorId)) {
         removeApplet(separatorId);
     } else if (containmentApplets.contains(separatorId) && containmentApplets[separatorId]) {
         containmentApplets[separatorId]->destroy();
     }
 
-    QTimer::singleShot(0, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
-    QTimer::singleShot(120, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
+    m_cleaningSeparatorApplets = false;
+
+    //! Single deferred persist: avoid multi-timer jitter and race with async
+    //! applet destruction by consolidating into one save after cleanup settles.
     QTimer::singleShot(250, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
     });
@@ -1388,18 +1382,18 @@ bool ContainmentInterface::removeInternalSeparatorAtRightBoundaryOfApplet(const 
     newOrder.removeAll(separatorId);
     setAppletsOrder(newOrder);
 
+    m_cleaningSeparatorApplets = true;
+
     if (m_appletData.contains(separatorId)) {
         removeApplet(separatorId);
     } else if (containmentApplets.contains(separatorId) && containmentApplets[separatorId]) {
         containmentApplets[separatorId]->destroy();
     }
 
-    QTimer::singleShot(0, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
-    QTimer::singleShot(120, this, [this, newOrder]() {
-        setAppletsOrder(newOrder);
-    });
+    m_cleaningSeparatorApplets = false;
+
+    //! Single deferred persist: avoid multi-timer jitter and race with async
+    //! applet destruction by consolidating into one save after cleanup settles.
     QTimer::singleShot(250, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
     });
@@ -1556,9 +1550,6 @@ void ContainmentInterface::cleanupInvalidSeparatorApplets()
 
     m_cleaningSeparatorApplets = false;
 
-    QTimer::singleShot(120, this, [this, sanitizedOrder]() {
-        setAppletsOrder(sanitizedOrder);
-    });
     QTimer::singleShot(300, this, [this, sanitizedOrder]() {
         saveAppletsOrder(sanitizedOrder);
     });
@@ -1855,7 +1846,6 @@ void ContainmentInterface::updateAppletsTracking()
              << "order" << m_appletOrder
              << "knownApplets" << m_appletData.keys();
     Q_EMIT initializationCompleted();
-    QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
     QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
 }
 
@@ -2155,7 +2145,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         Q_EMIT appletDataCreated(data.id);
     }
 
-    QTimer::singleShot(0, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
     QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
 }
 
