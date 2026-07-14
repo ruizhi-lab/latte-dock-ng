@@ -1074,22 +1074,20 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     newOrder.removeAll(separatorId);
     newOrder.insert(targetIndex, separatorId);
 
-    //! Block re-entrant cleanupInvalidSeparatorApplets that fires from
-    //! onAppletAdded → deferred timer.  Without this guard the deferred
-    //! cleanup races with setAppletsOrder, causing icon jitter.
+    //! Guard against re-entrant cleanupInvalidSeparatorApplets that would
+    //! undo our order change before it settles.
     m_cleaningSeparatorApplets = true;
 
-    //! Add separator QML item at the target index BEFORE setAppletsOrder,
-    //! so the item appears at its final position immediately without the
-    //! create-then-move animation that causes icon jitter.
-    if (m_layoutManager) {
-        QMetaObject::invokeMethod(m_layoutManager,
-                                  "addAppletItem",
-                                  Q_ARG(QObject *, separatorApplet),
-                                  Q_ARG(int, targetIndex));
-    }
-
     setAppletsOrder(newOrder);
+    // Separator applets can be added asynchronously by Plasma. Re-apply the
+    // same order shortly after creation so boundary separators stay anchored
+    // to the requested applet side instead of falling back to default side.
+    QTimer::singleShot(0, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(150, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
     QTimer::singleShot(300, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
         m_cleaningSeparatorApplets = false;
