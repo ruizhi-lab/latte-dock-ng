@@ -1080,9 +1080,6 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     m_cleaningSeparatorApplets = true;
 
     setAppletsOrder(newOrder);
-    //! Deferred persist only: a single save at 300ms allows Plasma's async
-    //! applet creation to settle, avoiding the multi-timer jitter that causes
-    //! icon oscillation when adding separators.
     QTimer::singleShot(300, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
         m_cleaningSeparatorApplets = false;
@@ -2152,7 +2149,9 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         Q_EMIT appletDataCreated(data.id);
     }
 
-    QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
+    if (!m_cleaningSeparatorApplets) {
+        QTimer::singleShot(250, this, &ContainmentInterface::cleanupInvalidSeparatorApplets);
+    }
 }
 
 QList<int> ContainmentInterface::toIntList(const QVariantList &list)
