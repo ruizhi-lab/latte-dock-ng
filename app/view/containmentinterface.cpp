@@ -1074,36 +1074,24 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     newOrder.removeAll(separatorId);
     newOrder.insert(targetIndex, separatorId);
 
+    //! Prevent deferred cleanupInvalidSeparatorApplets from racing with
+    //! the multi-timer setAppletsOrder chain that follows.
     m_cleaningSeparatorApplets = true;
 
-    //! Defer setAppletsOrder until the separator's QQuickItem exists.
-    //! If called before Plasma asynchronously creates the item,
-    //! requestAppletsOrder skips it (appletItem returns null), causing
-    //! adjacent icons to collapse into the gap, then expand when the
-    //! separator appears — that's the visual jitter.
-    auto applyAndPersist = [this, newOrder]() {
+    setAppletsOrder(newOrder);
+    // Separator applets can be added asynchronously by Plasma. Re-apply the
+    // same order shortly after creation so boundary separators stay anchored
+    // to the requested applet side instead of falling back to default side.
+    QTimer::singleShot(0, this, [this, newOrder]() {
         setAppletsOrder(newOrder);
-        QTimer::singleShot(150, this, [this, newOrder]() {
-            saveAppletsOrder(newOrder);
-            m_cleaningSeparatorApplets = false;
-        });
-    };
-
-    //! Try immediately first; if separator has no item yet, retry after a delay.
-    QQuickItem *item = nullptr;
-    if (m_layoutManager) {
-        QMetaObject::invokeMethod(m_layoutManager, "appletItem",
-                                  Qt::DirectConnection,
-                                  Q_RETURN_ARG(QQuickItem *, item),
-                                  Q_ARG(int, separatorId));
-        if (item) {
-            applyAndPersist();
-        } else {
-            QTimer::singleShot(100, this, applyAndPersist);
-        }
-    } else {
-        applyAndPersist();
-    }
+    });
+    QTimer::singleShot(150, this, [this, newOrder]() {
+        setAppletsOrder(newOrder);
+    });
+    QTimer::singleShot(300, this, [this, newOrder]() {
+        saveAppletsOrder(newOrder);
+        m_cleaningSeparatorApplets = false;
+    });
 
     return true;
 }
