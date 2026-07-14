@@ -1074,12 +1074,18 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     newOrder.removeAll(separatorId);
     newOrder.insert(targetIndex, separatorId);
 
+    //! Block re-entrant cleanupInvalidSeparatorApplets that fires from
+    //! onAppletAdded → deferred timer.  Without this guard the deferred
+    //! cleanup races with setAppletsOrder, causing icon jitter.
+    m_cleaningSeparatorApplets = true;
+
     setAppletsOrder(newOrder);
     //! Deferred persist only: a single save at 300ms allows Plasma's async
     //! applet creation to settle, avoiding the multi-timer jitter that causes
     //! icon oscillation when adding separators.
     QTimer::singleShot(300, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
+        m_cleaningSeparatorApplets = false;
     });
 
     return true;
@@ -1305,12 +1311,11 @@ bool ContainmentInterface::removeInternalSeparatorAtLeftBoundaryOfApplet(const i
         containmentApplets[separatorId]->destroy();
     }
 
-    m_cleaningSeparatorApplets = false;
-
     //! Single deferred persist: avoid multi-timer jitter and race with async
     //! applet destruction by consolidating into one save after cleanup settles.
     QTimer::singleShot(250, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
+        m_cleaningSeparatorApplets = false;
     });
 
     return true;
@@ -1390,12 +1395,10 @@ bool ContainmentInterface::removeInternalSeparatorAtRightBoundaryOfApplet(const 
         containmentApplets[separatorId]->destroy();
     }
 
-    m_cleaningSeparatorApplets = false;
-
-    //! Single deferred persist: avoid multi-timer jitter and race with async
-    //! applet destruction by consolidating into one save after cleanup settles.
+    //! Single deferred persist + guard reset after cleanup settles.
     QTimer::singleShot(250, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
+        m_cleaningSeparatorApplets = false;
     });
 
     return true;
