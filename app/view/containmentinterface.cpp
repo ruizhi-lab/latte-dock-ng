@@ -1742,7 +1742,6 @@ void ContainmentInterface::removeApplet(const int &id)
         return;
     }
 
-    Q_EMIT applet->appletDeleted(applet); //! this signal should be part of Plasma Frameworks AppletPrivate::destroy() function...
     applet->destroy();
 }
 
