@@ -1079,6 +1079,16 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     //! cleanup races with setAppletsOrder, causing icon jitter.
     m_cleaningSeparatorApplets = true;
 
+    //! Add separator QML item at the target index BEFORE setAppletsOrder,
+    //! so the item appears at its final position immediately without the
+    //! create-then-move animation that causes icon jitter.
+    if (m_layoutManager) {
+        QMetaObject::invokeMethod(m_layoutManager,
+                                  "addAppletItem",
+                                  Q_ARG(QObject *, separatorApplet),
+                                  Q_ARG(int, targetIndex));
+    }
+
     setAppletsOrder(newOrder);
     QTimer::singleShot(300, this, [this, newOrder]() {
         saveAppletsOrder(newOrder);
