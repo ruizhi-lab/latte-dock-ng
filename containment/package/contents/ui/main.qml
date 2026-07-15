@@ -37,23 +37,6 @@ ContainmentItem {
     Kirigami.Theme.inherit: false
     Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
-    property real panelBgOpacity: 1.0
-    property bool panelCustomTransparency: false
-
-    Timer {
-        id: panelCfgSync
-        interval: 300
-        repeat: true
-        running: true
-        onTriggered: {
-            var pt = plasmoid.configuration.panelTransparency
-            var isDefault = (pt === -1 || pt === "-1" || pt === undefined || pt === null || pt === "" || Number(pt) >= 100)
-            root.panelBgOpacity = isDefault ? 1.0 : Number(pt) / 100.0
-            root.panelCustomTransparency = !isDefault
-        }
-    }
-
-
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft && !root.isVertical
     LayoutMirroring.childrenInherit: true
 
@@ -113,7 +96,8 @@ ContainmentItem {
         return changed;
     }
 
-    property bool blurEnabled: !panelCustomTransparency && plasmoid.configuration.blurEnabled && (!forceTransparentPanel || forcePanelForBusyBackground)
+    //! Blur must not be disabled when the user picks a custom translucency value, or it will be unusable
+    property bool blurEnabled: plasmoid.configuration.blurEnabled && (!forceTransparentPanel || forcePanelForBusyBackground)
 
     readonly property bool inDraggingOverAppletOrOutOfContainment: latteView && latteView.containsDrag && !backDropArea.containsDrag
 
