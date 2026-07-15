@@ -165,18 +165,37 @@ Item{
     //! Skip "phantom" group entries (e.g. ghostty's headless daemon
     //! registers an xdg_toplevel with no real surface; activating it is a
     //! no-op which makes the task icon feel frozen).
+    //!
+    //! IsHidden is true for "phantoms" AND for minimized windows
+    //! A real minimized window still has a WinIdList and IsMinimized === true
+    //! Only reject group entries that are hidden without being minimized
     function isActivatableChild(kid) {
         if (!kid || !kid.model) {
-            return false;
-        }
-        if (kid.model.IsHidden === true) {
             return false;
         }
         var winIdList = kid.model.WinIdList;
         if (winIdList === undefined || winIdList.length === 0) {
             return false;
         }
+        if (kid.model.IsHidden === true && kid.model.IsMinimized !== true) {
+            return false;
+        }
         return true;
+    }
+
+    //! Activate child by subIndex
+    //! Restore it first, if minimized
+    //! In plasma 6 requestActivate() does not unminimize windows by itself,
+    //! so minimized group members would be skipped if they aren't unminimized first
+    function activateChild(subIndex) {
+        var mi = tasksModel.makeModelIndex(index, subIndex);
+        var kid = windowsLocalModel.items.get(subIndex);
+
+        if (kid && kid.model.IsMinimized === true) {
+            tasksModel.requestToggleMinimized(mi);
+        }
+
+        tasksModel.requestActivate(mi);
     }
 
     //! function which is used to cycle activation into
@@ -227,7 +246,7 @@ Item{
         if (nextAvailableWindow === -1)
             nextAvailableWindow = 0;
 
-        tasksModel.requestActivate(tasksModel.makeModelIndex(index,nextAvailableWindow));
+        activateChild(nextAvailableWindow);
     }
 
     //! function which is used to cycle activation into
@@ -272,7 +291,7 @@ Item{
         if (prevAvailableWindow === -2)
             prevAvailableWindow = 0;
 
-        tasksModel.requestActivate(tasksModel.makeModelIndex(index,prevAvailableWindow));
+        activateChild(prevAvailableWindow);
     }
 
     //! function which is used to cycle activation into
