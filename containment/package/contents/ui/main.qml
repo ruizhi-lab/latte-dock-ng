@@ -1402,26 +1402,14 @@ ContainmentItem {
                     latteView.windowsTracker.switchToPreviousVirtualDesktop();
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToPreviousActivity();
-                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
-                    rootWheelActivateTask(false);
                 } else {
                     rootWheelActivateTask(false);
                 }
             } else if (angle < -10) {
-                // Scroll DOWN = go RIGHT (next item in visual order)
                 if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
                     latteView.windowsTracker.switchToNextVirtualDesktop();
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToNextActivity();
-                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
-                    for (var ti = 0; ti < plasmoid.applets.length; ++ti) {
-                        var tp = plasmoid.applets[ti];
-                        if (tp.pluginName !== "org.kde.latte.plasmoid") continue;
-                        var qp = fastLayoutManager.resolveAppletQuickItem(tp);
-                        if (qp && qp.wheelToggleMinimizeTask && qp.wheelToggleMinimizeTask(wheel.x, wheel.y, parent)) return;
-                        break;
-                    }
-                    rootWheelActivateTask(true);
                 } else {
                     rootWheelActivateTask(true);
                 }

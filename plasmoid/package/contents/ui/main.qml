@@ -731,15 +731,12 @@ PlasmoidItem {
     function wheelToggleMinimizeTask(containmentX, containmentY, containmentItem) {
         var plasmoidLocal = mapFromItem(containmentItem, containmentX, containmentY);
         var listLocal = icList.mapFromItem(root, plasmoidLocal.x, plasmoidLocal.y);
-        var task = icList.itemAt(listLocal.x, listLocal.y);
-        if (task) {
-            var idx = task.modelIndex();
-            if (typeof idx === "number" && idx >= 0) {
-                // Called from containment bridge which already verified
-                // scrollAction === ScrollToggleMinimized.
-                tasksModel.requestToggleMinimized(idx);
-                return true;
-            }
+        var idx = icList.indexAt(listLocal.x, listLocal.y);
+        if (idx >= 0) {
+            // TaskMouseArea activates first, then toggles minimize.
+            tasksModel.requestActivate(idx);
+            tasksModel.requestToggleMinimized(idx);
+            return true;
         }
         return false;
     }
