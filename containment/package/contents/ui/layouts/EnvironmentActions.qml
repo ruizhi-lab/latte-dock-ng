@@ -48,7 +48,11 @@ Loader {
 
     sourceComponent: MouseArea{
         id: mainArea
-        acceptedButtons: Qt.LeftButton | Qt.MidButton
+        // Only accept LeftButton. Middle-click on empty area is handled by
+        // the C++ ContextMenuLayerQuickItem::mousePressEvent (Qt::MiddleButton).
+        // Including MiddleButton here would swallow the event before it
+        // reaches the C++ handler, breaking close-active-window.
+        acceptedButtons: Qt.LeftButton
         hoverEnabled: true
 
         property bool wheelIsBlocked: false
@@ -156,17 +160,16 @@ Loader {
                     latteView.windowsTracker.switchToNextActivity();
                 } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
                     if (!ctrlPressed) {
-                        var law = latteView.windowsTracker.allScreens.lastActiveWindow;
-                        if (law.isValid
-                                && !law.isMinimized
-                                && law.isMaximized){
+                        if (latteView.windowsTracker.allScreens.lastActiveWindow.isValid
+                                && !latteView.windowsTracker.allScreens.lastActiveWindow.isMinimized
+                                && latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized){
                             //! maximized
-                            law.requestToggleMaximized();
-                        } else if (law.isValid
-                                   && !law.isMinimized
-                                   && !law.isMaximized) {
+                            latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();
+                        } else if (latteView.windowsTracker.allScreens.lastActiveWindow.isValid
+                                   && !latteView.windowsTracker.allScreens.lastActiveWindow.isMinimized
+                                   && !latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized) {
                             //! normal
-                            law.requestToggleMinimized();
+                            latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMinimized();
                         }
                     } else if (latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized) {
                         latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();

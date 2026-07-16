@@ -1402,14 +1402,27 @@ ContainmentItem {
                     latteView.windowsTracker.switchToPreviousVirtualDesktop();
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToPreviousActivity();
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
+                    if (!ctrlPressed) rootWheelActivateTask(false);
+                    else if (!latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized)
+                        latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();
                 } else {
                     rootWheelActivateTask(false);
                 }
             } else if (angle < -10) {
+                // Scroll DOWN = go RIGHT (next item in visual order)
                 if (root.scrollAction === LatteContainment.types.ScrollDesktops) {
                     latteView.windowsTracker.switchToNextVirtualDesktop();
                 } else if (root.scrollAction === LatteContainment.types.ScrollActivities) {
                     latteView.windowsTracker.switchToNextActivity();
+                } else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized) {
+                    if (!ctrlPressed) {
+                        var lw = latteView.windowsTracker.allScreens.lastActiveWindow;
+                        if (lw.isValid && !lw.isMinimized && lw.isMaximized) lw.requestToggleMaximized();
+                        else if (lw.isValid && !lw.isMinimized && !lw.isMaximized) lw.requestToggleMinimized();
+                    } else if (latteView.windowsTracker.allScreens.lastActiveWindow.isMaximized) {
+                        latteView.windowsTracker.allScreens.lastActiveWindow.requestToggleMaximized();
+                    }
                 } else {
                     rootWheelActivateTask(true);
                 }
