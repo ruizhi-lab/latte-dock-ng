@@ -259,28 +259,35 @@ Item{
         }
 
         var childs = windowsLocalModel.items;
-
-        //indicates than nothing was found
-        var prevAvailableWindow = -2;
+        var activeIdx = -1;
 
         for(var i=childs.count-1; i>=0; --i){
             var kid = childs.get(i);
             if (kid.model.IsActive === true) {
-                prevAvailableWindow = i - 1;
+                activeIdx = i;
                 break;
             }
         }
 
-        //the active window is 0
-        if (prevAvailableWindow == -1) {
-            prevAvailableWindow = childs.count-1;
+        // Pick the previous activatable sibling, wrapping around. Skip
+        // phantom children (no surface) so backwards cycling also reliably
+        // reaches a real window, mirroring activateNextTask().
+        var prevAvailableWindow = -1;
+        for(var step=1; step<=childs.count; ++step) {
+            var probe = ((activeIdx === -1 ? childs.count : activeIdx) - step + 2*childs.count) % childs.count;
+            if (isActivatableChild(childs.get(probe))) {
+                prevAvailableWindow = probe;
+                break;
+            }
         }
 
-        if (prevAvailableWindow === -2 && lastActiveWinInGroup !==-1){
+        if (prevAvailableWindow === -1 && lastActiveWinInGroup !==-1){
             for(var i=childs.count-1; i>=0; --i){
                 var kid = childs.get(i);
-                var firstTask = kid.model.WinIdList[0];
-                if ( firstTask === lastActiveWinInGroup) {
+                var winIdList = kid.model.WinIdList;
+                var kidId = (winIdList !== undefined ? winIdList[0] : 0);
+
+                if (kidId === lastActiveWinInGroup && isActivatableChild(kid)) {
                     prevAvailableWindow = i;
                     break;
                 }
@@ -288,7 +295,7 @@ Item{
         }
 
         //no window was found
-        if (prevAvailableWindow === -2)
+        if (prevAvailableWindow === -1)
             prevAvailableWindow = 0;
 
         activateChild(prevAvailableWindow);
