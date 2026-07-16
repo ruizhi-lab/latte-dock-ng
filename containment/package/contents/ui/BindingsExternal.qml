@@ -341,6 +341,7 @@ Item {
                      || latteView.visibility.mode === LatteCore.types.AutoHide))
                || indexer.clientsTrackingWindowsCount  > 0                   /*Applets Need Windows Tracking */
                || root.dragActiveWindowEnabled                               /*Dragging Active Window(Empty Areas)*/
+               || root.scrollAction === LatteContainment.types.ScrollToggleMinimized /*Wheel Cycle And Minimize needs lastActiveWindow*/
                || ((root.backgroundOnlyOnMaximized                           /*Dynamic Background */
                     || plasmoid.configuration.solidBackgroundForMaximized
                     || root.disablePanelShadowMaximized
