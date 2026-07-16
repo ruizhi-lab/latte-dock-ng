@@ -74,6 +74,7 @@ private Q_SLOTS:
     void layoutIconDetectsEmptyAndComparesFields();
     void layoutsTableSubtractsAndMarksFreeActivities();
     void preferencesDefaultsRoundTrip();
+    void preferencesAutostartDefaultsToEnabled();
     void preferencesEqualityComparesAllFields();
     void pluginIdClassifiesLatteBuiltInsAndSeparators();
     void screenInitializesFromSerializedGeometry();
@@ -516,6 +517,22 @@ void DataUnitTest::preferencesDefaultsRoundTrip()
     preferences.setToDefaults();
     QVERIFY(preferences.inDefaultValues());
     QCOMPARE(preferences.contextMenuAlwaysActions, Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
+}
+
+void DataUnitTest::preferencesAutostartDefaultsToEnabled()
+{
+    // The Preferences page checkbox "Enable autostart during startup" must
+    // default to checked: both the class constant and a freshly constructed
+    // Preferences object have autostart enabled.
+    QVERIFY(Preferences::AUTOSTART);
+
+    Preferences preferences;
+    QVERIFY(preferences.autostart);
+
+    preferences.autostart = false;
+    QVERIFY(!preferences.inDefaultValues());
+    preferences.setToDefaults();
+    QVERIFY(preferences.autostart);
 }
 
 void DataUnitTest::preferencesEqualityComparesAllFields()

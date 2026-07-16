@@ -48,6 +48,7 @@ private Q_SLOTS:
     void cmakeOffscreenTestsUseSharedHelper();
     void cmakeAutotestRegistrationMaintainsAggregateTarget();
     void cmakePackagingConfigLivesInModule();
+    void autostartDefaultEnabledContracts();
     void cmakeWarningRelaxationLivesInModule();
     void cmakeFindsQtCoreToolsBeforeKdeInstallDirs();
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
@@ -1256,6 +1257,44 @@ void SourceContractTest::cmakePackagingConfigLivesInModule()
     QVERIFY(testingGuide.open(QFile::ReadOnly));
     const QString guideSource = QString::fromUtf8(testingGuide.readAll());
     QVERIFY(guideSource.contains(QStringLiteral("CMake helper modules keep target resolution, compiler warning relaxation, and packaging metadata out of the top-level build file.")));
+}
+
+void SourceContractTest::autostartDefaultEnabledContracts()
+{
+    //! "Enable autostart during startup" (Preferences page) must default to
+    //! enabled and the first-run logic must create the autostart entry once.
+
+    QFile preferencesHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/data/preferencesdata.h"));
+    QVERIFY(preferencesHeader.open(QFile::ReadOnly));
+    const QString preferencesSource = QString::fromUtf8(preferencesHeader.readAll());
+    QVERIFY(preferencesSource.contains(QStringLiteral("static const bool AUTOSTART = true;")));
+    QVERIFY(preferencesSource.contains(QStringLiteral("bool autostart{AUTOSTART};")));
+
+    QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
+    QVERIFY(universalSettings.open(QFile::ReadOnly));
+    const QString universalSource = QString::fromUtf8(universalSettings.readAll());
+
+    //! First-run chain: when the user never configured autostart and it is
+    //! disabled, enable it exactly once and remember the decision.
+    const int userSetRead = universalSource.indexOf(
+        QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(\"userConfiguredAutostart\", false);"));
+    const int firstRunGuard = universalSource.indexOf(
+        QStringLiteral("if (!autostartUserSet && !autostart()) {"), userSetRead);
+    const int enableCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), firstRunGuard);
+    const int rememberDecision = universalSource.indexOf(
+        QStringLiteral("m_universalGroup.writeEntry(\"userConfiguredAutostart\", true);"), enableCall);
+    QVERIFY(userSetRead >= 0);
+    QVERIFY(firstRunGuard > userSetRead);
+    QVERIFY(enableCall > firstRunGuard);
+    QVERIFY(rememberDecision > enableCall);
+
+    //! Autostart state is the existence of the desktop file, and enabling
+    //! copies the installed application launcher.
+    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(importer.open(QFile::ReadOnly));
+    const QString importerSource = QString::fromUtf8(importer.readAll());
+    QVERIFY(importerSource.contains(QStringLiteral("\"/autostart/org.kde.latte-dock.desktop\"")));
+    QVERIFY(importerSource.contains(QStringLiteral("standardPath(\"applications/org.kde.latte-dock.desktop\", false)")));
 }
 
 void SourceContractTest::cmakeWarningRelaxationLivesInModule()

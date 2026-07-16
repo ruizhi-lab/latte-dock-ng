@@ -347,7 +347,10 @@ int main(int argc, char **argv)
         struct sigaction sa{};
         sa.sa_handler = [](int) {
             const char c = 1;
-            write(sigPipe[1], &c, 1);
+            // The pipe is non-blocking; when it is full a wake-up is already
+            // pending, so a failed write can be safely ignored.
+            const ssize_t written = write(sigPipe[1], &c, 1);
+            (void)written;
         };
         sigemptyset(&sa.sa_mask);
         sa.sa_flags = SA_RESTART;
