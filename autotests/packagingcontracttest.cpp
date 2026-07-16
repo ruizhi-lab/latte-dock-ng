@@ -45,7 +45,15 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(knsCompat.open(QFile::ReadOnly));
     const QString knsCompatSource = QString::fromUtf8(knsCompat.readAll());
     QVERIFY(knsCompatSource.contains(QStringLiteral("userLocalQmlBase")));
-    QVERIFY(!knsCompatSource.contains(QStringLiteral("QDir::homePath() + QStringLiteral(\"/.local/lib64/qt6/qml\")")));
+    // Hardcoded ~/.local QML paths are only allowed inside the legacy-cleanup
+    // block that removes pre-1.2.x overrides; override creation itself must
+    // resolve the target through userLocalQmlBase().
+    const QString hardcodedLegacyPath = QStringLiteral("QDir::homePath() + QStringLiteral(\"/.local/lib64/qt6/qml\")");
+    const int legacyCleanupComment = knsCompatSource.indexOf(QStringLiteral("Clean up overrides from the old user-local Qt QML path"));
+    QVERIFY(legacyCleanupComment >= 0);
+    QCOMPARE(knsCompatSource.count(hardcodedLegacyPath), 1);
+    QVERIFY(knsCompatSource.indexOf(hardcodedLegacyPath) > legacyCleanupComment);
+    QVERIFY(knsCompatSource.contains(QStringLiteral("const QString qmlBase = userLocalQmlBase(systemQmlBase);")));
 
     QFile dockerCompose(QStringLiteral(LATTE_SOURCE_DIR "/docker/docker-compose.yml"));
     QVERIFY(dockerCompose.open(QFile::ReadOnly));

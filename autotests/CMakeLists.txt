@@ -2,6 +2,11 @@ set(latte_autotest_targets)
 
 function(latte_add_test _test_name)
     add_test(NAME ${_test_name} COMMAND ${_test_name})
+    # Force English so i18n()-dependent assertions are stable regardless of
+    # the session locale (e.g. zh_CN would translate model header strings).
+    set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT "LC_ALL=C.UTF-8")
+    set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT "LANG=C.UTF-8")
+    set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT "LANGUAGE=en_US")
     list(APPEND latte_autotest_targets ${_test_name})
     set(latte_autotest_targets ${latte_autotest_targets} PARENT_SCOPE)
 endfunction()
@@ -9,7 +14,7 @@ endfunction()
 function(latte_add_offscreen_test _test_name)
     latte_add_test(${_test_name})
     set(latte_autotest_targets ${latte_autotest_targets} PARENT_SCOPE)
-    set_tests_properties(${_test_name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 endfunction()
 
 set(dataunittest_SRCS

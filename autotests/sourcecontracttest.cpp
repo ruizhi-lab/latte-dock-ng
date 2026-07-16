@@ -315,7 +315,9 @@ void SourceContractTest::allScreensCloneAppletSyncContracts()
     QVERIFY(interfaceCpp.contains(QStringLiteral("suppressNextAppletCreatedSignal();\n    Plasma::Applet *createdApplet = m_view->containment()->createApplet(pluginId);")));
     QVERIFY(!interfaceCpp.contains(QStringLiteral("Latte::Layouts::Importer::standardPaths();\n    QString pluginpath;")));
     QVERIFY(interfaceCpp.contains(QStringLiteral("Q_EMIT appletCreated(currentPluginId);")));
-    QVERIFY(interfaceCpp.contains(QStringLiteral("if (!ai) {\n        return nullptr;\n    }")));
+    // Since ed0afd054 a missing cached AppletQuickItem falls back to
+    // itemForApplet() resolution instead of bailing out with nullptr.
+    QVERIFY(interfaceCpp.contains(QStringLiteral("if (!ai) {\n                ai = PlasmaQuick::AppletQuickItem::itemForApplet(m_appletData[id].applet);\n            }")));
 
     const int trackAllAppletsComment = interfaceCpp.indexOf(QStringLiteral("//! Track all applets, for example to support syncing between different docks"));
     const int trackAllAppletsData = interfaceCpp.indexOf(QStringLiteral("ViewPart::AppletInterfaceData data;"), trackAllAppletsComment);
@@ -394,7 +396,9 @@ void SourceContractTest::layoutManagerRepairSkipsAppletsInDestruction()
     const QString src = QString::fromUtf8(source.readAll());
 
     // Verify repairAppletContainers() skips applets being destroyed.
-    QVERIFY(src.contains(QStringLiteral("void LayoutManager::repairAppletContainers()")));
+    // Returns bool since 452fa2d82 so callers can stop early when no
+    // repair work was performed.
+    QVERIFY(src.contains(QStringLiteral("bool LayoutManager::repairAppletContainers()")));
 
     // Guard 1: skip applets in m_appletsInScheduledDestruction.
     QVERIFY(src.contains(QStringLiteral("if (m_appletsInScheduledDestruction.contains(id)) {\n            continue;\n        }")));
@@ -1199,7 +1203,10 @@ void SourceContractTest::cmakeOffscreenTestsUseSharedHelper()
     const QString cmakeSource = QString::fromUtf8(autotestsCMake.readAll());
 
     QVERIFY(cmakeSource.contains(QStringLiteral("function(latte_add_offscreen_test")));
-    QVERIFY(cmakeSource.contains(QStringLiteral("set_tests_properties(${_test_name} PROPERTIES ENVIRONMENT \"QT_QPA_PLATFORM=offscreen\")")));
+    // APPEND keeps the offscreen platform from clobbering the forced-English
+    // locale environment set by latte_add_test().
+    QVERIFY(cmakeSource.contains(QStringLiteral("set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT \"QT_QPA_PLATFORM=offscreen\")")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT \"LANGUAGE=en_US\")")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_add_offscreen_test(coreunittest)")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_add_offscreen_test(qmlsmoketest)")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_add_offscreen_test(sourcecontracttest)")));
