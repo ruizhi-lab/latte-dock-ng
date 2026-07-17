@@ -78,11 +78,12 @@ QRegion combinedMask(const QRect &baseMask,
     return region;
 }
 
-bool shouldApplyBlur(float effectiveOpacity, const QRect &rect, bool drawEffects)
+bool shouldApplyBlur(float backgroundOpacity, const QRect &rect, bool drawEffects)
 {
     if (!drawEffects) return false;
     if (rect.isNull() || rect.isEmpty()) return false;
-    if (effectiveOpacity >= 0.95f) return false;
+    // Default (-1, theme-controlled) passes; custom values >= 0.95 are skipped
+    if (backgroundOpacity >= 0.95f) return false;
     return true;
 }
 
@@ -108,6 +109,7 @@ private Q_SLOTS:
 
     void blurDisabledAboveThreshold();
     void blurEnabledBelowThreshold();
+    void blurEnabledAtDefaultOpacity();
     void blurDisabledWhenDrawEffectsFalse();
     void blurDisabledWhenRectInvalid();
 };
@@ -200,6 +202,12 @@ void EffectsLogicTest::blurDisabledAboveThreshold()
 void EffectsLogicTest::blurEnabledBelowThreshold()
 {
     QVERIFY(EffectsLogic::shouldApplyBlur(0.94f, QRect(0,0,100,50), true));
+}
+
+void EffectsLogicTest::blurEnabledAtDefaultOpacity()
+{
+    // -1 is the default (theme-controlled transparency), should allow blur
+    QVERIFY(EffectsLogic::shouldApplyBlur(-1.0f, QRect(0,0,100,50), true));
 }
 
 void EffectsLogicTest::blurDisabledWhenDrawEffectsFalse()

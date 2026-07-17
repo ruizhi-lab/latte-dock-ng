@@ -120,7 +120,7 @@
       <label>override plasma theme background shadow; -1 stands for default plasma theme behavior and value represents pixels</label>
     </entry>
     <entry name="blurEnabled" type="Bool">
-      <default>true</default>
+      <default>false</default>
     </entry>
     <entry name="backgroundOnlyOnMaximized" type="Bool">
       <default>false</default>

@@ -2556,19 +2556,19 @@ void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()
     }
 
     {
-        // effectiveBackgroundOpacity is now set from BindingsExternal
-        // so that the default (-1) case reports the theme's real
-        // maxOpacity instead of the old hard-coded 1.0 (which always
-        // suppressed blur in effects.cpp at the >=0.95 guard).
+        // effectiveBackgroundOpacity is now set from BindingsExternal.
+        // The default (-1) case reports 1.0 to preserve the ghosting
+        // guard in effects.cpp (blur is skipped when opacity >= 0.95).
+        // The C++ gate now uses backgroundOpacity instead, which is -1
+        // at default and correctly allows effects through.
         QFile f(QStringLiteral(LATTE_SOURCE_DIR
             "/containment/package/contents/ui/BindingsExternal.qml"));
         QVERIFY(f.open(QFile::ReadOnly));
         const QString src = QString::fromUtf8(f.readAll());
 
         QVERIFY(src.contains(QStringLiteral("effectiveBackgroundOpacity")));
-        QVERIFY(src.contains(QStringLiteral("themeExtendedBackground.maxOpacity")));
         QVERIFY(src.contains(QStringLiteral("background.currentOpacity")));
-        QVERIFY(src.contains(QStringLiteral("panelTransparency !== -1")));
+        QVERIFY(src.contains(QStringLiteral("panelTransparency === -1")));
     }
 }
 

@@ -192,18 +192,7 @@ Item {
         target: latteView && latteView.effects ? latteView.effects : null
         property: "effectiveBackgroundOpacity"
         when: latteView && latteView.effects
-        //! Forcing 1.0 for the default setting always causes the blur effect to be skipped.
-        //! (Values >= 0.95 are skipped in effects.cpp)
-        //! Meanwhile the panel translucency gets the theme's maxOpacity,
-        //! so report the theme's maxOpacity here as well.
-        //! This makes translucent themes able to get blur.
-        value: {
-            if (plasmoid.configuration.panelTransparency !== -1) {
-                return background.currentOpacity;
-            }
-
-            return background.themeExtendedBackground ? background.themeExtendedBackground.maxOpacity : 1.0;
-        }
+        value: plasmoid.configuration.panelTransparency === -1 ? 1.0 : background.currentOpacity
     }
 
     Binding{

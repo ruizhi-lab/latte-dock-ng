@@ -483,10 +483,13 @@ void Effects::updateEffects()
         // and background-contrast are barely visible through it. The binary
         // QRegion mask would only create visual artifacts (jagged edges at
         // rounded corners, ghosting when the mask lags during animations).
-        // Skip effects when the effective opacity exceeds 0.95.
+        // Default (-1) is theme-controlled and always translucent — never skip.
+        // Only skip when the user explicitly set near-opaque (>= 95%).
+        bool skipForGhosting = (m_backgroundOpacity != -1.0f
+                                && m_backgroundOpacity >= 0.95f);
         if (!m_rect.isNull() && !m_rect.isEmpty()
             && m_rect != VisibilityManager::ISHIDDENMASK
-            && m_effectiveBackgroundOpacity < 0.95f) {
+            && !skipForGhosting) {
             QRegion backMask;
 
             if (m_backgroundRadiusEnabled) {
