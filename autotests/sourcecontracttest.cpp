@@ -2524,16 +2524,52 @@ void SourceContractTest::mainQmlCreateAppletItemRetryCeilingAt80()
 
 void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()
 {
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/main.qml"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
+    // The old panelCfgSync polling timer and its ad-hoc parsing of
+    // panelTransparency values (-1, "-1", undefined, null, "",
+    // Number(pt) >= 100) have been removed.  kcfg bindings are
+    // reactive and the actual transparency path uses
+    // themeExtendedBackground.maxOpacity for the default setting
+    // and background.currentOpacity for custom values.
+    //
+    // Verify that the removed dead code is gone and the new
+    // direct binding is in place.
 
-    // panelCfgSync must handle transparency values: pt === -1, "-1",
-    // undefined, null, "", Number(pt) >= 100.
-    QVERIFY(src.contains(QStringLiteral("\"-1\"")));
-    QVERIFY(src.contains(QStringLiteral("Number(pt) >= 100")));
-    QVERIFY(src.contains(QStringLiteral("panelCfgSync")) || src.contains(QStringLiteral("transparency")));
+    {
+        QFile f(QStringLiteral(LATTE_SOURCE_DIR
+            "/containment/package/contents/ui/main.qml"));
+        QVERIFY(f.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(f.readAll());
+
+        // The polling timer must not be present.
+        QVERIFY(!src.contains(QStringLiteral("panelCfgSync")));
+
+        // blurEnabled must NOT be gated on a custom-transparency flag
+        // so that blur can be used with user-chosen opacity values.
+        QVERIFY(!src.contains(QStringLiteral("panelCustomTransparency")));
+        QVERIFY(!src.contains(QStringLiteral("panelBgOpacity")));
+
+        // blurEnabled still responds to the user's blur toggle and the
+        // force-transparent / force-panel-for-busy-background guard.
+        QVERIFY(src.contains(QStringLiteral("blurEnabled")));
+        QVERIFY(src.contains(QStringLiteral("plasmoid.configuration.blurEnabled")));
+        QVERIFY(src.contains(QStringLiteral("forceTransparentPanel")));
+    }
+
+    {
+        // effectiveBackgroundOpacity is now set from BindingsExternal
+        // so that the default (-1) case reports the theme's real
+        // maxOpacity instead of the old hard-coded 1.0 (which always
+        // suppressed blur in effects.cpp at the >=0.95 guard).
+        QFile f(QStringLiteral(LATTE_SOURCE_DIR
+            "/containment/package/contents/ui/BindingsExternal.qml"));
+        QVERIFY(f.open(QFile::ReadOnly));
+        const QString src = QString::fromUtf8(f.readAll());
+
+        QVERIFY(src.contains(QStringLiteral("effectiveBackgroundOpacity")));
+        QVERIFY(src.contains(QStringLiteral("themeExtendedBackground.maxOpacity")));
+        QVERIFY(src.contains(QStringLiteral("background.currentOpacity")));
+        QVERIFY(src.contains(QStringLiteral("panelTransparency !== -1")));
+    }
 }
 
 void SourceContractTest::mainQmlOnInStartupChangedMustCheckLatteViewExists()
