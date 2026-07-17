@@ -99,6 +99,8 @@ ContainmentItem {
     //! Blur must not be disabled when the user picks a custom translucency value, or it will be unusable
     property bool blurEnabled: plasmoid.configuration.blurEnabled && (!forceTransparentPanel || forcePanelForBusyBackground)
 
+    onBlurEnabledChanged: updateEffectsArea()
+
     readonly property bool inDraggingOverAppletOrOutOfContainment: latteView && latteView.containsDrag && !backDropArea.containsDrag
 
     readonly property Item dragInfo: Item {

@@ -137,6 +137,11 @@ void Effects::setDrawShadows(bool draw)
     m_drawShadows = draw;
 
     Q_EMIT drawShadowsChanged();
+
+    // Trigger a repaint so the compositor applies the new shadows state.
+    if (m_view) {
+        m_view->update();
+    }
 }
 
 bool Effects::drawEffects() const
@@ -153,6 +158,13 @@ void Effects::setDrawEffects(bool draw)
     m_drawEffects = draw;
 
     Q_EMIT drawEffectsChanged();
+
+    // Trigger a repaint so the compositor applies the new effects state.
+    // Without this, blur/enable toggles have no visual effect until the
+    // next geometry change or user interaction forces a frame commit.
+    if (m_view) {
+        m_view->update();
+    }
 }
 
 void Effects::setForceBottomBorder(bool draw)
