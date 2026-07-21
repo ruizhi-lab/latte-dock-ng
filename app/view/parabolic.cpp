@@ -53,10 +53,12 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         return;
     }
 
-    //! Prevent rapid oscillation between items when the cursor is positioned
-    //! exactly between two icons. A minimum lock interval (150ms) is enforced
-    //! when switching from one zoomed item to another — clearing to null on
-    //! exit is always allowed to avoid a stale zoomed state.
+    //! When clearing to null, record the timestamp.
+    constexpr int EXIT_COOLDOWN_MS{60};
+    if (!item && m_currentParabolicItem) {
+        m_lastExitTimer.start();
+    }
+
     if (m_currentParabolicItem && item) {
         if (m_lastSwitchTimer.isValid() && m_lastSwitchTimer.elapsed() < MIN_SWITCH_INTERVAL_MS) {
             return;
@@ -64,17 +66,24 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         m_lastSwitchTimer.start();
     }
 
-    //! When entering a new item from a null state (e.g., after the cursor
-    //! left an icon gap), validate that the cursor is actually within the
-    //! item's bounds.  Qt/Wayland can deliver spurious onEntered signals
-    //! immediately after a zoom clear, which would otherwise trigger a
-    //! rapid enter→exit oscillation between adjacent icons.
-    if (!m_currentParabolicItem && item && m_view && m_view->contentItem()) {
-        const QPointF cursorPos = QCursor::pos(m_view->screen());
-        const QPointF local = item->mapFromItem(m_view->contentItem(),
-                                                 m_view->contentItem()->mapFromGlobal(cursorPos.toPoint()));
-        if (!item->contains(local)) {
+    if (!m_currentParabolicItem && item) {
+        //! Block rapid null→item re-entry: a sglClearZoom() → restore
+        //! animation can change input-mask boundaries, triggering a
+        //! spurious onEntered on a neighbouring item while the cursor is
+        //! stationary in the gap.  Only used for null→item (not item→item)
+        //! so normal cross-icon swipes stay responsive.
+        if (m_lastExitTimer.isValid() && m_lastExitTimer.elapsed() < EXIT_COOLDOWN_MS) {
             return;
+        }
+
+        //! Validate that the cursor is actually within the item's bounds.
+        if (m_view && m_view->contentItem()) {
+            const QPointF cursorPos = QCursor::pos(m_view->screen());
+            const QPointF local = item->mapFromItem(m_view->contentItem(),
+                                                     m_view->contentItem()->mapFromGlobal(cursorPos.toPoint()));
+            if (!item->contains(local)) {
+                return;
+            }
         }
     }
 
