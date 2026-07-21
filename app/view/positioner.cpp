@@ -422,10 +422,14 @@ void Positioner::reconsiderScreen()
 
     qDebug() << "dock screen exists  ::: " << screenExists;
 
-    //! 1.a primary dock must be always on the primary screen
-    if (m_view->onPrimary() && (m_screenNameToFollow != primaryScreen->name()
-                                || m_screenToFollow != primaryScreen
-                                || m_view->screen() != primaryScreen)) {
+    //! 1.a primary dock must be always on the primary screen.
+    //! Skip this check during an active relocation animation (screen
+    //! change is in progress, e.g., switching to AllSecondaryScreens).
+    if (!inRelocationAnimation()
+        && m_view->onPrimary()
+        && (m_screenNameToFollow != primaryScreen->name()
+            || m_screenToFollow != primaryScreen
+            || m_view->screen() != primaryScreen)) {
         //! case 1
         qDebug() << "reached case 1: of updating dock primary screen...";
         setScreenToFollow(primaryScreen);
