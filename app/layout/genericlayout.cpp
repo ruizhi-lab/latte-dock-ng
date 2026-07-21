@@ -1580,6 +1580,29 @@ void GenericLayout::removeView(const Latte::Data::View &viewData)
     destroyContainment(viewcontainment);
 }
 
+void GenericLayout::removeViewWithoutDestroyingContainment(const Latte::Data::View &viewData)
+{
+    if (!containsView(viewData.id.toInt())) {
+        return;
+    }
+
+    if (!isActive()) {
+        Layouts::Storage::self()->removeView(file(), viewData);
+        return;
+    }
+
+    Plasma::Containment *viewcontainment = containmentForId(viewData.id.toUInt());
+    if (viewcontainment) {
+        auto *vw = m_latteViews.take(viewcontainment);
+        m_containments.removeAll(viewcontainment);
+        if (vw) {
+            vw->disconnectSensitiveSignals();
+            vw->deleteLater();
+        }
+        Layouts::Storage::self()->removeView(file(), viewData);
+    }
+}
+
 void GenericLayout::removeOrphanedSubContainment(const int &containmentId)
 {
     Data::ViewsTable views = viewsTable();

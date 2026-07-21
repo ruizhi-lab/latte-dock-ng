@@ -118,7 +118,8 @@ public:
     bool newView(const QString &templateName);
     Data::View newView(const Latte::Data::View &nextViewData);
     void removeView(const Latte::Data::View &viewData);
-    void updateView(const Latte::Data::View &viewData);    
+    void removeViewWithoutDestroyingContainment(const Latte::Data::View &viewData);
+    void updateView(const Latte::Data::View &viewData);
     QString storedView(const int &containmentId); //returns temp filepath containing all view data
     void removeOrphanedSubContainment(const int &containmentId);
 

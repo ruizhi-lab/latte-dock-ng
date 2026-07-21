@@ -101,7 +101,10 @@ void OriginalView::removeClone(Latte::ClonedView *view)
         return;
     }
     cloned->positioner()->slideOutDuringExit();
-    cloned->layout()->removeView(cloned->data());
+    //! Use removeViewWithoutDestroyingContainment to avoid triggering
+    //! Plasma containment->destroy(), which can cascade into the original
+    //! containment and clear its applets during screens-group switches.
+    cloned->layout()->removeViewWithoutDestroyingContainment(cloned->data());
 }
 
 void OriginalView::createClone(int screenId)
