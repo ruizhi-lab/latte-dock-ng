@@ -9,6 +9,7 @@
 #include "view.h"
 
 // Qt
+#include <QCursor>
 #include <QDragMoveEvent>
 #include <QHoverEvent>
 #include <QMetaObject>
@@ -61,6 +62,20 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
             return;
         }
         m_lastSwitchTimer.start();
+    }
+
+    //! When entering a new item from a null state (e.g., after the cursor
+    //! left an icon gap), validate that the cursor is actually within the
+    //! item's bounds.  Qt/Wayland can deliver spurious onEntered signals
+    //! immediately after a zoom clear, which would otherwise trigger a
+    //! rapid enter→exit oscillation between adjacent icons.
+    if (!m_currentParabolicItem && item && m_view && m_view->contentItem()) {
+        const QPointF cursorPos = QCursor::pos(m_view->screen());
+        const QPointF local = item->mapFromItem(m_view->contentItem(),
+                                                 m_view->contentItem()->mapFromGlobal(cursorPos.toPoint()));
+        if (!item->contains(local)) {
+            return;
+        }
     }
 
     if (m_currentParabolicItem) {
