@@ -53,10 +53,12 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         return;
     }
 
-    //! When clearing to null, record the timestamp.
-    constexpr int EXIT_COOLDOWN_MS{60};
-    if (!item && m_currentParabolicItem) {
-        m_lastExitTimer.start();
+    //! Record the cursor position at exit so we can detect whether a
+    //! subsequent enter is from genuine user movement or from an animation
+    //! boundary-crossing (sglClearZoom → restore animation changes the
+    //! input mask, which moves MouseArea edges across a stationary cursor).
+    if (!item && m_currentParabolicItem && m_view) {
+        m_lastExitPos = QCursor::pos(m_view->screen());
     }
 
     if (m_currentParabolicItem && item) {
@@ -67,13 +69,16 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
     }
 
     if (!m_currentParabolicItem && item) {
-        //! Block rapid null→item re-entry: a sglClearZoom() → restore
-        //! animation can change input-mask boundaries, triggering a
-        //! spurious onEntered on a neighbouring item while the cursor is
-        //! stationary in the gap.  Only used for null→item (not item→item)
-        //! so normal cross-icon swipes stay responsive.
-        if (m_lastExitTimer.isValid() && m_lastExitTimer.elapsed() < EXIT_COOLDOWN_MS) {
-            return;
+        //! Require the cursor to have moved at least a few pixels since the
+        //! last exit.  Without this, a restore animation that resizes items
+        //! can deliver a genuine onEntered (the cursor IS inside the resized
+        //! area) that immediately exits again, creating an oscillation loop
+        //! between adjacent icons while the cursor is stationary in the gap.
+        if (m_view && !m_lastExitPos.isNull()) {
+            const QPointF curPos = QCursor::pos(m_view->screen());
+            if ((curPos - m_lastExitPos).manhattanLength() < 3.0) {
+                return;
+            }
         }
 
         //! Validate that the cursor is actually within the item's bounds.
