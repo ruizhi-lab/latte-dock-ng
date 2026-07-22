@@ -890,6 +890,11 @@ add_executable(parabolicmathtest EXCLUDE_FROM_ALL ${parabolicmathtest_SRCS})
 target_link_libraries(parabolicmathtest Qt6::Core Qt6::Test)
 latte_add_test(parabolicmathtest)
 
+set(parabolicstatetest_SRCS parabolicstatetest.cpp)
+add_executable(parabolicstatetest EXCLUDE_FROM_ALL ${parabolicstatetest_SRCS})
+target_link_libraries(parabolicstatetest Qt6::Core Qt6::Gui Qt6::Test)
+latte_add_test(parabolicstatetest)
+
 set(visibilitylogictest_SRCS visibilitylogictest.cpp)
 add_executable(visibilitylogictest EXCLUDE_FROM_ALL ${visibilitylogictest_SRCS})
 target_link_libraries(visibilitylogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
