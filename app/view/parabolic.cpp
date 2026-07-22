@@ -9,7 +9,6 @@
 #include "view.h"
 
 // Qt
-#include <QCursor>
 #include <QDragMoveEvent>
 #include <QHoverEvent>
 #include <QMetaObject>
@@ -65,22 +64,15 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         m_lastSwitchTimer.start();
     }
 
-    //! After the nullifier fires (cursor left all items), the next enter
-    //! may be spurious: sglClearZoom() -> restore animation changes input-
-    //! mask boundaries, which can move a MouseArea edge across a stationary
-    //! cursor in an inter-icon gap.  Only guard this one transition so that
-    //! normal cross-icon swipes are completely unaffected.
+    //! After the nullifier fires (cursor left all items), swallow the
+    //! first enter attempt.  A sglClearZoom() → restore animation can
+    //! shift input-mask boundaries across a stationary cursor in an
+    //! inter-icon gap, delivering a spurious onEntered.  Dropping just
+    //! one enter breaks the oscillation loop; the next genuine mouse
+    //! move will re-enter normally.
     if (!m_currentParabolicItem && item && m_nullifierJustFired) {
         m_nullifierJustFired = false;
-
-        if (m_view && m_view->contentItem()) {
-            const QPointF cursorPos = QCursor::pos(m_view->screen());
-            const QPointF local = item->mapFromItem(m_view->contentItem(),
-                                                     m_view->contentItem()->mapFromGlobal(cursorPos.toPoint()));
-            if (!item->contains(local)) {
-                return;
-            }
-        }
+        return;
     }
 
     if (m_currentParabolicItem) {
