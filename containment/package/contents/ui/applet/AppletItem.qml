@@ -248,9 +248,9 @@ Item {
     property int maxWidth: root.isHorizontal ? root.height : root.width
     property int maxHeight: root.isHorizontal ? root.height : root.width
     property int internalSplitterId: 0
-    property int sortDragCommitCooldownMs: 300
-    property real sortDragCenterDeadZoneRatio: 0.40
-    property real sortDragMinDistance: 20
+    property int sortDragCommitCooldownMs: 400
+    property real sortDragCenterDeadZoneRatio: 0.44
+    property real sortDragMinDistance: 30
 
     property int previousIndex: -1
     property int spacersMaxSize: Math.max(0,Math.ceil(0.55 * metrics.iconSize) - metrics.totals.lengthEdges)
@@ -1383,10 +1383,88 @@ Item {
 
     ///END connections
 
+    // Edit-mode drag via MouseArea (fallback when DragHandler does not
+    // activate on Wayland with the config window grabbing pointer focus).
+    MouseArea {
+        id: editModeDragArea
+        anchors.fill: parent
+        // Only activate when DragHandler is NOT active — avoids double-processing
+        // which would feed updateSortDrag from two independent paths.
+        enabled: root.editMode
+                 && !appletItem.isInternalViewSplitter
+                 && !appletItem.isSeparator
+                 && !appletItem.isSpacer
+                 && !appletSortDragHandler.active
+        cursorShape: Qt.DragMoveCursor
+
+        property bool dragging: false
+        property real pressX: 0
+        property real pressY: 0
+        property real lastUpdateTs: 0
+
+        onPressed: function(mouse) {
+            dragging = false;
+            pressX = mouse.x;
+            pressY = mouse.y;
+            lastUpdateTs = 0;
+        }
+
+        onPositionChanged: function(mouse) {
+            // Require ≥ 20 px Manhattan movement before drag commits begin.
+            // This matches the DragHandler dragThreshold and provides
+            // deliberate resistance against accidental micro-drags.
+            if (!dragging && Math.abs(mouse.x - pressX) + Math.abs(mouse.y - pressY) > 20) {
+                dragging = true;
+                // Set sortDragMoved true so the guard in updateSortDrag
+                // (!sortDragMoved && !appletSortDragHandler.active) passes.
+                appletItem.sortDragMoved = true;
+                appletItem.resetSortDragHistory();
+                appletItem.thinTooltip.hide(appletItem.tooltipVisualParent);
+                appletItem.opacity = 0.4;
+            }
+
+            if (dragging) {
+                // Rate-limit to ~60 Hz, matching the DragHandler poller.
+                // Without this gate the MouseArea would call updateSortDrag
+                // on every hardware mouse event (potentially 1000+ Hz),
+                // starving the 300 ms cooldown and 20 px spatial hysteresis.
+                var now = Date.now();
+                if (now - lastUpdateTs < 16) {
+                    return;
+                }
+                lastUpdateTs = now;
+
+                var rp = appletItem.mapToItem(root, mouse.x, mouse.y);
+                appletItem.updateSortDrag(rp.x, rp.y);
+            }
+        }
+
+        onReleased: {
+            if (dragging) {
+                appletItem.finishSortDrag();
+                appletItem.resetSortDragHistory();
+                appletItem.opacity = 1.0;
+            }
+            dragging = false;
+        }
+
+        onCanceled: {
+            if (dragging) {
+                appletItem.opacity = 1.0;
+            }
+            dragging = false;
+        }
+    }
+
     DragHandler {
         id: appletSortDragHandler
         target: null
         acceptedButtons: Qt.LeftButton
+        // Require 16 px of deliberate movement before the drag session
+        // activates.  Qt 6 defaults to a very low (or zero) threshold
+        // which can fire on any press + micro-move, producing the
+        // rapid-fire sort-commits perceived as flashing icons.
+        dragThreshold: 24
         // In edit mode, indexer-supported applets (Latte Tasks plasmoid) and internal
         // splitters are excluded from container-level sort-drag. The plasmoid handles
         // its own internal task reorder via TaskMouseArea.qml.

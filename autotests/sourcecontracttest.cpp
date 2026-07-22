@@ -1913,6 +1913,25 @@ void SourceContractTest::appletItemInternalViewSplitterAndSortDragGuards()
     // isExpandedIndicatorActive must exclude activeWindowControl and appmenu.
     QVERIFY(src.contains(QStringLiteral("\"org.kde.activeWindowControl\"")));
     QVERIFY(src.contains(QStringLiteral("\"org.kde.plasma.appmenu\"")));
+
+    // DragHandler must set an explicit dragThreshold ≥ 16 px so Qt 6's
+    // near-zero default does not activate sort-drag on micro-movements.
+    QVERIFY(src.contains(QStringLiteral("dragThreshold:")));
+
+    // Wayland fallback: a MouseArea (editModeDragArea) must be present
+    // for when DragHandler fails to activate with the config window open.
+    QVERIFY(src.contains(QStringLiteral("editModeDragArea")));
+
+    // sortDragCommitCooldownMs guard against rapid same-target recommits.
+    QVERIFY(src.contains(QStringLiteral("sortDragCommitCooldownMs: 400")));
+
+    // sortDragCenterDeadZoneRatio ≥ 0.44 keeps the centre 88 % of each
+    // applet as a no-reorder zone — only the outer 6 % edges can trigger.
+    QVERIFY(src.contains(QStringLiteral("sortDragCenterDeadZoneRatio: 0.44")));
+
+    // sortDragMinDistance ≥ 30 px Manhattan so commits require deliberate
+    // pointer movement and are not fed by sub-frame micro-motion.
+    QVERIFY(src.contains(QStringLiteral("sortDragMinDistance: 30")));
 }
 
 void SourceContractTest::appletItemFallbackTrackedWindowsAndConstraintHints()
