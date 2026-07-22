@@ -59,7 +59,7 @@ private:
 
     QTimer m_parabolicItemNullifier;
     QElapsedTimer m_lastSwitchTimer;
-    QPointF m_lastExitPos;
+    bool m_nullifierJustFired{false};
 };
 
 }

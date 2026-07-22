@@ -30,6 +30,7 @@ Parabolic::Parabolic(Latte::View *parent)
     m_parabolicItemNullifier.setInterval(80);
     m_parabolicItemNullifier.setSingleShot(true);
     connect(&m_parabolicItemNullifier, &QTimer::timeout, this, [this]() {
+        m_nullifierJustFired = true;
         setCurrentParabolicItem(nullptr);
     });
 
@@ -53,14 +54,10 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         return;
     }
 
-    //! Record the cursor position at exit so we can detect whether a
-    //! subsequent enter is from genuine user movement or from an animation
-    //! boundary-crossing (sglClearZoom → restore animation changes the
-    //! input mask, which moves MouseArea edges across a stationary cursor).
-    if (!item && m_currentParabolicItem && m_view) {
-        m_lastExitPos = QCursor::pos(m_view->screen());
-    }
-
+    //! Prevent rapid oscillation between items when the cursor is positioned
+    //! exactly between two icons. A minimum lock interval (150ms) is enforced
+    //! when switching from one zoomed item to another — clearing to null on
+    //! exit is always allowed to avoid a stale zoomed state.
     if (m_currentParabolicItem && item) {
         if (m_lastSwitchTimer.isValid() && m_lastSwitchTimer.elapsed() < MIN_SWITCH_INTERVAL_MS) {
             return;
@@ -68,20 +65,14 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         m_lastSwitchTimer.start();
     }
 
-    if (!m_currentParabolicItem && item) {
-        //! Require the cursor to have moved at least a few pixels since the
-        //! last exit.  Without this, a restore animation that resizes items
-        //! can deliver a genuine onEntered (the cursor IS inside the resized
-        //! area) that immediately exits again, creating an oscillation loop
-        //! between adjacent icons while the cursor is stationary in the gap.
-        if (m_view && !m_lastExitPos.isNull()) {
-            const QPointF curPos = QCursor::pos(m_view->screen());
-            if ((curPos - m_lastExitPos).manhattanLength() < 3.0) {
-                return;
-            }
-        }
+    //! After the nullifier fires (cursor left all items), the next enter
+    //! may be spurious: sglClearZoom() -> restore animation changes input-
+    //! mask boundaries, which can move a MouseArea edge across a stationary
+    //! cursor in an inter-icon gap.  Only guard this one transition so that
+    //! normal cross-icon swipes are completely unaffected.
+    if (!m_currentParabolicItem && item && m_nullifierJustFired) {
+        m_nullifierJustFired = false;
 
-        //! Validate that the cursor is actually within the item's bounds.
         if (m_view && m_view->contentItem()) {
             const QPointF cursorPos = QCursor::pos(m_view->screen());
             const QPointF local = item->mapFromItem(m_view->contentItem(),
