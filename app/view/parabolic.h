@@ -60,6 +60,7 @@ private:
     QTimer m_parabolicItemNullifier;
     QElapsedTimer m_lastSwitchTimer;
     bool m_nullifierJustFired{false};
+    QPointF m_nullifierFirePos;
 };
 
 }

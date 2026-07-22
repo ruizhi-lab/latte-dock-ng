@@ -9,6 +9,7 @@
 #include "view.h"
 
 // Qt
+#include <QCursor>
 #include <QDragMoveEvent>
 #include <QHoverEvent>
 #include <QMetaObject>
@@ -30,6 +31,7 @@ Parabolic::Parabolic(Latte::View *parent)
     m_parabolicItemNullifier.setSingleShot(true);
     connect(&m_parabolicItemNullifier, &QTimer::timeout, this, [this]() {
         m_nullifierJustFired = true;
+        m_nullifierFirePos = QCursor::pos(m_view ? m_view->screen() : nullptr);
         setCurrentParabolicItem(nullptr);
     });
 
@@ -64,19 +66,27 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         m_lastSwitchTimer.start();
     }
 
-    //! After the nullifier fires (cursor left all items), swallow the
-    //! first enter attempt.  A sglClearZoom() → restore animation can
-    //! shift input-mask boundaries across a stationary cursor in an
-    //! inter-icon gap, delivering a spurious onEntered.  Dropping just
-    //! one enter breaks the oscillation loop; the next genuine mouse
-    //! move will re-enter normally.
-    if (!m_currentParabolicItem && item && m_nullifierJustFired) {
-        m_nullifierJustFired = false;
-        return;
-    }
-
     if (m_currentParabolicItem) {
         QMetaObject::invokeMethod(m_currentParabolicItem, "parabolicExited", Qt::QueuedConnection);
+    }
+
+    //! A successful enter means the cursor is now properly inside an item;
+    //! clear the nullifier guard so the next exit can be detected normally.
+    //! Only clear if the cursor has actually moved since the nullifier fired
+    //! — a stationary-cursor enter is from an animation boundary-crossing,
+    //! not genuine user movement.
+    if (item) {
+        if (!m_nullifierFirePos.isNull() && m_view) {
+            const QPointF cur = QCursor::pos(m_view->screen());
+            if ((cur - m_nullifierFirePos).manhattanLength() < 3.0) {
+                // cursor hasn't moved — keep the guard
+            } else {
+                m_nullifierJustFired = false;
+                m_nullifierFirePos = QPointF();
+            }
+        } else {
+            m_nullifierJustFired = false;
+        }
     }
 
     m_currentParabolicItem = item;
@@ -105,8 +115,14 @@ void Parabolic::onEvent(QEvent *e)
                                           Q_ARG(qreal, internal.y()));
             } else {
                 m_lastOrphanParabolicMove = windowPos;
-                //! clearing parabolic item
-                m_parabolicItemNullifier.start();
+                //! clearing parabolic item.  Skip re-triggering the
+                //! nullifier within the grace period to prevent an
+                //! oscillation loop: a sglClearZoom() restore animation
+                //! can temporarily resize items, causing the cursor to
+                //! fall inside a neighbour and immediately exit again.
+                if (!m_nullifierJustFired) {
+                    m_parabolicItemNullifier.start();
+                }
             }
         } else {
             m_lastOrphanParabolicMove = windowPos;
