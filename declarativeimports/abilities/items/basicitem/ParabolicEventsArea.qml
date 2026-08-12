@@ -129,15 +129,13 @@ Item {
                 return;
             }
 
-            if( ((abilityItem.parabolicItem.zoom === 1 || abilityItem.parabolicItem.zoom === abilityItem.abilities.parabolic.factor.zoom)
-                 && !abilityItem.abilities.parabolic.directRenderingEnabled)
-                    || abilityItem.abilities.parabolic.directRenderingEnabled) {
-
-                var step = Math.abs(lastParabolicPos-mousePos);
-                if (step >= abilityItem.abilities.animations.hoverPixelSensitivity){
-                    lastParabolicPos = mousePos;
-                    calculateParabolicScales(mousePos);
-                }
+            //!   Checks for whether it is fully zoomed or not zoomed at all,
+            //! has been removed to make it like DirectRendering, which will
+            //! improve the stuttering issue when not fully zoomed.
+            var step = Math.abs(lastParabolicPos-mousePos);
+            if (step >= abilityItem.abilities.animations.hoverPixelSensitivity){
+                lastParabolicPos = mousePos;
+                calculateParabolicScales(mousePos);
             }
         }
     }
@@ -156,8 +154,15 @@ Item {
         //! icon stuck magnified until the animation ends. Restore the zoom
         //! right away; without a running animation direct rendering is
         //! enabled and this branch is not hit.
-        if (!abilityItem.abilities.parabolic.directRenderingEnabled && abilityItem.parabolicItem.zoom > 1) {
+        //!
+        //!   A check for whether the zoom has been completed has been added to
+        //! avoid incorrectly setting the zoom multiplier..
+        if (!abilityItem.abilities.parabolic.directRenderingEnabled
+            && abilityItem.parabolicItem.zoom > 1
+            && abilityItem.abilities.parabolic.isZoomed == true
+        ) {
             abilityItem.parabolicItem.zoom = 1;
+            abilityItem.abilities.parabolic.isZoomed = false;
         }
     }
 
