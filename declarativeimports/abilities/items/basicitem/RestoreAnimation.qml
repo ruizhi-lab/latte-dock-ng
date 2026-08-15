@@ -17,6 +17,6 @@ SequentialAnimation{
         property: "zoom"
         to: 1
         duration: 3 * abilityItem.animationTime
-        easing.type: Easing.InCubic
+        easing.type: Easing.OutCubic
     }
 }

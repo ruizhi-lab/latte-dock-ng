@@ -100,8 +100,6 @@ Item {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
 
-        restoreAnimation.stop();
-
         if (isThinTooltipEnabled) {
             abilityItem.abilities.thinTooltip.show(abilityItem.tooltipVisualParent, abilityItem.thinTooltipText);
         }
@@ -154,15 +152,9 @@ Item {
         //! icon stuck magnified until the animation ends. Restore the zoom
         //! right away; without a running animation direct rendering is
         //! enabled and this branch is not hit.
-        //!
-        //!   A check for whether the zoom has been completed has been added to
-        //! avoid incorrectly setting the zoom multiplier..
-        if (!abilityItem.abilities.parabolic.directRenderingEnabled
-            && abilityItem.parabolicItem.zoom > 1
-            && abilityItem.abilities.parabolic.isZoomed == true
-        ) {
-            abilityItem.parabolicItem.zoom = 1;
-            abilityItem.abilities.parabolic.isZoomed = false;
+        if (!abilityItem.abilities.parabolic.directRenderingEnabled && abilityItem.parabolicItem.zoom > 1) {
+            // abilityItem.parabolicItem.zoom = 1;
+            // I HAVE NOT FINISHED THE ANIMATION PART !!!
         }
     }
 

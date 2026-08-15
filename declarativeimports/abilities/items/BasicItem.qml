@@ -396,7 +396,7 @@ Item{
     BasicItemParts.RestoreAnimation{id: _restoreAnimation}
 
     function slotClearZoom(){
-        restoreAnimation.start();
+        abilityItem.parabolicItem.zoom = 1;
     }
 
     // Feed drag pointer coordinates directly to the parabolic tracker when

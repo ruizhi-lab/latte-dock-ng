@@ -59,15 +59,13 @@ Item{
     readonly property alias titleTooltipVisualParent: _titleTooltipVisualParent
 
     readonly property string bothAxisZoomEvent: parabolicItem + "_zoom"
-    /* Rectangle{
-            anchors.fill: parent
-            border.width: 1
-            border.color: "green"
-            color: "transparent"
-        }*/
+
+    property alias zoomBehaviorAnimation: _zoomBehaviorAnimation
+
 
     Behavior on zoom {
         NumberAnimation{
+            id: _zoomBehaviorAnimation
             duration: (!abilityItem.abilities.parabolic.directRenderingEnabled || restoreAnimation.running)
                       ? 3 * abilityItem.animationTime : 0
             easing.type: Easing.OutCubic
