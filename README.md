@@ -110,6 +110,24 @@ distro before release: source install, package-manager install
 and built as a release gate; Nix users consume it through the flake interface
 instead of a standalone binary archive.
 
+### Distribution channels
+
+Release tags can be published through the supported package channels by the
+`Publish distribution channels` workflow:
+
+- **Arch Linux**: the `latte-dock-ng` AUR package.
+- **Fedora**: the Latte Dock NG COPR project.
+- **Debian**: the signed APT repository at
+  `https://ruizhi-lab.github.io/latte-dock-ng/`, with `trixie` and `sid`
+  suites.
+- **Gentoo**: the personal
+  [`ruizhi-overlay`](https://github.com/ruizhi-lab/gentoo-overlay).
+- **NixOS**: this repository's flake package and default overlay.
+
+The AUR, COPR, and APT publishers require repository-owner configuration; see
+[`packaging/README.md`](packaging/README.md). A custom domain is not required
+for the Debian repository.
+
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every
 modern build. It never blocks a Plasma 6.3+ distro — the oldest of them

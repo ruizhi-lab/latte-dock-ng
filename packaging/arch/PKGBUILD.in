@@ -1,0 +1,52 @@
+# Maintainer: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
+pkgname=latte-dock-ng
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc='Wayland-first dock for KDE Plasma 6'
+arch=('x86_64')
+url='https://github.com/ruizhi-lab/latte-dock-ng'
+license=('GPL-3.0-or-later')
+depends=(
+  'qt6-base'
+  'qt6-declarative'
+  'qt6-wayland'
+  'libplasma'
+  'plasma-activities'
+  'plasma-activities-stats'
+  'plasma-workspace'
+  'kwayland'
+  'kconfig'
+  'kcoreaddons'
+  'kcrash'
+  'kdbusaddons'
+  'kdeclarative'
+  'kglobalaccel'
+  'kguiaddons'
+  'ki18n'
+  'kiconthemes'
+  'kio'
+  'kitemmodels'
+  'knotifications'
+  'kpackage'
+  'ksvg'
+  'kxmlgui'
+  'layer-shell-qt'
+  'hicolor-icon-theme'
+)
+makedepends=('cmake' 'extra-cmake-modules' 'gcc' 'gettext' 'ninja' 'pkgconf')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('@SHA256@')
+
+build() {
+  cmake -S "${srcdir}/${pkgname}-${pkgver}" -B build \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_TESTING=OFF \
+    -DVERSION="${pkgver}"
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

@@ -1,0 +1,132 @@
+name: Publish distribution channels
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  AUR_PACKAGE_NAME: latte-dock-ng
+
+jobs:
+  aur:
+    name: Update AUR
+    if: ${{ secrets.AUR_SSH_PRIVATE_KEY != '' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AUR SSH key
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur_key
+          chmod 600 ~/.ssh/aur_key
+          cat >> ~/.ssh/config <<'EOF'
+          Host aur.archlinux.org
+            User aur
+            IdentityFile ~/.ssh/aur_key
+            StrictHostKeyChecking accept-new
+          EOF
+
+      - name: Update AUR package
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          version="${TAG_NAME#v}"
+          source_url="https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/${TAG_NAME}.tar.gz"
+          sha256="$(curl --fail --location "$source_url" | sha256sum | awk '{print $1}')"
+          git clone "ssh://aur@aur.archlinux.org/${AUR_PACKAGE_NAME}.git" aur
+          sed \
+            -e "s/@VERSION@/${version}/" \
+            -e "s/@SHA256@/${sha256}/" \
+            packaging/arch/PKGBUILD.in > aur/PKGBUILD
+          docker run --rm \
+            -v "$PWD/aur:/pkg" \
+            archlinux:latest \
+            bash -c 'pacman -Sy --noconfirm --needed base-devel >/dev/null && cd /pkg && makepkg --printsrcinfo > .SRCINFO'
+          cd aur
+          git config user.name "${GITHUB_REPOSITORY_OWNER}"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add PKGBUILD .SRCINFO
+          git diff --cached --quiet || {
+            git commit -m "Update to ${version}"
+            git push origin master
+          }
+
+  copr:
+    name: Trigger Fedora COPR
+    if: ${{ secrets.COPR_WEBHOOK_URL != '' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Trigger COPR rebuild
+        env:
+          COPR_WEBHOOK_URL: ${{ secrets.COPR_WEBHOOK_URL }}
+        run: curl --fail --show-error --retry 3 -X POST "$COPR_WEBHOOK_URL"
+
+  debian:
+    name: Publish Debian APT repository
+    if: ${{ secrets.APT_GPG_PRIVATE_KEY != '' && secrets.APT_GPG_KEY_ID != '' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Download Debian release packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          mkdir -p dist
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" \
+            --pattern '*.deb' --dir dist
+
+      - name: Build signed APT repository
+        env:
+          APT_GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          APT_GPG_KEY_ID: ${{ secrets.APT_GPG_KEY_ID }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gnupg reprepro
+          printf '%s\n' "$APT_GPG_PRIVATE_KEY" | gpg --batch --import
+          mkdir -p apt-repo/conf apt-repo/incoming
+          cat > apt-repo/conf/distributions <<EOF
+          Origin: Latte Dock NG
+          Label: Latte Dock NG
+          Codename: trixie
+          Suite: stable
+          Architectures: amd64
+          Components: main
+          Description: Latte Dock NG packages for Debian 13
+          SignWith: ${APT_GPG_KEY_ID}
+
+          Origin: Latte Dock NG
+          Label: Latte Dock NG
+          Codename: sid
+          Suite: unstable
+          Architectures: amd64
+          Components: main
+          Description: Latte Dock NG packages for Debian unstable
+          SignWith: ${APT_GPG_KEY_ID}
+          EOF
+          trixie_deb="$(find dist -maxdepth 1 -name '*+deb13u1*.deb' -print -quit)"
+          sid_deb="$(find dist -maxdepth 1 -name '*.deb' ! -name '*+deb13u1*.deb' -print -quit)"
+          test -n "$trixie_deb" -a -n "$sid_deb"
+          reprepro -b apt-repo includedeb trixie "$trixie_deb"
+          reprepro -b apt-repo includedeb sid "$sid_deb"
+          gpg --armor --export "$APT_GPG_KEY_ID" > apt-repo/latte-dock-ng-archive-keyring.asc
+
+      - name: Upload APT repository artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apt-repo
+
+      - name: Deploy APT repository
+        uses: actions/deploy-pages@v4
