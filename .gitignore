@@ -53,8 +53,6 @@ CMakeLists.txt.user*
 .cache/
 .claude/
 .pi/
-CLAUDE.md
-AGENTS.md
 openspec/
 .codegraph/
 

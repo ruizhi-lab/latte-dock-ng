@@ -19,9 +19,10 @@ The current suite covers:
 - scheme color parsing
 - window-system helper logic
 - selected settings delegates and widgets
-- 60+ source-level UI/runtime regression contracts covering widget-specific
-  special handling: digital clock sizing, systray guards, volume/appmenu
-  popups, separator/spacer behavior, drag-and-drop, and scroll/wheel actions
+- source-level UI/runtime regression contracts (170+ checks across the GCC
+  and Clang suites) covering widget-specific special handling: digital clock
+  sizing, systray guards, volume/appmenu popups, separator/spacer behavior,
+  drag-and-drop, and scroll/wheel actions
 - install, uninstall, Docker, and packaging contracts
 
 Test executables are intentionally marked `EXCLUDE_FROM_ALL` so normal application builds are not slowed by test-only targets.
@@ -40,13 +41,58 @@ cmake --build build-autotests-clang --target latte-autotests --parallel 8
 ctest --test-dir build-autotests-clang --output-on-failure
 ```
 
-On `gentoo-bull`, use `--parallel 8` or `./install.sh --user --jobs 8`.
+Tune the parallelism to the host's core count; keep it below the core count so the build does not starve the desktop.
 
 After tests pass, verify the regular user install path:
 
 ```bash
 ./install.sh --user --jobs 8
 ```
+
+## Runtime Retest Workflow
+
+Automated tests cannot reproduce shell-integration bugs (window lifecycle,
+shutdown teardown, Wayland focus, compositor interaction). Before committing a
+risky fix, retest the live dock with the user-mode Debug build and verify a
+clean quit:
+
+1. Install the modified code for the current user (Debug keeps symbols for
+   later core analysis):
+
+   ```bash
+   ./install.sh --user Debug
+   ```
+
+2. Stop the running dock and launch the user-mode binary with a fresh debug
+   log from a terminal. Do not use `pkill -f` on a command line that also
+   contains "latte-dock-ng" (it matches the shell itself); use the exact
+   process name:
+
+   ```bash
+   pkill -x latte-dock-ng || true
+   rm -f /tmp/latte-ng.log
+   source ~/.config/latte-dock-ng/dev-env.sh
+   nohup ~/.local/bin/latte-dock-ng --replace --debug > /tmp/latte-ng.log 2>&1 &
+   ```
+
+3. Exercise the changed behavior, then drive the exact scenario the fix
+   targets (dock restart, applet popups and submenus, KDE logout or reboot).
+
+4. Verify a clean teardown instead of trusting the exit status:
+   - `coredumpctl list` must not gain a `latte-dock-ng` entry. Record the
+     newest entry id before the test as a baseline and compare afterwards.
+   - The debug log must not contain `Fatal`, `ASSERT`, `Segmentation` or
+     `KCrash`, and it should end at the expected teardown markers (for a full
+     quit: `Latte Corona - deleted...`, `QuickWindowSystem destructed`).
+   - On a signal-driven quit, the log should show the shutdown handler path
+     (`KSignalHandler received signal 15` -> `calling quit()`).
+
+5. Analyze the log for new warnings/errors and file follow-ups before the
+   next risky change.
+
+For crash fixes, run an A/B check against the previous binary: reproduce the
+crash with the old build and confirm a fresh core, rebuild with the fix,
+repeat the scenario, and confirm no new core is produced.
 
 ## Adding Tests
 

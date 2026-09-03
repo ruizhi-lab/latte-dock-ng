@@ -6,6 +6,10 @@
 - Date: 2026-05-03
 - License: GPL-3.0
 - Target release: `v1.0.1`
+- Status: **implemented** (`v1.0.1`, 2026-05). Kept as the historical design
+  record; later releases follow the current release workflow documented in
+  `CLAUDE.md` (version bump in `CMakeLists.txt` + `default.nix`, annotated
+  `vX.Y.Z` tag, GitHub release, Gentoo overlay ebuild + Manifest).
 
 ## Background
 Latte Dock NG already exposes version data in multiple surfaces:

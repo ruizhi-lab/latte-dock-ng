@@ -1,3 +1,37 @@
+## [Unreleased]
+
+## [v1.2.46] - 2026-09-03
+
+### Fixed
+- Fix a dock crash (SIGABRT) when quitting during logout, shutdown or restart:
+  the cascading-menu pointer tracker connected each tracked window's
+  destroyed() signal to `View::onPointerWindowDestroyed` on Enter but never
+  disconnected it, so a hovered-and-left window (including the dock's own
+  window) kept a live connection that fired from `~QObject`'s destroyed()
+  emission against the half-destroyed View. Connections are now dropped when
+  the pointer leaves a window and for every still-tracked window in the View
+  destructor.
+- Preserve the user's XDG autostart entry across upgrades: pre-install
+  cleanup passes the new `--preserve-autostart` flag, so reinstalling over an
+  existing installation no longer removes the user's autostart preference.
+
+### Tests
+- Source-contract tests lock the pointer-window connection lifecycle on
+  pointer Leave and in the View destructor.
+- GCC and Clang autotest suites pass all 40 registered tests.
+
+## [v1.2.45] - 2026-08-30
+
+### Fixed
+- Use the versioned `latte-dock-ng` icon name consistently in the application
+  desktop entry, kicker action, and application window so updated shortcuts
+  load the current artwork instead of a cached legacy icon.
+- Fix the SVG icon wrappers to reference the PNG companion installed beside
+  them, allowing KDE icon themes to render the new artwork correctly.
+
+### Tests
+- CMake build and the full registered autotest suite pass.
+
 ## [v1.2.44] - 2026-08-30
 
 ### Added
@@ -35,111 +69,6 @@
   and supported Plasma baseline.
 - The release workflow validates the NixOS flake with `nix flake check` and
   `nix build` before publishing release artifacts.
-
-## [v1.2.41] - 2026-08-23
-
-### Performance
-- Reduce idle task hover work when window previews and window highlighting
-  are disabled, while preserving tooltip and task auto-scroll behavior.
-- Reduce repeated task, PulseAudio, layout-import, and headless desktop
-  integration work across the dock's active and startup paths.
-
-### Tests
-- Add a source-contract autotest covering the inactive preview hover guard.
-- GCC and Clang autotest suites pass all 39 registered tests.
-
-## [v1.2.39] - 2026-08-21
-
-### Fixed
-- The bounce-induced zoom freeze (issue #42) is fixed: parabolic scale
-  broadcasts are now addressed through `effectiveIndex` (`index >= 0 ? index :
-  taskItem.lastValidIndex`), so a delegate kept alive by `ListView.delayRemove`
-  during a launcher->window conversion (index -1) keeps tracking the pointer
-  instead of being frozen at its old zoom or pinned to zoom level 1 by the
-  clear broadcast; outgoing broadcasts use the same effective index, removing
-  out-of-bounds addresses like -1/-2.
-- Icon scaling no longer behaves abnormally when the pointer moves into the
-  dock and over other icons while the parabolic zoom animation is still
-  running (issue #40): the zoom gate in `ParabolicEventsArea.onParabolicMove`
-  was removed, so the parabolic effect keeps updating during the zoom-in
-  animation and the `Behavior on zoom` in ParabolicItem animates smoothly
-  toward the new target.
-- Zoom restore is delegated to the `Behavior on zoom`: `slotClearZoom` only
-  sets the target value (`parabolicItem.zoom = 1`) and the Behavior animates
-  toward it, avoiding jarring jumps when prior animations have not finished.
-- A window without launcher identity (an app that ships no .desktop file,
-  e.g. a bare window with empty AppId) no longer renders as a phantom
-  separator line at the right end of the dock: the separator placeholder
-  is now applied only to launcher-type entries whose URL is still being
-  resolved asynchronously, never to plain windows or startup items.
-  Previously such a window stayed thin (separator-like) forever, and
-  "Remove Right/Left Separator" could not get rid of it — the phantom had
-  an empty launcher URL, so removing it through the launcher list was a
-  silent no-op that still reported success.
-- The launcher-local separator removal path now refuses entries with an
-  empty launcher URL, so a task that merely looks like a separator can
-  never be "removed" without actually changing the launcher list.
-- The Trash widget now has a "Keep Original Icon Colors" option in its
-  context menu (issue #44): when enabled, Latte strips the "-symbolic"
-  suffix from the applet's icon so the full-color icon from the icon theme
-  shows, while the empty/full trash icon keeps switching; disabling the
-  toggle restores the original icon immediately. Scoped to the Trash widget
-  because other applets (launchers) render monochrome through their own
-  color masks that this cannot override.
-- Translations are synced with the source after the Dock/Panel -> Dock
-  migration: ~25 strings in latte-dock and the containment-actions context
-  menu silently fell back to English in every language because the po files
-  were never regenerated. Msgids are realigned and several user-facing
-  strings wrongly marked `notr="true"` in the Qt Designer dialogs (Thickness
-  margin influence, Export Template, New, Remove, Import..., Export...) are
-  translatable again.
-
-### Tests
-- New source-contract tests lock the `effectiveIndex` fallback in
-  `ParabolicEventsArea` and the Behavior-driven zoom restore path
-  (`zoomRestoreDelegatedToBehaviorAnimation`).
-- New source-contract tests lock the empty-URL guard in the separator
-  removal path, the isSeparator window/startup exclusion, and the context
-  menu routing through the guarded launcher-local removal.
-- New source-contract tests lock the "Keep Original Icon Colors" menu wiring
-  and the Trash-only icon override path.
-- New source-contract tests lock the Qt Designer notr fixes, the absence of
-  stale Dock/Panel msgids across all po domains, and that the translation
-  Messages.sh scripts reference only existing directories.
-
-## [v1.2.45] - 2026-08-30
-
-### Fixed
-- Use the versioned `latte-dock-ng` icon name consistently in the application
-  desktop entry, kicker action, and application window so updated shortcuts
-  load the current artwork instead of a cached legacy icon.
-- Fix the SVG icon wrappers to reference the PNG companion installed beside
-  them, allowing KDE icon themes to render the new artwork correctly.
-
-### Tests
-- CMake build and the full registered autotest suite pass.
-
-## [v1.2.46] - 2026-09-03
-
-### Fixed
-- Fix a dock crash (SIGABRT) when quitting during logout, shutdown or restart:
-  the cascading-menu pointer tracker connected each tracked window's
-  destroyed() signal to `View::onPointerWindowDestroyed` on Enter but never
-  disconnected it, so a hovered-and-left window (including the dock's own
-  window) kept a live connection that fired from `~QObject`'s destroyed()
-  emission against the half-destroyed View. Connections are now dropped when
-  the pointer leaves a window and for every still-tracked window in the View
-  destructor.
-- Preserve the user's XDG autostart entry across upgrades: pre-install
-  cleanup passes the new `--preserve-autostart` flag, so reinstalling over an
-  existing installation no longer removes the user's autostart preference.
-
-### Tests
-- Source-contract tests lock the pointer-window connection lifecycle on
-  pointer Leave and in the View destructor.
-- GCC and Clang autotest suites pass all 40 registered tests.
-
-## [Unreleased]
 
 ## [v1.2.42] - 2026-08-29
 
@@ -200,6 +129,18 @@
   import.
 - GCC and Clang autotest suites pass all 40 registered tests.
 
+## [v1.2.41] - 2026-08-23
+
+### Performance
+- Reduce idle task hover work when window previews and window highlighting
+  are disabled, while preserving tooltip and task auto-scroll behavior.
+- Reduce repeated task, PulseAudio, layout-import, and headless desktop
+  integration work across the dock's active and startup paths.
+
+### Tests
+- Add a source-contract autotest covering the inactive preview hover guard.
+- GCC and Clang autotest suites pass all 39 registered tests.
+
 ## [v1.2.40] - 2026-08-21
 
 ### Fixed
@@ -231,6 +172,65 @@
   (`restoreZoomTimerGracePeriodPreventsBoundaryBlip`), and the Trash
   keep-original-colors default + migration
   (`trashKeepOriginalColorsDefaultsToCheckedForAllConfigs`).
+
+## [v1.2.39] - 2026-08-21
+
+### Fixed
+- The bounce-induced zoom freeze (issue #42) is fixed: parabolic scale
+  broadcasts are now addressed through `effectiveIndex` (`index >= 0 ? index :
+  taskItem.lastValidIndex`), so a delegate kept alive by `ListView.delayRemove`
+  during a launcher->window conversion (index -1) keeps tracking the pointer
+  instead of being frozen at its old zoom or pinned to zoom level 1 by the
+  clear broadcast; outgoing broadcasts use the same effective index, removing
+  out-of-bounds addresses like -1/-2.
+- Icon scaling no longer behaves abnormally when the pointer moves into the
+  dock and over other icons while the parabolic zoom animation is still
+  running (issue #40): the zoom gate in `ParabolicEventsArea.onParabolicMove`
+  was removed, so the parabolic effect keeps updating during the zoom-in
+  animation and the `Behavior on zoom` in ParabolicItem animates smoothly
+  toward the new target.
+- Zoom restore is delegated to the `Behavior on zoom`: `slotClearZoom` only
+  sets the target value (`parabolicItem.zoom = 1`) and the Behavior animates
+  toward it, avoiding jarring jumps when prior animations have not finished.
+- A window without launcher identity (an app that ships no .desktop file,
+  e.g. a bare window with empty AppId) no longer renders as a phantom
+  separator line at the right end of the dock: the separator placeholder
+  is now applied only to launcher-type entries whose URL is still being
+  resolved asynchronously, never to plain windows or startup items.
+  Previously such a window stayed thin (separator-like) forever, and
+  "Remove Right/Left Separator" could not get rid of it — the phantom had
+  an empty launcher URL, so removing it through the launcher list was a
+  silent no-op that still reported success.
+- The launcher-local separator removal path now refuses entries with an
+  empty launcher URL, so a task that merely looks like a separator can
+  never be "removed" without actually changing the launcher list.
+- The Trash widget now has a "Keep Original Icon Colors" option in its
+  context menu (issue #44): when enabled, Latte strips the "-symbolic"
+  suffix from the applet's icon so the full-color icon from the icon theme
+  shows, while the empty/full trash icon keeps switching; disabling the
+  toggle restores the original icon immediately. Scoped to the Trash widget
+  because other applets (launchers) render monochrome through their own
+  color masks that this cannot override.
+- Translations are synced with the source after the Dock/Panel -> Dock
+  migration: ~25 strings in latte-dock and the containment-actions context
+  menu silently fell back to English in every language because the po files
+  were never regenerated. Msgids are realigned and several user-facing
+  strings wrongly marked `notr="true"` in the Qt Designer dialogs (Thickness
+  margin influence, Export Template, New, Remove, Import..., Export...) are
+  translatable again.
+
+### Tests
+- New source-contract tests lock the `effectiveIndex` fallback in
+  `ParabolicEventsArea` and the Behavior-driven zoom restore path
+  (`zoomRestoreDelegatedToBehaviorAnimation`).
+- New source-contract tests lock the empty-URL guard in the separator
+  removal path, the isSeparator window/startup exclusion, and the context
+  menu routing through the guarded launcher-local removal.
+- New source-contract tests lock the "Keep Original Icon Colors" menu wiring
+  and the Trash-only icon override path.
+- New source-contract tests lock the Qt Designer notr fixes, the absence of
+  stale Dock/Panel msgids across all po domains, and that the translation
+  Messages.sh scripts reference only existing directories.
 
 ## [v1.2.38] - 2026-08-10
 
