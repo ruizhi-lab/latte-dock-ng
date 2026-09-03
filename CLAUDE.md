@@ -4,14 +4,16 @@ This file consolidates the project memory previously maintained by Claude Code
 (the legacy Claude Code memory directory, 20 files).
 pi loads `AGENTS.md` / `CLAUDE.md` as context files automatically.
 
-Memory role split (kept consistent across the three AI docs): `AGENTS.md`
-carries the always-on rules and the standard debug/re-test workflow;
-`CODEX.md` is the compact Codex memory with the same rules plus pointers;
-this file (`CLAUDE.md`) is the detailed reference for the release workflow,
-test-VM quirks, and known issues. Runtime clean-quit/coredump verification is
-documented in `docs/development-testing-guide.md` (Runtime Retest Workflow).
-See `AGENTS.md` for the standard debug/re-test workflow (user-mode install,
-kill, launch, log analysis, no auto-commit).
+Memory role split (kept consistent across the two AI docs): `AGENTS.md`
+carries the always-on rules and the standard debug/re-test workflow and is
+auto-loaded by pi, OpenAI Codex and other AGENTS.md-aware tools; this file
+(`CLAUDE.md`) is the detailed reference for the release workflow, known
+issues, and cross-distro compatibility notes. Runtime clean-quit/coredump
+verification is documented in `docs/development-testing-guide.md` (Runtime
+Retest Workflow). There is deliberately no separate CODEX.md — Codex reads
+AGENTS.md, so one compact auto-loaded file keeps every agent on the same
+rules. See `AGENTS.md` for the standard debug/re-test workflow (user-mode
+install, kill, launch, log analysis, no auto-commit).
 
 ## Rules (explicit user feedback)
 
@@ -94,6 +96,24 @@ scroll minimize). Fix failures before version bump and tag.
 GitHub ops (push/ls-remote) may hang without a proxy. Try direct first; on a
 hang, retry through the local HTTP proxy configured in the shell environment
 (machine-local — the exact proxy address is not committed to the repo).
+
+## Architecture & compatibility notes
+
+- The application is one large executable assembled by `app/CMakeLists.txt`.
+  Large runtime sources include `layoutmanager.cpp`, `containmentinterface.cpp`,
+  `view.cpp`, `storage.cpp`, and `AppletItem.qml`.
+- Use `-j8` for project builds unless a command has a specific resource limit.
+- User configuration intentionally disables window previews and keeps only the
+  normal tooltip; treat preview-window rendering as an inactive path unless the
+  user explicitly enables it for a regression check.
+- The application icon uses the versioned `latte-dock-ng` name; do not fall
+  back to the legacy `latte-dock` name, which third-party icon themes (e.g.
+  Breeze) shadow with the old artwork.
+- Debian Plasma 6.3 lacks a filesystem `org.kde.plasma.plasmoid` QML module:
+  register it lazily and never use an attached-type stub that breaks Behavior
+  resolution (Qt 6.8 QML compiler).
+- On Fedora, Wayland runs natively even with a minimal environment; capture
+  latte's own logs with `--log-file` plus `QT_LOGGING_RULES='latte*=true'`.
 
 ## Known issues & fixes (diagnosis memory)
 

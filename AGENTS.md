@@ -3,24 +3,26 @@
 This file is loaded by pi at startup (context file) and holds the project's
 rules and workflow, migrated from Claude Code's project memory.
 
-Three AI-facing memory documents share one role split; keep them consistent
-when project knowledge changes:
+Two AI-facing memory files share one role split; keep them consistent when
+project knowledge changes:
 
-- `AGENTS.md` (this file) — the rules below and the standard debug/retest
-  workflow; always in effect.
-- `CODEX.md` — compact durable memory with the same rules plus pointers to the
-detailed references below; read it in Codex sessions and update it when durable
-knowledge changes.
-- `CLAUDE.md` — detailed reference: release workflow, test-VM quirks, known
-issues & fixes. Read it when working on releases, VM testing, or those areas.
+- `AGENTS.md` (this file) — loaded automatically by pi, OpenAI Codex, Cursor
+  and other AGENTS.md-aware tools. Carries the rules below and the standard
+  debug/retest workflow; always in effect.
+- `CLAUDE.md` — detailed reference: release workflow, known issues, fixes and
+  cross-distro compatibility notes (Claude Code loads it automatically; other
+  agents read it on request).
+
+There is deliberately no separate CODEX.md: Codex reads AGENTS.md, so one
+compact auto-loaded file keeps every agent on the same rules.
 
 Shared testing/release procedures live in `docs/`: `development-testing-guide.md`
 documents the autotest suite and the Runtime Retest Workflow (clean-quit and
 coredump A/B verification after runtime fixes).
 
-**Full memory details** (test-VM quirks, release workflow, known bugs & fixes):
-read `CLAUDE.md` in the project root when relevant. The rules below are
-always in effect.
+**Full memory details** (release workflow, known bugs & fixes, compatibility
+notes): read `CLAUDE.md` in the project root when relevant. The rules below
+are always in effect.
 
 ## User Rules (always apply)
 
@@ -121,7 +123,6 @@ When testing changes to latte-dock-ng, follow this exact workflow:
 - **GitHub proxy**: if git push/ls-remote hangs, retry through the local HTTP
   proxy configured in the shell environment (machine-local; exact address is
   not committed to the repo).
-- **Detailed memory**: release workflow, test-VM quirks, known issues
-  (appmenu empty slot, knscompat Badge qmldir, blur ghosting fix,
-  hover-preview stutter research) are in `CLAUDE.md`; the compact Codex memory
-  is `CODEX.md`.
+- **Detailed memory**: release workflow, known issues (appmenu empty slot,
+  knscompat Badge qmldir, blur ghosting fix, hover-preview stutter research)
+  and cross-distro compatibility notes are in `CLAUDE.md`.
