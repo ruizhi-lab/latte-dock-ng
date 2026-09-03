@@ -71,6 +71,8 @@ private Q_SLOTS:
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
     void synchronizerUnloadUsesSynchronousDelete();
+    void pointerWindowTrackingDisconnectsOnLeave();
+    void viewDestructorDropsPointerWindowTrackingConnections();
     void taskIconsRefreshAfterIconThemeChanges();
     void taskAudioBadgesScaleWithParabolicZoom();
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
@@ -1097,6 +1099,66 @@ void SourceContractTest::synchronizerUnloadUsesSynchronousDelete()
     QVERIFY(src.contains(QStringLiteral("delete layout;")));
     QVERIFY(!src.contains(QStringLiteral("central->deleteLater();")));
     QVERIFY(!src.contains(QStringLiteral("layout->deleteLater();")));
+}
+
+void SourceContractTest::pointerWindowTrackingDisconnectsOnLeave()
+{
+    //! The cascading-menu pointer tracker connects a tracked window's
+    //! destroyed() signal to View::onPointerWindowDestroyed when the pointer
+    //! enters it (eventFilter Enter branch). If that connection survives the
+    //! pointer leaving, it later fires against a View that is already being
+    //! destroyed during logout/shutdown teardown: ~QObject emits destroyed()
+    //! and Qt's internal qobject_cast assertion aborts on the half-destroyed
+    //! receiver. Leave must therefore drop the connection it mirrors.
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(viewSourceFile.readAll());
+
+    const QString enterConnect = QStringLiteral(
+            "connect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed, Qt::UniqueConnection);");
+    const QString windowDisconnect = QStringLiteral(
+            "disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);");
+
+    //! Exactly one connect site (eventFilter Enter) and at least two disconnect
+    //! sites (eventFilter Leave plus ~View) keep the tracking connections from
+    //! outliving their window's membership in m_pointerWindows.
+    QCOMPARE(src.count(enterConnect), 1);
+    QVERIFY(src.count(windowDisconnect) >= 2);
+
+    //! The Leave branch drops the connection right after it stops tracking the
+    //! window, so a tracked window never keeps a live destroyed() connection
+    //! after the pointer has left it.
+    const int removeIndex = src.indexOf(QStringLiteral("m_pointerWindows.remove(window);"));
+    const int leaveDisconnect = src.indexOf(windowDisconnect, removeIndex);
+    QVERIFY(removeIndex >= 0);
+    QVERIFY(leaveDisconnect > removeIndex);
+}
+
+void SourceContractTest::viewDestructorDropsPointerWindowTrackingConnections()
+{
+    //! Teardown while the pointer is still over a dock window (or over a popup
+    //! that never received Leave) must not leave destroyed() connections
+    //! behind: ~View disconnects every still-tracked window before member
+    //! deletion and clears the tracking set, so the base ~QObject can emit
+    //! destroyed() without activating onPointerWindowDestroyed against this
+    //! half-destroyed View.
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(viewSourceFile.readAll());
+
+    const int destructor = src.indexOf(QStringLiteral("View::~View()"));
+    QVERIFY(destructor >= 0);
+
+    const int removeEventFilter = src.indexOf(QStringLiteral("qApp->removeEventFilter(this);"), destructor);
+    const int loopStart = src.indexOf(QStringLiteral("for (QWindow *window : m_pointerWindows) {"), removeEventFilter);
+    const int windowDisconnect = src.indexOf(QStringLiteral(
+            "disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);"),
+            loopStart);
+    const int clear = src.indexOf(QStringLiteral("m_pointerWindows.clear();"), windowDisconnect);
+    QVERIFY(removeEventFilter > destructor);
+    QVERIFY(loopStart > removeEventFilter);
+    QVERIFY(windowDisconnect > loopStart);
+    QVERIFY(clear > windowDisconnect);
 }
 
 void SourceContractTest::taskAudioBadgesScaleWithParabolicZoom()
