@@ -119,6 +119,26 @@
 ### Tests
 - CMake build and the full registered autotest suite pass.
 
+## [v1.2.46] - 2026-09-03
+
+### Fixed
+- Fix a dock crash (SIGABRT) when quitting during logout, shutdown or restart:
+  the cascading-menu pointer tracker connected each tracked window's
+  destroyed() signal to `View::onPointerWindowDestroyed` on Enter but never
+  disconnected it, so a hovered-and-left window (including the dock's own
+  window) kept a live connection that fired from `~QObject`'s destroyed()
+  emission against the half-destroyed View. Connections are now dropped when
+  the pointer leaves a window and for every still-tracked window in the View
+  destructor.
+- Preserve the user's XDG autostart entry across upgrades: pre-install
+  cleanup passes the new `--preserve-autostart` flag, so reinstalling over an
+  existing installation no longer removes the user's autostart preference.
+
+### Tests
+- Source-contract tests lock the pointer-window connection lifecycle on
+  pointer Leave and in the View destructor.
+- GCC and Clang autotest suites pass all 40 registered tests.
+
 ## [Unreleased]
 
 ## [v1.2.42] - 2026-08-29
