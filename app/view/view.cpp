@@ -273,6 +273,18 @@ View::~View()
 
     qApp->removeEventFilter(this);
 
+    //! Drop pointer-window tracking connections before member teardown. Each
+    //! tracked popup/submenu window has a destroyed -> onPointerWindowDestroyed
+    //! connection to this View (created in eventFilter on Enter). If such a window
+    //! dies while the View is being destroyed, Qt activates the slot against the
+    //! half-destroyed View and aborts on its internal qobject_cast assertion.
+    //! disconnectSensitiveSignals() does not cover these per-window connections.
+    for (QWindow *window : m_pointerWindows) {
+        disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);
+    }
+
+    m_pointerWindows.clear();
+
     //! clear Layout connections
     m_visibleHackTimer1.stop();
     m_visibleHackTimer2.stop();
@@ -877,6 +889,15 @@ bool View::eventFilter(QObject *watched, QEvent *event)
                 }
             } else if (event->type() == QEvent::Leave) {
                 m_pointerWindows.remove(window);
+
+                //! Mirror the Enter-side connect: a destroyed -> onPointerWindowDestroyed
+                //! connection must never outlive its tracked-window membership. Leaving a
+                //! window removes it from the set, so its connection is dropped here too;
+                //! otherwise the dock's own window (which is also tracked while the pointer
+                //! hovers it) keeps a self-connection alive that fires from ~QObject's
+                //! destroyed() emission during teardown and aborts on Qt's internal
+                //! qobject_cast assertion against the half-destroyed View.
+                disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);
 
                 //! Only submenu windows (transient children of an applet
                 //! popup) can trigger the close; the first-level popup and
