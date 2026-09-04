@@ -35,9 +35,9 @@ msgstr "%1的选项"
 
 #: app/declarativeimports/contextmenulayerquickitem.cpp:455
 #, kde-format
-msgctxt "@action:inmenu keep the applet's original colorful icon instead of a colorized one"
-msgid "Keep Original Icon Colors"
-msgstr "保留原始图标颜色"
+msgctxt "@action:inmenu use the icon theme's original colors instead of Latte's colorization"
+msgid "Use Icon Theme Colors"
+msgstr "使用图标主题原色"
 
 #: app/indicator/factory.cpp:284
 #, kde-format

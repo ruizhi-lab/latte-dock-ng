@@ -2022,7 +2022,7 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     // "userBlocksColorizing" option, so the QML userBlocksColorizing gate in
     // AppletItem.qml stops colorizing that applet (issue #44). It must be
     // offered for every applet rather than only the Trash widget.
-    QVERIFY(src.contains(QStringLiteral("Keep Original Icon Colors")));
+    QVERIFY(src.contains(QStringLiteral("Use Icon Theme Colors")));
     QVERIFY(src.contains(QStringLiteral("userBlocksColorizing")));
     QVERIFY(src.contains(QStringLiteral("setOption")));
     QVERIFY(!src.contains(QStringLiteral("applet->pluginMetaData().pluginId() == QLatin1String(\"org.kde.plasma.trash\")")));
@@ -2031,7 +2031,7 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     // containment menu, and its checked state must reflect the layout
     // manager's current list.
     const int aaa = src.indexOf(QStringLiteral("ContextMenuLayerQuickItem::addAppletActions"));
-    const int toggle = src.indexOf(QStringLiteral("Keep Original Icon Colors"));
+    const int toggle = src.indexOf(QStringLiteral("Use Icon Theme Colors"));
     QVERIFY(aaa >= 0);
     QVERIFY(toggle > aaa);
     QVERIFY(src.contains(QStringLiteral("setCheckable(true)")));
@@ -2166,8 +2166,8 @@ void SourceContractTest::poFilesHaveNoStaleDockPanelMsgids()
     QVERIFY(zhSource.contains(QStringLiteral("msgstr \"厚度边距影响\"")));
     QVERIFY(zhSource.contains(QStringLiteral("msgid \"Export Template\"")));
     QVERIFY(zhSource.contains(QStringLiteral("msgstr \"导出模板\"")));
-    QVERIFY(zhSource.contains(QStringLiteral("msgid \"Keep Original Icon Colors\"")));
-    QVERIFY(zhSource.contains(QStringLiteral("msgstr \"保留原始图标颜色\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgid \"Use Icon Theme Colors\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgstr \"使用图标主题原色\"")));
 }
 
 void SourceContractTest::translationExtractionReferencesValidDirectories()

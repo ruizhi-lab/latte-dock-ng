@@ -446,8 +446,8 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         }
     }
 
-    //! Per-applet toggle: stop Latte from colorizing the widget so its
-    //! original icon-theme icon shows instead of a monochrome/symbolic one.
+    //! Per-applet toggle: use the icon theme's original colors instead of
+    //! Latte's monochrome/symbolic colorization.
     //! Backed by LayoutManager::setOption("userBlocksColorizing"), which feeds
     //! userBlocksColorizingApplets and the QML userBlocksColorizing gate.
     if (m_latteView->extendedInterface()) {
@@ -455,7 +455,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
             const int appletId = static_cast<int>(applet->id());
             const QList<int> disabledColoring = layoutMgr->property("userBlocksColorizingApplets").value<QList<int>>();
 
-            QAction *keepOriginalColorsAction = desktopMenu->addAction(i18nc("@action:inmenu keep the applet's original colorful icon instead of a colorized one", "Keep Original Icon Colors"));
+            QAction *keepOriginalColorsAction = desktopMenu->addAction(i18nc("@action:inmenu use the icon theme's original colors instead of Latte's colorization", "Use Icon Theme Colors"));
             keepOriginalColorsAction->setCheckable(true);
             keepOriginalColorsAction->setChecked(disabledColoring.contains(appletId));
 
