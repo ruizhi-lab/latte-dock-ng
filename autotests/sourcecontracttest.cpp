@@ -87,6 +87,7 @@ private Q_SLOTS:
     void trashKeepOriginalColorsDefaultsToCheckedForAllConfigs();
     void appletIconOverrideStripsSymbolicForOriginalColors();
     void widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized();
+    void containmentLayoutAutotestLinksIconThemes();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
     void scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize();
@@ -2009,6 +2010,22 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     QVERIFY(wrapperSource.contains(QStringLiteral("opacity: visible && appletItem.containsMouse ? 1 : 0")));
     QVERIFY(wrapperSource.contains(QStringLiteral("brightness: 0.30")));
     QVERIFY(wrapperSource.contains(QStringLiteral("contrast: 0.1")));
+}
+
+void SourceContractTest::containmentLayoutAutotestLinksIconThemes()
+{
+    QFile autotestCMake(QStringLiteral(LATTE_SOURCE_DIR "/autotests/CMakeLists.txt"));
+    QVERIFY(autotestCMake.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(autotestCMake.readAll());
+    const int targetStart = source.indexOf(QStringLiteral("target_link_libraries(containmentlayoutunittest"));
+    const int targetEnd = source.indexOf(QStringLiteral("latte_add_offscreen_test(containmentlayoutunittest)"), targetStart);
+
+    // layoutmanager.cpp includes KIconLoader for the generic original-color
+    // fallback. The unit test compiles that source directly, so it must link
+    // the imported IconThemes target to inherit its generated include paths.
+    QVERIFY(targetStart >= 0);
+    QVERIFY(targetEnd > targetStart);
+    QVERIFY(source.mid(targetStart, targetEnd - targetStart).contains(QStringLiteral("KF6::IconThemes")));
 }
 
 void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()

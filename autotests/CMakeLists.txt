@@ -746,6 +746,7 @@ target_link_libraries(containmentlayoutunittest
     Qt6::Quick
     Qt6::Test
     KF6::ConfigCore
+    KF6::IconThemes
     Plasma::Plasma
     Plasma::PlasmaQuick
 )

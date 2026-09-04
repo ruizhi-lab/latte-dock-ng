@@ -1,5 +1,25 @@
 ## [Unreleased]
 
+## [v1.2.47] - 2026-09-04
+
+### Added
+- Add a generic per-widget `Use Icon Theme Colors` context-menu option for
+  displaying the icon theme's original colors instead of Latte's colorization.
+- Add a safe image fallback for widgets without a discoverable compact icon,
+  including dynamic state refresh for volume and brightness widgets.
+
+### Fixed
+- Restore widget hover highlighting and parabolic zoom alignment when the
+  original-color fallback is active.
+- Keep dynamic widget states synchronized while using icon-theme colors, with
+  symbolic-only themes and icons falling back without color changes.
+- Clarify the Chinese translation so it explicitly describes icon-theme colors.
+
+### Tests
+- Add source-contract coverage for the generic original-color fallback,
+  dynamic icon-state refresh, hover effect, zoom transform, and translations.
+- GCC and Clang autotest suites pass all 40 registered tests.
+
 ## [v1.2.46] - 2026-09-03
 
 ### Fixed
