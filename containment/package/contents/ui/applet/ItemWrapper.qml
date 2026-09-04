@@ -76,6 +76,13 @@ Item{
 
     opacity: appletColorizer.mustBeShown && appletItem.environment.isGraphicsSystemAccelerated ? 0 : 1
 
+    // Apply native hover feedback only to compact applets that expose an icon.
+    // Trash is a special case: it deliberately keeps its themed non-symbolic
+    // icon, which Latte cannot always discover through the generic icon path.
+    // Text-only and custom-painted applets therefore keep their own visuals.
+    readonly property bool supportsHoveredIconEffect: communicator.appletMainIconIsFound
+                                                      || appletItem.pluginName === "org.kde.plasma.trash"
+
     property bool disableLengthScale: false
     property bool disableThicknessScale: false
 
@@ -507,6 +514,33 @@ Item{
                     easing.type: Easing.OutCubic
                 }
             }
+        }
+    }
+
+    // The shell CompactApplet is not used by every Plasma widget.  Rendering
+    // from this wrapper guarantees the same hover brightness for both shell
+    // and native compact representations, including Trash.
+    MultiEffect {
+        id: hoveredAppletEffect
+        anchors.fill: _wrapperContainer
+        source: _wrapperContainer
+        z: 1000
+        // Fixed-slot widgets (such as Trash) scale their native compact
+        // representation during the parabolic wave. Mirror that transform so
+        // the hover copy remains exactly aligned with the icon.
+        scale: _wrapperContainer.scale
+        transformOrigin: _wrapperContainer.transformOrigin
+        visible: wrapper.supportsHoveredIconEffect
+                 && appletItem.indicators
+                 && !appletItem.indicators.info.providesHoveredAnimation
+        // Reuse Latte's existing parabolic hover state.  Adding an input item
+        // above applets would steal the wave from neighbouring task icons.
+        opacity: visible && appletItem.containsMouse ? 1 : 0
+        brightness: 0.30
+        contrast: 0.1
+
+        Behavior on opacity {
+            NumberAnimation { duration: appletItem.animations.duration.large }
         }
     }
 
