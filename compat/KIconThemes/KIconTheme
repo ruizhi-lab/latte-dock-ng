@@ -1,0 +1,17 @@
+#pragma once
+
+// See compat/KIconThemes/KIconLoader for why this shim exists: nixpkgs
+// (NixOS) builds each KF6 framework in its own isolated store path, which
+// breaks the fully-qualified <KIconThemes/KIconTheme> spelling even though
+// find_package(KF6IconThemes) succeeds there.
+#if __has_include(<KIconTheme>)
+#include <KIconTheme>
+#elif __has_include(<KIconThemes/kicontheme.h>)
+#include <KIconThemes/kicontheme.h>
+#elif __has_include(<kicontheme.h>)
+#include <kicontheme.h>
+#elif __has_include_next(<KIconThemes/KIconTheme>)
+#include_next <KIconThemes/KIconTheme>
+#else
+#error "Could not find a usable KIconTheme header"
+#endif

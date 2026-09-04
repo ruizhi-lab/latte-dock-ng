@@ -2019,6 +2019,9 @@ void SourceContractTest::containmentLayoutAutotestLinksIconThemes()
     const QString source = QString::fromUtf8(autotestCMake.readAll());
     const int targetStart = source.indexOf(QStringLiteral("target_link_libraries(containmentlayoutunittest"));
     const int targetEnd = source.indexOf(QStringLiteral("latte_add_offscreen_test(containmentlayoutunittest)"), targetStart);
+    QFile iconThemeCompat(QStringLiteral(LATTE_SOURCE_DIR "/compat/KIconThemes/KIconTheme"));
+    QVERIFY(iconThemeCompat.open(QFile::ReadOnly));
+    const QString iconThemeCompatSource = QString::fromUtf8(iconThemeCompat.readAll());
 
     // layoutmanager.cpp includes KIconLoader for the generic original-color
     // fallback. The unit test compiles that source directly, so it must link
@@ -2026,6 +2029,8 @@ void SourceContractTest::containmentLayoutAutotestLinksIconThemes()
     QVERIFY(targetStart >= 0);
     QVERIFY(targetEnd > targetStart);
     QVERIFY(source.mid(targetStart, targetEnd - targetStart).contains(QStringLiteral("KF6::IconThemes")));
+    QVERIFY(iconThemeCompatSource.contains(QStringLiteral("__has_include(<KIconTheme>)")));
+    QVERIFY(iconThemeCompatSource.contains(QStringLiteral("__has_include_next(<KIconThemes/KIconTheme>)")));
 }
 
 void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
