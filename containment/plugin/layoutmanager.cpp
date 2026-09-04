@@ -23,6 +23,7 @@
 
 // KDE
 #include <KConfigGroup>
+#include <KIconThemes/KIconLoader>
 
 #define ISAPPLETLOCKEDOPTION QStringLiteral("lockZoom")
 #define ISCOLORINGBLOCKEDOPTION QStringLiteral("userBlocksColorizing")
@@ -1038,6 +1039,36 @@ int LayoutManager::appletId(QObject *applet) const
     }
 
     return -1;
+}
+
+QString LayoutManager::appletIcon(QObject *applet) const
+{
+    const int id = appletId(applet);
+
+    if (id <= 0) {
+        return {};
+    }
+
+    if (auto containment = containmentObject()) {
+        for (Plasma::Applet *candidate : containment->applets()) {
+            if (candidate && static_cast<int>(candidate->id()) == id) {
+                return candidate->icon();
+            }
+        }
+    }
+
+    return {};
+}
+
+QString LayoutManager::appletIconPath(QObject *applet) const
+{
+    const QString icon = appletIcon(applet);
+
+    if (icon.isEmpty()) {
+        return {};
+    }
+
+    return KIconLoader::global()->iconPath(icon, -64, true);
 }
 
 int LayoutManager::configuredAppletCount() const

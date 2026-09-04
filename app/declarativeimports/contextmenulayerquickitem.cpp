@@ -446,12 +446,11 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         }
     }
 
-    //! Per-applet toggle for the Trash widget: stop Latte from colorizing it
-    //! so its full-color icon shows instead of a monochrome/symbolic one.
+    //! Per-applet toggle: stop Latte from colorizing the widget so its
+    //! original icon-theme icon shows instead of a monochrome/symbolic one.
     //! Backed by LayoutManager::setOption("userBlocksColorizing"), which feeds
     //! userBlocksColorizingApplets and the QML userBlocksColorizing gate.
-    if (applet->pluginMetaData().pluginId() == QLatin1String("org.kde.plasma.trash")
-        && m_latteView->extendedInterface()) {
+    if (m_latteView->extendedInterface()) {
         if (QPointer<QObject> layoutMgr = m_latteView->extendedInterface()->layoutManager()) {
             const int appletId = static_cast<int>(applet->id());
             const QList<int> disabledColoring = layoutMgr->property("userBlocksColorizingApplets").value<QList<int>>();

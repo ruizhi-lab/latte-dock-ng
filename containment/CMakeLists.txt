@@ -37,6 +37,7 @@ target_link_libraries(lattecontainmentplugin PRIVATE
                       Qt6::Quick
                       ${LATTE_DECLARATIVE_TARGET}
                       ${LATTE_CONFIGQML_TARGET}
+                      KF6::IconThemes
                       Plasma::Plasma
                       Plasma::PlasmaQuick)
 

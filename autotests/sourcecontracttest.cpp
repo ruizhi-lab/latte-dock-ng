@@ -86,6 +86,7 @@ private Q_SLOTS:
     void appletContextMenuExposesKeepOriginalColorsToggle();
     void trashKeepOriginalColorsDefaultsToCheckedForAllConfigs();
     void appletIconOverrideStripsSymbolicForOriginalColors();
+    void widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
     void scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize();
@@ -1938,17 +1939,76 @@ void SourceContractTest::appletIconOverrideStripsSymbolicForOriginalColors()
     // "Keep original icon colors" must undo Plasma's panel "-symbolic"
     // icon substitution (issue #44): strip the suffix via setIcon, gated on
     // the userBlocksColorizing list, and only when a full-color variant
-    // exists so symbolic-only applets are untouched. Scoped to the Trash
-    // widget, whose icon name is the only one that ends with "-symbolic".
+    // exists so symbolic-only applets are untouched. This must apply to every
+    // applet that the user asks to keep in its original icon-theme colors.
     QVERIFY(src.contains(QStringLiteral("applyOriginalIconColors")));
     QVERIFY(src.contains(QStringLiteral("-symbolic")));
     QVERIFY(src.contains(QStringLiteral("QIcon::fromTheme")));
     QVERIFY(src.contains(QStringLiteral("setIcon")));
-    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.trash")));
+    QVERIFY(src.contains(QStringLiteral("originalColorIconName")));
+    QVERIFY(src.contains(QStringLiteral("iconExistsInCurrentTheme")));
+    QVERIFY(src.contains(QStringLiteral("KIconTheme::current")));
+    QVERIFY(src.contains(QStringLiteral("QStandardPaths::locateAll")));
+    QVERIFY(src.contains(QStringLiteral("QStandardPaths::standardLocations")));
+    QVERIFY(src.contains(QStringLiteral("lastIndexOf(QLatin1Char('-'))")));
+    QVERIFY(!src.contains(QStringLiteral("if (pluginIdFromMetaData(applet->pluginMetaData())")));
     //! Both directions must be immediate: stripping on enable and restoring
     //! the original on disable (tracked via m_iconOverrideOriginal).
     QVERIFY(src.contains(QStringLiteral("m_iconOverrideOriginal")));
+
+    QFile appletItemFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItemFile.open(QFile::ReadOnly));
+    const QString appletItemSource = QString::fromUtf8(appletItemFile.readAll());
+    QVERIFY(appletItemSource.contains(QStringLiteral("userKeepsOriginalIconColors")));
+
+    QFile wrapperFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ItemWrapper.qml"));
+    QVERIFY(wrapperFile.open(QFile::ReadOnly));
+    const QString wrapperSource = QString::fromUtf8(wrapperFile.readAll());
+        QVERIFY(wrapperSource.contains(QStringLiteral("refreshIconPath")));
+        QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
+        QVERIFY(appletItemSource.contains(QStringLiteral("currentBackendAppletIconPath")));
+        QVERIFY(wrapperSource.contains(QStringLiteral("hoveredOriginalIconEffect")));
     QVERIFY(hdr.contains(QStringLiteral("applyOriginalIconColors")));
+
+    QFile layoutManagerHeader(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.h"));
+    QVERIFY(layoutManagerHeader.open(QFile::ReadOnly));
+    QVERIFY(QString::fromUtf8(layoutManagerHeader.readAll()).contains(QStringLiteral("Q_INVOKABLE int appletId(QObject *applet) const")));
+    QFile layoutManagerSource(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(layoutManagerSource.open(QFile::ReadOnly));
+    const QString layoutManagerSourceText = QString::fromUtf8(layoutManagerSource.readAll());
+    QVERIFY(layoutManagerSourceText.contains(QStringLiteral("QString LayoutManager::appletIcon(QObject *applet) const")));
+    QVERIFY(layoutManagerSourceText.contains(QStringLiteral("KIconLoader::global()->iconPath")));
+}
+
+void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized()
+{
+    QFile appletItemFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItemFile.open(QFile::ReadOnly));
+    const QString appletItemSource = QString::fromUtf8(appletItemFile.readAll());
+
+    QFile wrapperFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ItemWrapper.qml"));
+    QVERIFY(wrapperFile.open(QFile::ReadOnly));
+    const QString wrapperSource = QString::fromUtf8(wrapperFile.readAll());
+
+    // Widgets whose compact representation has no discoverable IconItem use
+    // an Image fallback. The fallback must call the backend directly so
+    // dynamic states such as volume mute/unmute are not frozen in QML's
+    // getter-backed property cache.
+    QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIconPath()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIconPath()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
+
+    // The fallback is above the native hover copy and therefore needs its own
+    // MultiEffect. It must use the same mouse state, brightness and fixed-slot
+    // zoom transform as the generic widget hover path.
+    QVERIFY(wrapperSource.contains(QStringLiteral("id: hoveredOriginalIconEffect")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("source: originalIconFallback")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("z: 1200")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("scale: originalIconFallback.scale")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("transformOrigin: originalIconFallback.transformOrigin")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("opacity: visible && appletItem.containsMouse ? 1 : 0")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("brightness: 0.30")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("contrast: 0.1")));
 }
 
 void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
@@ -1960,12 +2020,12 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     // The per-applet "keep original icon colors" toggle must live in the
     // applet context menu and drive LayoutManager::setOption with the
     // "userBlocksColorizing" option, so the QML userBlocksColorizing gate in
-    // AppletItem.qml stops colorizing that applet (issue #44). It is scoped
-    // to the Trash widget only.
+    // AppletItem.qml stops colorizing that applet (issue #44). It must be
+    // offered for every applet rather than only the Trash widget.
     QVERIFY(src.contains(QStringLiteral("Keep Original Icon Colors")));
     QVERIFY(src.contains(QStringLiteral("userBlocksColorizing")));
     QVERIFY(src.contains(QStringLiteral("setOption")));
-    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.trash")));
+    QVERIFY(!src.contains(QStringLiteral("applet->pluginMetaData().pluginId() == QLatin1String(\"org.kde.plasma.trash\")")));
 
     // The toggle must be inside addAppletActions (per-applet menu), not the
     // containment menu, and its checked state must reflect the layout

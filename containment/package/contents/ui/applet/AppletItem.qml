@@ -145,7 +145,11 @@ Item {
                                                      && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
                                                      && (appletsZoomEnabled || !isExternalPlasmaApplet)
     readonly property bool userBlocksColorizing: appletBlocksColorizing
-                                                 || (fastLayoutManager && applet && (fastLayoutManager.userBlocksColorizingApplets.indexOf(applet.id)>=0))
+                                                 || (fastLayoutManager && backendAppletId > 0
+                                                     && fastLayoutManager.userBlocksColorizingApplets.indexOf(backendAppletId) >= 0)
+    readonly property bool userKeepsOriginalIconColors: fastLayoutManager
+                                                        && backendAppletId > 0
+                                                        && fastLayoutManager.userBlocksColorizingApplets.indexOf(backendAppletId) >= 0
 
     property bool isExpandedIndicatorActive: (isExpanded
                                               && !appletItem.communicator.indexerIsSupported
@@ -191,6 +195,22 @@ Item {
     property bool isPlaceHolder: false
     property bool isPressed: viewSignalsConnector.pressed
     property QtObject backendAppletRef: null
+    readonly property int backendAppletId: fastLayoutManager && backendAppletRef
+                                         ? fastLayoutManager.appletId(backendAppletRef) : -1
+    readonly property string backendAppletIcon: fastLayoutManager && backendAppletRef
+                                               ? fastLayoutManager.appletIcon(backendAppletRef) : ""
+    readonly property string backendAppletIconPath: fastLayoutManager && backendAppletRef
+                                                   ? fastLayoutManager.appletIconPath(backendAppletRef) : ""
+
+    // QML cannot invalidate a getter-backed property when a Plasma applet
+    // changes its icon without exposing a notify signal.  The fallback image
+    // calls this function while it is visible so dynamic widget states are
+    // read directly from the backend.
+    function currentBackendAppletIconPath() {
+        return fastLayoutManager && backendAppletRef
+                ? fastLayoutManager.appletIconPath(backendAppletRef) : "";
+    }
+
     property bool isSeparator: pluginName === "audoban.applet.separator"
                                || pluginName === "org.kde.latte.separator"
     property bool isSpacer: pluginName === "org.kde.latte.spacer"

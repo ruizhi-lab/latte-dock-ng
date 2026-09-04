@@ -21,6 +21,8 @@
 
 // Qt
 #include <QJsonArray>
+#include <QDir>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
 #include <QIcon>
@@ -29,6 +31,7 @@
 #include <QLatin1String>
 #include <QSet>
 #include <QStringList>
+#include <QStandardPaths>
 #include <QTimer>
 
 // Plasma
@@ -38,11 +41,13 @@
 
 // KDE
 #include <KConfigGroup>
+#include <KSharedConfig>
 #include <KDesktopFile>
 #include <KLocalizedString>
 #include <KPluginMetaData>
 #include <KDeclarative/ConfigPropertyMap>
 #include <KConfigLoader>
+#include <KIconThemes/KIconTheme>
 
 namespace {
 constexpr const char kInternalViewSplitterPluginId[] = "org.kde.latte.splitter";
@@ -108,6 +113,92 @@ inline QString pluginIdFromMetaData(const KPluginMetaData &meta)
     }
 
     return QString();
+}
+
+bool iconExistsInCurrentTheme(const QString &iconName)
+{
+    KSharedConfigPtr kdeGlobals = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+    kdeGlobals->reparseConfiguration();
+    const KConfigGroup iconsGroup(kdeGlobals, QStringLiteral("Icons"));
+    QString currentTheme = iconsGroup.readEntry(QStringLiteral("Theme"), QString());
+
+    if (currentTheme.isEmpty()) {
+        currentTheme = KIconTheme::current();
+    }
+
+    if (iconName.isEmpty() || currentTheme.isEmpty()) {
+        return false;
+    }
+
+    const QStringList filters = {
+        iconName + QStringLiteral(".svg"),
+        iconName + QStringLiteral(".svgz"),
+        iconName + QStringLiteral(".png"),
+        iconName + QStringLiteral(".xpm")
+    };
+
+    QStringList searchPaths = QIcon::themeSearchPaths();
+    searchPaths << QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
+                                               QStringLiteral("icons"),
+                                               QStandardPaths::LocateDirectory);
+
+    for (const QString &dataPath : QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)) {
+        searchPaths << QDir(dataPath).filePath(QStringLiteral("icons"));
+    }
+
+    searchPaths.removeDuplicates();
+
+    for (const QString &searchPath : searchPaths) {
+        const QDir themeDir(QDir(searchPath).filePath(currentTheme));
+
+        if (!themeDir.exists()) {
+            continue;
+        }
+
+        QDirIterator iconFiles(themeDir.path(), filters, QDir::Files, QDirIterator::Subdirectories);
+        if (iconFiles.hasNext()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+QString originalColorIconName(const QString &iconName)
+{
+    const QString symbolicSuffix = QStringLiteral("-symbolic");
+
+    if (!iconName.endsWith(symbolicSuffix)) {
+        return {};
+    }
+
+    const QString strippedIcon = iconName.chopped(symbolicSuffix.size());
+    QStringList candidates;
+    QString candidate = strippedIcon;
+
+    // Prefer an exact non-symbolic icon from the active theme. If it is not
+    // supplied, progressively drop implementation-specific suffixes (for
+    // example, start-here-kde -> start-here) and use the first themed match.
+    while (!candidate.isEmpty()) {
+        candidates << candidate;
+
+        const int separator = candidate.lastIndexOf(QLatin1Char('-'));
+        if (separator <= 0) {
+            break;
+        }
+
+        candidate = candidate.left(separator);
+    }
+
+    for (const QString &themedCandidate : candidates) {
+        if (iconExistsInCurrentTheme(themedCandidate)) {
+            return themedCandidate;
+        }
+    }
+
+    // Themes can inherit icons or expose them through a non-filesystem
+    // engine. Preserve the exact-name fallback for those cases.
+    return QIcon::fromTheme(strippedIcon).isNull() ? QString{} : strippedIcon;
 }
 
 inline QStringList appletProvidesFromMetaData(const KPluginMetaData &meta)
@@ -1828,29 +1919,16 @@ void ContainmentInterface::applyOriginalIconColors(Plasma::Applet *applet)
         return;
     }
 
-    //! Only the Trash widget uses this path (issue #44): its Plasmoid.icon
-    //! appends "-symbolic" when it lives in a panel, and other applets
-    //! render monochrome through their own color masks that cannot be
-    //! overridden here.
-    if (pluginIdFromMetaData(applet->pluginMetaData()) != QLatin1String("org.kde.plasma.trash")) {
-        return;
-    }
-
     const int appletId = static_cast<int>(applet->id());
     const bool keepOriginal = m_appletsDisabledColoring.contains(appletId);
     const QString icon = applet->icon();
-    const QString suffix = QStringLiteral("-symbolic");
 
     if (keepOriginal) {
-        QString target;
-
-        if (icon.endsWith(suffix)) {
-            target = icon.chopped(suffix.size());
-        }
+        const QString target = originalColorIconName(icon);
 
         //! Only override when a full-color variant actually exists in the
-        //! icon theme, so applets whose only icon is symbolic are untouched.
-        if (!target.isEmpty() && target != icon && !QIcon::fromTheme(target).isNull()) {
+        //! icon theme, so symbolic-only applets are untouched.
+        if (!target.isEmpty() && target != icon) {
             m_iconOverrideOriginal.insert(appletId, icon);
             applet->setIcon(target);
             qCDebug(latteView) << "originalIconColors override"

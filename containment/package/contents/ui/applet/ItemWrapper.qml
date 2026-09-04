@@ -77,11 +77,21 @@ Item{
     opacity: appletColorizer.mustBeShown && appletItem.environment.isGraphicsSystemAccelerated ? 0 : 1
 
     // Apply native hover feedback only to compact applets that expose an icon.
-    // Trash is a special case: it deliberately keeps its themed non-symbolic
-    // icon, which Latte cannot always discover through the generic icon path.
     // Text-only and custom-painted applets therefore keep their own visuals.
     readonly property bool supportsHoveredIconEffect: communicator.appletMainIconIsFound
                                                       || appletItem.pluginName === "org.kde.plasma.trash"
+
+    // Some Plasma applets (for example the built-in Application Dashboard)
+    // render their compact icon outside a discoverable IconItem. The C++
+    // applet icon property still changes for these applets, but their native
+    // compact representation does not repaint from that property. Render the
+    // changed theme icon in Latte only for this generic, opt-in fallback path.
+    readonly property bool needsOriginalIconFallback: appletItem.userKeepsOriginalIconColors
+                                                       && !communicator.appletMainIconIsFound
+                                                       && appletItem.backendAppletRef
+                                                       && appletItem.backendAppletIcon
+                                                       && appletItem.backendAppletIconPath
+                                                       && !appletItem.backendAppletIcon.endsWith("-symbolic")
 
     property bool disableLengthScale: false
     property bool disableThicknessScale: false
@@ -535,6 +545,80 @@ Item{
                  && !appletItem.indicators.info.providesHoveredAnimation
         // Reuse Latte's existing parabolic hover state.  Adding an input item
         // above applets would steal the wave from neighbouring task icons.
+        opacity: visible && appletItem.containsMouse ? 1 : 0
+        brightness: 0.30
+        contrast: 0.1
+
+        Behavior on opacity {
+            NumberAnimation { duration: appletItem.animations.duration.large }
+        }
+    }
+
+    // A few Plasma applets render their compact icon outside a discoverable
+    // IconItem. Use the resolved theme file only for the explicit opt-in;
+    // Image keeps this fallback independent from Latte's custom IconItem.
+    Item {
+        id: originalIconFallback
+        anchors.fill: _wrapperContainer
+        z: 1100
+        scale: _wrapperContainer.scale
+        transformOrigin: _wrapperContainer.transformOrigin
+        visible: wrapper.needsOriginalIconFallback
+        property string iconPath: ""
+
+        function refreshIconPath() {
+            const nextPath = visible ? appletItem.currentBackendAppletIconPath() : "";
+
+            if (iconPath !== nextPath) {
+                iconPath = nextPath;
+            }
+        }
+
+        Component.onCompleted: refreshIconPath()
+        onVisibleChanged: refreshIconPath()
+
+        // Some applets expose their state through iconChanged without a QML
+        // property notification on the resolved backend object. Poll only
+        // while this opt-in fallback is visible so dynamic widgets such as
+        // volume and brightness keep their current state.
+        Timer {
+            interval: 100
+            repeat: true
+            running: originalIconFallback.visible
+            onTriggered: originalIconFallback.refreshIconPath()
+        }
+
+        Binding {
+            target: appletItem.applet
+            property: "opacity"
+            when: originalIconFallback.visible && appletItem.applet
+            value: 0
+        }
+
+        Image {
+            anchors.centerIn: parent
+            width: appletItem.metrics.iconSize
+            height: appletItem.metrics.iconSize
+            source: originalIconFallback.iconPath
+            sourceSize.width: width
+            sourceSize.height: height
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+        }
+    }
+
+    // The fallback image is above the native hover copy, so apply the same
+    // brightness effect to it when the generic original-color path is active.
+    MultiEffect {
+        id: hoveredOriginalIconEffect
+        anchors.fill: originalIconFallback
+        z: 1200
+        source: originalIconFallback
+        scale: originalIconFallback.scale
+        transformOrigin: originalIconFallback.transformOrigin
+        visible: originalIconFallback.visible
+                 && appletItem.indicators
+                 && !appletItem.indicators.info.providesHoveredAnimation
         opacity: visible && appletItem.containsMouse ? 1 : 0
         brightness: 0.30
         contrast: 0.1

@@ -108,6 +108,9 @@ public Q_SLOTS:
     Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, const int &x, const int &y);
     Q_INVOKABLE bool repairAppletContainers();
     Q_INVOKABLE QObject *resolveAppletQuickItem(QObject *applet) const;
+    Q_INVOKABLE int appletId(QObject *applet) const;
+    Q_INVOKABLE QString appletIcon(QObject *applet) const;
+    Q_INVOKABLE QString appletIconPath(QObject *applet) const;
 
     Q_INVOKABLE int dndSpacerIndex();
     Q_INVOKABLE int defaultInsertionIndex() const;
@@ -193,7 +196,6 @@ private:
     bool isJustifySplitter(const QQuickItem *item) const;
     bool isValidApplet(const int &id);
     bool insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *item, int x, int y);
-    int appletId(QObject *applet) const;
     int configuredAppletCount() const;
 
     int distanceFromTail(QQuickItem *layout, QPointF pos) const;

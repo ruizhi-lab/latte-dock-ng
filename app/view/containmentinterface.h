@@ -191,7 +191,7 @@ private:
     bool appletIsExpandable(PlasmaQuick::AppletQuickItem *appletQuickItem) const;
 
     //! Undo Plasma's panel "-symbolic" icon substitution for applets the user
-    //! asked to keep original colors (e.g. the Trash widget). Re-applied on
+    //! asked to keep original colors. Re-applied on
     //! every iconChanged because the applet's own QML binding re-runs on state
     //! changes and would otherwise restore the symbolic name.
     void applyOriginalIconColors(Plasma::Applet *applet);
