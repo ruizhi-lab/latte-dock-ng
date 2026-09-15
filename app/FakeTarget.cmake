@@ -11,7 +11,7 @@ add_custom_target(fake-target
 
 # qmllint: qml static syntax checker
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ECM_ENABLE_SANITIZERS)
-    find_program(QMLLINT qmllint)
+    find_program(QMLLINT NAMES qmllint-qt6 qmllint HINTS /usr/lib64/qt6/bin /usr/lib/qt6/bin)
 
     if(EXISTS "${QMLLINT}")
         message(STATUS "Found qmllint: ${QMLLINT}")

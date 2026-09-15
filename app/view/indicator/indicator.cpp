@@ -68,6 +68,7 @@ Indicator::Indicator(Latte::View *parent)
 Indicator::~Indicator()
 {
     unloadIndicators();
+    saveConfig();
 
     if (m_component) {
         m_component->deleteLater();
@@ -347,7 +348,16 @@ void Indicator::updateScheme()
         m_configLoader = new KConfigLoader(m_view->containment()->config().group(QStringLiteral("Indicator")).group(m_metadata.pluginId()), &file);
         m_configuration = new KDeclarative::ConfigPropertyMap(m_configLoader, this);
 
+        // In KF6, KConfigPropertyMap dropped autosave on property assignment,
+        // keeping changes in-memory until writeConfig() is explicitly called.
+        // Without writeConfig(), m_configLoader never writes dirty items to the
+        // underlying containment Indicator KConfigGroup, causing config.sync()
+        // to flush an empty group and resetting all indicator settings on restart.
         connect(m_configuration, &QQmlPropertyMap::valueChanged, this, [this]() {
+            if (m_configuration) {
+                m_configuration->writeConfig();
+            }
+
             if (m_view && m_view->containment()) {
                 auto config = m_view->containment()->config().group(QStringLiteral("Indicator"));
                 config.sync();
@@ -363,6 +373,7 @@ void Indicator::updateScheme()
     }
 
     if (prevConfiguration) {
+        prevConfiguration->writeConfig();
         prevConfiguration->deleteLater();
     }
 
@@ -383,6 +394,10 @@ void Indicator::loadConfig()
 
 void Indicator::saveConfig()
 {
+    if (m_configuration) {
+        m_configuration->writeConfig();
+    }
+
     auto config = m_view->containment()->config().group(QStringLiteral("Indicator"));
     config.writeEntry(QStringLiteral("customType"), m_customType);
     config.writeEntry(QStringLiteral("enabled"), m_enabled);

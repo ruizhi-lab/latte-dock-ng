@@ -2781,6 +2781,8 @@ void SourceContractTest::appearanceConfigPreservesIndicatorStyleConfiguration()
 
     // Indicator scheme update must connect valueChanged to immediately sync config to disk.
     QVERIFY(indicatorCppSrc.contains(QStringLiteral("connect(m_configuration, &QQmlPropertyMap::valueChanged")));
+    // In KF6, KConfigPropertyMap does not autosave, so valueChanged and saveConfig must call writeConfig().
+    QVERIFY(indicatorCppSrc.contains(QStringLiteral("m_configuration->writeConfig()")));
 }
 
 void SourceContractTest::mainCppMessageSuppressionCoversFrameworkWarnings()
