@@ -351,6 +351,9 @@ target_link_libraries(indicatorunittest
     Qt6::Test
     Qt6::Widgets
     KF6::Archive
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::ConfigQml
     KF6::CoreAddons
     KF6::I18n
     KF6::Notifications
