@@ -50,6 +50,13 @@ that specification review does not replace an actual 3.20 parser/configure
 run. Keep M1a **Pending validation** for that check; do not report minimum
 version compatibility as tested.
 
+The oldest supported distro acceptance target is Debian 13.7's packaged stack:
+CMake 3.31.6-2, Qt 6.8.2, KF 6.13 and Plasma 6.3.6. `docker/verify-install.sh`
+now checks the package minimums and records the exact installed package
+versions before the install/build verification. This CI check remains Pending
+until the Debian 13 job runs. Gentoo, Arch and Fedora jobs provide moving
+forward-compatibility coverage and should record their component versions.
+
 ## Exact commands
 
 From the repository root:
@@ -70,11 +77,11 @@ ctest --test-dir "build/modernization/<preset>" --show-only=json-v1
 
 ## Handoff
 
-Next action: implement **M1b only**. Update the GCC/Clang jobs in
+Next action: continue **M1b only**. Update the GCC/Clang jobs in
 `.github/workflows/build.yml` to use the corresponding configure/build/test
 presets and eight build jobs. Preserve syntax/deep QML lint and distro/package
 checks, validate workflow syntax and job-to-preset mapping, then record remote
 CI as Pending validation until the affected jobs run. M1b can use the local
-M1a evidence; keep the CMake 3.20 execution item open until a 3.20 binary is
-available. The user authorized automatic commits and pushes on this branch;
-never push another branch or a tag.
+M1a evidence; validate both the CMake 3.20 floor and Debian 13.7 package stack
+in CI. The user authorized automatic commits and pushes on this branch; never
+push another branch or a tag.

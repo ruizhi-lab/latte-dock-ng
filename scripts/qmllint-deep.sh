@@ -1,28 +1,7 @@
 #!/usr/bin/env bash
-# Type-resolution QML lint against a configured/built build tree.
-#
-# Unlike scripts/qmllint.sh (syntax-only gate, no build required), this
-# script feeds qmllint the module import paths it needs to actually resolve
-# types:
-#   - <build-dir>/qml/                          the three generated latte QML
-#                                               modules (core, containment,
-#                                               tasks) with plugins.qmltypes
-#   - a staged import root for the pure-QML     org.kde.latte.abilities,
-#     modules installed as loose files          org.kde.latte.components and
-#                                               the org.kde.latte.compat shim
-#   - the system QML directory (default)        Qt and Plasma modules
-#
-# Gate (deliberately narrow, see README notes in the repository):
-#   1. qmllint errors (syntax/type errors) fail the run.
-#   2. Failed imports of the three org.kde.latte.* modules WE build fail the
-#      run: a broken qmldir, plugin or install layout must not slip through.
-# Everything else (7k+ legacy warnings inherited from upstream latte-dock:
-# unqualified access, missing properties, runtime-registered
-# org.kde.latte.private.app imports that can never resolve on disk, ...)
-# is summarized per category and written to <build-dir>/qmllint-deep.log
-# for triage, but does not fail the run.
-#
-# Usage: scripts/qmllint-deep.sh [build-dir]   (default: ./build)
+# Type-resolution QML lint against a configured and built build tree.
+# Raw output, execution manifests and normalized diagnostics stay under the
+# build directory so a failed CI job can be compared without rerunning it.
 
 set -uo pipefail
 
@@ -41,13 +20,12 @@ if [[ -z "$qmllint" ]]; then
     exit 1
 fi
 
-module_dir="$build_dir/qml/org/kde/latte"
-if [[ ! -d "$module_dir/core" ]]; then
-    echo "error: $module_dir/core not found — configure and build the QML modules first (cmake -B <dir> && cmake --build <dir> --target lattecoreplugin)" >&2
+module_root="$build_dir/qml/org/kde/latte"
+if [[ ! -d "$module_root/core" ]]; then
+    echo "error: $module_root/core not found — configure and build QML modules first" >&2
     exit 1
 fi
 
-# Stage the loose-file latte modules under one import root.
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
 mkdir -p "$stage/org/kde/latte/compat"
@@ -57,78 +35,76 @@ ln -sfn "$root/compat/qml/org/kde/latte/compat/taskmanager" "$stage/org/kde/latt
 
 mapfile -t files < <(git -C "$root" ls-files '*.qml')
 if [[ ${#files[@]} -eq 0 ]]; then
-    echo "qmllint-deep: no QML files found"
-    exit 0
+    echo "qmllint-deep: no QML files found" >&2
+    exit 1
 fi
 
+evidence="$build_dir/qmllint-baseline"
+mkdir -p "$evidence/raw"
 log="$build_dir/qmllint-deep.log"
 : > "$log"
 
-# Categories promoted to error level once their backlog reaches zero.
-# Protocol (docs/qmllint-backlog-plan.md): a category may be appended here
-# after two consecutive zero-warning measurements with green CI; the gate
-# then fails on any new occurrence. Waived categories are never added.
+# Promote only categories with two comparable zero-warning runs and green CI.
 PROMOTED_ERROR_CATEGORIES=(
-    # Phase 1 will promote: unused-imports, signal-handler-parameters, ...
+    # The backlog has no category with two consecutive zero-warning runs yet.
 )
 
-args=(--ignore-settings --max-warnings -1 -I "$build_dir/qml" -I "$stage")
-for category in "${PROMOTED_ERROR_CATEGORIES[@]}"; do
-    args+=("--$category" error)
-done
-
 echo "qmllint-deep: linting ${#files[@]} QML files with import resolution ($qmllint)"
-echo "qmllint-deep: import roots: $build_dir/qml, staged latte modules, system qml"
+echo "qmllint-deep: import roots: build QML modules, staged Latte modules, system QML"
+version=$("$qmllint" --version 2>&1)
+printf '%s\n' "$version" > "$evidence/qmllint-version.txt"
+python3 - "$root" "$evidence/expected-files.json" "${files[@]}" <<'PY'
+import json
+import sys
+from pathlib import Path
 
+root = Path(sys.argv[1]).resolve()
+files = sorted({Path(path).resolve().relative_to(root).as_posix() for path in sys.argv[3:]})
+Path(sys.argv[2]).write_text(json.dumps(files, indent=2) + "\n", encoding="utf-8")
+PY
+
+run_args=(run --qmllint "$qmllint" --source-root "$root"
+    --expected-files "$evidence/expected-files.json"
+    --build-qml "$build_dir/qml" --staged-qml "$stage"
+    --manifest "$evidence/manifest.json" --raw-dir "$evidence/raw"
+    --tool-version "$version" --import-root "<build-qml>" --import-root "<staged-latte-qml>"
+    --import-root "<system-qml>" --environment "host=$(. /etc/os-release && printf '%s-%s' "$ID" "$VERSION_ID")")
+for category in "${PROMOTED_ERROR_CATEGORIES[@]}"; do
+    run_args+=(--error-category "$category")
+done
 failed=0
-chunk=200
-total=${#files[@]}
-for ((start = 0; start < total; start += chunk)); do
-    batch=("${files[@]:start:chunk}")
-    "$qmllint" "${args[@]}" "${batch[@]}" >>"$log" 2>&1
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        failed=1
-    fi
-done
+python3 "$root/scripts/qmllint-baseline.py" "${run_args[@]}" --output "$evidence/current.json" >"$log" 2>&1 || failed=1
 
-# Gate 2: the three generated modules must be complete in the build tree.
-# (Do NOT rely on import-failure greps alone: on machines with a system
-# latte-dock installed, qmllint silently falls back to the system module.)
-for module in core private/containment private/tasks; do
-    module_dir_abs="$build_dir/qml/org/kde/latte/$module"
-    for artifact in qmldir; do
-        if [[ ! -f "$module_dir_abs/$artifact" ]]; then
-            echo "qmllint-deep: FAILED — missing $module_dir_abs/$artifact (run the build first)" >&2
-            failed=1
-        fi
-    done
-    plugin_line=$(grep -E '^plugin ' "$module_dir_abs/qmldir" 2>/dev/null | awk '{print $2}')
-    if [[ -z "$plugin_line" ]]; then
-        echo "qmllint-deep: FAILED — no plugin line in $module_dir_abs/qmldir" >&2
-        failed=1
-    elif [[ ! -f "$module_dir_abs/$plugin_line.so" && ! -f "$module_dir_abs/lib$plugin_line.so" ]]; then
-        echo "qmllint-deep: FAILED — plugin library for $plugin_line not found in $module_dir_abs" >&2
-        failed=1
-    fi
-done
-
-# Gate 3: when no system latte-dock masks resolution (e.g. CI containers),
-# a latte-generated module failing to import means the build tree is broken.
-if grep -qE 'Failed to import org\.kde\.latte\.(core|private\.(containment|tasks))\b' "$log"; then
-    echo "qmllint-deep: FAILED — latte-generated QML modules did not resolve:" >&2
-    grep -E 'Failed to import org\.kde\.latte\.(core|private\.(containment|tasks))\b' "$log" | sort -u | head >&2
-    failed=1
+python3 "$root/scripts/qmllint-baseline.py" check-modules --build-qml "$build_dir/qml" || failed=1
+if [[ -f "$evidence/current.json" ]]; then
+    python3 "$root/scripts/qmllint-baseline.py" check-imports --report "$evidence/current.json" || failed=1
 fi
 
-echo "qmllint-deep: warning categories (full log: $log):"
-# Only parse "Warning:"/"Info:" lines: code-context lines may end in
-# brackets too (e.g. "grid.children[i]") and would pollute the histogram.
-# (unused-imports is emitted at info level by current qmllint versions.)
-grep -E '^(Warning|Info): ' "$log" | grep -oE '\[[A-Za-z][A-Za-z0-9.-]*\]$' | sort | uniq -c | sort -rn | sed 's/^/  /'
+if [[ -f "$evidence/current.json" ]]; then
+    python3 - "$evidence/current.json" <<'PY'
+import collections
+import json
+import sys
+from pathlib import Path
+
+report = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+counts = collections.Counter()
+for diagnostic in report["diagnostics"]:
+    counts[diagnostic["category"]] += diagnostic["count"]
+print("qmllint-deep: warning counts (raw logs and report: " + str(Path(sys.argv[1]).parent) + "):")
+for category, count in counts.most_common():
+    print(f"  {count:5} {category}")
+PY
+fi
+
+if [[ -f "$root/docs/qmllint-baseline.json" && -f "$evidence/current.json" ]]; then
+    python3 "$root/scripts/qmllint-baseline.py" compare \
+        --baseline "$root/docs/qmllint-baseline.json" --current "$evidence/current.json" \
+        --output "$evidence/comparison.json" >"$evidence/comparison.log" 2>&1 || failed=1
+fi
 
 if [[ $failed -ne 0 ]]; then
-    echo "qmllint-deep: FAILED (see $log)" >&2
+    echo "qmllint-deep: FAILED (see $log and $evidence)" >&2
     exit 1
 fi
-echo "qmllint-deep: OK"
+echo "qmllint-deep: OK (evidence: $evidence)"

@@ -75,6 +75,12 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(dockerVerifySource.contains(QStringLiteral("user helper binary")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("user kicker action")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("-perm -111")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("record_build_stack")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("verify_debian13_build_stack")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("cmake:3.31.6")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("qt6-base-dev:6.8.2")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("libkf6coreaddons-dev:6.13.0")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("libplasma-dev:6.3.6")));
 
     QFile archPackage(QStringLiteral(LATTE_SOURCE_DIR "/docker/package-arch.sh"));
     QVERIFY(archPackage.open(QFile::ReadOnly));

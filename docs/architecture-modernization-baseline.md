@@ -53,7 +53,9 @@ These findings remain for M2a/M2b and M3; M0 made no production changes.
 
 | Area | Evidence | Consequence |
 | --- | --- | --- |
-| Floors | CMake 3.20; C++20; Qt 6.6; KF6 6.0; Plasma 6.3 | Keep floors; validate APIs/preset schema against them. |
+| Source floors | CMake 3.20; C++20; Qt 6.6; KF6 6.0; Plasma 6.3 | Preserve these declared source compatibility floors. |
+| Oldest supported distro acceptance | Debian 13.7: CMake 3.31.6-2; Qt 6.8.2; KF6 6.13; Plasma 6.3.6 | Verify and record these packaged versions in the Debian 13 CI build; do not confuse them with source-declared floors. |
+| Forward-compatibility distro acceptance | Gentoo, Arch and Fedora stable package stacks | Record versions from CI runs; rolling package versions are not pinned in the plan. |
 | Application | app/CMakeLists.txt collects sources in latte-dock-ng; subdirectories append through PARENT_SCOPE | A directory is not an enforced library boundary. |
 | Host symbols | latte-dock-ng enables exports and default C++ visibility for private.app | Hidden visibility or target extraction can break imports. |
 | QML modules | C++ core/containment/tasks/app modules use generated registration/metadata; abilities/components install loose QML | Preserve module-specific metadata and both installation roots. |

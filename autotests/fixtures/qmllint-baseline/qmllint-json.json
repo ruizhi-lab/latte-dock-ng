@@ -3,7 +3,7 @@
   "files": [
     {
       "filename": "a.qml",
-      "success": false,
+      "success": true,
       "warnings": [
         {
           "charOffset": 12,

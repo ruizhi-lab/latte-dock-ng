@@ -134,8 +134,9 @@ failure; distinguish M0 evidence collection from a validated green baseline.
 
 ## M1a: Reproducible presets
 
-**Files:** CMakePresets.json (new), .gitignore, .clangd and testing documentation.
-**Do not change:** install.sh behavior, dependency floors or CI yet.
+**Files:** CMakePresets.json (new), .gitignore, .clangd, the Debian 13 build
+version assertion and testing documentation.
+**Do not change:** install.sh behavior or the source-declared dependency floors.
 
 **Steps:** use JSON schema version 2 compatible with CMake 3.20. Set explicit
 C/C++ compilers, separate binary directories, Debug/Release, BUILD_TESTING=ON
@@ -147,9 +148,12 @@ an explicit local database selection; do not hard-code a developer path or
 create a global symlink that changes another developer's database selection.
 
 **Acceptance:** list/configure/build/test all four presets; compare registrations
-with M0. Verify schema-v2 parsing with CMake 3.20 as well as the local version;
-an unavailable minimum-version check stays pending. Existing user-mode install
-remains supported. Do not introduce unsupported workflow presets.
+with M0. Verify schema-v2 parsing with CMake 3.20 as well as the local version.
+Also record the Debian 13.7 default CMake 3.31.6-2 and desktop stack (Qt 6.8.2,
+KF 6.13, Plasma 6.3.6) from its package build. Keep these environment checks
+distinct from the source-declared compatibility floors. An unavailable check
+stays pending. Existing user-mode install remains supported. Do not introduce
+unsupported workflow presets.
 
 ## M1b: Use presets in CI
 

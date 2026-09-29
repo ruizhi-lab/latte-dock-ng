@@ -6,10 +6,12 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import os
 from pathlib import Path
 import platform
 from pathlib import PurePosixPath
 import re
+import subprocess
 import sys
 from typing import Any
 
@@ -410,6 +412,150 @@ def _compare(args: argparse.Namespace) -> int:
         return 2
 
 
+def _run(args: argparse.Namespace) -> int:
+    """Lint every expected file in bounded chunks and retain complete evidence."""
+    source_root = Path(args.source_root).resolve()
+    try:
+        if args.chunk_size < 1:
+            raise BaselineError("chunk size must be positive")
+        expected = _canonical_expected_files(_load_json(Path(args.expected_files), "expected-file"), source_root)
+        raw_dir = Path(args.raw_dir)
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        process_codes: list[int] = []
+        file_codes: dict[str, int] = {}
+        combined_files: list[dict[str, Any]] = []
+        command_error: str | None = None
+
+        # Remove caller-provided QML search paths so a user-installed Latte
+        # module cannot satisfy imports that should resolve from this build.
+        clean_environment = os.environ.copy()
+        for name in ("QML_IMPORT_PATH", "QML2_IMPORT_PATH", "QML2_IMPORTS"):
+            clean_environment.pop(name, None)
+
+        for chunk_index, start in enumerate(range(0, len(expected), args.chunk_size)):
+            chunk = expected[start:start + args.chunk_size]
+            command = [args.qmllint, "--ignore-settings", "--max-warnings", "-1", "--json", "-",
+                       "-I", args.build_qml, "-I", args.staged_qml]
+            for category in args.error_category:
+                command.extend((f"--{category}", "error"))
+            command.extend(str(source_root / file) for file in chunk)
+            try:
+                completed = subprocess.run(command, cwd=source_root, env=clean_environment,
+                                           text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                           check=False)
+                process_codes.append(completed.returncode)
+                chunk_raw = raw_dir / f"chunk-{chunk_index:03d}.json"
+                chunk_raw.write_text(completed.stdout, encoding="utf-8")
+                (raw_dir / f"chunk-{chunk_index:03d}.stderr.log").write_text(
+                    completed.stderr, encoding="utf-8")
+                for file in chunk:
+                    file_codes[file] = completed.returncode
+                try:
+                    chunk_report = json.loads(completed.stdout)
+                    if not isinstance(chunk_report, dict) or chunk_report.get("revision") != JSON_REVISION or not isinstance(chunk_report.get("files"), list):
+                        raise BaselineError(f"qmllint chunk {chunk_index} returned an unsupported JSON report")
+                    combined_files.extend(chunk_report["files"])
+                except (json.JSONDecodeError, UnicodeError) as error:
+                    command_error = f"qmllint chunk {chunk_index} returned malformed or truncated JSON: {error}"
+            except OSError as error:
+                process_codes.append(127)
+                for file in chunk:
+                    file_codes[file] = 127
+                command_error = f"cannot execute qmllint chunk {chunk_index}: {error}"
+
+        manifest = {
+            "schemaVersion": MANIFEST_SCHEMA_VERSION,
+            "complete": command_error is None and all(code == 0 for code in process_codes),
+            "attemptedFiles": expected,
+            "fileExitCodes": file_codes,
+            "processExitCodes": process_codes,
+        }
+        manifest_path = Path(args.manifest)
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        raw_path = raw_dir / "qmllint.json"
+        raw_path.write_text(json.dumps({"revision": JSON_REVISION, "files": combined_files},
+                                       indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        if command_error:
+            raise BaselineError(command_error)
+        report = build_report(raw_path.read_text(encoding="utf-8"), "json", manifest, expected,
+                              source_root, args.tool_version, args.import_root,
+                              _read_environment(args.environment))
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"qmllint-baseline: linted {len(expected)} files in {len(process_codes)} processes; "
+              f"wrote {output} ({len(report['diagnostics'])} identities)")
+        return 0
+    except (BaselineError, OSError, UnicodeError) as error:
+        print(f"qmllint-baseline: error: {error}", file=sys.stderr)
+        return 1
+
+
+def _validate_generated_modules(build_qml: Path) -> list[str]:
+    failures: list[str] = []
+    modules = ("core", "private/app", "private/containment", "private/tasks")
+    for module in modules:
+        module_dir = build_qml / "org/kde/latte" / module
+        qmldir = module_dir / "qmldir"
+        expected_uri = "org.kde.latte." + module.replace("/", ".")
+        if not qmldir.is_file():
+            failures.append(f"missing {qmldir}")
+            continue
+        try:
+            lines = qmldir.read_text(encoding="utf-8").splitlines()
+        except (OSError, UnicodeError) as error:
+            failures.append(f"cannot read {qmldir}: {error}")
+            continue
+        fields = [line.split() for line in lines if line.strip() and not line.lstrip().startswith("#")]
+        values = {key: [entry[1] for entry in fields if len(entry) == 2 and entry[0] == key]
+                  for key in ("module", "plugin", "typeinfo")}
+        if values["module"] != [expected_uri]:
+            failures.append(f"expected one module {expected_uri} declaration in {qmldir}")
+        if len(values["plugin"]) != 1:
+            failures.append(f"expected one plugin declaration in {qmldir}")
+        else:
+            plugin = values["plugin"][0]
+            if not any((module_dir / name).is_file() for name in (plugin + ".so", "lib" + plugin + ".so")):
+                failures.append(f"plugin library {plugin} is missing under {module_dir}")
+        if len(values["typeinfo"]) != 1:
+            failures.append(f"expected one typeinfo declaration in {qmldir}")
+        elif not (module_dir / values["typeinfo"][0]).is_file():
+            failures.append(f"referenced typeinfo {values['typeinfo'][0]} is missing under {module_dir}")
+    return failures
+
+
+def _validate_import_report(report: Any) -> list[str]:
+    _validate_report(report, "current")
+    failures = []
+    for diagnostic in report["diagnostics"]:
+        if diagnostic["category"] == "import" and re.search(
+            r"Failed to import org\.kde\.latte\.(?:core|private\.(?:containment|tasks))\b",
+            diagnostic["message"],
+        ):
+            failures.append(f"failed build-owned module import in {diagnostic['file']}: {diagnostic['message']}")
+    return failures
+
+
+def _check_modules(args: argparse.Namespace) -> int:
+    failures = _validate_generated_modules(Path(args.build_qml))
+    for failure in failures:
+        print(f"qmllint-baseline: FAILED — {failure}", file=sys.stderr)
+    return 1 if failures else 0
+
+
+def _check_imports(args: argparse.Namespace) -> int:
+    try:
+        report = _load_json(Path(args.report), "current diagnostic report")
+        failures = _validate_import_report(report)
+        for failure in failures:
+            print(f"qmllint-baseline: FAILED — {failure}", file=sys.stderr)
+        return 1 if failures else 0
+    except (BaselineError, OSError, UnicodeError) as error:
+        print(f"qmllint-baseline: error: {error}", file=sys.stderr)
+        return 2
+
+
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -430,6 +576,30 @@ def _argument_parser() -> argparse.ArgumentParser:
     compare.add_argument("--current", required=True)
     compare.add_argument("--output", help="optional additions/removals JSON report")
     compare.set_defaults(handler=_compare)
+
+    run = commands.add_parser("run", help="lint a complete QML inventory and retain raw evidence")
+    run.add_argument("--qmllint", required=True)
+    run.add_argument("--source-root", required=True)
+    run.add_argument("--expected-files", required=True)
+    run.add_argument("--build-qml", required=True)
+    run.add_argument("--staged-qml", required=True)
+    run.add_argument("--chunk-size", type=int, default=200)
+    run.add_argument("--error-category", action="append", default=[])
+    run.add_argument("--manifest", required=True)
+    run.add_argument("--raw-dir", required=True)
+    run.add_argument("--tool-version", required=True)
+    run.add_argument("--import-root", action="append", default=[])
+    run.add_argument("--environment", action="append", default=[], metavar="NAME=VALUE")
+    run.add_argument("--output", required=True)
+    run.set_defaults(handler=_run)
+
+    modules = commands.add_parser("check-modules", help="verify generated qmldir plugin and typeinfo artifacts")
+    modules.add_argument("--build-qml", required=True)
+    modules.set_defaults(handler=_check_modules)
+
+    imports = commands.add_parser("check-imports", help="reject failed imports of build-owned Latte modules")
+    imports.add_argument("--report", required=True)
+    imports.set_defaults(handler=_check_imports)
     return parser
 
 

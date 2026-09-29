@@ -220,6 +220,108 @@ class QmllintBaselineTest(unittest.TestCase):
             )
             self.assertEqual(comparison.returncode, 1, comparison.stdout + comparison.stderr)
 
+    def test_run_collects_all_chunks_raw_logs_and_exit_codes(self) -> None:
+        with tempfile.TemporaryDirectory() as output_dir:
+            directory = Path(output_dir)
+            expected_path = directory / "expected.json"
+            expected_path.write_text(json.dumps(self.expected), encoding="utf-8")
+            fake_qmllint = directory / "fake-qmllint"
+            fake_qmllint.write_text(
+                "#!/usr/bin/env python3\n"
+                "import json, pathlib, sys\n"
+                "if '--version' in sys.argv: print('qmllint 6.11.2'); raise SystemExit(0)\n"
+                "files = [arg for arg in sys.argv if arg.endswith('.qml')]\n"
+                "print(json.dumps({'revision': 4, 'files': ["
+                "{'filename': file, 'success': True, 'warnings': []} for file in files]}))\n",
+                encoding="utf-8",
+            )
+            fake_qmllint.chmod(0o755)
+            output = directory / "report.json"
+            manifest = directory / "manifest.json"
+            raw_dir = directory / "raw"
+            result = qmllint_baseline.main([
+                "run", "--qmllint", str(fake_qmllint), "--source-root", str(self.root),
+                "--expected-files", str(expected_path), "--build-qml", str(directory / "qml"),
+                "--staged-qml", str(directory / "stage"), "--chunk-size", "1",
+                "--manifest", str(manifest), "--raw-dir", str(raw_dir),
+                "--tool-version", "qmllint 6.11.2", "--import-root", "<build-qml>",
+                "--environment", "qt=6.11.2", "--output", str(output),
+            ])
+            self.assertEqual(result, 0)
+            report = json.loads(output.read_text(encoding="utf-8"))
+            run_manifest = json.loads(manifest.read_text(encoding="utf-8"))
+            self.assertEqual(report["manifest"]["attemptedFiles"], self.expected)
+            self.assertEqual(run_manifest["processExitCodes"], [0, 0])
+            self.assertEqual(sorted(Path(raw_dir).glob("chunk-*.json")).__len__(), 2)
+
+    def test_run_preserves_failed_process_exit_and_does_not_write_report(self) -> None:
+        with tempfile.TemporaryDirectory() as output_dir:
+            directory = Path(output_dir)
+            expected_path = directory / "expected.json"
+            expected_path.write_text(json.dumps(self.expected), encoding="utf-8")
+            fake_qmllint = directory / "failed-qmllint"
+            fake_qmllint.write_text(
+                "#!/usr/bin/env python3\n"
+                "import json, sys\n"
+                "if '--version' in sys.argv: print('qmllint 6.11.2'); raise SystemExit(0)\n"
+                "files = [arg for arg in sys.argv if arg.endswith('.qml')]\n"
+                "print(json.dumps({'revision': 4, 'files': ["
+                "{'filename': file, 'success': False, 'warnings': []} for file in files]}))\n"
+                "raise SystemExit(1)\n",
+                encoding="utf-8",
+            )
+            fake_qmllint.chmod(0o755)
+            manifest = directory / "manifest.json"
+            output = directory / "report.json"
+            result = qmllint_baseline.main([
+                "run", "--qmllint", str(fake_qmllint), "--source-root", str(self.root),
+                "--expected-files", str(expected_path), "--build-qml", str(directory / "qml"),
+                "--staged-qml", str(directory / "stage"), "--manifest", str(manifest),
+                "--raw-dir", str(directory / "raw"), "--tool-version", "qmllint 6.11.2",
+                "--import-root", "<build-qml>", "--environment", "qt=6.11.2",
+                "--output", str(output),
+            ])
+            self.assertEqual(result, 1)
+            run_manifest = json.loads(manifest.read_text(encoding="utf-8"))
+            self.assertEqual(run_manifest["processExitCodes"], [1])
+            self.assertFalse(run_manifest["complete"])
+            self.assertFalse(output.exists())
+
+    def test_generated_module_checker_uses_declared_typeinfo_and_plugin_names(self) -> None:
+        build_qml = self.root / "build" / "qml"
+        for module in ("core", "private/app", "private/containment", "private/tasks"):
+            module_dir = build_qml / "org/kde/latte" / module
+            module_dir.mkdir(parents=True)
+            uri = "org.kde.latte." + module.replace("/", ".")
+            (module_dir / "qmldir").write_text(
+                f"module {uri}\nplugin generated_{module.replace('/', '_')}\n"
+                "typeinfo generated_types.qmltypes\n",
+                encoding="utf-8",
+            )
+            (module_dir / f"libgenerated_{module.replace('/', '_')}.so").touch()
+            (module_dir / "generated_types.qmltypes").touch()
+        self.assertEqual(qmllint_baseline._validate_generated_modules(build_qml), [])
+
+        private_dir = build_qml / "org/kde/latte/private/app"
+        (private_dir / "generated_types.qmltypes").unlink()
+        failures = qmllint_baseline._validate_generated_modules(build_qml)
+        self.assertTrue(any("referenced typeinfo generated_types.qmltypes is missing" in item for item in failures))
+
+        (private_dir / "generated_types.qmltypes").touch()
+        (private_dir / "libgenerated_private_app.so").unlink()
+        failures = qmllint_baseline._validate_generated_modules(build_qml)
+        self.assertTrue(any("plugin library generated_private_app is missing" in item for item in failures))
+
+    def test_build_owned_import_failures_are_fatal_even_with_warning_exit(self) -> None:
+        report = self.build_json_report()
+        report["diagnostics"].append({
+            "file": "a.qml", "category": "import", "severity": "warning",
+            "message": "Failed to import org.kde.latte.private.tasks", "count": 1,
+        })
+        failures = qmllint_baseline._validate_import_report(report)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("build-owned module import", failures[0])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

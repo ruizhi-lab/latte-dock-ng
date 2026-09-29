@@ -49,7 +49,34 @@ ctest --preset gcc-debug
 Use `gcc-release`, `clang-debug` or `clang-release` to select the other
 compiler/configuration. `CMakeUserPresets.json` is intentionally ignored for
 machine-local choices. The project presets require CMake 3.20 schema-v2
-support.
+support. Keep CMake 3.20 as the source compatibility floor. The Debian 13.7
+container separately verifies its packaged minimum stack: CMake 3.31.6, Qt
+6.8.2, KDE Frameworks 6.13 and Plasma 6.3.6. Gentoo, Arch and Fedora checks
+record their current stable versions as forward-compatibility evidence.
+
+## Deep QML lint and baseline review
+
+The syntax-only check and the build-aware deep check serve different purposes.
+The latter records raw JSON chunks, stderr, complete file coverage and process
+exit codes under the selected build directory. It checks each generated Latte
+`qmldir` against its declared plugin library and typeinfo file, and compares
+diagnostics with the reviewed baseline when fingerprints match.
+
+```bash
+bash scripts/qmllint.sh
+bash scripts/qmllint-deep.sh build/modernization/gcc-debug
+python3 scripts/qmllint-baseline.py compare \
+    --baseline docs/qmllint-baseline.json \
+    --current build/modernization/gcc-debug/qmllint-baseline/current.json
+```
+
+The full category inventory, dynamic-interface exceptions, promotion criteria
+and review workflow are in [qmllint-backlog-plan.md](qmllint-backlog-plan.md).
+Do not copy a current report over the baseline to clear a failed comparison.
+Inspect the environment fingerprint and additions/removals first. Standalone
+lint cannot validate `org.kde.latte.private.app`, whose plugin resolves symbols
+from the Latte application host; its metadata and build artifacts are checked
+separately, and host behavior requires an application-level smoke/retest.
 
 ```bash
 cmake -S . -B build-autotests-gcc -DBUILD_TESTING=ON

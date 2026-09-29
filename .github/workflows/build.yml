@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
     tags: ["v*"]
   pull_request:
     branches: [main]
@@ -51,7 +51,7 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get install -y --no-install-recommends \
-            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon \
+            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon python3 \
             qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-tools-dev \
             libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
             libkf6crash-dev libkf6dbusaddons-dev libkf6declarative-dev \
@@ -96,6 +96,17 @@ jobs:
       - name: Deep QML lint
         run: ./scripts/qmllint-deep.sh "build/modernization/${{ matrix.preset }}"
 
+      - name: Retain QML baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qmllint-baseline-${{ matrix.preset }}
+          path: |
+            build/modernization/${{ matrix.preset }}/qmllint-deep.log
+            build/modernization/${{ matrix.preset }}/qmllint-baseline/
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload build diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -119,7 +130,7 @@ jobs:
       - name: Install qmllint
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends qt6-declarative-dev qt6-declarative-dev-tools
+          apt-get install -y --no-install-recommends python3 qt6-declarative-dev qt6-declarative-dev-tools
 
       - uses: actions/checkout@v4
 
