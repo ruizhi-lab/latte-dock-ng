@@ -5,42 +5,17 @@
 
 #include <QObject>
 #include <QRect>
-#include <QStringList>
 #include <QTest>
 #include <Plasma/Plasma>
 
-// Replicates core logic from app/view/visibilitymanager.cpp
+// These pure geometry and mode checks avoid hosting a full Plasma view;
+// hiding-blocker behavior is tested against its production helper.
 
 namespace VisibilityMode {
 enum Type { AlwaysVisible = 0, AutoHide = 1, DodgeActive = 2, DodgeMaximized = 3, DodgeAllWindows = 4,
             WindowsGoBelow = 5, WindowsCanCover = 6, WindowsAlwaysCover = 7, SidebarOnDemand = 8, SidebarAutoHide = 9
           };
 }
-
-class BlockHidingEvents
-{
-public:
-    bool isBlocked() const { return !m_events.isEmpty(); }
-
-    bool hasEvent(const QString &t) const { return !t.isEmpty() && m_events.contains(t); }
-
-    bool addEvent(const QString &t) {
-        if (m_events.contains(t) || t.isEmpty()) return false;
-
-        bool was = isBlocked(); m_events << t; return was != isBlocked();
-    }
-
-    bool removeEvent(const QString &t) {
-        if (!m_events.contains(t) || t.isEmpty()) return false;
-
-        bool was = isBlocked(); m_events.removeAll(t); return was != isBlocked();
-    }
-
-    int count() const { return m_events.size(); }
-
-private:
-    QStringList m_events;
-};
 
 QRect computeStruts(const QRect &screen, const QRect &view, Plasma::Types::Location loc, int thickness)
 {
@@ -96,15 +71,6 @@ class VisibilityLogicTest : public QObject
 {
     Q_OBJECT
 private Q_SLOTS:
-    void initiallyNotBlocked();
-    void addMakesBlocked();
-    void removeLastMakesUnblocked();
-    void duplicateIgnored();
-    void emptyTypeIgnored();
-    void multipleEventsKeepBlocked();
-    void removeOneOfMultipleStillBlocked();
-    void addReturnsChangedWhenStatusFlips();
-
     void topStrutsAlignsWithView();
     void bottomStrutsHugsBottom();
     void zeroThicknessEmpty();
@@ -121,39 +87,6 @@ private Q_SLOTS:
     void dodgeHidesWhenWindowTouchingWithoutMouse();
     void sidebarOnDemandToggle();
 };
-
-void VisibilityLogicTest::initiallyNotBlocked() { BlockHidingEvents e; QVERIFY(!e.isBlocked()); }
-
-void VisibilityLogicTest::addMakesBlocked() { BlockHidingEvents e; e.addEvent(QStringLiteral("drag")); QVERIFY(e.isBlocked()); }
-
-void VisibilityLogicTest::removeLastMakesUnblocked()
-{
-    BlockHidingEvents e; e.addEvent(QStringLiteral("drag")); e.removeEvent(QStringLiteral("drag")); QVERIFY(!e.isBlocked());
-}
-
-void VisibilityLogicTest::duplicateIgnored()
-{
-    BlockHidingEvents e; QVERIFY(e.addEvent(QStringLiteral("menu"))); QVERIFY(!e.addEvent(QStringLiteral("menu"))); QCOMPARE(e.count(), 1);
-}
-
-void VisibilityLogicTest::emptyTypeIgnored() { BlockHidingEvents e; QVERIFY(!e.addEvent(QString())); QVERIFY(!e.isBlocked()); }
-
-void VisibilityLogicTest::multipleEventsKeepBlocked()
-{
-    BlockHidingEvents e; e.addEvent(QStringLiteral("a")); e.addEvent(QStringLiteral("b")); QVERIFY(e.isBlocked()); QCOMPARE(e.count(), 2);
-}
-
-void VisibilityLogicTest::removeOneOfMultipleStillBlocked()
-{
-    BlockHidingEvents e; e.addEvent(QStringLiteral("a")); e.addEvent(QStringLiteral("b"));
-    QVERIFY(!e.removeEvent(QStringLiteral("a"))); // still blocked
-    QVERIFY(e.isBlocked());
-}
-
-void VisibilityLogicTest::addReturnsChangedWhenStatusFlips()
-{
-    BlockHidingEvents e; QVERIFY(e.addEvent(QStringLiteral("first"))); QVERIFY(!e.addEvent(QStringLiteral("first")));
-}
 
 void VisibilityLogicTest::topStrutsAlignsWithView()
 {

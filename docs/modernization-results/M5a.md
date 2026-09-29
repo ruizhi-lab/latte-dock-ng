@@ -2,6 +2,10 @@
 
 Status: Pending remote CI validation.
 
+Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
+Actual start HEAD: `35a164d99` on `codex/modernization-m0-baseline`.
+Implementation commit: `15b64b60a`.
+
 ## Scope
 
 Extract the unique, nonempty event-name set from `VisibilityManager` into a

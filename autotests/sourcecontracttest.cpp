@@ -221,7 +221,37 @@ private Q_SLOTS:
     void appletPopupHidesOnWindowDeactivateByDefault();
     void viewTracksPointerWindowsAndResetsCascadingSubmenus();
     void pointerWindowTrackerRemovesDestroyedWindows();
+    void visibilityManagerBlockerWrappersDelegateTransitions();
 };
+
+void SourceContractTest::visibilityManagerBlockerWrappersDelegateTransitions()
+{
+    QFile managerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/visibilitymanager.cpp"));
+    QVERIFY(managerFile.open(QFile::ReadOnly));
+    const QString managerSource = QString::fromUtf8(managerFile.readAll());
+
+    const qsizetype addStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::addBlockHidingEvent"));
+    const qsizetype removeStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::removeBlockHidingEvent"));
+    const qsizetype stateHandlerStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::onHidingIsBlockedChanged"));
+    const qsizetype stateHandlerEnd = managerSource.indexOf(QStringLiteral("void VisibilityManager::onHeadThicknessChanged"), stateHandlerStart);
+    QVERIFY(addStart >= 0);
+    QVERIFY(removeStart > addStart);
+    QVERIFY(stateHandlerStart > removeStart);
+    QVERIFY(stateHandlerEnd > stateHandlerStart);
+
+    const QString addWrapper = managerSource.mid(addStart, removeStart - addStart);
+    const QString removeWrapper = managerSource.mid(removeStart, stateHandlerStart - removeStart);
+    QVERIFY(addWrapper.contains(QStringLiteral("if (m_blockHidingEvents.addEvent(type))")));
+    QVERIFY(addWrapper.contains(QStringLiteral("Q_EMIT hidingIsBlockedChanged();")));
+    QVERIFY(removeWrapper.contains(QStringLiteral("if (m_blockHidingEvents.removeEvent(type))")));
+    QVERIFY(removeWrapper.contains(QStringLiteral("Q_EMIT hidingIsBlockedChanged();")));
+    QVERIFY(managerSource.contains(QStringLiteral("connect(this, &VisibilityManager::hidingIsBlockedChanged, this, &VisibilityManager::onHidingIsBlockedChanged)")));
+
+    const QString stateHandler = managerSource.mid(stateHandlerStart, stateHandlerEnd - stateHandlerStart);
+    QVERIFY(stateHandler.contains(QStringLiteral("m_timerHide.stop();")));
+    QVERIFY(stateHandler.contains(QStringLiteral("Q_EMIT mustBeShown();")));
+    QVERIFY(stateHandler.contains(QStringLiteral("updateHiddenState();")));
+}
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
 {
