@@ -174,7 +174,7 @@ is complete; execution and runtime evidence below are not.
 | M2a | Pending validation | [53 targets gated; local GCC/Clang Debug/Release and CMake 3.20 checks pass](modernization-results/M2a.md) | Push and record the strict-gate CI matrix result |
 | M2b-GCC16 | Complete | [Qt QMetaType incomplete-SFINAE diagnostic scoped to generated moc aggregate](modernization-results/M2b-gcc16.md) | Recheck the suppression after GCC or Qt changes this probe |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
-| M3b | Pending validation | [Ubuntu/Neon baseline and four CI comparisons pass; host smoke pending](modernization-results/M3b.md) | Validate private.app through an isolated application-host smoke |
+| M3b | Pending validation | [Baseline CI passed; real application-host smoke passes locally on Gentoo and Debian 13](modernization-results/M3b.md) | Push the smoke test and record the complete CI result |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |

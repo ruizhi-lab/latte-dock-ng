@@ -1000,6 +1000,18 @@ add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
 
+# Load the application-facing plugin from its real symbol-exporting executable.
+# A standalone QML test executable cannot validate private.app's host contract.
+add_test(NAME privateapphostsmoketest
+    COMMAND ${CMAKE_COMMAND} -E env
+        LATTE_PRIVATE_APP_HOST_SMOKE=1
+        LATTE_DISABLE_USER_LOCAL_QML_IMPORTS=1
+        QT_QPA_PLATFORM=offscreen
+        QT_QUICK_BACKEND=software
+        $<TARGET_FILE:latte-dock-ng>
+)
+set_property(TEST privateapphostsmoketest PROPERTY TIMEOUT 30)
+
 # This parser test exercises the standalone baseline tool and its JSON/text
 # fixtures; it does not need another compiled QtTest executable.
 find_package(Python3 3.7 COMPONENTS Interpreter QUIET)

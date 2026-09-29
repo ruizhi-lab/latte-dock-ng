@@ -51,6 +51,8 @@
 #include <QTextStream>
 #include <QThread>
 #include <QTimer>
+#include <QQmlComponent>
+#include <QUrl>
 
 // KDE
 #include <KLocalizedString>
@@ -112,6 +114,31 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     applyUserLocalPluginPaths();
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
+
+    if (qEnvironmentVariableIntValue("LATTE_PRIVATE_APP_HOST_SMOKE") == 1) {
+        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+        QQmlEngine engine;
+        engine.addImportPath(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../qml")));
+
+        QQmlComponent component(&engine);
+        component.setData(QByteArrayLiteral("import QtQml\n"
+                                            "import org.kde.latte.private.app 0.1 as LatteApp\n"
+                                            "LatteApp.ContextMenuLayer {}"),
+                          QUrl(QStringLiteral("latte-private-app-host-smoke.qml")));
+        QObject *root = component.create();
+
+        if (!root) {
+            qCritical() << "private.app host smoke failed:" << component.errors();
+            return 1;
+        }
+
+        // This process is the real exporting application executable. Loading
+        // the module here verifies private.app's host symbol contract, which a
+        // standalone QQmlEngine test cannot establish.
+        delete root;
+        qInfo() << "private.app loaded in latte-dock-ng host process";
+        return 0;
+    }
 
     // During system startup the Wayland compositor may not be immediately
     // detectable, especially when launched via XDG autostart or systemd

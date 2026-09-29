@@ -6,8 +6,10 @@ Branch: `codex/modernization-m0-baseline`
 
 Starting revision: `6def9032d8943075124f71bcd12be6c2a0798ac0`
 
-Status: Ubuntu/Neon baseline reviewed and recorded; green CI comparison passed;
-application-host smoke remains Pending validation.
+Status: Ubuntu/Neon baseline reviewed and recorded; previous CI baseline
+comparisons passed. The application-host smoke passes locally on the current
+Gentoo and Debian 13 stacks; the CI run including this new smoke is Pending
+validation.
 
 ## Implementation
 
@@ -24,7 +26,13 @@ actual `typeinfo` filename. Import failures for build-owned `core`, containment
 and tasks modules fail independently of the warning baseline. `private.app`
 metadata and artifacts are checked, but its plugin resolves symbols exported
 by the main executable. Standalone qmllint or a separate QML engine cannot
-prove that host contract; an application-host smoke test remains required.
+prove that host contract. The real `latte-dock-ng` executable now has a
+test-only `LATTE_PRIVATE_APP_HOST_SMOKE=1` path that imports and instantiates
+`LatteApp.ContextMenuLayer` from the build-tree plugin before normal Wayland
+startup. This path runs only when the dedicated environment variable is set;
+the ordinary desktop startup path is unchanged. CTest launches the actual
+exporting executable with Qt's offscreen/software platform and disables
+developer-local QML overrides.
 
 Following the user's platform clarification, the Debian 13.7 install verifier
 now records CMake, Qt, KF and Plasma versions on all distro runs and enforces
@@ -121,6 +129,10 @@ the same USTC repositories already used by local Compose.
 - Follow-up remote Actions results and an application-host smoke run — Pending validation.
 - `python3 scripts/qmllint-baseline.py compare --baseline docs/qmllint-baseline.json --current <CI-report> --output <diff>` — zero additions/removals for all four matching reports.
 - Run [36623951814](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36623951814) — all four baseline comparisons and the complete workflow passed.
+- `ctest --test-dir /tmp/latte-m2a-final/gcc-debug --output-on-failure -R '^privateapphostsmoketest$'` — passed; the real GCC 16 `latte-dock-ng` process imported `org.kde.latte.private.app` and instantiated `ContextMenuLayer`.
+- The same host smoke passed after rebuilding with Clang 22.1 Debug.
+- In the refreshed Debian 13 image with CMake 3.20.6, GCC 14.2, Qt 6.8.2 and KF 6.13: strict application build passed and `privateapphostsmoketest` passed.
+- The GitHub Actions run including `privateapphostsmoketest` — Pending validation.
 - `packagingcontracttest` and `sourcecontracttest` rebuilt and passed after the
   package-floor, mirror and KWayland target changes.
 
@@ -131,12 +143,11 @@ for 14 days.
 
 ## Handoff
 
-1. Add or document an isolated application-host smoke path for `org.kde.latte.private.app`.
-   The plugin's CMake contract intentionally resolves Latte symbols from the
-   executable, so do not attempt to treat standalone plugin import as proof.
-2. After the host smoke passes, mark M3b Complete. M2a can proceed as soon as
-   M1a and M1b meet their acceptance checks; M4a also depends on M2a.
+1. Push the host-smoke test path and record the new workflow result, including
+   `privateapphostsmoketest` and all four baseline comparisons.
+2. Mark M3b Complete after that run passes. M2a strict-gate CI is independently
+   running; M4a depends on its completion.
 
 M1a's Debian CMake 3.20.6 configure/build and all 43 CTest targets now pass;
-M1b's remote workflow passed. No desktop runtime behavior changed in this
-batch.
+M1b's remote workflow passed. The host smoke does not install or restart the
+user's dock; it exits before normal Corona/Wayland startup.
