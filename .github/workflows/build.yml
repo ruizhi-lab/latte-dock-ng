@@ -20,10 +20,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: GCC
+          - name: GCC Debug
+            preset: gcc-debug
             cc: gcc
             cxx: g++
-          - name: Clang
+          - name: GCC Release
+            preset: gcc-release
+            cc: gcc
+            cxx: g++
+          - name: Clang Debug
+            preset: clang-debug
+            cc: clang
+            cxx: clang++
+          - name: Clang Release
+            preset: clang-release
             cc: clang
             cxx: clang++
     env:
@@ -56,23 +66,49 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Record toolchain versions
+        run: |
+          cmake --version
+          "$CC" --version
+          "$CXX" --version
+
       - name: Configure
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+        run: |
+          set -euo pipefail
+          mkdir -p build/modernization/logs
+          cmake --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-configure.log"
 
-      - name: Build
-        run: cmake --build build --parallel $(nproc)
-
-      - name: Build autotests
-        run: cmake --build build --target latte-autotests --parallel $(nproc)
+      # The build preset includes both the default application/plugin targets
+      # and latte-autotests, and fixes the build parallelism at eight jobs.
+      - name: Build application and autotests
+        run: |
+          set -euo pipefail
+          cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure
+        run: |
+          set -euo pipefail
+          ctest --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-ctest.log"
 
       # Type-resolution lint over the freshly built modules: fails on QML
       # errors and on broken/missing generated latte QML modules. Legacy
-      # warnings are summarized into build/qmllint-deep.log.
+      # warnings are summarized into the preset build's qmllint-deep.log.
       - name: Deep QML lint
-        run: ./scripts/qmllint-deep.sh build
+        run: ./scripts/qmllint-deep.sh "build/modernization/${{ matrix.preset }}"
+
+      - name: Upload build diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-${{ matrix.preset }}
+          path: |
+            build/modernization/logs/${{ matrix.preset }}-*.log
+            build/modernization/${{ matrix.preset }}/CMakeCache.txt
+            build/modernization/${{ matrix.preset }}/compile_commands.json
+            build/modernization/${{ matrix.preset }}/Testing/Temporary/LastTest.log
+            build/modernization/${{ matrix.preset }}/qmllint-deep.log
+          if-no-files-found: warn
+          retention-days: 7
 
   qml-lint:
     name: QML lint (qmllint)
