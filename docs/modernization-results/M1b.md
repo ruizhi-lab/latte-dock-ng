@@ -63,9 +63,19 @@ there. A later run also found GitHub Actions could not access the openSUSE CDN
 (HTTP 403); openSUSE jobs now use the verified USTC repositories, while all
 other distro jobs keep their existing repositories.
 
+Run [36616436049](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36616436049)
+confirmed all four configure/build/CTest jobs, QML syntax lint, and all distro
+install/package jobs pass. All four deep-lint jobs then failed before linting:
+Git rejected the checkout as dubious ownership inside the Ubuntu job
+container, so `git ls-files` returned no QML files. The report artifacts
+confirm this is file discovery rather than a QML diagnostic. The workflow now
+marks only `$GITHUB_WORKSPACE` as a safe Git directory immediately before deep
+lint. Rerun CI and inspect all four complete diagnostic reports before M1b or
+M3b can be accepted.
+
 ## Handoff
 
-Next action: push the QML dependency and openSUSE mirror adjustment, confirm all
-four Deep QML lint steps produce complete reports, and review the uploaded
+Next action: validate and push the container workspace trust fix, then confirm
+all four Deep QML lint steps produce complete reports and review their
 fingerprints for M3b. The user authorized automatic commits and pushes on this
 branch only.

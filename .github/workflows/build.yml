@@ -96,6 +96,11 @@ jobs:
       # Type-resolution lint over the freshly built modules: fails on QML
       # errors and on broken/missing generated latte QML modules. Legacy
       # warnings are summarized into the preset build's qmllint-deep.log.
+      # Checkout ownership differs inside the job container, so trust only
+      # this workspace before the script uses git ls-files for QML discovery.
+      - name: Trust workspace for Git file discovery
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Deep QML lint
         run: ./scripts/qmllint-deep.sh "build/modernization/${{ matrix.preset }}"
 
