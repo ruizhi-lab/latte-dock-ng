@@ -1,5 +1,6 @@
 ARG DEBIAN_BASE=trixie
-FROM debian:${DEBIAN_BASE}
+ARG BASE_IMAGE=debian
+FROM ${BASE_IMAGE}:${DEBIAN_BASE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 

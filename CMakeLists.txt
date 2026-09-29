@@ -163,7 +163,8 @@ get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
 latte_resolve_target_from_candidates(LATTE_DECLARATIVE_TARGET KF6::Declarative KF6::KDeclarative)
 latte_resolve_target_from_candidates(LATTE_QUICKADDONS_TARGET KF6::QuickAddons KF6::KQuickAddons)
 latte_resolve_target_from_candidates(LATTE_NEWSTUFF_TARGET KF6::NewStuffWidgets KF6::KNewStuffWidgets KF6::NewStuff KF6::KNewStuff)
-latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET KWayland::Client KF6::WaylandClient KF6::KWaylandClient)
+latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET
+    Plasma::KWaylandClient KWayland::Client KF6::WaylandClient KF6::KWaylandClient)
 latte_resolve_target_from_candidates(LATTE_CONFIGQML_TARGET KF6::ConfigQml KF6::KConfigQml)
 latte_resolve_target_from_candidates(LATTE_SVG_TARGET KF6::Svg KF6::KSvg KF6::KSvgCore)
 

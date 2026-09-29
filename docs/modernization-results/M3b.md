@@ -28,8 +28,10 @@ prove that host contract; an application-host smoke test remains required.
 
 Following the user's platform clarification, the Debian 13.7 install verifier
 now records CMake, Qt, KF and Plasma versions on all distro runs and enforces
-the Debian 13 floors: CMake 3.31.6, Qt 6.8.2, KF 6.13 and Plasma 6.3.6. The
-source-declared compatibility floor remains CMake 3.20 / Qt 6.6 / KF 6.0 /
+the Debian 13 floors: CMake 3.31.6, Qt 6.8.2, KF 6.13, `libplasma-dev` 6.3.5
+and `plasma-workspace-dev` 4:6.3.6 (Debian's packaged development and desktop
+versions). The target desktop runtime is recorded during local desktop retest.
+The source-declared compatibility floor remains CMake 3.20 / Qt 6.6 / KF 6.0 /
 Plasma 6.3. The separate Debian 13 container exercises the distribution's
 default CMake; Gentoo, Arch and Fedora remain forward-compatibility checks.
 
@@ -50,7 +52,36 @@ Pending validation and replace the baseline only after reviewing the uploaded
 CI report and its additions/removals. No warning category was promoted because
 none has two zero-warning runs.
 
+Docker Compose now defaults Docker Hub base images to DaoCloud's mirror and
+accepts per-image `LATTE_*_IMAGE` overrides. All eight configured images were
+pulled, refreshed from their current package repositories and rebuilt. Ubuntu's
+Deb822 source rewrite was verified by a successful USTC package-index update;
+HTTP is used because this host's HTTPS proxy rejects the USTC certificate.
+Debian 13, Ubuntu 26.04, Arch, Fedora 44, openSUSE Tumbleweed, Mageia 10,
+Gentoo and NixOS all passed their complete local install verifiers. Gentoo was
+run against a local `1.2.51` source archive after its live-ebuild fetch failed
+without the host's GitHub proxy. Nix verification now stages source without
+ignored `build*` directories so stale host CMake caches are not copied into the
+Nix store. Mageia now selects UTF-8 only when that locale is installed.
+
+The Debian 13 image verified CMake 3.31.6-2, Qt 6.8.2, KF 6.13,
+`libplasma-dev` 6.3.5-1 and `plasma-workspace-dev` 4:6.3.6-2. The refreshed
+moving stacks also built and installed successfully: Ubuntu (Qt 6.10.2/KF
+6.24), Arch/Fedora/openSUSE (Qt 6.11.2/KF 6.30), and Mageia (Qt 6.10.0/KF
+6.22). Gentoo and NixOS resolve Qt 6.11.2 with KF 6.29 and 6.30,
+respectively. Headless Plasma version probes now suppress core dumps if the
+runtime cannot start without a desktop session.
+
 ## Validation
+
+The first feature-branch workflow run
+[36598722902](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36598722902)
+completed with the QML syntax check and all distro install/package jobs except
+the Debian 13 build-stack assertion passing. Four preset build jobs failed
+before configuration because their multiline actions steps ran under `sh` and
+rejected Bash `pipefail`; the Debian 13 assertion expected `libplasma-dev`
+6.3.6 although the distribution publishes 6.3.5-1. Both causes are corrected
+in the follow-up change and require a successful rerun before this batch passes.
 
 - `python3 -m py_compile scripts/qmllint-baseline.py autotests/test_qmllint_baseline.py` — passed.
 - `python3 autotests/test_qmllint_baseline.py` — **19/19 passed**, including
@@ -58,6 +89,7 @@ none has two zero-warning runs.
   fatal build-owned import diagnostics.
 - `bash -n scripts/qmllint-deep.sh` — passed.
 - `bash -n docker/verify-install.sh` — passed.
+- `bash -n docker/verify-nix-nixos.sh docker/verify-ebuild-gentoo.sh` — passed.
 - `bash scripts/qmllint.sh` — passed for all 236 tracked QML files.
 - `python3 scripts/qmllint-baseline.py check-modules --build-qml build/modernization/gcc-debug/qml` — passed.
 - `bash scripts/qmllint-deep.sh build/modernization/<preset>` — passed for all
@@ -69,7 +101,9 @@ none has two zero-warning runs.
 - `git diff --check` — passed.
 - Workflow YAML parsed and the GCC/Clang Debug/Release matrix and feature branch
   trigger were checked locally.
-- Remote Actions results and an application-host smoke run — Pending validation.
+- Follow-up remote Actions results and an application-host smoke run — Pending validation.
+- `packagingcontracttest` and `sourcecontracttest` rebuilt and passed after the
+  package-floor, mirror and KWayland target changes.
 
 Raw measurements and logs are in the ignored local directories
 `build/modernization/<preset>/qmllint-baseline/` and
@@ -90,6 +124,6 @@ for 14 days.
    executable, so do not attempt to treat standalone plugin import as proof.
 4. Only after both validations pass, mark M3b Complete and begin M4a.
 
-M1a's CMake 3.20 execution, Debian 13.7 package-stack check and M1b's remote
-workflow validation also remain Pending validation. No desktop runtime behavior
+M1a's CMake 3.20 CTest has one missing-icon environment failure, and M1b's
+remote workflow rerun remains Pending validation. No desktop runtime behavior
 changed in this batch.

@@ -1583,6 +1583,7 @@ void SourceContractTest::cmakeTargetResolutionUsesSharedHelpers()
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_target_from_candidates(LATTE_NEWSTUFF_TARGET")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_library_variable(LATTE_NEWSTUFF_TARGET")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("Plasma::KWaylandClient KWayland::Client")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_library_variable(LATTE_WAYLANDCLIENT_TARGET")));
 }
 

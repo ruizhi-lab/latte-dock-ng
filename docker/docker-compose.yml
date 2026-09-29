@@ -5,59 +5,89 @@ x-latte-verify: &latte-verify
     - /build:exec
   working_dir: /build
 
+x-latte-build: &latte-build
+  network: host
+
+# Compose defaults to DaoCloud's Docker Hub mirror for restricted networks.
+# Each image stays overridable with LATTE_*_IMAGE; Dockerfiles retain upstream defaults for CI.
+
 services:
   arch:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.arch
+      args:
+        BASE_IMAGE: ${LATTE_ARCH_IMAGE:-docker.m.daocloud.io/library/archlinux}
     command: bash /src/docker/verify-install.sh ARCH
 
   fedora:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.fedora
+      args:
+        BASE_IMAGE: ${LATTE_FEDORA_IMAGE:-docker.m.daocloud.io/library/fedora}
     command: bash /src/docker/verify-install.sh FEDORA
 
   opensuse:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.opensuse
+      args:
+        BASE_IMAGE: ${LATTE_OPENSUSE_IMAGE:-docker.m.daocloud.io/opensuse/tumbleweed}
     command: bash /src/docker/verify-install.sh OPENSUSE
 
   ubuntu:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.ubuntu
+      args:
+        BASE_IMAGE: ${LATTE_UBUNTU_IMAGE:-docker.m.daocloud.io/library/ubuntu}
     command: bash /src/docker/verify-install.sh UBUNTU
 
   mageia:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.mageia
+      args:
+        BASE_IMAGE: ${LATTE_MAGEIA_IMAGE:-docker.m.daocloud.io/library/mageia}
     command: bash /src/docker/verify-install.sh MAGEIA
 
   debian:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.debian
-    command: bash /src/docker/verify-install.sh DEBIAN
+      args:
+        BASE_IMAGE: ${LATTE_DEBIAN_IMAGE:-docker.m.daocloud.io/library/debian}
+    command: bash /src/docker/verify-install.sh debian13
 
   gentoo:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.gentoo
+      args:
+        BASE_IMAGE: ${LATTE_GENTOO_IMAGE:-docker.m.daocloud.io/gentoo/stage3}
     command: bash /src/docker/verify-ebuild-gentoo.sh
 
   nixos:
     <<: *latte-verify
     build:
+      <<: *latte-build
       context: .
       dockerfile: Dockerfile.nixos
+      args:
+        BASE_IMAGE: ${LATTE_NIXOS_IMAGE:-docker.m.daocloud.io/nixos/nix}
     command: bash /src/docker/verify-nix-nixos.sh

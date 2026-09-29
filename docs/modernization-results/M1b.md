@@ -44,18 +44,22 @@ seven days.
   required matrix/preset relationships were checked with PyYAML and a focused
   semantic assertion instead.
 
-Remote GitHub Actions validation is **Pending validation**. The workflow's
-existing triggers run on pushes to `main` and pull requests targeting `main`;
-the feature-branch push itself does not provide a run URL. Record the affected
-job run URLs and results when GitHub executes this workflow. M1a's separate
-CMake 3.20 executable check also remains pending.
+Remote GitHub Actions validation is **Pending validation**. Initial run
+[36598722902](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36598722902)
+was triggered after the feature workflow was wired to `codex/**`. All four
+preset build jobs stopped in Configure because GitHub Actions selected `sh`
+for multiline steps containing Bash's `set -o pipefail`; this patch sets
+`shell: bash` on Configure, Build and Test. The Debian 13 install verification
+also exposed a mismatch between Plasma desktop 6.3.6 and Debian's actual
+`libplasma-dev` 6.3.5-1; the package checks now distinguish the two. The
+Debian 13 package-install job and other distro install/package jobs passed.
+Rerun the affected matrix after this correction. M1a's CMake 3.20.6 Debian-stack
+configure and build now pass; its one icon-dependent CTest failure is recorded
+there.
 
 ## Handoff
 
-Next action: proceed with the next independent planned slice, **M3a**, while
-keeping M1a and M1b acceptance pending. M3a can use the four successful local
-QML measurements as diagnostic input, but must implement stable identities,
-normalization, fail-closed coverage checks and parser fixtures without changing
-the current warning gate. Revisit the M1a/M1b pending checks when a CMake 3.20
-binary and an affected GitHub Actions run are available. The user authorized
-automatic commits and pushes on this branch only.
+Next action: push the focused CI/package-floor corrections, confirm the four
+build jobs and Debian 13 stack check pass remotely, and use those jobs as the
+M1b/M3b evidence. The user authorized automatic commits and pushes on this
+branch only.

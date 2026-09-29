@@ -42,20 +42,28 @@ selection remains a local editor preference.
 - `git check-ignore CMakeUserPresets.json`: confirmed ignored.
 - `git diff --check`: passed.
 
-The minimum supported executable, CMake 3.20, is not installed in this
-environment; only 4.3.4 is available. The [official CMake 3.20 preset
-documentation](https://cmake.org/cmake/help/v3.20/manual/cmake-presets.7.html)
-defines schema version 2 and the configure/build/test fields used here, but
-that specification review does not replace an actual 3.20 parser/configure
-run. Keep M1a **Pending validation** for that check; do not report minimum
-version compatibility as tested.
+The official CMake 3.20.6 binary was used to validate the minimum on Debian 13.
+`cmake --list-presets`, `cmake --preset gcc-debug`, and
+`cmake --build --preset gcc-debug` all passed with Debian's Qt 6.8.2, KF 6.13
+and Plasma 6.3.6 development stack. The first configure exposed that Debian
+exports the KWayland target as `Plasma::KWaylandClient`; adding that explicit
+candidate lets older CMake resolve it without relying on imported-target
+enumeration. A source contract protects the candidate list.
+
+The same CMake 3.20.6 build ran 43 CTest targets: 42 passed and `coreunittest`
+failed two icon-source assertions because the minimal build image has no icon
+theme assets. This is an environment limitation, not a CMake configure/build
+failure; keep that test result visible until the test image supplies its
+required icons. The [official CMake 3.20 preset documentation](https://cmake.org/cmake/help/v3.20/manual/cmake-presets.7.html)
+also confirms the schema-v2 fields used by the presets.
 
 The oldest supported distro acceptance target is Debian 13.7's packaged stack:
-CMake 3.31.6-2, Qt 6.8.2, KF 6.13 and Plasma 6.3.6. `docker/verify-install.sh`
-now checks the package minimums and records the exact installed package
-versions before the install/build verification. This CI check remains Pending
-until the Debian 13 job runs. Gentoo, Arch and Fedora jobs provide moving
-forward-compatibility coverage and should record their component versions.
+CMake 3.31.6-2, Qt 6.8.2, KF 6.13 and Plasma desktop 6.3.6. Debian ships
+`libplasma-dev` 6.3.5-1 and `plasma-workspace-dev` 4:6.3.6-2; the local
+Debian 13 container passed both package-floor checks and the complete
+system/user install-uninstall verifier. The feature-branch CI rerun remains
+pending. Gentoo, Arch, Fedora, openSUSE, Mageia, Ubuntu and NixOS forward-stack
+checks are recorded in M3b.
 
 ## Exact commands
 
@@ -77,11 +85,7 @@ ctest --test-dir "build/modernization/<preset>" --show-only=json-v1
 
 ## Handoff
 
-Next action: continue **M1b only**. Update the GCC/Clang jobs in
-`.github/workflows/build.yml` to use the corresponding configure/build/test
-presets and eight build jobs. Preserve syntax/deep QML lint and distro/package
-checks, validate workflow syntax and job-to-preset mapping, then record remote
-CI as Pending validation until the affected jobs run. M1b can use the local
-M1a evidence; validate both the CMake 3.20 floor and Debian 13.7 package stack
-in CI. The user authorized automatic commits and pushes on this branch; never
-push another branch or a tag.
+Next action: push the corrected CI and package-verification slice, then record
+the fresh workflow result. Keep the missing-icon CTest failure visible; do not
+claim that every CMake 3.20 test passed. The user authorized automatic commits
+and pushes on this branch; never push another branch or a tag.

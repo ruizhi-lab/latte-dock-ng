@@ -60,6 +60,8 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     const QString dockerSource = QString::fromUtf8(dockerCompose.readAll());
     QVERIFY(dockerSource.contains(QStringLiteral("${LATTE_SRC:-..}:/src:ro")));
     QVERIFY(dockerSource.contains(QStringLiteral("bash /src/docker/verify-install.sh")));
+    QVERIFY(dockerSource.contains(QStringLiteral("LATTE_DEBIAN_IMAGE:-docker.m.daocloud.io/library/debian")));
+    QVERIFY(dockerSource.contains(QStringLiteral("bash /src/docker/verify-install.sh debian13")));
     QVERIFY(dockerSource.contains(QStringLiteral("dockerfile: Dockerfile.gentoo")));
     QVERIFY(dockerSource.contains(QStringLiteral("bash /src/docker/verify-ebuild-gentoo.sh")));
     QVERIFY(!dockerSource.contains(QStringLiteral("/data/projects/latte-dock-ng:/src:ro")));
@@ -80,7 +82,9 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(dockerVerifySource.contains(QStringLiteral("cmake:3.31.6")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("qt6-base-dev:6.8.2")));
     QVERIFY(dockerVerifySource.contains(QStringLiteral("libkf6coreaddons-dev:6.13.0")));
-    QVERIFY(dockerVerifySource.contains(QStringLiteral("libplasma-dev:6.3.6")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("libplasma-dev:6.3.5")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("plasma-workspace-dev:6.3.6")));
+    QVERIFY(dockerVerifySource.contains(QStringLiteral("locale -a | grep -Eiq '^C[.]utf-?8$'")));
 
     QFile archPackage(QStringLiteral(LATTE_SOURCE_DIR "/docker/package-arch.sh"));
     QVERIFY(archPackage.open(QFile::ReadOnly));

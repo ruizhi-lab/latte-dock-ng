@@ -16,10 +16,13 @@ by itself. The user's selected batch determines the implementation scope.
 Keep the source-declared floors at CMake 3.20, Qt 6.6, KF6 6.0 and Plasma 6.3.
 Validate the CMake preset minimum at 3.20 and separately test the oldest
 supported Debian desktop stack using Debian 13.7 packages: CMake 3.31.6-2,
-Qt 6.8.2, KDE Frameworks 6.13 and Plasma 6.3.6. Debian 13's package build
-records and checks these floors. Gentoo, Arch and Fedora CI checks represent
-forward-compatibility coverage against their current stable component versions;
-capture those versions from each run rather than pinning a moving “latest”.
+Qt 6.8.2, KDE Frameworks 6.13 and the Plasma 6.3.6 desktop release. Debian's
+`libplasma-dev` package is currently 6.3.5-1 while `plasma-workspace-dev` is
+4:6.3.6-2. The reproducible container checks both package floors; local desktop
+retest records the installed Plasma runtime version. Gentoo, Arch and Fedora CI
+checks represent forward-compatibility coverage against their current stable
+component versions; capture those versions from each run rather than pinning a
+moving “latest”.
 
 Read [AGENTS.md](../AGENTS.md) and the relevant entries in the
 [architecture map](architecture-overview.md). Then read this plan's selected
@@ -166,11 +169,11 @@ is complete; execution and runtime evidence below are not.
 | --- | --- | --- | --- |
 | Source assessment | Complete | [2026-09-29 record](architecture-modernization-baseline.md) | Start M0 when implementation is requested |
 | M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
-| M1a | Pending validation | [Four local presets pass; minimum and Debian 13.7 checks pending](modernization-results/M1a.md) | Verify schema-v2 with CMake 3.20 and Debian 13.7 stack in CI |
-| M1b | Pending validation | [Four-job preset CI matrix and local checks pass](modernization-results/M1b.md) | Run affected GitHub Actions jobs and record their URLs/results |
+| M1a | Pending validation | [CMake 3.20.6 Debian configure/build and package stack pass; one icon-dependent CTest failure remains](modernization-results/M1a.md) | Rerun CI and resolve or formally scope the missing-icon test environment |
+| M1b | Pending validation | [Preset CI shell and Debian package floors corrected; remote rerun pending](modernization-results/M1b.md) | Run affected GitHub Actions jobs and record their URLs/results |
 | M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
-| M3b | Pending validation | [Full-file machine baseline, metadata gate and backlog; CI fingerprint/host smoke pending](modernization-results/M3b.md) | Capture matching Ubuntu/Neon CI evidence and validate private.app through the application host |
+| M3b | Pending validation | [China-mirror distro images refreshed; install verifiers pass; CI fingerprint/host smoke pending](modernization-results/M3b.md) | Capture matching Ubuntu/Neon CI evidence and validate private.app through the application host |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |

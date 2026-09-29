@@ -73,6 +73,7 @@ jobs:
           "$CXX" --version
 
       - name: Configure
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p build/modernization/logs
@@ -81,11 +82,13 @@ jobs:
       # The build preset includes both the default application/plugin targets
       # and latte-autotests, and fixes the build parallelism at eight jobs.
       - name: Build application and autotests
+        shell: bash
         run: |
           set -euo pipefail
           cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
 
       - name: Test
+        shell: bash
         run: |
           set -euo pipefail
           ctest --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-ctest.log"

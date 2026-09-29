@@ -1,4 +1,5 @@
-FROM gentoo/stage3:latest
+ARG BASE_IMAGE=gentoo/stage3
+FROM ${BASE_IMAGE}:latest
 
 ARG USE_MIRRORS=true
 ARG JOBS=4

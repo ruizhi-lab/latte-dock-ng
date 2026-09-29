@@ -1,4 +1,5 @@
-FROM fedora:44
+ARG BASE_IMAGE=fedora
+FROM ${BASE_IMAGE}:44
 
 ARG USE_MIRRORS=true
 
