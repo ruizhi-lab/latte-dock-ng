@@ -8,6 +8,7 @@
 # build directory
 build*/
 /cmake-build*
+/CMakeUserPresets.json
 
 # package artifacts
 /dist/

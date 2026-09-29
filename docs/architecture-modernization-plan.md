@@ -156,7 +156,8 @@ is complete; execution and runtime evidence below are not.
 | --- | --- | --- | --- |
 | Source assessment | Complete | [2026-09-29 record](architecture-modernization-baseline.md) | Start M0 when implementation is requested |
 | M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
-| M1a / M1b | Not started | Presets absent at baseline | M0, then presets, then CI |
+| M1a | Pending validation | [Four local presets pass; CMake 3.20 runtime check unavailable](modernization-results/M1a.md) | Validate schema-v2 parsing/configure with CMake 3.20 when available |
+| M1b | In progress | M1a local checks pass; schema-v2 structure matches the official 3.20 spec | Map GCC/Clang CI jobs to the matching presets and verify workflow locally |
 | M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
 | M3a / M3b | Not started | Promotion list empty | Stable identities, then CI baseline |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |

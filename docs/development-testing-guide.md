@@ -33,6 +33,24 @@ Test executables are intentionally marked `EXCLUDE_FROM_ALL` so normal applicati
 
 Both GCC and Clang builds must remain error-free. Use separate build directories so compiler configuration and generated files do not contaminate each other:
 
+The shared schema-v2 presets provide four equivalent configurations. They keep
+their compile databases in separate directories and build both the application
+and `latte-autotests` with eight jobs. `.clangd` continues to select the
+existing `build` database; selecting a preset database is a local editor choice
+and should not replace or symlink the shared default.
+
+```bash
+cmake --list-presets
+cmake --preset gcc-debug
+cmake --build --preset gcc-debug
+ctest --preset gcc-debug
+```
+
+Use `gcc-release`, `clang-debug` or `clang-release` to select the other
+compiler/configuration. `CMakeUserPresets.json` is intentionally ignored for
+machine-local choices. The project presets require CMake 3.20 schema-v2
+support.
+
 ```bash
 cmake -S . -B build-autotests-gcc -DBUILD_TESTING=ON
 cmake --build build-autotests-gcc --target latte-autotests --parallel 8
