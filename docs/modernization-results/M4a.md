@@ -4,8 +4,7 @@ Date: 2026-09-30
 
 Branch: `codex/modernization-m0-baseline`
 
-Status: Pending validation until the next feature-branch workflow runs the
-targeted clang-tidy step.
+Status: Complete.
 
 Starting revision: `d8c669e91`.
 
@@ -35,15 +34,18 @@ GCC jobs keep their existing build-only behavior for this lint category.
 - CI YAML parsed; the check runs only in the Clang Debug matrix job.
 - `python3 -m py_compile scripts/test-clang-tidy.py` — passed.
 - `git diff --check` — passed.
-- Feature-branch CI for this new step — Pending validation.
+- Feature-branch CI run `36633737377` at `46a4cd39b` — the Clang Debug
+  `Run targeted clang-tidy checks` step passed.
+
+Feature-branch run `36633737377` at `46a4cd39b` completed the Clang Debug
+`Run targeted clang-tidy checks` step successfully. It used the matrix
+compilation database and passed both production and negative-fixture checks.
 
 No production code changed. `app/data/errordata.cpp` and its headers retain
 their existing behavior and have no diagnostic requiring cleanup.
 
 ## Handoff
 
-The current workflow run validates M2a and M3b. After it passes, push this
-M4a slice and confirm the Clang Debug job installs clang-tidy, reads the
-matching compilation database and rejects the fixture. If the selected checks
-report new production findings, keep them as a separate scoped warning-family
-slice rather than rewriting unrelated files.
+The targeted static-analysis gate is validated. Continue with M4b's separate
+sanitizer configuration; if the selected checks report new production findings
+in a future run, keep them as a separate scoped warning-family slice.

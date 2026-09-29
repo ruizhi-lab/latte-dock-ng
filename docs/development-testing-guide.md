@@ -197,3 +197,52 @@ python3 autotests/coverageestimate.py
 ```
 
 Report this estimate after each test commit. It is not a line or branch coverage metric, but it is useful for tracking which production compilation units now have direct regression coverage.
+# Sanitizer checks
+
+The opt-in `gcc-asan-ubsan` preset uses a separate build directory and applies
+AddressSanitizer and UndefinedBehaviorSanitizer to first-party C++ targets,
+including project plugins and helper binaries. It leaves normal Debug/Release
+and install presets unchanged. The focused preset builds the application host
+plus `dataunittest`, `coreunittest`, and `previewprocessunittest`; it runs those
+tests and the offscreen `privateapphostsmoketest`. This compiles and links the
+application plugins under sanitizers, and instruments the fake preview helper
+through the test target dependency without changing the production process
+boundary. The private.app host smoke disables only ASan's ODR detector for
+the `Interfaces` meta-object intentionally compiled into both host and plugin;
+address, leak and undefined-behavior checks stay enabled.
+
+Run the focused local check with:
+
+```bash
+cmake --preset gcc-asan-ubsan
+cmake --build --preset gcc-asan-ubsan
+ctest --preset gcc-asan-ubsan
+python3 scripts/test-sanitizers.py --compiler g++
+```
+
+The fixture runner deliberately triggers a heap buffer overflow and signed
+integer overflow and requires the corresponding sanitizer diagnostics. Do not
+install or launch this instrumented build as the user-mode dock. Record any
+third-party findings with the exact target and stack before considering a
+narrow suppression.
+
+# Nix development and tests
+
+`nix develop` exposes the release derivation's build dependencies plus GCC,
+Clang, Make, D-Bus and Python for local verification. Its preset build remains
+an ordinary Debug/Release build. `nix flake check --print-build-logs` builds a
+separate `checks.x86_64-linux.autotests` derivation, builds the application
+host and test executables, then runs CTest with software Qt rendering and a
+private session bus. `nix build .#default --no-link --print-build-logs`
+validates the release package independently; the check-only derivation is not
+installed into the release output.
+
+The main commands are:
+
+```bash
+nix flake check --print-build-logs
+nix build .#default --no-link --print-build-logs
+nix develop
+cmake --preset gcc-debug
+cmake --build --preset gcc-debug
+```

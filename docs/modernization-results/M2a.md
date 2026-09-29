@@ -4,8 +4,8 @@ Date: 2026-09-30
 
 Branch: `codex/modernization-m0-baseline`
 
-Status: Pending validation until the pushed feature-branch CI matrix passes.
-The complete local acceptance matrix passed.
+Status: Complete.
+The complete local acceptance matrix and pushed feature-branch CI matrix passed.
 
 Source baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 M2a start HEAD: `4c6fa1ca4`.
@@ -45,7 +45,8 @@ source must build successfully. No production source behavior changed.
 - `LATTE_STRICT_WARNINGS=OFF` configured successfully and printed the explicit
   downstream-only status message.
 - `git diff --check` — passed.
-- The first integrated CI run [36632244809](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36632244809) stopped all build jobs during dependency installation because Ubuntu/Neon does not publish the Debian-specific `qt6-svg-plugins` name; the Ubuntu dependency is corrected to `libqt6svg6`. Strict-warning CI after that package fix — Pending validation.
+- The first integrated CI run [36632244809](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36632244809) stopped all build jobs during dependency installation because Ubuntu/Neon does not publish the Debian-specific `qt6-svg-plugins` name. The Ubuntu dependency was corrected to `libqt6svg6`.
+- Run [36633737377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36633737377) at `46a4cd39b` passed the complete GCC/Clang Debug/Release build, strict-warning fixture, CTest, QML lint/baseline, and distribution/package matrix.
 
 One new GCC 16 diagnostic was found in Qt 6's intentional incomplete-type
 SFINAE probe while the generated `latte-dock-ng` moc aggregation includes
@@ -73,10 +74,5 @@ Logs are in `/tmp/latte-m2a-final-*`; the Debian 13 CMake 3.20.6 run is in
 
 ## Handoff
 
-The strict-warning CI run including M3b's application-host smoke is in progress.
-M4a's local static-analysis slice is now prepared independently while that
-remote result is pending.
-
-Next action: record the current CI run; if it passes, mark M2a and M3b Complete,
-then push M4a for its own remote validation. The user authorized automatic
-commits and pushes on this branch only.
+Next action: continue with M4b sanitizer coverage. No user-mode desktop
+installation or retest was required for this build-policy slice.

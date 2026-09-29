@@ -33,10 +33,12 @@ private Q_SLOTS:
 
 void CoreUnitTest::initTestCase()
 {
-    // Offscreen Qt starts with only its resource icon path. Add the standard
-    // system theme directory and select Breeze so theme-name assertions are
-    // independent of the developer's active KDE session.
-    QIcon::setThemeSearchPaths({QStringLiteral("/usr/share/icons")});
+    // Offscreen Qt may not inherit the active desktop's icon paths. Allow
+    // isolated package builds to provide their Breeze icon directory while
+    // retaining the conventional system path for distro builds.
+    const QString iconThemePath = qEnvironmentVariable(
+        "LATTE_TEST_ICON_THEME_PATH", QStringLiteral("/usr/share/icons"));
+    QIcon::setThemeSearchPaths({iconThemePath});
     QIcon::setThemeName(QStringLiteral("breeze"));
 }
 

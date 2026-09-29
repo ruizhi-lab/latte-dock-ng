@@ -26,6 +26,10 @@ option(LATTE_STRICT_WARNINGS
     "Treat GCC and Clang warnings in Latte targets as errors (disable only as a downstream compatibility escape hatch)."
     ON
 )
+option(LATTE_ENABLE_ASAN_UBSAN
+    "Instrument first-party C++ targets with AddressSanitizer and UndefinedBehaviorSanitizer."
+    OFF
+)
 
 set(KF6_LOCALE_PREFIX "")
 set(QT_MAJOR_VERSION 6)
@@ -45,6 +49,7 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(LatteTargetResolution)
 include(LatteStrictWarnings)
+include(LatteSanitizers)
 include(WriteBasicConfigVersionFile)
 include(CTest)
 
@@ -327,6 +332,7 @@ endif()
 # programs, QML plugins and excluded test binaries while leaving imported KDE,
 # Qt and other dependency targets untouched.
 cmake_language(DEFER CALL latte_enable_strict_warnings_for_project)
+cmake_language(DEFER CALL latte_enable_sanitizers_for_project)
 
 ki18n_install(po)
 

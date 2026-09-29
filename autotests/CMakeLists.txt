@@ -1011,6 +1011,14 @@ add_test(NAME privateapphostsmoketest
         $<TARGET_FILE:latte-dock-ng>
 )
 set_property(TEST privateapphostsmoketest PROPERTY TIMEOUT 30)
+if(LATTE_ENABLE_ASAN_UBSAN)
+    # The private.app plugin and its exporting host intentionally compile the
+    # same Interfaces QML meta-object from interfaces.cpp. ASan sees those
+    # DSO copies as an ODR violation during dlopen; disable only that ASan
+    # subcheck for this host smoke while retaining address, leak and UB checks.
+    set_property(TEST privateapphostsmoketest APPEND PROPERTY ENVIRONMENT
+        "ASAN_OPTIONS=detect_odr_violation=0")
+endif()
 
 # This parser test exercises the standalone baseline tool and its JSON/text
 # fixtures; it does not need another compiled QtTest executable.

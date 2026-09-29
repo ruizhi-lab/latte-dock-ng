@@ -65,6 +65,15 @@
         "BUILD_TESTING": "ON",
         "LATTE_STRICT_WARNINGS": "ON"
       }
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "displayName": "GCC AddressSanitizer and UndefinedBehaviorSanitizer",
+      "inherits": "gcc-debug",
+      "binaryDir": "${sourceDir}/build/modernization/gcc-asan-ubsan",
+      "cacheVariables": {
+        "LATTE_ENABLE_ASAN_UBSAN": "ON"
+      }
     }
   ],
   "buildPresets": [
@@ -91,6 +100,18 @@
       "configurePreset": "clang-release",
       "jobs": 8,
       "targets": ["all", "latte-autotests"]
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "configurePreset": "gcc-asan-ubsan",
+      "jobs": 8,
+      "targets": [
+        "latte-dock-ng",
+        "latteprivateappplugin",
+        "dataunittest",
+        "coreunittest",
+        "previewprocessunittest"
+      ]
     }
   ],
   "testPresets": [
@@ -127,6 +148,21 @@
     {
       "name": "clang-release",
       "configurePreset": "clang-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "configurePreset": "gcc-asan-ubsan",
+      "filter": {
+        "include": {
+          "name": "^(dataunittest|coreunittest|previewprocessunittest|privateapphostsmoketest)$"
+        }
+      },
       "output": {
         "outputOnFailure": true
       },

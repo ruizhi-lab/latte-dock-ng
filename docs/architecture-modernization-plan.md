@@ -171,19 +171,19 @@ is complete; execution and runtime evidence below are not.
 | M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
 | M1a | Complete | [CMake 3.20.6 Debian configure/build pass with zero warnings; 43/43 CTest](modernization-results/M1a.md) | M2a: add and verify warning-as-error policy |
 | M1b | Complete | [Run 36623951814: all four preset build/test/lint jobs and distro checks pass](modernization-results/M1b.md) | Continue with M3b application-host smoke while strict-gate CI runs |
-| M2a | Pending validation | [53 targets gated; local GCC/Clang Debug/Release and CMake 3.20 checks pass](modernization-results/M2a.md) | Push and record the strict-gate CI matrix result |
+| M2a | Complete | [Run 36633737377: GCC/Clang Debug/Release, strict fixtures, CTest and distro matrix pass](modernization-results/M2a.md) | Continue M4b sanitizer coverage |
 | M2b-GCC16 | Complete | [Qt QMetaType incomplete-SFINAE diagnostic scoped to generated moc aggregate](modernization-results/M2b-gcc16.md) | Recheck the suppression after GCC or Qt changes this probe |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
-| M3b | Pending validation | [Baseline CI passed; real application-host smoke passes locally on Gentoo and Debian 13](modernization-results/M3b.md) | Push the smoke test and record the complete CI result |
-| M4a | Pending validation | [Two scoped bug-prone checks pass on app/data/errordata.cpp; negative fixture works](modernization-results/M4a.md) | Include the clang-tidy gate in the next feature-branch CI run |
-| M4b | Not started | No sanitizer preset or fixture | Add the opt-in sanitizer preset after M4a |
+| M3b | Complete | [Run 36633737377: all four baseline comparisons and private.app host smoke pass](modernization-results/M3b.md) | Continue runtime/performance track after prerequisites |
+| M4a | Complete | [Run 36633737377: Clang Debug clang-tidy production and negative checks pass](modernization-results/M4a.md) | Continue M4b sanitizer coverage |
+| M4b | Pending validation | GCC/Clang negative fixtures and refreshed Ubuntu sanitizer CTest pass 4/4; local Gentoo LSan has a ptrace restriction | Record sanitizer CI result; keep leak detection enabled |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | No target boundary selected | Justify dependency reduction after M5b |
-| M7 | Not started | Nix outputs inspected | Add explicit checks after prerequisites |
+| M7 | Pending validation | Separate Nix test derivation/dev shell and NixOS CI steps added; flake parses, Nix checks unavailable on host | Record Nix flake check, default package build, and dev-shell preset results; keep flake.lock unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.

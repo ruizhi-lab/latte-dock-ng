@@ -6,10 +6,8 @@ Branch: `codex/modernization-m0-baseline`
 
 Starting revision: `6def9032d8943075124f71bcd12be6c2a0798ac0`
 
-Status: Ubuntu/Neon baseline reviewed and recorded; previous CI baseline
-comparisons passed. The application-host smoke passes locally on the current
-Gentoo and Debian 13 stacks; the CI run including this new smoke is Pending
-validation.
+Status: Complete. The Ubuntu/Neon baseline, all four CI comparisons, and
+application-host smoke passed in local Gentoo, Debian 13, and feature-branch CI.
 
 ## Implementation
 
@@ -132,7 +130,7 @@ the same USTC repositories already used by local Compose.
 - `ctest --test-dir /tmp/latte-m2a-final/gcc-debug --output-on-failure -R '^privateapphostsmoketest$'` — passed; the real GCC 16 `latte-dock-ng` process imported `org.kde.latte.private.app` and instantiated `ContextMenuLayer`.
 - The same host smoke passed after rebuilding with Clang 22.1 Debug.
 - In the refreshed Debian 13 image with CMake 3.20.6, GCC 14.2, Qt 6.8.2 and KF 6.13: strict application build passed and `privateapphostsmoketest` passed.
-- The GitHub Actions run including `privateapphostsmoketest` — Pending validation.
+- Run [36633737377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36633737377) at `46a4cd39b` — all four GCC/Clang preset jobs, QML checks, distro/package verifiers and the real application-host smoke passed.
 - `packagingcontracttest` and `sourcecontracttest` rebuilt and passed after the
   package-floor, mirror and KWayland target changes.
 
@@ -143,10 +141,8 @@ for 14 days.
 
 ## Handoff
 
-1. Push the host-smoke test path and record the new workflow result, including
-   `privateapphostsmoketest` and all four baseline comparisons.
-2. Mark M3b Complete after that run passes. M2a strict-gate CI is independently
-   running; M4a depends on its completion.
+1. Continue with M4b's sanitizer preset. Revisit the QML baseline only when the
+   selected toolchain/environment fingerprint changes.
 
 M1a's Debian CMake 3.20.6 configure/build and all 43 CTest targets now pass;
 M1b's remote workflow passed. The host smoke does not install or restart the

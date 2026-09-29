@@ -36,3 +36,22 @@ if command -v latte-dock-ng >/dev/null; then
 fi
 
 echo "=== NixOS: BUILD + INSTALL + UNINSTALL SUCCESS ==="
+
+cd "${nix_source}"
+
+# Keep flake tests in the same updated NixOS image that validates the package,
+# so the remote gate also covers the documented developer preset.
+echo "=== NixOS: explicit flake check ==="
+nix --extra-experimental-features "nix-command flakes" \
+    flake check --print-build-logs
+
+echo "=== NixOS: release flake package ==="
+nix --extra-experimental-features "nix-command flakes" \
+    build .#default --no-link --print-build-logs
+
+echo "=== NixOS: development shell preset build ==="
+nix --extra-experimental-features "nix-command flakes" \
+    develop --command bash -c \
+    'cmake --preset gcc-debug && cmake --build --preset gcc-debug'
+
+echo "=== NixOS: FLAKE CHECK + PACKAGE + DEV SHELL SUCCESS ==="
