@@ -159,7 +159,8 @@ is complete; execution and runtime evidence below are not.
 | M1a | Pending validation | [Four local presets pass; CMake 3.20 runtime check unavailable](modernization-results/M1a.md) | Validate schema-v2 parsing/configure with CMake 3.20 when available |
 | M1b | Pending validation | [Four-job preset CI matrix and local checks pass](modernization-results/M1b.md) | Run affected GitHub Actions jobs and record their URLs/results |
 | M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
-| M3a / M3b | Not started | Promotion list empty | Stable identities, then CI baseline |
+| M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
+| M3b | In progress | M3a comparator is registered; CI workflow matrix is available | Integrate full QML collection, reviewed baseline/backlog and CI comparison |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |

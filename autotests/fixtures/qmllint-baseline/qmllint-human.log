@@ -1,0 +1,8 @@
+Warning: a.qml:2:14: Unqualified access to titleText [unqualified]
+Info: titleText is a member of a parent element.
+
+    title: titleText
+           ^^^^^^^^^
+Warning: b.qml:9:3: Member "action" not found on type "Plasma::Applet" [missing-property]
+    action.trigger()
+    ^^^^^^

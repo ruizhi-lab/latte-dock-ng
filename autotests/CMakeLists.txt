@@ -999,3 +999,14 @@ endforeach()
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
+
+# This parser test exercises the standalone baseline tool and its JSON/text
+# fixtures; it does not need another compiled QtTest executable.
+find_package(Python3 3.7 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+    add_test(NAME qmllintbaselinetest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_baseline.py)
+    set_property(TEST qmllintbaselinetest PROPERTY TIMEOUT 30)
+else()
+    message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
+endif()

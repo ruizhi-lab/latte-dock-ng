@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "complete": true,
+  "attemptedFiles": [
+    "a.qml",
+    "b.qml"
+  ],
+  "fileExitCodes": {
+    "a.qml": 0,
+    "b.qml": 0
+  },
+  "processExitCodes": [0]
+}

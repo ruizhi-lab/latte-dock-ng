@@ -1,0 +1,36 @@
+{
+  "revision": 4,
+  "files": [
+    {
+      "filename": "a.qml",
+      "success": false,
+      "warnings": [
+        {
+          "charOffset": 12,
+          "column": 2,
+          "id": "unqualified",
+          "length": 8,
+          "line": 2,
+          "message": "Unqualified access to titleText",
+          "suggestions": [],
+          "type": "warning"
+        },
+        {
+          "charOffset": 12,
+          "column": 2,
+          "id": "unqualified",
+          "length": 8,
+          "line": 2,
+          "message": "Unqualified access to titleText",
+          "suggestions": [],
+          "type": "warning"
+        }
+      ]
+    },
+    {
+      "filename": "b.qml",
+      "success": true,
+      "warnings": []
+    }
+  ]
+}
