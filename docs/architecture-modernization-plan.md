@@ -88,7 +88,7 @@ slice; do not merge all letters into one change by default.
 | 15 | P2b | P2a | One-item deduplication; no global/multi-size cache | Bounded implementation after review |
 | 16 | P3a | P0, M3b | One bounded edge-layout convergence optimization | QML timing review |
 | 17 | P3b | P0, M3b | Edit-state notification proof, then a scoped polling reduction | Plasma compatibility review |
-| Later | M6 | M2a, M4b, M5b | One justified internal target/dependency boundary | Architecture review |
+| Deferred | M6 | M2a, M4b, M5b | Candidate review found no target that reduces an app dependency; see [M6 evaluation](modernization-results/M6.md) | Revisit only with measured build or ownership benefit |
 | Independent | M7 | M1a, M2a | Explicit Nix development and test outputs | Nix sandbox review |
 | Conditional | P4 | P0, M3b, M5b | Evaluate one shared per-view task query before implementation | Model ownership review |
 | Conditional | P5 | P0, M3b | Evaluate one effect/layer allocation optimization | GPU/visual review |
@@ -183,7 +183,7 @@ is complete; execution and runtime evidence below are not.
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
-| M6 | Deferred | No target boundary selected | Justify dependency reduction after M5b |
+| M6 | Deferred | [Evaluation](modernization-results/M6.md): the apparent shared `SchemeColors` source still depends on app-owned config/layout services; extracting it would add a target without reducing app dependencies | Revisit only if a measurable build or ownership benefit emerges |
 | M7 | Pending validation | Nix test derivation compiled the full suite; NixOS sandbox lacked `/etc/dbus-1/session.conf`; flake now selects the Nix-provided session config explicitly | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
