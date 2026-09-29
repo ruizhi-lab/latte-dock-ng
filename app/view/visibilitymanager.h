@@ -13,6 +13,7 @@
 // local
 #include <coretypes.h>
 #include "../plasma/quick/containmentview.h"
+#include "blockhidingevents.h"
 
 // Qt
 #include <QObject>
@@ -250,7 +251,7 @@ private:
 
     int m_strutsThickness{0};
 
-    QStringList m_blockHidingEvents;
+    BlockHidingEvents m_blockHidingEvents;
 
     QRect m_publishedStruts;
     QRect m_lastMask;

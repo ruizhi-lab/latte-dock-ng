@@ -177,7 +177,8 @@ is complete; execution and runtime evidence below are not.
 | M3b | Complete | [Run 36633737377: all four baseline comparisons and private.app host smoke pass](modernization-results/M3b.md) | Continue runtime/performance track after prerequisites |
 | M4a | Complete | [Run 36633737377: Clang Debug clang-tidy production and negative checks pass](modernization-results/M4a.md) | Continue M4b sanitizer coverage |
 | M4b | Pending validation | GCC/Clang negative fixtures and refreshed Ubuntu sanitizer CTest pass 4/4; local Gentoo LSan has a ptrace restriction | Record sanitizer CI result; keep leak detection enabled |
-| M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
+| M5a | Pending validation | Helper extraction and focused tests pass GCC/Clang; full GCC CTest has one sandbox D-Bus bind failure; local LSan is blocked by ptrace; remote CI run 36637219288 remains in progress | Await M4b/M7 CI, then push M5a to run full CI/sanitizer matrix |
+| M5b | Not started | Current visibility test still contains a copied blocker implementation | Replace that copy and verify wrapper notification/runtime wiring after M5a |
 | P0 | Not started | No live profile | Establish comparable scenarios |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |

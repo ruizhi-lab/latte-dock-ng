@@ -108,6 +108,7 @@
       "targets": [
         "latte-dock-ng",
         "latteprivateappplugin",
+        "blockhidingeventstest",
         "dataunittest",
         "coreunittest",
         "previewprocessunittest"
@@ -160,7 +161,7 @@
       "configurePreset": "gcc-asan-ubsan",
       "filter": {
         "include": {
-          "name": "^(dataunittest|coreunittest|previewprocessunittest|privateapphostsmoketest)$"
+          "name": "^(blockhidingeventstest|dataunittest|coreunittest|previewprocessunittest|privateapphostsmoketest)$"
         }
       },
       "output": {

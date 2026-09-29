@@ -941,6 +941,10 @@ add_executable(visibilitylogictest EXCLUDE_FROM_ALL ${visibilitylogictest_SRCS})
 target_link_libraries(visibilitylogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
 latte_add_test(visibilitylogictest)
 
+add_executable(blockhidingeventstest EXCLUDE_FROM_ALL blockhidingeventstest.cpp)
+target_link_libraries(blockhidingeventstest Qt6::Core Qt6::Test)
+latte_add_test(blockhidingeventstest)
+
 set(storagelogictest_SRCS storagelogictest.cpp)
 add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
 target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data)

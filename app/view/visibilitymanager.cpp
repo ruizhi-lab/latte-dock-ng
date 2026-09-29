@@ -552,7 +552,7 @@ void VisibilityManager::setIsShownFully(bool fully)
 
 bool VisibilityManager::hidingIsBlocked() const
 {
-    return (m_blockHidingEvents.count() > 0);
+    return m_blockHidingEvents.isBlocked();
 }
 
 bool VisibilityManager::isFloatingGapWindowEnabled() const
@@ -572,39 +572,23 @@ void VisibilityManager::setIsFloatingGapWindowEnabled(bool enabled)
 
 bool VisibilityManager::hasBlockHidingEvent(const QString &type)
 {
-    return (!type.isEmpty() && m_blockHidingEvents.contains(type));
+    return m_blockHidingEvents.hasEvent(type);
 }
 
 void VisibilityManager::addBlockHidingEvent(const QString &type)
 {
-    if (m_blockHidingEvents.contains(type) || type.isEmpty()) {
-        return;
-    }
-
     //qCDebug(latteView) << " org.kde.late {{ ++++ adding block hiding event :: " << type;
 
-    bool prevHidingIsBlocked = hidingIsBlocked();
-
-    m_blockHidingEvents << type;
-
-    if (prevHidingIsBlocked != hidingIsBlocked()) {
+    if (m_blockHidingEvents.addEvent(type)) {
         Q_EMIT hidingIsBlockedChanged();
     }
 }
 
 void VisibilityManager::removeBlockHidingEvent(const QString &type)
 {
-    if (!m_blockHidingEvents.contains(type) || type.isEmpty()) {
-        return;
-    }
-
     //qCDebug(latteView) << " org.kde.latte {{ ---- remove block hiding event :: " << type;
 
-    bool prevHidingIsBlocked = hidingIsBlocked();
-
-    m_blockHidingEvents.removeAll(type);
-
-    if (prevHidingIsBlocked != hidingIsBlocked()) {
+    if (m_blockHidingEvents.removeEvent(type)) {
         Q_EMIT hidingIsBlockedChanged();
     }
 }
