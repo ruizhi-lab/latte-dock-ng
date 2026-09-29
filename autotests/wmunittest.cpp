@@ -9,6 +9,7 @@
 #include <KConfigGroup>
 
 #include <QBuffer>
+#include <QCoreApplication>
 #include <QFile>
 #include <QImage>
 #include <QPixmap>
@@ -87,11 +88,14 @@ void WindowSystemUnitTest::processLookupFallsBackToExecutableWhenConfigured()
     QVERIFY(dir.isValid());
 
     KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.filePath(QStringLiteral("rulesrc")), KConfig::SimpleConfig);
-    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("/bin/true"), QStringLiteral("True"), config);
+    // Nix builds do not provide the FHS /bin/true path; use this test binary,
+    // which is an executable in every supported build environment.
+    const QString executablePath = QCoreApplication::applicationFilePath();
+    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(executablePath, QStringLiteral("True"), config);
 
     QCOMPARE(services.count(), 1);
     QCOMPARE(services.constFirst()->name(), QStringLiteral("True"));
-    QCOMPARE(services.constFirst()->exec(), QStringLiteral("/bin/true"));
+    QCOMPARE(services.constFirst()->exec(), executablePath);
 }
 
 void WindowSystemUnitTest::processLookupCanIgnoreConfiguredRuntimeWrapper()
@@ -104,13 +108,14 @@ void WindowSystemUnitTest::processLookupCanIgnoreConfiguredRuntimeWrapper()
     settings.writeEntry(QStringLiteral("TryIgnoreRuntimes"), QStringList{QStringLiteral("latte-runtime-wrapper")});
     config->sync();
 
-    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-runtime-wrapper /bin/true"),
+    const QString executablePath = QCoreApplication::applicationFilePath();
+    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-runtime-wrapper %1").arg(executablePath),
                                     QStringLiteral("True"),
                                     config);
 
     QCOMPARE(services.count(), 1);
     QCOMPARE(services.constFirst()->name(), QStringLiteral("True"));
-    QCOMPARE(services.constFirst()->exec(), QStringLiteral("/bin/true"));
+    QCOMPARE(services.constFirst()->exec(), executablePath);
 }
 
 void WindowSystemUnitTest::windowInfoWrapCopiesAndAssignsWindowState()

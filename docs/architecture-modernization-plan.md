@@ -176,15 +176,15 @@ is complete; execution and runtime evidence below are not.
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
 | M3b | Complete | [Run 36633737377: all four baseline comparisons and private.app host smoke pass](modernization-results/M3b.md) | Continue runtime/performance track after prerequisites |
 | M4a | Complete | [Run 36633737377: Clang Debug clang-tidy production and negative checks pass](modernization-results/M4a.md) | Continue M4b sanitizer coverage |
-| M4b | Pending validation | GCC/Clang negative fixtures and refreshed Ubuntu sanitizer CTest pass 4/4; local Gentoo LSan has a ptrace restriction | Record sanitizer CI result; keep leak detection enabled |
-| M5a | Pending validation | [Report](modernization-results/M5a.md): helper extraction and focused tests pass GCC/Clang; full GCC CTest has one sandbox D-Bus bind failure; local LSan is blocked by ptrace; CI run 36639481756 is in progress | Await full CI/sanitizer matrix |
+| M4b | Complete | Run 36642361102: GCC sanitizer job passed with leak detection enabled; ASan/UBSan fixtures and selected tests passed | Keep sanitizer checks in CI |
+| M5a | Complete | [Report](modernization-results/M5a.md): production helper and focused tests pass GCC/Clang; run 36642361102 passed the full GCC/Clang matrix and sanitizer job | Record desktop interaction retest after implementation batches |
 | M5b | Pending validation | [Report](modernization-results/M5b.md): removed copied blocker model; production-helper tests remain; added a narrow wrapper wiring contract; desktop scenarios await final user retest | Await M5a full CI, then record desktop retest points |
 | P0 | Not started | No live profile | Establish comparable scenarios |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | [Evaluation](modernization-results/M6.md): the apparent shared `SchemeColors` source still depends on app-owned config/layout services; extracting it would add a target without reducing app dependencies | Revisit only if a measurable build or ownership benefit emerges |
-| M7 | Pending validation | Nix test derivation compiled the full suite; NixOS sandbox lacked `/etc/dbus-1/session.conf`; flake now selects the Nix-provided session config explicitly | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
+| M7 | Pending validation | [Report](modernization-results/M7.md): run 36642361102 built all tests but Nix CTest passed 41/46; fix Nix Qt/QML/font/D-Bus environment and FHS-only WM fixtures | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.

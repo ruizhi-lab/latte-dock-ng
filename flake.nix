@@ -15,6 +15,11 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           package = import ./default.nix { inherit pkgs; };
+          testInputs = (package.buildInputs or [ ]) ++ [
+            pkgs.kdePackages.breeze-icons
+            pkgs.fontconfig
+            pkgs.dejavu_fonts
+          ];
         in {
           autotests = package.overrideAttrs (old: {
             pname = "${old.pname}-tests";
@@ -22,9 +27,7 @@
               "-DBUILD_TESTING=ON"
               "-DLATTE_STRICT_WARNINGS=ON"
             ];
-            buildInputs = (old.buildInputs or [ ]) ++ [
-              pkgs.kdePackages.breeze-icons
-            ];
+            buildInputs = testInputs;
             doCheck = true;
             buildPhase = ''
               runHook preBuild
@@ -34,10 +37,21 @@
             '';
             checkPhase = ''
               runHook preCheck
+              mkdir -p "$TMPDIR/bin" "$TMPDIR/font-cache"
+              cat > "$TMPDIR/bin/dbus-run-session" <<'WRAPPER'
+              #!/bin/sh
+              exec ${pkgs.dbus}/bin/dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf "$@"
+              WRAPPER
+              chmod +x "$TMPDIR/bin/dbus-run-session"
+              export PATH="$TMPDIR/bin:$PATH"
+              export QML2_IMPORT_PATH="${pkgs.lib.makeSearchPath "lib/qt-6/qml" testInputs}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export QT_PLUGIN_PATH="${pkgs.lib.makeSearchPath "lib/qt-6/plugins" testInputs}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+              export FONTCONFIG_FILE="${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
+              export XDG_CACHE_HOME="$TMPDIR/font-cache"
               export LATTE_TEST_ICON_THEME_PATH="${pkgs.kdePackages.breeze-icons}/share/icons"
               QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
-                dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf \
-                  -- ctest --output-on-failure
+                dbus-run-session -- ctest --output-on-failure
               runHook postCheck
             '';
             installPhase = ''
