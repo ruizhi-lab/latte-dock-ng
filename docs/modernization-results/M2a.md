@@ -45,7 +45,7 @@ source must build successfully. No production source behavior changed.
 - `LATTE_STRICT_WARNINGS=OFF` configured successfully and printed the explicit
   downstream-only status message.
 - `git diff --check` — passed.
-- Feature-branch CI after this change — Pending validation.
+- The first integrated CI run [36632244809](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36632244809) stopped all build jobs during dependency installation because Ubuntu/Neon does not publish the Debian-specific `qt6-svg-plugins` name; the Ubuntu dependency is corrected to `libqt6svg6`. Strict-warning CI after that package fix — Pending validation.
 
 One new GCC 16 diagnostic was found in Qt 6's intentional incomplete-type
 SFINAE probe while the generated `latte-dock-ng` moc aggregation includes
@@ -73,7 +73,10 @@ Logs are in `/tmp/latte-m2a-final-*`; the Debian 13 CMake 3.20.6 run is in
 
 ## Handoff
 
-Next action: push this slice and record the strict-warning CI run URL. If all
-four matrix jobs pass, mark M2a Complete and start M4a. M3b can proceed
-independently with its isolated `org.kde.latte.private.app` host smoke. The user
-authorized automatic commits and pushes on this branch only.
+The strict-warning CI run including M3b's application-host smoke is in progress.
+M4a's local static-analysis slice is now prepared independently while that
+remote result is pending.
+
+Next action: record the current CI run; if it passes, mark M2a and M3b Complete,
+then push M4a for its own remote validation. The user authorized automatic
+commits and pushes on this branch only.

@@ -54,6 +54,15 @@ container separately verifies its packaged minimum stack: CMake 3.31.6, Qt
 6.8.2, KDE Frameworks 6.13 and Plasma 6.3.6. Gentoo, Arch and Fedora checks
 record their current stable versions as forward-compatibility evidence.
 
+The initial clang-tidy gate selects two bug-prone checks for the small
+`app/data/errordata.cpp` component. Run it from a Clang Debug compile database;
+the disposable fixture confirms an ignored `std::string::empty()` result is
+reported as an error.
+
+```bash
+python3 scripts/test-clang-tidy.py --build-dir build/modernization/clang-debug
+```
+
 ## Deep QML lint and baseline review
 
 The syntax-only check and the build-aware deep check serve different purposes.

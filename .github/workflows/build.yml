@@ -55,7 +55,7 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get install -y --no-install-recommends \
-            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon git python3 \
+            build-essential clang clang-tidy cmake extra-cmake-modules pkgconf dbus-daemon git python3 \
             qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev qt6-wayland-dev qt6-tools-dev \
             libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
             libkf6crash-dev libkf6dbusaddons-dev libkf6declarative-dev \
@@ -65,7 +65,7 @@ jobs:
             libkf6windowsystem-dev libkf6xmlgui-dev kf6-ksvg-dev \
             libplasma-dev libkpipewire-dev libkf6wayland-dev \
             plasma-activities-dev plasma-activities-stats-dev \
-            plasma-workspace-dev plasma-pa plasma-wayland-protocols breeze-icon-theme qt6-svg-plugins \
+            plasma-workspace-dev plasma-pa plasma-wayland-protocols breeze-icon-theme libqt6svg6 \
             libwayland-dev liblayershellqtinterface-dev
 
       - uses: actions/checkout@v4
@@ -90,6 +90,10 @@ jobs:
         run: |
           set -euo pipefail
           cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
+
+      - name: Run targeted clang-tidy checks
+        if: matrix.preset == 'clang-debug'
+        run: python3 scripts/test-clang-tidy.py --build-dir "build/modernization/${{ matrix.preset }}"
 
       - name: Verify strict warnings reject and clear a diagnostic
         run: python3 scripts/test-strict-warnings.py --compiler "$CXX" --build-type "${{ matrix.build_type }}"

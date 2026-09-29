@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libkf6kio-dev libkf6i18n-dev libkf6notifications-dev \
       libkf6newstuff-dev libkf6archive-dev libkf6globalaccel-dev \
       libkf6crash-dev libkf6windowsystem-dev libkf6package-dev libkf6svg-dev \
+      breeze-icon-theme libqt6svg6 \
       plasma-wayland-protocols libwayland-dev \
       liblayershellqtinterface-dev \
       gettext build-essential git pkgconf file && \

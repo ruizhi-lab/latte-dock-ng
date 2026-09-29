@@ -175,7 +175,8 @@ is complete; execution and runtime evidence below are not.
 | M2b-GCC16 | Complete | [Qt QMetaType incomplete-SFINAE diagnostic scoped to generated moc aggregate](modernization-results/M2b-gcc16.md) | Recheck the suppression after GCC or Qt changes this probe |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
 | M3b | Pending validation | [Baseline CI passed; real application-host smoke passes locally on Gentoo and Debian 13](modernization-results/M3b.md) | Push the smoke test and record the complete CI result |
-| M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
+| M4a | Pending validation | [Two scoped bug-prone checks pass on app/data/errordata.cpp; negative fixture works](modernization-results/M4a.md) | Include the clang-tidy gate in the next feature-branch CI run |
+| M4b | Not started | No sanitizer preset or fixture | Add the opt-in sanitizer preset after M4a |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |

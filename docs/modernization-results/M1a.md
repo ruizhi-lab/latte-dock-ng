@@ -53,8 +53,10 @@ enumeration. A source contract protects the candidate list.
 The first minimal-image CTest run exposed two `coreunittest` assertions that
 depend on named theme icons. The test now explicitly selects the standard
 Breeze theme and theme search path, while Debian/Ubuntu test images and CI
-install Breeze plus Qt's SVG icon engine. Debian/Ubuntu build images also
-install `qt6-declarative-private-dev`; without the package GCC reports missing
+install Breeze plus Qt's SVG icon engine (`qt6-svg-plugins` on Debian and
+`libqt6svg6` on Ubuntu/Neon). The Debian testing and Ubuntu developer images
+now carry those same theme assets. Debian/Ubuntu build images also install
+`qt6-declarative-private-dev`; without the package GCC reports missing
 Qt private include directories exported by Debian's Qt development packages.
 With those deterministic test dependencies, the CMake 3.20.6 Debian 13
 configure and build passed with zero compiler warnings/errors, and all 43 CTest
