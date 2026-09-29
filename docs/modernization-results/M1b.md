@@ -51,15 +51,18 @@ preset build jobs stopped in Configure because GitHub Actions selected `sh`
 for multiline steps containing Bash's `set -o pipefail`; this patch sets
 `shell: bash` on Configure, Build and Test. The Debian 13 install verification
 also exposed a mismatch between Plasma desktop 6.3.6 and Debian's actual
-`libplasma-dev` 6.3.5-1; the package checks now distinguish the two. The
-Debian 13 package-install job and other distro install/package jobs passed.
-Rerun the affected matrix after this correction. M1a's CMake 3.20.6 Debian-stack
+`libplasma-dev` 6.3.5-1; the package checks now distinguish the two. Follow-up
+run [36613178730](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36613178730)
+confirmed all four configure/build/CTest jobs, QML syntax lint and all distro
+install/package jobs pass. The four Deep QML lint steps failed because the
+Ubuntu build container omitted `git`, which `qmllint-deep.sh` uses to enumerate
+tracked QML files. `git` is now included in build dependencies; rerun the
+workflow to complete remote M1b validation. M1a's CMake 3.20.6 Debian-stack
 configure and build now pass; its one icon-dependent CTest failure is recorded
 there.
 
 ## Handoff
 
-Next action: push the focused CI/package-floor corrections, confirm the four
-build jobs and Debian 13 stack check pass remotely, and use those jobs as the
-M1b/M3b evidence. The user authorized automatic commits and pushes on this
-branch only.
+Next action: push the missing `git` build dependency, confirm all four Deep QML
+lint steps produce complete reports, and review the uploaded fingerprints for
+M3b. The user authorized automatic commits and pushes on this branch only.

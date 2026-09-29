@@ -76,12 +76,19 @@ runtime cannot start without a desktop session.
 
 The first feature-branch workflow run
 [36598722902](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36598722902)
-completed with the QML syntax check and all distro install/package jobs except
-the Debian 13 build-stack assertion passing. Four preset build jobs failed
-before configuration because their multiline actions steps ran under `sh` and
-rejected Bash `pipefail`; the Debian 13 assertion expected `libplasma-dev`
-6.3.6 although the distribution publishes 6.3.5-1. Both causes are corrected
-in the follow-up change and require a successful rerun before this batch passes.
+completed with the four preset build jobs stopping in Configure because their
+multiline actions steps ran under `sh` and rejected Bash `pipefail`. The Debian
+13 assertion also expected `libplasma-dev` 6.3.6 although the distribution
+publishes 6.3.5-1. Those causes are corrected.
+
+The follow-up run
+[36613178730](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36613178730)
+passed all four configure/build/CTest jobs, QML syntax lint, and all distro
+install/package jobs. Deep QML lint could not enumerate tracked sources because
+`git` was absent from the Ubuntu build container; the build dependency list now
+includes it. Re-run CI and review all four generated reports before selecting
+the matching Ubuntu/Neon baseline. No report from that run is usable as a
+baseline because the script exited before QML enumeration.
 
 - `python3 -m py_compile scripts/qmllint-baseline.py autotests/test_qmllint_baseline.py` — passed.
 - `python3 autotests/test_qmllint_baseline.py` — **19/19 passed**, including

@@ -51,7 +51,7 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get install -y --no-install-recommends \
-            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon python3 \
+            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon git python3 \
             qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-tools-dev \
             libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
             libkf6crash-dev libkf6dbusaddons-dev libkf6declarative-dev \
