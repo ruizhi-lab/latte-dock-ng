@@ -61,7 +61,7 @@ jobs:
             libkf6windowsystem-dev libkf6xmlgui-dev kf6-ksvg-dev \
             libplasma-dev libkpipewire-dev libkf6wayland-dev \
             plasma-activities-dev plasma-activities-stats-dev \
-            plasma-workspace-dev plasma-wayland-protocols \
+            plasma-workspace-dev plasma-pa plasma-wayland-protocols \
             libwayland-dev liblayershellqtinterface-dev
 
       - uses: actions/checkout@v4

@@ -70,12 +70,20 @@ Git rejected the checkout as dubious ownership inside the Ubuntu job
 container, so `git ls-files` returned no QML files. The report artifacts
 confirm this is file discovery rather than a QML diagnostic. The workflow now
 marks only `$GITHUB_WORKSPACE` as a safe Git directory immediately before deep
-lint. Rerun CI and inspect all four complete diagnostic reports before M1b or
-M3b can be accepted.
+lint. Rerun [36618715973](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36618715973)
+then completed all four builds/tests and every distro install/package job, but
+the lint comparator correctly rejected the Gentoo candidate fingerprint.
+All four Ubuntu/Neon reports were identical, covered all 236 files, and had
+successful process/file exit codes. Their only diagnostic delta was three
+related import warnings in `PulseAudio.qml` because CI did not install the
+`plasma-pa` runtime package that provides `org.kde.plasma.private.volume`.
+That package is now included in the CI lint environment so the baseline
+captures the intended system imports instead of preserving a missing-module
+artifact.
 
 ## Handoff
 
-Next action: validate and push the container workspace trust fix, then confirm
-all four Deep QML lint steps produce complete reports and review their
-fingerprints for M3b. The user authorized automatic commits and pushes on this
+Next action: run CI with the `plasma-pa` QML module installed, review all four
+reports against the current candidate, then establish and verify the matching
+Ubuntu/Neon baseline. The user authorized automatic commits and pushes on this
 branch only.
