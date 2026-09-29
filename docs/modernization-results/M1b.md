@@ -44,7 +44,12 @@ seven days.
   required matrix/preset relationships were checked with PyYAML and a focused
   semantic assertion instead.
 
-Remote GitHub Actions validation is **Pending validation**. Initial run
+Remote GitHub Actions validation was completed by run
+[36623951814](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36623951814):
+all four preset build/test/deep-lint jobs, QML syntax lint, and all distro
+install/package jobs passed. The four CI QML reports compare cleanly against
+the reviewed Ubuntu/Neon baseline with identical file coverage and diagnostics.
+The run's only earlier retries and their causes are recorded below. Initial run
 [36598722902](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36598722902)
 was triggered after the feature workflow was wired to `codex/**`. All four
 preset build jobs stopped in Configure because GitHub Actions selected `sh`
@@ -91,8 +96,16 @@ were the expected fingerprint mismatch; all builds/tests and distro
 install/package jobs passed. Run CI once more against the updated baseline to
 complete remote M1b validation.
 
+Final run [36623951814](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36623951814)
+completed successfully at revision `54cfd44d`. GCC and Clang Debug/Release
+each configured, built, ran all 43 registered CTest targets and compared the
+complete 236-file QML report against the accepted Ubuntu/Neon baseline. QML
+syntax lint and every distro install and package verification job also passed.
+The build artifacts contain the four successful lint reports and test logs.
+
 ## Handoff
 
-Next action: run CI against the reviewed Ubuntu/Neon baseline and record all
-four green comparison results. The user authorized automatic commits and pushes
-on this branch only.
+Next action: finish M1a's Debian 13 / CMake 3.20 CTest check with the expected
+icon-theme assets, then start M2a. M3b still needs an isolated application-host
+smoke for `org.kde.latte.private.app`. The user authorized automatic commits and
+pushes on this branch only.

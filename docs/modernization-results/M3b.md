@@ -6,8 +6,8 @@ Branch: `codex/modernization-m0-baseline`
 
 Starting revision: `6def9032d8943075124f71bcd12be6c2a0798ac0`
 
-Status: Ubuntu/Neon baseline reviewed and recorded; green CI comparison and
-application-host smoke remain Pending validation.
+Status: Ubuntu/Neon baseline reviewed and recorded; green CI comparison passed;
+application-host smoke remains Pending validation.
 
 ## Implementation
 
@@ -120,6 +120,7 @@ the same USTC repositories already used by local Compose.
   trigger were checked locally.
 - Follow-up remote Actions results and an application-host smoke run — Pending validation.
 - `python3 scripts/qmllint-baseline.py compare --baseline docs/qmllint-baseline.json --current <CI-report> --output <diff>` — zero additions/removals for all four matching reports.
+- Run [36623951814](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36623951814) — all four baseline comparisons and the complete workflow passed.
 - `packagingcontracttest` and `sourcecontracttest` rebuilt and passed after the
   package-floor, mirror and KWayland target changes.
 
@@ -130,15 +131,12 @@ for 14 days.
 
 ## Handoff
 
-1. Rerun the feature-branch workflow and verify all four CI jobs compare cleanly
-   against the reviewed Ubuntu/Neon baseline.
-2. Add or document an application-host smoke path for `org.kde.latte.private.app`.
+1. Add or document an isolated application-host smoke path for `org.kde.latte.private.app`.
    The plugin's CMake contract intentionally resolves Latte symbols from the
    executable, so do not attempt to treat standalone plugin import as proof.
-3. After both validations pass, mark M3b Complete. The next planned code batch
-   is M2a once M1a and M1b meet their acceptance checks; M4a also depends on
-   M2a and can follow after then.
+2. After the host smoke passes, mark M3b Complete. M2a can proceed as soon as
+   M1a and M1b meet their acceptance checks; M4a also depends on M2a.
 
-M1a's CMake 3.20 CTest has one missing-icon environment failure, and M1b's
-remote workflow rerun remains Pending validation. No desktop runtime behavior
-changed in this batch.
+M1a's Debian CMake 3.20.6 configure/build and all 43 CTest targets now pass;
+M1b's remote workflow passed. No desktop runtime behavior changed in this
+batch.

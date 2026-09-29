@@ -50,20 +50,26 @@ exports the KWayland target as `Plasma::KWaylandClient`; adding that explicit
 candidate lets older CMake resolve it without relying on imported-target
 enumeration. A source contract protects the candidate list.
 
-The same CMake 3.20.6 build ran 43 CTest targets: 42 passed and `coreunittest`
-failed two icon-source assertions because the minimal build image has no icon
-theme assets. This is an environment limitation, not a CMake configure/build
-failure; keep that test result visible until the test image supplies its
-required icons. The [official CMake 3.20 preset documentation](https://cmake.org/cmake/help/v3.20/manual/cmake-presets.7.html)
+The first minimal-image CTest run exposed two `coreunittest` assertions that
+depend on named theme icons. The test now explicitly selects the standard
+Breeze theme and theme search path, while Debian/Ubuntu test images and CI
+install Breeze plus Qt's SVG icon engine. Debian/Ubuntu build images also
+install `qt6-declarative-private-dev`; without the package GCC reports missing
+Qt private include directories exported by Debian's Qt development packages.
+With those deterministic test dependencies, the CMake 3.20.6 Debian 13
+configure and build passed with zero compiler warnings/errors, and all 43 CTest
+targets passed. The [official CMake 3.20 preset documentation](https://cmake.org/cmake/help/v3.20/manual/cmake-presets.7.html)
 also confirms the schema-v2 fields used by the presets.
 
 The oldest supported distro acceptance target is Debian 13.7's packaged stack:
 CMake 3.31.6-2, Qt 6.8.2, KF 6.13 and Plasma desktop 6.3.6. Debian ships
 `libplasma-dev` 6.3.5-1 and `plasma-workspace-dev` 4:6.3.6-2; the local
 Debian 13 container passed both package-floor checks and the complete
-system/user install-uninstall verifier. The feature-branch CI rerun remains
-pending. Gentoo, Arch, Fedora, openSUSE, Mageia, Ubuntu and NixOS forward-stack
-checks are recorded in M3b.
+system/user install-uninstall verifier. Feature-branch CI run
+[36623951814](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36623951814)
+passed all four build/test/lint presets and every distro install/package job.
+Gentoo, Arch, Fedora, openSUSE, Mageia, Ubuntu and NixOS forward-stack checks
+are recorded in M3b.
 
 ## Exact commands
 
@@ -85,7 +91,6 @@ ctest --test-dir "build/modernization/<preset>" --show-only=json-v1
 
 ## Handoff
 
-Next action: push the corrected CI and package-verification slice, then record
-the fresh workflow result. Keep the missing-icon CTest failure visible; do not
-claim that every CMake 3.20 test passed. The user authorized automatic commits
-and pushes on this branch; never push another branch or a tag.
+Next action: proceed to M2a. CMake 3.20.6 Debian configure, build and all 43
+CTest targets now pass. The user authorized automatic commits and pushes on
+this branch; never push another branch or a tag.

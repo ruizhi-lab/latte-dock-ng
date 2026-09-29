@@ -18,6 +18,7 @@ class CoreUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void extrasFormatRectsAndEnums();
     void extrasCompareFloatingPointValues();
     void toolsCalculateColorBrightnessAndLumina();
@@ -29,6 +30,15 @@ private Q_SLOTS:
     void quickWindowSystemReportsWaylandCompositing();
     void singletonsCreateExpectedObjects();
 };
+
+void CoreUnitTest::initTestCase()
+{
+    // Offscreen Qt starts with only its resource icon path. Add the standard
+    // system theme directory and select Breeze so theme-name assertions are
+    // independent of the developer's active KDE session.
+    QIcon::setThemeSearchPaths({QStringLiteral("/usr/share/icons")});
+    QIcon::setThemeName(QStringLiteral("breeze"));
+}
 
 void CoreUnitTest::extrasFormatRectsAndEnums()
 {
