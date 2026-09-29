@@ -59,10 +59,13 @@ Ubuntu build container omitted `git`, which `qmllint-deep.sh` uses to enumerate
 tracked QML files. `git` is now included in build dependencies; rerun the
 workflow to complete remote M1b validation. M1a's CMake 3.20.6 Debian-stack
 configure and build now pass; its one icon-dependent CTest failure is recorded
-there.
+there. A later run also found GitHub Actions could not access the openSUSE CDN
+(HTTP 403); openSUSE jobs now use the verified USTC repositories, while all
+other distro jobs keep their existing repositories.
 
 ## Handoff
 
-Next action: push the missing `git` build dependency, confirm all four Deep QML
-lint steps produce complete reports, and review the uploaded fingerprints for
-M3b. The user authorized automatic commits and pushes on this branch only.
+Next action: push the QML dependency and openSUSE mirror adjustment, confirm all
+four Deep QML lint steps produce complete reports, and review the uploaded
+fingerprints for M3b. The user authorized automatic commits and pushes on this
+branch only.

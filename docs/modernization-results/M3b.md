@@ -88,7 +88,10 @@ install/package jobs. Deep QML lint could not enumerate tracked sources because
 `git` was absent from the Ubuntu build container; the build dependency list now
 includes it. Re-run CI and review all four generated reports before selecting
 the matching Ubuntu/Neon baseline. No report from that run is usable as a
-baseline because the script exited before QML enumeration.
+baseline because the script exited before QML enumeration. A subsequent run
+also received HTTP 403 from the openSUSE CDN while refreshing rolling package
+metadata; the CI workflow now directs openSUSE verification/package builds to
+the same USTC repositories already used by local Compose.
 
 - `python3 -m py_compile scripts/qmllint-baseline.py autotests/test_qmllint_baseline.py` — passed.
 - `python3 autotests/test_qmllint_baseline.py` — **19/19 passed**, including
