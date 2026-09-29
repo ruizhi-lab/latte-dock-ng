@@ -170,10 +170,10 @@ is complete; execution and runtime evidence below are not.
 | Source assessment | Complete | [2026-09-29 record](architecture-modernization-baseline.md) | Start M0 when implementation is requested |
 | M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
 | M1a | Pending validation | [CMake 3.20.6 Debian configure/build and package stack pass; one icon-dependent CTest failure remains](modernization-results/M1a.md) | Rerun CI and resolve or formally scope the missing-icon test environment |
-| M1b | Pending validation | [Build/test and distro jobs pass; complete Ubuntu/Neon reports exposed a missing Plasma volume QML dependency](modernization-results/M1b.md) | Rerun CI with `plasma-pa` installed; review and record the matching baseline |
+| M1b | Pending validation | [Build/test and distro jobs pass; reviewed Ubuntu/Neon reports match the candidate](modernization-results/M1b.md) | Rerun CI against the reviewed baseline and confirm all four lint comparisons pass |
 | M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
-| M3b | Pending validation | [China-mirror distro images refreshed; install verifiers pass; CI fingerprint/host smoke pending](modernization-results/M3b.md) | Capture matching Ubuntu/Neon CI evidence and validate private.app through the application host |
+| M3b | Pending validation | [Ubuntu/Neon baseline reviewed with identical four-preset reports; host smoke pending](modernization-results/M3b.md) | Confirm green CI comparison and validate private.app through the application host |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
 | M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
 | P0 | Not started | No live profile | Establish comparable scenarios |

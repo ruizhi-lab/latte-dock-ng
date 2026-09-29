@@ -6,8 +6,8 @@ Branch: `codex/modernization-m0-baseline`
 
 Starting revision: `6def9032d8943075124f71bcd12be6c2a0798ac0`
 
-Status: implementation recorded; remote baseline and application-host smoke
-remain Pending validation.
+Status: Ubuntu/Neon baseline reviewed and recorded; green CI comparison and
+application-host smoke remain Pending validation.
 
 ## Implementation
 
@@ -37,19 +37,26 @@ default CMake; Gentoo, Arch and Fedora remain forward-compatibility checks.
 
 The baseline comparator runs in every build matrix job. GitHub Actions now
 also runs for `codex/**` branches and retains the raw baseline evidence as an
-artifact. The first local baseline is from Gentoo 2.18, qmllint/Qt 6.11.2 and
-contains 7,343 occurrences across 10 categories and 236 source files. All four
-local GCC/Clang Debug/Release reports have identical SHA-256:
+artifact. The initial local candidate was from Gentoo 2.18 with qmllint 6.11.2
+and contained 7,343 occurrences across 10 categories and 236 source files.
+The accepted baseline now uses qmllint 6.11.1 from the Ubuntu 24.04 KDE Neon CI
+environment and retains the same diagnostic identities, multiplicities and
+category counts. All four local GCC/Clang Debug/Release reports have
+identical SHA-256:
 `6b4fd15eb6ae5dc73bde467680e690637904df47e34ee94421e711e0ec99e7a6`.
 The detailed category counts and scoped dynamic-interface exceptions are in
 [`qmllint-backlog-plan.md`](../qmllint-backlog-plan.md), and the baseline is
 [`qmllint-baseline.json`](../qmllint-baseline.json).
 
-The local candidate intentionally fingerprints `gentoo-2.18`; the CI build
-container is Ubuntu 24.04 with KDE Neon packages. CI will reject this mismatch
-until its own run supplies a complete comparable report. Keep that failure
-Pending validation and replace the baseline only after reviewing the uploaded
-CI report and its additions/removals. No warning category was promoted because
+The CI build container installs `plasma-pa` so `PulseAudio.qml` resolves the
+system-owned volume QML module during type analysis. Run
+[36621406790](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36621406790)
+produced byte-identical reports for all four presets, each covering 236 files
+with zero failed exits. The complete normalized report hash is
+`cd460339154a1c2dacc7c1ed7ec07d6b6f9c4a03502c34130501b80025043bee`. Compared
+with the Gentoo candidate there were no added or removed identities and no
+multiplicity changes; only tool and host fingerprints differed. That report is
+now the reviewed machine baseline. No warning category was promoted because
 none has two zero-warning runs.
 
 Docker Compose now defaults Docker Hub base images to DaoCloud's mirror and
@@ -112,6 +119,7 @@ the same USTC repositories already used by local Compose.
 - Workflow YAML parsed and the GCC/Clang Debug/Release matrix and feature branch
   trigger were checked locally.
 - Follow-up remote Actions results and an application-host smoke run — Pending validation.
+- `python3 scripts/qmllint-baseline.py compare --baseline docs/qmllint-baseline.json --current <CI-report> --output <diff>` — zero additions/removals for all four matching reports.
 - `packagingcontracttest` and `sourcecontracttest` rebuilt and passed after the
   package-floor, mirror and KWayland target changes.
 
@@ -122,17 +130,14 @@ for 14 days.
 
 ## Handoff
 
-1. Read the feature-branch GitHub Actions run. Download a complete successful
-   job's QML baseline artifact and verify every preset report has identical
-   file coverage and diagnostics.
-2. If fingerprints match across build presets, review and replace the checked-in
-   candidate with the Ubuntu/Neon report, then rerun comparison. If they differ,
-   identify the differing system import or package rather than normalizing it
-   away.
-3. Add or document an application-host smoke path for `org.kde.latte.private.app`.
+1. Rerun the feature-branch workflow and verify all four CI jobs compare cleanly
+   against the reviewed Ubuntu/Neon baseline.
+2. Add or document an application-host smoke path for `org.kde.latte.private.app`.
    The plugin's CMake contract intentionally resolves Latte symbols from the
    executable, so do not attempt to treat standalone plugin import as proof.
-4. Only after both validations pass, mark M3b Complete and begin M4a.
+3. After both validations pass, mark M3b Complete. The next planned code batch
+   is M2a once M1a and M1b meet their acceptance checks; M4a also depends on
+   M2a and can follow after then.
 
 M1a's CMake 3.20 CTest has one missing-icon environment failure, and M1b's
 remote workflow rerun remains Pending validation. No desktop runtime behavior

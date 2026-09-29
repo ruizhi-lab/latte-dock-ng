@@ -81,9 +81,18 @@ That package is now included in the CI lint environment so the baseline
 captures the intended system imports instead of preserving a missing-module
 artifact.
 
+Run [36621406790](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36621406790)
+confirmed the corrected import environment: all four preset reports were
+byte-identical, covered 236 files with successful exit codes, and had no
+diagnostic identity or multiplicity changes against the reviewed Gentoo
+candidate. The CI tool/host fingerprint differs by design, so the reviewed
+Ubuntu/Neon report now replaces that candidate. The only failures in this run
+were the expected fingerprint mismatch; all builds/tests and distro
+install/package jobs passed. Run CI once more against the updated baseline to
+complete remote M1b validation.
+
 ## Handoff
 
-Next action: run CI with the `plasma-pa` QML module installed, review all four
-reports against the current candidate, then establish and verify the matching
-Ubuntu/Neon baseline. The user authorized automatic commits and pushes on this
-branch only.
+Next action: run CI against the reviewed Ubuntu/Neon baseline and record all
+four green comparison results. The user authorized automatic commits and pushes
+on this branch only.

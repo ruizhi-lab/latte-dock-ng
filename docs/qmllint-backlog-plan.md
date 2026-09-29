@@ -5,10 +5,9 @@ Date: 2026-09-30
 The reviewed machine baseline is [`qmllint-baseline.json`](qmllint-baseline.json).
 It records all 236 tracked QML files, the qmllint JSON revision, the tool and
 host fingerprint, import roots, successful process exit codes, and normalized
-diagnostic identities with multiplicities. The initial measurement used
-qmllint 6.11.2, Qt 6.11.2 and the GCC Debug build tree on Gentoo 2.18. It is a
-local candidate baseline; CI must establish a matching Ubuntu 24.04 KDE Neon
-baseline before this fingerprint can pass in the CI container. A fingerprint
+diagnostic identities with multiplicities. The accepted fingerprint is
+qmllint 6.11.1 on Ubuntu 24.04 with the KDE Neon build stack, using the GCC
+Debug build tree and the installed `plasma-pa` QML module. A fingerprint
 mismatch fails closed and is not permission to overwrite this file.
 
 ## Initial measured backlog
@@ -73,7 +72,14 @@ whole-file `missing-property` suppression is permitted.
    output and tool version are retained under each build directory and uploaded
    as CI evidence.
 
-The CI Ubuntu/Neon candidate has not yet been collected. The current local
-baseline intentionally makes that environment difference explicit. Replace it
-only after a CI run provides the corresponding complete report and raw
-evidence; until then, CI baseline comparison remains Pending validation.
+The initial Gentoo candidate used qmllint 6.11.2 and had the same 724
+diagnostic identities and multiplicities as the accepted Ubuntu/Neon report.
+The four Ubuntu/Neon reports from run
+[36621406790](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36621406790)
+were byte-identical (SHA-256
+`cd460339154a1c2dacc7c1ed7ec07d6b6f9c4a03502c34130501b80025043bee`), covered
+all 236 files with zero failed exits, and contained no additions or removals
+against the Gentoo candidate. Installing `plasma-pa` supplies the expected
+`org.kde.plasma.private.volume` module and keeps the comparison free of
+environment-only import warnings. The selected report was reviewed and copied
+into the machine baseline; a green CI comparison against it remains pending.

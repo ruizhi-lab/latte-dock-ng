@@ -5072,7 +5072,7 @@
   "environment": {
     "architecture": "x86_64",
     "attributes": {
-      "host": "gentoo-2.18"
+      "host": "ubuntu-24.04"
     },
     "importRoots": [
       "<build-qml>",
@@ -5569,6 +5569,6 @@
     "format": "json",
     "jsonRevision": 4,
     "name": "qmllint",
-    "version": "qmllint 6.11.2"
+    "version": "qmllint 6.11.1"
   }
 }
