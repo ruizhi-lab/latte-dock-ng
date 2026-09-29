@@ -105,7 +105,7 @@ The build artifacts contain the four successful lint reports and test logs.
 
 ## Handoff
 
-Next action: finish M1a's Debian 13 / CMake 3.20 CTest check with the expected
-icon-theme assets, then start M2a. M3b still needs an isolated application-host
-smoke for `org.kde.latte.private.app`. The user authorized automatic commits and
-pushes on this branch only.
+M1a is complete. M2a strict-warning policy work is underway and will be
+validated by the feature-branch workflow. M3b still needs an isolated
+application-host smoke for `org.kde.latte.private.app`. The user authorized
+automatic commits and pushes on this branch only.

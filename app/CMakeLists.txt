@@ -69,6 +69,17 @@ add_executable(latte-dock-ng ${lattedock-app_SRCS})
 qt_add_resources(latte-dock-ng "paneltracker" PREFIX "/latte" FILES wm/plasmapaneltracker.js)
 add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16)
+    # GCC 16 flags Qt 6 QMetaType's intentional incomplete-type SFINAE probe
+    # when the generated moc aggregate later includes Latte::View's definition.
+    # Keep the workaround on this generated translation unit only; remove it
+    # when that Qt probe or GCC diagnostic no longer produces the false positive.
+    set_source_files_properties(
+        "${CMAKE_CURRENT_BINARY_DIR}/latte-dock-ng_autogen/mocs_compilation.cpp"
+        PROPERTIES COMPILE_OPTIONS "-Wno-sfinae-incomplete"
+    )
+endif()
+
 # The private.app QML plugin is hosted by this executable and resolves its
 # application-facing type dependencies from the exported process symbols.
 set_target_properties(latte-dock-ng PROPERTIES

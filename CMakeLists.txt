@@ -22,6 +22,10 @@ set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 option(KDE_L10N_AUTO_TRANSLATIONS "Compatibility flag for external install scripts." OFF)
 set(KDE_L10N_BRANCH "" CACHE STRING "Compatibility translation branch name from external scripts.")
 option(LATTE_INSTALL_USER_KICKERACTION_EXECUTABLE "Install user-local Plasma kicker action as trusted executable desktop file." OFF)
+option(LATTE_STRICT_WARNINGS
+    "Treat GCC and Clang warnings in Latte targets as errors (disable only as a downstream compatibility escape hatch)."
+    ON
+)
 
 set(KF6_LOCALE_PREFIX "")
 set(QT_MAJOR_VERSION 6)
@@ -40,6 +44,7 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(LatteTargetResolution)
+include(LatteStrictWarnings)
 include(WriteBasicConfigVersionFile)
 include(CTest)
 
@@ -317,6 +322,11 @@ add_subdirectory(shell)
 if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
+
+# Defer until every subdirectory has created its targets. This includes helper
+# programs, QML plugins and excluded test binaries while leaving imported KDE,
+# Qt and other dependency targets untouched.
+cmake_language(DEFER CALL latte_enable_strict_warnings_for_project)
 
 ki18n_install(po)
 

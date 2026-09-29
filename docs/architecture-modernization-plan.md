@@ -170,8 +170,9 @@ is complete; execution and runtime evidence below are not.
 | Source assessment | Complete | [2026-09-29 record](architecture-modernization-baseline.md) | Start M0 when implementation is requested |
 | M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
 | M1a | Complete | [CMake 3.20.6 Debian configure/build pass with zero warnings; 43/43 CTest](modernization-results/M1a.md) | M2a: add and verify warning-as-error policy |
-| M1b | Complete | [Run 36623951814: all four preset build/test/lint jobs and distro checks pass](modernization-results/M1b.md) | M2a after M1a's CMake 3.20 CTest environment check |
-| M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
+| M1b | Complete | [Run 36623951814: all four preset build/test/lint jobs and distro checks pass](modernization-results/M1b.md) | Continue with M3b application-host smoke while strict-gate CI runs |
+| M2a | Pending validation | [53 targets gated; local GCC/Clang Debug/Release and CMake 3.20 checks pass](modernization-results/M2a.md) | Push and record the strict-gate CI matrix result |
+| M2b-GCC16 | Complete | [Qt QMetaType incomplete-SFINAE diagnostic scoped to generated moc aggregate](modernization-results/M2b-gcc16.md) | Recheck the suppression after GCC or Qt changes this probe |
 | M3a | Complete | [Stable parser, fail-closed comparisons and fixtures](modernization-results/M3a.md) | M3b: collect a reviewed baseline in a controlled environment and gate CI |
 | M3b | Pending validation | [Ubuntu/Neon baseline and four CI comparisons pass; host smoke pending](modernization-results/M3b.md) | Validate private.app through an isolated application-host smoke |
 | M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |

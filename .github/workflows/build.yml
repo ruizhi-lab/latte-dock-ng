@@ -22,18 +22,22 @@ jobs:
         include:
           - name: GCC Debug
             preset: gcc-debug
+            build_type: Debug
             cc: gcc
             cxx: g++
           - name: GCC Release
             preset: gcc-release
+            build_type: Release
             cc: gcc
             cxx: g++
           - name: Clang Debug
             preset: clang-debug
+            build_type: Debug
             cc: clang
             cxx: clang++
           - name: Clang Release
             preset: clang-release
+            build_type: Release
             cc: clang
             cxx: clang++
     env:
@@ -86,6 +90,9 @@ jobs:
         run: |
           set -euo pipefail
           cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
+
+      - name: Verify strict warnings reject and clear a diagnostic
+        run: python3 scripts/test-strict-warnings.py --compiler "$CXX" --build-type "${{ matrix.build_type }}"
 
       - name: Test
         shell: bash
