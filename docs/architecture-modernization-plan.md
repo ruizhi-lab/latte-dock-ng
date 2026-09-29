@@ -1,121 +1,185 @@
-# Architecture and Tooling Modernization Plan
+# Architecture, Quality and Performance Modernization Plan
 
-Status: proposed; implementation has not started.
-Assessment date: 2026-09-19. Baseline revision: `78813c598`.
+Status: execution backlog; this refresh implements documentation only.
+Assessment date: 2026-09-29.
+Source baseline: `main` at `e3ef1ddf001aa032cffa62db21cfd97196174746` (1.2.51).
+The local HEAD and remote `refs/heads/main` matched when checked on that date.
 
-## Purpose and authority
+## Authority and how to use this plan
 
-Make existing quality rules enforceable and reduce the cost of changing runtime
-behavior. Preserve C++20, Qt 6, KDE Frameworks 6, Plasma 6, and Wayland. This is
-an incremental maintenance plan, not a rewrite or a release request.
+Preserve the current features, C++20, CMake 3.20, Qt 6.6, KF6 6.0, Plasma 6.3
+and Wayland. This plan authorizes no implementation, release or remote mutation
+by itself. The user's selected batch determines the implementation scope.
 
-Read [AGENTS.md](../AGENTS.md) first. Use the companion
-[implementation guide](architecture-modernization-implementation.md) for each
-work package. Runtime verification remains defined by the
-[development testing guide](development-testing-guide.md).
+Read [AGENTS.md](../AGENTS.md) and the relevant entries in the
+[architecture map](architecture-overview.md). Then read this plan's selected
+row, the common rules and that batch's section in the
+[implementation guide](architecture-modernization-implementation.md).
+The [baseline record](architecture-modernization-baseline.md) separates source
+observations from checks actually executed. The
+[performance protocol](performance-validation-guide.md) defines measurements
+and desktop acceptance. These documents replace the assessment at `78813c598`;
+they do not imply that its proposed M0-M7 packages were implemented.
 
-## Verified baseline and limits
+For a smaller model, assign one slice such as M1a or P1b per turn. Read the
+common rules plus the selected section rather than exploring every candidate.
+Every slice must leave a durable handoff containing an exact next action.
+Boundary review means an explicit review of the listed assumptions by the user
+or a separately selected reviewer; it does not request automatic delegation.
 
-The assessment inspected source and configuration; it did not rebuild the
-application, execute the full test suite, or establish current CI health.
+## Current baseline and uncertainty
 
-| Area | Observed state | Consequence |
-| --- | --- | --- |
-| Language and dependencies | C++20, Qt >= 6.6, KF6 >= 6.0, Plasma >= 6.3; CMake >= 3.20 | Keep these compatibility floors unless a later decision explicitly changes them. |
-| Application structure | `app/CMakeLists.txt` assembles most application sources into one executable; child directories append sources through `PARENT_SCOPE` | Directory boundaries do not enforce internal dependencies. |
-| Runtime size | `layoutmanager.cpp`: 2,872 lines; `containmentinterface.cpp`: 2,536; `view.cpp`: 2,127; `AppletItem.qml`: 1,975; `storage.cpp`: 1,911 | These are investigation candidates, not mandatory line-count reduction targets. |
-| Isolation | Preview helper uses an independent process, watchdog, serial validation, bounded protocol and fallback | Preserve this fault boundary and the authoritative hover-action setting. |
-| CI | GCC/Clang builds and tests, QML lint, multi-distribution source/package installation checks | Extend existing workflows rather than replacing them. |
-| Compiler warnings | Project explicitly adds `-Werror=format-security`; no comprehensive project warning-as-error gate was found in the reviewed CI | Reconfirm effective ECM/compiler flags, then enforce the zero-warning rule. |
-| QML lint | Deep lint allows legacy diagnostics; promoted categories are empty | Introduce a measured baseline and prevent regressions. |
-| QML backlog | Script references `docs/qmllint-backlog-plan.md`, absent at the baseline | Supply a scoped plan before claiming warning governance exists. |
-| Tests | Unit, plugin, source-contract and isolated D-Bus tests exist; coverage estimate is file-level | Do not describe source contracts or file estimates as runtime/branch coverage. |
-| Local build state | Existing GCC and Clang directories listed 41 and 42 tests respectively | Regenerate matching configurations; this observation does not establish a source defect. |
-| Developer tools | clang-format and clangd configured; no tracked CMake Presets or clang-tidy configuration found | Establish repeatable configurations and introduce targeted analysis. |
-| Nix | Flake has package/overlay/module outputs but no explicit `checks` or `devShells` outputs | A successful flake check alone does not prove application tests ran. |
+| Observation at the source baseline | Implication |
+| --- | --- |
+| Modern language/platform stack and API capability probes already exist | Keep dependency floors and cross-distribution fallbacks. |
+| Most application sources still form one executable; private.app imports depend on host exports | Extract useful internal policy only; preserve host/plugin linking. |
+| Geometry production helpers and direct backend tests already exist | Extend them instead of declaring all policy untested or re-extracting it. |
+| Some visibility, storage and parabolic logic tests copy production algorithms | A passing copy cannot prove production behavior. Convert one bounded case first. |
+| GCC/Clang CI, syntax/deep QML lint and distribution installation checks exist | Extend current gates. Their presence does not establish current CI health. |
+| No tracked presets, clang-tidy config or referenced QML backlog document; promoted QML categories are empty | Reproducibility and diagnostic governance remain unfinished. |
+| Existing local caches list 40-42 tests, depending on the directory | Fresh equivalent configurations and test-name comparison are mandatory. |
+| Window hints already debounce, skip inactive views and aggregate layout hints | Preserve these optimizations; do not repeat the work. |
+| updateWindowCache emits windowChanged; the tracker unconditionally schedules hint recalculation | A concrete event-routing optimization candidate exists. Start with title-only changes. |
+| Icon geometry changes schedule pixmap loading and texture updates | Deduplication is a candidate, not a measured bottleneck. |
+| Root-level edit polling and bounded edge-layout refreshes exist | Compatibility/timing workarounds need characterization before reduction. |
+| Preview helper already starts lazily and has bounded IPC, watchdogs, stale-reply rejection and an idle lease | Retain isolation and fallback; do not claim process removal as an optimization. |
+| Nix exposes packages/overlay/module but no explicit checks/devShells | Establish a test contract without changing the lock or release package scope. |
 
-The deep lint script's historical “7k+” comment is not a measured current count.
-All counts and tool behavior must be remeasured at implementation time.
+No fresh application build, full test execution, live desktop retest, remote CI
+inspection or performance profile was performed for this documentation refresh.
+No CPU, memory, GPU or startup improvement has been established.
 
-## Architectural direction
+## Delivery sequence
 
-Keep the application as a cohesive desktop program with focused internal
-components. Do not introduce services or public shared-library APIs merely to
-make the directory layout appear modular.
+The M identifiers remain the quality/architecture track. P identifiers are the
+new performance track. Each letter identifies an independently reviewable
+slice; do not merge all letters into one change by default.
 
-- Application composition: `Corona` and `View` coordinate lifecycle and wire
-  components together; avoid adding more unrelated policy to them.
-- Testable policy: geometry, visibility decisions and storage transformations
-  should accept explicit inputs and expose deterministic results where feasible.
-- Platform adapters: Plasma, KWin, Wayland and compatibility behavior stay behind
-  focused interfaces. Preserve version-specific fallbacks until consumers and
-  supported distributions are verified.
-- Presentation: QML owns visual composition; give it explicit, typed state
-  instead of expanding implicit context and cross-component object discovery.
-- Ownership: retain Qt parent ownership and `QPointer` where appropriate.
-  Document the state authority, destruction order and stale-callback behavior;
-  do not mechanically replace QObject pointers with smart pointers.
-
-## Work packages and dependencies
-
-Each package should be a reviewable change, with smaller slices when necessary.
-Suggested commit subjects do not change the branch policy in `AGENTS.md`: work
-on `main` still requires separate commit and push approval, while validated
-work on another branch may be committed and pushed automatically.
-
-| ID | Priority | Depends on | Deliverable | Suggested commit subject |
+| Order | Batch | Dependencies | Deliverable and slice boundary | Execution level |
 | --- | --- | --- | --- | --- |
-| M0 | First | None | Reproducible baseline and evidence ledger | `docs: record modernization baseline` |
-| M1 | High | M0 | Shared compiler/build/test presets | `build: add reproducible development presets` |
-| M2 | High | M1 | Verified compiler warning gate | `ci: enforce compiler warning policy` |
-| M3 | High | M0 | QML diagnostic baseline and regression gate | `ci: prevent new QML diagnostics` |
-| M4 | Medium | M1, M2 | Focused static analysis and sanitizer validation | `test: add lifecycle analysis checks` |
-| M5 | High | M0, M1 | Behavioral tests for one selected runtime boundary | `test: cover selected runtime behavior` |
-| M6 | Medium | M2, M4, M5 | One tested internal component extraction | `refactor: isolate selected runtime policy` |
-| M7 | Medium | M1 | Explicit Nix development/test contract | `build: define Nix development checks` |
+| 1 | M0 | None | Fresh four-configuration quality baseline and test/diagnostic inventory | Routine evidence collection |
+| 2 | M1a | M0 | CMake schema-v2 presets and local editor selection | Routine configuration |
+| 3 | M1b | M1a | CI uses equivalent presets and eight build jobs | Routine configuration |
+| 4 | M2a | M1a, M1b | Strict first-party compiler-warning gate with negative fixtures | Bounded build policy |
+| 4a | M2b | M2a diagnostic evidence | One warning family per slice, only if required | Localized fixes; review behavior changes |
+| 5 | M3a | M0 | Stable QML diagnostic identities and parser tests | Bounded tooling |
+| 6 | M3b | M3a, M1b | Comparable baseline, CI comparison and backlog governance | Bounded tooling |
+| 7 | M4a | M1a, M2a | Small targeted static-analysis configuration | Bounded tooling |
+| 8 | M4b | M4a | Opt-in ASan/UBSan configuration and selected tests | Instrumentation review |
+| 9 | M5a | M0, M1a, M2a | Production hiding-blocker value helper, behavior unchanged | Bounded C++ extraction |
+| 10 | M5b | M5a, M4b | Replace copied blocker tests and verify production wiring | Lifecycle/binding review |
+| 11 | P0 | M0, M1a | Repeatable A/B performance baseline and scenario evidence | Measurement; desktop coordination |
+| 12 | P1a | P0, M3b, M5b | Title-event characterization and a reviewed routing specification | Window-state boundary review |
+| 13 | P1b | P1a | Title-only fast path, conservative fallback and production tests | Bounded implementation after review |
+| 14 | P2a | P0, M3b, M4b | Icon invalidation matrix and observed raster/texture activity | Render-state boundary review |
+| 15 | P2b | P2a | One-item deduplication; no global/multi-size cache | Bounded implementation after review |
+| 16 | P3a | P0, M3b | One bounded edge-layout convergence optimization | QML timing review |
+| 17 | P3b | P0, M3b | Edit-state notification proof, then a scoped polling reduction | Plasma compatibility review |
+| Later | M6 | M2a, M4b, M5b | One justified internal target/dependency boundary | Architecture review |
+| Independent | M7 | M1a, M2a | Explicit Nix development and test outputs | Nix sandbox review |
+| Conditional | P4 | P0, M3b, M5b | Evaluate one shared per-view task query before implementation | Model ownership review |
+| Conditional | P5 | P0, M3b | Evaluate one effect/layer allocation optimization | GPU/visual review |
+| Conditional | P6 | M1a, M3b, P0 | Evaluate one pure-QML module's build-time caching | Import/install review |
 
-M3 and M7 need not wait for the architecture extraction. Within M6, first add
-characterization tests, then extract production logic, then simplify callers.
-Do not combine unrelated warning cleanup, behavior changes and refactors.
+M3 and M7 can proceed independently of runtime refactoring once their listed
+dependencies are met. P1 and P2 are alternatives selected by measurement;
+neither must wait for the other. P3a/P3b are separate fixes. M6 and P4-P6 need a
+recorded benefit and approved narrow design before implementation. Do not add
+M6 merely to increase the number of CMake targets. LTO/PGO and global QML
+conversion remain deferred experiments, outside the default sequence.
 
-## Completion criteria
+Dependencies describe usable functionality and evidence. A predecessor with
+all required local checks green but remote CI pending may support the next
+local tooling slice; keep both remote acceptance and parent completion pending.
+Unexplained local build/test failures block dependent runtime changes. A pending
+desktop retest never counts as a validated runtime foundation for another fix.
 
-- Matching GCC and Clang configurations build the application and all tests
-  with zero compiler warnings/errors; CI demonstrably rejects an injected
-  project warning in a disposable validation fixture.
-- QML syntax and generated-module checks remain active. New unapproved
-  diagnostics fail comparison against a reviewed baseline; no global warning
-  suppression hides the backlog.
-- Developers and CI use documented equivalent configurations, with separate
-  build trees and explicit compiler selection.
-- At least one high-risk behavior is tested through production code, with the
-  relevant desktop retest recorded. Tests must not reproduce the production
-  algorithm in the test body.
-- At least one internal boundary has explicit dependencies and ownership;
-  callers and tests use the same extracted production implementation.
-- Nix checks state exactly whether they build, test, or verify installation.
-- Each package has evidence, limitations and a handoff record. A package with
-  required desktop/CI verification outstanding remains pending validation.
+## Invariants that every batch must preserve
 
-## Non-goals and safeguards
+- One authoritative source per state. Cached values have explicit invalidation;
+  asynchronous work rejects stale results and stops at teardown.
+- Corona coordinates application services, View composes a dock, QML owns
+  presentation. Layout coordination and containment arrangement stay distinct.
+- QML URIs/type names, configuration formats, D-Bus interfaces and both QML
+  installation roots remain compatible. Preserve private.app host exports.
+- QObject parent ownership does not replace dependency-aware teardown. Keep
+  thread affinity, context-bound callbacks and the documented shutdown order.
+- Preview hover choice remains authoritative; title tooltips, highlight,
+  helper failure fallback and process isolation stay intact.
+- Hidden applets can still forward parabolic messages. Opacity-based hiding is
+  deliberate; changing the whole containment to visible:false or unloading it
+  can reset applet state and reshow windows.
+- Plasma popup positioning uses PlasmaQuick::Dialog::adjustGeometry(), never
+  raw QWindow::setPosition(). Preserve icon/theme and fractional-DPR behavior.
+- Do not remove compatibility timers based on interval alone. Bounded repair
+  or drag-only timers are different from steady-state polling.
+- Preserve valuable source contracts. New tests exercise production logic;
+  copied algorithms are not a replacement for behavioral coverage.
+- Document changed local invariants beside their implementation, with trigger,
+  state authority, lifetime/timing constraint and prevented failure.
 
-No language migration, whole-tree formatting, blanket QML import conversion,
-public ABI redesign, minimum-version bump, feature removal, version bump,
-release tag, or automatic commit/push is included. Do not weaken existing
-regression contracts just to make a refactor pass. Treat build infrastructure
-and compatibility changes as potentially affecting every supported package.
+## Acceptance and completion
+
+Every batch has its specific checks in the implementation guide. Common gates:
+
+1. Scope is confined to the selected slice, with no unrelated formatting,
+   dependency bump, feature removal, release or configuration migration.
+2. Affected GCC/Clang application, helper, plugin and test builds have zero
+   warnings/errors. Strict-gate work includes Debug and Release negative checks.
+3. Fresh configurations list the expected tests; all required tests execute.
+   Missing binaries, unexplained skips and altered tests are not success.
+4. QML syntax/module checks remain active; comparable diagnostic output has no
+   unreviewed additions. A parser/tool failure is not an empty clean baseline.
+5. Runtime changes pass the canonical Debug install, detached user-mode launch,
+   user feedback and log review. Teardown/crash fixes additionally require the
+   clean-quit/coredump and applicable pre-fix/fixed A/B checks.
+6. Performance changes meet the [performance protocol](performance-validation-guide.md):
+   reduced intended work, repeated representative A/B evidence, no functional
+   regression and no unexplained latency/memory tradeoff. No invented target
+   percentage or comparisons between Debug and Release.
+7. Relevant host/plugin, distribution and Nix checks are recorded separately.
+   Local CTest does not prove remote CI or a real compositor passed.
+8. Durable evidence and an exact handoff exist. Required unavailable checks
+   leave the batch pending validation; they are never reported as passed.
+
+An evaluation with no measurable opportunity ends with a documented deferred
+decision and no optimization patch. It is not completion of an implementation
+batch. Quality-baseline failures must be explained before dependent changes.
 
 ## Progress ledger
 
-Update this table only with evidence from the implementation revision.
+Update individual slice rows as work starts. Add M2b rows per warning family
+and separate rows for any later evaluation/implementation. The source snapshot
+is complete; execution and runtime evidence below are not.
 
-| Package | Status | Revision/evidence | Remaining work |
+| Batch | Status | Evidence | Next action |
 | --- | --- | --- | --- |
-| M0 | Not started | Assessment only | Fresh measurements |
-| M1 | Not started | None | Presets |
-| M2 | Not started | None | Warning gate |
-| M3 | Not started | None | QML baseline and gate |
-| M4 | Not started | None | Analysis and sanitizers |
-| M5 | Not started | None | Behavioral coverage |
-| M6 | Not started | None | Component extraction |
-| M7 | Not started | None | Nix checks |
+| Source assessment | Complete | [2026-09-29 record](architecture-modernization-baseline.md) | Start M0 when implementation is requested |
+| M0 | Complete | [Fresh local baseline and handoff](modernization-results/M0.md) | M1a: add CMake schema-v2 presets and validate all four configurations |
+| M1a / M1b | Not started | Presets absent at baseline | M0, then presets, then CI |
+| M2a / M2b | Not started | Partial warning-as-error options only | Verify policy and negative fixture |
+| M3a / M3b | Not started | Promotion list empty | Stable identities, then CI baseline |
+| M4a / M4b | Not started | No tracked tidy configuration | Targeted analysis, then sanitizers |
+| M5a / M5b | Not started | Copied blocker tests identified | Extract only blocker policy, then wire tests |
+| P0 | Not started | No live profile | Establish comparable scenarios |
+| P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
+| P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
+| P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
+| M6 | Deferred | No target boundary selected | Justify dependency reduction after M5b |
+| M7 | Not started | Nix outputs inspected | Add explicit checks after prerequisites |
+| P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
+
+Use Not started, In progress, Pending validation, Complete or Deferred.
+Do not mark a parent package complete when one slice is still pending.
+The handoff template and reusable task prompt are in the implementation guide.
+
+## Git and rollback
+
+On main, editing/testing is allowed within the requested batch; committing and
+pushing require separate explicit user approvals. Never silently switch
+branches. Follow AGENTS.md for authorized work on other branches. This plan is
+not commit, push, tag or release authorization.
+
+If a slice fails a gate, preserve its evidence and fix that slice. Restore only
+its own uncommitted edits when abandoning it; preserve unrelated user work.
+Do not automatically reset, rewrite published history or revert commits.
