@@ -36,7 +36,8 @@
               runHook preCheck
               export LATTE_TEST_ICON_THEME_PATH="${pkgs.kdePackages.breeze-icons}/share/icons"
               QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
-                dbus-run-session -- ctest --output-on-failure
+                dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf \
+                  -- ctest --output-on-failure
               runHook postCheck
             '';
             installPhase = ''

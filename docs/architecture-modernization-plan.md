@@ -184,7 +184,7 @@ is complete; execution and runtime evidence below are not.
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | No target boundary selected | Justify dependency reduction after M5b |
-| M7 | Pending validation | Separate Nix test derivation/dev shell and NixOS CI steps added; flake parses, Nix checks unavailable on host | Record Nix flake check, default package build, and dev-shell preset results; keep flake.lock unchanged |
+| M7 | Pending validation | Nix test derivation compiled the full suite; NixOS sandbox lacked `/etc/dbus-1/session.conf`; flake now selects the Nix-provided session config explicitly | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.
