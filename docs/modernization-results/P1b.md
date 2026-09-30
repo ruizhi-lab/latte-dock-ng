@@ -89,7 +89,13 @@ trustworthy timestamp for the tracker receiving each title update. The field
 comparison unit test covers every non-display `WindowInfoWrap` field, and the
 source contract checks wiring. No fake-adapter host fixture was added; the live
 Wayland title trace verifies the real dispatch path, while individual non-title
-state and exact pending-geometry timing checks remain pending.
+state and exact pending-geometry timing checks remain pending. The live global
+schedule/execute markers carry no window or event IDs, so they cannot correlate
+a resize with its debounce deadline. Adding per-event production tracing would
+change the measured path and undermine the uninstrumented Release comparison;
+pending-timer preservation is instead protected by the source contract and the
+production handler's unchanged timer path. Do not add instrumentation unless a
+bounded, event-correlated test seam becomes available.
 The user-confirmed Fedora task indicators and preview are recovery evidence,
 not completion of the runtime feature matrix.
 
@@ -100,10 +106,9 @@ hide/dodge behavior and preview-helper failure fallback.
 
 ## Handoff
 
-Add a bounded event-correlated check for the pending-geometry deadline if it
-can be done without a heavyweight host fixture. Verify the already-tested
-non-title fallback against the live state path where a safe compositor event is
-available. If no trustworthy bounded event-to-tracker timestamp can be added
-without perturbing Release sampling, leave response latency explicitly
-unmeasured. Complete the three hover modes and affected task/window interaction
-matrix in the final desktop retest.
+No bounded event-correlated pending-geometry check is currently available:
+the live markers have no event identity, and production tracing would perturb
+the Release measurement. Keep exact title-response latency unmeasured unless a
+lightweight event-correlated seam is later identified. The remaining action is
+the manual title/window-state and task-interaction matrix in the final desktop
+retest, including each of the three hover choices.
