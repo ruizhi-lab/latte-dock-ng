@@ -1,0 +1,50 @@
+# P3a: Edge-layout refresh evaluation
+
+Status: Deferred. The current implementation has no trustworthy readiness
+signal that can safely stop the bounded repair timer early. No runtime behavior
+was changed and no reduction in layout or geometry-publication work is claimed.
+
+Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
+Implementation branch: `codex/modernization-m0-baseline`.
+
+## Evaluation
+
+`plasmoid/package/contents/ui/main.qml` responds to both `locationChanged` and
+`formFactorChanged` by running an immediate repair and restarting a timer with
+up to eight additional passes at 120 ms intervals. Each pass resets list
+scrolling, calls `icList.forceLayout()` and emits `publishTasksGeometries()`.
+The timer is bounded and only runs after an edge/orientation change.
+
+The task view is a virtualized `ListView`. Its delegates are created and moved
+asynchronously, and the `TaskItem.slotPublishGeometries()` path publishes
+viewport-clamped geometry only when the task belongs to the current layout and
+the view is ready (or not yet ready). Hidden views intentionally publish
+screen-edge geometry. Consequently, stable `width`/`height`, a stable number
+of currently instantiated children, or one quiet interval cannot establish
+that all current-generation delegate geometry has been published. No existing
+signal reports that condition. Stopping on any of those proxies could leave a
+late delegate or the latest rapid edge change with stale geometry.
+
+Per the P3a rule, the timer, eight-pass bound, immediate pass and fallback are
+left unchanged until the production layout/publication path can expose a
+generation-aware readiness condition. This avoids changing behavior without a
+way to verify convergence.
+
+## Validation
+
+- CodeGraph was queried first for edge-change, layout, force-layout and geometry-publication paths; it did not index the task `main.qml` by those names. After that, `rg` confirmed the refresh timer and signal connections in `plasmoid/package/contents/ui/main.qml`, and the publisher in `plasmoid/package/contents/ui/task/TaskItem.qml`.
+- `sed -n '360,420p' plasmoid/package/contents/ui/main.qml` — confirmed location/form-factor changes start the 500 ms geometry publisher and immediate-plus-repeated layout refresh.
+- `sed -n '1400,1465p' plasmoid/package/contents/ui/main.qml` — confirmed the immediate pass and eight delayed 120 ms passes, each forcing layout and publishing geometry.
+- `sed -n '895,970p' plasmoid/package/contents/ui/task/TaskItem.qml` — confirmed readiness, layout-membership, viewport-clamping and hidden-view conditions in production geometry publication.
+- `git diff --check` — passed for this documentation-only evaluation.
+- No build or runtime test was run because production code is unchanged.
+
+## Handoff
+
+Do not reduce the timer based on geometry equality or elapsed time. Revisit only
+after the production ListView/delegate publisher exposes a readiness signal
+bound to the latest edge-change generation and current model state. Then test
+late delegates, an empty task model, task arrival/removal during relocation,
+rapid superseding edge changes, all four edges, horizontal/vertical layouts,
+center/justify alignment, multiple screens and fractional scale before
+changing the fallback.
