@@ -120,6 +120,26 @@ without restarting Latte. The backend test covers unavailable interfaces on a
 private bus, while the QML tests protect click routing and phantom filtering.
 Hover-thumbnail previews remain disabled and are outside this test's scope.
 
+## Remote VM GUI Testing
+
+An SSH shell does not inherit the active Plasma GUI session. Launching Latte
+from that shell without the session's display and D-Bus variables can make the
+isolated preview helper fail to connect to the display; the helper failure
+fallback then disables previews after repeated attempts. Read the environment
+from the active Plasma user service before a remote GUI test:
+
+```bash
+systemctl --user show-environment
+```
+
+Pass through the reported `DISPLAY`, `WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`,
+`XDG_RUNTIME_DIR`, `DBUS_SESSION_BUS_ADDRESS` and, when present, `XAUTHORITY`.
+For a development Debug install, also source the generated
+`~/.config/latte-dock-ng/dev-env.sh` in the launch script. Do not construct
+`QML_IMPORT_PATH`, `QML2_IMPORT_PATH` or `XDG_DATA_DIRS` by hand: the user
+installer selects the QML and plugin roots for its install prefix. Verify the
+launch log and the user-mode executable path before judging shell behavior.
+
 ## Runtime Retest Workflow
 
 Automated tests cannot reproduce shell-integration bugs (window lifecycle,
