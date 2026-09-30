@@ -159,6 +159,17 @@ test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
 latte-dock-ng` is safe for identifying the Dock. Never use `pkill -f` in a
 command that also contains `latte-dock-ng`.
 
+Verify the running Dock's environment through `/proc/<pid>/environ` when a
+preview helper or GUI test tool cannot connect to the display. A Dock launched
+from a bare SSH shell may report `XDG_SESSION_TYPE=tty` and lack both
+`DISPLAY` and `WAYLAND_DISPLAY`; in this state the isolated helper aborts during
+Qt platform initialization and repeated failures intentionally disable preview
+for the rest of that Dock session. Import the Plasma user-service variables
+shown above and restart the Dock to reset this fail-closed session state. The
+Dock, preview helper, Spectacle and other GUI subprocesses all need the active
+Plasma session environment. Do not diagnose a helper startup failure from a
+launch that lacks it as a Latte preview regression.
+
 Wayland pointer injection needs a different path from an SSH X11 command.
 Fedora 44's `ydotoold` was inactive and `/dev/uinput` was root-only. A
 temporary daemon can be started with a user-owned socket, then used for
