@@ -1,6 +1,7 @@
 # P1b: Title-only fast path
 
-Status: Implementation complete; runtime and performance acceptance pending.
+Status: Implementation and title-work target verified; response-latency and
+functional acceptance remain pending.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation base: P1a commit `ec8a504db`.
@@ -39,29 +40,59 @@ scheduling. It is a wiring check, not a live compositor dispatch test.
 - `ctest --test-dir /tmp/latte-p1b-gcc-debug --output-on-failure -R '^(sourcecontracttest|wmunittest)$'` — passed (2/2).
 - `git diff --check` — passed. `formatter.sh` was applied to only the changed C++ ranges and the diff was reviewed; its generated formatting around existing function definitions was normalized back to the surrounding file style.
 
-## Pending acceptance
+## Runtime work-count result
 
-The predeclared target is zero hint schedules for ten title-only changes (ten
-schedules in each of five P1a runs). No P1b live trace or five-pair Release
-CPU/latency comparison was collected. SSH access could not be established from
-this host: `ssh -o BatchMode=yes -o ConnectTimeout=5 fedora 'printf fedora-ready'`
-failed with `Bad owner or permissions on /etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf`,
-and `/home/ruizhi/.ssh/config` is absent. The application terminal is also not
-attached to this task. Do not treat the P1a Debug counts as P1b results.
+Five Fedora Wayland Debug trials each changed the title of a synthetic window
+ten times. In every trial, the title-only measurement window produced zero new
+hint schedules and zero executions; all probes exited successfully. The
+window-added scan settled before counting, and the synthetic window closed
+after counting. This meets the predeclared work target of zero schedules for
+ten title-only changes, down from ten schedules per trial on P1a.
 
-The full production-dispatch fake-adapter test and runtime state matrix remain
-pending as well. The user has confirmed that Fedora task indicators and window
-previews are restored and Debian task indicators are restored; these recovery
-checks do not validate this change. The final manual desktop retest remains
-scheduled after all implementation batches. No CPU, memory or wakeup saving is
-claimed until the predeclared work target and comparable performance checks are
-recorded.
+## Release A/B result
+
+Five alternating Release A/B pairs used separate matching install prefixes.
+A is `ec8a504db` (P1a) and B is `f6ebf3432`. Both were built with GCC 16.2.1
+on Fedora 44 using Release, Qt 6.11.2, KDE Frameworks 6.30, Plasma 6.7.5 and
+kernel 7.2.7. Each executable loaded its own prefix's QML/plugin files, with
+the same user layout and Plasma environment. Each run used a 30-second warmup
+and the same synthetic ten-title sequence; `/proc/<pid>/stat` and
+`smaps_rollup` were sampled over a 7.5-second interval spanning that sequence.
+All ten probes exited successfully. The raw marker-free records are in
+[P1b-release-ab-2026-09-30.jsonl](P1b-release-ab-2026-09-30.jsonl).
+
+The median paired B−A CPU delta was 0 seconds (0 percentage points of one
+core), with a range of −0.01 to +0.24 seconds (−0.134 to +3.197 percentage
+points). The median paired PSS delta was +2,094 KiB, ranging from −300 to
++144,763 KiB. The high value comes from the first B run (382,728 KiB versus
+237,965 KiB for its paired A); it is retained with unknown cause. The other
+four B runs ranged from 234,628 to 245,455 KiB, and their A partners ranged
+from 234,213 to 237,582 KiB. The short CPU window had no repeatable change
+outside its observed variability. These measurements do not support a CPU or
+memory saving claim. Each Release run printed the VM's two Mesa EGL
+`failed to create dri2 screen` warnings, matching the existing Fedora graphics
+environment warning. The canonical user-mode Debug process was restored after
+the Release trials.
+
+Title response latency was not measured: the fixture does not expose a
+trustworthy timestamp for the tracker receiving each title update. The field
+comparison unit test covers every non-display `WindowInfoWrap` field, and the
+source contract checks wiring, but a fake-adapter test through real production
+dispatch plus live non-title state and pending-geometry checks remain pending.
+The user-confirmed Fedora task indicators and preview are recovery evidence,
+not completion of the runtime feature matrix.
+
+The final manual matrix must test the task-icon hover settings independently:
+window preview only, highlight only, and preview plus highlight. Verify each
+mode follows its setting and preserves tooltips, grouped-window actions,
+hide/dodge behavior and preview-helper failure fallback.
 
 ## Handoff
 
-Restore a working Fedora SSH route or an attached Plasma VM terminal, then
-install the P1b user-mode Debug build with its generated `dev-env.sh`, trigger
-the native Wayland title probe and record marker-only schedule/execute counts.
-Verify state changes still schedule the full path and an already pending
-geometry scan survives a title event. If those checks pass, collect five
-same-sequence Release A/B pairs for CPU and latency before marking P1b complete.
+Add or identify a lightweight test seam that exercises the real tracker
+dispatch for title and full-update signals. Verify non-title state changes
+schedule the full path and a title event leaves an already pending geometry
+scan scheduled. If no trustworthy bounded event-to-tracker timestamp can be
+added without perturbing Release sampling, leave response latency explicitly
+unmeasured. Complete the three hover modes and affected task/window interaction
+matrix in the final desktop retest.

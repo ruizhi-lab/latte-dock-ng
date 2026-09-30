@@ -31,10 +31,12 @@ the final desktop retest.
 - The production helper's controlled mutation rejection and GCC ASan/UBSan focused test are recorded in [M5a](M5a.md). LeakSanitizer was unavailable locally due to the host ptrace restriction. Full M5a CI run 36642361102 passed the GCC/Clang matrix and sanitizer job.
 - Fedora GUI retest now confirms task status indicators and hover window previews work with the canonical user-mode install and Plasma session environment; Debian task indicators are also restored. See [P0](P0.md) for the SSH session-environment diagnosis.
 - The full blocker interaction matrix has not yet been recorded. Menu popup, drag hover, shortcut popup, edit/configuration mode, overlapping blockers, and clean exit/log review remain for the Fedora GUI VM and the final user retest after all batches finish.
+- The task-icon hover setting also needs three separate checks: window preview only, highlight only, and preview plus highlight. The user's confirmation that previews have returned does not prove the other choices or their combined behavior.
 
 ## Handoff
 
 The implementation and local checks are recorded above. Record the remaining
-blocker interactions in the Fedora GUI VM as runtime evidence becomes available.
-The final user retest must verify the runtime scenarios above; keep this slice
-Pending validation until that feedback is received.
+blocker interactions and all three task-icon hover choices in the Fedora GUI VM
+as runtime evidence becomes available. The final user retest must verify the
+runtime scenarios above; keep this slice Pending validation until that feedback
+is received.
