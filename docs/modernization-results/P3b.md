@@ -55,8 +55,9 @@ task-icon pass, set each hover choice independently and verify its own behavior:
 - `PreviewAndHighlightWindows`: show previews and highlight matching windows.
 
 Also verify tooltips, grouped-window actions, hide/dodge behavior and preview-
-helper failure fallback in each applicable mode. Fedora's restored preview
-confirms only the preview path; Debian Plasma 6.3.6 remains separately pending.
+helper failure fallback in each applicable mode. Fedora and Debian 13.7 users
+confirmed the configured preview-only path; highlight-only and combined modes
+remain pending on both desktops.
 
 ## Handoff
 

@@ -1,9 +1,9 @@
 # Modernization final desktop retest
 
 Run this checklist after all implementation commits are installed. The Fedora
-44 VM is running the user-mode Debug build from commit `c03ffa7ec` with its
-Plasma Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is reachable
-and is running the user-mode Debug build. The user confirmed that
+44 VM is running the current branch's user-mode Debug build with its Plasma
+Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is reachable and is
+running the current branch's user-mode Debug build. The user confirmed that
 `PreviewWindows` now shows a preview on Debian; the other hover modes remain
 untested there.
 
@@ -64,7 +64,9 @@ remain pending.
   rapid sequence of edge changes. Verify the latest edge and published window
   geometries win.
 - Record the current `coredumpctl` baseline, quit/restart the dock cleanly, and
-  confirm no new Latte core, Fatal, ASSERT or unexpected teardown warning.
+  confirm no new Latte core, Fatal, ASSERT or unexpected teardown warning. If
+  the preview helper is active, confirm the dock reaps it without a
+  `QProcess: Destroyed while process` warning or an orphan helper.
 
 ## Record results
 

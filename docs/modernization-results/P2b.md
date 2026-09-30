@@ -3,9 +3,9 @@
 Status: Pending validation. The bounded destination-only resize optimization
 and available production tests are implemented. GCC/Clang Debug and Release
 targets pass locally, and Fedora Wayland at DPR 1 and 1.5 verifies both the
-skip and the required reload when the raster request changes. Debian runtime,
-cross-screen movement, user hover/zoom visual checks and broader application
-A/B memory sampling remain pending.
+skip and the required reload when the raster request changes. Debian theme
+invalidation, cross-screen movement, user hover/zoom visual checks and broader
+application A/B memory sampling remain pending.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
@@ -51,7 +51,7 @@ same one-item pixmap and window-owned texture between updates.
 
 ## Handoff
 
-Test on Debian 13.7 / Plasma 6.3.6 after its SSH route is available. During the
+Test the icon invalidation matrix on Debian 13.7 / Plasma 6.3.6. During the
 final desktop retest, move the dock between outputs with different DPRs and
 compare task icon hover/zoom quality at integer and fractional scale. Test the
 three task hover choices as separate cases: `PreviewWindows` (preview only),

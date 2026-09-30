@@ -2,10 +2,10 @@
 
 Status: Pending validation. Implementation and available invalidation checks
 are complete; moving one live item between screens with different DPRs and
-Debian Plasma 6.3 runtime compatibility remain pending. Raster and scene-graph
-traces plus focused image, QIcon, named-theme replacement, enabled/active state,
-zero-size, fractional-DPR, color-group, overlay, providesColors and window-
-recreation checks pass.
+Debian-specific theme/icon invalidation cases remain pending. Raster and
+scene-graph traces plus focused image/QIcon tests cover named-theme replacement,
+enabled/active state, zero size, fractional DPR, color groups, overlays,
+`providesColors` and window recreation.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
