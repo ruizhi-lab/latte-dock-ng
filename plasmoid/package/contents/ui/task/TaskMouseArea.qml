@@ -128,9 +128,10 @@ MouseArea {
 
     }
 
-    // containmentEditing is polled once by the root task manager because the
-    // containment writes it directly through item.applet.
-    readonly property bool _containmentEditing: root.containmentEditingPolled
+    // The root combines the Latte bridge, Plasma configuration and the
+    // containment's direct assignment. Reading that notifying state avoids a
+    // second idle poll and keeps click/wheel guards aligned with edit changes.
+    readonly property bool _containmentEditing: root.inEditMode
 
     function isContainmentEditing() {
         return _containmentEditing;

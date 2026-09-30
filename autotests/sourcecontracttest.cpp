@@ -80,6 +80,7 @@ private Q_SLOTS:
     void pointerWindowTrackingDisconnectsOnLeave();
     void viewDestructorDropsPointerWindowTrackingConnections();
     void taskIconsRefreshAfterIconThemeChanges();
+    void taskMouseAreaUsesAuthoritativeEditModeState();
     void taskAudioBadgesScaleWithParabolicZoom();
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
@@ -3835,6 +3836,36 @@ void SourceContractTest::taskMouseAreaSkipsInactivePreviewChecks()
     const QString mainSource = QString::fromUtf8(mainQml.readAll());
     QVERIFY(mainSource.contains(QStringLiteral("readonly property bool showPreviews: false")));
     QVERIFY(mainSource.contains(QStringLiteral("id: toolTipDelegateLoader\n        active: root.showPreviews")));
+}
+
+void SourceContractTest::taskMouseAreaUsesAuthoritativeEditModeState()
+{
+    QFile taskMain(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(taskMain.open(QFile::ReadOnly));
+    const QString taskMainSource = QString::fromUtf8(taskMain.readAll());
+
+    // All edit-mode sources converge on one notifying root property. Do not
+    // retain a second task-side poll which can lag gesture gating by one tick.
+    QVERIFY(taskMainSource.contains(QStringLiteral(
+        "readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentEditing")));
+    QVERIFY(taskMainSource.contains(QStringLiteral("property bool containmentEditing: false")));
+    QVERIFY(!taskMainSource.contains(QStringLiteral("containmentEditingPoller")));
+    QVERIFY(!taskMainSource.contains(QStringLiteral("containmentEditingPolled")));
+
+    QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
+                                   "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
+    QVERIFY(taskMouse.open(QFile::ReadOnly));
+    const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
+    QVERIFY(taskMouseSource.contains(QStringLiteral("readonly property bool _containmentEditing: root.inEditMode")));
+
+    QFile containmentMain(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(containmentMain.open(QFile::ReadOnly));
+    const QString containmentSource = QString::fromUtf8(containmentMain.readAll());
+    QVERIFY(containmentSource.contains(QStringLiteral("property bool editMode: plasmoid.userConfiguring")));
+    QVERIFY(containmentSource.contains(QStringLiteral("id: editModePoller")));
+    QVERIFY(containmentSource.contains(QStringLiteral("interval: 200")));
+    QVERIFY(containmentSource.contains(QStringLiteral("if (!plasmoid.userConfiguring)")));
+    QVERIFY(containmentSource.contains(QStringLiteral("item.applet.containmentEditing = editMode")));
 }
 
 void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
