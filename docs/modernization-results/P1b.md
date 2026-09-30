@@ -22,8 +22,9 @@ reinsert an ID after that authoritative removal. Non-title changes continue
 through the existing full path. A title event does not stop or restart pending
 geometry work.
 
-Focused tests cover title-only equality and representative geometry,
-eligibility, desktop and icon changes. The source contract checks adapter-to-
+The focused unit test covers title-only equality and independently changes
+every non-display `WindowInfoWrap` field to verify that each requires the full
+fallback. The source contract checks adapter-to-
 tracker wiring, metadata notification, guarded removal and conditional hint
 scheduling. It is a wiring check, not a live compositor dispatch test.
 

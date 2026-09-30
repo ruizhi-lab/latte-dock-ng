@@ -230,26 +230,48 @@ void WindowSystemUnitTest::windowInfoWrapDetectsNonDisplayChanges()
     titleOnly.setDisplay(QStringLiteral("Updated title"));
     QVERIFY(original.hasSameNonDisplayState(titleOnly));
 
-    Latte::WindowSystem::WindowInfoWrap geometryChanged = titleOnly;
-    geometryChanged.setGeometry(QRect(10, 20, 300, 400));
-    QVERIFY(!original.hasSameNonDisplayState(geometryChanged));
+    const auto differsFromTitleOnly = [&original](auto mutate) {
+        Latte::WindowSystem::WindowInfoWrap updated = original;
+        mutate(updated);
+        return !original.hasSameNonDisplayState(updated);
+    };
 
-    Latte::WindowSystem::WindowInfoWrap eligibilityChanged = titleOnly;
-    eligibilityChanged.setHasSkipTaskbar(true);
-    QVERIFY(!original.hasSameNonDisplayState(eligibilityChanged));
-
-    Latte::WindowSystem::WindowInfoWrap desktopChanged = titleOnly;
-    desktopChanged.setIsOnAllDesktops(true);
-    QVERIFY(!original.hasSameNonDisplayState(desktopChanged));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setWid("window-2"); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setParentId("parent-2"); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setGeometry(QRect(10, 20, 300, 400)); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsValid(false); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsActive(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMinimized(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaxVert(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaxHoriz(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsFullscreen(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsShaded(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsKeepAbove(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsKeepBelow(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipPager(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipSwitcher(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipTaskbar(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsOnAllDesktops(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsOnAllActivities(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsClosable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsFullScreenable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsGroupable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaximizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMinimizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMovable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsResizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsShadeable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsVirtualDesktopsChangeable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setAppName(QStringLiteral("Different app")); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setDesktops({QStringLiteral("desktop-2")}); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setActivities({QStringLiteral("activity-2")}); }));
 
     QPixmap originalPixmap(1, 1);
     originalPixmap.fill(Qt::blue);
     QPixmap updatedPixmap(1, 1);
     updatedPixmap.fill(Qt::red);
     original.setIcon(QIcon(originalPixmap));
-    Latte::WindowSystem::WindowInfoWrap iconChanged = original;
-    iconChanged.setIcon(QIcon(updatedPixmap));
-    QVERIFY(!original.hasSameNonDisplayState(iconChanged));
+    QVERIFY(differsFromTitleOnly([&updatedPixmap](auto &info) { info.setIcon(QIcon(updatedPixmap)); }));
 }
 
 void WindowSystemUnitTest::appDataFromUrlReadsLocalDesktopFile()
