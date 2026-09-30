@@ -1,12 +1,12 @@
 # P3b: Remove the duplicate task edit-state poll
 
-Status: Pending validation. Task gesture guards now consume the task root's
+Status: Complete. Task gesture guards now consume the task root's
 combined, notifying `inEditMode` property, and its always-running 200 ms mirror
 poll has been removed. The outer containment's compatibility poll remains in
 place to detect Plasma's missed `userConfiguring` exit notification. Local
 source-contract/QML smoke tests and syntax lint pass, and the user reports the
 desktop edit/task interactions passed. Full deep-QML diagnostic comparison
-remains pending a matching qmllint version.
+was completed by the strict deep-QML CI gate on the recorded branch commit.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
@@ -35,7 +35,7 @@ runtime A/B measurement.
 - For all four configurations:
   `ctest --test-dir build/modernization/<config> -R '^(sourcecontracttest|qmlsmoketest)$' --output-on-failure` — passed (2/2).
 - `bash scripts/qmllint.sh plasmoid/package/contents/ui/main.qml plasmoid/package/contents/ui/task/TaskMouseArea.qml` — passed.
-- `bash scripts/qmllint-deep.sh build/modernization/gcc-debug` and the corresponding Clang Debug command — did not pass the baseline gate because the installed qmllint is 6.11.2 while the reviewed baseline fingerprints 6.11.1. The current run produced 724 diagnostic identities; a direct identity/count comparison of the two changed QML files found no additions or removals (26 identities in each baseline/current pair). The full-tree result remains pending a comparable qmllint environment.
+- Local `bash scripts/qmllint-deep.sh build/modernization/gcc-debug` and the corresponding Clang Debug command — could not pass the baseline gate because the installed qmllint is 6.11.2 while the reviewed baseline fingerprints 6.11.1. The current run produced 724 diagnostic identities; a direct identity/count comparison of the two changed QML files found no additions or removals (26 identities in each baseline/current pair).
 - Supplemental full-tree comparison on 2026-09-30: the baseline and both complete Debug reports cover the same 236 QML files and all qmllint process/per-file exit codes are successful. Comparing diagnostic identities/counts while retaining the tool-version mismatch showed 724 rows in each report and zero changed identities in both GCC Debug and Clang Debug. This supports that the patch introduced no diagnostic changes under qmllint 6.11.2, but does not replace the strict fingerprint gate for the reviewed 6.11.1 environment.
 - `git diff --check` — passed.
 - Fedora 44 final staging: the committed branch snapshot at `c03ffa7ec` was built and installed with `bash install.sh --user Debug`; the user-mode process is running from `/home/fedora/.local/bin/latte-dock-ng` with the captured Plasma session environment and developer QML overrides.
@@ -43,6 +43,7 @@ runtime A/B measurement.
 - Debian 13.7 / Plasma 6.3.6 build/install completed after installing the missing `qt6-declarative-private-dev` build dependency from the configured USTC mirror. The user-mode Debug dock is running with the session environment restored. Startup scan has no Warning, Error, Fatal, ASSERT or missing-icon entries; the Debian Trash icon resource URL compatibility fix is recorded in [debian13-runtime.md](debian13-runtime.md).
 - On 2026-09-30, the user reported that the remaining task hover, edit-state and interaction checks passed. Per-OS/mode detail was not supplied in that aggregate result.
 - The user accepts two-output behavior by code review because a second display is unavailable; it is not recorded as a runtime test.
+- GitHub Actions run `36741144541`: the strict `Deep QML lint` step passed in GCC Debug, Clang Debug, GCC Release and Clang Release jobs. That step runs the baseline-aware `scripts/qmllint-deep.sh` against the checked-in fingerprint, so this is the strict gate, not only the supplemental diagnostic identity comparison. The same four jobs passed build, autotest and zero-warning checks. At report update time the NixOS install verification was still running; it is unrelated to the QML fingerprint gate.
 
 ## Pending runtime acceptance
 
@@ -62,8 +63,8 @@ passed; per-OS and per-mode details were not supplied.
 ## Handoff
 
 The user reports the edit-state and three-hover-choice matrix passed. See the
-aggregate [manual retest checklist](manual-retest-checklist.md). The strict
-deep-QML fingerprint gate remains pending because the installed qmllint version
-differs from the reviewed baseline, despite the supplemental zero-delta identity
-comparison above. Re-run both Debug comparisons with qmllint 6.11.1 when that
-tool version is available; do not rewrite the reviewed baseline to 6.11.2.
+aggregate [manual retest checklist](manual-retest-checklist.md). CI run
+`36741144541` passed the strict deep-QML fingerprint gate in all four
+GCC/Clang Debug/Release jobs; the baseline was not changed. Keep the reviewed
+baseline pinned and preserve the source contract that protects the authoritative
+edit-state notification path.

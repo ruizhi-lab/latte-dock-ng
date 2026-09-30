@@ -226,6 +226,15 @@ deltas. The captured cursor over an icon is useful targeting evidence, but
 preview/helper or visible highlight evidence is still required to confirm the
 hover action.
 
+Relative `ydotool` movement can be affected by pointer acceleration, so the
+requested delta does not reliably predict the final pixel. Take and inspect a
+pointer-included screenshot after each calibration move instead of accumulating
+assumed coordinates. On a fresh Fedora Release Dock start, the first entry over
+a task sometimes showed the zoom effect without starting the preview helper;
+move away and re-enter the identified running task icon, then wait for and
+verify the helper in the process list before collecting a sample. Exclude a
+window unless both Dock and helper identities remain stable throughout it.
+
 For Fedora 44's 1920x1080 VM, passing pixel coordinates to
 `ydotool mousemove --absolute -x/-y` did not target the corresponding pixel;
 the screenshot cursor remained at the upper-left corner. A large 0–65535-style
