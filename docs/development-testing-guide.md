@@ -140,6 +140,54 @@ For a development Debug install, also source the generated
 installer selects the QML and plugin roots for its install prefix. Verify the
 launch log and the user-mode executable path before judging shell behavior.
 
+Use the standard per-user install path for both Debug retests and Release
+measurements. Debug uses `bash install.sh --user Debug`; Release measurement
+builds can use `bash install.sh --user Release --jobs 8 --no-clean`. Launch
+`~/.local/bin/latte-dock-ng` from the captured Plasma session. The Debug
+developer environment is generated for local module overrides; Release's
+installed binary detects its own QML prefix. Do not launch a separate `/tmp`
+prefix for compositor integration tests: Fedora 44 KWin denied the
+PlasmaWindowManagement protocol to a directly launched `/tmp` binary even
+though the process started, which invalidated that run. KWin matches privileged
+Plasma interfaces against the first executable token in the registered desktop
+entry; the temporary prefix did not match it.
+
+For detached SSH launches, save the session variables in a small launcher,
+source `dev-env.sh` only for Debug, and use `setsid -f nohup` so the VM process
+survives the command session. Start with a fresh log and inspect it after the
+test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
+latte-dock-ng` is safe for identifying the Dock. Never use `pkill -f` in a
+command that also contains `latte-dock-ng`.
+
+Wayland pointer injection needs a different path from an SSH X11 command.
+Fedora 44's `ydotoold` was inactive and `/dev/uinput` was root-only. A
+temporary daemon can be started with a user-owned socket, then used for
+relative pointer movement:
+
+```bash
+vm_uid="$(id -u)"
+vm_gid="$(id -g)"
+vm_socket="/run/user/${vm_uid}/ydotool-latte-test.sock"
+sudo -n setsid -f nohup /usr/bin/ydotoold \
+  --socket-path="$vm_socket" --socket-perm=0660 \
+  --socket-own="${vm_uid}:${vm_gid}" >/tmp/ydotoold-latte-test.log 2>&1
+until test -S "$vm_socket"; do sleep 1; done
+sleep 2  # Let udev and the compositor discover the virtual input device.
+export YDOTOOL_SOCKET="$vm_socket"
+ydotool mousemove -x 10 -y 0
+```
+
+Fedora 44 `ydotool` 1.0.4 produced matching `libinput debug-events` pointer
+deltas for relative moves. In that environment, `mousemove --absolute` also
+appeared as a relative event, and `xdotool getmouselocation` did not reflect
+the injected movement during the Wayland check. Do not treat an exit code or
+XWayland cursor query as proof that a Latte hover action fired; verify the
+actual preview/highlight behavior or helper lifecycle. `mousemove -x/-y`
+accepts relative deltas, so an absolute target still needs a trustworthy
+starting coordinate. Stop only the temporary `/usr/bin/ydotoold` process whose
+arguments contain this test's custom socket path, then remove that socket. Do
+not leave a privileged input daemon running between tests.
+
 ## Runtime Retest Workflow
 
 Automated tests cannot reproduce shell-integration bugs (window lifecycle,
