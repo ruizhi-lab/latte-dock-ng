@@ -2,10 +2,13 @@
 
 Run this checklist after all implementation commits are installed. The Fedora
 44 VM is running the current branch's user-mode Debug build with its Plasma
-Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is reachable and is
-running the current branch's user-mode Debug build. The user confirmed that
-`PreviewWindows` now shows a preview on Debian; the other hover modes remain
-untested there.
+Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is powered off at the
+user's request and reserved for the final compatibility pass because it has
+the oldest supported desktop stack. Keep it off until Fedora and the other
+planned validation is complete, then boot it, update packages if needed,
+install the final branch's user-mode Debug build and run the Debian-specific
+checks. The user previously confirmed that `PreviewWindows` shows a preview on
+Debian; the other hover modes remain unverified there.
 
 ## Task icon hover choices
 
