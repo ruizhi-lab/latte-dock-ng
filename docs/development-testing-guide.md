@@ -215,6 +215,20 @@ deltas. The captured cursor over an icon is useful targeting evidence, but
 preview/helper or visible highlight evidence is still required to confirm the
 hover action.
 
+For Fedora 44's 1920x1080 VM, passing pixel coordinates to
+`ydotool mousemove --absolute -x/-y` did not target the corresponding pixel;
+the screenshot cursor remained at the upper-left corner. A large 0–65535-style
+coordinate attempt and a relative move from an unknown origin also failed to
+establish a target. Do not guess the absolute-coordinate scale or use a
+successful command exit as input evidence. Capture the pointer before and
+after each calibration move and verify its visible position before a hover
+test. Also, temporary QML source probes can be masked by the compiled cache:
+the Dock clears `~/.cache/lattedock/qmlcache` only when its
+`VERSION-QMLCACHEREVISION` marker changes. To test an edited installed QML file,
+preserve the cache reversibly, force a fresh compile in an isolated test, then
+restore both the source and cache before the ordinary Dock launch. A missing
+probe log without this check does not prove that the QML event was not fired.
+
 ## Runtime Retest Workflow
 
 Automated tests cannot reproduce shell-integration bugs (window lifecycle,
