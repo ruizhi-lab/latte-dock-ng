@@ -197,6 +197,24 @@ hover performance sample. GUI utilities such as Spectacle also need the
 captured Plasma session variables; an SSH-launched Spectacle help probe without
 them aborted instead of producing a diagnostic.
 
+When visual inspection of the VM is authorized, a screenshot with the pointer
+included can establish the current pointer origin and distinguish a launcher
+from a running task icon. Start Spectacle with the captured Plasma session
+environment, for example:
+
+```bash
+while IFS= read -r line; do export "$line"; done \
+  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY)=')
+spectacle --background --nonotify --pointer --output /tmp/latte-vm-hover.png
+```
+
+Transfer the temporary image only when authorized and remove it after
+inspection. Re-capture after relative pointer moves: observed `ydotool` motion
+did not always land at the arithmetic position inferred from the requested
+deltas. The captured cursor over an icon is useful targeting evidence, but
+preview/helper or visible highlight evidence is still required to confirm the
+hover action.
+
 ## Runtime Retest Workflow
 
 Automated tests cannot reproduce shell-integration bugs (window lifecycle,
