@@ -79,12 +79,13 @@ not provided. Debian `PreviewWindows` had already been confirmed separately.
 
 The active-helper shutdown was tested separately. GCC Debug
 `previewprocessunittest` passed all 9 cases, including destruction while its
-fake helper was running. Fedora and Debian Dock SIGTERM/restart checks both
-showed the expected teardown markers, no new coredump, no fatal/error/warning
-markers, and no surviving helper; however, no helper was active at either
-signal. A Debian helper process observed shortly before its baseline had
-exited before the signal. Therefore the live Dock-with-active-helper case
-remains pending.
+fake helper was running. On 2026-09-30, Debian Dock PID 14073 had a live
+`latte-dock-ng-preview` child PID 14215 at SIGTERM. Both exited, the expected
+teardown markers appeared, there were no Warning/Error/Fatal/ASSERT or
+QProcess-destruction warnings and no new coredump. Dock restarted as PID 14298
+with a clean startup log. Fedora's earlier ordinary SIGTERM/restart check was
+also clean, though no helper was active then. The live Dock-with-active-helper
+case is complete based on the Debian run.
 
 For each OS, record the Plasma/Qt/KF versions, selected hover mode, pass/fail,
 any reproduction steps, and the final log scan. Useful Fedora paths are

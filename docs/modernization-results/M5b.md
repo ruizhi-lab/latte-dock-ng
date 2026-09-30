@@ -1,8 +1,7 @@
 # M5b: Replace copied blocker tests and verify wiring
 
-Status: Pending validation. The user reports all functional interaction checks
-passed; the live Dock exit with its preview helper still active was not
-reproduced.
+Status: Complete. The user reports all functional interaction checks passed,
+and the live Dock exit with its preview helper still active passed on Debian 13.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Actual start HEAD: `c6ea29dd9` on `codex/modernization-m0-baseline`.
@@ -40,9 +39,11 @@ source-level coverage work.
 - Fedora 44 user-mode Debug Dock: SIGTERM produced the expected shutdown path and `Latte Corona - deleted...` / `QuickWindowSystem destructed` markers, no new coredump, no fatal/error/warning markers, and no helper survivor. No helper was active at the signal.
 - Debian 13.7 user-mode Debug Dock: the same clean result. A `latte-dock-ng-preview` PID was observed shortly before the test but exited before the baseline/signal; it was not active during the Dock teardown.
 - Both VMs were restarted from their canonical user-mode Debug binaries; fresh idle startup logs had no Warning, Error, Fatal or ASSERT entries.
+- On 2026-09-30, Debian's user-mode Debug Dock (PID 14073) was confirmed to own a live `latte-dock-ng-preview` child (PID 14215) immediately before SIGTERM. Both processes exited; the log contained the signal handling, fast-teardown, Corona deletion and QuickWindowSystem destruction markers, with no Warning, Error, Fatal, ASSERT or QProcess-destruction warning. `coredumpctl` showed no new Latte core. The canonical Debug Dock was restarted as PID 14298 and its fresh startup log had no warning/error markers.
 
 ## Handoff
 
 The user reports the functional blocker interactions and hover choices passed.
-Keep this slice Pending validation only for a live Dock exit while its preview
-helper is still running; the standalone production-object lifecycle test passes.
+The live active-helper shutdown now also passes on Debian 13, in addition to
+the standalone production-object lifecycle test. Keep the regression test and
+its bounded reap behavior; no further M5b validation is pending.
