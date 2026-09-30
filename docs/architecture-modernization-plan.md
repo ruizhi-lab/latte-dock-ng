@@ -184,7 +184,7 @@ is complete; execution and runtime evidence below are not.
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | [Evaluation](modernization-results/M6.md): the apparent shared `SchemeColors` source still depends on app-owned config/layout services; extracting it would add a target without reducing app dependencies | Revisit only if a measurable build or ownership benefit emerges |
-| M7 | Pending validation | [Report](modernization-results/M7.md): run 36642361102 built all tests but Nix CTest passed 41/46; fix Nix Qt/QML/font/D-Bus environment and FHS-only WM fixtures | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
+| M7 | Pending validation | [Report](modernization-results/M7.md): run 36645587779 built all tests but Nix CTest passed 42/46; configure-time QML probes, QtSvg plugin lookup and CMake-resolved D-Bus executable still need their Nix paths/config | Re-run Nix flake check, default package build and dev-shell preset; keep `flake.lock` unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.

@@ -976,6 +976,12 @@ target_link_libraries(autostartlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(autostartlogictest)
 
 find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
+set(LATTE_DBUS_SESSION_CONFIG "" CACHE FILEPATH
+    "Optional D-Bus session config used by tests with a private bus")
+set(_latte_dbus_session_args)
+if (LATTE_DBUS_SESSION_CONFIG)
+    list(APPEND _latte_dbus_session_args "--config-file=${LATTE_DBUS_SESSION_CONFIG}")
+endif()
 add_executable(windowviewbackendtest EXCLUDE_FROM_ALL
     windowviewbackendtest.cpp
     ../plasmoid/plugin/windowviewbackend.cpp
@@ -984,7 +990,7 @@ add_executable(windowviewbackendtest EXCLUDE_FROM_ALL
 target_link_libraries(windowviewbackendtest Qt6::Core Qt6::DBus Qt6::Qml Qt6::Test)
 # Keep the fake KWin service off the real desktop's session bus.
 add_test(NAME windowviewbackendtest
-    COMMAND ${DBUS_RUN_SESSION_EXECUTABLE} -- ${CMAKE_COMMAND} -E env
+    COMMAND ${DBUS_RUN_SESSION_EXECUTABLE} ${_latte_dbus_session_args} -- ${CMAKE_COMMAND} -E env
         LATTE_PRIVATE_TEST_BUS=1 $<TARGET_FILE:windowviewbackendtest>)
 set_property(TEST windowviewbackendtest PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
 list(APPEND latte_autotest_targets windowviewbackendtest)
