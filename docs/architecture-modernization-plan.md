@@ -178,13 +178,13 @@ is complete; execution and runtime evidence below are not.
 | M4a | Complete | [Run 36633737377: Clang Debug clang-tidy production and negative checks pass](modernization-results/M4a.md) | Continue M4b sanitizer coverage |
 | M4b | Complete | Run 36642361102: GCC sanitizer job passed with leak detection enabled; ASan/UBSan fixtures and selected tests passed | Keep sanitizer checks in CI |
 | M5a | Complete | [Report](modernization-results/M5a.md): production helper and focused tests pass GCC/Clang; run 36642361102 passed the full GCC/Clang matrix and sanitizer job | Record desktop interaction retest after implementation batches |
-| M5b | Pending validation | [Report](modernization-results/M5b.md): removed copied blocker model; production-helper tests remain; added a narrow wrapper wiring contract; desktop scenarios await final user retest | Await M5a full CI, then record desktop retest points |
+| M5b | Pending validation | [Report](modernization-results/M5b.md): removed copied blocker model; production-helper tests remain; added a narrow wrapper wiring contract; desktop scenarios await final user retest | After implementation batches, run the listed desktop scenarios and review the fresh log |
 | P0 | Pending validation | [Report](modernization-results/P0.md): host has no active dock process and no pidstat, so live CPU/PSS A/A samples are unavailable; no zero values inferred | Resume read-only profiling in a coordinated session with an identified dock and matching runtime roots |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | [Evaluation](modernization-results/M6.md): the apparent shared `SchemeColors` source still depends on app-owned config/layout services; extracting it would add a target without reducing app dependencies | Revisit only if a measurable build or ownership benefit emerges |
-| M7 | Pending validation | [Report](modernization-results/M7.md): local Nix verification passed 46/46 CTest, package build/install/uninstall, `.#default`, and GCC Debug preset. Qt QML/Kirigami runtime paths now select actual package outputs; mirror contracts pass. | Push the fix on this branch and record the new remote workflow result; keep `flake.lock` unchanged |
+| M7 | Complete | [Report](modernization-results/M7.md): local Nix verification passed 46/46 CTest, package build/install/uninstall, `.#default`, and GCC Debug preset; run 36668396118 passed all 20 jobs including NixOS install verification. Qt QML/Kirigami runtime paths select actual package outputs; mirror contracts pass. | Continue with the performance track after P0 and M5b runtime prerequisites are validated |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.
