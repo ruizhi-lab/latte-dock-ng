@@ -36,6 +36,7 @@ runtime A/B measurement.
   `ctest --test-dir build/modernization/<config> -R '^(sourcecontracttest|qmlsmoketest)$' --output-on-failure` — passed (2/2).
 - `bash scripts/qmllint.sh plasmoid/package/contents/ui/main.qml plasmoid/package/contents/ui/task/TaskMouseArea.qml` — passed.
 - `bash scripts/qmllint-deep.sh build/modernization/gcc-debug` and the corresponding Clang Debug command — did not pass the baseline gate because the installed qmllint is 6.11.2 while the reviewed baseline fingerprints 6.11.1. The current run produced 724 diagnostic identities; a direct identity/count comparison of the two changed QML files found no additions or removals (26 identities in each baseline/current pair). The full-tree result remains pending a comparable qmllint environment.
+- Supplemental full-tree comparison on 2026-09-30: the baseline and both complete Debug reports cover the same 236 QML files and all qmllint process/per-file exit codes are successful. Comparing diagnostic identities/counts while retaining the tool-version mismatch showed 724 rows in each report and zero changed identities in both GCC Debug and Clang Debug. This supports that the patch introduced no diagnostic changes under qmllint 6.11.2, but does not replace the strict fingerprint gate for the reviewed 6.11.1 environment.
 - `git diff --check` — passed.
 - Fedora 44 final staging: the committed branch snapshot at `c03ffa7ec` was built and installed with `bash install.sh --user Debug`; the user-mode process is running from `/home/fedora/.local/bin/latte-dock-ng` with the captured Plasma session environment and developer QML overrides.
 - Initial Fedora startup log scan: no Warning, Error, Fatal or ASSERT entries. The log contains informational shutdown/startup messages, a missing KActivities service notice and the existing containment-action metadata notice. The final Fedora/Debian Dock shutdown and fresh startup logs on 2026-09-30 also contained no Warning, Error, Fatal or ASSERT entries.
@@ -61,6 +62,8 @@ passed; per-OS and per-mode details were not supplied.
 ## Handoff
 
 The user reports the edit-state and three-hover-choice matrix passed. See the
-aggregate [manual retest checklist](manual-retest-checklist.md). The comparable
-deep-QML diagnostic gate remains unavailable because the installed qmllint
-version differs from the reviewed baseline; retain that limitation above.
+aggregate [manual retest checklist](manual-retest-checklist.md). The strict
+deep-QML fingerprint gate remains pending because the installed qmllint version
+differs from the reviewed baseline, despite the supplemental zero-delta identity
+comparison above. Re-run both Debug comparisons with qmllint 6.11.1 when that
+tool version is available; do not rewrite the reviewed baseline to 6.11.2.
