@@ -40,6 +40,8 @@ source-level coverage work.
 - Debian 13.7 user-mode Debug Dock: the same clean result. A `latte-dock-ng-preview` PID was observed shortly before the test but exited before the baseline/signal; it was not active during the Dock teardown.
 - Both VMs were restarted from their canonical user-mode Debug binaries; fresh idle startup logs had no Warning, Error, Fatal or ASSERT entries.
 - On 2026-09-30, Debian's user-mode Debug Dock (PID 14073) was confirmed to own a live `latte-dock-ng-preview` child (PID 14215) immediately before SIGTERM. Both processes exited; the log contained the signal handling, fast-teardown, Corona deletion and QuickWindowSystem destruction markers, with no Warning, Error, Fatal, ASSERT or QProcess-destruction warning. `coredumpctl` showed no new Latte core. The canonical Debug Dock was restarted as PID 14298 and its fresh startup log had no warning/error markers.
+- GitHub run [36729541560](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/36729541560) exposed a stale `isolatedWindowPreviewProcessIsFailClosed` source contract in all four compiler/build-mode jobs. It rejected every `waitForFinished` call, conflicting with the M5b bounded teardown reap above. The contract now rejects waits in the interactive path and requires the 250 ms graceful / 1000 ms forced bounds and kill to appear only in `shutdownProcess()`. GCC Debug and Clang Debug rebuilt `sourcecontracttest`; the focused CTest target passed in both. The full matrix rerun is pending after this correction.
+- The user requested the Debian 13 VM remain powered off until final compatibility testing; its last verified test state remains recorded above.
 
 ## Handoff
 

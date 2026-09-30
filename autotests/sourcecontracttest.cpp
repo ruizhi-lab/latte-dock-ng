@@ -3889,9 +3889,9 @@ void SourceContractTest::appletIconResourcePathsUseQmlUrlScheme()
 
 void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
 {
-    // The dock-side manager must stay asynchronous and fail closed. Any
-    // blocking wait on the helper, capture or screencasting would freeze the
-    // dock's event loop, which is the exact failure the isolation removes.
+    // The dock-side manager must stay asynchronous and fail closed. Blocking
+    // IPC waits would freeze the event loop; only bounded process reaping is
+    // allowed after teardown has started and the event loop is about to stop.
     QFile manager(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/plugin/previewprocess.cpp"));
     QVERIFY(manager.open(QFile::ReadOnly));
     const QString managerSource = QString::fromUtf8(manager.readAll());
@@ -3909,7 +3909,15 @@ void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
     QVERIFY(managerSource.contains(QStringLiteral("TypeMove")));
     QVERIFY(managerSource.contains(QStringLiteral("TypeClosed")));
     QVERIFY(!managerSource.contains(QStringLiteral("waitForStarted")));
-    QVERIFY(!managerSource.contains(QStringLiteral("waitForFinished")));
+    const int shutdownStart = managerSource.indexOf(QStringLiteral("void PreviewProcess::shutdownProcess()"));
+    QVERIFY(shutdownStart >= 0);
+    const int shutdownEnd = managerSource.indexOf(QStringLiteral("void PreviewProcess::fail()"), shutdownStart);
+    QVERIFY(shutdownEnd > shutdownStart);
+    const QString shutdownSource = managerSource.mid(shutdownStart, shutdownEnd - shutdownStart);
+    QVERIFY(shutdownSource.contains(QStringLiteral("waitForFinished(250)")));
+    QVERIFY(shutdownSource.contains(QStringLiteral("waitForFinished(1000)")));
+    QVERIFY(shutdownSource.contains(QStringLiteral("process->kill()")));
+    QVERIFY(managerSource.count(QStringLiteral("waitForFinished")) == 2);
     QVERIFY(!managerSource.contains(QStringLiteral("waitForReadyRead")));
     QVERIFY(!managerSource.contains(QStringLiteral("waitForBytesWritten")));
 
