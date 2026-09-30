@@ -59,13 +59,11 @@ uninstall sequence used by the other distro script.
 
 ## NixOS validation
 
-The refreshed NixOS image is currently running the full
-`docker/verify-nix-nixos.sh` workflow. It first builds and installs/uninstalls
-the package, then runs `nix flake check`, builds `.#default`, and builds the
-GCC Debug development preset. The local Nix image was rebuilt after setting
-its channel to Tsinghua's nixpkgs mirror and its binary cache to Tsinghua first,
-with `cache.nixos.org` as fallback. These commands verified the generated
-Compose settings:
+The refreshed local NixOS image completed the package install/uninstall,
+`nix flake check`, `.#default` build and GCC Debug development-preset build.
+The local image uses Tsinghua's nixpkgs mirror and binary cache first, with
+`cache.nixos.org` as fallback. These commands verified the generated Compose
+settings:
 
 ```sh
 docker compose -f docker/docker-compose.yml build --pull nixos
@@ -77,10 +75,39 @@ The channel output was
 `https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixpkgs-unstable`; the
 substituter output listed
 `https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store` before
-`https://cache.nixos.org/`. The full local verification is currently running
-with `JOBS=8 docker compose -f docker/docker-compose.yml run --rm --no-deps
---pull never nixos`; its live output confirms downloads are coming from the
-Tsinghua cache. The latest remote run before this local rerun reached 44/46
-CTest targets; `qmlsmoketest` and `pluginregistrationunittest` still failed to
-load QtQml's `qmlplugin`. Update this report with final local and remote results
-before M7 is marked complete.
+`https://cache.nixos.org/`. The local verification passed all 46 registered
+CTest targets. GitHub run `36668396118` passed all 20 jobs, including NixOS
+install verification. This closes the earlier QtQml `qmlplugin` runtime-path
+failures.
+
+## Updated local VMs
+
+Both VMs were refreshed before runtime validation. Fedora 44 had a successful
+80-package `dnf update` transaction on 2026-09-30; a subsequent
+`dnf check-update --refresh` refreshed repository metadata and reported no
+pending package updates. The VM reports CMake 4.3.0, Qt 6.11.2, KDE Frameworks
+6.30, Plasma 6.7.5 and kernel 7.2.7.
+
+Debian 13 still had 14 security packages pending after the user's earlier
+manual update. Its main and updates repositories already used USTC, while the
+security entries still used `security.debian.org`. The verified Chinese mirror
+responded successfully, so the security entries were switched to HTTPS USTC
+after preserving `/etc/apt/sources.list.codex-backup`. The exact refresh and
+upgrade commands were:
+
+```sh
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+sudo apt-get -s full-upgrade
+sudo DEBIAN_FRONTEND=noninteractive apt-get full-upgrade -y
+```
+
+The first upgrade installed 13 security updates. The reviewed full upgrade
+added only the Debian 13.7 security kernel `6.12.111-1` and updated its meta
+package; it removed no packages. The 108 MB kernel archive downloaded from
+`https://mirrors.ustc.edu.cn/debian-security` in two seconds. The VM was
+rebooted to activate it, `uname -r` reported `6.12.111+deb13-amd64`, and
+`apt list --upgradable` returned no packages.
+
+The subsequent Fedora UI profile attempt is recorded separately in
+[P0](P0.md); its partial samples are invalid and are not acceptance evidence.
