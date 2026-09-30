@@ -75,6 +75,8 @@ void Windows::init()
         Q_EMIT windowChanged(wid);
     });
 
+    connect(m_wm, &AbstractWindowInterface::windowTitleChanged, this, &Windows::updateWindowInfoForTitle);
+
     connect(m_wm, &AbstractWindowInterface::windowRemoved, this, [this](WindowId wid) {
         m_windows.remove(wid);
 
@@ -816,6 +818,32 @@ void Windows::updateAllHintsAfterTimer()
     //! keep instrumented counts separate from uninstrumented timing samples.
     qCDebug(latteWm) << "[perf-trace] hint-schedule";
     m_updateAllHintsTimer.start();
+}
+
+void Windows::updateWindowInfoForTitle(const WindowId &wid)
+{
+    if (!m_windows.contains(wid)) {
+        return;
+    }
+
+    const WindowInfoWrap previousInfo = m_windows[wid];
+    const WindowInfoWrap updatedInfo = m_wm->requestInfo(wid);
+
+    // requestInfo() can synchronously report that a blocked window was
+    // removed. The removal handler is authoritative; never reinsert it here.
+    if (!m_windows.contains(wid)) {
+        return;
+    }
+
+    m_windows[wid] = updatedInfo;
+
+    if (!previousInfo.hasSameNonDisplayState(updatedInfo)) {
+        //! A title notification can race a geometry/eligibility change. Keep
+        //! the established full scan whenever any non-title field changed.
+        updateAllHintsAfterTimer();
+    }
+
+    Q_EMIT windowChanged(wid);
 }
 
 void Windows::updateAllHints()

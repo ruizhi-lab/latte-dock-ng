@@ -108,6 +108,7 @@ public:
 private Q_SLOTS:
     void updateWindow();
     void updateWindowGeometry();
+    void updateWindowTitle();
     void updateWindowCache();
     void windowUnmapped();
 

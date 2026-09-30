@@ -433,6 +433,43 @@ void WindowInfoWrap::setDisplay(const QString &display)
     m_display = display;
 }
 
+bool WindowInfoWrap::hasSameNonDisplayState(const WindowInfoWrap &other) const
+{
+    //! A title notification refreshes the whole Wayland snapshot. If any
+    //! non-title field changed too, retain the full hint update so geometry,
+    //! eligibility and task-action changes cannot be hidden by the fast path.
+    return m_wid == other.m_wid
+           && m_parentId == other.m_parentId
+           && m_geometry == other.m_geometry
+           && m_isValid == other.m_isValid
+           && m_isActive == other.m_isActive
+           && m_isMinimized == other.m_isMinimized
+           && m_isMaxVert == other.m_isMaxVert
+           && m_isMaxHoriz == other.m_isMaxHoriz
+           && m_isFullscreen == other.m_isFullscreen
+           && m_isShaded == other.m_isShaded
+           && m_isKeepAbove == other.m_isKeepAbove
+           && m_isKeepBelow == other.m_isKeepBelow
+           && m_hasSkipPager == other.m_hasSkipPager
+           && m_hasSkipSwitcher == other.m_hasSkipSwitcher
+           && m_hasSkipTaskbar == other.m_hasSkipTaskbar
+           && m_isOnAllDesktops == other.m_isOnAllDesktops
+           && m_isOnAllActivities == other.m_isOnAllActivities
+           && m_isClosable == other.m_isClosable
+           && m_isFullScreenable == other.m_isFullScreenable
+           && m_isGroupable == other.m_isGroupable
+           && m_isMaximizable == other.m_isMaximizable
+           && m_isMinimizable == other.m_isMinimizable
+           && m_isMovable == other.m_isMovable
+           && m_isResizable == other.m_isResizable
+           && m_isShadeable == other.m_isShadeable
+           && m_isVirtualDesktopsChangeable == other.m_isVirtualDesktopsChangeable
+           && m_appName == other.m_appName
+           && m_icon.cacheKey() == other.m_icon.cacheKey()
+           && m_desktops == other.m_desktops
+           && m_activities == other.m_activities;
+}
+
 QIcon WindowInfoWrap::icon() const
 {
     return m_icon;

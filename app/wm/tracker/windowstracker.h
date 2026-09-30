@@ -131,6 +131,7 @@ private:
     void updateAllHints();
     void updateAllHintsAfterTimer();
     void updateLayoutHintsFromViews();
+    void updateWindowInfoForTitle(const WindowId &wid);
 
     //! Views
     void updateHints(Latte::View *view);

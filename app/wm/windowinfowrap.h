@@ -115,6 +115,7 @@ public:
 
     QString display() const;
     void setDisplay(const QString &display);
+    bool hasSameNonDisplayState(const WindowInfoWrap &other) const;
 
     QIcon icon() const;
     void setIcon(const QIcon &icon);

@@ -2729,10 +2729,11 @@ void SourceContractTest::windowHintPerformanceTraceMarksScheduledAndExecutedWork
 
     // Title notifications enter the metadata path; geometry and state changes
     // retain the full hint-update path for P1a/P1b characterization.
-    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache)")));
+    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowTitle)")));
     QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry)")));
     QVERIFY(waylandSource.contains(QStringLiteral("Q_EMIT windowChanged(pW->uuid())")));
     QVERIFY(waylandSource.contains(QStringLiteral("considerWindowChanged(pW->uuid())")));
+    QVERIFY(waylandSource.contains(QStringLiteral("Q_EMIT windowTitleChanged(pW->uuid())")));
 
     QFile abstractWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.cpp"));
     QVERIFY(abstractWindow.open(QFile::ReadOnly));
@@ -2745,6 +2746,20 @@ void SourceContractTest::windowHintPerformanceTraceMarksScheduledAndExecutedWork
     QVERIFY(trackerSource.contains(QStringLiteral("m_updateAllHintsTimer.setInterval(300)")));
     QVERIFY(trackerSource.contains(QStringLiteral("m_windows[wid] = m_wm->requestInfo(wid);")));
     QVERIFY(trackerSource.contains(QStringLiteral("updateAllHintsAfterTimer();")));
+
+    const int titleHandlerStart = trackerSource.indexOf(QStringLiteral("void Windows::updateWindowInfoForTitle(const WindowId &wid)"));
+    QVERIFY(titleHandlerStart >= 0);
+    const int titleHandlerEnd = trackerSource.indexOf(QStringLiteral("void Windows::updateAllHints()"), titleHandlerStart);
+    QVERIFY(titleHandlerEnd > titleHandlerStart);
+    const QString titleHandler = trackerSource.mid(titleHandlerStart, titleHandlerEnd - titleHandlerStart);
+    QVERIFY(titleHandler.contains(QStringLiteral("const WindowInfoWrap updatedInfo = m_wm->requestInfo(wid);")));
+    QVERIFY(titleHandler.contains(QStringLiteral("if (!m_windows.contains(wid))")));
+    QVERIFY(titleHandler.contains(QStringLiteral("previousInfo.hasSameNonDisplayState(updatedInfo)")));
+    QVERIFY(titleHandler.contains(QStringLiteral("Q_EMIT windowChanged(wid)")));
+    QVERIFY(titleHandler.indexOf(QStringLiteral("updateAllHintsAfterTimer();"))
+            > titleHandler.indexOf(QStringLiteral("if (!previousInfo.hasSameNonDisplayState(updatedInfo))")));
+
+    QVERIFY(trackerSource.contains(QStringLiteral("connect(m_wm, &AbstractWindowInterface::windowTitleChanged, this, &Windows::updateWindowInfoForTitle)")));
 
     QFile lastActiveWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tracker/lastactivewindow.cpp"));
     QVERIFY(lastActiveWindow.open(QFile::ReadOnly));

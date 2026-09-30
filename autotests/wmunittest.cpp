@@ -34,6 +34,7 @@ private Q_SLOTS:
     void processLookupCanIgnoreConfiguredRuntimeWrapper();
     void windowInfoWrapCopiesAndAssignsWindowState();
     void windowInfoWrapTracksParentsAndMembership();
+    void windowInfoWrapDetectsNonDisplayChanges();
     void appDataFromUrlReadsLocalDesktopFile();
     void appDataFromUrlPreservesFallbackForUnknownUrls();
     void appDataFromUrlReadsQueryFlags();
@@ -212,6 +213,43 @@ void WindowSystemUnitTest::windowInfoWrapTracksParentsAndMembership()
     QVERIFY(!info.isOnActivity(QStringLiteral("activity-2")));
     info.setIsOnAllActivities(true);
     QVERIFY(info.isOnActivity(QStringLiteral("activity-2")));
+}
+
+void WindowSystemUnitTest::windowInfoWrapDetectsNonDisplayChanges()
+{
+    Latte::WindowSystem::WindowInfoWrap original;
+    original.setWid("window-1");
+    original.setParentId("parent-1");
+    original.setIsValid(true);
+    original.setGeometry(QRect(1, 2, 300, 400));
+    original.setDesktops({QStringLiteral("desktop-1")});
+    original.setActivities({QStringLiteral("activity-1")});
+    original.setDisplay(QStringLiteral("Initial title"));
+
+    Latte::WindowSystem::WindowInfoWrap titleOnly = original;
+    titleOnly.setDisplay(QStringLiteral("Updated title"));
+    QVERIFY(original.hasSameNonDisplayState(titleOnly));
+
+    Latte::WindowSystem::WindowInfoWrap geometryChanged = titleOnly;
+    geometryChanged.setGeometry(QRect(10, 20, 300, 400));
+    QVERIFY(!original.hasSameNonDisplayState(geometryChanged));
+
+    Latte::WindowSystem::WindowInfoWrap eligibilityChanged = titleOnly;
+    eligibilityChanged.setHasSkipTaskbar(true);
+    QVERIFY(!original.hasSameNonDisplayState(eligibilityChanged));
+
+    Latte::WindowSystem::WindowInfoWrap desktopChanged = titleOnly;
+    desktopChanged.setIsOnAllDesktops(true);
+    QVERIFY(!original.hasSameNonDisplayState(desktopChanged));
+
+    QPixmap originalPixmap(1, 1);
+    originalPixmap.fill(Qt::blue);
+    QPixmap updatedPixmap(1, 1);
+    updatedPixmap.fill(Qt::red);
+    original.setIcon(QIcon(originalPixmap));
+    Latte::WindowSystem::WindowInfoWrap iconChanged = original;
+    iconChanged.setIcon(QIcon(updatedPixmap));
+    QVERIFY(!original.hasSameNonDisplayState(iconChanged));
 }
 
 void WindowSystemUnitTest::appDataFromUrlReadsLocalDesktopFile()
