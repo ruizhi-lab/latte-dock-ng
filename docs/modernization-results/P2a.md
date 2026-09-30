@@ -1,9 +1,10 @@
 # P2a: Icon invalidation and work characterization
 
-Status: Pending validation. Implementation and available invalidation checks
-are complete; moving one live item between screens with different DPRs and
-Debian-specific theme/icon invalidation cases remain pending. Raster and
-scene-graph traces plus focused image/QIcon tests cover named-theme replacement,
+Status: Complete. Implementation and invalidation checks are complete. The
+user reports the Debian-specific theme/icon and remaining functional checks
+passed. Two-output migration is accepted by code review at the user's request;
+it was not exercised on physical dual-display hardware. Raster and scene-graph
+traces plus focused image/QIcon tests cover named-theme replacement,
 enabled/active state, zero size, fractional DPR, color groups, overlays,
 `providesColors` and window recreation.
 
@@ -77,16 +78,17 @@ below are observed.
 | --- | --- | --- |
 | QImage replacement, same empty string identity | Red-to-blue output test passes | Confirm Debug generation trace for replacement |
 | QIcon replacement, same empty string identity | Red-to-blue output test passes | Theme-backed QIcon resolution and theme signal |
-| Named theme icon replacement under the same source identity | Fedora Wayland controlled red-to-blue switch passes after `KIconLoader::iconChanged`; ordinary QImage source stays idle | Verify on Debian Plasma 6.3 and through a real system icon-theme switch |
+| Named theme icon replacement under the same source identity | Fedora Wayland controlled red-to-blue switch passes after `KIconLoader::iconChanged`; user reports remaining Debian theme/icon checks passed | No additional functional check reported |
 | Zero size then non-zero | Raster clears and green pixels return | Scene-graph node removal and recreation on a live window |
 | Geometry-only change with same effective raster size | Fedora Wayland DPR 1 and 1.5: raster dimensions/DPR remain stable; destination changes and texture/raster work repeats | Visually compare hover/zoom sharpness at integer and fractional scale |
 | SVG source repaint and Plasma theme change | Setter/signal path reviewed; named icon theme signal tested | Exercise same-URL Plasma SVG content/theme refresh and Plasma theme switch |
-| SVG color-group change | Fedora Wayland: KSvg color set, repaint signal, raster and texture all update | Verify color-group output on Debian Plasma 6.3 |
-| Overlay list change | Temporary theme overlay changes production pixels and triggers raster/texture reload | Verify overlay output on Debian Plasma 6.3 |
+| SVG color-group change | Fedora Wayland: KSvg color set, repaint signal, raster and texture all update; user reports remaining theme/icon checks passed | No additional functional check reported |
+| Overlay list change | Temporary theme overlay changes production pixels and triggers raster/texture reload; user reports remaining theme/icon checks passed | No additional functional check reported |
 | Enabled/active icon states | Blue source pixels change for active and disabled production rasters | Verify state-change texture output on the live scene graph |
-| `providesColors` | Same-name red-to-blue theme switch updates the derived background color | Verify derived color output on Debian Plasma 6.3 |
-| Fractional DPR | Fedora Wayland test at simulated DPR 1.5 reports 96x96 backing at DPR 1.33 for the 72-pixel QIcon request | Confirm on a physical/non-simulated fractional-scale display |
-| Moving between screens | Not tested; `kscreen-doctor -o` reports one connected Fedora VM output | Move the live dock between outputs with different DPRs |
+| `providesColors` | Same-name red-to-blue theme switch updates the derived background color; user reports remaining theme/icon checks passed | No additional functional check reported |
+| Fractional DPR | Fedora Wayland test at simulated DPR 1.5 reports 96x96 backing at DPR 1.33 for the 72-pixel QIcon request; user reports the final scale/visual checks passed | Physical scale method was not separately recorded |
+| Moving between screens | Assumed pass by user-approved code review; `ItemDevicePixelRatioHasChanged` refreshes the scale-dependent raster. `kscreen-doctor -o` reports one connected Fedora VM output. | No dual-display runtime check was available |
+| Hotplug/reconnect | Assumed pass by the same user-approved screen-following review; no runtime hotplug check was available | No additional output available |
 | QQuickWindow / scene graph recreation | Sequential Fedora Wayland windows each render; trace shows a new texture for the replacement window | Confirm compositor-driven scene-graph invalidation/recovery if a safe trigger is available |
 
 The actual task delegate uses `Kirigami.Icon` in `plasmoid/package/contents/ui/task/TaskIcon.qml`;

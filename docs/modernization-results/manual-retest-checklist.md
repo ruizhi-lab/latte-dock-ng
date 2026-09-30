@@ -21,9 +21,9 @@ and move the pointer across the icon, its zoomed area and the preview surface.
 
 Repeat the three choices with a single-window task and a grouped task. Confirm
 title tooltips still work, preview-helper failure preserves the documented
-fallback, and the saved hover choice is read after relaunch. Debian's confirmed
-preview result covers only the `PreviewWindows` path; the other two choices
-remain pending.
+fallback, and the saved hover choice is read after relaunch. The user reports
+all three choices passed in the final functional retest; per-OS and per-mode
+details were not supplied.
 
 ## Task interactions and edit mode
 
@@ -48,9 +48,11 @@ remain pending.
 - At integer and fractional display scale, compare task icon sharpness during
   parabolic zoom. Check for blur, clipping, stale textures, flicker or
   incorrect destination rectangles while the dock resizes and relocates.
-- Where two outputs are available, move the dock between outputs with
-  different DPRs and hotplug/reconnect one output. This remains unavailable on
-  the single-output Fedora VM unless a second display becomes available.
+- Two-output runtime testing is unavailable. At the user's request, accept the
+  cross-screen path by code review: `Positioner` follows `QScreen` changes and
+  `IconItem` refreshes when Qt reports `ItemDevicePixelRatioHasChanged`, using
+  the window's effective DPR. Record this as assumed pass, not a physical
+  multi-display test. Hotplug remains unexercised at runtime.
 - Change the desktop icon theme while a named icon is visible. Verify its
   pixels and derived colors refresh, and check overlays, disabled state and
   active state remain correct.
@@ -70,12 +72,26 @@ remain pending.
 
 ## Record results
 
+On 2026-09-30, the user reported that all remaining functional checks in this
+matrix passed, with two-output testing handled by the code-review assumption
+above. This is aggregate user feedback; per-OS and per-hover-mode details were
+not provided. Debian `PreviewWindows` had already been confirmed separately.
+
+The active-helper shutdown was tested separately. GCC Debug
+`previewprocessunittest` passed all 9 cases, including destruction while its
+fake helper was running. Fedora and Debian Dock SIGTERM/restart checks both
+showed the expected teardown markers, no new coredump, no fatal/error/warning
+markers, and no surviving helper; however, no helper was active at either
+signal. A Debian helper process observed shortly before its baseline had
+exited before the signal. Therefore the live Dock-with-active-helper case
+remains pending.
+
 For each OS, record the Plasma/Qt/KF versions, selected hover mode, pass/fail,
 any reproduction steps, and the final log scan. Useful Fedora paths are
 `/home/fedora/.local/bin/latte-dock-ng` and `/tmp/latte-ng.log`; the final
 Debug process already uses the captured Wayland session environment and
-`~/.config/latte-dock-ng/dev-env.sh`. Do not mark cross-screen checks passed
-unless that environment was actually available. Debian startup, helper
-installation and the `PreviewWindows` interaction are recorded in
+`~/.config/latte-dock-ng/dev-env.sh`. Treat the user's cross-screen code-review
+acceptance as an assumed pass, not as a runtime display check. Debian startup,
+helper installation and the `PreviewWindows` interaction are recorded in
 [`debian13-runtime.md`](debian13-runtime.md); retain the separate highlight
-checks above as pending.
+checks above as user-reported passes, with per-mode details not provided.

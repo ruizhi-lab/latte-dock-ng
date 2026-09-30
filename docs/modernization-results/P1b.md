@@ -1,7 +1,8 @@
 # P1b: Title-only fast path
 
-Status: Implementation and title-work target verified; response-latency and
-functional acceptance remain pending.
+Status: Implementation and title-work target verified; the user reports
+functional acceptance passed. Exact response latency and a measurable
+performance benefit remain unverified.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation base: P1a commit `ec8a504db`.
@@ -104,11 +105,15 @@ window preview only, highlight only, and preview plus highlight. Verify each
 mode follows its setting and preserves tooltips, grouped-window actions,
 hide/dodge behavior and preview-helper failure fallback.
 
+On 2026-09-30, the user reported that the remaining title/window-state and task
+interaction checks passed. Exact response latency remains unmeasured, and the
+short Release A/B samples still do not support a CPU or memory saving claim.
+
 ## Handoff
 
 No bounded event-correlated pending-geometry check is currently available:
 the live markers have no event identity, and production tracing would perturb
 the Release measurement. Keep exact title-response latency unmeasured unless a
-lightweight event-correlated seam is later identified. The remaining action is
-the manual title/window-state and task-interaction matrix in the final desktop
-retest, including each of the three hover choices.
+lightweight event-correlated seam is later identified. Retain the user's
+functional acceptance while keeping the response-latency and performance
+benefit limits explicit.

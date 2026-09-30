@@ -1,11 +1,12 @@
 # P2b: Conservative per-item geometry deduplication
 
-Status: Pending validation. The bounded destination-only resize optimization
-and available production tests are implemented. GCC/Clang Debug and Release
-targets pass locally, and Fedora Wayland at DPR 1 and 1.5 verifies both the
-skip and the required reload when the raster request changes. Debian theme
-invalidation, cross-screen movement, user hover/zoom visual checks and broader
-application A/B memory sampling remain pending.
+Status: Complete. The bounded destination-only resize optimization and
+production tests pass. GCC/Clang Debug and Release targets pass locally, and
+Fedora Wayland at DPR 1 and 1.5 verifies both the skip and required reload when
+the raster request changes. The user reports remaining theme, hover/zoom and
+visual checks passed. Cross-screen movement is accepted by user-requested code
+review only; no dual-display runtime test or broader application A/B memory
+sampling was performed.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
@@ -51,11 +52,8 @@ same one-item pixmap and window-owned texture between updates.
 
 ## Handoff
 
-Test the icon invalidation matrix on Debian 13.7 / Plasma 6.3.6. During the
-final desktop retest, move the dock between outputs with different DPRs and
-compare task icon hover/zoom quality at integer and fractional scale. Test the
-three task hover choices as separate cases: `PreviewWindows` (preview only),
-`HighlightWindows` (highlight only), and `PreviewAndHighlightWindows`
-(preview plus highlight). Gather application-level A/B resource samples only
-if they can isolate this geometry update without replacing the higher-
-resolution pixmap-size trace evidence with VM-wide RSS noise.
+The user reports the Debian and hover/zoom visual checks passed. Cross-screen
+movement is accepted by code review only, with no physical dual-display test.
+Gather application-level A/B resource samples only if they can isolate this
+geometry update without replacing the higher-resolution pixmap-size trace
+evidence with VM-wide RSS noise.
