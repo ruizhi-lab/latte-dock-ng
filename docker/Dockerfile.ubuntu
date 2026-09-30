@@ -3,7 +3,7 @@ FROM ${BASE_IMAGE}:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
       find /etc/apt -maxdepth 2 -type f \( -name '*.sources' -o -name sources.list \) \

@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=opensuse/tumbleweed
 FROM ${BASE_IMAGE}:latest
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
       zypper --non-interactive mr -d repo-oss repo-non-oss repo-update && \

@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile.arch
       args:
         BASE_IMAGE: ${LATTE_ARCH_IMAGE:-docker.m.daocloud.io/library/archlinux}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh ARCH
 
   fedora:
@@ -30,6 +31,7 @@ services:
       dockerfile: Dockerfile.fedora
       args:
         BASE_IMAGE: ${LATTE_FEDORA_IMAGE:-docker.m.daocloud.io/library/fedora}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh FEDORA
 
   opensuse:
@@ -40,6 +42,7 @@ services:
       dockerfile: Dockerfile.opensuse
       args:
         BASE_IMAGE: ${LATTE_OPENSUSE_IMAGE:-docker.m.daocloud.io/opensuse/tumbleweed}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh OPENSUSE
 
   ubuntu:
@@ -50,6 +53,7 @@ services:
       dockerfile: Dockerfile.ubuntu
       args:
         BASE_IMAGE: ${LATTE_UBUNTU_IMAGE:-docker.m.daocloud.io/library/ubuntu}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh UBUNTU
 
   mageia:
@@ -60,6 +64,7 @@ services:
       dockerfile: Dockerfile.mageia
       args:
         BASE_IMAGE: ${LATTE_MAGEIA_IMAGE:-docker.m.daocloud.io/library/mageia}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh MAGEIA
 
   debian:
@@ -70,6 +75,7 @@ services:
       dockerfile: Dockerfile.debian
       args:
         BASE_IMAGE: ${LATTE_DEBIAN_IMAGE:-docker.m.daocloud.io/library/debian}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh debian13
 
   gentoo:
@@ -80,6 +86,7 @@ services:
       dockerfile: Dockerfile.gentoo
       args:
         BASE_IMAGE: ${LATTE_GENTOO_IMAGE:-docker.m.daocloud.io/gentoo/stage3}
+        USE_MIRRORS: "true"
     command: bash /src/docker/verify-ebuild-gentoo.sh
 
   nixos:
@@ -90,4 +97,8 @@ services:
       dockerfile: Dockerfile.nixos
       args:
         BASE_IMAGE: ${LATTE_NIXOS_IMAGE:-docker.m.daocloud.io/nixos/nix}
+        NIXPKGS_CHANNEL_URL: https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixpkgs-unstable
+    environment:
+      NIX_CONFIG: >-
+        substituters = https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org/
     command: bash /src/docker/verify-nix-nixos.sh

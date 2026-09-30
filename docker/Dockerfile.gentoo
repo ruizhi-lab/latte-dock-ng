@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=gentoo/stage3
 FROM ${BASE_IMAGE}:latest
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 ARG JOBS=4
 ARG GENTOO_SYNC_URI=rsync://rsync.gentoo.org/gentoo-portage
 ARG GENTOO_SYNC_URI_CN=rsync://mirrors.tuna.tsinghua.edu.cn/gentoo-portage
