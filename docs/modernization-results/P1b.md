@@ -49,6 +49,16 @@ window-added scan settled before counting, and the synthetic window closed
 after counting. This meets the predeclared work target of zero schedules for
 ten title-only changes, down from ten schedules per trial on P1a.
 
+The canonical Debug dock then ran a separate synthetic QWidget case requesting
+one resize followed by eleven title updates. Its global trace showed 12 hint
+schedules and 10 executions; a separate ten-second idle interval showed 0/0.
+This confirms that tracker hint work remained active during the mixed sequence,
+but these markers have no event IDs and cannot attribute each schedule or prove
+the exact pending-timer deadline. The source contract verifies that the
+unchanged-title branch does not call the scheduling helper and the production
+handler does not stop its timer. Individual non-title state transitions remain
+in the focused `WindowInfoWrap` comparison test and the live retest matrix.
+
 ## Release A/B result
 
 Five alternating Release A/B pairs used separate matching install prefixes.
@@ -77,8 +87,9 @@ the Release trials.
 Title response latency was not measured: the fixture does not expose a
 trustworthy timestamp for the tracker receiving each title update. The field
 comparison unit test covers every non-display `WindowInfoWrap` field, and the
-source contract checks wiring, but a fake-adapter test through real production
-dispatch plus live non-title state and pending-geometry checks remain pending.
+source contract checks wiring. No fake-adapter host fixture was added; the live
+Wayland title trace verifies the real dispatch path, while individual non-title
+state and exact pending-geometry timing checks remain pending.
 The user-confirmed Fedora task indicators and preview are recovery evidence,
 not completion of the runtime feature matrix.
 
@@ -89,10 +100,10 @@ hide/dodge behavior and preview-helper failure fallback.
 
 ## Handoff
 
-Add or identify a lightweight test seam that exercises the real tracker
-dispatch for title and full-update signals. Verify non-title state changes
-schedule the full path and a title event leaves an already pending geometry
-scan scheduled. If no trustworthy bounded event-to-tracker timestamp can be
-added without perturbing Release sampling, leave response latency explicitly
+Add a bounded event-correlated check for the pending-geometry deadline if it
+can be done without a heavyweight host fixture. Verify the already-tested
+non-title fallback against the live state path where a safe compositor event is
+available. If no trustworthy bounded event-to-tracker timestamp can be added
+without perturbing Release sampling, leave response latency explicitly
 unmeasured. Complete the three hover modes and affected task/window interaction
 matrix in the final desktop retest.
