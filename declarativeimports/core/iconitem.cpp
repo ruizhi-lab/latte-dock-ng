@@ -17,6 +17,9 @@
 // Qt
 #include <QDebug>
 #include <QGuiApplication>
+#ifndef QT_NO_DEBUG
+#include <QLoggingCategory>
+#endif
 #include <QPainter>
 #include <QPaintEngine>
 #include <QQuickWindow>
@@ -33,6 +36,10 @@
 #include <KIconThemes/KIconEffect>
 
 namespace {
+
+#ifndef QT_NO_DEBUG
+Q_LOGGING_CATEGORY(latteIconItemLog, "latte.iconitem", QtWarningMsg)
+#endif
 
 inline qreal itemDevicePixelRatio(const QQuickItem *item)
 {
@@ -88,6 +95,17 @@ IconItem::IconItem(QQuickItem *parent)
                 this, &IconItem::implicitWidthChanged);
         connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
                 this, &IconItem::implicitHeightChanged);
+        // A named theme icon can keep the same source while KIconLoader
+        // resolves it to different pixels. Reload only theme-backed sources;
+        // the iconChanged signal is the authoritative theme invalidation event.
+        connect(KIconLoader::global(), &KIconLoader::iconChanged, this, [this](int) {
+            if (!m_icon.name().isEmpty() || !m_svgIconName.isEmpty()) {
+                // providesColors is derived from pixels, while the source name
+                // is unchanged across theme switches.
+                m_lastColorsSourceId.clear();
+                schedulePixmapUpdate();
+            }
+        });
     }
     connect(this, &QQuickItem::enabledChanged,
             this, &IconItem::enabledChanged);
@@ -117,6 +135,11 @@ void IconItem::setSource(const QVariant &source)
     }
 
     m_source = source;
+#ifndef QT_NO_DEBUG
+    if (latteIconItemLog().isDebugEnabled()) {
+        m_traceSourceGeneration.fetch_add(1, std::memory_order_relaxed);
+    }
+#endif
     QString sourceString = source.toString();
 
     // If the QIcon was created with QIcon::fromTheme(), try to load it as svg
@@ -407,6 +430,16 @@ QSGNode *IconItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *update
         textureNode->setTexture(QSharedPointer<QSGTexture>(window()->createTextureFromImage(m_iconPixmap.toImage(), QQuickWindow::TextureCanUseAtlas)));
         textureNode->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
 
+#ifndef QT_NO_DEBUG
+        if (latteIconItemLog().isDebugEnabled()) {
+            qCDebug(latteIconItemLog) << "[iconitem-trace] texture-create" << this
+                                      << "source-generation" << m_traceSourceGeneration.load(std::memory_order_relaxed)
+                                      << "invalidation-generation" << m_traceInvalidationGeneration.load(std::memory_order_relaxed)
+                                      << "raster" << m_iconPixmap.size()
+                                      << "dpr" << m_iconPixmap.devicePixelRatio();
+        }
+#endif
+
         m_sizeChanged = true;
         m_textureChanged = false;
     }
@@ -415,6 +448,14 @@ QSGNode *IconItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *update
         const auto iconSize = qMin(boundingRect().size().width(), boundingRect().size().height());
         const QRectF destRect(QPointF(boundingRect().center() - QPointF(iconSize / 2, iconSize / 2)), QSizeF(iconSize, iconSize));
         textureNode->setRect(destRect);
+#ifndef QT_NO_DEBUG
+        if (latteIconItemLog().isDebugEnabled()) {
+            qCDebug(latteIconItemLog) << "[iconitem-trace] destination-update" << this
+                                      << "rect" << destRect
+                                      << "source-generation" << m_traceSourceGeneration.load(std::memory_order_relaxed)
+                                      << "invalidation-generation" << m_traceInvalidationGeneration.load(std::memory_order_relaxed);
+        }
+#endif
         m_sizeChanged = false;
     }
 
@@ -423,6 +464,13 @@ QSGNode *IconItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *update
 
 void IconItem::schedulePixmapUpdate()
 {
+#ifndef QT_NO_DEBUG
+    if (latteIconItemLog().isDebugEnabled()) {
+        const auto generation = m_traceInvalidationGeneration.fetch_add(1, std::memory_order_relaxed) + 1;
+        qCDebug(latteIconItemLog) << "[iconitem-trace] pixmap-scheduled" << this
+                                  << "invalidation-generation" << generation;
+    }
+#endif
     polish();
 }
 
@@ -516,6 +564,16 @@ void IconItem::loadPixmap()
     }
 
     const auto size = qMin(width(), height());
+#ifndef QT_NO_DEBUG
+    if (latteIconItemLog().isDebugEnabled()) {
+        qCDebug(latteIconItemLog) << "[iconitem-trace] pixmap-load" << this
+                                  << "source-generation" << m_traceSourceGeneration.load(std::memory_order_relaxed)
+                                  << "invalidation-generation" << m_traceInvalidationGeneration.load(std::memory_order_relaxed)
+                                  << "logical-size" << QSizeF(width(), height())
+                                  << "raster-request" << size
+                                  << "dpr" << itemDevicePixelRatio(this);
+    }
+#endif
     //final pixmap to paint
     QPixmap result;
 
@@ -597,6 +655,16 @@ void IconItem::loadPixmap()
     }
 
     m_iconPixmap = result;
+
+#ifndef QT_NO_DEBUG
+    if (latteIconItemLog().isDebugEnabled()) {
+        qCDebug(latteIconItemLog) << "[iconitem-trace] pixmap-ready" << this
+                                  << "source-generation" << m_traceSourceGeneration.load(std::memory_order_relaxed)
+                                  << "invalidation-generation" << m_traceInvalidationGeneration.load(std::memory_order_relaxed)
+                                  << "raster" << m_iconPixmap.size()
+                                  << "dpr" << m_iconPixmap.devicePixelRatio();
+    }
+#endif
 
     if (m_providesColors && m_lastLoadedSourceId != m_lastColorsSourceId) {
         m_lastColorsSourceId = m_lastLoadedSourceId;
