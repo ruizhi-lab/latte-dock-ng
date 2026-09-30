@@ -81,6 +81,7 @@ private Q_SLOTS:
     void viewDestructorDropsPointerWindowTrackingConnections();
     void taskIconsRefreshAfterIconThemeChanges();
     void taskMouseAreaUsesAuthoritativeEditModeState();
+    void appletIconResourcePathsUseQmlUrlScheme();
     void taskAudioBadgesScaleWithParabolicZoom();
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
@@ -3866,6 +3867,24 @@ void SourceContractTest::taskMouseAreaUsesAuthoritativeEditModeState()
     QVERIFY(containmentSource.contains(QStringLiteral("interval: 200")));
     QVERIFY(containmentSource.contains(QStringLiteral("if (!plasmoid.userConfiguring)")));
     QVERIFY(containmentSource.contains(QStringLiteral("item.applet.containmentEditing = editMode")));
+}
+
+void SourceContractTest::appletIconResourcePathsUseQmlUrlScheme()
+{
+    QFile layoutManagerFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(layoutManagerFile.open(QFile::ReadOnly));
+    const QString layoutManagerSource = QString::fromUtf8(layoutManagerFile.readAll());
+
+    const int functionStart = layoutManagerSource.indexOf(QStringLiteral("QString LayoutManager::appletIconPath(QObject *applet) const"));
+    QVERIFY(functionStart >= 0);
+    const int functionEnd = layoutManagerSource.indexOf(QStringLiteral("int LayoutManager::configuredAppletCount() const"), functionStart);
+    QVERIFY(functionEnd > functionStart);
+    const QString functionSource = layoutManagerSource.mid(functionStart, functionEnd - functionStart);
+
+    // Plasma may bundle an icon in Qt resources. QML Image interprets a bare
+    // :/ path as relative to the plasmoid URL and logs a missing-file warning.
+    QVERIFY(functionSource.contains(QStringLiteral("iconPath.startsWith(QStringLiteral(\":/\"))")));
+    QVERIFY(functionSource.contains(QStringLiteral("return QStringLiteral(\"qrc\") + iconPath")));
 }
 
 void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()

@@ -1068,7 +1068,16 @@ QString LayoutManager::appletIconPath(QObject *applet) const
         return {};
     }
 
-    return KIconLoader::global()->iconPath(icon, -64, true);
+    const QString iconPath = KIconLoader::global()->iconPath(icon, -64, true);
+
+    if (iconPath.startsWith(QStringLiteral(":/"))) {
+        // KIconLoader can return a Qt resource path for Plasma-bundled icons.
+        // QML Image needs a qrc URL; a bare ":/" is resolved relative to this
+        // plasmoid and produces a missing file URL instead.
+        return QStringLiteral("qrc") + iconPath;
+    }
+
+    return iconPath;
 }
 
 int LayoutManager::configuredAppletCount() const

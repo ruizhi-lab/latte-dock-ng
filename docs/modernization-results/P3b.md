@@ -37,7 +37,11 @@ runtime A/B measurement.
 - `bash scripts/qmllint.sh plasmoid/package/contents/ui/main.qml plasmoid/package/contents/ui/task/TaskMouseArea.qml` — passed.
 - `bash scripts/qmllint-deep.sh build/modernization/gcc-debug` and the corresponding Clang Debug command — did not pass the baseline gate because the installed qmllint is 6.11.2 while the reviewed baseline fingerprints 6.11.1. The current run produced 724 diagnostic identities; a direct identity/count comparison of the two changed QML files found no additions or removals (26 identities in each baseline/current pair). The full-tree result remains pending a comparable qmllint environment.
 - `git diff --check` — passed.
-- No VM runtime install/restart was performed yet; all GUI interaction and debug-log acceptance is deferred to the final manual retest after the implementation batches.
+- Fedora 44 final staging: the committed branch snapshot at `c03ffa7ec` was built and installed with `bash install.sh --user Debug`; the user-mode process is running from `/home/fedora/.local/bin/latte-dock-ng` with the captured Plasma session environment and developer QML overrides.
+- Initial Fedora startup log scan: no Warning, Error, Fatal or ASSERT entries. The log contains informational shutdown/startup messages, a missing KActivities service notice and the existing containment-action metadata notice. This is startup evidence only; final interaction-log review remains pending.
+- Debian 13.7 / Plasma 6.3.6 build/install completed after installing the missing `qt6-declarative-private-dev` build dependency from the configured USTC mirror. The user-mode Debug dock is running with the session environment restored. Startup scan has no Warning, Error, Fatal, ASSERT or missing-icon entries; the Debian Trash icon resource URL compatibility fix is recorded in [debian13-runtime.md](debian13-runtime.md).
+- The user manually confirmed the configured `PreviewWindows` hover mode now displays previews on Debian. Highlight-only and combined modes remain pending separate interaction checks.
+- All GUI interaction and post-retest debug-log acceptance remain pending the final manual retest.
 
 ## Pending runtime acceptance
 
@@ -56,9 +60,7 @@ confirms only the preview path; Debian Plasma 6.3.6 remains separately pending.
 
 ## Handoff
 
-Install the final branch through the canonical user-mode Debug workflow after
-all planned implementation batches. Run the edit-state and three hover-choice
-matrix above in the Fedora and Debian GUI VMs, inspect `/tmp/latte-ng.log` for
-new warnings/errors, then record outcomes here and in the aggregate final
-retest report. Do not treat source-contract checks as compositor interaction
-proof.
+Run the edit-state and three hover-choice matrix above in the Fedora and
+Debian GUI VMs, inspect `/tmp/latte-ng.log` for new warnings/errors, then record
+outcomes here and in the aggregate [manual retest checklist](manual-retest-checklist.md).
+Do not treat source-contract checks as compositor interaction proof.
