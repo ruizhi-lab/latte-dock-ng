@@ -33,7 +33,9 @@ scheduling. It is a wiring check, not a live compositor dispatch test.
 - `ctest --test-dir build-autotests-gcc --output-on-failure -R '^(sourcecontracttest|wmunittest)$'` — passed (2/2).
 - `cmake --build build-autotests-clang -j8 --target latte-dock-ng sourcecontracttest wmunittest` — passed. The C++ build completed; build-aware QML lint emitted the repository's existing dynamic Plasma-interface and unqualified-access diagnostics.
 - `ctest --test-dir build-autotests-clang --output-on-failure -R '^(sourcecontracttest|wmunittest)$'` — passed (2/2).
-- `cmake --build build-autotests-gcc -j8 --target latte-dock-ng sourcecontracttest wmunittest` — application target blocked by GCC's `-Werror=sfinae-incomplete` diagnostic in the existing generated MOC aggregate at `app/view/view.h:69`; the same build did compile the focused GCC test targets. This diagnostic is outside the P1b diff and is recorded as a pending GCC full-application check.
+- The initial `build-autotests-gcc` directory was stale: it cached GCC 15.3, but `/usr/bin/g++` had since moved to GCC 16.2, so its generated Makefile omitted the GCC-16-only MOC suppression. A fresh configure with `cmake -S . -B /tmp/latte-p1b-gcc-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTING=ON -DLATTE_STRICT_WARNINGS=ON` detected GCC 16.2.1 and applied `-Wno-sfinae-incomplete` only to the generated MOC aggregate.
+- `cmake --build /tmp/latte-p1b-gcc-debug -j8 --target latte-dock-ng sourcecontracttest wmunittest` — passed. The build-aware QML lint reported existing dynamic Plasma-interface and unqualified-access warnings; the C++ build completed without compiler warnings/errors.
+- `ctest --test-dir /tmp/latte-p1b-gcc-debug --output-on-failure -R '^(sourcecontracttest|wmunittest)$'` — passed (2/2).
 - `git diff --check` — passed. `formatter.sh` was applied to only the changed C++ ranges and the diff was reviewed; its generated formatting around existing function definitions was normalized back to the surrounding file style.
 
 ## Pending acceptance
@@ -61,5 +63,4 @@ install the P1b user-mode Debug build with its generated `dev-env.sh`, trigger
 the native Wayland title probe and record marker-only schedule/execute counts.
 Verify state changes still schedule the full path and an already pending
 geometry scan survives a title event. If those checks pass, collect five
-same-sequence Release A/B pairs for CPU and latency. Also resolve the GCC
-full-application warning gate independently before marking P1b complete.
+same-sequence Release A/B pairs for CPU and latency before marking P1b complete.
