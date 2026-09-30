@@ -695,16 +695,21 @@ void IconItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeomet
     if (newGeometry.size() != oldGeometry.size()) {
         m_sizeChanged = true;
 
-        if (newGeometry.width() > 1 && newGeometry.height() > 1) {
+        const auto oldRasterRequest = qMin(oldGeometry.width(), oldGeometry.height());
+        const auto newRasterRequest = qMin(newGeometry.width(), newGeometry.height());
+
+        // The texture rectangle follows every geometry change, but raster work
+        // depends on the smaller edge. Repainting for the other edge recreates
+        // an identical pixmap and texture; itemChange still invalidates on DPR
+        // changes, which are authoritative for scale-dependent raster sources.
+        if (newGeometry.width() > 1 && newGeometry.height() > 1
+            && newRasterRequest != oldRasterRequest) {
             schedulePixmapUpdate();
         } else {
             update();
         }
 
-        const auto oldSize = qMin(oldGeometry.size().width(), oldGeometry.size().height());
-        const auto newSize = qMin(newGeometry.size().width(), newGeometry.size().height());
-
-        if (!almost_equal(oldSize, newSize, 2)) {
+        if (!almost_equal(oldRasterRequest, newRasterRequest, 2)) {
             Q_EMIT paintedSizeChanged();
         }
     }
