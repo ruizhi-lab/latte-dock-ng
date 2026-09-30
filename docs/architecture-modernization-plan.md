@@ -179,7 +179,7 @@ is complete; execution and runtime evidence below are not.
 | M4b | Complete | Run 36642361102: GCC sanitizer job passed with leak detection enabled; ASan/UBSan fixtures and selected tests passed | Keep sanitizer checks in CI |
 | M5a | Complete | [Report](modernization-results/M5a.md): production helper and focused tests pass GCC/Clang; run 36642361102 passed the full GCC/Clang matrix and sanitizer job | Record desktop interaction retest after implementation batches |
 | M5b | Pending validation | [Report](modernization-results/M5b.md): removed copied blocker model; production-helper tests remain; added a narrow wrapper wiring contract; desktop scenarios await final user retest | Await M5a full CI, then record desktop retest points |
-| P0 | Not started | No live profile | Establish comparable scenarios |
+| P0 | Pending validation | [Report](modernization-results/P0.md): host has no active dock process and no pidstat, so live CPU/PSS A/A samples are unavailable; no zero values inferred | Resume read-only profiling in a coordinated session with an identified dock and matching runtime roots |
 | P1a / P1b | Not started | Event cascade traced | Characterize title-only routing |
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
