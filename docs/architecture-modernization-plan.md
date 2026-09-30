@@ -184,7 +184,7 @@ is complete; execution and runtime evidence below are not.
 | P2a / P2b | Not started | Raster/texture paths traced | Establish invalidation and activity evidence |
 | P3a / P3b | Not started | Timers identified, not characterized | Prove convergence/notification readiness |
 | M6 | Deferred | [Evaluation](modernization-results/M6.md): the apparent shared `SchemeColors` source still depends on app-owned config/layout services; extracting it would add a target without reducing app dependencies | Revisit only if a measurable build or ownership benefit emerges |
-| M7 | Pending validation | [Report](modernization-results/M7.md): run 36648781667 passed 44/46 CTest targets; `qmlsmoketest` and `pluginregistrationunittest` still fail to resolve QtQml's `qmlplugin` in Nix. A full local rerun is now using the refreshed Tsinghua-mirror image. | Trace the QtQml import/plugin lookup in the local Nix environment, fix the declared test environment (not test expectations), then rerun all 46 CTest targets, flake checks, package build and dev-shell preset; keep `flake.lock` unchanged |
+| M7 | Pending validation | [Report](modernization-results/M7.md): local Nix verification passed 46/46 CTest, package build/install/uninstall, `.#default`, and GCC Debug preset. Qt QML/Kirigami runtime paths now select actual package outputs; mirror contracts pass. | Push the fix on this branch and record the new remote workflow result; keep `flake.lock` unchanged |
 | P4 / P5 / P6 | Deferred | Candidates only | Select one using P0 evidence |
 
 Use Not started, In progress, Pending validation, Complete or Deferred.

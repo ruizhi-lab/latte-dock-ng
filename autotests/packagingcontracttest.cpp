@@ -4,6 +4,7 @@
 */
 
 #include <QFile>
+#include <QStringList>
 #include <QTest>
 
 class PackagingContractTest : public QObject
@@ -64,7 +65,23 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(dockerSource.contains(QStringLiteral("bash /src/docker/verify-install.sh debian13")));
     QVERIFY(dockerSource.contains(QStringLiteral("dockerfile: Dockerfile.gentoo")));
     QVERIFY(dockerSource.contains(QStringLiteral("bash /src/docker/verify-ebuild-gentoo.sh")));
+    QVERIFY(dockerSource.contains(QStringLiteral(
+            "NIXPKGS_CHANNEL_URL: https://mirrors.tuna.tsinghua.edu.cn/nix-channels/nixpkgs-unstable")));
+    QVERIFY(dockerSource.contains(QStringLiteral(
+            "substituters = https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org/")));
+    QCOMPARE(dockerSource.count(QStringLiteral("USE_MIRRORS: \"true\"")), 7);
     QVERIFY(!dockerSource.contains(QStringLiteral("/data/projects/latte-dock-ng:/src:ro")));
+
+    const QStringList distroDockerfiles{
+        QStringLiteral("arch"), QStringLiteral("debian"), QStringLiteral("debian-testing"), QStringLiteral("fedora"),
+        QStringLiteral("gentoo"), QStringLiteral("mageia"), QStringLiteral("opensuse"), QStringLiteral("ubuntu"),
+    };
+    for (const QString &distro : distroDockerfiles) {
+        QFile dockerfile(QStringLiteral(LATTE_SOURCE_DIR "/docker/Dockerfile.") + distro);
+        QVERIFY(dockerfile.open(QFile::ReadOnly));
+        const QString dockerfileSource = QString::fromUtf8(dockerfile.readAll());
+        QVERIFY2(dockerfileSource.contains(QStringLiteral("ARG USE_MIRRORS=false")), qPrintable(distro));
+    }
 
     QFile dockerVerify(QStringLiteral(LATTE_SOURCE_DIR "/docker/verify-install.sh"));
     QVERIFY(dockerVerify.open(QFile::ReadOnly));
@@ -102,7 +119,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(gentooDockerfile.open(QFile::ReadOnly));
     const QString gentooDockerfileSource = QString::fromUtf8(gentooDockerfile.readAll());
     QVERIFY(gentooDockerfileSource.contains(QStringLiteral("gentoo/stage3")));
-    QVERIFY(gentooDockerfileSource.contains(QStringLiteral("ARG USE_MIRRORS=true")));
+    QVERIFY(gentooDockerfileSource.contains(QStringLiteral("ARG USE_MIRRORS=false")));
     QVERIFY(gentooDockerfileSource.contains(QStringLiteral("GENTOO_MIRRORS=")));
     QVERIFY(gentooDockerfileSource.contains(QStringLiteral("binrepos.conf")));
     QVERIFY(gentooDockerfileSource.contains(QStringLiteral("GENTOO_BINHOST_URI_CN")));
@@ -166,8 +183,14 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.fedora")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.debian")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.arch")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("build-args: USE_MIRRORS=false")));
     QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
     QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("verify-ebuild-gentoo.sh")));
+
+    QFile buildWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/build.yml"));
+    QVERIFY(buildWorkflow.open(QFile::ReadOnly));
+    const QString buildWorkflowSource = QString::fromUtf8(buildWorkflow.readAll());
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("--build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }}")));
 
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));
     QVERIFY(packagingCMake.open(QFile::ReadOnly));

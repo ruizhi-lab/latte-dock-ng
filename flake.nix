@@ -21,6 +21,16 @@
             pkgs.dejavu_fonts
             pkgs.qt6.qtsvg
           ];
+          runtimeTestInputs = map
+            (input: pkgs.lib.getOutput "out" (input.unwrapped or input))
+            (package.passthru.runtimeInputs ++ [
+              pkgs.kdePackages.breeze-icons
+              pkgs.fontconfig
+              pkgs.dejavu_fonts
+              pkgs.qt6.qtsvg
+            ]);
+          qmlImportPath = pkgs.lib.makeSearchPath "lib/qt-6/qml" runtimeTestInputs;
+          qtPluginPath = pkgs.lib.makeSearchPath "lib/qt-6/plugins" runtimeTestInputs;
         in {
           autotests = package.overrideAttrs (old: {
             pname = "${old.pname}-tests";
@@ -30,9 +40,10 @@
               "-DLATTE_DBUS_SESSION_CONFIG=${pkgs.dbus}/share/dbus-1/session.conf"
             ];
             preConfigure = (old.preConfigure or "") + ''
-              export QML2_IMPORT_PATH="${pkgs.lib.makeSearchPath "lib/qt-6/qml" testInputs}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
               export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
-              export QT_PLUGIN_PATH="${pkgs.lib.makeSearchPath "lib/qt-6/plugins" testInputs}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
               export FONTCONFIG_FILE="${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
               export XDG_CACHE_HOME="$TMPDIR/font-cache"
               mkdir -p "$XDG_CACHE_HOME"
@@ -49,10 +60,20 @@
             '';
             checkPhase = ''
               runHook preCheck
+              # Nix hooks may scope configure-phase exports to that phase; give
+              # CTest the same explicit module and plugin paths as CMake's QML probes.
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+              export FONTCONFIG_FILE="${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
+              export XDG_CACHE_HOME="$TMPDIR/font-cache"
+              mkdir -p "$XDG_CACHE_HOME"
+              export QT_QPA_PLATFORM=offscreen
+              export QT_QUICK_BACKEND=software
               export LATTE_TEST_ICON_THEME_PATH="${pkgs.kdePackages.breeze-icons}/share/icons"
-              QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
-                dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf \
-                  -- ctest --output-on-failure
+              dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf \
+                -- ctest --output-on-failure
               runHook postCheck
             '';
             installPhase = ''
@@ -65,6 +86,16 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           package = import ./default.nix { inherit pkgs; };
+          runtimeInputs = map
+            (input: pkgs.lib.getOutput "out" (input.unwrapped or input))
+            (package.passthru.runtimeInputs ++ [
+              pkgs.kdePackages.breeze-icons
+              pkgs.fontconfig
+              pkgs.dejavu_fonts
+              pkgs.qt6.qtsvg
+            ]);
+          qmlImportPath = pkgs.lib.makeSearchPath "lib/qt-6/qml" runtimeInputs;
+          qtPluginPath = pkgs.lib.makeSearchPath "lib/qt-6/plugins" runtimeInputs;
         in {
           default = pkgs.mkShell {
             inputsFrom = [ package ];
@@ -74,6 +105,12 @@
               pkgs.gnumake
               pkgs.python3
             ];
+            shellHook = ''
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+            '';
           };
         });
 
