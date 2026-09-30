@@ -1,0 +1,5 @@
+{"run":1,"backend":"Qt 6.11.2 Wayland","window_warmup_seconds":5,"title_changes_requested":10,"title_change_interval_ms":500,"hint_schedules":10,"hint_executions":4}
+{"run":2,"backend":"Qt 6.11.2 Wayland","window_warmup_seconds":5,"title_changes_requested":10,"title_change_interval_ms":500,"hint_schedules":10,"hint_executions":4}
+{"run":3,"backend":"Qt 6.11.2 Wayland","window_warmup_seconds":5,"title_changes_requested":10,"title_change_interval_ms":500,"hint_schedules":10,"hint_executions":4}
+{"run":4,"backend":"Qt 6.11.2 Wayland","window_warmup_seconds":5,"title_changes_requested":10,"title_change_interval_ms":500,"hint_schedules":10,"hint_executions":11}
+{"run":5,"backend":"Qt 6.11.2 Wayland","window_warmup_seconds":5,"title_changes_requested":10,"title_change_interval_ms":500,"hint_schedules":10,"hint_executions":11}

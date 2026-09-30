@@ -812,11 +812,16 @@ void Windows::updateAllHintsAfterTimer()
     //! Defer the update — the timer will call updateAllHints() after the
     //! debounce interval. This prevents redundant O(n_windows×n_views)
     //! scans during rapid geometry changes (e.g. window drag/resize).
+    //! The opt-in marker counts scheduled work without logging window metadata;
+    //! keep instrumented counts separate from uninstrumented timing samples.
+    qCDebug(latteWm) << "[perf-trace] hint-schedule";
     m_updateAllHintsTimer.start();
 }
 
 void Windows::updateAllHints()
 {
+    qCDebug(latteWm) << "[perf-trace] hint-execute";
+
     //! Pre-filter: only update views that are enabled and tracking the
     //! current activity. Disabled/inactive views are skipped entirely.
     bool hasActiveView{false};

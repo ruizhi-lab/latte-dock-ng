@@ -109,6 +109,7 @@ private Q_SLOTS:
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
     void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
     void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
+    void windowHintPerformanceTraceMarksScheduledAndExecutedWork();
     void dynamicWindowDotsAreOptInAndAggregateOverflow();
     void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
@@ -2708,6 +2709,48 @@ void SourceContractTest::waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitel
     // Plasmashell windows must be handled specially: sidepanels are
     // whitelisted, panel/fullscreen windows are ignored.
     QVERIFY(src.contains(QStringLiteral("org.kde.plasmashell")));
+}
+
+void SourceContractTest::windowHintPerformanceTraceMarksScheduledAndExecutedWork()
+{
+    QFile tracker(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tracker/windowstracker.cpp"));
+    QVERIFY(tracker.open(QFile::ReadOnly));
+    const QString trackerSource = QString::fromUtf8(tracker.readAll());
+
+    // These opt-in markers count tracker work without exposing window IDs,
+    // titles or geometry in the captured performance trace.
+    QVERIFY(trackerSource.contains(QStringLiteral("[perf-trace] hint-schedule")));
+    QVERIFY(trackerSource.contains(QStringLiteral("[perf-trace] hint-execute")));
+    QVERIFY(trackerSource.contains(QStringLiteral("keep instrumented counts separate from uninstrumented timing samples")));
+
+    QFile wayland(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(wayland.open(QFile::ReadOnly));
+    const QString waylandSource = QString::fromUtf8(wayland.readAll());
+
+    // Title notifications enter the metadata path; geometry and state changes
+    // retain the full hint-update path for P1a/P1b characterization.
+    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache)")));
+    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry)")));
+    QVERIFY(waylandSource.contains(QStringLiteral("Q_EMIT windowChanged(pW->uuid())")));
+    QVERIFY(waylandSource.contains(QStringLiteral("considerWindowChanged(pW->uuid())")));
+
+    QFile abstractWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.cpp"));
+    QVERIFY(abstractWindow.open(QFile::ReadOnly));
+    const QString abstractSource = QString::fromUtf8(abstractWindow.readAll());
+
+    // The general geometry-event debounce remains independent of the tracker
+    // debounce used by current metadata-only changes.
+    QVERIFY(abstractSource.contains(QStringLiteral("m_windowWaitingTimer.setInterval(150)")));
+    QVERIFY(abstractSource.contains(QStringLiteral("void AbstractWindowInterface::considerWindowChanged(WindowId wid)")));
+    QVERIFY(trackerSource.contains(QStringLiteral("m_updateAllHintsTimer.setInterval(300)")));
+    QVERIFY(trackerSource.contains(QStringLiteral("m_windows[wid] = m_wm->requestInfo(wid);")));
+    QVERIFY(trackerSource.contains(QStringLiteral("updateAllHintsAfterTimer();")));
+
+    QFile lastActiveWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tracker/lastactivewindow.cpp"));
+    QVERIFY(lastActiveWindow.open(QFile::ReadOnly));
+    const QString lastActiveSource = QString::fromUtf8(lastActiveWindow.readAll());
+    QVERIFY(lastActiveSource.contains(QStringLiteral("connect(m_windowsTracker, &Windows::windowChanged, this, &LastActiveWindow::windowChanged)")));
+    QVERIFY(lastActiveSource.contains(QStringLiteral("setInformation(historyitem)")));
 }
 
 void SourceContractTest::genericLayoutReassertsDefaultContextMenuOnContainmentWiring()
