@@ -188,6 +188,15 @@ starting coordinate. Stop only the temporary `/usr/bin/ydotoold` process whose
 arguments contain this test's custom socket path, then remove that socket. Do
 not leave a privileged input daemon running between tests.
 
+A Fedora hover sweep with this input harness did not start the preview helper,
+even though `libinput` observed the injected motion. The task icon had not been
+identified, so do not infer either a working or broken Latte hover path from a
+pointer command alone. Establish a known pointer origin and task-icon target,
+then verify the helper process or visible hover effect before collecting a
+hover performance sample. GUI utilities such as Spectacle also need the
+captured Plasma session variables; an SSH-launched Spectacle help probe without
+them aborted instead of producing a diagnostic.
+
 ## Runtime Retest Workflow
 
 Automated tests cannot reproduce shell-integration bugs (window lifecycle,
