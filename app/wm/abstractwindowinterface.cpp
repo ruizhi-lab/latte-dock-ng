@@ -286,6 +286,9 @@ void AbstractWindowInterface::initKWinInterface()
                     arg.value<QDBusVariant>().variant().toBool();
             }
 
+            // QDBusConnection resolves a remote signal by D-Bus signature and
+            // requires a SLOT receiver. KWin owns this state; without the
+            // subscription, later wrapping changes would leave our cache stale.
             bool signalconnected = QDBusConnection::sessionBus().connect(
                                        KWINSERVICE,
                                        QStringLiteral("/VirtualDesktopManager"),

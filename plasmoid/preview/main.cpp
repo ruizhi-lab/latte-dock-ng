@@ -218,6 +218,10 @@ int main(int argc, char **argv)
             view.update();
         }
     };
+    // Preview.qml creates these signals at runtime; QQuickItem has no matching
+    // C++ signal members. The view owns the root item and stays alive until the
+    // helper exits, so the signature bridge must remain connected for card
+    // actions to reach the dock's protocol writer.
     QObject::connect(item, SIGNAL(activate(QString)), &view, SLOT(activate(QString)));
     QObject::connect(item, SIGNAL(closeRequested(QString)), &view, SLOT(close(QString)));
     QObject::connect(&view, &PreviewView::activateRequested, &app, [&](const QString &uuid) {
