@@ -4013,6 +4013,22 @@ void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
     const QString taskItemSource = QString::fromUtf8(taskItem.readAll());
     QVERIFY(taskItemSource.contains(QStringLiteral("function moveIsolatedPreview")));
     QVERIFY(taskItemSource.contains(QStringLiteral("mapToGlobal")));
+    // A QObject can still exist after its delegate's QML context is invalid.
+    // The selection must be released at removal and destruction, before a
+    // root-owned frame callback can invoke that context's methods again.
+    const QString release = QStringLiteral("if (root.isolatedPreviewTask === taskItem) {\n"
+                                           "            root.isolatedPreviewTask = null;\n"
+                                           "        }");
+    QVERIFY(taskItemSource.count(release) >= 2);
+    const qsizetype destruction = taskItemSource.indexOf(QStringLiteral("Component.onDestruction: {"));
+    const qsizetype removal = taskItemSource.indexOf(QStringLiteral("ListView.onRemove: {"));
+    QVERIFY(destruction >= 0);
+    QVERIFY(removal > destruction);
+    QVERIFY(taskItemSource.mid(destruction, removal - destruction).contains(release));
+    QVERIFY(taskItemSource.mid(removal).contains(release));
+    QVERIFY(taskItemSource.mid(removal).indexOf(release)
+            < taskItemSource.mid(removal).indexOf(QStringLiteral("removalScheduler.schedule();")));
+    QVERIFY(mainSource.contains(QStringLiteral("if (!root.isolatedPreviewsEnabled || !task || task.inRemoveStage)")));
 }
 
 void SourceContractTest::latteCoreQmlModuleDeclaresPlasmaCoreDependency()
@@ -4544,7 +4560,8 @@ SourceContractTest::taskRemovalDefersAnimationOutsideGeometryBindings()
     const QString source = QString::fromUtf8(task.readAll());
     // The executable QML test covers scheduler behavior; this locks its wiring
     // into the full Plasma-hosted delegate, which cannot load in isolation.
-    QVERIFY(source.contains(QStringLiteral("ListView.onRemove: removalScheduler.schedule()")));
+    QVERIFY(source.contains(QStringLiteral("ListView.onRemove: {")));
+    QVERIFY(source.contains(QStringLiteral("removalScheduler.schedule();")));
     QVERIFY(source.contains(QStringLiteral("animation: taskRealRemovalAnimation")));
     QVERIFY(source.contains(QStringLiteral("task: taskItem")));
 }

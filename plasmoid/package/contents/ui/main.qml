@@ -243,9 +243,12 @@ PlasmoidItem {
     FrameAnimation {
         running: root.isolatedPreviewTask !== null
         onTriggered: {
-            if (root.isolatedPreviewTask) {
-                root.isolatedPreviewTask.moveIsolatedPreview();
+            var task = root.isolatedPreviewTask;
+            if (!root.isolatedPreviewsEnabled || !task || task.inRemoveStage) {
+                root.isolatedPreviewTask = null;
+                return;
             }
+            task.moveIsolatedPreview();
         }
     }
     // The preview delegate pulls in thumbnail and MPRIS components.  Keep it

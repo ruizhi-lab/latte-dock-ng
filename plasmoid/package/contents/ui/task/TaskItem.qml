@@ -650,7 +650,7 @@ AbilityItem.BasicItem {
     // Visual hover is authoritative during parabolic zoom; the ordinary
     // MouseArea can lose ownership while the enlarged icon is still hovered.
     onVisualContainsMouseChanged: {
-        if (visualContainsMouse && root.isolatedPreviewsEnabled && !isLauncher && !isSeparator) {
+        if (visualContainsMouse && root.isolatedPreviewsEnabled && itemIndex >= 0 && !inRemoveStage && !isLauncher && !isSeparator) {
             if (root.isolatedPreviewTask && root.isolatedPreviewTask !== taskItem) {
                 // A preview is already on screen for another task: move it to
                 // this one immediately instead of waiting out the show delay
@@ -672,7 +672,7 @@ AbilityItem.BasicItem {
         // in-process scene and is too slow for a tooltip-like isolated preview.
         interval: Math.min(250, Math.max(150, plasmoid.configuration.previewsDelay))
         onTriggered: {
-            if (taskItem.visualContainsMouse && root.isolatedPreviewsEnabled
+            if (taskItem.visualContainsMouse && root.isolatedPreviewsEnabled && taskItem.itemIndex >= 0 && !taskItem.inRemoveStage
                     && !root.contextMenu && !root.inEditMode && !root.disableAllWindowsFunctionality) {
                 root.isolatedPreviewTask = taskItem;
                 taskItem.updateIsolatedPreview();
@@ -1196,6 +1196,13 @@ AbilityItem.BasicItem {
     }
 
     Component.onDestruction: {
+        // The root owns the preview selection, but this delegate owns its QML
+        // functions. Release it before its context disappears; otherwise the
+        // root's frame callback can invoke a function in an invalid context.
+        isolatedPreviewDelay.stop();
+        if (root.isolatedPreviewTask === taskItem) {
+            root.isolatedPreviewTask = null;
+        }
         if (highlightedHoverIds.length > 0) {
             root.windowsHovered(highlightedHoverIds, false);
         }
@@ -1242,7 +1249,15 @@ AbilityItem.BasicItem {
         animation: taskRealRemovalAnimation
     }
 
-    ListView.onRemove: removalScheduler.schedule()
+    ListView.onRemove: {
+        // Delayed removal keeps the item alive for animation, not interaction.
+        // Do not clear a newer task's selection when this delegate leaves.
+        isolatedPreviewDelay.stop();
+        if (root.isolatedPreviewTask === taskItem) {
+            root.isolatedPreviewTask = null;
+        }
+        removalScheduler.schedule();
+    }
 
     onIsLauncherAnimationRunningChanged: {
         if (!isLauncherAnimationRunning && taskRealRemovalAnimation.paused) {
