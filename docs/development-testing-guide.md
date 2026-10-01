@@ -159,6 +159,28 @@ test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
 latte-dock-ng` is safe for identifying the Dock. Never use `pkill -f` in a
 command that also contains `latte-dock-ng`.
 
+Import the Plasma session from the user systemd manager before starting either
+the Dock or GUI test tools over SSH. On the Fedora 44 VM, sourcing
+`~/.config/latte-dock-ng/dev-env.sh` alone does not restore Wayland variables.
+This launcher pattern imports only the active session values and then applies
+the Debug overrides:
+
+```bash
+while IFS= read -r line; do export "$line"; done \
+  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY)=')
+source ~/.config/latte-dock-ng/dev-env.sh
+exec ~/.local/bin/latte-dock-ng --replace --debug --log-file /tmp/latte-ng.log
+```
+
+For repeatable pointer injection, set `YDOTOOL_SOCKET` to the temporary
+daemon's socket and pass relative deltas after `--`, for example
+`ydotool mousemove -- 200 100`. Fedora's installed `ydotool` does not accept a
+`--socket-path` option on the client. Recalibrate with a pointer-included
+screenshot after each move because acceleration makes the resulting pixel
+position differ from the requested delta. A matching KWin D-Bus method call
+proves that Latte requested highlighting, but only compositor output or a
+visible screenshot proves that the window effect was rendered.
+
 Verify the running Dock's environment through `/proc/<pid>/environ` when a
 preview helper or GUI test tool cannot connect to the display. A Dock launched
 from a bare SSH shell may report `XDG_SESSION_TYPE=tty` and lack both

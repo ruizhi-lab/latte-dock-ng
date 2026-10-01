@@ -99,3 +99,14 @@ acceptance as an assumed pass, not as a runtime display check. Debian startup,
 helper installation and the `PreviewWindows` interaction are recorded in
 [`debian13-runtime.md`](debian13-runtime.md); retain the separate highlight
 checks above as user-reported passes, with per-mode details not provided.
+
+On 2026-10-01, Fedora 44's three hover choices were independently exercised
+with a two-window Firefox group after importing Plasma's systemd user-session
+environment into the SSH launch. Preview-only displayed both cards and ran the
+isolated helper. Highlight-only sent both matching window UUIDs to KWin and did
+not start the helper. Combined mode sent the same highlight request and ran
+the helper. KWin request delivery is verified; visual highlight rendering
+still needs a direct visual check. The original layout was restored exactly.
+Debian 13 was not reachable after reboot (`ssh ... 192.168.122.177` returned
+`No route to host`), so its final updated-package compatibility pass remains
+pending.
