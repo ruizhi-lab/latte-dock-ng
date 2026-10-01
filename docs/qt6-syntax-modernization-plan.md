@@ -139,7 +139,7 @@ feedback, restored settings, unresolved limitations and one next action.
 | S3 | Complete | [Dynamic QML and D-Bus connection review](modernization-results/S3.md); retain runtime-resolved signatures. |
 | S4a/S4b | Complete | [ScrollArea owner inventory and qualification](modernization-results/S4.md); begin S5 after S3 review. |
 | S5a/S5b | Complete / no S5b change | [ComboBox dynamic property inventory](modernization-results/S5.md); no stable project-owned `var` input was found. |
-| S6 | Log follow-up pending | [Final verification and Fedora external-issue record](modernization-results/S6.md); desktop feedback received, task-preview log observation remains unresolved. |
+| S6 | Complete with hardware limitation | [Final verification and Fedora external-issue record](modernization-results/S6.md); desktop and task-lifetime retests pass; physical touchpad input unavailable. |
 
 Update individual rows or slice entries as work proceeds; do not mark deferred
 work implemented.
