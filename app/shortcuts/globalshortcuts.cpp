@@ -526,7 +526,7 @@ void GlobalShortcuts::hideViewsTimerSlot()
     }
 
     auto initParameters = [this]() {
-        m_lastInvokedAction = Q_NULLPTR;
+        m_lastInvokedAction = nullptr;
 
         if (viewsToHideAreValid()) {
             for (const auto latteView : m_hideViews) {

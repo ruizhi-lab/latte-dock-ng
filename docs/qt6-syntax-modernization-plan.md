@@ -134,7 +134,7 @@ feedback, restored settings, unresolved limitations and one next action.
 | Batch | Status | Evidence / next action |
 | --- | --- | --- |
 | S0 | Complete | [Fedora environment and rollback baseline](modernization-results/S0.md); capture interaction-specific before state within S1/S2. |
-| S1 | Not started | Replace four C++ spellings, build GCC/Clang and check relevant behavior. |
+| S1 | Complete | [Four C++ spelling replacements and Fedora Debug acceptance](modernization-results/S1.md); begin S2 pre-change wheel baseline. |
 | S2 | Not started | Capture wheel/ComboBox before state, then change three handlers. |
 | S3 | Not started | Wait for S2 acceptance. |
 | S4a/S4b | Not started | Wait for S2 acceptance. |

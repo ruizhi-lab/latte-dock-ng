@@ -141,13 +141,13 @@ public:
 
     QColor glowColor() const;
 
-    void updatePolish() Q_DECL_OVERRIDE;
+    void updatePolish() override;
     QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *updatePaintNodeData) override;
 
     void itemChange(ItemChange change, const ItemChangeData &value) override;
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 
-    void componentComplete() Q_DECL_OVERRIDE;
+    void componentComplete() override;
 
 Q_SIGNALS:
     void activeChanged();
