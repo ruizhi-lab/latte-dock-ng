@@ -71,8 +71,9 @@ sed -n '1390,1475p' plasmoid/package/contents/ui/main.qml
 sed -n '880,985p' plasmoid/package/contents/ui/task/TaskItem.qml
 ```
 
-No P3a edge-transition test was run because the required readiness signal is
-absent; the eight delayed passes and fallback remain unchanged.
+No P3a readiness or convergence test was run because the required latest-
+generation acknowledgement is absent; the eight delayed passes and fallback
+remain unchanged.
 
 ## Cross-version TaskManager API check — 2026-10-01
 
@@ -111,23 +112,31 @@ before all live delegates have published. Reopen only when the upstream API or
 a production-owned adapter can acknowledge the latest generation and current
 delegate set. No runtime code or behavior changed; no build was required.
 
-## VM trigger-harness attempt — 2026-10-01
+## Fedora VM transition and harness follow-up — 2026-10-01
 
-A Fedora 44 GUI attempt was made to exercise the existing location-change
-handler without modifying saved user configuration. A temporary Debug QML log
-probe was installed and the Layout Editor was opened. The available ydotool
-daemon accepted keyboard input, but its absolute mouse-move command did not
-move the pointer in the captured desktop; the corrected `click` syntax was
-identified from the VM manpage, but the cursor could not be reliably placed on
-the intended control. The fallback `DISPLAY=:0 xdotool mousemove 1435 687`
-failed with `Authorization required, but no authorization protocol
-specified`. No edge transition was issued, so this is not a runtime pass.
+The Fedora 44 Wayland VM's XWayland authority path was read from the running
+Xwayland command line. A one-session KWin remote-input prompt was approved
+through temporary ydotool keyboard input with “Always allow” left unchecked.
+Afterward, `DISPLAY=:0 XAUTHORITY=<session-file> xdotool mousemove 1435 687`
+placed the pointer at the intended settings control; a pointer-included
+screenshot verified its actual position before each click.
 
-The probe and temporary files were removed, the exact QML backup was restored,
-and the Debug Dock was relaunched. The saved active layout retained its
-pre-test SHA-256:
+Two UI paths moved the visible Dock from Bottom to Top and back to Bottom. The
+Layout Editor's Docks table applied its Top row value, then discarding the
+dialog restored the saved layout exactly. The Dock's own Edit Dock panel also
+moved the visible Dock Top and back Bottom. These observations confirm that
+the GUI transitions worked, but a temporary `console.log` probe in
+`refreshTaskLayoutPass()` emitted no marker for either path, even after
+preserving and clearing the QML cache before relaunch. This does not establish
+whether the handler ran; therefore no refresh-pass count, convergence result
+or P3a performance claim is made. The settings-driven route may recreate a
+view rather than signal the existing QML root, and probe loading/log routing
+still needs an independent check.
+
+The exact QML source, compiled cache and saved layout were restored. The active
+layout SHA-256 matches its pre-test value:
 `ed6ade8626fe13cd10e93233e51cd83247faa838975d1f4c74e20b5d11e408ec`.
-The next harness attempt must first establish reliable pointer movement in the
-Wayland session (including ydotool's documented pointer-acceleration
-precondition) and verify the pointer location from a fresh screenshot before
-clicking any settings control.
+The user-mode Debug Dock was relaunched and its fresh log contains only the
+previously observed VM EGL warnings and normal startup information. P3a stays
+Deferred until there is both an observable latest-generation readiness
+contract and a validated way to record the refresh path.

@@ -296,7 +296,28 @@ coordinate attempt and a relative move from an unknown origin also failed to
 establish a target. Do not guess the absolute-coordinate scale or use a
 successful command exit as input evidence. Capture the pointer before and
 after each calibration move and verify its visible position before a hover
-test. Also, temporary QML source probes can be masked by the compiled cache:
+test.
+
+On Fedora 44, XWayland mouse control through SSH works only when the active
+session's Xauthority file is supplied; find its path from the running
+Xwayland command line without displaying the file contents. A first
+`xdotool` input request can open a KWin remote-control prompt. For an
+authorized disposable-VM test, approve that one request using a separate
+temporary input path such as `ydotool` and leave “Always allow” unchecked.
+Then pass `DISPLAY` and `XAUTHORITY` to `xdotool`, move to one visible control,
+and verify the pointer in a fresh screenshot before clicking. Do not print,
+copy into the repository, or retain Xauthority cookie contents; stop the
+temporary input daemon after the test.
+
+The Layout Editor's Docks table can apply a new edge and move the visible Dock,
+but that UI change does not prove whether the existing QML root received
+`locationChanged` or was recreated. For P3a, use the Dock's own Edit Dock panel
+for a direct transition, and instrument `refreshTaskLayoutPass()` with the
+compiled QML cache handled explicitly. A missing marker is inconclusive:
+verify that the edited QML was loaded before treating it as evidence about the
+handler.
+
+Temporary QML source probes can be masked by the compiled cache:
 the Dock clears `~/.cache/lattedock/qmlcache` only when its
 `VERSION-QMLCACHEREVISION` marker changes. To test an edited installed QML file,
 preserve the cache reversibly, force a fresh compile in an isolated test, then
