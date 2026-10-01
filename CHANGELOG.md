@@ -1,3 +1,19 @@
+## [v1.2.52] - 2026-10-01
+
+### Added
+- Add reproducible CMake build/test presets and stricter compiler, QML, static-analysis, and sanitizer checks for contributors.
+- Add explicit Nix test and development-shell outputs.
+
+### Changed
+- Avoid redundant task-hint work for title-only window updates, icon raster reloads when the effective raster size is unchanged, and task edit-state polling.
+
+### Fixed
+- Reap the isolated preview helper during dock shutdown and normalize Plasma resource icon URLs for QML consumers.
+
+### Tests
+- Expand production-behavior and lifecycle coverage across GCC/Clang and Debian 13.7, with Fedora and Debian desktop retests.
+- Validate the CMake 3.20 floor and the Debian 13.7 CMake 3.31.6 toolchain.
+
 ## [v1.2.51] - 2026-09-22
 
 ### Fixed
