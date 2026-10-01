@@ -1,6 +1,6 @@
 # Qt 6 Syntax Modernization: Implementation and Fedora VM Validation
 
-Status: S0-S2 and S4 complete; S3, S5 and S6 remain.
+Status: S0-S2, S4 and S5 complete; S3 and S6 remain.
 Date: 2026-10-01. Planning baseline: `2c404cde6` on
 `codex/architecture-followup`. Reconcile actual HEAD before implementation.
 
@@ -138,7 +138,7 @@ feedback, restored settings, unresolved limitations and one next action.
 | S2 | Complete | [Three explicit QML wheel parameters and Fedora component checks](modernization-results/S2.md); begin S3 connection review. |
 | S3 | Not started | Wait for S2 acceptance. |
 | S4a/S4b | Complete | [ScrollArea owner inventory and qualification](modernization-results/S4.md); begin S5 after S3 review. |
-| S5a/S5b | Not started / conditional | Wait for S3 and S4 evidence. |
+| S5a/S5b | Complete / no S5b change | [ComboBox dynamic property inventory](modernization-results/S5.md); no stable project-owned `var` input was found. |
 | S6 | Not started | Wait for accepted implementation slices. |
 
 Update individual rows or slice entries as work proceeds; do not mark deferred

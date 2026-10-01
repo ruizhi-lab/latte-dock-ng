@@ -19,6 +19,8 @@ T.ComboBox {
     id: control
     Kirigami.Theme.inherit: true
 
+    // Kirigami owns these attached objects; keep their dynamic QML type so
+    // palette and metrics bindings follow host updates without conversion.
     readonly property var theme: Kirigami.Theme
     readonly property var units: Kirigami.Units
     SystemPalette {
