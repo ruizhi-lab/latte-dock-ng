@@ -1,6 +1,6 @@
 # Qt 6 Syntax Modernization: Implementation and Fedora VM Validation
 
-Status: Planned; no implementation or VM acceptance claimed.
+Status: S0-S2 complete; S3-S6 remain.
 Date: 2026-10-01. Planning baseline: `2c404cde6` on
 `codex/architecture-followup`. Reconcile actual HEAD before implementation.
 
@@ -135,7 +135,7 @@ feedback, restored settings, unresolved limitations and one next action.
 | --- | --- | --- |
 | S0 | Complete | [Fedora environment and rollback baseline](modernization-results/S0.md); capture interaction-specific before state within S1/S2. |
 | S1 | Complete | [Four C++ spelling replacements and Fedora Debug acceptance](modernization-results/S1.md); begin S2 pre-change wheel baseline. |
-| S2 | Not started | Capture wheel/ComboBox before state, then change three handlers. |
+| S2 | Complete | [Three explicit QML wheel parameters and Fedora component checks](modernization-results/S2.md); begin S3 connection review. |
 | S3 | Not started | Wait for S2 acceptance. |
 | S4a/S4b | Not started | Wait for S2 acceptance. |
 | S5a/S5b | Not started / conditional | Wait for S3 and S4 evidence. |

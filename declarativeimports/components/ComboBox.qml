@@ -179,7 +179,7 @@ T.ComboBox {
         acceptedButtons: Qt.LeftButton
         preventStealing: true
         property int indexUnderMouse: -1
-        onWheel: {
+        onWheel: function(wheel) {
             if (!control.wheelEnabled) {
                 return;
             }
@@ -391,7 +391,7 @@ T.ComboBox {
                 rightMargin: control.rightPadding
             }
             acceptedButtons: Qt.NoButton
-            onWheel: {
+            onWheel: function(wheel) {
                 if (!control.wheelEnabled) {
                     return;
                 }
