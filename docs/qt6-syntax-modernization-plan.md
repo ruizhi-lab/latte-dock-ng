@@ -1,6 +1,6 @@
 # Qt 6 Syntax Modernization: Implementation and Fedora VM Validation
 
-Status: S0-S5 implemented/reviewed; S6 automated checks passed, desktop feedback pending.
+Status: S0-S5 implemented/reviewed; S6 automated checks passed, desktop feedback received with a separate runtime log observation.
 Date: 2026-10-01. Planning baseline: `2c404cde6` on
 `codex/architecture-followup`. Reconcile actual HEAD before implementation.
 
@@ -139,7 +139,7 @@ feedback, restored settings, unresolved limitations and one next action.
 | S3 | Complete | [Dynamic QML and D-Bus connection review](modernization-results/S3.md); retain runtime-resolved signatures. |
 | S4a/S4b | Complete | [ScrollArea owner inventory and qualification](modernization-results/S4.md); begin S5 after S3 review. |
 | S5a/S5b | Complete / no S5b change | [ComboBox dynamic property inventory](modernization-results/S5.md); no stable project-owned `var` input was found. |
-| S6 | Pending desktop feedback | [Final automated verification and remaining acceptance](modernization-results/S6.md); collect Fedora interaction feedback and review the log again. |
+| S6 | Log follow-up pending | [Final verification and Fedora external-issue record](modernization-results/S6.md); desktop feedback received, task-preview log observation remains unresolved. |
 
 Update individual rows or slice entries as work proceeds; do not mark deferred
 work implemented.
