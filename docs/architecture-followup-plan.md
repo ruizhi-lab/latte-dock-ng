@@ -84,7 +84,7 @@ is not a durable handoff.
 | A1 | Complete | [Comment-only cleanup](modernization-results/A1.md) | A2: classify each log filter against captured emitters before changing behavior. |
 | A2 | Deferred | [No current log evidence](modernization-results/A2.md) | Capture a fresh user-mode Debug log that identifies each suppressed message before changing filters. |
 | A3 | Deferred | [Legacy splitter branch analysis](modernization-results/A3.md) | Reopen only with fixture coverage and user retest for Justify alignment, separators and drag ordering. |
-| A4 | Not started | None | Wait for A0. |
+| A4 | Pending validation | [Mapping trace and comment correction](modernization-results/A4.md) | Add production mapping tests and retest primary-not-zero, nested applets and display hotplug before changing mapping logic. |
 | A5 | Not started | None | Wait for selected A2-A4 evidence. |
 | A6 | Not started | None | Wait for A5. |
 

@@ -1216,16 +1216,8 @@ void Corona::loadDefaultLayout()
 
 int Corona::screenForContainment(const Plasma::Containment *containment) const
 {
-    //FIXME: indexOf is not a proper way to support multi-screen
-    // as for environment to environment the indexes change
-    // also there is the following issue triggered
-    // from latteView adaptToScreen()
-    //
-    // in a multi-screen environment that
-    // primary screen is not set to 0 it was
-    // created an endless showing loop at
-    // startup (catch-up race) between
-    // screen:0 and primaryScreen
+    // The layout's pending/live view mapping is authoritative while available;
+    // lastScreen() is Plasma's persisted fallback during startup or teardown.
 
     //case in which this containment is child of an applet, hello systray :)
     if (Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent())) {
