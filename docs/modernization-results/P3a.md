@@ -1,8 +1,9 @@
 # P3a: Edge-layout refresh evaluation
 
-Status: Deferred. The current implementation has no trustworthy readiness
-signal that can safely stop the bounded repair timer early. No runtime behavior
-was changed and no reduction in layout or geometry-publication work is claimed.
+Status: Deferred after early re-evaluation. The current implementation still
+has no trustworthy readiness signal that can safely stop the bounded repair
+timer early. No runtime behavior was changed and no reduction in layout or
+geometry-publication work is claimed.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
@@ -48,3 +49,27 @@ late delegates, an empty task model, task arrival/removal during relocation,
 rapid superseding edge changes, all four edges, horizontal/vertical layouts,
 center/justify alignment, multiple screens and fractional scale before
 changing the fallback.
+
+## Early re-evaluation — 2026-10-01
+
+The current `refreshTaskLayoutPass()` has no generation token or completion
+acknowledgement. It calls `forceLayout()` and emits a broadcast; each delegate
+then independently clamps and publishes geometry through the TaskManager
+model. The publication API does not report that KWin/TaskManager accepted the
+geometry for every live delegate in the latest generation. A QML profiler
+startup trace cannot establish that contract, so the early evaluation does not
+change the previous decision. A future slice would need a production
+generation-aware publisher/readiness contract and focused tests before it can
+reduce passes.
+
+Evidence commands:
+
+```bash
+codegraph explore "root.locationChanged formFactorChanged refresh timer layoutPass publishTasksGeometries TaskItem.slotPublishGeometries generation ready signal ListView delegates"
+rg -n "onLocationChanged|onFormFactorChanged|refresh|forceLayout|publishTasksGeometries|slotPublishGeometries|viewport|isCurrent" plasmoid/package/contents/ui/main.qml plasmoid/package/contents/ui/task/TaskItem.qml
+sed -n '1390,1475p' plasmoid/package/contents/ui/main.qml
+sed -n '880,985p' plasmoid/package/contents/ui/task/TaskItem.qml
+```
+
+No P3a edge-transition test was run because the required readiness signal is
+absent; the eight delayed passes and fallback remain unchanged.
