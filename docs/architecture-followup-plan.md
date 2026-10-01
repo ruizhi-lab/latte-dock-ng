@@ -82,7 +82,7 @@ is not a durable handoff.
 | --- | --- | --- | --- |
 | A0 | Complete | [Inventory and candidate classification](modernization-results/A0.md) | A1: remove only the verified stale compatibility comments. |
 | A1 | Complete | [Comment-only cleanup](modernization-results/A1.md) | A2: classify each log filter against captured emitters before changing behavior. |
-| A2 | Not started | None | Wait for A0. |
+| A2 | Deferred | [No current log evidence](modernization-results/A2.md) | Capture a fresh user-mode Debug log that identifies each suppressed message before changing filters. |
 | A3 | Not started | None | Wait for A0. |
 | A4 | Not started | None | Wait for A0. |
 | A5 | Not started | None | Wait for selected A2-A4 evidence. |
