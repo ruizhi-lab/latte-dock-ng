@@ -29,7 +29,7 @@ documentation-only handoff an implemented syntax change.
 
 | Batch | Prerequisite | Implementation scope | Acceptance |
 | --- | --- | --- | --- |
-| S0 | None | Verify branch/HEAD and VM access. Record current toolchain, active Plasma session, installed Dock identity and relevant pre-change interactions. Prepare isolated config/layout backups and a known-good user-mode reinstall path. | Reproducible baseline for S1/S2, named build presets, VM environment record and restoration procedure. This is evidence collection, not a production refactor. |
+| S0 | None | Verify branch/HEAD and VM access. Record current toolchain, active Plasma session and installed Dock identity. Capture the visible pre-change dock state, prepare isolated config/layout backups and a known-good user-mode reinstall path. Capture interaction-specific baselines immediately before each runtime slice. | Reproducible environment baseline for S1/S2, named build presets, VM record and restoration procedure. This is evidence collection, not a production refactor. |
 | S1 | S0 | Replace the two `Q_DECL_OVERRIDE` uses in `declarativeimports/core/iconitem.h` with `override`; replace `Q_NULLPTR` in `app/alternativeshelper.cpp` and `app/shortcuts/globalshortcuts.cpp` with `nullptr`. | GCC/Clang application and affected core plugin compile with zero warnings; relevant existing tests pass. Review preprocessor equivalence. No new tests that merely check keyword spelling. |
 | S2 | S0, S1 | In `declarativeimports/components/ScrollArea.qml` and the two wheel handlers in `ComboBox.qml`, change implicit `wheel` injection to `onWheel: function(wheel) { ... }`. Preserve handler bodies and event propagation. | Syntax/import checks, comparable deep-lint delta, focused real-component event checks and Fedora VM wheel/selection retest. Explicit argument access adds no runtime QML error. |
 | S3 | S2 | Document and verify the two preview QML-to-C++ signal connections in `plasmoid/preview/main.cpp` and the D-Bus slot connection in `app/wm/abstractwindowinterface.cpp`. Inspect existing failure handling before proposing any change. | Evidence table of signature, owner, lifetime, connection failure behavior and consumer. Fedora preview activate/close and desktop-wrap checks. Keep string signatures where required; any discovered behavior fix becomes a separately scoped implementation slice. |
@@ -131,8 +131,18 @@ status, base and implementation revision, changed files, exact commands and
 results, diagnostic additions/removals, VM source identity, scenarios and
 feedback, restored settings, unresolved limitations and one next action.
 
-Initial ledger: S0-S6 Not started (S5b conditional). Update individual rows or
-slice entries as work proceeds; do not mark deferred work implemented.
+| Batch | Status | Evidence / next action |
+| --- | --- | --- |
+| S0 | Complete | [Fedora environment and rollback baseline](modernization-results/S0.md); capture interaction-specific before state within S1/S2. |
+| S1 | Not started | Replace four C++ spellings, build GCC/Clang and check relevant behavior. |
+| S2 | Not started | Capture wheel/ComboBox before state, then change three handlers. |
+| S3 | Not started | Wait for S2 acceptance. |
+| S4a/S4b | Not started | Wait for S2 acceptance. |
+| S5a/S5b | Not started / conditional | Wait for S3 and S4 evidence. |
+| S6 | Not started | Wait for accepted implementation slices. |
+
+Update individual rows or slice entries as work proceeds; do not mark deferred
+work implemented.
 
 Reusable implementation prompt:
 
