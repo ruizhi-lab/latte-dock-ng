@@ -2,13 +2,10 @@
 
 Run this checklist after all implementation commits are installed. The Fedora
 44 VM is running the current branch's user-mode Debug build with its Plasma
-Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is powered off at the
-user's request and reserved for the final compatibility pass because it has
-the oldest supported desktop stack. Keep it off until Fedora and the other
-planned validation is complete, then boot it, update packages if needed,
-install the final branch's user-mode Debug build and run the Debian-specific
-checks. The user previously confirmed that `PreviewWindows` shows a preview on
-Debian; the other hover modes remain unverified there.
+Wayland environment restored. Debian 13.7 / Plasma 6.3.6 is the oldest
+supported desktop compatibility target; it has been updated, built and tested
+on this branch. Record each user-reported result with the OS when known; do not
+infer per-OS acceptance from an aggregate report.
 
 ## Task icon hover choices
 
@@ -121,3 +118,10 @@ captured screenshot. The final manual retest must confirm that preview and
 highlight are visible together on Debian, then repeat single-window and grouped
 tasks on Fedora and Debian. Do not treat a running helper as a visible preview.
 The VM's original layout was restored exactly after testing.
+
+Latest user confirmation: `PreviewWindows`, `HighlightWindows` and
+`PreviewAndHighlightWindows` all work normally, and the app menu, app dashboard,
+Kicker, Trash and CPU monitor widgets work normally. The OS and individual
+widget actions were not specified. This closes the aggregate manual feature
+check; retain the earlier Debian combined-mode screenshot as a per-OS evidence
+gap until a Debian-specific visible combined preview is recorded.
