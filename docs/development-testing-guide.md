@@ -235,6 +235,24 @@ starting coordinate. Stop only the temporary `/usr/bin/ydotoold` process whose
 arguments contain this test's custom socket path, then remove that socket. Do
 not leave a privileged input daemon running between tests.
 
+Do not send an unqualified Enter key while the Latte Docks editor is open.
+Fedora 44's ydotool accepts explicit `keycode:pressed` values. The command
+`ydotool key 28` omitted an explicit release and left Enter held; in the Docks
+editor this repeatedly activated the New/default-dock action and generated
+hundreds of unsaved additions. Send a complete press/release pair instead,
+such as `ydotool key 28:1 28:0`, and include matching release events for every
+key in a sequence. If a test command fails mid-sequence, release all held keys
+before continuing. The recovery was to stop the temporary input daemon,
+terminate the test Dock to discard the in-memory edits, verify the saved layout
+against its pre-test checksum, then relaunch the user-mode Debug binary with
+the captured Plasma session environment. The saved layout remained
+byte-for-byte unchanged. Future automation must target one identified control
+and assert exactly one state change before proceeding; never use a key press
+without its explicit release for add/remove/apply controls. A later harmless
+Escape probe using the explicit press/release pair kept both the Dock PID and
+saved-layout checksum unchanged; its shell cleanup trap failed, so the daemon
+was stopped by exact PID and socket absence was checked separately.
+
 A Fedora hover sweep with this input harness did not start the preview helper,
 even though `libinput` observed the injected motion. The task icon had not been
 identified, so do not infer either a working or broken Latte hover path from a
