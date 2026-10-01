@@ -227,7 +227,7 @@ class QmllintBaselineTest(unittest.TestCase):
             expected_path.write_text(json.dumps(self.expected), encoding="utf-8")
             fake_qmllint = directory / "fake-qmllint"
             fake_qmllint.write_text(
-                "#!/usr/bin/env python3\n"
+                f"#!{sys.executable}\n"
                 "import json, pathlib, sys\n"
                 "if '--version' in sys.argv: print('qmllint 6.11.2'); raise SystemExit(0)\n"
                 "files = [arg for arg in sys.argv if arg.endswith('.qml')]\n"
@@ -261,7 +261,7 @@ class QmllintBaselineTest(unittest.TestCase):
             expected_path.write_text(json.dumps(self.expected), encoding="utf-8")
             fake_qmllint = directory / "failed-qmllint"
             fake_qmllint.write_text(
-                "#!/usr/bin/env python3\n"
+                f"#!{sys.executable}\n"
                 "import json, sys\n"
                 "if '--version' in sys.argv: print('qmllint 6.11.2'); raise SystemExit(0)\n"
                 "files = [arg for arg in sys.argv if arg.endswith('.qml')]\n"

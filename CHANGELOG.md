@@ -1,3 +1,8 @@
+## [v1.2.53] - 2026-10-01
+
+### Fixed
+- Run qmllint baseline test helpers with the active Python interpreter so tests work in isolated Nix build environments.
+
 ## [v1.2.52] - 2026-10-01
 
 ### Added
