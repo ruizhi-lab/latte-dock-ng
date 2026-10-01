@@ -301,13 +301,19 @@ test.
 On Fedora 44, XWayland mouse control through SSH works only when the active
 session's Xauthority file is supplied; find its path from the running
 Xwayland command line without displaying the file contents. A first
-`xdotool` input request can open a KWin remote-control prompt. For an
-authorized disposable-VM test, approve that one request using a separate
-temporary input path such as `ydotool` and leave “Always allow” unchecked.
-Then pass `DISPLAY` and `XAUTHORITY` to `xdotool`, move to one visible control,
-and verify the pointer in a fresh screenshot before clicking. Do not print,
-copy into the repository, or retain Xauthority cookie contents; stop the
-temporary input daemon after the test.
+`xdotool` input request can open a KWin remote-control prompt. The one-time
+approval is session-scoped; “Always allow” is intentionally left unchecked by
+default. For a dedicated disposable Fedora test VM where unattended pointer
+automation is required, KWin 6.7.5 supports the persistent
+`[Xwayland] XwaylandEisNoPrompt=true` option in `~/.config/kwinrc` (also
+exposed in System Settings under Legacy X11 App Support). This suppresses the
+prompt for XWayland applications generally, not just xdotool, so enable it
+only in that test VM. Start a fresh Plasma session after changing it, then
+verify a new xdotool process can move the pointer without a prompt. In either
+mode, pass the active session's `DISPLAY` and `XAUTHORITY` to `xdotool`, move
+to one visible control, and verify the pointer in a fresh screenshot before
+clicking. Do not print, copy into the repository, or retain Xauthority cookie
+contents; stop any temporary input daemon after the test.
 
 The Layout Editor's Docks table can apply a new edge and move the visible Dock,
 but that UI change does not prove whether the existing QML root received
