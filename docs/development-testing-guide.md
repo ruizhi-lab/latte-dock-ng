@@ -181,6 +181,20 @@ position differ from the requested delta. A matching KWin D-Bus method call
 proves that Latte requested highlighting, but only compositor output or a
 visible screenshot proves that the window effect was rendered.
 
+On Debian 13 Wayland, `xdotool getmouselocation` reported XWayland coordinates
+that did not move the compositor pointer; at the VM's 1920x1080 capture size,
+the XWayland coordinate space was scaled and clamped, so deriving a task-icon
+target from that readback was misleading. Debian Trixie does not provide the
+`ydotool` package in the configured main mirror. For an authorized disposable
+VM test, `python3-evdev` can create a temporary relative pointer through
+`/dev/uinput`; that device is root-only by default. Let udev create its
+`/dev/input/eventN` node, grant the logged-in test user a temporary ACL on that
+specific node before sending movement, and confirm the resulting cursor and
+hover state with a pointer-included screenshot. Relative input is accelerated,
+so repeat small calibrated moves instead of trusting arithmetic deltas. Stop
+the temporary device process after the test; the event node disappears with
+it. Install test utilities from the configured local China mirror.
+
 Verify the running Dock's environment through `/proc/<pid>/environ` when a
 preview helper or GUI test tool cannot connect to the display. A Dock launched
 from a bare SSH shell may report `XDG_SESSION_TYPE=tty` and lack both

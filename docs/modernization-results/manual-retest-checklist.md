@@ -110,3 +110,14 @@ still needs a direct visual check. The original layout was restored exactly.
 Debian 13 was not reachable after reboot (`ssh ... 192.168.122.177` returned
 `No route to host`), so its final updated-package compatibility pass remains
 pending.
+
+Correction on 2026-10-01: Debian 13 was subsequently reached after the user
+started its VM. The updated-package Debug build and all 46 CTest targets passed.
+With three Konsole windows, `PreviewWindows` visibly showed three preview
+cards, which the user also manually confirmed, and `HighlightWindows` reached KWin and visibly subdued the surrounding
+desktop while hovered. In `PreviewAndHighlightWindows`, both the KWin request
+and helper process were observed, but the preview cards were not visible in the
+captured screenshot. The final manual retest must confirm that preview and
+highlight are visible together on Debian, then repeat single-window and grouped
+tasks on Fedora and Debian. Do not treat a running helper as a visible preview.
+The VM's original layout was restored exactly after testing.
