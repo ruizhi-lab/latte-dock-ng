@@ -1,7 +1,8 @@
 # Architecture and Legacy-Code Follow-Up Plan
 
-Status: planning only. Reviewed on 2026-10-01 from `main` at `39610fd89`.
-This document does not mark any implementation or runtime verification complete.
+Status: source review and handoffs recorded on `codex/architecture-followup`.
+Initial assessment: 2026-10-01 from `main` at `39610fd89`. Runtime-dependent
+implementation remains deferred or pending as shown in the ledger.
 
 ## Scope and relationship to existing work
 
@@ -27,9 +28,9 @@ produce evidence before any deletion or behavioral refactor.
 
 | ID | Dependency | Bounded work | Acceptance |
 | --- | --- | --- | --- |
-| A0 | None | Record a fresh inventory of active vs historical Qt5/KF5/X11 references, large ownership boundaries, QML diagnostic counts, current HEAD and build presets. Classify every candidate below as executable behavior, persisted compatibility, package naming, comment or dead code. | A dated evidence table with file/line, consumer, authority and disposition; no production edit. |
+| A0 | None | Record a fresh inventory of active vs historical Qt5/KF5/X11 references, large ownership boundaries, current HEAD and build presets. Include the latest comparable reviewed QML diagnostic counts with their environment fingerprint, distinguishing that baseline from a new run. Classify every candidate below as executable behavior, persisted compatibility, package naming, comment or dead code. | A dated evidence table with file/line, consumer, authority and disposition; no production edit. |
 | A1 | A0 | Remove stale *comments only* in `declarativeimports/core/extras.h`, `containment/package/contents/ui/colorizer/CustomBackground.qml` and similar proven historical text. Check whether `ENABLE_MAKE_UNIQUE` is ever enabled before touching its guarded implementation. | Comments explain the current Qt6 constraint; no behavior change; link/whitespace review. If the macro can be enabled, move its code to a separate reviewed slice. |
-| A2 | A0 | Audit `app/main.cpp::filterDebugMessageOutput` as a table of exact message, emitter, reason, supported versions and removal condition. Split the broad substring matches from exact known third-party diagnostics; change one match family per patch only after a captured log proves its source. | A controlled injected diagnostic remains visible; known dependency warning is filtered; real warning/error still reaches the log. GCC/Clang and relevant startup checks pass. Do not blanket-remove filtering. |
+| A2 | A0 | Audit `app/main.cpp::filterDebugMessageOutput` as a table of exact message, emitter, reason, supported versions and removal condition. Observe candidate messages before the filter's early return using temporary local instrumentation, then change one match family per patch only after its source is established. | A controlled injected diagnostic remains visible; known dependency warning is filtered; real warning/error still reaches the log. GCC/Clang and relevant startup checks pass. Do not blanket-remove filtering. |
 | A3 | A0 | Trace `LayoutManager::usesLegacyJustifySplitters()` and every caller, config migration and QML counterpart. Decide whether the constant-false branches are unreachable for supported saved layouts. | Consumer map and saved-layout fixtures first; if safe, remove only the unreachable branch family and verify dock alignment, separator/spacer and drag behavior on a real desktop. |
 | A4 | A0 | Trace `Corona::screenForContainment`, `Synchronizer::screenForContainment`, `ScreenPool` connector IDs and `lastScreen()` fallback. Characterize primary-not-zero, hotplug and nested containment behavior before changing anything. | Focused production tests for mapping/fallback plus physical two-output retest or an explicit pending-validation record. No index-to-ID conversion based on the old FIXME alone. |
 | A5 | A2-A4 evidence | Choose **one** decision-heavy policy in `View`, `ContainmentInterface` or containment `LayoutManager` with a stable input/output contract. Extract only that policy into a small production helper; retain QObject, QML and plugin ownership at the existing boundary. | Tests call the production helper and cover invalidation/fallback; host-dependent QML plugin loads; GCC/Clang builds, CTest, QML checks and affected runtime behavior pass. Stop if extraction creates a second state authority. |
@@ -82,7 +83,7 @@ is not a durable handoff.
 | --- | --- | --- | --- |
 | A0 | Complete | [Inventory and candidate classification](modernization-results/A0.md) | A1: remove only the verified stale compatibility comments. |
 | A1 | Complete | [Comment-only cleanup](modernization-results/A1.md) | A2: classify each log filter against captured emitters before changing behavior. |
-| A2 | Deferred | [No current log evidence](modernization-results/A2.md) | Capture a fresh user-mode Debug log that identifies each suppressed message before changing filters. |
+| A2 | Deferred | [Filtered messages need pre-filter observation](modernization-results/A2.md) | Capture candidate messages before the handler returns; record context and runtime, then remove temporary instrumentation. |
 | A3 | Deferred | [Legacy splitter branch analysis](modernization-results/A3.md) | Reopen only with fixture coverage and user retest for Justify alignment, separators and drag ordering. |
 | A4 | Pending validation | [Mapping trace and comment correction](modernization-results/A4.md) | Add production mapping tests and retest primary-not-zero, nested applets and display hotplug before changing mapping logic. |
 | A5 | Deferred | [No new extraction candidate justified](modernization-results/A5.md) | Reopen with a concrete ownership defect, duplication or measured maintenance/build cost. |

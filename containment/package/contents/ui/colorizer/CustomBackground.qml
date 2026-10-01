@@ -108,8 +108,8 @@ Item{
         id: kirigamiRect
         anchors.fill: painter
         active: root.kirigamiLibraryIsFound && main.shadowSize>0
-        //! Select the shadow implementation only when the installed Kirigami
-        //! module provides it; otherwise the fallback keeps the background loadable.
+        //! The loader stays inactive when Kirigami is unavailable or no shadow
+        //! is requested; selecting NormalRectangle does not activate it.
         source: root.kirigamiLibraryIsFound ? "KirigamiShadowedRectangle.qml" : "NormalRectangle.qml"
     }
 
