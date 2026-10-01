@@ -73,3 +73,40 @@ sed -n '880,985p' plasmoid/package/contents/ui/task/TaskItem.qml
 
 No P3a edge-transition test was run because the required readiness signal is
 absent; the eight delayed passes and fallback remain unchanged.
+
+## Cross-version TaskManager API check — 2026-10-01
+
+The publication boundary was checked against the installed TaskManager headers
+on the Debian 13 and Fedora 44 VMs, including the newer Fedora Plasma stack.
+Both versions expose `requestPublishDelegateGeometry(...)` as a `void` virtual
+method on `AbstractTasksModelIface`; neither header exposes a completion signal
+or generation token. The API documentation also retains a FIXME that multiple
+delegates in multiple applets are not handled. This confirms the missing
+acknowledgement is an upstream API limitation on both the compatibility floor
+and the newer tested stack, rather than a missed Latte-side signal.
+
+Commands and results:
+
+```text
+Fedora 44 / Plasma 6.7.5:
+rpm -qf /usr/include/taskmanager/abstracttasksmodeliface.h
+  plasma-workspace-devel-6.7.5-1.fc44.x86_64
+grep -A22 -B4 -n "requestPublishDelegateGeometry" /usr/include/taskmanager/abstracttasksmodeliface.h
+  virtual void requestPublishDelegateGeometry(...);
+  header documentation includes the multiple-delegates FIXME
+
+Debian 13 / Plasma 6.3.6:
+dpkg-query -S /usr/include/taskmanager/abstracttasksmodeliface.h
+  plasma-workspace-dev: /usr/include/taskmanager/abstracttasksmodeliface.h
+dpkg-query -W plasma-workspace-dev
+  plasma-workspace-dev 4:6.3.6-2
+grep -A22 -B4 -n "requestPublishDelegateGeometry" /usr/include/taskmanager/abstracttasksmodeliface.h
+  virtual void requestPublishDelegateGeometry(...);
+  header documentation includes the multiple-delegates FIXME
+```
+
+This strengthens the defer decision: implementing readiness solely in Latte
+would guess at acceptance by TaskManager/KWin and could stop refresh passes
+before all live delegates have published. Reopen only when the upstream API or
+a production-owned adapter can acknowledge the latest generation and current
+delegate set. No runtime code or behavior changed; no build was required.
