@@ -45,7 +45,7 @@ runtime A/B measurement.
 - The user accepts two-output behavior by code review because a second display is unavailable; it is not recorded as a runtime test.
 - GitHub Actions run `36741144541`: the strict `Deep QML lint` step passed in GCC Debug, Clang Debug, GCC Release and Clang Release jobs. That step runs the baseline-aware `scripts/qmllint-deep.sh` against the checked-in fingerprint, so this is the strict gate, not only the supplemental diagnostic identity comparison. The same four jobs passed build, autotest and zero-warning checks. At report update time the NixOS install verification was still running; it is unrelated to the QML fingerprint gate.
 
-## Pending runtime acceptance
+## Runtime acceptance record
 
 Test edit entry/exit, startup with the Latte bridge absent, bridge reattachment,
 late task arrival and removal, then verify right-click menus, click/modifier
@@ -58,7 +58,8 @@ task-icon pass, set each hover choice independently and verify its own behavior:
 
 Also verify tooltips, grouped-window actions, hide/dodge behavior and preview-
 helper failure fallback in each applicable mode. The user reports this matrix
-passed; per-OS and per-mode details were not supplied.
+passed. The later confirmation explicitly covers all three hover modes on both
+Fedora and Debian; individual operation details remain unspecified.
 
 ## Handoff
 

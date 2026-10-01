@@ -22,8 +22,8 @@ and move the pointer across the icon, its zoomed area and the preview surface.
 Repeat the three choices with a single-window task and a grouped task. Confirm
 title tooltips still work, preview-helper failure preserves the documented
 fallback, and the saved hover choice is read after relaunch. The user reports
-all three choices passed in the final functional retest; per-OS and per-mode
-details were not supplied.
+all three choices passed on both Fedora and Debian. Individual per-mode
+operation details were not supplied.
 
 ## Task interactions and edit mode
 
@@ -120,8 +120,7 @@ tasks on Fedora and Debian. Do not treat a running helper as a visible preview.
 The VM's original layout was restored exactly after testing.
 
 Latest user confirmation: `PreviewWindows`, `HighlightWindows` and
-`PreviewAndHighlightWindows` all work normally, and the app menu, app dashboard,
-Kicker, Trash and CPU monitor widgets work normally. The OS and individual
-widget actions were not specified. This closes the aggregate manual feature
-check; retain the earlier Debian combined-mode screenshot as a per-OS evidence
-gap until a Debian-specific visible combined preview is recorded.
+`PreviewAndHighlightWindows` all work normally on both Fedora and Debian. The
+app menu, app dashboard, Kicker, Trash and CPU monitor widgets also work on both
+systems. This closes the earlier Debian combined-mode screenshot discrepancy
+and the aggregate widget retest. Individual widget actions were not specified.
