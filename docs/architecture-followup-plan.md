@@ -85,8 +85,8 @@ is not a durable handoff.
 | A2 | Deferred | [No current log evidence](modernization-results/A2.md) | Capture a fresh user-mode Debug log that identifies each suppressed message before changing filters. |
 | A3 | Deferred | [Legacy splitter branch analysis](modernization-results/A3.md) | Reopen only with fixture coverage and user retest for Justify alignment, separators and drag ordering. |
 | A4 | Pending validation | [Mapping trace and comment correction](modernization-results/A4.md) | Add production mapping tests and retest primary-not-zero, nested applets and display hotplug before changing mapping logic. |
-| A5 | Not started | None | Wait for selected A2-A4 evidence. |
-| A6 | Not started | None | Wait for A5. |
+| A5 | Deferred | [No new extraction candidate justified](modernization-results/A5.md) | Reopen with a concrete ownership defect, duplication or measured maintenance/build cost. |
+| A6 | Complete | [Follow-up review](modernization-results/A6.md) | Keep A2-A5 candidates deferred/pending until their stated evidence exists. |
 
 ## Prompt for a smaller implementation model
 
