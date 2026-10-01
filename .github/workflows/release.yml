@@ -203,6 +203,15 @@ jobs:
               [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
             "
 
+      - name: Disambiguate RPM artifact filename
+        if: matrix.format == 'rpm'
+        env:
+          DISTRO: ${{ matrix.distro }}
+        run: |
+          for package in dist/*.rpm; do
+            mv "$package" "${package%.rpm}-${DISTRO}.rpm"
+          done
+
       - uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.distro }}
