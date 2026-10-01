@@ -16,10 +16,10 @@ MouseArea{
     signal scrolledDown(QtObject wheel);
 
     onWheel: function(wheel) {
-        if (delayIsEnabled && wheelIsBlocked){
+        if (__scrollArea.delayIsEnabled && __scrollArea.wheelIsBlocked){
             return;
         } else {
-            wheelIsBlocked = true;
+            __scrollArea.wheelIsBlocked = true;
             __scrollDelayer.start();
         }
 

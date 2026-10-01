@@ -39,5 +39,10 @@ TestCase {
         wait(100)
         mouseWheel(area, 40, 40, 0, 96)
         compare(upCount, 1)
+
+        area.delayIsEnabled = false
+        mouseWheel(area, 40, 40, 0, 120)
+        mouseWheel(area, 40, 40, 0, 120)
+        compare(upCount, 3)
     }
 }
