@@ -110,3 +110,24 @@ would guess at acceptance by TaskManager/KWin and could stop refresh passes
 before all live delegates have published. Reopen only when the upstream API or
 a production-owned adapter can acknowledge the latest generation and current
 delegate set. No runtime code or behavior changed; no build was required.
+
+## VM trigger-harness attempt — 2026-10-01
+
+A Fedora 44 GUI attempt was made to exercise the existing location-change
+handler without modifying saved user configuration. A temporary Debug QML log
+probe was installed and the Layout Editor was opened. The available ydotool
+daemon accepted keyboard input, but its absolute mouse-move command did not
+move the pointer in the captured desktop; the corrected `click` syntax was
+identified from the VM manpage, but the cursor could not be reliably placed on
+the intended control. The fallback `DISPLAY=:0 xdotool mousemove 1435 687`
+failed with `Authorization required, but no authorization protocol
+specified`. No edge transition was issued, so this is not a runtime pass.
+
+The probe and temporary files were removed, the exact QML backup was restored,
+and the Debug Dock was relaunched. The saved active layout retained its
+pre-test SHA-256:
+`ed6ade8626fe13cd10e93233e51cd83247faa838975d1f4c74e20b5d11e408ec`.
+The next harness attempt must first establish reliable pointer movement in the
+Wayland session (including ydotool's documented pointer-acceleration
+precondition) and verify the pointer location from a fresh screenshot before
+clicking any settings control.
