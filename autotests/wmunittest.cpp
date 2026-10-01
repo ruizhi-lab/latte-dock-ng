@@ -9,6 +9,7 @@
 #include <KConfigGroup>
 
 #include <QBuffer>
+#include <QCoreApplication>
 #include <QFile>
 #include <QImage>
 #include <QPixmap>
@@ -33,6 +34,7 @@ private Q_SLOTS:
     void processLookupCanIgnoreConfiguredRuntimeWrapper();
     void windowInfoWrapCopiesAndAssignsWindowState();
     void windowInfoWrapTracksParentsAndMembership();
+    void windowInfoWrapDetectsNonDisplayChanges();
     void appDataFromUrlReadsLocalDesktopFile();
     void appDataFromUrlPreservesFallbackForUnknownUrls();
     void appDataFromUrlReadsQueryFlags();
@@ -87,11 +89,14 @@ void WindowSystemUnitTest::processLookupFallsBackToExecutableWhenConfigured()
     QVERIFY(dir.isValid());
 
     KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.filePath(QStringLiteral("rulesrc")), KConfig::SimpleConfig);
-    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("/bin/true"), QStringLiteral("True"), config);
+    // Nix builds do not provide the FHS /bin/true path; use this test binary,
+    // which is an executable in every supported build environment.
+    const QString executablePath = QCoreApplication::applicationFilePath();
+    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(executablePath, QStringLiteral("True"), config);
 
     QCOMPARE(services.count(), 1);
     QCOMPARE(services.constFirst()->name(), QStringLiteral("True"));
-    QCOMPARE(services.constFirst()->exec(), QStringLiteral("/bin/true"));
+    QCOMPARE(services.constFirst()->exec(), executablePath);
 }
 
 void WindowSystemUnitTest::processLookupCanIgnoreConfiguredRuntimeWrapper()
@@ -104,13 +109,14 @@ void WindowSystemUnitTest::processLookupCanIgnoreConfiguredRuntimeWrapper()
     settings.writeEntry(QStringLiteral("TryIgnoreRuntimes"), QStringList{QStringLiteral("latte-runtime-wrapper")});
     config->sync();
 
-    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-runtime-wrapper /bin/true"),
+    const QString executablePath = QCoreApplication::applicationFilePath();
+    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-runtime-wrapper %1").arg(executablePath),
                                     QStringLiteral("True"),
                                     config);
 
     QCOMPARE(services.count(), 1);
     QCOMPARE(services.constFirst()->name(), QStringLiteral("True"));
-    QCOMPARE(services.constFirst()->exec(), QStringLiteral("/bin/true"));
+    QCOMPARE(services.constFirst()->exec(), executablePath);
 }
 
 void WindowSystemUnitTest::windowInfoWrapCopiesAndAssignsWindowState()
@@ -207,6 +213,65 @@ void WindowSystemUnitTest::windowInfoWrapTracksParentsAndMembership()
     QVERIFY(!info.isOnActivity(QStringLiteral("activity-2")));
     info.setIsOnAllActivities(true);
     QVERIFY(info.isOnActivity(QStringLiteral("activity-2")));
+}
+
+void WindowSystemUnitTest::windowInfoWrapDetectsNonDisplayChanges()
+{
+    Latte::WindowSystem::WindowInfoWrap original;
+    original.setWid("window-1");
+    original.setParentId("parent-1");
+    original.setIsValid(true);
+    original.setGeometry(QRect(1, 2, 300, 400));
+    original.setDesktops({QStringLiteral("desktop-1")});
+    original.setActivities({QStringLiteral("activity-1")});
+    original.setDisplay(QStringLiteral("Initial title"));
+
+    Latte::WindowSystem::WindowInfoWrap titleOnly = original;
+    titleOnly.setDisplay(QStringLiteral("Updated title"));
+    QVERIFY(original.hasSameNonDisplayState(titleOnly));
+
+    const auto differsFromTitleOnly = [&original](auto mutate) {
+        Latte::WindowSystem::WindowInfoWrap updated = original;
+        mutate(updated);
+        return !original.hasSameNonDisplayState(updated);
+    };
+
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setWid("window-2"); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setParentId("parent-2"); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setGeometry(QRect(10, 20, 300, 400)); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsValid(false); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsActive(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMinimized(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaxVert(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaxHoriz(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsFullscreen(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsShaded(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsKeepAbove(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsKeepBelow(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipPager(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipSwitcher(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setHasSkipTaskbar(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsOnAllDesktops(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsOnAllActivities(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsClosable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsFullScreenable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsGroupable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMaximizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMinimizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsMovable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsResizable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsShadeable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setIsVirtualDesktopsChangeable(true); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setAppName(QStringLiteral("Different app")); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setDesktops({QStringLiteral("desktop-2")}); }));
+    QVERIFY(differsFromTitleOnly([](auto &info) { info.setActivities({QStringLiteral("activity-2")}); }));
+
+    QPixmap originalPixmap(1, 1);
+    originalPixmap.fill(Qt::blue);
+    QPixmap updatedPixmap(1, 1);
+    updatedPixmap.fill(Qt::red);
+    original.setIcon(QIcon(originalPixmap));
+    QVERIFY(differsFromTitleOnly([&updatedPixmap](auto &info) { info.setIcon(QIcon(updatedPixmap)); }));
 }
 
 void WindowSystemUnitTest::appDataFromUrlReadsLocalDesktopFile()

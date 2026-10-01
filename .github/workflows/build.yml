@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
     tags: ["v*"]
   pull_request:
     branches: [main]
@@ -20,10 +20,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: GCC
+          - name: GCC Debug
+            preset: gcc-debug
+            build_type: Debug
             cc: gcc
             cxx: g++
-          - name: Clang
+          - name: GCC Release
+            preset: gcc-release
+            build_type: Release
+            cc: gcc
+            cxx: g++
+          - name: Clang Debug
+            preset: clang-debug
+            build_type: Debug
+            cc: clang
+            cxx: clang++
+          - name: Clang Release
+            preset: clang-release
+            build_type: Release
             cc: clang
             cxx: clang++
     env:
@@ -41,8 +55,8 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get install -y --no-install-recommends \
-            build-essential clang cmake extra-cmake-modules pkgconf dbus-daemon \
-            qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-tools-dev \
+            build-essential clang clang-tidy cmake extra-cmake-modules pkgconf dbus-daemon git python3 \
+            qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev qt6-wayland-dev qt6-tools-dev \
             libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
             libkf6crash-dev libkf6dbusaddons-dev libkf6declarative-dev \
             libkf6globalaccel-dev libkf6guiaddons-dev libkf6i18n-dev \
@@ -51,28 +65,96 @@ jobs:
             libkf6windowsystem-dev libkf6xmlgui-dev kf6-ksvg-dev \
             libplasma-dev libkpipewire-dev libkf6wayland-dev \
             plasma-activities-dev plasma-activities-stats-dev \
-            plasma-workspace-dev plasma-wayland-protocols \
+            plasma-workspace-dev plasma-pa plasma-wayland-protocols breeze-icon-theme libqt6svg6 \
             libwayland-dev liblayershellqtinterface-dev
 
       - uses: actions/checkout@v4
 
+      - name: Record toolchain versions
+        run: |
+          cmake --version
+          "$CC" --version
+          "$CXX" --version
+
       - name: Configure
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/modernization/logs
+          cmake --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-configure.log"
 
-      - name: Build
-        run: cmake --build build --parallel $(nproc)
+      # The build preset includes both the default application/plugin targets
+      # and latte-autotests, and fixes the build parallelism at eight jobs.
+      - name: Build application and autotests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
 
-      - name: Build autotests
-        run: cmake --build build --target latte-autotests --parallel $(nproc)
+      - name: Run targeted clang-tidy checks
+        if: matrix.preset == 'clang-debug'
+        run: python3 scripts/test-clang-tidy.py --build-dir "build/modernization/${{ matrix.preset }}"
+
+      - name: Verify strict warnings reject and clear a diagnostic
+        run: python3 scripts/test-strict-warnings.py --compiler "$CXX" --build-type "${{ matrix.build_type }}"
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure
+        shell: bash
+        run: |
+          set -euo pipefail
+          ctest --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-ctest.log"
+
+      - name: Configure targeted ASan/UBSan tree
+        if: matrix.preset == 'gcc-debug'
+        run: cmake --preset gcc-asan-ubsan
+
+      - name: Build targeted ASan/UBSan tests
+        if: matrix.preset == 'gcc-debug'
+        run: cmake --build --preset gcc-asan-ubsan
+
+      - name: Run targeted ASan/UBSan tests
+        if: matrix.preset == 'gcc-debug'
+        run: ctest --preset gcc-asan-ubsan
+
+      - name: Verify sanitizer fixtures report both defect classes
+        if: matrix.preset == 'gcc-debug'
+        run: python3 scripts/test-sanitizers.py --compiler "$CXX"
 
       # Type-resolution lint over the freshly built modules: fails on QML
       # errors and on broken/missing generated latte QML modules. Legacy
-      # warnings are summarized into build/qmllint-deep.log.
+      # warnings are summarized into the preset build's qmllint-deep.log.
+      # Checkout ownership differs inside the job container, so trust only
+      # this workspace before the script uses git ls-files for QML discovery.
+      - name: Trust workspace for Git file discovery
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Deep QML lint
-        run: ./scripts/qmllint-deep.sh build
+        run: ./scripts/qmllint-deep.sh "build/modernization/${{ matrix.preset }}"
+
+      - name: Retain QML baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qmllint-baseline-${{ matrix.preset }}
+          path: |
+            build/modernization/${{ matrix.preset }}/qmllint-deep.log
+            build/modernization/${{ matrix.preset }}/qmllint-baseline/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload build diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-${{ matrix.preset }}
+          path: |
+            build/modernization/logs/${{ matrix.preset }}-*.log
+            build/modernization/${{ matrix.preset }}/CMakeCache.txt
+            build/modernization/${{ matrix.preset }}/compile_commands.json
+            build/modernization/${{ matrix.preset }}/Testing/Temporary/LastTest.log
+            build/modernization/${{ matrix.preset }}/qmllint-deep.log
+          if-no-files-found: warn
+          retention-days: 7
 
   qml-lint:
     name: QML lint (qmllint)
@@ -83,7 +165,7 @@ jobs:
       - name: Install qmllint
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends qt6-declarative-dev qt6-declarative-dev-tools
+          apt-get install -y --no-install-recommends python3 qt6-declarative-dev qt6-declarative-dev-tools
 
       - uses: actions/checkout@v4
 
@@ -135,7 +217,7 @@ jobs:
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
           docker build --file docker/${{ matrix.dockerfile }} \
-            --build-arg USE_MIRRORS=false \
+            --build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }} \
             "${build_args[@]}" \
             --tag latte-verify-${{ matrix.distro }} docker
 
@@ -193,7 +275,7 @@ jobs:
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
           docker build --file docker/${{ matrix.dockerfile }} \
-            --build-arg USE_MIRRORS=false \
+            --build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }} \
             "${build_args[@]}" \
             --tag latte-package-${{ matrix.distro }} docker
 

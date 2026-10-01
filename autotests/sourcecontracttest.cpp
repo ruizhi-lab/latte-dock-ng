@@ -80,6 +80,8 @@ private Q_SLOTS:
     void pointerWindowTrackingDisconnectsOnLeave();
     void viewDestructorDropsPointerWindowTrackingConnections();
     void taskIconsRefreshAfterIconThemeChanges();
+    void taskMouseAreaUsesAuthoritativeEditModeState();
+    void appletIconResourcePathsUseQmlUrlScheme();
     void taskAudioBadgesScaleWithParabolicZoom();
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
@@ -109,6 +111,7 @@ private Q_SLOTS:
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
     void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
     void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
+    void windowHintPerformanceTraceMarksScheduledAndExecutedWork();
     void dynamicWindowDotsAreOptInAndAggregateOverflow();
     void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
@@ -221,7 +224,37 @@ private Q_SLOTS:
     void appletPopupHidesOnWindowDeactivateByDefault();
     void viewTracksPointerWindowsAndResetsCascadingSubmenus();
     void pointerWindowTrackerRemovesDestroyedWindows();
+    void visibilityManagerBlockerWrappersDelegateTransitions();
 };
+
+void SourceContractTest::visibilityManagerBlockerWrappersDelegateTransitions()
+{
+    QFile managerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/visibilitymanager.cpp"));
+    QVERIFY(managerFile.open(QFile::ReadOnly));
+    const QString managerSource = QString::fromUtf8(managerFile.readAll());
+
+    const qsizetype addStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::addBlockHidingEvent"));
+    const qsizetype removeStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::removeBlockHidingEvent"));
+    const qsizetype stateHandlerStart = managerSource.indexOf(QStringLiteral("void VisibilityManager::onHidingIsBlockedChanged"));
+    const qsizetype stateHandlerEnd = managerSource.indexOf(QStringLiteral("void VisibilityManager::onHeadThicknessChanged"), stateHandlerStart);
+    QVERIFY(addStart >= 0);
+    QVERIFY(removeStart > addStart);
+    QVERIFY(stateHandlerStart > removeStart);
+    QVERIFY(stateHandlerEnd > stateHandlerStart);
+
+    const QString addWrapper = managerSource.mid(addStart, removeStart - addStart);
+    const QString removeWrapper = managerSource.mid(removeStart, stateHandlerStart - removeStart);
+    QVERIFY(addWrapper.contains(QStringLiteral("if (m_blockHidingEvents.addEvent(type))")));
+    QVERIFY(addWrapper.contains(QStringLiteral("Q_EMIT hidingIsBlockedChanged();")));
+    QVERIFY(removeWrapper.contains(QStringLiteral("if (m_blockHidingEvents.removeEvent(type))")));
+    QVERIFY(removeWrapper.contains(QStringLiteral("Q_EMIT hidingIsBlockedChanged();")));
+    QVERIFY(managerSource.contains(QStringLiteral("connect(this, &VisibilityManager::hidingIsBlockedChanged, this, &VisibilityManager::onHidingIsBlockedChanged)")));
+
+    const QString stateHandler = managerSource.mid(stateHandlerStart, stateHandlerEnd - stateHandlerStart);
+    QVERIFY(stateHandler.contains(QStringLiteral("m_timerHide.stop();")));
+    QVERIFY(stateHandler.contains(QStringLiteral("Q_EMIT mustBeShown();")));
+    QVERIFY(stateHandler.contains(QStringLiteral("updateHiddenState();")));
+}
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
 {
@@ -1583,6 +1616,7 @@ void SourceContractTest::cmakeTargetResolutionUsesSharedHelpers()
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_target_from_candidates(LATTE_NEWSTUFF_TARGET")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_library_variable(LATTE_NEWSTUFF_TARGET")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET")));
+    QVERIFY(cmakeSource.contains(QStringLiteral("Plasma::KWaylandClient KWayland::Client")));
     QVERIFY(cmakeSource.contains(QStringLiteral("latte_resolve_library_variable(LATTE_WAYLANDCLIENT_TARGET")));
 }
 
@@ -2679,6 +2713,63 @@ void SourceContractTest::waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitel
     QVERIFY(src.contains(QStringLiteral("org.kde.plasmashell")));
 }
 
+void SourceContractTest::windowHintPerformanceTraceMarksScheduledAndExecutedWork()
+{
+    QFile tracker(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tracker/windowstracker.cpp"));
+    QVERIFY(tracker.open(QFile::ReadOnly));
+    const QString trackerSource = QString::fromUtf8(tracker.readAll());
+
+    // These opt-in markers count tracker work without exposing window IDs,
+    // titles or geometry in the captured performance trace.
+    QVERIFY(trackerSource.contains(QStringLiteral("[perf-trace] hint-schedule")));
+    QVERIFY(trackerSource.contains(QStringLiteral("[perf-trace] hint-execute")));
+    QVERIFY(trackerSource.contains(QStringLiteral("keep instrumented counts separate from uninstrumented timing samples")));
+
+    QFile wayland(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(wayland.open(QFile::ReadOnly));
+    const QString waylandSource = QString::fromUtf8(wayland.readAll());
+
+    // Title notifications enter the metadata path; geometry and state changes
+    // retain the full hint-update path for P1a/P1b characterization.
+    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowTitle)")));
+    QVERIFY(waylandSource.contains(QStringLiteral("connect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry)")));
+    QVERIFY(waylandSource.contains(QStringLiteral("Q_EMIT windowChanged(pW->uuid())")));
+    QVERIFY(waylandSource.contains(QStringLiteral("considerWindowChanged(pW->uuid())")));
+    QVERIFY(waylandSource.contains(QStringLiteral("Q_EMIT windowTitleChanged(pW->uuid())")));
+
+    QFile abstractWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.cpp"));
+    QVERIFY(abstractWindow.open(QFile::ReadOnly));
+    const QString abstractSource = QString::fromUtf8(abstractWindow.readAll());
+
+    // The general geometry-event debounce remains independent of the tracker
+    // debounce used by current metadata-only changes.
+    QVERIFY(abstractSource.contains(QStringLiteral("m_windowWaitingTimer.setInterval(150)")));
+    QVERIFY(abstractSource.contains(QStringLiteral("void AbstractWindowInterface::considerWindowChanged(WindowId wid)")));
+    QVERIFY(trackerSource.contains(QStringLiteral("m_updateAllHintsTimer.setInterval(300)")));
+    QVERIFY(trackerSource.contains(QStringLiteral("m_windows[wid] = m_wm->requestInfo(wid);")));
+    QVERIFY(trackerSource.contains(QStringLiteral("updateAllHintsAfterTimer();")));
+
+    const int titleHandlerStart = trackerSource.indexOf(QStringLiteral("void Windows::updateWindowInfoForTitle(const WindowId &wid)"));
+    QVERIFY(titleHandlerStart >= 0);
+    const int titleHandlerEnd = trackerSource.indexOf(QStringLiteral("void Windows::updateAllHints()"), titleHandlerStart);
+    QVERIFY(titleHandlerEnd > titleHandlerStart);
+    const QString titleHandler = trackerSource.mid(titleHandlerStart, titleHandlerEnd - titleHandlerStart);
+    QVERIFY(titleHandler.contains(QStringLiteral("const WindowInfoWrap updatedInfo = m_wm->requestInfo(wid);")));
+    QVERIFY(titleHandler.contains(QStringLiteral("if (!m_windows.contains(wid))")));
+    QVERIFY(titleHandler.contains(QStringLiteral("previousInfo.hasSameNonDisplayState(updatedInfo)")));
+    QVERIFY(titleHandler.contains(QStringLiteral("Q_EMIT windowChanged(wid)")));
+    QVERIFY(titleHandler.indexOf(QStringLiteral("updateAllHintsAfterTimer();"))
+            > titleHandler.indexOf(QStringLiteral("if (!previousInfo.hasSameNonDisplayState(updatedInfo))")));
+
+    QVERIFY(trackerSource.contains(QStringLiteral("connect(m_wm, &AbstractWindowInterface::windowTitleChanged, this, &Windows::updateWindowInfoForTitle)")));
+
+    QFile lastActiveWindow(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tracker/lastactivewindow.cpp"));
+    QVERIFY(lastActiveWindow.open(QFile::ReadOnly));
+    const QString lastActiveSource = QString::fromUtf8(lastActiveWindow.readAll());
+    QVERIFY(lastActiveSource.contains(QStringLiteral("connect(m_windowsTracker, &Windows::windowChanged, this, &LastActiveWindow::windowChanged)")));
+    QVERIFY(lastActiveSource.contains(QStringLiteral("setInformation(historyitem)")));
+}
+
 void SourceContractTest::genericLayoutReassertsDefaultContextMenuOnContainmentWiring()
 {
     QFile layoutCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
@@ -3748,11 +3839,59 @@ void SourceContractTest::taskMouseAreaSkipsInactivePreviewChecks()
     QVERIFY(mainSource.contains(QStringLiteral("id: toolTipDelegateLoader\n        active: root.showPreviews")));
 }
 
+void SourceContractTest::taskMouseAreaUsesAuthoritativeEditModeState()
+{
+    QFile taskMain(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(taskMain.open(QFile::ReadOnly));
+    const QString taskMainSource = QString::fromUtf8(taskMain.readAll());
+
+    // All edit-mode sources converge on one notifying root property. Do not
+    // retain a second task-side poll which can lag gesture gating by one tick.
+    QVERIFY(taskMainSource.contains(QStringLiteral(
+        "readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentEditing")));
+    QVERIFY(taskMainSource.contains(QStringLiteral("property bool containmentEditing: false")));
+    QVERIFY(!taskMainSource.contains(QStringLiteral("containmentEditingPoller")));
+    QVERIFY(!taskMainSource.contains(QStringLiteral("containmentEditingPolled")));
+
+    QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
+                                   "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
+    QVERIFY(taskMouse.open(QFile::ReadOnly));
+    const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
+    QVERIFY(taskMouseSource.contains(QStringLiteral("readonly property bool _containmentEditing: root.inEditMode")));
+
+    QFile containmentMain(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(containmentMain.open(QFile::ReadOnly));
+    const QString containmentSource = QString::fromUtf8(containmentMain.readAll());
+    QVERIFY(containmentSource.contains(QStringLiteral("property bool editMode: plasmoid.userConfiguring")));
+    QVERIFY(containmentSource.contains(QStringLiteral("id: editModePoller")));
+    QVERIFY(containmentSource.contains(QStringLiteral("interval: 200")));
+    QVERIFY(containmentSource.contains(QStringLiteral("if (!plasmoid.userConfiguring)")));
+    QVERIFY(containmentSource.contains(QStringLiteral("item.applet.containmentEditing = editMode")));
+}
+
+void SourceContractTest::appletIconResourcePathsUseQmlUrlScheme()
+{
+    QFile layoutManagerFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(layoutManagerFile.open(QFile::ReadOnly));
+    const QString layoutManagerSource = QString::fromUtf8(layoutManagerFile.readAll());
+
+    const int functionStart = layoutManagerSource.indexOf(QStringLiteral("QString LayoutManager::appletIconPath(QObject *applet) const"));
+    QVERIFY(functionStart >= 0);
+    const int functionEnd = layoutManagerSource.indexOf(QStringLiteral("int LayoutManager::configuredAppletCount() const"), functionStart);
+    QVERIFY(functionEnd > functionStart);
+    const QString functionSource = layoutManagerSource.mid(functionStart, functionEnd - functionStart);
+
+    // Plasma may bundle an icon in Qt resources. QML Image interprets a bare
+    // :/ path as relative to the plasmoid URL and logs a missing-file warning.
+    QVERIFY(functionSource.contains(QStringLiteral("iconPath.startsWith(QStringLiteral(\":/\"))")));
+    QVERIFY(functionSource.contains(QStringLiteral("return QStringLiteral(\"qrc\") + iconPath")));
+}
+
 void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
 {
-    // The dock-side manager must stay asynchronous and fail closed. Any
-    // blocking wait on the helper, capture or screencasting would freeze the
-    // dock's event loop, which is the exact failure the isolation removes.
+    // The dock-side manager must stay asynchronous and fail closed. Blocking
+    // IPC waits would freeze the event loop; only bounded process reaping is
+    // allowed after teardown has started and the event loop is about to stop.
     QFile manager(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/plugin/previewprocess.cpp"));
     QVERIFY(manager.open(QFile::ReadOnly));
     const QString managerSource = QString::fromUtf8(manager.readAll());
@@ -3770,7 +3909,15 @@ void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
     QVERIFY(managerSource.contains(QStringLiteral("TypeMove")));
     QVERIFY(managerSource.contains(QStringLiteral("TypeClosed")));
     QVERIFY(!managerSource.contains(QStringLiteral("waitForStarted")));
-    QVERIFY(!managerSource.contains(QStringLiteral("waitForFinished")));
+    const int shutdownStart = managerSource.indexOf(QStringLiteral("void PreviewProcess::shutdownProcess()"));
+    QVERIFY(shutdownStart >= 0);
+    const int shutdownEnd = managerSource.indexOf(QStringLiteral("void PreviewProcess::fail()"), shutdownStart);
+    QVERIFY(shutdownEnd > shutdownStart);
+    const QString shutdownSource = managerSource.mid(shutdownStart, shutdownEnd - shutdownStart);
+    QVERIFY(shutdownSource.contains(QStringLiteral("waitForFinished(250)")));
+    QVERIFY(shutdownSource.contains(QStringLiteral("waitForFinished(1000)")));
+    QVERIFY(shutdownSource.contains(QStringLiteral("process->kill()")));
+    QVERIFY(managerSource.count(QStringLiteral("waitForFinished")) == 2);
     QVERIFY(!managerSource.contains(QStringLiteral("waitForReadyRead")));
     QVERIFY(!managerSource.contains(QStringLiteral("waitForBytesWritten")));
 

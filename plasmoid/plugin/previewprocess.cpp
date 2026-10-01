@@ -62,7 +62,7 @@ PreviewProcess::PreviewProcess(const QString &executable, bool enabled, QObject 
 }
 PreviewProcess::~PreviewProcess()
 {
-    discardProcess();
+    shutdownProcess();
 }
 void PreviewProcess::show(const QVariantList &windows, const QRect &anchor, int edge)
 {
@@ -276,6 +276,34 @@ void PreviewProcess::discardProcess()
         process->kill();
     }
 }
+
+void PreviewProcess::shutdownProcess()
+{
+    if (!m_process) {
+        return;
+    }
+
+    QProcess *process = m_process;
+    m_process = nullptr;
+    process->disconnect(this);
+
+    if (process->state() != QProcess::NotRunning) {
+        // QObject teardown is about to stop the event loop. EOF lets the helper
+        // close cleanly; reap it synchronously so its child QProcess is never
+        // destroyed while live. Force-kill only if graceful exit exceeds the
+        // short shutdown bound, then wait once more before deleting the owner.
+        if (process->state() == QProcess::Running) {
+            process->closeWriteChannel();
+        }
+        if (!process->waitForFinished(250) && process->state() != QProcess::NotRunning) {
+            process->kill();
+            process->waitForFinished(1000);
+        }
+    }
+
+    delete process;
+}
+
 void PreviewProcess::fail()
 {
     discardProcess();

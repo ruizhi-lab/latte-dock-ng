@@ -22,6 +22,14 @@ set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 option(KDE_L10N_AUTO_TRANSLATIONS "Compatibility flag for external install scripts." OFF)
 set(KDE_L10N_BRANCH "" CACHE STRING "Compatibility translation branch name from external scripts.")
 option(LATTE_INSTALL_USER_KICKERACTION_EXECUTABLE "Install user-local Plasma kicker action as trusted executable desktop file." OFF)
+option(LATTE_STRICT_WARNINGS
+    "Treat GCC and Clang warnings in Latte targets as errors (disable only as a downstream compatibility escape hatch)."
+    ON
+)
+option(LATTE_ENABLE_ASAN_UBSAN
+    "Instrument first-party C++ targets with AddressSanitizer and UndefinedBehaviorSanitizer."
+    OFF
+)
 
 set(KF6_LOCALE_PREFIX "")
 set(QT_MAJOR_VERSION 6)
@@ -40,6 +48,8 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
 include(LatteTargetResolution)
+include(LatteStrictWarnings)
+include(LatteSanitizers)
 include(WriteBasicConfigVersionFile)
 include(CTest)
 
@@ -163,7 +173,8 @@ get_property(_latte_imported_targets DIRECTORY PROPERTY IMPORTED_TARGETS)
 latte_resolve_target_from_candidates(LATTE_DECLARATIVE_TARGET KF6::Declarative KF6::KDeclarative)
 latte_resolve_target_from_candidates(LATTE_QUICKADDONS_TARGET KF6::QuickAddons KF6::KQuickAddons)
 latte_resolve_target_from_candidates(LATTE_NEWSTUFF_TARGET KF6::NewStuffWidgets KF6::KNewStuffWidgets KF6::NewStuff KF6::KNewStuff)
-latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET KWayland::Client KF6::WaylandClient KF6::KWaylandClient)
+latte_resolve_target_from_candidates(LATTE_WAYLANDCLIENT_TARGET
+    Plasma::KWaylandClient KWayland::Client KF6::WaylandClient KF6::KWaylandClient)
 latte_resolve_target_from_candidates(LATTE_CONFIGQML_TARGET KF6::ConfigQml KF6::KConfigQml)
 latte_resolve_target_from_candidates(LATTE_SVG_TARGET KF6::Svg KF6::KSvg KF6::KSvgCore)
 
@@ -316,6 +327,12 @@ add_subdirectory(shell)
 if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
+
+# Defer until every subdirectory has created its targets. This includes helper
+# programs, QML plugins and excluded test binaries while leaving imported KDE,
+# Qt and other dependency targets untouched.
+cmake_language(DEFER CALL latte_enable_strict_warnings_for_project)
+cmake_language(DEFER CALL latte_enable_sanitizers_for_project)
 
 ki18n_install(po)
 

@@ -9,7 +9,21 @@
 #include <QTest>
 #include <QUuid>
 
+#include <memory>
+#include <QStringList>
+
 using Latte::Tasks::PreviewProcess;
+
+namespace {
+QStringList processLifetimeWarnings;
+
+void captureProcessLifetimeWarnings(QtMsgType type, const QMessageLogContext &, const QString &message)
+{
+    if (type == QtWarningMsg && message.contains(QStringLiteral("QProcess: Destroyed while process"))) {
+        processLifetimeWarnings.append(message);
+    }
+}
+}
 
 class PreviewProcessUnitTest : public QObject
 {
@@ -22,6 +36,7 @@ private Q_SLOTS:
     void activationReplyHidesPreview();
     void moveHeartbeatUpdatesHoverState();
     void failedHelperDisablesAfterConsecutiveCrashes();
+    void destructionReapsRunningHelperWithoutWarning();
 
 private:
     static QVariantList windows(const QString &title);
@@ -117,6 +132,20 @@ void PreviewProcessUnitTest::failedHelperDisablesAfterConsecutiveCrashes()
 
     QVERIFY(!process.enabled());
     QVERIFY(!process.visible());
+}
+
+void PreviewProcessUnitTest::destructionReapsRunningHelperWithoutWarning()
+{
+    auto process = std::make_unique<PreviewProcess>(QStringLiteral(LATTE_PREVIEW_FAKE_HELPER), true);
+    process->show(windows(QStringLiteral("idle")), QRect(10, 20, 40, 40), 4);
+    QTRY_VERIFY(process->visible());
+
+    processLifetimeWarnings.clear();
+    const QtMessageHandler previousHandler = qInstallMessageHandler(captureProcessLifetimeWarnings);
+    process.reset();
+    qInstallMessageHandler(previousHandler);
+
+    QVERIFY2(processLifetimeWarnings.isEmpty(), qPrintable(processLifetimeWarnings.join(QLatin1Char('\n'))));
 }
 
 QTEST_GUILESS_MAIN(PreviewProcessUnitTest)

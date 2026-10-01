@@ -4,8 +4,61 @@ set -euo pipefail
 
 distro="${1:-unknown}"
 jobs="${JOBS:-}"
-export LANG="${LANG:-C.UTF-8}"
-export LC_ALL="${LC_ALL:-C.UTF-8}"
+default_locale="C"
+if command -v locale >/dev/null 2>&1 && locale -a | grep -Eiq '^C[.]utf-?8$'; then
+    default_locale="C.UTF-8"
+fi
+export LANG="${LANG:-${default_locale}}"
+export LC_ALL="${LC_ALL:-${default_locale}}"
+
+record_build_stack() {
+    echo "=== ${distro}: build stack versions ==="
+    cmake --version | head -n 1
+    if command -v pkg-config >/dev/null 2>&1; then
+        for module in Qt6Core KF6CoreAddons KF6Plasma Plasma; do
+            if pkg-config --exists "$module"; then
+                printf '%s %s\n' "$module" "$(pkg-config --modversion "$module")"
+            fi
+        done
+    fi
+    if command -v plasmashell >/dev/null 2>&1; then
+        local plasma_version
+        plasma_version="$( (ulimit -c 0; plasmashell --version) 2>/dev/null )" || plasma_version=""
+        if [[ -n "$plasma_version" ]]; then
+            printf '%s\n' "$plasma_version"
+        else
+            echo "Plasma runtime version unavailable in headless verification image"
+        fi
+    fi
+}
+
+verify_debian13_build_stack() {
+    local package minimum version
+    local requirements=(
+        "cmake:3.31.6"
+        "qt6-base-dev:6.8.2"
+        "libkf6coreaddons-dev:6.13.0"
+        "libplasma-dev:6.3.5"
+        "plasma-workspace-dev:6.3.6"
+    )
+
+    echo "=== Debian 13 minimum build stack ==="
+    for requirement in "${requirements[@]}"; do
+        package="${requirement%%:*}"
+        minimum="${requirement#*:}"
+        version="$(dpkg-query --show --showformat='${Version}' "$package")"
+        printf '  %s %s (minimum %s)\n' "$package" "$version" "$minimum"
+        if ! dpkg --compare-versions "$version" ge "$minimum"; then
+            echo "${package} ${version} is below the Debian 13 supported minimum ${minimum}" >&2
+            return 1
+        fi
+    done
+}
+
+record_build_stack
+if [[ "$distro" == "debian13" ]]; then
+    verify_debian13_build_stack
+fi
 
 install_with_optional_jobs() {
     local mode="$1"

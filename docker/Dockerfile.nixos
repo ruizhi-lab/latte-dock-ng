@@ -1,7 +1,10 @@
-FROM nixos/nix:latest
+ARG BASE_IMAGE=nixos/nix
+FROM ${BASE_IMAGE}:latest
+
+ARG NIXPKGS_CHANNEL_URL=https://nixos.org/channels/nixos-unstable
 
 # Point at nixos-unstable explicitly and refresh it, rather than trusting
 # whatever channel happens to be bundled with the base image. Matches the
 # nixpkgs branch pinned by this repo's own flake.nix.
-RUN nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs && \
+RUN nix-channel --add "${NIXPKGS_CHANNEL_URL}" nixpkgs && \
     nix-channel --update

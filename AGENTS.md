@@ -22,6 +22,13 @@ describe planned work, not completed capabilities or permission to commit/push.
 The rules below are always in effect. Consult the later knowledge-base sections
 when working on releases, compatibility problems or known runtime behavior.
 
+Local container builds and verification runs should prefer China-hosted Docker
+image mirrors and China-hosted package/Nix cache mirrors when available. Keep
+these as local Compose build arguments or runtime environment overrides, with
+upstream defaults in Dockerfiles so GitHub workflows continue using their
+configured upstream sources. Do not change GitHub workflow mirror settings as
+part of local mirror maintenance.
+
 ## User Rules (always apply)
 
 1. **Main branch commit/push protection** — On `main`, never commit or push

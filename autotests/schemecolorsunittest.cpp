@@ -8,7 +8,7 @@
 #include "importer.h"
 
 #include <KConfigGroup>
-#include <KConfigGui/kconfiggui.h>
+#include <KConfigGui>
 #include <KSharedConfig>
 
 #include <QDir>

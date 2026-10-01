@@ -1,6 +1,7 @@
-FROM mageia:10
+ARG BASE_IMAGE=mageia
+FROM ${BASE_IMAGE}:10
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
       sed -i 's|^mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/*.repo && \

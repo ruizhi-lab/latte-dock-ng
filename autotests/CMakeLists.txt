@@ -941,6 +941,10 @@ add_executable(visibilitylogictest EXCLUDE_FROM_ALL ${visibilitylogictest_SRCS})
 target_link_libraries(visibilitylogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
 latte_add_test(visibilitylogictest)
 
+add_executable(blockhidingeventstest EXCLUDE_FROM_ALL blockhidingeventstest.cpp)
+target_link_libraries(blockhidingeventstest Qt6::Core Qt6::Test)
+latte_add_test(blockhidingeventstest)
+
 set(storagelogictest_SRCS storagelogictest.cpp)
 add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
 target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data)
@@ -972,6 +976,12 @@ target_link_libraries(autostartlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(autostartlogictest)
 
 find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
+set(LATTE_DBUS_SESSION_CONFIG "" CACHE FILEPATH
+    "Optional D-Bus session config used by tests with a private bus")
+set(_latte_dbus_session_args)
+if (LATTE_DBUS_SESSION_CONFIG)
+    list(APPEND _latte_dbus_session_args "--config-file=${LATTE_DBUS_SESSION_CONFIG}")
+endif()
 add_executable(windowviewbackendtest EXCLUDE_FROM_ALL
     windowviewbackendtest.cpp
     ../plasmoid/plugin/windowviewbackend.cpp
@@ -980,7 +990,7 @@ add_executable(windowviewbackendtest EXCLUDE_FROM_ALL
 target_link_libraries(windowviewbackendtest Qt6::Core Qt6::DBus Qt6::Qml Qt6::Test)
 # Keep the fake KWin service off the real desktop's session bus.
 add_test(NAME windowviewbackendtest
-    COMMAND ${DBUS_RUN_SESSION_EXECUTABLE} -- ${CMAKE_COMMAND} -E env
+    COMMAND ${DBUS_RUN_SESSION_EXECUTABLE} ${_latte_dbus_session_args} -- ${CMAKE_COMMAND} -E env
         LATTE_PRIVATE_TEST_BUS=1 $<TARGET_FILE:windowviewbackendtest>)
 set_property(TEST windowviewbackendtest PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
 list(APPEND latte_autotest_targets windowviewbackendtest)
@@ -999,3 +1009,34 @@ endforeach()
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )
+
+# Load the application-facing plugin from its real symbol-exporting executable.
+# A standalone QML test executable cannot validate private.app's host contract.
+add_test(NAME privateapphostsmoketest
+    COMMAND ${CMAKE_COMMAND} -E env
+        LATTE_PRIVATE_APP_HOST_SMOKE=1
+        LATTE_DISABLE_USER_LOCAL_QML_IMPORTS=1
+        QT_QPA_PLATFORM=offscreen
+        QT_QUICK_BACKEND=software
+        $<TARGET_FILE:latte-dock-ng>
+)
+set_property(TEST privateapphostsmoketest PROPERTY TIMEOUT 30)
+if(LATTE_ENABLE_ASAN_UBSAN)
+    # The private.app plugin and its exporting host intentionally compile the
+    # same Interfaces QML meta-object from interfaces.cpp. ASan sees those
+    # DSO copies as an ODR violation during dlopen; disable only that ASan
+    # subcheck for this host smoke while retaining address, leak and UB checks.
+    set_property(TEST privateapphostsmoketest APPEND PROPERTY ENVIRONMENT
+        "ASAN_OPTIONS=detect_odr_violation=0")
+endif()
+
+# This parser test exercises the standalone baseline tool and its JSON/text
+# fixtures; it does not need another compiled QtTest executable.
+find_package(Python3 3.7 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+    add_test(NAME qmllintbaselinetest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_baseline.py)
+    set_property(TEST qmllintbaselinetest PROPERTY TIMEOUT 30)
+else()
+    message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
+endif()

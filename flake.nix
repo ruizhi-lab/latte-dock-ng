@@ -11,6 +11,109 @@
         let pkgs = nixpkgs.legacyPackages.${system};
         in { default = import ./default.nix { inherit pkgs; }; });
 
+      checks = forAllSystems (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          package = import ./default.nix { inherit pkgs; };
+          testInputs = (package.buildInputs or [ ]) ++ [
+            pkgs.kdePackages.breeze-icons
+            pkgs.fontconfig
+            pkgs.dejavu_fonts
+            pkgs.qt6.qtsvg
+          ];
+          runtimeTestInputs = map
+            (input: pkgs.lib.getOutput "out" (input.unwrapped or input))
+            (package.passthru.runtimeInputs ++ [
+              pkgs.kdePackages.breeze-icons
+              pkgs.fontconfig
+              pkgs.dejavu_fonts
+              pkgs.qt6.qtsvg
+            ]);
+          qmlImportPath = pkgs.lib.makeSearchPath "lib/qt-6/qml" runtimeTestInputs;
+          qtPluginPath = pkgs.lib.makeSearchPath "lib/qt-6/plugins" runtimeTestInputs;
+        in {
+          autotests = package.overrideAttrs (old: {
+            pname = "${old.pname}-tests";
+            cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+              "-DBUILD_TESTING=ON"
+              "-DLATTE_STRICT_WARNINGS=ON"
+              "-DLATTE_DBUS_SESSION_CONFIG=${pkgs.dbus}/share/dbus-1/session.conf"
+            ];
+            preConfigure = (old.preConfigure or "") + ''
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+              export FONTCONFIG_FILE="${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
+              export XDG_CACHE_HOME="$TMPDIR/font-cache"
+              mkdir -p "$XDG_CACHE_HOME"
+              export QT_QPA_PLATFORM=offscreen
+              export QT_QUICK_BACKEND=software
+            '';
+            buildInputs = testInputs;
+            doCheck = true;
+            buildPhase = ''
+              runHook preBuild
+              cmake --build . --parallel "$NIX_BUILD_CORES" \
+                --target latte-dock-ng latteprivateappplugin latte-autotests
+              runHook postBuild
+            '';
+            checkPhase = ''
+              runHook preCheck
+              # Nix hooks may scope configure-phase exports to that phase; give
+              # CTest the same explicit module and plugin paths as CMake's QML probes.
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+              export FONTCONFIG_FILE="${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
+              export XDG_CACHE_HOME="$TMPDIR/font-cache"
+              mkdir -p "$XDG_CACHE_HOME"
+              export QT_QPA_PLATFORM=offscreen
+              export QT_QUICK_BACKEND=software
+              export LATTE_TEST_ICON_THEME_PATH="${pkgs.kdePackages.breeze-icons}/share/icons"
+              dbus-run-session --config-file=${pkgs.dbus}/share/dbus-1/session.conf \
+                -- ctest --output-on-failure
+              runHook postCheck
+            '';
+            installPhase = ''
+              mkdir -p "$out"
+            '';
+          });
+        });
+
+      devShells = forAllSystems (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          package = import ./default.nix { inherit pkgs; };
+          runtimeInputs = map
+            (input: pkgs.lib.getOutput "out" (input.unwrapped or input))
+            (package.passthru.runtimeInputs ++ [
+              pkgs.kdePackages.breeze-icons
+              pkgs.fontconfig
+              pkgs.dejavu_fonts
+              pkgs.qt6.qtsvg
+            ]);
+          qmlImportPath = pkgs.lib.makeSearchPath "lib/qt-6/qml" runtimeInputs;
+          qtPluginPath = pkgs.lib.makeSearchPath "lib/qt-6/plugins" runtimeInputs;
+        in {
+          default = pkgs.mkShell {
+            inputsFrom = [ package ];
+            packages = [
+              pkgs.clang
+              pkgs.dbus
+              pkgs.gnumake
+              pkgs.python3
+            ];
+            shellHook = ''
+              export QML2_IMPORT_PATH="${qmlImportPath}''${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+              export QML_IMPORT_PATH="$QML2_IMPORT_PATH"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${qmlImportPath}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${qtPluginPath}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+            '';
+          };
+        });
+
       overlays.default = final: prev: {
         latte-dock-ng = import ./default.nix { pkgs = final; };
       };

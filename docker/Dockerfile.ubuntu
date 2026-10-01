@@ -1,25 +1,27 @@
-FROM ubuntu:26.04
+ARG BASE_IMAGE=ubuntu
+FROM ${BASE_IMAGE}:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
-      sed -i 's|^deb https\?://[^/]*/ubuntu|deb https://mirrors.ustc.edu.cn/ubuntu|g' /etc/apt/sources.list.d/*.sources 2>/dev/null || \
-      sed -i 's|//ports.ubuntu.com|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list 2>/dev/null || \
-      sed -i 's|//archive.ubuntu.com|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list ; \
-      sed -i 's|//security.ubuntu.com|//mirrors.ustc.edu.cn|g' /etc/apt/sources.list ; \
+      find /etc/apt -maxdepth 2 -type f \( -name '*.sources' -o -name sources.list \) \
+        -exec sed -i -E \
+          's#https?://(archive|security|ports).ubuntu.com/ubuntu(-ports)?#http://mirrors.ustc.edu.cn/ubuntu#g' \
+          {} + ; \
     fi
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       cmake extra-cmake-modules \
-      qt6-base-dev qt6-base-dev-tools qt6-declarative-dev qt6-wayland-dev \
+      qt6-base-dev qt6-base-dev-tools qt6-declarative-dev qt6-declarative-private-dev qt6-wayland-dev \
       libplasma-dev libplasmaactivities-dev libplasmaactivitiesstats-dev plasma-workspace-dev kwayland-dev \
       libkf6config-dev libkf6coreaddons-dev libkf6guiaddons-dev libkf6dbusaddons-dev \
       libkf6declarative-dev libkf6itemmodels-dev libkf6xmlgui-dev libkf6iconthemes-dev \
       libkf6kio-dev libkf6i18n-dev libkf6notifications-dev \
       libkf6newstuff-dev libkf6archive-dev libkf6globalaccel-dev \
       libkf6crash-dev libkf6windowsystem-dev libkf6package-dev libkf6svg-dev \
+      breeze-icon-theme libqt6svg6 qt6-svg-plugins \
       plasma-wayland-protocols libwayland-dev \
       liblayershellqtinterface-dev \
       gettext build-essential git pkgconf file && \

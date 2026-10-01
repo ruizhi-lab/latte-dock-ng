@@ -18,6 +18,7 @@ class CoreUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void extrasFormatRectsAndEnums();
     void extrasCompareFloatingPointValues();
     void toolsCalculateColorBrightnessAndLumina();
@@ -29,6 +30,17 @@ private Q_SLOTS:
     void quickWindowSystemReportsWaylandCompositing();
     void singletonsCreateExpectedObjects();
 };
+
+void CoreUnitTest::initTestCase()
+{
+    // Offscreen Qt may not inherit the active desktop's icon paths. Allow
+    // isolated package builds to provide their Breeze icon directory while
+    // retaining the conventional system path for distro builds.
+    const QString iconThemePath = qEnvironmentVariable(
+        "LATTE_TEST_ICON_THEME_PATH", QStringLiteral("/usr/share/icons"));
+    QIcon::setThemeSearchPaths({iconThemePath});
+    QIcon::setThemeName(QStringLiteral("breeze"));
+}
 
 void CoreUnitTest::extrasFormatRectsAndEnums()
 {

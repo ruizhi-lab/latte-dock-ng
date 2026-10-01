@@ -1,6 +1,7 @@
-FROM archlinux:latest
+ARG BASE_IMAGE=archlinux
+FROM ${BASE_IMAGE}:latest
 
-ARG USE_MIRRORS=true
+ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
       echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist ; \

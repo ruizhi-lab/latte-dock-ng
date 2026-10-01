@@ -1,0 +1,4 @@
+Checks: '-*,bugprone-use-after-move,bugprone-unused-return-value'
+WarningsAsErrors: '*'
+HeaderFilterRegex: '^.*/app/data/.*$'
+FormatStyle: file

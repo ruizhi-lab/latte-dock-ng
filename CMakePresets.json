@@ -1,0 +1,175 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "gcc-debug",
+      "displayName": "GCC Debug",
+      "description": "GCC Debug build with tests and compile commands",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/modernization/gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON",
+        "LATTE_STRICT_WARNINGS": "ON"
+      }
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "GCC Release",
+      "description": "GCC Release build with tests and compile commands",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/modernization/gcc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON",
+        "LATTE_STRICT_WARNINGS": "ON"
+      }
+    },
+    {
+      "name": "clang-debug",
+      "displayName": "Clang Debug",
+      "description": "Clang Debug build with tests and compile commands",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/modernization/clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON",
+        "LATTE_STRICT_WARNINGS": "ON"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Clang Release",
+      "description": "Clang Release build with tests and compile commands",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/modernization/clang-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON",
+        "LATTE_STRICT_WARNINGS": "ON"
+      }
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "displayName": "GCC AddressSanitizer and UndefinedBehaviorSanitizer",
+      "inherits": "gcc-debug",
+      "binaryDir": "${sourceDir}/build/modernization/gcc-asan-ubsan",
+      "cacheVariables": {
+        "LATTE_ENABLE_ASAN_UBSAN": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug",
+      "jobs": 8,
+      "targets": ["all", "latte-autotests"]
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release",
+      "jobs": 8,
+      "targets": ["all", "latte-autotests"]
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
+      "jobs": 8,
+      "targets": ["all", "latte-autotests"]
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release",
+      "jobs": 8,
+      "targets": ["all", "latte-autotests"]
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "configurePreset": "gcc-asan-ubsan",
+      "jobs": 8,
+      "targets": [
+        "latte-dock-ng",
+        "latteprivateappplugin",
+        "blockhidingeventstest",
+        "dataunittest",
+        "coreunittest",
+        "previewprocessunittest"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "gcc-asan-ubsan",
+      "configurePreset": "gcc-asan-ubsan",
+      "filter": {
+        "include": {
+          "name": "^(blockhidingeventstest|dataunittest|coreunittest|previewprocessunittest|privateapphostsmoketest)$"
+        }
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    }
+  ]
+}

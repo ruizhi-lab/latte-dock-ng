@@ -3,20 +3,6 @@
 let
   inherit (pkgs) lib stdenv cmake wayland;
   inherit (pkgs) kdePackages;
-in
-stdenv.mkDerivation {
-  pname = "latte-dock-ng";
-  version = "1.2.51";
-
-  src = lib.cleanSource ./.;
-
-  nativeBuildInputs = [
-    cmake
-    pkgs.dbus
-    kdePackages.extra-cmake-modules
-    kdePackages.wrapQtAppsHook
-  ];
-
   buildInputs = [
     kdePackages.qtbase
     kdePackages.qtdeclarative
@@ -51,6 +37,23 @@ stdenv.mkDerivation {
     kdePackages.kwindowsystem
     kdePackages.kxmlgui
   ];
+in
+stdenv.mkDerivation {
+  pname = "latte-dock-ng";
+  version = "1.2.51";
+
+  src = lib.cleanSource ./.;
+
+  nativeBuildInputs = [
+    cmake
+    pkgs.dbus
+    kdePackages.extra-cmake-modules
+    kdePackages.wrapQtAppsHook
+  ];
+
+  inherit buildInputs;
+
+  passthru.runtimeInputs = buildInputs;
 
   meta = with lib; {
     description = "Dock-style app launcher based on Plasma frameworks (KDE Plasma 6 fork)";

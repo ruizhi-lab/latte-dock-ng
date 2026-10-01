@@ -14,6 +14,9 @@
 
 // C++
 #include <memory>
+#ifndef QT_NO_DEBUG
+#include <atomic>
+#endif
 
 // Qt
 #include <QQuickItem>
@@ -23,6 +26,8 @@
 
 // Plasma
 #include <KSvg/Svg>
+
+class DeclarativeCoreUnitTest;
 
 // this file is based on PlasmaCore::IconItem class, thanks to KDE
 namespace Latte {
@@ -171,6 +176,16 @@ private:
     void setGlowColor(QColor glow);
 
 private:
+    friend class ::DeclarativeCoreUnitTest;
+
+#ifndef QT_NO_DEBUG
+    // Debug-only counters support opt-in raster/scene-graph traces. They stay
+    // dormant unless the latte.iconitem category is explicitly enabled, and
+    // source names are never logged because they may contain user paths.
+    std::atomic<quint64> m_traceSourceGeneration{0};
+    std::atomic<quint64> m_traceInvalidationGeneration{0};
+#endif
+
     bool m_active;
     bool m_providesColors{false};
     bool m_smooth;

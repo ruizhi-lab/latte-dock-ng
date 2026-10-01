@@ -43,6 +43,7 @@ private:
     void fail();
     void onFinished();
     void discardProcess();
+    void shutdownProcess();
     bool m_enabled{false};
     // Cleared at the start of every hover: a single helper failure hides the
     // preview for the current hover but must not permanently disable the

@@ -33,6 +33,60 @@ Test executables are intentionally marked `EXCLUDE_FROM_ALL` so normal applicati
 
 Both GCC and Clang builds must remain error-free. Use separate build directories so compiler configuration and generated files do not contaminate each other:
 
+The shared schema-v2 presets provide four equivalent configurations. They keep
+their compile databases in separate directories and build both the application
+and `latte-autotests` with eight jobs. `.clangd` continues to select the
+existing `build` database; selecting a preset database is a local editor choice
+and should not replace or symlink the shared default.
+
+```bash
+cmake --list-presets
+cmake --preset gcc-debug
+cmake --build --preset gcc-debug
+ctest --preset gcc-debug
+```
+
+Use `gcc-release`, `clang-debug` or `clang-release` to select the other
+compiler/configuration. `CMakeUserPresets.json` is intentionally ignored for
+machine-local choices. The project presets require CMake 3.20 schema-v2
+support. Keep CMake 3.20 as the source compatibility floor. The Debian 13.7
+container separately verifies its packaged minimum stack: CMake 3.31.6, Qt
+6.8.2, KDE Frameworks 6.13 and Plasma 6.3.6. Gentoo, Arch and Fedora checks
+record their current stable versions as forward-compatibility evidence.
+
+The initial clang-tidy gate selects two bug-prone checks for the small
+`app/data/errordata.cpp` component. Run it from a Clang Debug compile database;
+the disposable fixture confirms an ignored `std::string::empty()` result is
+reported as an error.
+
+```bash
+python3 scripts/test-clang-tidy.py --build-dir build/modernization/clang-debug
+```
+
+## Deep QML lint and baseline review
+
+The syntax-only check and the build-aware deep check serve different purposes.
+The latter records raw JSON chunks, stderr, complete file coverage and process
+exit codes under the selected build directory. It checks each generated Latte
+`qmldir` against its declared plugin library and typeinfo file, and compares
+diagnostics with the reviewed baseline when fingerprints match.
+
+```bash
+bash scripts/qmllint.sh
+bash scripts/qmllint-deep.sh build/modernization/gcc-debug
+python3 scripts/qmllint-baseline.py compare \
+    --baseline docs/qmllint-baseline.json \
+    --current build/modernization/gcc-debug/qmllint-baseline/current.json
+```
+
+The full category inventory, dynamic-interface exceptions, promotion criteria
+and review workflow are in [qmllint-backlog-plan.md](qmllint-backlog-plan.md).
+Do not copy a current report over the baseline to clear a failed comparison.
+Inspect the environment fingerprint and additions/removals first. Standalone
+lint cannot validate `org.kde.latte.private.app`, whose plugin resolves symbols
+from the Latte application host; its metadata and build artifacts are checked
+separately, and host behavior requires an application-level smoke/retest.
+
 ```bash
 cmake -S . -B build-autotests-gcc -DBUILD_TESTING=ON
 cmake --build build-autotests-gcc --target latte-autotests --parallel 8
@@ -65,6 +119,216 @@ cycling. Restore the effect immediately; the next click should present again
 without restarting Latte. The backend test covers unavailable interfaces on a
 private bus, while the QML tests protect click routing and phantom filtering.
 Hover-thumbnail previews remain disabled and are outside this test's scope.
+
+## Remote VM GUI Testing
+
+An SSH shell does not inherit the active Plasma GUI session. Launching Latte
+from that shell without the session's display and D-Bus variables can make the
+isolated preview helper fail to connect to the display; the helper failure
+fallback then disables previews after repeated attempts. Read the environment
+from the active Plasma user service before a remote GUI test:
+
+```bash
+systemctl --user show-environment
+```
+
+Pass through the reported `DISPLAY`, `WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`,
+`XDG_RUNTIME_DIR`, `DBUS_SESSION_BUS_ADDRESS` and, when present, `XAUTHORITY`.
+For a development Debug install, also source the generated
+`~/.config/latte-dock-ng/dev-env.sh` in the launch script. Do not construct
+`QML_IMPORT_PATH`, `QML2_IMPORT_PATH` or `XDG_DATA_DIRS` by hand: the user
+installer selects the QML and plugin roots for its install prefix. Verify the
+launch log and the user-mode executable path before judging shell behavior.
+
+Use the standard per-user install path for both Debug retests and Release
+measurements. Debug uses `bash install.sh --user Debug`; Release measurement
+builds can use `bash install.sh --user Release --jobs 8 --no-clean`. Launch
+`~/.local/bin/latte-dock-ng` from the captured Plasma session. The Debug
+developer environment is generated for local module overrides; Release's
+installed binary detects its own QML prefix. Do not launch a separate `/tmp`
+prefix for compositor integration tests: Fedora 44 KWin denied the
+PlasmaWindowManagement protocol to a directly launched `/tmp` binary even
+though the process started, which invalidated that run. KWin matches privileged
+Plasma interfaces against the first executable token in the registered desktop
+entry; the temporary prefix did not match it.
+
+For detached SSH launches, save the session variables in a small launcher,
+source `dev-env.sh` only for Debug, and use `setsid -f nohup` so the VM process
+survives the command session. Start with a fresh log and inspect it after the
+test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
+latte-dock-ng` is safe for identifying the Dock. Never use `pkill -f` in a
+command that also contains `latte-dock-ng`.
+
+Import the Plasma session from the user systemd manager before starting either
+the Dock or GUI test tools over SSH. On the Fedora 44 VM, sourcing
+`~/.config/latte-dock-ng/dev-env.sh` alone does not restore Wayland variables.
+This launcher pattern imports only the active session values and then applies
+the Debug overrides:
+
+```bash
+while IFS= read -r line; do export "$line"; done \
+  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY)=')
+source ~/.config/latte-dock-ng/dev-env.sh
+exec ~/.local/bin/latte-dock-ng --replace --debug --log-file /tmp/latte-ng.log
+```
+
+For repeatable pointer injection, set `YDOTOOL_SOCKET` to the temporary
+daemon's socket and pass relative deltas after `--`, for example
+`ydotool mousemove -- 200 100`. Fedora's installed `ydotool` does not accept a
+`--socket-path` option on the client. Recalibrate with a pointer-included
+screenshot after each move because acceleration makes the resulting pixel
+position differ from the requested delta. A matching KWin D-Bus method call
+proves that Latte requested highlighting, but only compositor output or a
+visible screenshot proves that the window effect was rendered.
+
+On Debian 13 Wayland, `xdotool getmouselocation` reported XWayland coordinates
+that did not move the compositor pointer; at the VM's 1920x1080 capture size,
+the XWayland coordinate space was scaled and clamped, so deriving a task-icon
+target from that readback was misleading. Debian Trixie does not provide the
+`ydotool` package in the configured main mirror. For an authorized disposable
+VM test, `python3-evdev` can create a temporary relative pointer through
+`/dev/uinput`; that device is root-only by default. Let udev create its
+`/dev/input/eventN` node, grant the logged-in test user a temporary ACL on that
+specific node before sending movement, and confirm the resulting cursor and
+hover state with a pointer-included screenshot. Relative input is accelerated,
+so repeat small calibrated moves instead of trusting arithmetic deltas. Stop
+the temporary device process after the test; the event node disappears with
+it. Install test utilities from the configured local China mirror.
+
+Verify the running Dock's environment through `/proc/<pid>/environ` when a
+preview helper or GUI test tool cannot connect to the display. A Dock launched
+from a bare SSH shell may report `XDG_SESSION_TYPE=tty` and lack both
+`DISPLAY` and `WAYLAND_DISPLAY`; in this state the isolated helper aborts during
+Qt platform initialization and repeated failures intentionally disable preview
+for the rest of that Dock session. Import the Plasma user-service variables
+shown above and restart the Dock to reset this fail-closed session state. The
+Dock, preview helper, Spectacle and other GUI subprocesses all need the active
+Plasma session environment. Do not diagnose a helper startup failure from a
+launch that lacks it as a Latte preview regression.
+
+Wayland pointer injection needs a different path from an SSH X11 command.
+Fedora 44's `ydotoold` was inactive and `/dev/uinput` was root-only. A
+temporary daemon can be started with a user-owned socket, then used for
+relative pointer movement:
+
+```bash
+vm_uid="$(id -u)"
+vm_gid="$(id -g)"
+vm_socket="/run/user/${vm_uid}/ydotool-latte-test.sock"
+sudo -n setsid -f nohup /usr/bin/ydotoold \
+  --socket-path="$vm_socket" --socket-perm=0660 \
+  --socket-own="${vm_uid}:${vm_gid}" >/tmp/ydotoold-latte-test.log 2>&1
+until test -S "$vm_socket"; do sleep 1; done
+sleep 2  # Let udev and the compositor discover the virtual input device.
+export YDOTOOL_SOCKET="$vm_socket"
+ydotool mousemove -x 10 -y 0
+```
+
+Fedora 44 `ydotool` 1.0.4 produced matching `libinput debug-events` pointer
+deltas for relative moves. In that environment, `mousemove --absolute` also
+appeared as a relative event, and `xdotool getmouselocation` did not reflect
+the injected movement during the Wayland check. Do not treat an exit code or
+XWayland cursor query as proof that a Latte hover action fired; verify the
+actual preview/highlight behavior or helper lifecycle. `mousemove -x/-y`
+accepts relative deltas, so an absolute target still needs a trustworthy
+starting coordinate. Stop only the temporary `/usr/bin/ydotoold` process whose
+arguments contain this test's custom socket path, then remove that socket. Do
+not leave a privileged input daemon running between tests.
+
+Do not send an unqualified Enter key while the Latte Docks editor is open.
+Fedora 44's ydotool accepts explicit `keycode:pressed` values. The command
+`ydotool key 28` omitted an explicit release and left Enter held; in the Docks
+editor this repeatedly activated the New/default-dock action and generated
+hundreds of unsaved additions. Send a complete press/release pair instead,
+such as `ydotool key 28:1 28:0`, and include matching release events for every
+key in a sequence. If a test command fails mid-sequence, release all held keys
+before continuing. The recovery was to stop the temporary input daemon,
+terminate the test Dock to discard the in-memory edits, verify the saved layout
+against its pre-test checksum, then relaunch the user-mode Debug binary with
+the captured Plasma session environment. The saved layout remained
+byte-for-byte unchanged. Future automation must target one identified control
+and assert exactly one state change before proceeding; never use a key press
+without its explicit release for add/remove/apply controls. A later harmless
+Escape probe using the explicit press/release pair kept both the Dock PID and
+saved-layout checksum unchanged; its shell cleanup trap failed, so the daemon
+was stopped by exact PID and socket absence was checked separately.
+
+A Fedora hover sweep with this input harness did not start the preview helper,
+even though `libinput` observed the injected motion. The task icon had not been
+identified, so do not infer either a working or broken Latte hover path from a
+pointer command alone. Establish a known pointer origin and task-icon target,
+then verify the helper process or visible hover effect before collecting a
+hover performance sample. GUI utilities such as Spectacle also need the
+captured Plasma session variables; an SSH-launched Spectacle help probe without
+them aborted instead of producing a diagnostic.
+
+When visual inspection of the VM is authorized, a screenshot with the pointer
+included can establish the current pointer origin and distinguish a launcher
+from a running task icon. Start Spectacle with the captured Plasma session
+environment, for example:
+
+```bash
+while IFS= read -r line; do export "$line"; done \
+  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY)=')
+spectacle --background --nonotify --pointer --output /tmp/latte-vm-hover.png
+```
+
+Transfer the temporary image only when authorized and remove it after
+inspection. Re-capture after relative pointer moves: observed `ydotool` motion
+did not always land at the arithmetic position inferred from the requested
+deltas. The captured cursor over an icon is useful targeting evidence, but
+preview/helper or visible highlight evidence is still required to confirm the
+hover action.
+
+Relative `ydotool` movement can be affected by pointer acceleration, so the
+requested delta does not reliably predict the final pixel. Take and inspect a
+pointer-included screenshot after each calibration move instead of accumulating
+assumed coordinates. On a fresh Fedora Release Dock start, the first entry over
+a task sometimes showed the zoom effect without starting the preview helper;
+move away and re-enter the identified running task icon, then wait for and
+verify the helper in the process list before collecting a sample. Exclude a
+window unless both Dock and helper identities remain stable throughout it.
+
+For Fedora 44's 1920x1080 VM, passing pixel coordinates to
+`ydotool mousemove --absolute -x/-y` did not target the corresponding pixel;
+the screenshot cursor remained at the upper-left corner. A large 0–65535-style
+coordinate attempt and a relative move from an unknown origin also failed to
+establish a target. Do not guess the absolute-coordinate scale or use a
+successful command exit as input evidence. Capture the pointer before and
+after each calibration move and verify its visible position before a hover
+test.
+
+On Fedora 44, XWayland mouse control through SSH works only when the active
+session's Xauthority file is supplied; find its path from the running
+Xwayland command line without displaying the file contents. A first
+`xdotool` input request can open a KWin remote-control prompt. The one-time
+approval is session-scoped; “Always allow” is intentionally left unchecked by
+default. For a dedicated disposable Fedora test VM where unattended pointer
+automation is required, KWin 6.7.5 supports the persistent
+`[Xwayland] XwaylandEisNoPrompt=true` option in `~/.config/kwinrc` (also
+exposed in System Settings under Legacy X11 App Support). This suppresses the
+prompt for XWayland applications generally, not just xdotool, so enable it
+only in that test VM. Start a fresh Plasma session after changing it, then
+verify a new xdotool process can move the pointer without a prompt. In either
+mode, pass the active session's `DISPLAY` and `XAUTHORITY` to `xdotool`, move
+to one visible control, and verify the pointer in a fresh screenshot before
+clicking. Do not print, copy into the repository, or retain Xauthority cookie
+contents; stop any temporary input daemon after the test.
+
+The Layout Editor's Docks table can apply a new edge and move the visible Dock,
+but that UI change does not prove whether the existing QML root received
+`locationChanged` or was recreated. For P3a, use the Dock's own Edit Dock panel
+for a direct transition, and instrument `refreshTaskLayoutPass()` with the
+compiled QML cache handled explicitly. A missing marker is inconclusive:
+verify that the edited QML was loaded before treating it as evidence about the
+handler.
+
+Temporary QML source probes can be masked by the compiled cache:
+the Dock clears `~/.cache/lattedock/qmlcache` only when its
+`VERSION-QMLCACHEREVISION` marker changes. To test an edited installed QML file,
+preserve the cache reversibly, force a fresh compile in an isolated test, then
+restore both the source and cache before the ordinary Dock launch. A missing
+probe log without this check does not prove that the QML event was not fired.
 
 ## Runtime Retest Workflow
 
@@ -143,3 +407,52 @@ python3 autotests/coverageestimate.py
 ```
 
 Report this estimate after each test commit. It is not a line or branch coverage metric, but it is useful for tracking which production compilation units now have direct regression coverage.
+# Sanitizer checks
+
+The opt-in `gcc-asan-ubsan` preset uses a separate build directory and applies
+AddressSanitizer and UndefinedBehaviorSanitizer to first-party C++ targets,
+including project plugins and helper binaries. It leaves normal Debug/Release
+and install presets unchanged. The focused preset builds the application host
+plus `dataunittest`, `coreunittest`, and `previewprocessunittest`; it runs those
+tests and the offscreen `privateapphostsmoketest`. This compiles and links the
+application plugins under sanitizers, and instruments the fake preview helper
+through the test target dependency without changing the production process
+boundary. The private.app host smoke disables only ASan's ODR detector for
+the `Interfaces` meta-object intentionally compiled into both host and plugin;
+address, leak and undefined-behavior checks stay enabled.
+
+Run the focused local check with:
+
+```bash
+cmake --preset gcc-asan-ubsan
+cmake --build --preset gcc-asan-ubsan
+ctest --preset gcc-asan-ubsan
+python3 scripts/test-sanitizers.py --compiler g++
+```
+
+The fixture runner deliberately triggers a heap buffer overflow and signed
+integer overflow and requires the corresponding sanitizer diagnostics. Do not
+install or launch this instrumented build as the user-mode dock. Record any
+third-party findings with the exact target and stack before considering a
+narrow suppression.
+
+# Nix development and tests
+
+`nix develop` exposes the release derivation's build dependencies plus GCC,
+Clang, Make, D-Bus and Python for local verification. Its preset build remains
+an ordinary Debug/Release build. `nix flake check --print-build-logs` builds a
+separate `checks.x86_64-linux.autotests` derivation, builds the application
+host and test executables, then runs CTest with software Qt rendering and a
+private session bus. `nix build .#default --no-link --print-build-logs`
+validates the release package independently; the check-only derivation is not
+installed into the release output.
+
+The main commands are:
+
+```bash
+nix flake check --print-build-logs
+nix build .#default --no-link --print-build-logs
+nix develop
+cmake --preset gcc-debug
+cmake --build --preset gcc-debug
+```

@@ -140,6 +140,7 @@ public:
 Q_SIGNALS:
     void activeWindowChanged(WindowId wid);
     void windowChanged(WindowId winfo);
+    void windowTitleChanged(WindowId wid);
     void windowAdded(WindowId wid);
     void windowRemoved(WindowId wid);
     void currentDesktopChanged();

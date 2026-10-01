@@ -1215,11 +1215,22 @@ void WaylandInterface::updateWindowGeometry()
     updateWindow();
 }
 
+void WaylandInterface::updateWindowTitle()
+{
+    //! A title does not affect window/view intersection. Keep its metadata
+    //! notification distinct so the tracker can update consumers without
+    //! restarting a hint scan unless another window field changed too.
+    PlasmaWindow *pW = qobject_cast<PlasmaWindow *>(QObject::sender());
+
+    if (pW && isValidWindow(pW)) {
+        Q_EMIT windowTitleChanged(pW->uuid());
+    }
+}
+
 void WaylandInterface::updateWindowCache()
 {
-    //! Called for cosmetic changes (title, skipTaskbar, skipSwitcher,
-    //! onAllDesktops, parentWindow). These do NOT affect view intersection
-    //! or visibility, so we skip the expensive O(n_windows×n_views) scan.
+    //! Keep eligibility, desktop and parent changes on the general notification
+    //! path; unlike title-only changes, they can alter task and view membership.
     PlasmaWindow *pW = qobject_cast<PlasmaWindow *>(QObject::sender());
 
     if (pW && isValidWindow(pW)) {
@@ -1257,9 +1268,9 @@ void WaylandInterface::trackWindow(KWayland::Client::PlasmaWindow *w)
     connect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindowGeometry);
     connect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindowGeometry);
 
-    //! Cosmetic signals: these do not affect view intersection calculations.
-    //! Only update cached info — skip the expensive O(n_windows×n_views) scan.
-    connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache);
+    //! Title-only changes use the metadata path; state changes retain the full
+    //! tracker notification because they can alter task and view membership.
+    connect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowTitle);
     connect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindowCache);
     connect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindowCache);
     connect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindowCache);

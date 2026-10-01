@@ -318,29 +318,10 @@ PlasmoidItem {
 
     //END Latte Dock Panel properties
 
-    // Set by containment directly via item.applet.containmentEditing = editMode
-    // in main.qml onEditModeChanged. Avoids QML binding notification issues.
+    // The containment writes this property from its editMode handler. Its QML
+    // change notification feeds the authoritative edit-mode binding below;
+    // the containment keeps its own compatibility poll for Plasma's source state.
     property bool containmentEditing: false
-    property bool containmentEditingPolled: false
-
-    // Keep the compatibility poll in one place instead of creating one
-    // repeating timer per task delegate.  The containment writes directly to
-    // containmentEditing, so this also covers environments that do not emit a
-    // property notification for that assignment.
-    Timer {
-        id: containmentEditingPoller
-        interval: 200
-        repeat: true
-        running: tasksModel.count > 0
-        onRunningChanged: {
-            if (running) {
-                root.containmentEditingPolled = root.containmentEditing;
-            }
-        }
-        onTriggered: root.containmentEditingPolled = root.containmentEditing
-    }
-
-    onContainmentEditingChanged: containmentEditingPolled = containmentEditing
 
     readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentEditing
 
