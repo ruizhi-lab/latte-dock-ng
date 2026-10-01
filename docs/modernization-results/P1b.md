@@ -1,8 +1,8 @@
 # P1b: Title-only fast path
 
-Status: Implementation and title-work target verified; the user reports
-functional acceptance passed. Exact response latency and a measurable
-performance benefit remain unverified.
+Status: Deferred for long-term observation. Implementation and title-work
+target are verified; the user reports functional acceptance passed. Exact
+response latency and a measurable performance benefit remain unverified.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation base: P1a commit `ec8a504db`.
