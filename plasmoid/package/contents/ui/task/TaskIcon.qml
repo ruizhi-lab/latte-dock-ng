@@ -275,16 +275,13 @@ Item {
                     ]
                 } // progressMask
 
-                // (No audio mask: the audio badge is small and translucent,
-                //  it overlays the icon directly without needing a cutout —
-                //  and the legacy Qt5 mask was anchored to the wrong corner
-                //  anyway, leaving an empty hole opposite the badge.)
+                // The audio badge is small and translucent, so it overlays the
+                // icon directly without needing a separate mask cutout.
             }
 
-            // Replaces a Qt5-era ShaderEffect with hand-written GLSL that
-            // Qt6 RHI cannot compile (would yield "Failed to find shader …").
-            // Equivalent semantics: render iconSourceLayer, but punch holes
-            // wherever maskLayer is opaque so the badges visuals can sit in.
+            // The inverted mask leaves badge regions transparent over the icon;
+            // using Qt Quick's effect keeps shader handling compatible with the
+            // Qt 6 scene graph backends.
             MultiEffect {
                 id: iconOverlay
                 anchors.fill: parent

@@ -81,7 +81,7 @@ is not a durable handoff.
 | Row | Status | Evidence | Next action |
 | --- | --- | --- | --- |
 | A0 | Complete | [Inventory and candidate classification](modernization-results/A0.md) | A1: remove only the verified stale compatibility comments. |
-| A1 | Not started | None | Wait for A0. |
+| A1 | Complete | [Comment-only cleanup](modernization-results/A1.md) | A2: classify each log filter against captured emitters before changing behavior. |
 | A2 | Not started | None | Wait for A0. |
 | A3 | Not started | None | Wait for A0. |
 | A4 | Not started | None | Wait for A0. |
