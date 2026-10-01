@@ -5083,6 +5083,8 @@
   },
   "manifest": {
     "attemptedFiles": [
+      "autotests/qml/tst_combobox_wheel.qml",
+      "autotests/qml/tst_scrollarea_wheel.qml",
       "compat/qml/org/kde/latte/compat/taskmanager/Backend.qml",
       "compat/qml/org/kde/latte/compat/taskmanager/SmartLauncherItem.qml",
       "containment/package/contents/ui/BindingsExternal.qml",
@@ -5322,6 +5324,8 @@
     ],
     "complete": true,
     "fileExitCodes": {
+      "autotests/qml/tst_combobox_wheel.qml": 0,
+      "autotests/qml/tst_scrollarea_wheel.qml": 0,
       "compat/qml/org/kde/latte/compat/taskmanager/Backend.qml": 0,
       "compat/qml/org/kde/latte/compat/taskmanager/SmartLauncherItem.qml": 0,
       "containment/package/contents/ui/BindingsExternal.qml": 0,

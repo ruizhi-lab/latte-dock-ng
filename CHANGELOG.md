@@ -1,3 +1,18 @@
+## [v1.2.54] - 2026-10-02
+
+### Changed
+- Modernize Qt 6 signal parameter syntax and C++20 usage while preserving the
+  existing interaction behavior.
+
+### Fixed
+- Prevent task preview callbacks from using a task delegate after it has been
+  removed or destroyed.
+
+### Tests
+- Add runtime QML coverage for ComboBox and ScrollArea wheel behavior.
+- Validate GCC and Clang builds and autotests, plus Fedora and Debian 13 desktop
+  retests.
+
 ## [v1.2.53] - 2026-10-01
 
 ### Fixed

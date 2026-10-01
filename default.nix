@@ -40,7 +40,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "latte-dock-ng";
-  version = "1.2.53";
+  version = "1.2.54";
 
   src = lib.cleanSource ./.;
 

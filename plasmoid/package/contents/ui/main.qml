@@ -182,7 +182,11 @@ PlasmoidItem {
     // independent. Re-enable only after a runtime responsiveness retest.
     readonly property bool showPreviews: false
     readonly property alias isolatedPreview: isolatedPreviewProcess
-    property Item isolatedPreviewTask: null
+    // TaskItem is a local delegate component rather than a named type in this
+    // root. Keep the selected delegate dynamic so its preview methods and
+    // removal state remain accessible; its teardown handlers clear this
+    // reference before a stale frame callback can reach a destroyed object.
+    property var isolatedPreviewTask: null
     readonly property bool isolatedPreviewsEnabled: isolatedPreview.enabled
         && (hoverAction === LatteTasks.types.PreviewWindows || hoverAction === LatteTasks.types.PreviewAndHighlightWindows)
 
