@@ -4,9 +4,12 @@ The Fedora COPR and openSUSE Build Service (OBS) packages use platform-specific
 RPM specifications. COPR uses [`latte-dock-ng.spec`](../latte-dock-ng.spec)
 from Git SCM with `rpkg`; OBS's [`_service`](../_service) retrieves the release
 tag and extracts [`packaging/obs/latte-dock-ng.spec`](../packaging/obs/latte-dock-ng.spec).
-Both currently target x86_64. Fedora 44 and openSUSE Tumbleweed are the
-supported repository targets; openSUSE Leap is not supported because its
-Plasma version is below the project's minimum.
+All package builds target x86_64. Fedora 44 COPR and openSUSE Tumbleweed OBS
+are the maintained RPM repositories; openSUSE Leap is not supported because
+its Plasma version is below the project's minimum. The release workflow also
+produces a Mageia RPM asset, but there is no maintained Mageia package
+repository; users install that release asset manually. See the
+[`release workflow status`](release-workflow.md) for current validation.
 
 ## Fedora COPR setup (one time)
 
@@ -65,6 +68,10 @@ permission to trigger services for this package. Use its generated webhook URL
 in GitHub under **Settings → Webhooks**, with `application/json` and the
 **Branch or tag creation** event. The workflow definition is in
 `.obs/workflows.yml` and triggers the package services on tag pushes.
+
+Current release automation and validation status, including the pending OBS
+tag-trigger check, is tracked in
+[`release-workflow.md`](release-workflow.md).
 
 ## Installation after the first successful build
 

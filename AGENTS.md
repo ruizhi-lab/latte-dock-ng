@@ -166,20 +166,11 @@ When testing changes to latte-dock-ng, follow this exact workflow:
 
 ## Release Workflow (only on explicit request)
 
-### latte-dock-ng repository
-
-1. Bump `set(VERSION X.Y.Z)` in `CMakeLists.txt` and `version = "X.Y.Z"` in
-   `default.nix`.
-2. Run `nix flake check --print-build-logs`,
-   `nix build .#default --no-link --print-build-logs`, and the required GCC and
-   Clang autotests.
-3. Commit `release: bump version to X.Y.Z`, including the pending changes and
-   `CHANGELOG.md` section.
-4. Create an annotated `vX.Y.Z` tag, then push the commit and tag only with
-   separate explicit user authorization.
-5. After CI creates the artifacts, curate English release notes with a
-   `compare/vPREV...vX.Y.Z` changelog link. Debian trixie packages use the
-   `+deb13u1` revision marker; testing/sid uses plain `-1`.
+Follow [`docs/release-workflow.md`](docs/release-workflow.md) for release
+preparation, package publication, repository availability and current
+validation status. Do not duplicate release-specific platform status here.
+The main-branch commit/push rules above still apply; release tags require their
+own explicit authorization and are not implied by approval to commit or push.
 
 ### Gentoo overlay
 

@@ -20,6 +20,20 @@ Installation
 > installation, so a package that only builds but cannot be installed is rejected.
 > Gentoo is best verified on a native Gentoo host, where Portage can reuse its
 > configured signed binhost instead of rebuilding the full Plasma stack.
+>
+> **openSUSE CI status (2026-10-03):** the latest recorded main-branch run
+> failed while installing dependencies in the openSUSE packaging and
+> verification container images, before compiling or installing the RPM.
+> `zypper` reported a Tumbleweed dependency conflict involving
+> `glib2-stage1-devel` and `libpcre2-8-0`. See the
+> [failed run](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/37113104585).
+> The Build workflow now uses the upstream openSUSE repositories, matching the
+> Release workflow; rerun CI to confirm the fix.
+> This CI image failure does not establish whether the separately configured
+> OBS release-tag automation works; that remains to be checked after a new tag.
+> Fedora COPR builds and the Debian/Ubuntu APT repository are verified. Mageia
+> has a release RPM asset but no maintained package repository; follow the
+> release workflow notes for repository status.
 
 ## Kubuntu / KDE Neon (26.04+)
 
@@ -43,7 +57,19 @@ sudo apt install \
 
 Debian 13 (trixie) ships Plasma 6.3.6 and is the minimum supported version; the same build instructions apply to testing and sid.
 
-Prefer the prebuilt deb from the [GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases) — see the two-variant note at the top of this page:
+The signed [APT repository](https://ruizhi-lab.github.io/latte-dock-ng/) is
+available for Debian 13, Debian testing, and Ubuntu 26.04+. Follow the
+[repository setup instructions](docs/debian-apt-repository.md) to configure
+the appropriate suite, then install and update with `apt`:
+
+```bash
+sudo apt update
+sudo apt install latte-dock-ng
+```
+
+Alternatively, download a prebuilt `.deb` from the
+[GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases) — see
+the two-variant note at the top of this page:
 
 ```bash
 # Debian testing / sid (and Ubuntu 26.04+)

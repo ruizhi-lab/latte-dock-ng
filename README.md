@@ -99,16 +99,29 @@ Prebuilt packages are attached to every
   - `latte-dock-ng_<ver>-1+deb13u1_amd64.deb` — built on Debian 13
     (trixie), links `libplasma6`; the `+deb13u1` revision marks the
     Debian 13 (stable) build
-- **`.rpm`** — one native build is published per RPM family: Fedora, openSUSE
-  Tumbleweed, and Mageia 10+. Each RPM is built and install-tested on its
-  target distribution; do not substitute the Fedora RPM on openSUSE or Mageia.
+- **`.rpm`** — release packages target Fedora, openSUSE Tumbleweed, and
+  Mageia 10+ using their native RPM packaging. Do not substitute the Fedora
+  RPM on openSUSE or Mageia. Fedora and openSUSE have maintained repositories;
+  Mageia currently has no maintained package repository and uses the RPM
+  attached to GitHub Releases.
 - **`pkg.tar.zst`** — Arch Linux
 
-Every binary package format is install-checked automatically on its target
-distro before release: source install, package-manager install
-(apt / dnf / pacman) and a headless launch. The NixOS flake is also checked
-and built as a release gate; Nix users consume it through the flake interface
-instead of a standalone binary archive.
+The release pipeline includes native package-manager install checks
+(apt / dnf / pacman) and a headless launch on supported targets. The NixOS
+flake is also checked and built as a release gate; Nix users consume it through
+the flake interface instead of a standalone binary archive. See the current
+CI caveat below before treating every target as verified.
+
+Current CI caveat (2026-10-03): the
+[main-branch build run](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/37113104585)
+failed in both openSUSE jobs while building their dependency container images.
+`zypper` could not resolve a Tumbleweed repository conflict involving
+`glib2-stage1-devel` and incompatible `libpcre2-8-0` versions, so the RPM
+build/install steps did not run. The Build workflow had forced openSUSE jobs
+onto a moving USTC mirror while the Release workflow used upstream repos; CI
+now consistently uses upstream repos for these jobs. Rerun the workflow to
+verify the fix. This is separate from the OBS release-tag webhook, which is
+configured but still awaits verification on a new tag.
 
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every
@@ -116,25 +129,27 @@ modern build. It never blocks a Plasma 6.3+ distro — the oldest of them
 (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is **not** supported: it
 ships Plasma 5.27, which predates the Plasma 6.3 requirement.
 
-After the first successful repository builds, Fedora users can install from
-[COPR](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/):
+Repository availability:
+
+- **Fedora COPR**: build and installation verified. Enable the
+  [COPR repository](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/):
 
 ```bash
 sudo dnf copr enable ruizhi-lab/latte-dock-ng
 sudo dnf install latte-dock-ng
 ```
 
-openSUSE Tumbleweed users can install from the
-[OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng)
-using its **Install** instructions. The OBS repository is not ready for users
-until its first successful build.
+- **Debian 13 / Debian testing / Ubuntu 26.04+**: the signed APT repository
+  and its GitHub Pages deployment are live. See the
+  [APT setup and install instructions](docs/debian-apt-repository.md).
+- **openSUSE Tumbleweed OBS**: package and service configuration are in place,
+  but automatic publication on a new GitHub release tag has not yet been
+  verified. Once a build succeeds, use the **Install** instructions on the
+  [OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng).
 
-The signed Debian/Ubuntu APT repository setup and install instructions are in
-[`docs/debian-apt-repository.md`](docs/debian-apt-repository.md). The APT
-repository becomes available after its one-time GitHub Pages and signing-key
-setup.
-
-Maintainer setup and tag-triggered publishing instructions are in
+Release preparation, repository publication, and validation status are in
+[`docs/release-workflow.md`](docs/release-workflow.md). Maintainer setup for
+COPR and OBS is in
 [`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
 
 ### From my personal gentoo overlay for Gentoo Linux
