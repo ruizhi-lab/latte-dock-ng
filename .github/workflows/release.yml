@@ -255,3 +255,76 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+
+  apt-repository:
+    name: Publish signed APT repository
+    needs: [package, nixos, release]
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+    concurrency:
+      group: latte-dock-ng-apt-repository
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check APT signing secrets
+        id: signing
+        env:
+          APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
+          APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
+        run: |
+          if [ -n "$APT_SIGNING_PRIVATE_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "APT publication skipped: APT_SIGNING_PRIVATE_KEY is not configured."
+          fi
+
+      - name: Download Debian packages
+        if: steps.signing.outputs.configured == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: package-debian*
+          merge-multiple: true
+          path: ${{ runner.temp }}/apt-debs
+
+      - name: Install repository tools
+        if: steps.signing.outputs.configured == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends apt-utils dpkg-dev gnupg
+
+      - name: Publish Debian and Ubuntu APT suites
+        if: steps.signing.outputs.configured == 'true'
+        env:
+          APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
+          APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
+          APT_DEB_DIR: ${{ runner.temp }}/apt-debs
+        run: |
+          bash scripts/publish-apt-repository.sh
+
+      - name: Collect GitHub Pages content
+        if: steps.signing.outputs.configured == 'true'
+        run: |
+          git switch gh-pages
+          mkdir -p "$RUNNER_TEMP/pages"
+          cp -a dists pool latte-dock-ng-archive-keyring.gpg "$RUNNER_TEMP/pages/"
+
+      - name: Upload GitHub Pages artifact
+        if: steps.signing.outputs.configured == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/pages
+
+      - name: Deploy GitHub Pages
+        if: steps.signing.outputs.configured == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

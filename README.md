@@ -129,6 +129,11 @@ openSUSE Tumbleweed users can install from the
 using its **Install** instructions. The OBS repository is not ready for users
 until its first successful build.
 
+The signed Debian/Ubuntu APT repository setup and install instructions are in
+[`docs/debian-apt-repository.md`](docs/debian-apt-repository.md). The APT
+repository becomes available after its one-time GitHub Pages and signing-key
+setup.
+
 Maintainer setup and tag-triggered publishing instructions are in
 [`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
 

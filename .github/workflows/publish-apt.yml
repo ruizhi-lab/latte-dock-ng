@@ -1,0 +1,71 @@
+name: Publish APT repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing GitHub release tag to seed or rebuild the APT repository
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: latte-dock-ng-apt-repository
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Seed or rebuild signed APT suites
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download release DEB packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APT_RELEASE_TAG: ${{ inputs.release_tag }}
+          APT_DEB_DIR: ${{ runner.temp }}/apt-debs
+        run: |
+          mkdir -p "$APT_DEB_DIR"
+          gh release download "$APT_RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'latte-dock-ng_*_amd64.deb' \
+            --dir "$APT_DEB_DIR"
+
+      - name: Install repository tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends apt-utils dpkg-dev gnupg
+
+      - name: Publish signed APT suites
+        env:
+          APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
+          APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
+          APT_DEB_DIR: ${{ runner.temp }}/apt-debs
+          APT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: bash scripts/publish-apt-repository.sh
+
+      - name: Collect GitHub Pages content
+        run: |
+          git switch gh-pages
+          mkdir -p "$RUNNER_TEMP/pages"
+          cp -a dists pool latte-dock-ng-archive-keyring.gpg "$RUNNER_TEMP/pages/"
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/pages
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
