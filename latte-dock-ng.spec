@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 Name:           latte-dock-ng
-Version:        {{{ git_dir_version }}}
+Version:        1.2.54
 Release:        1%{?dist}
 Summary:        Wayland-first dock for KDE Plasma 6
 License:        GPL-3.0-or-later
