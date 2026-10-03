@@ -53,19 +53,46 @@ sudo apt install \
   gettext build-essential git pkgconf
 ```
 
-## Debian (13 trixie / Testing / Unstable)
+## Debian and Ubuntu (13 trixie / Testing / Ubuntu 26.04+)
 
 Debian 13 (trixie) ships Plasma 6.3.6 and is the minimum supported version; the same build instructions apply to testing and sid.
 
-The signed [APT repository](https://ruizhi-lab.github.io/latte-dock-ng/) is
-available for Debian 13, Debian testing, and Ubuntu 26.04+. Follow the
-[repository setup instructions](docs/debian-apt-repository.md) to configure
-the appropriate suite, then install and update with `apt`:
+The signed [Latte Dock NG APT repository](https://ruizhi-lab.github.io/latte-dock-ng/)
+supports amd64. Add its signing key:
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://ruizhi-lab.github.io/latte-dock-ng/latte-dock-ng-archive-keyring.gpg \
+  | sudo tee /etc/apt/keyrings/latte-dock-ng.gpg >/dev/null
+sudo chmod 0644 /etc/apt/keyrings/latte-dock-ng.gpg
+```
+
+Add **one** source line matching your OS release:
+
+```bash
+# Debian 13 (trixie)
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/latte-dock-ng.gpg] https://ruizhi-lab.github.io/latte-dock-ng trixie main' \
+  | sudo tee /etc/apt/sources.list.d/latte-dock-ng.list
+
+# OR Debian testing
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/latte-dock-ng.gpg] https://ruizhi-lab.github.io/latte-dock-ng testing main' \
+  | sudo tee /etc/apt/sources.list.d/latte-dock-ng.list
+
+# OR Ubuntu 26.04+
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/latte-dock-ng.gpg] https://ruizhi-lab.github.io/latte-dock-ng ubuntu main' \
+  | sudo tee /etc/apt/sources.list.d/latte-dock-ng.list
+```
+
+Then install or upgrade:
 
 ```bash
 sudo apt update
 sudo apt install latte-dock-ng
 ```
+
+The Ubuntu suite uses the Debian testing package, which CI verifies on Ubuntu
+26.04. Do not add multiple suites to the same system. Maintainer instructions
+for the repository are in [`docs/debian-apt-repository.md`](docs/debian-apt-repository.md).
 
 Alternatively, download a prebuilt `.deb` from the
 [GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases) — see
@@ -111,7 +138,27 @@ sudo pacman -S \
   gcc gettext git pkgconf
 ```
 
+## Gentoo
+
+Install from the personal overlay:
+
+```bash
+eselect repository add ruizhi-overlay git https://github.com/ruizhi-lab/gentoo-overlay.git
+emaint sync -r ruizhi-overlay
+emerge -av kde-misc/latte-dock-ng
+```
+
 ## Fedora (44+)
+
+Install the prebuilt package from Fedora COPR:
+
+```bash
+sudo dnf copr enable ruizhi-lab/latte-dock-ng
+sudo dnf install latte-dock-ng
+```
+
+The COPR build and installation have been verified on Fedora 44. To build
+from source instead, install these dependencies:
 
 ```bash
 sudo dnf install \
@@ -131,6 +178,20 @@ sudo dnf install \
 
 ## openSUSE Tumbleweed
 
+Install the prebuilt package from OBS:
+
+```bash
+sudo zypper addrepo --refresh \
+  https://download.opensuse.org/repositories/home:/ruizhi-lab/openSUSE_Tumbleweed/home:ruizhi-lab.repo
+sudo zypper refresh
+sudo zypper install latte-dock-ng
+```
+
+This repository targets Tumbleweed x86_64 only; do not use it on Leap. The
+[OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng)
+shows its current build status. To build from source instead, install these
+dependencies:
+
 ```bash
 sudo zypper install \
   cmake extra-cmake-modules \
@@ -148,6 +209,11 @@ sudo zypper install \
 ```
 
 ## Mageia (10+)
+
+Mageia has no maintained package repository. Download the Mageia-specific RPM
+from [GitHub Releases](https://github.com/ruizhi-lab/latte-dock-ng/releases)
+and install that release asset with Mageia's package manager. Do not use the
+Fedora or openSUSE RPM. To build from source, install these dependencies:
 
 ```bash
 sudo dnf install \
@@ -242,7 +308,37 @@ lists every Qt6/KF6 dependency and Nix builds them all in one derivation.
 Have Nix installed and skip straight to building.
 
 For getting it installed on your system rather than building it locally,
-see the [README](./README.md#nixos) for flake integration.
+add the flake as an input and apply its module:
+
+```nix
+# flake.nix
+inputs.latte-dock-ng.url = "github:ruizhi-lab/latte-dock-ng";
+
+# in your nixosSystem call
+nixpkgs.lib.nixosSystem {
+  system = "x86_64-linux";
+  modules = [
+    inputs.latte-dock-ng.nixosModules.default
+    ./configuration.nix
+  ];
+};
+```
+
+The module exposes `pkgs.latte-dock-ng`; add it to system packages:
+
+```nix
+# configuration.nix
+{ pkgs, ... }: {
+  environment.systemPackages = [ pkgs.latte-dock-ng ];
+}
+```
+
+Or build/run it without adding it as a flake input:
+
+```bash
+nix build github:ruizhi-lab/latte-dock-ng
+nix run github:ruizhi-lab/latte-dock-ng
+```
 
 ### Ad hoc, without cloning
 

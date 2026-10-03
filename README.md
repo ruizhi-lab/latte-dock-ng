@@ -129,102 +129,16 @@ modern build. It never blocks a Plasma 6.3+ distro — the oldest of them
 (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is **not** supported: it
 ships Plasma 5.27, which predates the Plasma 6.3 requirement.
 
-Repository availability:
+## Installation
 
-- **Fedora COPR**: build and installation verified. Enable the
-  [COPR repository](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/):
+See [`INSTALLATION.md`](INSTALLATION.md) for end-user instructions to install
+from Fedora COPR, the Debian/Ubuntu APT repository, openSUSE OBS, the Gentoo
+overlay, the NixOS flake, or GitHub Release packages. Mageia has a release RPM
+but no maintained package repository.
 
-```bash
-sudo dnf copr enable ruizhi-lab/latte-dock-ng
-sudo dnf install latte-dock-ng
-```
-
-- **Debian 13 / Debian testing / Ubuntu 26.04+**: the signed APT repository
-  and its GitHub Pages deployment are live. See the
-  [APT setup and install instructions](docs/debian-apt-repository.md).
-- **openSUSE Tumbleweed OBS**: package and service configuration are in place,
-  but automatic publication on a new GitHub release tag has not yet been
-  verified. Once a build succeeds, use the **Install** instructions on the
-  [OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng).
-
-Release preparation, repository publication, and validation status are in
-[`docs/release-workflow.md`](docs/release-workflow.md). Maintainer setup for
-COPR and OBS is in
-[`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
-
-### From my personal gentoo overlay for Gentoo Linux
-
-```bash
-eselect repository add ruizhi-overlay git https://github.com/ruizhi-lab/gentoo-overlay.git
-emaint sync -r ruizhi-overlay
-emerge -av kde-misc/latte-dock-ng
-```
-
-### NixOS
-
-Add it as a flake input, then put its module in your `nixosSystem`'s
-`modules` list:
-
-```nix
-# flake.nix
-inputs.latte-dock-ng.url = "github:ruizhi-lab/latte-dock-ng";
-
-# in your nixosSystem call
-nixpkgs.lib.nixosSystem {
-  system = "x86_64-linux";
-  modules = [
-    inputs.latte-dock-ng.nixosModules.default
-    ./configuration.nix
-  ];
-};
-```
-
-That module just applies the package overlay. It doesn't install anything
-on its own, but every other module in the list now sees `pkgs.latte-dock-ng`
-with no further wiring, so add it wherever you list system packages:
-
-```nix
-# configuration.nix
-{ pkgs, ... }: {
-  environment.systemPackages = [ pkgs.latte-dock-ng ];
-}
-```
-
-Or build/run it directly without adding it as an input:
-
-```bash
-nix build github:ruizhi-lab/latte-dock-ng
-nix run github:ruizhi-lab/latte-dock-ng
-```
-
-See the [installation instructions](./INSTALLATION.md#nixos) for building from source instead.
-
-### From source
-
-```bash
-git clone https://github.com/ruizhi-lab/latte-dock-ng.git
-cd latte-dock-ng
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-cmake --build . --parallel $(nproc)
-sudo cmake --install .
-```
-
-See the [installation instructions](./INSTALLATION.md) for distro-specific dependency setup.
-
-### Helper scripts
-
-```bash
-# Build + install (pre-clean enabled by default)
-bash install.sh --help
-bash install.sh
-bash install.sh --clean --purge-user-data
-
-# Uninstall (manifest + known root/user override paths)
-bash uninstall.sh --help
-bash uninstall.sh --dry-run
-bash uninstall.sh --purge-user-data
-```
+Maintainer release and repository status is documented in
+[`docs/release-workflow.md`](docs/release-workflow.md); COPR and OBS setup
+details are in [`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
 
 ## Run Latte Dock NG
 
