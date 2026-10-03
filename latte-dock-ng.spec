@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 Name:           latte-dock-ng
-Version:        1.2.54
+Version:        {{{ git_dir_version }}}
 Release:        1%{?dist}
 Summary:        Wayland-first dock for KDE Plasma 6
 License:        GPL-3.0-or-later
 URL:            https://github.com/ruizhi-lab/latte-dock-ng
-Source0:        https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v%{version}.tar.gz
+Source0:        {{{ git_dir_archive }}}
 
 %if 0%{?suse_version}
 BuildRequires:  cmake, extra-cmake-modules, gcc-c++, gettext, make, pkg-config
@@ -43,7 +43,7 @@ Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3 and newer. It
 provides an animated dock for tasks and widgets.
 
 %prep
-%autosetup -n latte-dock-ng-%{version}
+{{{ git_dir_setup_macro }}}
 
 %build
 %cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
