@@ -1,0 +1,24 @@
+Architectures: amd64
+Codename: testing
+Components: main
+Date: Sat, 03 Oct 2026 10:28:31 +0000
+Description: Latte Dock NG packages
+Label: Latte Dock NG
+Origin: ruizhi-lab
+Suite: testing
+MD5Sum:
+ a269d90b36f9df100b4ca4106cafa716              185 Release
+ 0c71dc355cd58739100d7a7ba46204b0             2014 main/binary-amd64/Packages
+ b22136014d02d6e51b5fe043ceed81ac              874 main/binary-amd64/Packages.gz
+SHA1:
+ 951af28de31bf420178baf5a59e783e9039398bd              185 Release
+ 5ab90be2bc46faf10110fa634560d8d27f561062             2014 main/binary-amd64/Packages
+ b952bd3060923bb077faeda6d67462531e3c4f30              874 main/binary-amd64/Packages.gz
+SHA256:
+ 9c857ecb3225ff7ee19b610e8c1a7152ce73ecfe6cbcebc69f43cb1f1fc3e5fe              185 Release
+ c8da297ca66838a1ca58def280d03043d0fb11a0be6940c8256c31c157e7fe8a             2014 main/binary-amd64/Packages
+ 58de855b19aeca53d7cf581a2878e55f0199d9df6d006db924fea13c6a847d51              874 main/binary-amd64/Packages.gz
+SHA512:
+ 74b00236f2afa3e81d1f7258d968d5f97644e41ef44863ca8f0a25ed40c9b9aaa90c634f6944b8292a31412c885cd3e127decf8885a08d43eb6b94ce73cdfaa1              185 Release
+ 02e88a0f842b0daf0db672fa2736197ee9fa58834e5fd6091089c8353e2193c813a6f3c491e83db9a6f156e66da04a7231d357514dbe286c6d800539df857b81             2014 main/binary-amd64/Packages
+ d79bee8d8bcd055b7692d1d7ca93cc87c727b2b8b70cbc4d218b3cb9fd0b05c115c935504eb3709379cc8496e42f5a3259c3d121d04ef060c28df916962e52a3              874 main/binary-amd64/Packages.gz
