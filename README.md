@@ -116,6 +116,22 @@ modern build. It never blocks a Plasma 6.3+ distro — the oldest of them
 (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is **not** supported: it
 ships Plasma 5.27, which predates the Plasma 6.3 requirement.
 
+After the first successful repository builds, Fedora users can install from
+[COPR](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/):
+
+```bash
+sudo dnf copr enable ruizhi-lab/latte-dock-ng
+sudo dnf install latte-dock-ng
+```
+
+openSUSE Tumbleweed users can install from the
+[OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng)
+using its **Install** instructions. The OBS repository is not ready for users
+until its first successful build.
+
+Maintainer setup and tag-triggered publishing instructions are in
+[`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
+
 ### From my personal gentoo overlay for Gentoo Linux
 
 ```bash

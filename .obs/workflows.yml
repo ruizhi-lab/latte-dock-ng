@@ -1,0 +1,7 @@
+release_tag:
+  steps:
+    - trigger_services:
+        project: home:ruizhi-lab
+        package: latte-dock-ng
+  filters:
+    event: tag_push
