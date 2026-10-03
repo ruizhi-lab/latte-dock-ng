@@ -23,7 +23,7 @@ BuildRequires:  kf6-karchive-devel, kf6-kglobalaccel-devel, kf6-kcrash-devel
 BuildRequires:  kf6-kwindowsystem-devel, kf6-kpackage-devel, kf6-ksvg-devel
 BuildRequires:  plasma-wayland-protocols, wayland-devel, layer-shell-qt6-devel
 Requires:       kf6-kirigami, kf6-kcmutils, kf6-knewstuff
-%elif 0%{?mdkversion}
+%elif 0%{?mageia}
 BuildRequires:  cmake, extra-cmake-modules, gcc-c++, gettext, make, pkgconf-pkg-config
 BuildRequires:  qtbase6-common-devel, lib64qt6base6-devel
 BuildRequires:  lib64qt6qml-devel, lib64qt6quick-devel, lib64qt6quickwidgets-devel
