@@ -74,6 +74,8 @@ fi
 # to the package root. CMake records /usr/... paths when DESTDIR is not present.
 %cmake_install
 sed -i 's#^%{buildroot}##' redhat-linux-build/install_manifest.txt
+# RPM treats whitespace as a file-list separator; escape spaces in installed paths.
+sed -i 's/ /\\ /g' redhat-linux-build/install_manifest.txt
 
 %files -f redhat-linux-build/install_manifest.txt
 
