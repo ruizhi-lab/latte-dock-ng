@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 Name:           latte-dock-ng
-Version:        {{{ git_dir_version }}}
+Version:        {{{ latte_git_version }}}
 Release:        1%{?dist}
 Summary:        Wayland-first dock for KDE Plasma 6
 License:        GPL-3.0-or-later
 URL:            https://github.com/ruizhi-lab/latte-dock-ng
-Source0:        {{{ git_dir_archive }}}
+Source0:        {{{ latte_git_archive }}}
 
 %if 0%{?suse_version}
 BuildRequires:  cmake, extra-cmake-modules, gcc-c++, gettext, make, pkg-config
@@ -23,6 +23,24 @@ BuildRequires:  kf6-karchive-devel, kf6-kglobalaccel-devel, kf6-kcrash-devel
 BuildRequires:  kf6-kwindowsystem-devel, kf6-kpackage-devel, kf6-ksvg-devel
 BuildRequires:  plasma-wayland-protocols, wayland-devel, layer-shell-qt6-devel
 Requires:       kf6-kirigami, kf6-kcmutils, kf6-knewstuff
+%elif 0%{?mdkversion}
+BuildRequires:  cmake, extra-cmake-modules, gcc-c++, gettext, make, pkgconf-pkg-config
+BuildRequires:  qtbase6-common-devel, lib64qt6base6-devel
+BuildRequires:  lib64qt6qml-devel, lib64qt6quick-devel, lib64qt6quickwidgets-devel
+BuildRequires:  lib64qt6wayland-devel, lib64qt6waylandclient-devel
+BuildRequires:  lib64plasma-devel, lib64plasmaactivities-devel
+BuildRequires:  lib64plasmaactivitiesstats-devel, lib64plasma-workspace-devel
+BuildRequires:  lib64kwayland-devel
+BuildRequires:  lib64kf6config-devel, lib64kf6coreaddons-devel, lib64kf6guiaddons-devel
+BuildRequires:  lib64kf6dbusaddons-devel, lib64kf6declarative-devel
+BuildRequires:  lib64kf6itemmodels-devel, lib64kf6xmlgui-devel, lib64kf6iconthemes-devel
+BuildRequires:  lib64kf6kio-devel, lib64kf6i18n-devel, lib64kf6notifications-devel
+BuildRequires:  lib64kf6newstuff-devel, lib64kf6archive-devel, lib64kf6globalaccel-devel
+BuildRequires:  lib64kf6crash-devel, lib64kf6windowsystem-devel
+BuildRequires:  lib64kf6package-devel, lib64kf6svg-devel
+BuildRequires:  plasma-wayland-protocols-devel, lib64wayland-devel, lib64glvnd-devel
+BuildRequires:  lib64layer-shell-qt-devel
+Requires:       lib64kirigami6, lib64kf6kcmutils6, lib64kf6newstuffcore6
 %else
 BuildRequires:  cmake, extra-cmake-modules, gcc-c++, gettext, make, pkgconf-pkg-config
 BuildRequires:  qt6-qtbase-devel, qt6-qtdeclarative-devel, qt6-qtwayland-devel
@@ -43,7 +61,7 @@ Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3 and newer. It
 provides an animated dock for tasks and widgets.
 
 %prep
-{{{ git_dir_setup_macro }}}
+{{{ latte_git_setup_macro }}}
 
 %build
 %cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
@@ -73,12 +91,18 @@ fi
 # Remove DESTDIR if CMake recorded it in the manifest; RPM paths are relative
 # to the package root. CMake records /usr/... paths when DESTDIR is not present.
 %cmake_install
-sed -i 's#^%{buildroot}##' redhat-linux-build/install_manifest.txt
+manifest_file="$(find . -type f -name install_manifest.txt -print -quit)"
+if [ -z "$manifest_file" ]; then
+    echo "CMake install_manifest.txt was not found" >&2
+    exit 1
+fi
+sed -i 's#^%{buildroot}##' "$manifest_file"
 # RPM treats whitespace as a file-list separator; escape spaces in installed paths.
-sed -i 's/ /\\ /g' redhat-linux-build/install_manifest.txt
+sed -i 's/ /\\ /g' "$manifest_file"
+cp "$manifest_file" latte-dock-ng-install-manifest.txt
 
-%files -f redhat-linux-build/install_manifest.txt
+%files -f latte-dock-ng-install-manifest.txt
 
 %changelog
 * Sat Oct 03 2026 Ruizhi Zhong <ruizhi.zhong88@gmail.com> - 1.2.54-1
-- Initial COPR and OBS packaging.
+- Initial COPR packaging.

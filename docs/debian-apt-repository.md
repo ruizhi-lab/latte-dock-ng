@@ -1,8 +1,7 @@
 # Debian and Ubuntu APT repository
 
-This repository is independent of OBS. OBS builds RPM packages for openSUSE;
-this workflow publishes the existing Debian packages as a signed APT
-repository on GitHub Pages.
+This workflow publishes Debian packages as a signed APT repository on GitHub
+Pages. RPM packages are published through Fedora COPR.
 
 The release workflow publishes these amd64 suites from the matching release
 assets:

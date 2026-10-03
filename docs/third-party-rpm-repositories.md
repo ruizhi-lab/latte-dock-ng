@@ -1,21 +1,18 @@
-# COPR and OBS RPM repositories
+# COPR RPM repository
 
-The Fedora COPR and openSUSE Build Service (OBS) packages use platform-specific
-RPM specifications. COPR uses [`latte-dock-ng.spec`](../latte-dock-ng.spec)
-from Git SCM with `rpkg`; OBS's [`_service`](../_service) retrieves the release
-tag and extracts [`packaging/obs/latte-dock-ng.spec`](../packaging/obs/latte-dock-ng.spec).
-All package builds target x86_64. Fedora 44 COPR and openSUSE Tumbleweed OBS
-are the maintained RPM repositories; openSUSE Leap is not supported because
-its Plasma version is below the project's minimum. The release workflow also
-produces a Mageia RPM asset, but there is no maintained Mageia package
-repository; users install that release asset manually. See the
-[`release workflow status`](release-workflow.md) for current validation.
+Fedora COPR hosts the project's personal RPM repository for Fedora, Mageia,
+and openSUSE Tumbleweed. Package builds use the root
+[`latte-dock-ng.spec`](../latte-dock-ng.spec) with `rpkg`; release packages
+are also attached to GitHub Releases. All RPM builds target x86_64. openSUSE
+Leap is unsupported because its Plasma version is below the project's minimum.
+See the [`release workflow status`](release-workflow.md) for per-chroot
+validation.
 
-## Fedora COPR setup (one time)
+## COPR project configuration
 
-Create the COPR project `ruizhi-lab/latte-dock-ng` and enable the
-`fedora-44-x86_64` chroot. On the project's **Packages** page, add an SCM
-package with these values:
+The project is `ruizhi-lab/latte-dock-ng`. Enable the chroots needed for the
+supported RPM targets (Fedora 44, Mageia 10, and openSUSE Tumbleweed, x86_64).
+On the project's **Packages** page, its SCM package uses:
 
 - Package name: `latte-dock-ng`
 - SCM type: Git
@@ -23,57 +20,22 @@ package with these values:
 - Committish: `main`
 - Spec file: `latte-dock-ng.spec`
 - SRPM method: `rpkg`
-- Enable automatic rebuilds
+- Automatic rebuilds enabled
 
-Use the COPR project's **Settings → Integrations** page to create its GitHub
-webhook. Add that URL in GitHub under **Settings → Webhooks**, use
-`application/json`, and select the **Branch or tag creation** event. If COPR
-does not infer the package from the `vX.Y.Z` release tag, use the optional
-package-name suffix shown in the COPR webhook instructions:
-`.../<ID>/<UUID>/latte-dock-ng/`.
+The GitHub webhook is configured under COPR **Settings → Integrations** and
+GitHub **Settings → Webhooks**. It uses `application/json` and the
+**Branch or tag creation** event. Since the release tags are named `vX.Y.Z`,
+the webhook URL includes the package name suffix `latte-dock-ng` so COPR knows
+which package to rebuild.
 
-The first build can be started from the COPR package page after the package
-definition has been saved. Later `vX.Y.Z` tag pushes trigger builds through the
-webhook. The root spec uses rpkg's `git_dir_version` and `git_dir_archive`
-templates to derive the version and source archive from the checked-out Git
-tree; keep the release tag on the commit COPR builds. Use `rpkg` as the SRPM
-method rather than direct `rpmbuild`.
+The first build can be started from the COPR package page. Later release tag
+pushes trigger builds through the webhook. The root spec uses the custom rpkg
+macros in `rpkg.macros` to derive a version from the latest `vX.Y.Z` tag and
+create a matching source archive. Commits after a release tag get a
+`.git.<count>.<hash>` suffix; keep the relevant release tag available to the
+COPR checkout.
 
-## OBS setup (one time)
-
-The OBS project is `home:ruizhi-lab`, with package `latte-dock-ng`. Configure
-the project to build for repository `openSUSE_Tumbleweed`, architecture
-`x86_64`, using the standard `openSUSE:Tumbleweed` path. Do not enable Leap.
-
-Install `osc` and configure its credentials for `https://api.opensuse.org`.
-After the packaging changes are on GitHub, check out the existing package and
-add the OBS service and its spec:
-
-```bash
-osc checkout home:ruizhi-lab latte-dock-ng
-cd home:ruizhi-lab/latte-dock-ng
-cp /path/to/latte-dock-ng/_service .
-cp /path/to/latte-dock-ng/packaging/obs/latte-dock-ng.spec latte-dock-ng.spec
-osc add _service latte-dock-ng.spec
-osc commit -m "Add Latte Dock NG RPM build sources"
-```
-
-Replace `/path/to/latte-dock-ng` with the local checkout path. On the OBS
-package page, trigger the source services once, then start the initial build.
-The service follows the latest reachable `v*` tag and strips its leading `v`
-when setting the RPM version.
-
-To rebuild on future GitHub release tags, create an OBS workflow token with
-permission to trigger services for this package. Use its generated webhook URL
-in GitHub under **Settings → Webhooks**, with `application/json` and the
-**Branch or tag creation** event. The workflow definition is in
-`.obs/workflows.yml` and triggers the package services on tag pushes.
-
-Current release automation and validation status, including the pending OBS
-tag-trigger check, is tracked in
-[`release-workflow.md`](release-workflow.md).
-
-## Installation after the first successful build
+## Installation
 
 Fedora users can enable COPR and install with:
 
@@ -82,17 +44,23 @@ sudo dnf copr enable ruizhi-lab/latte-dock-ng
 sudo dnf install latte-dock-ng
 ```
 
-For openSUSE Tumbleweed, use the **Install** instructions shown on the OBS
-package page after its repository has published a successful build. Repository
-URLs are generated by OBS and should be copied from that page.
+For Mageia and openSUSE, use the distribution-specific repository setup
+instructions on the [COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
+Confirm that the selected distribution's latest build succeeded before
+installing. The currently published COPR build used `0.0.git.<count>.<hash>`.
+The spec now derives versions from project release tags, but needs a successful
+COPR rebuild to verify the fix. Until then, use the GitHub Release RPM if you
+need a version aligned with a release. openSUSE users should use Tumbleweed
+only, not Leap.
 
 ## Release version maintenance
 
-When preparing a release, update the canonical application version in
-`CMakeLists.txt` and `default.nix` as described in the release workflow. Do not
-manually bump either RPM spec's `Version:` field: COPR's `rpkg` templates derive
-its version and source archive from the checked-out Git tree, and OBS's
-`set_version` service rewrites its spec version from the fetched release tag.
-Ensure `packaging/obs/latte-dock-ng.spec` is present in the release tag so OBS
-can extract it. Repository publication remains separate from GitHub Release
-creation and depends on each service's own build succeeding.
+Update the canonical application version in `CMakeLists.txt` and
+`default.nix` as described in the release workflow. The custom rpkg macros in
+`rpkg.macros` map the latest project `vX.Y.Z` tag to its `X.Y.Z` RPM version.
+Commits after that tag receive a
+`.git.<count>.<hash>` suffix; a build exactly on the release tag has the
+release version with no suffix. The source archive and `%setup` directory use
+the same computed version. Verify this behavior in COPR after the change is
+published. Repository publication is separate from GitHub Release creation
+and depends on each COPR chroot build succeeding.

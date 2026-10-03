@@ -101,9 +101,9 @@ Prebuilt packages are attached to every
     Debian 13 (stable) build
 - **`.rpm`** — release packages target Fedora, openSUSE Tumbleweed, and
   Mageia 10+ using their native RPM packaging. Do not substitute the Fedora
-  RPM on openSUSE or Mageia. Fedora and openSUSE have maintained repositories;
-  Mageia currently has no maintained package repository and uses the RPM
-  attached to GitHub Releases.
+  RPM on openSUSE or Mageia. COPR is configured for Fedora, openSUSE
+  Tumbleweed, and Mageia; Fedora has been verified. Keep the standalone RPMs
+  until the other COPR builds and release-version handling are verified.
 - **`pkg.tar.zst`** — Arch Linux
 
 The release pipeline includes native package-manager install checks
@@ -120,8 +120,7 @@ failed in both openSUSE jobs while building their dependency container images.
 build/install steps did not run. The Build workflow had forced openSUSE jobs
 onto a moving USTC mirror while the Release workflow used upstream repos; CI
 now consistently uses upstream repos for these jobs. Rerun the workflow to
-verify the fix. This is separate from the OBS release-tag webhook, which is
-configured but still awaits verification on a new tag.
+verify the fix. The openSUSE CI status is independent of COPR builds.
 
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every
@@ -132,13 +131,12 @@ ships Plasma 5.27, which predates the Plasma 6.3 requirement.
 ## Installation
 
 See [`INSTALLATION.md`](INSTALLATION.md) for end-user instructions to install
-from Fedora COPR, the Debian/Ubuntu APT repository, openSUSE OBS, the Gentoo
-overlay, the NixOS flake, or GitHub Release packages. Mageia has a release RPM
-but no maintained package repository.
+from COPR, the Debian/Ubuntu APT repository, the Gentoo overlay, the NixOS
+flake, or GitHub Release packages.
 
 Maintainer release and repository status is documented in
-[`docs/release-workflow.md`](docs/release-workflow.md); COPR and OBS setup
-details are in [`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
+[`docs/release-workflow.md`](docs/release-workflow.md); COPR setup details are
+in [`docs/third-party-rpm-repositories.md`](docs/third-party-rpm-repositories.md).
 
 ## Run Latte Dock NG
 

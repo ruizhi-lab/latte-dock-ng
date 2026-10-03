@@ -29,11 +29,9 @@ Installation
 > [failed run](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/37113104585).
 > The Build workflow now uses the upstream openSUSE repositories, matching the
 > Release workflow; rerun CI to confirm the fix.
-> This CI image failure does not establish whether the separately configured
-> OBS release-tag automation works; that remains to be checked after a new tag.
-> Fedora COPR builds and the Debian/Ubuntu APT repository are verified. Mageia
-> has a release RPM asset but no maintained package repository; follow the
-> release workflow notes for repository status.
+> Fedora COPR builds and the Debian/Ubuntu APT repository are verified. The
+> COPR project also targets Mageia and openSUSE; check the COPR project page for
+> the latest per-distribution build status.
 
 ## Kubuntu / KDE Neon (26.04+)
 
@@ -178,19 +176,15 @@ sudo dnf install \
 
 ## openSUSE Tumbleweed
 
-Install the prebuilt package from OBS:
+Install from the `ruizhi-lab/latte-dock-ng` COPR repository. Follow the
+openSUSE-specific repository instructions shown on the
+[COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
 
-```bash
-sudo zypper addrepo --refresh \
-  https://download.opensuse.org/repositories/home:/ruizhi-lab/openSUSE_Tumbleweed/home:ruizhi-lab.repo
-sudo zypper refresh
-sudo zypper install latte-dock-ng
-```
-
-This repository targets Tumbleweed x86_64 only; do not use it on Leap. The
-[OBS package page](https://build.opensuse.org/package/show/home:ruizhi-lab/latte-dock-ng)
-shows its current build status. To build from source instead, install these
-dependencies:
+The current COPR RPM version is a Git snapshot (`0.0.git...`), not the
+`vX.Y.Z` release version; use the matching GitHub Release RPM if you need
+release-aligned versioning. Use COPR on Tumbleweed x86_64 only; openSUSE Leap
+is unsupported.
+To build from source instead, install these dependencies:
 
 ```bash
 sudo zypper install \
@@ -210,10 +204,15 @@ sudo zypper install \
 
 ## Mageia (10+)
 
-Mageia has no maintained package repository. Download the Mageia-specific RPM
-from [GitHub Releases](https://github.com/ruizhi-lab/latte-dock-ng/releases)
-and install that release asset with Mageia's package manager. Do not use the
-Fedora or openSUSE RPM. To build from source, install these dependencies:
+Install from the `ruizhi-lab/latte-dock-ng` COPR repository using the
+Mageia-specific repository instructions shown on the
+[COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
+Confirm the Mageia chroot's latest build succeeded first. As a fallback,
+download the Mageia-specific RPM from
+[GitHub Releases](https://github.com/ruizhi-lab/latte-dock-ng/releases). Do
+not use the Fedora or openSUSE RPM. The current COPR RPM version is a Git
+snapshot (`0.0.git...`), not the `vX.Y.Z` release version. To build from
+source, install these dependencies:
 
 ```bash
 sudo dnf install \

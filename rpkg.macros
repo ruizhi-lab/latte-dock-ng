@@ -1,0 +1,58 @@
+# Map the project's vX.Y.Z release tags to RPM versions. rpkg's stock
+# git_version macro expects package-native tags and otherwise produces 0.0.git.*.
+function latte_git_version {
+    local repo_root latest_tag base_version commit_count commit_hash
+
+    repo_root="$(git rev-parse --show-toplevel)" || return
+    latest_tag="$(git -C "$repo_root" describe --tags --match 'v[0-9]*' --abbrev=0 2>/dev/null || true)"
+
+    if [[ -n "$latest_tag" ]]; then
+        base_version="${latest_tag#v}"
+    else
+        base_version="$(sed -nE 's/^[[:space:]]*set\(VERSION[[:space:]]+([0-9]+\.[0-9]+\.[0-9]+)\).*/\1/p' "$repo_root/CMakeLists.txt" | head -n 1)"
+    fi
+
+    if [[ ! "$base_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Could not derive Latte Dock NG version from Git tags or CMakeLists.txt" >&2
+        return 1
+    fi
+
+    if [[ -n "$latest_tag" ]]; then
+        commit_count="$(git -C "$repo_root" rev-list --count "${latest_tag}..HEAD")" || return
+    else
+        commit_count="$(git -C "$repo_root" rev-list --count HEAD)" || return
+    fi
+
+    if [[ "$commit_count" == 0 ]]; then
+        printf '%s' "$base_version"
+        return
+    fi
+
+    commit_hash="$(git -C "$repo_root" rev-parse --short=8 HEAD)" || return
+    printf '%s.git.%s.%s' "$base_version" "$commit_count" "$commit_hash"
+}
+
+function latte_git_archive {
+    local repo_root version archive_name source_dir
+
+    repo_root="$(git rev-parse --show-toplevel)" || return
+    version="$(latte_git_version)" || return
+    source_dir="latte-dock-ng-${version}"
+    archive_name="${source_dir}.tar.gz"
+
+    if [[ -n "${OUTDIR:-}" ]]; then
+        mkdir -p "$OUTDIR" || return
+        git -C "$repo_root" archive --format=tar.gz \
+            --prefix="${source_dir}/" \
+            --output="${OUTDIR}/${archive_name}" HEAD || return
+    fi
+
+    printf '%s' "$archive_name"
+}
+
+function latte_git_setup_macro {
+    local version
+
+    version="$(latte_git_version)" || return
+    printf '%%setup -q -n latte-dock-ng-%s' "$version"
+}
