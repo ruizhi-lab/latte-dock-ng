@@ -73,9 +73,9 @@ fi
 # Remove DESTDIR if CMake recorded it in the manifest; RPM paths are relative
 # to the package root. CMake records /usr/... paths when DESTDIR is not present.
 %cmake_install
-sed -i 's#^%{buildroot}##' build/install_manifest.txt
+sed -i 's#^%{buildroot}##' redhat-linux-build/install_manifest.txt
 
-%files -f build/install_manifest.txt
+%files -f redhat-linux-build/install_manifest.txt
 
 %changelog
 * Sat Oct 03 2026 Ruizhi Zhong <ruizhi.zhong88@gmail.com> - 1.2.54-1
