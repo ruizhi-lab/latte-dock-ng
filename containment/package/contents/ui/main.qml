@@ -1170,8 +1170,8 @@ ContainmentItem {
         id: appletItemComponent
         Applet.AppletItem{
             containmentRoot: layoutsContainer.root
-            layoutsContainer: layoutsContainer
-            latteView: latteView
+            layoutsContainerObject: layoutsContainer
+            latteViewObject: latteView
             animations: _animations
             debug: _debug
             environment: _environment

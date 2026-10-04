@@ -1,0 +1,111 @@
+name: Automatic Release
+
+on:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: automatic-release-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  tag-release:
+    name: Release a fully validated new version
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Tag the validated release
+        uses: actions/github-script@v7
+        env:
+          BUILD_RUN_ID: ${{ github.event.workflow_run.id }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        with:
+          script: |
+            const fs = require("fs");
+            const sourceSha = process.env.SOURCE_SHA;
+            const buildRunId = Number(process.env.BUILD_RUN_ID);
+            const versionSource = fs.readFileSync("CMakeLists.txt", "utf8");
+            const nixSource = fs.readFileSync("default.nix", "utf8");
+            const version = versionSource.match(/^\s*set\(VERSION\s+([^)]+)\)/m)?.[1];
+            const nixVersion = nixSource.match(/^\s*version\s*=\s*"([^"]+)";/m)?.[1];
+            if (!version || version !== nixVersion) {
+              core.setFailed(`CMake version ${version ?? "missing"} does not match default.nix version ${nixVersion ?? "missing"}.`);
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const { data: mainBranch } = await github.rest.repos.getBranch({ owner, repo, branch: "main" });
+            if (mainBranch.commit.sha !== sourceSha) {
+              core.info(`Build passed for ${sourceSha}, but main has advanced to ${mainBranch.commit.sha}; skipping automatic release.`);
+              return;
+            }
+            const releaseTag = `v${version}`;
+            const tagRef = `tags/${releaseTag}`;
+            let existingRef = null;
+            try {
+              ({ data: existingRef } = await github.rest.git.getRef({ owner, repo, ref: tagRef }));
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+
+            if (existingRef) {
+              let taggedObject = existingRef.object;
+              if (taggedObject.type === "tag") {
+                const { data } = await github.rest.git.getTag({ owner, repo, tag_sha: taggedObject.sha });
+                taggedObject = data.object;
+              }
+              if (taggedObject.sha !== sourceSha) {
+                core.info(`${releaseTag} already points to ${taggedObject.sha}; this successful Build is not a new release candidate.`);
+                return;
+              }
+
+              try {
+                await github.rest.repos.getReleaseByTag({ owner, repo, tag: releaseTag });
+                core.info(`${releaseTag} is already released.`);
+                return;
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+            } else {
+              const { data: tagObject } = await github.rest.git.createTag({
+                owner,
+                repo,
+                tag: releaseTag,
+                message: `Release ${releaseTag}, validated by Build run ${buildRunId}`,
+                object: sourceSha,
+                type: "commit",
+                tagger: {
+                  name: "github-actions[bot]",
+                  email: "41898282+github-actions[bot]@users.noreply.github.com",
+                },
+              });
+              await github.rest.git.createRef({ owner, repo, ref: `refs/${tagRef}`, sha: tagObject.sha });
+              core.info(`Created annotated tag ${releaseTag} at ${sourceSha}.`);
+            }
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: "release.yml",
+              ref: "main",
+              inputs: {
+                release_tag: releaseTag,
+                source_sha: sourceSha,
+              },
+            });
+            core.info(`Dispatched Release for ${releaseTag}; Release rechecks Build run ${buildRunId} before publication.`);

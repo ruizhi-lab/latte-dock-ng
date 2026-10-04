@@ -21,15 +21,15 @@ import "../debugger" as Debugger
 Item {
     id: appletItem
     required property var containmentRoot
-    required property var layoutsContainer
-    required property var latteView
+    required property var layoutsContainerObject
+    required property var latteViewObject
     readonly property var containmentRootReference: containmentRoot
     readonly property var root: containmentRoot
     readonly property var appletItemReference: appletItem
     readonly property var appletReference: applet
     readonly property var communicatorReference: communicator
-    readonly property var layoutsContainerReference: layoutsContainer
-    readonly property var latteViewReference: latteView
+    readonly property var layoutsContainerReference: layoutsContainerObject
+    readonly property var latteViewReference: latteViewObject
     readonly property var parabolicReference: parabolic
     readonly property var metricsReference: metrics
     readonly property var isSeparatorReference: isSeparator

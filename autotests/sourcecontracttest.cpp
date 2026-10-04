@@ -92,6 +92,7 @@ private Q_SLOTS:
     void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
     void contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly();
     void appletContextMenuExposesKeepOriginalColorsToggle();
+    void appletQmlParentInputsDoNotShadowContextIds();
     void trashKeepOriginalColorsDefaultsToCheckedForAllConfigs();
     void appletIconOverrideStripsSymbolicForOriginalColors();
     void widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized();
@@ -2152,6 +2153,36 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     QVERIFY(toggle > aaa);
     QVERIFY(src.contains(QStringLiteral("setCheckable(true)")));
     QVERIFY(src.contains(QStringLiteral("disabledColoring.contains(appletId)")));
+}
+
+void SourceContractTest::appletQmlParentInputsDoNotShadowContextIds()
+{
+    QFile appletItemFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItemFile.open(QFile::ReadOnly));
+    const QString appletItemSource = QString::fromUtf8(appletItemFile.readAll());
+
+    QFile containmentFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(containmentFile.open(QFile::ReadOnly));
+    const QString containmentSource = QString::fromUtf8(containmentFile.readAll());
+    const int componentStart = containmentSource.indexOf(QStringLiteral("id: appletItemComponent"));
+    const int componentEnd = containmentSource.indexOf(QStringLiteral("    Upgrader {"), componentStart);
+    QVERIFY(componentStart >= 0);
+    QVERIFY(componentEnd > componentStart);
+    const QString appletItemComponent = containmentSource.mid(componentStart, componentEnd - componentStart);
+
+    // Keep injected context IDs distinct from the receiving property names:
+    // QML resolves a same-named binding to the new property itself, creating
+    // a loop and leaving the layout/view context undefined at runtime.
+    QVERIFY(appletItemSource.contains(QStringLiteral("required property var layoutsContainerObject")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("required property var latteViewObject")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("layoutsContainerReference: layoutsContainerObject")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("latteViewReference: latteViewObject")));
+    QVERIFY(appletItemComponent.contains(QStringLiteral("layoutsContainerObject: layoutsContainer")));
+    QVERIFY(appletItemComponent.contains(QStringLiteral("latteViewObject: latteView")));
+    QVERIFY(!appletItemComponent.contains(QStringLiteral("layoutsContainer: layoutsContainer")));
+    QVERIFY(!appletItemComponent.contains(QStringLiteral("latteView: latteView")));
+    QVERIFY(!appletItemSource.contains(QStringLiteral("required property var layoutsContainer;")));
+    QVERIFY(!appletItemSource.contains(QStringLiteral("required property var latteView;")));
 }
 
 void SourceContractTest::trashKeepOriginalColorsDefaultsToCheckedForAllConfigs()

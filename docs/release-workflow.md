@@ -22,14 +22,19 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
 3. Wait for the complete `Build` run for that exact `main` commit to succeed.
    The candidate version in `CMakeLists.txt` must match the future `vX.Y.Z`
    tag. The Build run retains the seven packages that it built and installed.
-   Do not create a release tag to skip this gate.
-4. Create and push the annotated `vX.Y.Z` tag on the validated commit. The
-   release workflow checks the exact commit and version, publishes the signed
+   `.github/workflows/auto-release.yml` creates the annotated tag and dispatches
+   the Release workflow only after that successful Build, when the version has
+   not already been released. A tag that already points at another commit is
+   never moved. Do not create a release tag to skip this gate.
+4. The Release workflow independently checks the exact source commit and
+   version, publishes the signed
    APT repository from the validated DEB artifacts, and creates the GitHub
    Release from the same validated package artifacts. It does not rebuild
    release packages after validation. The Gentoo overlay update is prepared
    from that final tag, gets its Manifest regenerated and QA-checked, then is
-   pushed to `ruizhi-lab/gentoo-overlay`. Debian 13 uses the `+deb13u1`
+   pushed to `ruizhi-lab/gentoo-overlay`. It replaces older versioned ebuilds
+   while preserving `latte-dock-ng-9999.ebuild` for main-branch installs.
+   Debian 13 uses the `+deb13u1`
    revision, Debian testing uses `-1`, and Ubuntu uses `-1ubuntu1`.
 5. Curate English release notes and link the preceding tag with
    `compare/vPREV...vX.Y.Z`.

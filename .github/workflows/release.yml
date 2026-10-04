@@ -3,6 +3,16 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Validated release tag
+        required: true
+        type: string
+      source_sha:
+        description: Source commit validated by Build
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -16,10 +26,12 @@ jobs:
       build_run_id: ${{ steps.validation.outputs.build_run_id }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
 
       - name: Require tag version to match the validated source version
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
           expected="${RELEASE_TAG#v}"
           actual=$(sed -n 's/^ *set(VERSION \([^)]*\)).*/\1/p' CMakeLists.txt | head -1)
@@ -32,6 +44,8 @@ jobs:
       - name: Find the successful Build run for this commit
         id: validation
         uses: actions/github-script@v7
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
         with:
           script: |
             const { data } = await github.rest.actions.listWorkflowRunsForRepo({
@@ -40,14 +54,14 @@ jobs:
               workflow_id: "build.yml",
               branch: "main",
               event: "push",
-              head_sha: context.sha,
+              head_sha: process.env.SOURCE_SHA,
               per_page: 100,
             });
             const passed = data.workflow_runs.find((run) =>
               run.status === "completed" && run.conclusion === "success"
             );
             if (!passed) {
-              core.setFailed(`Commit ${context.sha} has no successful Build run from main.`);
+              core.setFailed(`Commit ${process.env.SOURCE_SHA} has no successful Build run from main.`);
               return;
             }
             core.setOutput("build_run_id", passed.id);
@@ -154,7 +168,7 @@ jobs:
 
       - name: Prepare and validate the tagged ebuild and Manifest
         env:
-          RELEASE_VERSION: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           version="${RELEASE_VERSION#v}"
           mkdir -p "$RUNNER_TEMP/gentoo-distfiles"
@@ -207,10 +221,13 @@ jobs:
             exit 1
           fi
 
-      - name: Replace the package directory with the validated result
+      - name: Remove obsolete versioned ebuilds and preserve the live ebuild
         run: |
-          rm -rf gentoo-overlay/kde-misc/latte-dock-ng
-          mkdir -p gentoo-overlay/kde-misc/latte-dock-ng
+          package_dir=gentoo-overlay/kde-misc/latte-dock-ng
+          test -f "$package_dir/latte-dock-ng-9999.ebuild"
+          sha256sum "$package_dir/latte-dock-ng-9999.ebuild" > "$RUNNER_TEMP/9999.before"
+          find "$package_dir" -maxdepth 1 -type f -name 'latte-dock-ng-*.ebuild' \
+            ! -name 'latte-dock-ng-9999.ebuild' -delete
 
       - name: Download validated ebuild and Manifest
         uses: actions/download-artifact@v4
@@ -218,9 +235,15 @@ jobs:
           name: gentoo-overlay-package
           path: gentoo-overlay/kde-misc/latte-dock-ng
 
+      - name: Verify live ebuild is preserved
+        run: |
+          package_dir=gentoo-overlay/kde-misc/latte-dock-ng
+          test -f "$package_dir/latte-dock-ng-9999.ebuild"
+          sha256sum --check "$RUNNER_TEMP/9999.before"
+
       - name: Commit and push the overlay update
         env:
-          RELEASE_VERSION: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           git -C gentoo-overlay config user.name "github-actions[bot]"
           git -C gentoo-overlay config user.email "41898282+github-actions[bot]@users.noreply.github.com"

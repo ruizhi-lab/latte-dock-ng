@@ -190,6 +190,20 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("RUIZHI_OVERLAY_TOKEN")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("ruizhi-lab/gentoo-overlay")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/prepare-gentoo-overlay.sh")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("workflow_dispatch:")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("inputs.source_sha || github.sha")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("! -name 'latte-dock-ng-9999.ebuild' -delete")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("sha256sum --check \"$RUNNER_TEMP/9999.before\"")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("rm -rf gentoo-overlay/kde-misc/latte-dock-ng")));
+
+    QFile automaticReleaseWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/auto-release.yml"));
+    QVERIFY(automaticReleaseWorkflow.open(QFile::ReadOnly));
+    const QString automaticReleaseWorkflowSource = QString::fromUtf8(automaticReleaseWorkflow.readAll());
+    QVERIFY(automaticReleaseWorkflowSource.contains(QStringLiteral("workflows: [Build]")));
+    QVERIFY(automaticReleaseWorkflowSource.contains(QStringLiteral("workflow_run.conclusion == 'success'")));
+    QVERIFY(automaticReleaseWorkflowSource.contains(QStringLiteral("github.rest.repos.getBranch")));
+    QVERIFY(automaticReleaseWorkflowSource.contains(QStringLiteral("github.rest.actions.createWorkflowDispatch")));
+    QVERIFY(automaticReleaseWorkflowSource.contains(QStringLiteral("release.yml")));
 
     QFile buildWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/build.yml"));
     QVERIFY(buildWorkflow.open(QFile::ReadOnly));
@@ -219,6 +233,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(overlayPublisherSource.contains(QStringLiteral("pkgcheck scan --repo")));
     QVERIFY(overlayPublisherSource.contains(QStringLiteral("ebuild \"$new_ebuild\" clean configure compile install")));
     QVERIFY(overlayPublisherSource.contains(QStringLiteral("${DISTDIR:-$(mktemp -d")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("! -name 'latte-dock-ng-9999.ebuild'")));
 
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));
     QVERIFY(packagingCMake.open(QFile::ReadOnly));
