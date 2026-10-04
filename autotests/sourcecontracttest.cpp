@@ -2075,10 +2075,9 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     // getter-backed property cache.
     QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIconPath()")));
     QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIcon()")));
-    QVERIFY(appletItemSource.contains(QStringLiteral("appletItem.fastLayoutManager && appletItem.backendAppletRef")));
-    QVERIFY(appletItemSource.contains(QStringLiteral("appletItem.fastLayoutManager.appletIcon(appletItem.backendAppletRef)")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("wrapper.appletItem.currentBackendAppletIcon()")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("wrapper.appletItem.currentBackendAppletIconPath()")));
+    QVERIFY(!appletItemSource.contains(QStringLiteral("appletItem.fastLayoutManager")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIcon()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIconPath()")));
     QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
 
     const int gateStart = wrapperSource.indexOf(QStringLiteral("readonly property bool needsOriginalIconFallback:"));

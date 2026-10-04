@@ -49,11 +49,11 @@ It is not available until the maintainer completes the one-time setup below.
    `https://ruizhi-lab.github.io/latte-dock-ng/latte-dock-ng-archive-keyring.gpg`
    before announcing the repository.
 
-Once the signing key secret exists, each later GitHub release automatically
-updates the repository after its package artifacts and release are ready. If
-the secret is absent, the APT publication job reports a skip and the other
-release jobs are unaffected. The workflow can also be run manually with a
-release tag to republish or seed the repository.
+Once the signing key secret exists, each later release automatically updates
+the repository from the freshly built DEB artifacts before creating the
+GitHub Release. A missing signing key or failed APT publication blocks the
+formal release. The workflow can also be run manually with an existing release
+tag to republish or seed the repository.
 
 ## User installation (after Pages is live)
 

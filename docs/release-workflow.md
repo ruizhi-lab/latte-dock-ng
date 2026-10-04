@@ -25,7 +25,8 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
    distro base images and rebuilds dependencies without cache, then builds
    and smoke-tests release packages for Fedora, openSUSE Tumbleweed, Mageia,
    Debian 13, Debian testing, Ubuntu 26.04, and Arch. It publishes GitHub
-   Release assets only after every package and NixOS job succeeds. Debian 13
+   Release assets only after package builds, NixOS checks and APT publication
+   succeed. Debian 13
    uses the `+deb13u1` revision, Debian testing uses `-1`, and Ubuntu uses
    `-1ubuntu1`.
 5. Curate English release notes and link the preceding tag with

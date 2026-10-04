@@ -190,7 +190,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QFile buildWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/build.yml"));
     QVERIFY(buildWorkflow.open(QFile::ReadOnly));
     const QString buildWorkflowSource = QString::fromUtf8(buildWorkflow.readAll());
-    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg USE_MIRRORS=false")), 3);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg USE_MIRRORS=false")), 2);
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("--build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }}")));
 
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));

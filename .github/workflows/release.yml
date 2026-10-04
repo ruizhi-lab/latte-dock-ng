@@ -261,7 +261,7 @@ jobs:
 
   release:
     name: Create Release
-    needs: [package, nixos]
+    needs: [package, nixos, apt-repository]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -283,7 +283,7 @@ jobs:
 
   apt-repository:
     name: Publish signed APT repository
-    needs: [package, nixos, release]
+    needs: [package, nixos]
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
@@ -309,8 +309,8 @@ jobs:
           if [ -n "$APT_SIGNING_PRIVATE_KEY" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "APT publication skipped: APT_SIGNING_PRIVATE_KEY is not configured."
+            echo "APT publication cannot run: APT_SIGNING_PRIVATE_KEY is not configured." >&2
+            exit 1
           fi
 
       - name: Download DEB packages

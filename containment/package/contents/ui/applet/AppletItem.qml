@@ -202,9 +202,12 @@ Item {
     readonly property string backendAppletIconPath: fastLayoutManager && backendAppletRef
                                                    ? fastLayoutManager.appletIconPath(backendAppletRef) : ""
 
+    // fastLayoutManager is an outer id from main.qml's creation context,
+    // not an AppletItem property. Qualifying it with appletItem makes this
+    // getter return an empty name and prevents the menu fallback repaint.
     function currentBackendAppletIcon() {
-        return appletItem.fastLayoutManager && appletItem.backendAppletRef
-                ? appletItem.fastLayoutManager.appletIcon(appletItem.backendAppletRef) : "";
+        return fastLayoutManager && backendAppletRef
+                ? fastLayoutManager.appletIcon(backendAppletRef) : "";
     }
 
     // QML cannot invalidate a getter-backed property when a Plasma applet

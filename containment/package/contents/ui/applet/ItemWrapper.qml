@@ -564,9 +564,9 @@ Item{
         property string iconPath: ""
 
         function refreshIconPath() {
-            const iconName = wrapper.needsOriginalIconFallback ? wrapper.appletItem.currentBackendAppletIcon() : "";
+            const iconName = wrapper.needsOriginalIconFallback ? appletItem.currentBackendAppletIcon() : "";
             const nextPath = iconName && !iconName.endsWith("-symbolic")
-                           ? wrapper.appletItem.currentBackendAppletIconPath() : "";
+                           ? appletItem.currentBackendAppletIconPath() : "";
 
             if (iconPath !== nextPath) {
                 iconPath = nextPath;
