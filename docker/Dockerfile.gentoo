@@ -121,6 +121,6 @@ RUN emerge --oneshot --noreplace \
 # Release automation needs repo-native manifest, policy, and metadata checks
 # before it publishes a new versioned ebuild to the overlay.
 RUN emerge --oneshot --noreplace \
-      app-portage/pkgcheck \
-      app-portage/pkgdev \
+      dev-util/pkgcheck \
+      dev-util/pkgdev \
       dev-libs/libxml2
