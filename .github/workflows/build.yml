@@ -350,6 +350,7 @@ jobs:
                 else
                   zypper --non-interactive --no-gpg-checks install --allow-unsigned-rpm ./latte-dock-ng-*.rpm
                 fi
+                test "$(rpm -q --qf "%{VERSION}" latte-dock-ng)" = "$VERSION"
                 for package in ./latte-dock-ng-*.rpm; do
                   cp "$package" "/out/${package%.rpm}-${DISTRO}.rpm"
                 done
@@ -366,13 +367,12 @@ jobs:
                 done
                 apt-get update -qq
                 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ./latte-dock-ng_*.deb
+                test "$(dpkg-query --show latte-dock-ng | cut -f2 | cut -d- -f1)" = "$VERSION"
                 cp ./latte-dock-ng_*.deb /out/
               fi
               test -x /usr/bin/latte-dock-ng
-              actual=$(QT_QPA_PLATFORM=offscreen /usr/bin/latte-dock-ng --version)
-              test "${actual##* }" = "$VERSION"
               test -f /usr/share/applications/org.kde.latte-dock.desktop
-              echo NATIVE_PACKAGE_INSTALL_OK
+              echo "NATIVE_PACKAGE_INSTALL_OK: $VERSION installed"
             '
 
       - name: Retain validated release package

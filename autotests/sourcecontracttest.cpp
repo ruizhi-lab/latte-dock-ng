@@ -2177,8 +2177,10 @@ void SourceContractTest::appletQmlParentInputsDoNotShadowContextIds()
     QVERIFY(appletItemSource.contains(QStringLiteral("required property var latteViewObject")));
     QVERIFY(appletItemSource.contains(QStringLiteral("layoutsContainerReference: layoutsContainerObject")));
     QVERIFY(appletItemSource.contains(QStringLiteral("latteViewReference: latteViewObject")));
-    QVERIFY(appletItemComponent.contains(QStringLiteral("layoutsContainerObject: layoutsContainer")));
-    QVERIFY(appletItemComponent.contains(QStringLiteral("latteViewObject: latteView")));
+    QVERIFY(containmentSource.contains(QStringLiteral("readonly property var latteViewReference: latteView")));
+    QVERIFY(containmentSource.contains(QStringLiteral("readonly property alias layoutsContainerItem: layoutsContainer")));
+    QVERIFY(appletItemComponent.contains(QStringLiteral("layoutsContainerObject: root.layoutsContainerItem")));
+    QVERIFY(appletItemComponent.contains(QStringLiteral("latteViewObject: root.latteViewReference")));
     QVERIFY(!appletItemComponent.contains(QStringLiteral("layoutsContainer: layoutsContainer")));
     QVERIFY(!appletItemComponent.contains(QStringLiteral("latteView: latteView")));
     QVERIFY(!appletItemSource.contains(QStringLiteral("required property var layoutsContainer;")));
