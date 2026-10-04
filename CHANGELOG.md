@@ -1,3 +1,14 @@
+## [v1.2.55] - 2026-10-04
+
+### Fixed
+- Restore original icon-theme colors for compact widgets such as Kicker and
+  Application Dashboard, whose icon can remain unchanged in the applet's
+  native representation after the context-menu option is enabled.
+
+### Tests
+- Add regression guards for configuration-bound widget icons, live backend icon
+  updates, and returning to native rendering when the option is disabled.
+
 ## [v1.2.54] - 2026-10-02
 
 ### Changed
