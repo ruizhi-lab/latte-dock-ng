@@ -8,19 +8,32 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
 ## Prepare and publish a release
 
 1. Update `set(VERSION X.Y.Z)` in `CMakeLists.txt` and `version = "X.Y.Z"` in
-   `default.nix`. Add the `CHANGELOG.md` section.
-2. Run the required release checks: `nix flake check --print-build-logs`,
-   `nix build .#default --no-link --print-build-logs`, and GCC and Clang
-   autotests.
-3. Commit the release changes and create an annotated `vX.Y.Z` tag on the
-   intended commit. Push the commit and tag according to the repository's
-   authorization rules.
-4. The tag triggers `.github/workflows/release.yml`. It builds release
-   artifacts for Fedora, openSUSE Tumbleweed, Mageia, Debian 13, Debian
-   testing, and Arch, then publishes them as GitHub Release assets. The
-   Debian 13 package has the `+deb13u1` revision; testing uses plain `-1`.
+   `default.nix`. Add the `CHANGELOG.md` section and refresh `flake.lock` when
+   advancing the pinned Nix dependencies.
+2. Push the release-candidate commit to `main`. This is the pre-release
+   validation step: `.github/workflows/build.yml` runs GCC and Clang builds,
+   autotests, QML lint, and native build/install verification for every
+   supported distro. Its Docker jobs pull current base-image tags and rebuild
+   dependency layers without cache, so package indexes and distro packages
+   are refreshed for each run.
+3. Wait for the complete `Build` run for that exact `main` commit to succeed.
+   The release workflow checks this commit-specific result and refuses to
+   publish when it is missing or failed. Do not create a release tag to skip
+   this gate.
+4. After validation is green, create and push the annotated `vX.Y.Z` tag on
+   the validated commit. `.github/workflows/release.yml` again pulls current
+   distro base images and rebuilds dependencies without cache, then builds
+   and smoke-tests release packages for Fedora, openSUSE Tumbleweed, Mageia,
+   Debian 13, Debian testing, Ubuntu 26.04, and Arch. It publishes GitHub
+   Release assets only after every package and NixOS job succeeds. Debian 13
+   uses the `+deb13u1` revision, Debian testing uses `-1`, and Ubuntu uses
+   `-1ubuntu1`.
 5. Curate English release notes and link the preceding tag with
    `compare/vPREV...vX.Y.Z`.
+
+Desktop runtime retesting is not a release gate. Use the GitHub Build and
+Release workflow results as the authoritative build and package-install
+verification for each release candidate.
 
 ## Repository publication after the tag
 
@@ -31,8 +44,10 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
   map those tags and suffix later commits. Verify a COPR build after this
   change before treating version handling as confirmed.
 - **Debian and Ubuntu APT:** the release workflow publishes the Debian 13
-  package to `trixie`, the Debian testing package to `testing`, and the same
-  testing package to `ubuntu`. The APT signing key is stored only in GitHub
+  package to `trixie`, the Debian testing package to `testing`, and the
+  Ubuntu-native package to `ubuntu`. Ubuntu 26.04 has older Qt dependencies
+  than Debian testing, so these packages must be built natively for each
+  distro. The APT signing key is stored only in GitHub
   Actions secrets. The initial repository seed and GitHub Pages deployment
   succeeded; future releases use the same automatic publication job.
 - **openSUSE Tumbleweed and Mageia:** the COPR project is configured for these

@@ -8,8 +8,7 @@ assets:
 
 - `trixie`: Debian 13 package (`+deb13u1`)
 - `testing`: Debian testing package
-- `ubuntu`: the Debian testing package, which is install-checked on Ubuntu
-  26.04 in CI
+- `ubuntu`: package built natively on Ubuntu 26.04
 
 The public repository URL is `https://ruizhi-lab.github.io/latte-dock-ng/`.
 It is not available until the maintainer completes the one-time setup below.
@@ -81,8 +80,8 @@ echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/latte-dock-ng.gpg] https://rui
   | sudo tee /etc/apt/sources.list.d/latte-dock-ng.list
 ```
 
-Ubuntu 26.04+ (the `ubuntu` suite uses the same package built on Debian
-testing and verified on Ubuntu 26.04):
+Ubuntu 26.04+ (the `ubuntu` suite uses the package built and install-checked
+natively on Ubuntu 26.04):
 
 ```bash
 echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/latte-dock-ng.gpg] https://ruizhi-lab.github.io/latte-dock-ng ubuntu main' \

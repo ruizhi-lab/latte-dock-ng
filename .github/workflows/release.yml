@@ -6,11 +6,38 @@ on:
 
 permissions:
   contents: write
-  actions: write # save/restore the type=gha docker build cache
+  actions: read
 
 jobs:
+  main-validation:
+    name: Require successful main validation
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Find the successful Build run for this commit
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "build.yml",
+              branch: "main",
+              event: "push",
+              head_sha: context.sha,
+              per_page: 100,
+            });
+            const passed = data.workflow_runs.find((run) =>
+              run.status === "completed" && run.conclusion === "success"
+            );
+            if (!passed) {
+              core.setFailed(`Commit ${context.sha} has no successful Build run from main.`);
+              return;
+            }
+            core.info(`Validated by Build run ${passed.id}: ${passed.html_url}`);
+
   package:
     name: ${{ matrix.distro }} (${{ matrix.format }})
+    needs: [main-validation]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -29,14 +56,16 @@ jobs:
             format: rpm
             rpm_requires: lib64kirigami6, lib64kf6kcmutils6, lib64kf6newstuffcore6
           #! The libplasma soname changed from 6 to 7 between Plasma 6.5
-          #! and 6.6, so a single deb cannot cover both camps: the trixie
-          #! build (libplasma6) serves Debian 13 stable, the testing build
-          #! (libplasma7) serves Debian testing and Ubuntu 26.04+.
+          #! and 6.6. Build each distro's package natively because Debian
+          #! testing's newer Qt dependencies are unavailable on Ubuntu 26.04.
           - distro: debian
             dockerfile: Dockerfile.debian
             format: deb
           - distro: debian-testing
             dockerfile: Dockerfile.debian-testing
+            format: deb
+          - distro: ubuntu
+            dockerfile: Dockerfile.ubuntu
             format: deb
           - distro: arch
             dockerfile: Dockerfile.arch
@@ -57,13 +86,11 @@ jobs:
           context: docker/
           file: docker/${{ matrix.dockerfile }}
           build-args: USE_MIRRORS=false
+          pull: true
+          no-cache: true
           tags: latte-build-${{ matrix.distro }}
           load: true
           provenance: false
-          # Cache the dependency-install layers between runs, scoped per
-          # distro so the matrix entries do not evict each other's cache.
-          cache-from: type=gha,scope=${{ matrix.distro }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.distro }}
 
       - name: Build and package (${{ matrix.distro }})
         run: |
@@ -81,13 +108,11 @@ jobs:
                 bash /src/docker/package-arch.sh \"\$VERSION\" /out
               else
                 GEN=\$([ '${{ matrix.format }}' = 'rpm' ] && echo RPM || echo DEB)
-                #! The trixie build carries the Debian 13 revision marker
-                #! (+deb13u1, the Debian convention for stable-specific
-                #! rebuilds) in the package version, which flows into both
-                #! the control file and the file name; testing keeps
-                #! the plain -1 release.
+                #! Use distro-specific revisions so the three DEBs have
+                #! distinct filenames and encode their native build target.
                 DEBREL='1'
                 if [ '${{ matrix.distro }}' = 'debian' ]; then DEBREL='1+deb13u1'; fi
+                if [ '${{ matrix.distro }}' = 'ubuntu' ]; then DEBREL='1ubuntu1'; fi
                 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\" -DCPACK_DEBIAN_PACKAGE_RELEASE=\"\$DEBREL\" -DLATTE_RPM_PACKAGE_REQUIRES=${{ matrix.rpm_requires }}
                 cmake --build . --parallel \$(nproc)
                 #! source-install verification on this distro: the install
@@ -97,8 +122,7 @@ jobs:
                 test -f /usr/share/applications/org.kde.latte-dock.desktop
                 echo SOURCE_INSTALL_OK
                 cpack -G \"\$GEN\"
-                #! The +deb13u1 revision already distinguishes the two deb
-                #! variants, so plain copying keeps the names apart.
+                #! The distro-specific revisions distinguish DEB filenames.
                 if [ '${{ matrix.format }}' = 'deb' ]; then
                   cp /build/latte-dock-ng_*.deb /out/
                 else
@@ -219,6 +243,7 @@ jobs:
 
   nixos:
     name: NixOS (flake)
+    needs: [main-validation]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -288,11 +313,11 @@ jobs:
             echo "APT publication skipped: APT_SIGNING_PRIVATE_KEY is not configured."
           fi
 
-      - name: Download Debian packages
+      - name: Download DEB packages
         if: steps.signing.outputs.configured == 'true'
         uses: actions/download-artifact@v4
         with:
-          pattern: package-debian*
+          pattern: package-*
           merge-multiple: true
           path: ${{ runner.temp }}/apt-debs
 

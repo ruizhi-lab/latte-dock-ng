@@ -9,8 +9,10 @@ export APT_SIGNING_PASSPHRASE
 
 mapfile -t trixie_debs < <(find "$APT_DEB_DIR" -maxdepth 1 -type f -name 'latte-dock-ng_*+deb13u1_amd64.deb' -print)
 mapfile -t testing_debs < <(find "$APT_DEB_DIR" -maxdepth 1 -type f -name 'latte-dock-ng_*-1_amd64.deb' ! -name '*+deb13u1*' -print)
+mapfile -t ubuntu_debs < <(find "$APT_DEB_DIR" -maxdepth 1 -type f -name 'latte-dock-ng_*-1ubuntu1_amd64.deb' -print)
 test "${#trixie_debs[@]}" -eq 1
 test "${#testing_debs[@]}" -eq 1
+test "${#ubuntu_debs[@]}" -eq 1
 
 if git ls-remote --exit-code origin refs/heads/gh-pages >/dev/null 2>&1; then
     git fetch origin gh-pages
@@ -25,8 +27,7 @@ for suite in trixie testing ubuntu; do
 done
 install -m 0644 "${trixie_debs[0]}" pool/trixie/main/l/latte-dock-ng/
 install -m 0644 "${testing_debs[0]}" pool/testing/main/l/latte-dock-ng/
-# The Debian testing package is also installed in CI on Ubuntu 26.04.
-install -m 0644 "${testing_debs[0]}" pool/ubuntu/main/l/latte-dock-ng/
+install -m 0644 "${ubuntu_debs[0]}" pool/ubuntu/main/l/latte-dock-ng/
 
 gpg_home="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/apt-gnupg"
 install -d -m 0700 "$gpg_home"

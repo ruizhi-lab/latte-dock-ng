@@ -203,8 +203,8 @@ Item {
                                                    ? fastLayoutManager.appletIconPath(backendAppletRef) : ""
 
     function currentBackendAppletIcon() {
-        return fastLayoutManager && backendAppletRef
-                ? fastLayoutManager.appletIcon(backendAppletRef) : "";
+        return appletItem.fastLayoutManager && appletItem.backendAppletRef
+                ? appletItem.fastLayoutManager.appletIcon(appletItem.backendAppletRef) : "";
     }
 
     // QML cannot invalidate a getter-backed property when a Plasma applet

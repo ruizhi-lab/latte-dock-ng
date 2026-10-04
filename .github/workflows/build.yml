@@ -2,7 +2,6 @@ name: Build
 on:
   push:
     branches: [main, "codex/**"]
-    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -216,7 +215,7 @@ jobs:
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
-          docker build --file docker/${{ matrix.dockerfile }} \
+          docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg USE_MIRRORS=false \
             "${build_args[@]}" \
             --tag latte-verify-${{ matrix.distro }} docker
@@ -264,6 +263,7 @@ jobs:
           - distro: ubuntu
             dockerfile: Dockerfile.ubuntu
             format: deb
+            debian_release: 1ubuntu1
 
     steps:
       - uses: actions/checkout@v4
@@ -274,17 +274,15 @@ jobs:
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
-          docker build --file docker/${{ matrix.dockerfile }} \
+          docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg USE_MIRRORS=false \
             "${build_args[@]}" \
             --tag latte-package-${{ matrix.distro }} docker
 
       - name: Build and install native package
         run: |
-          mkdir -p "${{ runner.temp }}/debian-testing-package"
           docker run --rm \
             --volume "${{ github.workspace }}:/src:ro" \
-            --volume "${{ runner.temp }}/debian-testing-package:/out" \
             --tmpfs /build:exec \
             --workdir /build \
             latte-package-${{ matrix.distro }} \
@@ -312,44 +310,10 @@ jobs:
                 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION="$VERSION" "${package_args[@]}"
                 cmake --build . --parallel "$(nproc)"
                 cpack -G DEB
-                # Keep the release-equivalent testing package so the next
-                # step can install it in Ubuntu rather than merely validating
-                # a package built natively by Ubuntu.
-                if [ "${{ matrix.distro }}" = debian-testing ]; then
-                  cp ./latte-dock-ng_*.deb /out/
-                fi
                 apt-get update -qq
                 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ./latte-dock-ng_*.deb
               fi
               test -x /usr/bin/latte-dock-ng
               test -f /usr/share/applications/org.kde.latte-dock.desktop
               echo NATIVE_PACKAGE_INSTALL_OK
-            '
-
-      - name: Verify Debian testing package on Ubuntu 26.04
-        if: matrix.distro == 'debian-testing'
-        run: |
-          docker build --file docker/Dockerfile.ubuntu \
-            --build-arg USE_MIRRORS=false \
-            --tag latte-cross-install-ubuntu docker
-          docker run --rm \
-            --volume "${{ runner.temp }}/debian-testing-package:/package:ro" \
-            latte-cross-install-ubuntu \
-            bash -c '
-              set -euo pipefail
-              deb_path=$(find /package -maxdepth 1 -name "latte-dock-ng_*.deb" -print -quit)
-              test -n "$deb_path"
-              dpkg-deb -f "$deb_path" Depends | grep -E "libplasma7|libqt6core|libc6"
-              apt-get update -qq
-              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$deb_path"
-              set +e
-              start=$(date +%s)
-              out=$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
-              rc=$?
-              elapsed=$(( $(date +%s) - start ))
-              set -e
-              echo "$out" | tail -3
-              echo "exit code: $rc, elapsed: ${elapsed}s"
-              [ $rc -eq 1 ] || { echo "unexpected exit code"; exit 1; }
-              [ $elapsed -ge 4 ] || { echo "exited before the platform retry loop completed"; exit 1; }
             '
