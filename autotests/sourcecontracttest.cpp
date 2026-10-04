@@ -2069,13 +2069,26 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     QVERIFY(wrapperFile.open(QFile::ReadOnly));
     const QString wrapperSource = QString::fromUtf8(wrapperFile.readAll());
 
-    // Widgets whose compact representation has no discoverable IconItem use
-    // an Image fallback. The fallback must call the backend directly so
+    // Compact widgets can use configuration-bound icons even when discovery
+    // succeeds. The fallback must call the backend directly so
     // dynamic states such as volume mute/unmute are not frozen in QML's
     // getter-backed property cache.
     QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIconPath()")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIcon()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIcon()")));
     QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIconPath()")));
     QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
+
+    const int gateStart = wrapperSource.indexOf(QStringLiteral("readonly property bool needsOriginalIconFallback:"));
+    const int gateEnd = wrapperSource.indexOf(QStringLiteral("property bool disableLengthScale:"), gateStart);
+    QVERIFY(gateStart >= 0 && gateEnd > gateStart);
+    const QString gate = wrapperSource.mid(gateStart, gateEnd - gateStart);
+    QVERIFY(!gate.contains(QStringLiteral("appletMainIconIsFound")));
+    QVERIFY(!gate.contains(QStringLiteral("backendAppletIcon")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("visible: wrapper.needsOriginalIconFallback && iconPath !== \"\"")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("running: wrapper.needsOriginalIconFallback")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("function onNeedsOriginalIconFallbackChanged()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("!iconName.endsWith(\"-symbolic\")")));
 
     // The fallback is above the native hover copy and therefore needs its own
     // MultiEffect. It must use the same mouse state, brightness and fixed-slot

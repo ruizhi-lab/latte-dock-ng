@@ -81,17 +81,14 @@ Item{
     readonly property bool supportsHoveredIconEffect: communicator.appletMainIconIsFound
                                                       || appletItem.pluginName === "org.kde.plasma.trash"
 
-    // Some Plasma applets (for example the built-in Application Dashboard)
-    // render their compact icon outside a discoverable IconItem. The C++
-    // applet icon property still changes for these applets, but their native
-    // compact representation does not repaint from that property. Render the
-    // changed theme icon in Latte only for this generic, opt-in fallback path.
+    // Compact applets can bind their icon directly to configuration even when
+    // Latte discovers an IconItem (for example Kicker). The backend applet icon
+    // is authoritative after the original-color override; discovery alone does
+    // not prove the native representation follows it. Do not gate this path on
+    // getter-backed icon properties: they have no notify signal and can retain
+    // the initial symbolic name after the menu option changes.
     readonly property bool needsOriginalIconFallback: appletItem.userKeepsOriginalIconColors
-                                                       && !communicator.appletMainIconIsFound
                                                        && appletItem.backendAppletRef
-                                                       && appletItem.backendAppletIcon
-                                                       && appletItem.backendAppletIconPath
-                                                       && !appletItem.backendAppletIcon.endsWith("-symbolic")
 
     property bool disableLengthScale: false
     property bool disableThicknessScale: false
@@ -554,20 +551,22 @@ Item{
         }
     }
 
-    // A few Plasma applets render their compact icon outside a discoverable
-    // IconItem. Use the resolved theme file only for the explicit opt-in;
-    // Image keeps this fallback independent from Latte's custom IconItem.
+    // Use the resolved theme file only for the explicit opt-in. Symbolic-only
+    // or unresolved icons keep their native representation. Keep polling while
+    // opted in, including when hidden, so a later usable icon can activate it.
     Item {
         id: originalIconFallback
         anchors.fill: _wrapperContainer
         z: 1100
         scale: _wrapperContainer.scale
         transformOrigin: _wrapperContainer.transformOrigin
-        visible: wrapper.needsOriginalIconFallback
+        visible: wrapper.needsOriginalIconFallback && iconPath !== ""
         property string iconPath: ""
 
         function refreshIconPath() {
-            const nextPath = visible ? appletItem.currentBackendAppletIconPath() : "";
+            const iconName = wrapper.needsOriginalIconFallback ? appletItem.currentBackendAppletIcon() : "";
+            const nextPath = iconName && !iconName.endsWith("-symbolic")
+                           ? appletItem.currentBackendAppletIconPath() : "";
 
             if (iconPath !== nextPath) {
                 iconPath = nextPath;
@@ -575,16 +574,19 @@ Item{
         }
 
         Component.onCompleted: refreshIconPath()
-        onVisibleChanged: refreshIconPath()
+        Connections {
+            target: wrapper
+            function onNeedsOriginalIconFallbackChanged() { originalIconFallback.refreshIconPath(); }
+        }
 
         // Some applets expose their state through iconChanged without a QML
         // property notification on the resolved backend object. Poll only
-        // while this opt-in fallback is visible so dynamic widgets such as
+        // while this fallback is opted in so dynamic widgets such as
         // volume and brightness keep their current state.
         Timer {
             interval: 100
             repeat: true
-            running: originalIconFallback.visible
+            running: wrapper.needsOriginalIconFallback
             onTriggered: originalIconFallback.refreshIconPath()
         }
 

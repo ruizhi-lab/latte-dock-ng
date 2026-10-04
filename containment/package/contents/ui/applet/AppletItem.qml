@@ -202,9 +202,14 @@ Item {
     readonly property string backendAppletIconPath: fastLayoutManager && backendAppletRef
                                                    ? fastLayoutManager.appletIconPath(backendAppletRef) : ""
 
+    function currentBackendAppletIcon() {
+        return fastLayoutManager && backendAppletRef
+                ? fastLayoutManager.appletIcon(backendAppletRef) : "";
+    }
+
     // QML cannot invalidate a getter-backed property when a Plasma applet
     // changes its icon without exposing a notify signal.  The fallback image
-    // calls this function while it is visible so dynamic widget states are
+    // calls these functions while opted in so dynamic widget states are
     // read directly from the backend.
     function currentBackendAppletIconPath() {
         return fastLayoutManager && backendAppletRef
