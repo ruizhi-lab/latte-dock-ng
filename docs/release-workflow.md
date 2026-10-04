@@ -10,31 +10,38 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
 1. Update `set(VERSION X.Y.Z)` in `CMakeLists.txt` and `version = "X.Y.Z"` in
    `default.nix`. Add the `CHANGELOG.md` section and refresh `flake.lock` when
    advancing the pinned Nix dependencies.
-2. Push the release-candidate commit to `main`. This is the pre-release
-   validation step: `.github/workflows/build.yml` runs GCC and Clang builds,
-   autotests, QML lint, and native build/install verification for every
-   supported distro. Its Docker jobs pull current base-image tags and rebuild
-   dependency layers without cache, so package indexes and distro packages
-   are refreshed for each run.
+2. Push the release-candidate commit to `main`. `.github/workflows/build.yml`
+   runs GCC and Clang builds, autotests, QML lint, native install verification,
+   and native package build/install verification for every supported distro.
+   It also runs the NixOS flake checks and validates the current Gentoo overlay
+   ebuild, metadata, candidate Manifest, and package build against the
+   candidate source. The main-branch APT preflight generates all signed suites
+   in a temporary directory and verifies signatures and package indexes; it
+   does not modify GitHub Pages. Docker jobs pull current base-image tags and
+   rebuild dependency layers without cache.
 3. Wait for the complete `Build` run for that exact `main` commit to succeed.
-   The release workflow checks this commit-specific result and refuses to
-   publish when it is missing or failed. Do not create a release tag to skip
-   this gate.
-4. After validation is green, create and push the annotated `vX.Y.Z` tag on
-   the validated commit. `.github/workflows/release.yml` again pulls current
-   distro base images and rebuilds dependencies without cache, then builds
-   and smoke-tests release packages for Fedora, openSUSE Tumbleweed, Mageia,
-   Debian 13, Debian testing, Ubuntu 26.04, and Arch. It publishes GitHub
-   Release assets only after package builds, NixOS checks and APT publication
-   succeed. Debian 13
-   uses the `+deb13u1` revision, Debian testing uses `-1`, and Ubuntu uses
-   `-1ubuntu1`.
+   The candidate version in `CMakeLists.txt` must match the future `vX.Y.Z`
+   tag. The Build run retains the seven packages that it built and installed.
+   Do not create a release tag to skip this gate.
+4. Create and push the annotated `vX.Y.Z` tag on the validated commit. The
+   release workflow checks the exact commit and version, publishes the signed
+   APT repository from the validated DEB artifacts, and creates the GitHub
+   Release from the same validated package artifacts. It does not rebuild
+   release packages after validation. The Gentoo overlay update is prepared
+   from that final tag, gets its Manifest regenerated and QA-checked, then is
+   pushed to `ruizhi-lab/gentoo-overlay`. Debian 13 uses the `+deb13u1`
+   revision, Debian testing uses `-1`, and Ubuntu uses `-1ubuntu1`.
 5. Curate English release notes and link the preceding tag with
    `compare/vPREV...vX.Y.Z`.
 
 Desktop runtime retesting is not a release gate. Use the GitHub Build and
 Release workflow results as the authoritative build and package-install
 verification for each release candidate.
+
+The release workflow needs the `RUIZHI_OVERLAY_TOKEN` repository Actions
+secret. It must be a fine-grained token limited to `ruizhi-lab/gentoo-overlay`
+with Contents read/write access. A missing or insufficient token blocks the
+release rather than silently skipping the overlay update.
 
 ## Repository publication after the tag
 

@@ -176,22 +176,49 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("ebuild")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral(">=kde-plasma/kscreenlocker-6.3:6")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("clean configure compile install")));
+    QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("pkgdev manifest -d")));
+    QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("pkgcheck scan --repo")));
 
     QFile releaseWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/release.yml"));
     QVERIFY(releaseWorkflow.open(QFile::ReadOnly));
     const QString releaseWorkflowSource = QString::fromUtf8(releaseWorkflow.readAll());
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.fedora")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.debian")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Dockerfile.arch")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("build-args: USE_MIRRORS=false")));
-    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
-    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("verify-ebuild-gentoo.sh")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Require successful main pre-release gate")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Require tag version to match the validated source version")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("run-id: ${{ needs.main-validation.outputs.build_run_id }}")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("pattern: release-package-*")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("needs: [main-validation, apt-repository, gentoo-overlay-publish]")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("RUIZHI_OVERLAY_TOKEN")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("ruizhi-lab/gentoo-overlay")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/prepare-gentoo-overlay.sh")));
 
     QFile buildWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/build.yml"));
     QVERIFY(buildWorkflow.open(QFile::ReadOnly));
     const QString buildWorkflowSource = QString::fromUtf8(buildWorkflow.readAll());
-    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg USE_MIRRORS=false")), 2);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg USE_MIRRORS=false")), 3);
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("--build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }}")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("name: Retain validated release package")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("retention-days: 90")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("nixos-release-check:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("gentoo-ebuild-preflight:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("Require overlay publication token on main")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("GENTOO_EBUILD_TEMPLATE=/overlay-ebuild")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("apt-repository-preflight:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("publish-apt-repository.sh --dry-run")));
+
+    QFile aptPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/publish-apt-repository.sh"));
+    QVERIFY(aptPublisher.open(QFile::ReadOnly));
+    const QString aptPublisherSource = QString::fromUtf8(aptPublisher.readAll());
+    QVERIFY(aptPublisherSource.contains(QStringLiteral("--dry-run <output-directory>")));
+    QVERIFY(aptPublisherSource.contains(QStringLiteral("APT repository preflight succeeded")));
+    QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring")));
+
+    QFile overlayPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/prepare-gentoo-overlay.sh"));
+    QVERIFY(overlayPublisher.open(QFile::ReadOnly));
+    const QString overlayPublisherSource = QString::fromUtf8(overlayPublisher.readAll());
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("pkgdev manifest -d")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("pkgcheck scan --repo")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("ebuild \"$new_ebuild\" clean configure compile install")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("${DISTDIR:-$(mktemp -d")));
 
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));
     QVERIFY(packagingCMake.open(QFile::ReadOnly));

@@ -2,6 +2,17 @@
 
 set -euo pipefail
 
+dry_run=false
+repo_dir=""
+if [[ "${1:-}" == "--dry-run" ]]; then
+    [[ $# -eq 2 ]] || { echo "Usage: $0 --dry-run <output-directory>" >&2; exit 2; }
+    dry_run=true
+    repo_dir=$(mkdir -p "$2" && cd "$2" && pwd)
+elif [[ $# -ne 0 ]]; then
+    echo "Usage: $0 [--dry-run <output-directory>]" >&2
+    exit 2
+fi
+
 : "${APT_SIGNING_PRIVATE_KEY:?Set APT_SIGNING_PRIVATE_KEY to the armored repository signing key}"
 : "${APT_DEB_DIR:?Set APT_DEB_DIR to the directory containing the release .deb files}"
 APT_SIGNING_PASSPHRASE=${APT_SIGNING_PASSPHRASE:-}
@@ -14,7 +25,10 @@ test "${#trixie_debs[@]}" -eq 1
 test "${#testing_debs[@]}" -eq 1
 test "${#ubuntu_debs[@]}" -eq 1
 
-if git ls-remote --exit-code origin refs/heads/gh-pages >/dev/null 2>&1; then
+if [[ "$dry_run" == true ]]; then
+    mkdir -p "$repo_dir"
+    cd "$repo_dir"
+elif git ls-remote --exit-code origin refs/heads/gh-pages >/dev/null 2>&1; then
     git fetch origin gh-pages
     git switch --force-create gh-pages origin/gh-pages
 else
@@ -62,7 +76,18 @@ EOF
     gpg --batch --yes --pinentry-mode loopback --passphrase "$APT_SIGNING_PASSPHRASE" \
         --local-user "$fingerprint" --armor --detach-sign \
         --output "dists/$suite/Release.gpg" "dists/$suite/Release"
+
+    gpgv --keyring "$repo_dir/latte-dock-ng-archive-keyring.gpg" \
+        "dists/$suite/Release.gpg" "dists/$suite/Release"
+    gpgv --keyring "$repo_dir/latte-dock-ng-archive-keyring.gpg" \
+        "dists/$suite/InRelease"
+    grep -q '^Package: latte-dock-ng$' "$index_dir/Packages"
 done
+
+if [[ "$dry_run" == true ]]; then
+    echo "APT repository preflight succeeded in $repo_dir (no remote changes made)."
+    exit 0
+fi
 
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

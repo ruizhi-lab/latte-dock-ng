@@ -18,6 +18,7 @@ Item{
     required property var containmentRoot
     readonly property var root: containmentRoot
     required property var appletItem
+    required property var colorizer
     required property var applet
     required property var communicator
     required property var layoutsContainer
@@ -74,7 +75,7 @@ Item{
         return communicator.parabolicEffectIsSupported ? appletPreferredThickness : scaledThickness + appletItem.metrics.margin.screenEdge;
     }
 
-    opacity: appletColorizer.mustBeShown && appletItem.environment.isGraphicsSystemAccelerated ? 0 : 1
+    opacity: colorizer.mustBeShown && appletItem.environment.isGraphicsSystemAccelerated ? 0 : 1
 
     // Apply native hover feedback only to compact applets that expose an icon.
     // Text-only and custom-painted applets therefore keep their own visuals.

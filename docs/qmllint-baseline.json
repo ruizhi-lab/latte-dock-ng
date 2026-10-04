@@ -4237,20 +4237,6 @@
     },
     {
       "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"activatePreviewUuid\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"closePreviewUuid\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 59,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"configuration\" not found on type \"QObject\"",
@@ -4288,20 +4274,6 @@
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"inRemoveStage\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"isLauncher\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"layoutDirection\" not found on type \"QQmlApplication\"",
       "severity": "warning"
     },
@@ -4321,13 +4293,6 @@
     },
     {
       "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"moveIsolatedPreview\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 4,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"status\" not found on type \"QObject\"",
@@ -4337,21 +4302,7 @@
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"updateIsolatedPreview\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"userConfiguring\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"visualContainsMouse\" not found on type \"QQuickItem\"",
       "severity": "warning"
     },
     {

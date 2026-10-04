@@ -117,3 +117,10 @@ RUN emerge --oneshot --noreplace \
       kde-plasma/plasma-workspace:6 \
       virtual/pkgconfig && \
     rm -rf /var/cache/distfiles/* /var/cache/binpkgs/*
+
+# Release automation needs repo-native manifest, policy, and metadata checks
+# before it publishes a new versioned ebuild to the overlay.
+RUN emerge --oneshot --noreplace \
+      app-portage/pkgcheck \
+      app-portage/pkgdev \
+      dev-libs/libxml2

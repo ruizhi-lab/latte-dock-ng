@@ -21,6 +21,8 @@ import "../debugger" as Debugger
 Item {
     id: appletItem
     required property var containmentRoot
+    required property var layoutsContainer
+    required property var latteView
     readonly property var containmentRootReference: containmentRoot
     readonly property var root: containmentRoot
     readonly property var appletItemReference: appletItem
@@ -1716,6 +1718,7 @@ Item {
                 id: _wrapper
                 containmentRoot: containmentRootReference
                 appletItem: appletItemReference
+                colorizer: appletColorizer
                 applet: appletReference
                 communicator: communicatorReference
                 layoutsContainer: layoutsContainerReference

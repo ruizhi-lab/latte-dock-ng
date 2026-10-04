@@ -54,7 +54,17 @@ else
     fi
 fi
 
-cat > "${package_dir}/latte-dock-ng-${version}.ebuild" <<EOF
+ebuild_file="${package_dir}/latte-dock-ng-${version}.ebuild"
+if [[ -n "${GENTOO_EBUILD_TEMPLATE:-}" ]]; then
+    cp "$GENTOO_EBUILD_TEMPLATE" "$ebuild_file"
+    if [[ -n "${GENTOO_METADATA_TEMPLATE:-}" ]]; then
+        cp "$GENTOO_METADATA_TEMPLATE" "${package_dir}/metadata.xml"
+    fi
+    if [[ "${GENTOO_VERIFY_FETCH_TAG:-false}" != "true" ]]; then
+        sed -i "s|^SRC_URI=.*|SRC_URI=\"file://${DISTDIR}/${dist_name} -> \${P}.tar.gz\"|" "$ebuild_file"
+    fi
+else
+cat > "$ebuild_file" <<EOF
 # Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -135,9 +145,22 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 EOF
+fi
 
 cd "${overlay}"
-ebuild "${package_dir}/latte-dock-ng-${version}.ebuild" manifest
+if [[ -n "${GENTOO_EBUILD_TEMPLATE:-}" ]]; then
+    cat > /etc/portage/repos.conf/latte-overlay.conf <<EOF
+[latte-overlay]
+location = ${overlay}
+masters = gentoo
+auto-sync = no
+EOF
+    pkgdev manifest -d "${DISTDIR}" "${package_dir}"
+    pkgcheck scan --repo "${overlay}" kde-misc/latte-dock-ng
+    xmllint --noout "${package_dir}/metadata.xml"
+else
+    ebuild "${package_dir}/latte-dock-ng-${version}.ebuild" manifest
+fi
 ebuild "${package_dir}/latte-dock-ng-${version}.ebuild" clean configure compile install
 
 echo "=== Gentoo ebuild verification succeeded for latte-dock-ng-${version} ==="

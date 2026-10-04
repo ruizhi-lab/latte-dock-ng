@@ -10,10 +10,27 @@ permissions:
 
 jobs:
   main-validation:
-    name: Require successful main validation
+    name: Require successful main pre-release gate
     runs-on: ubuntu-24.04
+    outputs:
+      build_run_id: ${{ steps.validation.outputs.build_run_id }}
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Require tag version to match the validated source version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          expected="${RELEASE_TAG#v}"
+          actual=$(sed -n 's/^ *set(VERSION \([^)]*\)).*/\1/p' CMakeLists.txt | head -1)
+          test -n "$actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "Tag version $expected does not match CMakeLists.txt version $actual." >&2
+            exit 1
+          fi
+
       - name: Find the successful Build run for this commit
+        id: validation
         uses: actions/github-script@v7
         with:
           script: |
@@ -33,257 +50,12 @@ jobs:
               core.setFailed(`Commit ${context.sha} has no successful Build run from main.`);
               return;
             }
+            core.setOutput("build_run_id", passed.id);
             core.info(`Validated by Build run ${passed.id}: ${passed.html_url}`);
-
-  package:
-    name: ${{ matrix.distro }} (${{ matrix.format }})
-    needs: [main-validation]
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - distro: fedora
-            dockerfile: Dockerfile.fedora
-            format: rpm
-            rpm_requires: kf6-kirigami, kf6-kcmutils, kf6-knewstuff
-          - distro: opensuse
-            dockerfile: Dockerfile.opensuse
-            format: rpm
-            rpm_requires: kf6-kirigami, kf6-kcmutils, kf6-knewstuff
-          - distro: mageia
-            dockerfile: Dockerfile.mageia
-            format: rpm
-            rpm_requires: lib64kirigami6, lib64kf6kcmutils6, lib64kf6newstuffcore6
-          #! The libplasma soname changed from 6 to 7 between Plasma 6.5
-          #! and 6.6. Build each distro's package natively because Debian
-          #! testing's newer Qt dependencies are unavailable on Ubuntu 26.04.
-          - distro: debian
-            dockerfile: Dockerfile.debian
-            format: deb
-          - distro: debian-testing
-            dockerfile: Dockerfile.debian-testing
-            format: deb
-          - distro: ubuntu
-            dockerfile: Dockerfile.ubuntu
-            format: deb
-          - distro: arch
-            dockerfile: Dockerfile.arch
-            format: pkg.tar.zst
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image (${{ matrix.distro }})
-        uses: docker/build-push-action@v6
-        with:
-          context: docker/
-          file: docker/${{ matrix.dockerfile }}
-          build-args: USE_MIRRORS=false
-          pull: true
-          no-cache: true
-          tags: latte-build-${{ matrix.distro }}
-          load: true
-          provenance: false
-
-      - name: Build and package (${{ matrix.distro }})
-        run: |
-          mkdir -p dist
-          docker run --rm \
-            -v ${{ github.workspace }}:/src:ro \
-            -v ${{ github.workspace }}/dist:/out \
-            -e VERSION="${{ env.VERSION }}" \
-            --tmpfs /build:exec \
-            -w /build \
-            latte-build-${{ matrix.distro }} \
-            bash -c "
-              set -e
-              if [ '${{ matrix.format }}' = 'pkg.tar.zst' ]; then
-                bash /src/docker/package-arch.sh \"\$VERSION\" /out
-              else
-                GEN=\$([ '${{ matrix.format }}' = 'rpm' ] && echo RPM || echo DEB)
-                #! Use distro-specific revisions so the three DEBs have
-                #! distinct filenames and encode their native build target.
-                DEBREL='1'
-                if [ '${{ matrix.distro }}' = 'debian' ]; then DEBREL='1+deb13u1'; fi
-                if [ '${{ matrix.distro }}' = 'ubuntu' ]; then DEBREL='1ubuntu1'; fi
-                cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\" -DCPACK_DEBIAN_PACKAGE_RELEASE=\"\$DEBREL\" -DLATTE_RPM_PACKAGE_REQUIRES=${{ matrix.rpm_requires }}
-                cmake --build . --parallel \$(nproc)
-                #! source-install verification on this distro: the install
-                #! must land the binary and the desktop file
-                cmake --install .
-                test -x /usr/bin/latte-dock-ng
-                test -f /usr/share/applications/org.kde.latte-dock.desktop
-                echo SOURCE_INSTALL_OK
-                cpack -G \"\$GEN\"
-                #! The distro-specific revisions distinguish DEB filenames.
-                if [ '${{ matrix.format }}' = 'deb' ]; then
-                  cp /build/latte-dock-ng_*.deb /out/
-                else
-                  cp /build/latte-dock-ng*.* /out/
-                fi
-              fi
-            "
-
-      - name: Smoke test RPM
-        if: matrix.format == 'rpm'
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/dist:/out:ro \
-            latte-build-${{ matrix.distro }} \
-            bash -c "
-              set -e
-              rpm_path=\$(ls /out/latte-dock-ng-*.rpm | head -1)
-              echo '== Native QML package dependencies =='
-              rpm -qpR \"\$rpm_path\" | grep -E 'kf6-(kirigami|kcmutils|knewstuff)|lib64(kirigami6|kf6kcmutils6|kf6newstuffcore6)'
-              echo '== File list sanity =='
-              rpm -qpl \"\$rpm_path\" | grep -E '/bin/latte-dock-ng\$|/share/applications/org.kde.latte-dock.desktop\$|/qt6/qml/org/kde/latte/core/qmldir\$|/share/icons/hicolor/'
-              echo '== Install (unresolvable Requires fails here) =='
-              if command -v dnf >/dev/null; then
-                dnf install -y --setopt=install_weak_deps=False \"\$rpm_path\"
-              else
-                zypper --non-interactive --no-gpg-checks install --allow-unsigned-rpm \"\$rpm_path\"
-              fi
-              echo '== rpmlint (errors are fatal, warnings informational) =='
-              if command -v rpmlint >/dev/null; then
-                LC_ALL=C rpmlint \"\$rpm_path\" | tee /tmp/rpmlint.log
-                ! grep -q 'E: ' /tmp/rpmlint.log
-              else
-                echo 'rpmlint not available on this distro; skipping'
-              fi
-              echo '== Launch (headless) =='
-              set +e
-              start=\$(date +%s)
-              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
-              rc=\$?
-              elapsed=\$(( \$(date +%s) - start ))
-              set -e
-              echo \"\$out\" | tail -3
-              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
-              # The Wayland-only build must reach the platform gate: exit 1
-              # after its 10x500ms retry loop. Anything else (127 missing lib,
-              # 124 hang, 139 crash, or a fast exit) means the package is broken.
-              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
-              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
-            "
-
-      - name: Smoke test DEB
-        if: matrix.format == 'deb'
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/dist:/out:ro \
-            latte-build-${{ matrix.distro }} \
-            bash -c "
-              set -e
-              deb_path=\$(ls /out/latte-dock-ng_*.deb | head -1)
-              echo '== Versioned deps (must match the libplasma camp of this distro) =='
-              dpkg-deb -f \"\$deb_path\" Depends | grep -E 'libplasma6|libplasma7|libqt6core|libc6'
-              echo '== Install (apt resolves Depends from the distro repos) =='
-              apt-get update -qq
-              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \"\$deb_path\"
-              echo '== Launch (headless) =='
-              set +e
-              start=\$(date +%s)
-              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
-              rc=\$?
-              elapsed=\$(( \$(date +%s) - start ))
-              set -e
-              echo \"\$out\" | tail -3
-              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
-              # The Wayland-only build must reach the platform gate: exit 1
-              # after its 10x500ms retry loop. Anything else means a broken
-              # package (missing lib, hang, crash, or fast exit).
-              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
-              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
-            "
-
-      - name: Smoke test Arch
-        if: matrix.format == 'pkg.tar.zst'
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/dist:/out:ro \
-            latte-build-${{ matrix.distro }} \
-            bash -c "
-              set -e
-              pkg_path=\$(ls /out/latte-dock-ng-*.pkg.tar.zst | head -1)
-              echo '== Install (pacman resolves deps from the repo) =='
-              pacman -U --noconfirm \"\$pkg_path\"
-              echo '== Launch (headless) =='
-              set +e
-              start=\$(date +%s)
-              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
-              rc=\$?
-              elapsed=\$(( \$(date +%s) - start ))
-              set -e
-              echo \"\$out\" | tail -3
-              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
-              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
-              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
-            "
-
-      - name: Disambiguate RPM artifact filename
-        if: matrix.format == 'rpm'
-        env:
-          DISTRO: ${{ matrix.distro }}
-        run: |
-          for package in dist/*.rpm; do
-            mv "$package" "${package%.rpm}-${DISTRO}.rpm"
-          done
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: package-${{ matrix.distro }}
-          path: dist/
-
-  nixos:
-    name: NixOS (flake)
-    needs: [main-validation]
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Check flake
-        run: nix flake check --print-build-logs
-
-      - name: Build NixOS package
-        run: nix build .#default --no-link --print-build-logs
-
-  release:
-    name: Create Release
-    needs: [package, nixos, apt-repository]
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: package-*
-          merge-multiple: true
-          path: dist
-
-      - name: List packages
-        run: ls -la dist/
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*
-          generate_release_notes: true
 
   apt-repository:
     name: Publish signed APT repository
-    needs: [package, nixos]
+    needs: [main-validation, gentoo-overlay-validate]
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
@@ -301,55 +73,189 @@ jobs:
           fetch-depth: 0
 
       - name: Check APT signing secrets
-        id: signing
         env:
           APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
-          APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
         run: |
-          if [ -n "$APT_SIGNING_PRIVATE_KEY" ]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ -z "$APT_SIGNING_PRIVATE_KEY" ]; then
             echo "APT publication cannot run: APT_SIGNING_PRIVATE_KEY is not configured." >&2
             exit 1
           fi
 
-      - name: Download DEB packages
-        if: steps.signing.outputs.configured == 'true'
+      - name: Download preflight-validated packages
         uses: actions/download-artifact@v4
         with:
-          pattern: package-*
+          run-id: ${{ needs.main-validation.outputs.build_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: release-package-*
           merge-multiple: true
           path: ${{ runner.temp }}/apt-debs
 
       - name: Install repository tools
-        if: steps.signing.outputs.configured == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends apt-utils dpkg-dev gnupg
 
       - name: Publish Debian and Ubuntu APT suites
-        if: steps.signing.outputs.configured == 'true'
         env:
           APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
           APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
           APT_DEB_DIR: ${{ runner.temp }}/apt-debs
-        run: |
-          bash scripts/publish-apt-repository.sh
+        run: bash scripts/publish-apt-repository.sh
 
       - name: Collect GitHub Pages content
-        if: steps.signing.outputs.configured == 'true'
         run: |
           git switch gh-pages
           mkdir -p "$RUNNER_TEMP/pages"
           cp -a dists pool latte-dock-ng-archive-keyring.gpg "$RUNNER_TEMP/pages/"
 
       - name: Upload GitHub Pages artifact
-        if: steps.signing.outputs.configured == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ runner.temp }}/pages
 
       - name: Deploy GitHub Pages
-        if: steps.signing.outputs.configured == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
+
+  gentoo-overlay-validate:
+    name: Validate Gentoo overlay ebuild
+    needs: [main-validation]
+    runs-on: ubuntu-24.04
+    outputs:
+      overlay_sha: ${{ steps.overlay_ref.outputs.sha }}
+    steps:
+      - name: Check overlay write token is configured
+        env:
+          RUIZHI_OVERLAY_TOKEN: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
+        run: |
+          if [ -z "$RUIZHI_OVERLAY_TOKEN" ]; then
+            echo "Overlay publication cannot run: RUIZHI_OVERLAY_TOKEN is not configured." >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Check out Gentoo overlay
+        uses: actions/checkout@v4
+        with:
+          repository: ruizhi-lab/gentoo-overlay
+          ref: main
+          path: gentoo-overlay
+
+      - name: Record validated overlay revision
+        id: overlay_ref
+        run: echo "sha=$(git -C gentoo-overlay rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build current Gentoo package toolchain
+        run: |
+          docker build --pull --no-cache --file docker/Dockerfile.gentoo \
+            --build-arg USE_MIRRORS=false \
+            --tag latte-gentoo-release docker
+
+      - name: Prepare and validate the tagged ebuild and Manifest
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: |
+          version="${RELEASE_VERSION#v}"
+          mkdir -p "$RUNNER_TEMP/gentoo-distfiles"
+          docker run --rm --network host \
+            --volume "${{ github.workspace }}:/src:ro" \
+            --volume "${{ github.workspace }}/gentoo-overlay:/overlay" \
+            --volume "$RUNNER_TEMP/gentoo-distfiles:/distfiles" \
+            --tmpfs /tmp:exec \
+            --env DISTDIR=/distfiles \
+            latte-gentoo-release \
+            bash /src/scripts/prepare-gentoo-overlay.sh "$version" /overlay
+
+      - name: Retain validated ebuild and Manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: gentoo-overlay-package
+          path: gentoo-overlay/kde-misc/latte-dock-ng/
+          if-no-files-found: error
+          retention-days: 90
+
+  gentoo-overlay-publish:
+    name: Publish Gentoo overlay ebuild
+    needs: [apt-repository, gentoo-overlay-validate]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check overlay write token
+        env:
+          RUIZHI_OVERLAY_TOKEN: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
+        run: |
+          if [ -z "$RUIZHI_OVERLAY_TOKEN" ]; then
+            echo "Overlay publication cannot run: RUIZHI_OVERLAY_TOKEN is not configured." >&2
+            exit 1
+          fi
+
+      - name: Check out Gentoo overlay
+        uses: actions/checkout@v4
+        with:
+          repository: ruizhi-lab/gentoo-overlay
+          ref: main
+          path: gentoo-overlay
+          token: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
+
+      - name: Require the overlay to match the validated revision
+        env:
+          VALIDATED_OVERLAY_SHA: ${{ needs.gentoo-overlay-validate.outputs.overlay_sha }}
+        run: |
+          current_sha=$(git -C gentoo-overlay rev-parse HEAD)
+          if [ "$current_sha" != "$VALIDATED_OVERLAY_SHA" ]; then
+            echo "Gentoo overlay main advanced after ebuild validation; refusing to overwrite it." >&2
+            exit 1
+          fi
+
+      - name: Replace the package directory with the validated result
+        run: |
+          rm -rf gentoo-overlay/kde-misc/latte-dock-ng
+          mkdir -p gentoo-overlay/kde-misc/latte-dock-ng
+
+      - name: Download validated ebuild and Manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: gentoo-overlay-package
+          path: gentoo-overlay/kde-misc/latte-dock-ng
+
+      - name: Commit and push the overlay update
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: |
+          git -C gentoo-overlay config user.name "github-actions[bot]"
+          git -C gentoo-overlay config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C gentoo-overlay add -- kde-misc/latte-dock-ng
+          if git -C gentoo-overlay diff --cached --quiet; then
+            echo "The overlay already contains the validated $RELEASE_VERSION recipe."
+            exit 0
+          fi
+          git -C gentoo-overlay commit -m "kde-misc/latte-dock-ng: add ${RELEASE_VERSION#v}"
+          git -C gentoo-overlay push origin main
+
+  release:
+    name: Create Release from validated packages
+    needs: [main-validation, apt-repository, gentoo-overlay-publish]
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download packages from the successful pre-release gate
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ needs.main-validation.outputs.build_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: release-package-*
+          merge-multiple: true
+          path: dist
+
+      - name: Verify release asset set
+        run: |
+          test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 7
+          ls -la dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
