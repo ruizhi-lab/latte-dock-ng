@@ -26,6 +26,7 @@ if [[ ! -f "$new_ebuild" ]]; then
     cp "${release_ebuilds[-1]}" "$new_ebuild"
 fi
 grep -Fq 'SRC_URI="https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"' "$new_ebuild"
+python3 "$(dirname "$0")/release-version.py" ebuild --file "$new_ebuild"
 
 for old_ebuild in "${release_ebuilds[@]}"; do
     [[ "$old_ebuild" == "$new_ebuild" ]] || rm -f "$old_ebuild"

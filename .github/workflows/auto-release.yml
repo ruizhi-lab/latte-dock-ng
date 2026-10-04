@@ -19,7 +19,7 @@ jobs:
     name: Release a fully validated new version
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch') &&
       github.event.workflow_run.head_branch == 'main' &&
       github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-24.04
@@ -28,6 +28,14 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
+
+      - name: Download the validated candidate identity
+        uses: actions/download-artifact@v4
+        with:
+          name: release-candidate-metadata
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: release-metadata
 
       - name: Tag the validated release
         uses: actions/github-script@v7
@@ -39,12 +47,12 @@ jobs:
             const fs = require("fs");
             const sourceSha = process.env.SOURCE_SHA;
             const buildRunId = Number(process.env.BUILD_RUN_ID);
-            const versionSource = fs.readFileSync("CMakeLists.txt", "utf8");
-            const nixSource = fs.readFileSync("default.nix", "utf8");
-            const version = versionSource.match(/^\s*set\(VERSION\s+([^)]+)\)/m)?.[1];
-            const nixVersion = nixSource.match(/^\s*version\s*=\s*"([^"]+)";/m)?.[1];
-            if (!version || version !== nixVersion) {
-              core.setFailed(`CMake version ${version ?? "missing"} does not match default.nix version ${nixVersion ?? "missing"}.`);
+            const candidate = JSON.parse(fs.readFileSync("release-metadata/release-candidate.json", "utf8"));
+            const version = candidate.version;
+            if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version) ||
+                candidate.source_sha !== sourceSha || candidate.build_run_id !== String(buildRunId) ||
+                Object.keys(candidate.packages ?? {}).length !== 7) {
+              core.setFailed("Candidate identity does not match the successful Build run.");
               return;
             }
 
@@ -106,6 +114,7 @@ jobs:
               inputs: {
                 release_tag: releaseTag,
                 source_sha: sourceSha,
+                build_run_id: String(buildRunId),
               },
             });
             core.info(`Dispatched Release for ${releaseTag}; Release rechecks Build run ${buildRunId} before publication.`);

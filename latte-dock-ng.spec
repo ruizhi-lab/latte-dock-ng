@@ -67,6 +67,7 @@ provides an animated dock for tasks and widgets.
 %cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
        -DCMAKE_BUILD_TYPE=Release \
        -DBUILD_TESTING=OFF \
+       -DVERSION=%{version} \
        -DLATTE_RPM_PACKAGE_REQUIRES="kf6-kirigami, kf6-kcmutils, kf6-knewstuff"
 %cmake_build
 

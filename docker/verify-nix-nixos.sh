@@ -43,15 +43,15 @@ cd "${nix_source}"
 # so the remote gate also covers the documented developer preset.
 echo "=== NixOS: explicit flake check ==="
 nix --extra-experimental-features "nix-command flakes" \
-    flake check --print-build-logs
+    flake check --impure --print-build-logs
 
 echo "=== NixOS: release flake package ==="
 nix --extra-experimental-features "nix-command flakes" \
-    build .#default --no-link --print-build-logs
+    build .#default --impure --no-link --print-build-logs
 
 echo "=== NixOS: development shell preset build ==="
 nix --extra-experimental-features "nix-command flakes" \
-    develop --command bash -c \
-    'cmake --preset gcc-debug && cmake --build --preset gcc-debug'
+    develop --impure --command bash -c \
+    'args=(); if [[ -n "${LATTE_RELEASE_VERSION:-}" ]]; then args+=(-DVERSION="$LATTE_RELEASE_VERSION"); fi; cmake --preset gcc-debug "${args[@]}" && cmake --build --preset gcc-debug'
 
 echo "=== NixOS: FLAKE CHECK + PACKAGE + DEV SHELL SUCCESS ==="

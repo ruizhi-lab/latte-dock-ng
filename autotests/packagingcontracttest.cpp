@@ -183,7 +183,10 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflow.open(QFile::ReadOnly));
     const QString releaseWorkflowSource = QString::fromUtf8(releaseWorkflow.readAll());
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Require successful main pre-release gate")));
-    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Require tag version to match the validated source version")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Require tag version to match the validated candidate version")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/release-version.py verify")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("inputs.build_run_id")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("tag_name: ${{ inputs.release_tag || github.ref_name }}")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("run-id: ${{ needs.main-validation.outputs.build_run_id }}")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("pattern: release-package-*")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("needs: [main-validation, apt-repository, gentoo-overlay-publish]")));
@@ -218,6 +221,10 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("GENTOO_EBUILD_TEMPLATE=/overlay-ebuild")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("apt-repository-preflight:")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("publish-apt-repository.sh --dry-run")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("release_version:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("release-candidate-metadata:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("LATTE_RELEASE_VERSION=\"$LATTE_RELEASE_VERSION\"")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("scripts/release-version.py metadata")));
 
     QFile aptPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/publish-apt-repository.sh"));
     QVERIFY(aptPublisher.open(QFile::ReadOnly));

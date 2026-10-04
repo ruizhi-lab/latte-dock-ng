@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {}, releaseVersion ? builtins.getEnv "LATTE_RELEASE_VERSION" }:
 
 let
   inherit (pkgs) lib stdenv cmake wayland;
@@ -37,30 +37,38 @@ let
     kdePackages.kwindowsystem
     kdePackages.kxmlgui
   ];
-in
-stdenv.mkDerivation {
-  pname = "latte-dock-ng";
-  version = "1.2.55";
+  package = stdenv.mkDerivation {
+    pname = "latte-dock-ng";
+    version = "1.2.55";
 
-  src = lib.cleanSource ./.;
+    src = lib.cleanSource ./.;
 
-  nativeBuildInputs = [
-    cmake
-    pkgs.dbus
-    kdePackages.extra-cmake-modules
-    kdePackages.wrapQtAppsHook
-  ];
+    nativeBuildInputs = [
+      cmake
+      pkgs.dbus
+      kdePackages.extra-cmake-modules
+      kdePackages.wrapQtAppsHook
+    ];
 
-  inherit buildInputs;
+    inherit buildInputs;
 
-  passthru.runtimeInputs = buildInputs;
+    passthru.runtimeInputs = buildInputs;
 
-  meta = with lib; {
-    description = "Dock-style app launcher based on Plasma frameworks (KDE Plasma 6 fork)";
-    homepage = "https://github.com/ruizhi-lab/latte-dock-ng";
-    license = licenses.gpl3Plus;
-    platforms = [ "x86_64-linux" ];
-    maintainers = [ ];
-    mainProgram = "latte-dock-ng";
+    meta = with lib; {
+      description = "Dock-style app launcher based on Plasma frameworks (KDE Plasma 6 fork)";
+      homepage = "https://github.com/ruizhi-lab/latte-dock-ng";
+      license = licenses.gpl3Plus;
+      platforms = [ "x86_64-linux" ];
+      maintainers = [ ];
+      mainProgram = "latte-dock-ng";
+    };
   };
-}
+in
+# Pure flake evaluation keeps the source default. Release CI explicitly opts
+# into impure evaluation to bind both package metadata and CMake to its input.
+if releaseVersion == "" then package else
+assert builtins.match "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)" releaseVersion != null;
+package.overrideAttrs (old: {
+  version = releaseVersion;
+  cmakeFlags = (old.cmakeFlags or [ ]) ++ [ "-DVERSION=${releaseVersion}" ];
+})

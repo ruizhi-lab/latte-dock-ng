@@ -1,16 +1,45 @@
 name: Build
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Release candidate v{0}', inputs.release_version) || format('Build {0}', github.sha) }}
 on:
   push:
     branches: [main, "codex/**"]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: Release version (X.Y.Z, without v); publish automatically after all checks pass
+        required: true
+        type: string
 
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  release-input:
+    name: Resolve and validate candidate version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve version
+        id: version
+        env:
+          LATTE_RELEASE_VERSION: ${{ inputs.release_version }}
+          EVENT_NAME: ${{ github.event_name }}
+          SOURCE_REF: ${{ github.ref }}
+        run: |
+          if [ "$EVENT_NAME" = workflow_dispatch ] && [ "$SOURCE_REF" != refs/heads/main ]; then
+            echo "Release candidates must be dispatched from main." >&2
+            exit 1
+          fi
+          version=$(python3 scripts/release-version.py resolve)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: [release-input]
     name: Build (${{ matrix.name }})
     runs-on: ubuntu-24.04
     container:
@@ -40,6 +69,7 @@ jobs:
             cc: clang
             cxx: clang++
     env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
     steps:
@@ -80,7 +110,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p build/modernization/logs
-          cmake --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-configure.log"
+          cmake --preset "${{ matrix.preset }}" -DVERSION="$LATTE_RELEASE_VERSION" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-configure.log"
 
       # The build preset includes both the default application/plugin targets
       # and latte-autotests, and fixes the build parallelism at eight jobs.
@@ -105,7 +135,7 @@ jobs:
 
       - name: Configure targeted ASan/UBSan tree
         if: matrix.preset == 'gcc-debug'
-        run: cmake --preset gcc-asan-ubsan
+        run: cmake --preset gcc-asan-ubsan -DVERSION="$LATTE_RELEASE_VERSION"
 
       - name: Build targeted ASan/UBSan tests
         if: matrix.preset == 'gcc-debug'
@@ -156,6 +186,9 @@ jobs:
           retention-days: 7
 
   qml-lint:
+    needs: [release-input]
+    env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: QML lint (qmllint)
     runs-on: ubuntu-24.04
     container:
@@ -174,6 +207,9 @@ jobs:
         run: ./scripts/qmllint.sh
 
   install-verify:
+    needs: [release-input]
+    env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: Install verify (${{ matrix.distro }})
     runs-on: ubuntu-24.04
     strategy:
@@ -226,10 +262,14 @@ jobs:
             --volume "${{ github.workspace }}:/src:ro" \
             --tmpfs /build:exec \
             --workdir /build \
+            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION" \
             latte-verify-${{ matrix.distro }} \
             bash /src/docker/${{ matrix.verifier }} "${{ matrix.distro }}"
 
   package-install-verify:
+    needs: [release-input]
+    env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: Package install verify (${{ matrix.distro }})
     runs-on: ubuntu-24.04
     strategy:
@@ -287,19 +327,24 @@ jobs:
             --volume "${{ github.workspace }}/dist/${{ matrix.distro }}:/out" \
             --tmpfs /build:exec \
             --workdir /build \
+            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION" \
             --env DISTRO="${{ matrix.distro }}" \
             latte-package-${{ matrix.distro }} \
             bash -c '
               set -euo pipefail
-              VERSION=$(sed -n "s/^ *set(VERSION \\([^)]*\\)).*/\\1/p" /src/CMakeLists.txt | head -1)
+              VERSION="$LATTE_RELEASE_VERSION"
               if [ "${{ matrix.format }}" = arch ]; then
                 bash /src/docker/package-arch.sh "$VERSION" /out
                 pacman -U --noconfirm /out/latte-dock-ng-*.pkg.tar.zst
+                test "$(pacman -Q latte-dock-ng | cut -d" " -f2)" = "$VERSION-1"
               elif [ "${{ matrix.format }}" = rpm ]; then
                 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION="$VERSION" \
                   -DLATTE_RPM_PACKAGE_REQUIRES=${{ matrix.rpm_requires }}
                 cmake --build . --parallel "$(nproc)"
                 cpack -G RPM
+                for package in ./latte-dock-ng-*.rpm; do
+                  test "$(rpm -qp --qf "%{VERSION}" "$package")" = "$VERSION"
+                done
                 if command -v dnf >/dev/null; then
                   dnf install -y --setopt=install_weak_deps=False ./latte-dock-ng-*.rpm
                 else
@@ -316,11 +361,16 @@ jobs:
                 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION="$VERSION" "${package_args[@]}"
                 cmake --build . --parallel "$(nproc)"
                 cpack -G DEB
+                for package in ./latte-dock-ng_*.deb; do
+                  test "$(dpkg-deb --field "$package" Version | cut -d- -f1)" = "$VERSION"
+                done
                 apt-get update -qq
                 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ./latte-dock-ng_*.deb
                 cp ./latte-dock-ng_*.deb /out/
               fi
               test -x /usr/bin/latte-dock-ng
+              actual=$(QT_QPA_PLATFORM=offscreen /usr/bin/latte-dock-ng --version)
+              test "${actual##* }" = "$VERSION"
               test -f /usr/share/applications/org.kde.latte-dock.desktop
               echo NATIVE_PACKAGE_INSTALL_OK
             '
@@ -334,6 +384,9 @@ jobs:
           retention-days: 90
 
   nixos-release-check:
+    needs: [release-input]
+    env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: NixOS release check
     runs-on: ubuntu-24.04
     steps:
@@ -345,7 +398,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Check flake
-        run: nix flake check --print-build-logs
+        run: nix flake check --impure --print-build-logs
 
       - name: Check Nix and CMake release versions match
         run: |
@@ -355,16 +408,21 @@ jobs:
           test "$cmake_version" = "$nix_version"
 
       - name: Build NixOS package
-        run: nix build .#default --no-link --print-build-logs
+        run: |
+          test "$(nix eval .#default.version --impure --raw)" = "$LATTE_RELEASE_VERSION"
+          nix build .#default --impure --no-link --print-build-logs
 
   gentoo-ebuild-preflight:
+    needs: [release-input]
+    env:
+      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: Gentoo ebuild preflight
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Require overlay publication token on main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         env:
           RUIZHI_OVERLAY_TOKEN: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
         run: |
@@ -389,7 +447,7 @@ jobs:
 
       - name: Build candidate ebuild from the current source tree
         run: |
-          version=$(sed -n 's/^ *set(VERSION \([^)]*\)).*/\1/p' CMakeLists.txt | head -1)
+          version="$LATTE_RELEASE_VERSION"
           template=$(find gentoo-overlay-source/kde-misc/latte-dock-ng -maxdepth 1 \
             -type f -name 'latte-dock-ng-*.ebuild' ! -name 'latte-dock-ng-9999.ebuild' \
             -print | sort -V | tail -1)
@@ -408,8 +466,8 @@ jobs:
 
   apt-repository-preflight:
     name: APT repository preflight (no publish)
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [package-install-verify, nixos-release-check, gentoo-ebuild-preflight]
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    needs: [release-input, package-install-verify, nixos-release-check, gentoo-ebuild-preflight]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -432,3 +490,30 @@ jobs:
           APT_SIGNING_PASSPHRASE: ${{ secrets.APT_SIGNING_PASSPHRASE }}
           APT_DEB_DIR: ${{ runner.temp }}/apt-debs
         run: bash scripts/publish-apt-repository.sh --dry-run "${RUNNER_TEMP}/apt-preview"
+
+  release-candidate-metadata:
+    name: Bind validated packages to version and source
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    needs: [release-input, build, qml-lint, install-verify, package-install-verify, nixos-release-check, gentoo-ebuild-preflight, apt-repository-preflight]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-package-*
+          merge-multiple: true
+          path: dist
+      - name: Record candidate identity and package checksums
+        env:
+          LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
+          SOURCE_SHA: ${{ github.sha }}
+          BUILD_RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 scripts/release-version.py metadata --sha "$SOURCE_SHA" \
+            --run-id "$BUILD_RUN_ID" --packages dist --file release-candidate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate-metadata
+          path: release-candidate.json
+          if-no-files-found: error
+          retention-days: 90

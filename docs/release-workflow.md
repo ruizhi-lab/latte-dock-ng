@@ -7,37 +7,61 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
 
 ## Prepare and publish a release
 
-1. Update `set(VERSION X.Y.Z)` in `CMakeLists.txt` and `version = "X.Y.Z"` in
-   `default.nix`. Add the `CHANGELOG.md` section and refresh `flake.lock` when
-   advancing the pinned Nix dependencies.
-2. Push the release-candidate commit to `main`. `.github/workflows/build.yml`
-   runs GCC and Clang builds, autotests, QML lint, native install verification,
-   and native package build/install verification for every supported distro.
-   It also runs the NixOS flake checks and validates the current Gentoo overlay
-   ebuild, metadata, candidate Manifest, and package build against the
-   candidate source. The main-branch APT preflight generates all signed suites
-   in a temporary directory and verifies signatures and package indexes; it
-   does not modify GitHub Pages. Docker jobs pull current base-image tags and
-   rebuild dependency layers without cache.
-3. Wait for the complete `Build` run for that exact `main` commit to succeed.
-   The candidate version in `CMakeLists.txt` must match the future `vX.Y.Z`
-   tag. The Build run retains the seven packages that it built and installed.
-   `.github/workflows/auto-release.yml` creates the annotated tag and dispatches
-   the Release workflow only after that successful Build, when the version has
-   not already been released. A tag that already points at another commit is
-   never moved. Do not create a release tag to skip this gate.
-4. The Release workflow independently checks the exact source commit and
-   version, publishes the signed
-   APT repository from the validated DEB artifacts, and creates the GitHub
-   Release from the same validated package artifacts. It does not rebuild
-   release packages after validation. The Gentoo overlay update is prepared
-   from that final tag, gets its Manifest regenerated and QA-checked, then is
-   pushed to `ruizhi-lab/gentoo-overlay`. It replaces older versioned ebuilds
-   while preserving `latte-dock-ng-9999.ebuild` for main-branch installs.
-   Debian 13 uses the `+deb13u1`
-   revision, Debian testing uses `-1`, and Ubuntu uses `-1ubuntu1`.
-5. Curate English release notes and link the preceding tag with
-   `compare/vPREV...vX.Y.Z`.
+1. Push the intended source changes to `main`. Maintain `CHANGELOG.md` and
+   refresh `flake.lock` when advancing the pinned Nix dependencies. A release
+   does not require changing the default versions in `CMakeLists.txt` or
+   `default.nix`.
+2. In GitHub Actions, select **Build → Run workflow**, choose **main**, and
+   supply `release_version`, for example `1.2.56` (without `v`). The CLI
+   equivalent is:
+   ```bash
+   gh workflow run build.yml --ref main -f release_version=1.2.56
+   ```
+   The input must be a stable `X.Y.Z` version. CI uses it for the application,
+   native packages, Nix derivations and the versioned Gentoo recipe. The
+   source checkout's default versions remain unchanged. Ordinary push/PR
+   builds continue using the matching CMake and Nix source defaults.
+3. The complete `Build` run performs GCC/Clang builds and autotests, QML lint,
+   native install/uninstall checks, seven native package build/install checks,
+   NixOS flake checks and the versioned Nix package build. Gentoo preflight
+   validates the current overlay template against the candidate source. The
+   signed APT preflight verifies signatures and indexes without publishing.
+   Docker jobs pull current base images and rebuild dependencies without cache.
+4. After every gate passes, Build retains the seven packages and a candidate
+   record containing the version, source SHA, Build run ID and package SHA256
+   checksums. `Automatic Release` reads that record, requires the source to
+   still be the current `main` commit, creates its annotated `vX.Y.Z` tag and
+   explicitly dispatches `Release`. Tags are never moved. An existing release
+   is skipped; an existing tag at another commit cannot be reused. If main
+   advances during validation, dispatch a fresh candidate against the new head.
+5. `Release` independently verifies the successful Build run, candidate
+   identity, package checksums and tag commit. It publishes APT and GitHub
+   Release from those same packages. Gentoo's Manifest must use the final tag
+   archive, so the actual tag archive receives another QA/build check before
+   publication. The overlay update removes older versioned ebuilds and keeps
+   `latte-dock-ng-9999.ebuild` byte-for-byte unchanged. Release operations are
+   serialized; an overlay revision change during validation blocks publication.
+   Debian 13 uses `+deb13u1`, Debian testing uses `-1`, and Ubuntu uses `-1ubuntu1`.
+6. Review the generated English release notes. The formal release includes
+   a comparison with the preceding tag.
+
+Main push builds also retain candidate records and can automatically publish
+an as-yet-untagged source default version. The parameterized manual trigger
+is the normal way to choose a new release version without editing those defaults.
+
+For retrying publication, run **Release → Run workflow** with `release_tag`,
+`source_sha`, and the successful `build_run_id`. These must match the immutable
+candidate record. Rerunning a failed Build is also supported; formal publication
+always uses a successful run and its validated artifacts. Publication across
+GitHub Pages and the Gentoo repository is not transactional: permission,
+network or service failures can still require a retry after preflight succeeds.
+
+Source builds from a tag archive retain the development default unless the
+packager supplies the tag version: use `cmake -DVERSION=X.Y.Z`, or set
+`LATTE_RELEASE_VERSION=X.Y.Z` for `install.sh` and Nix builds. For flakes,
+use `--impure` to allow the explicit environment input; pure flake evaluation
+keeps the source default. Gentoo passes its `PV` and COPR passes its computed
+RPM version to CMake automatically.
 
 Desktop runtime retesting is not a release gate. Use the GitHub Build and
 Release workflow results as the authoritative build and package-install

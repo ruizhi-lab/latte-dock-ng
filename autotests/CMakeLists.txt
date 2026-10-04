@@ -1037,6 +1037,9 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME qmllintbaselinetest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_baseline.py)
     set_property(TEST qmllintbaselinetest PROPERTY TIMEOUT 30)
+    add_test(NAME releaseversiontest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_release_version.py)
+    set_property(TEST releaseversiontest PROPERTY TIMEOUT 30)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()

@@ -37,6 +37,13 @@ detect_build_jobs() {
     echo "Info: auto-detected ${build_jobs} parallel job(s) (${mem_gb}GB mem, ${cpus} CPUs)"
 }
 
+# Validate a release override before pre-clean can remove an existing install.
+if [[ -n "${LATTE_RELEASE_VERSION:-}" ]] &&
+   [[ ! "$LATTE_RELEASE_VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+    echo "Error: LATTE_RELEASE_VERSION must be X.Y.Z." >&2
+    exit 2
+fi
+
 declare -a user_homes=()
 
 add_user_home() {
@@ -239,6 +246,16 @@ cmake_args=(
     -DENABLE_MAKE_UNIQUE="${enable_make_unique}"
     -DCMAKE_BUILD_TYPE="${build_type}"
 )
+
+# CI supplies the candidate version independently of the checkout's default.
+# Forward it for native install verification as well as package builds.
+if [[ -n "${LATTE_RELEASE_VERSION:-}" ]]; then
+    cmake_args+=(-DVERSION="$LATTE_RELEASE_VERSION")
+else
+    # A previous candidate may have cached VERSION in a reused build tree.
+    # Clear that override so ordinary installs return to the source default.
+    cmake_args+=(-UVERSION)
+fi
 
 if [[ "$install_mode" == "user" ]]; then
     cmake_args+=(-DLATTE_INSTALL_USER_KICKERACTION_EXECUTABLE=ON)

@@ -148,6 +148,9 @@ EOF
 fi
 
 cd "${overlay}"
+if [[ "$version" != "9999" ]]; then
+    python3 /src/scripts/release-version.py ebuild --file "$ebuild_file"
+fi
 if [[ -n "${GENTOO_EBUILD_TEMPLATE:-}" ]]; then
     cat > /etc/portage/repos.conf/latte-overlay.conf <<EOF
 [latte-overlay]
