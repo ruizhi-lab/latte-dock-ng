@@ -2,6 +2,7 @@
 """Exercise release input boundaries and publication identity checks."""
 
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -15,6 +16,10 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts/release-version.py"
 SPEC = importlib.util.spec_from_file_location("release_version", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+MANIFEST_SCRIPT = Path(__file__).resolve().parents[1] / "scripts/gentoo_manifest.py"
+MANIFEST_SPEC = importlib.util.spec_from_file_location("gentoo_manifest", MANIFEST_SCRIPT)
+MANIFEST_MODULE = importlib.util.module_from_spec(MANIFEST_SPEC)
+MANIFEST_SPEC.loader.exec_module(MANIFEST_MODULE)
 
 
 class ReleaseVersionTest(unittest.TestCase):
@@ -76,6 +81,38 @@ class ReleaseVersionTest(unittest.TestCase):
             (packages / "a.rpm").write_bytes(b"changed")
             result = subprocess.run([sys.executable, str(SCRIPT), "verify", *args], capture_output=True)
             self.assertNotEqual(result.returncode, 0)
+
+    def test_gentoo_manifest_tracks_final_archive_and_current_package_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "kde-misc" / "latte-dock-ng"
+            package.mkdir(parents=True)
+            (package / "Manifest").write_text("DIST stale-latte-dock-ng-1.2.55.tar.gz 1\n")
+            (package / "latte-dock-ng-1.2.56.ebuild").write_bytes(b"new ebuild")
+            (package / "latte-dock-ng-9999.ebuild").write_bytes(b"live ebuild")
+            (package / "metadata.xml").write_bytes(b"<pkgmetadata/>\n")
+            (package / "files").mkdir()
+            (package / "files" / "patch.diff").write_bytes(b"patch")
+            archive = root / "latte-dock-ng-1.2.56.tar.gz"
+            archive.write_bytes(b"tagged source archive")
+
+            record = MANIFEST_MODULE.update_manifest(package, archive)
+            lines = (package / "Manifest").read_text().splitlines()
+            self.assertIn(record, lines)
+            self.assertNotIn("DIST stale-latte-dock-ng-1.2.55.tar.gz 1", lines)
+            self.assertEqual(sum(line.startswith("EBUILD ") for line in lines), 2)
+            self.assertEqual(sum(line.startswith("MISC metadata.xml ") for line in lines), 1)
+            self.assertEqual(sum(line.startswith("AUX patch.diff ") for line in lines), 1)
+            self.assertIn("BLAKE2B " + hashlib.blake2b(archive.read_bytes(), digest_size=64).hexdigest(), record)
+
+            first_manifest = (package / "Manifest").read_bytes()
+            MANIFEST_MODULE.update_manifest(package, archive)
+            self.assertEqual(first_manifest, (package / "Manifest").read_bytes())
+
+            empty_archive = root / "latte-dock-ng-1.2.57.tar.gz"
+            empty_archive.touch()
+            with self.assertRaises(ValueError):
+                MANIFEST_MODULE.archive_record(empty_archive)
 
 
 if __name__ == "__main__":

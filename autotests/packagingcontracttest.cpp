@@ -194,6 +194,12 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("RUIZHI_OVERLAY_TOKEN")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("ruizhi-lab/gentoo-overlay")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/prepare-gentoo-overlay.sh")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("gentoo-overlay-prepare:")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("needs: [main-validation]")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("without a Gentoo package build")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("pkgcheck scan")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("ebuild \"$new_ebuild\" clean configure compile install")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("workflow_dispatch:")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("inputs.source_sha || github.sha")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("! -name 'latte-dock-ng-9999.ebuild' -delete")));
@@ -219,9 +225,8 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("name: Retain validated release package")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("retention-days: 90")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("nixos-release-check:")));
-    QVERIFY(buildWorkflowSource.contains(QStringLiteral("gentoo-ebuild-preflight:")));
-    QVERIFY(buildWorkflowSource.contains(QStringLiteral("Require overlay publication token on main")));
-    QVERIFY(buildWorkflowSource.contains(QStringLiteral("GENTOO_EBUILD_TEMPLATE=/overlay-ebuild")));
+    QVERIFY(!buildWorkflowSource.contains(QStringLiteral("gentoo-ebuild-preflight:")));
+    QVERIFY(!buildWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("apt-repository-preflight:")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("publish-apt-repository.sh --dry-run")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("release_version:")));
@@ -239,9 +244,12 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QFile overlayPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/prepare-gentoo-overlay.sh"));
     QVERIFY(overlayPublisher.open(QFile::ReadOnly));
     const QString overlayPublisherSource = QString::fromUtf8(overlayPublisher.readAll());
-    QVERIFY(overlayPublisherSource.contains(QStringLiteral("pkgdev manifest -d")));
-    QVERIFY(overlayPublisherSource.contains(QStringLiteral("pkgcheck scan --repo")));
-    QVERIFY(overlayPublisherSource.contains(QStringLiteral("ebuild \"$new_ebuild\" clean configure compile install")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("gentoo_manifest.py")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("curl --fail --location --retry 3")));
+    QVERIFY(overlayPublisherSource.contains(QStringLiteral("tar -tzf \"$archive\"")));
+    QVERIFY(!overlayPublisherSource.contains(QStringLiteral("pkgdev manifest")));
+    QVERIFY(!overlayPublisherSource.contains(QStringLiteral("pkgcheck scan")));
+    QVERIFY(!overlayPublisherSource.contains(QStringLiteral("ebuild \"$new_ebuild\" clean configure compile install")));
     QVERIFY(overlayPublisherSource.contains(QStringLiteral("${DISTDIR:-$(mktemp -d")));
     QVERIFY(overlayPublisherSource.contains(QStringLiteral("! -name 'latte-dock-ng-9999.ebuild'")));
 

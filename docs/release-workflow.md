@@ -31,9 +31,10 @@ target.
    builds continue using the matching CMake and Nix source defaults.
 3. The complete `Build` run performs GCC/Clang builds and autotests, QML lint,
    native install/uninstall checks, seven native package build/install checks,
-   NixOS flake checks and the versioned Nix package build. Gentoo preflight
-   validates the current overlay template against the candidate source. The
-   signed APT preflight verifies signatures and indexes without publishing.
+   NixOS flake checks and the versioned Nix package build. Gentoo is validated
+   on the maintainer's Gentoo system; Build does not provision a second Gentoo
+   environment. The signed APT preflight verifies signatures and indexes
+   without publishing.
    Docker jobs pull current base images and rebuild dependencies without cache.
 4. Require tag version to match the validated source version. After every gate
    passes, Build retains the seven packages and a candidate
@@ -45,12 +46,15 @@ target.
    advances during validation, dispatch a fresh candidate against the new head.
 5. `Release` independently verifies the successful Build run, candidate
    identity, package checksums and tag commit. It publishes APT and GitHub
-   Release from those same packages. Gentoo's Manifest must use the final tag
-   archive, so the actual tag archive receives another QA/build check before
-   publication. The overlay update removes older versioned ebuilds and keeps
-   `latte-dock-ng-9999.ebuild` byte-for-byte unchanged. Release operations are
-   serialized; an overlay revision change during validation blocks publication.
-   Debian 13 uses `+deb13u1`, Debian testing uses `-1`, and Ubuntu uses `-1ubuntu1`.
+   Release from those same packages. The Gentoo job downloads the final tag
+   archive, validates that it is readable, and calculates the Gentoo Manifest
+   checksums for that archive and the current overlay files. It does not install
+   Gentoo or compile the ebuild: after the other distro gates pass, it publishes
+   the versioned ebuild directly. The overlay update removes older versioned
+   ebuilds and keeps `latte-dock-ng-9999.ebuild` byte-for-byte unchanged.
+   Release operations are serialized; an overlay revision change during
+   preparation blocks publication. Debian 13 uses `+deb13u1`, Debian testing
+   uses `-1`, and Ubuntu uses `-1ubuntu1`.
 6. Review the generated English release notes. The formal release includes
    a comparison with the preceding tag.
 

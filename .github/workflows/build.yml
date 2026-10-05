@@ -424,62 +424,10 @@ jobs:
           test "$(nix eval .#default.version --impure --raw)" = "$LATTE_RELEASE_VERSION"
           nix build .#default --impure --no-link --print-build-logs
 
-  gentoo-ebuild-preflight:
-    needs: [release-input]
-    env:
-      LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
-    name: Gentoo ebuild preflight
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Require overlay publication token on main
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-        env:
-          RUIZHI_OVERLAY_TOKEN: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
-        run: |
-          if [ -z "$RUIZHI_OVERLAY_TOKEN" ]; then
-            echo "Set the RUIZHI_OVERLAY_TOKEN Actions secret before release validation." >&2
-            exit 1
-          fi
-
-      - name: Check out the current Gentoo package template
-        uses: actions/checkout@v4
-        with:
-          repository: ruizhi-lab/gentoo-overlay
-          ref: main
-          path: gentoo-overlay-source
-          token: ${{ secrets.RUIZHI_OVERLAY_TOKEN }}
-
-      - name: Build current Gentoo toolchain image
-        run: |
-          docker build --pull --no-cache --file docker/Dockerfile.gentoo \
-            --build-arg USE_MIRRORS=false \
-            --tag latte-gentoo-preflight docker
-
-      - name: Build candidate ebuild from the current source tree
-        run: |
-          version="$LATTE_RELEASE_VERSION"
-          template=$(find gentoo-overlay-source/kde-misc/latte-dock-ng -maxdepth 1 \
-            -type f -name 'latte-dock-ng-*.ebuild' ! -name 'latte-dock-ng-9999.ebuild' \
-            -print | sort -V | tail -1)
-          test -n "$template"
-          docker run --rm --network host \
-            --volume "${{ github.workspace }}:/src:ro" \
-            --volume "${{ github.workspace }}/$template:/overlay-ebuild:ro" \
-            --volume "${{ github.workspace }}/gentoo-overlay-source/kde-misc/latte-dock-ng:/overlay-package:ro" \
-            --tmpfs /tmp:exec \
-            --env VERSION="$version" \
-            --env GENTOO_VERIFY_FETCH_TAG=false \
-            --env GENTOO_EBUILD_TEMPLATE=/overlay-ebuild \
-            --env GENTOO_METADATA_TEMPLATE=/overlay-package/metadata.xml \
-            latte-gentoo-preflight \
-            bash /src/docker/verify-ebuild-gentoo.sh
-
   apt-repository-preflight:
     name: APT repository preflight (no publish)
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-    needs: [release-input, package-install-verify, nixos-release-check, gentoo-ebuild-preflight]
+    needs: [release-input, package-install-verify, nixos-release-check]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -506,7 +454,7 @@ jobs:
   release-candidate-metadata:
     name: Bind validated packages to version and source
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-    needs: [release-input, build, qml-lint, install-verify, package-install-verify, nixos-release-check, gentoo-ebuild-preflight, apt-repository-preflight]
+    needs: [release-input, build, qml-lint, install-verify, package-install-verify, nixos-release-check, apt-repository-preflight]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4

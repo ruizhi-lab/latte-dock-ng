@@ -10,6 +10,7 @@ fi
 version="$1"
 overlay_dir=$(realpath "$2")
 package_dir="$overlay_dir/kde-misc/latte-dock-ng"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 distdir="${DISTDIR:-$(mktemp -d "${TMPDIR:-/tmp}/latte-distfiles.XXXXXX")}"
 distfile="latte-dock-ng-${version}.tar.gz"
 
@@ -26,28 +27,26 @@ if [[ ! -f "$new_ebuild" ]]; then
     cp "${release_ebuilds[-1]}" "$new_ebuild"
 fi
 grep -Fq 'SRC_URI="https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"' "$new_ebuild"
-python3 "$(dirname "$0")/release-version.py" ebuild --file "$new_ebuild"
+python3 "$script_dir/release-version.py" ebuild --file "$new_ebuild"
 
 for old_ebuild in "${release_ebuilds[@]}"; do
     [[ "$old_ebuild" == "$new_ebuild" ]] || rm -f "$old_ebuild"
 done
 
 install -d -m 0755 "$distdir"
-export DISTDIR="$distdir"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${TMPDIR:-/tmp}/latte-pkgcheck-cache}"
-install -d -m 0755 /etc/portage/repos.conf
-cat > /etc/portage/repos.conf/ruizhi-overlay.conf <<EOF
-[ruizhi-overlay]
-location = $overlay_dir
-masters = gentoo
-auto-sync = no
-EOF
+archive="$distdir/$distfile"
+curl --fail --location --retry 3 --retry-all-errors --retry-delay 5 \
+    --output "$archive" \
+    "https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v${version}.tar.gz"
+tar -tzf "$archive" >/dev/null
 
-git config --global --add safe.directory "$overlay_dir"
-pkgdev manifest -d "$DISTDIR" "$package_dir"
-pkgcheck scan --repo "$overlay_dir" kde-misc/latte-dock-ng
-xmllint --noout "$package_dir/metadata.xml"
-ebuild "$new_ebuild" clean configure compile install
+# Native distro jobs provide the tested application build/install matrix. The
+# release path only needs the exact final tag archive and its Gentoo Manifest;
+# the maintainer's Gentoo system remains the ebuild runtime-validation host.
+python3 "$script_dir/gentoo_manifest.py" "$package_dir" "$archive"
+python3 -c 'import sys, xml.etree.ElementTree as ET; ET.parse(sys.argv[1])' "$package_dir/metadata.xml"
+grep -Fq 'SRC_URI="https://github.com/ruizhi-lab/latte-dock-ng/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"' "$new_ebuild"
+grep -Fq -- '-DVERSION="${PV}"' "$new_ebuild"
 
 grep -Fq "$distfile" "$package_dir/Manifest"
 git -C "$overlay_dir" diff --check
