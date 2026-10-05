@@ -212,7 +212,9 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QFile buildWorkflow(QStringLiteral(LATTE_SOURCE_DIR "/.github/workflows/build.yml"));
     QVERIFY(buildWorkflow.open(QFile::ReadOnly));
     const QString buildWorkflowSource = QString::fromUtf8(buildWorkflow.readAll());
-    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg USE_MIRRORS=false")), 3);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("use_mirrors=false")), 2);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("use_mirrors=true")), 2);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg \"USE_MIRRORS=${use_mirrors}\"")), 2);
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("--build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }}")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("name: Retain validated release package")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("retention-days: 90")));
