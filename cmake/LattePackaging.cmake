@@ -37,9 +37,9 @@ endif()
 set(CPACK_RPM_PACKAGE_NAME "latte-dock-ng")
 # The built RPM requires glibc >= 2.34 (__libc_start_main@GLIBC_2.34 is a crt1
 # artifact of every modern toolchain, so the floor cannot be lowered by
-# switching build hosts). This never blocks a Plasma 6.3+ distro — the oldest
-# of them (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is unsupported for
-# shipping Plasma 5.27, not because of glibc.
+# switching build hosts). It does not block the current Plasma 6.3+ package
+# targets. openSUSE Leap 15.x is unsupported for shipping Plasma 5.27, not
+# because of glibc.
 # A single RPM is built once per version on the Fedora container and must
 # install on Fedora, openSUSE and Mageia alike, so no %{?dist} dist tag is
 # used and the file name stays distro-neutral. If the build is ever split

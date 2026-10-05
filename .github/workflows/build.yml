@@ -231,6 +231,7 @@ jobs:
           - distro: mageia
             dockerfile: Dockerfile.mageia
             verifier: verify-install.sh
+            mageia_version: cauldron
           - distro: debian13
             dockerfile: Dockerfile.debian
             verifier: verify-install.sh
@@ -250,6 +251,9 @@ jobs:
           build_args=()
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
+          fi
+          if [ -n "${{ matrix.mageia_version }}" ]; then
+            build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg USE_MIRRORS=false \
@@ -291,6 +295,7 @@ jobs:
             dockerfile: Dockerfile.mageia
             format: rpm
             rpm_requires: lib64kirigami6, lib64kf6kcmutils6, lib64kf6newstuffcore6
+            mageia_version: cauldron
           - distro: debian13
             dockerfile: Dockerfile.debian
             build_args: DEBIAN_BASE=trixie
@@ -313,6 +318,9 @@ jobs:
           build_args=()
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
+          fi
+          if [ -n "${{ matrix.mageia_version }}" ]; then
+            build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg USE_MIRRORS=false \

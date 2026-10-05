@@ -14,8 +14,11 @@ Installation
 > dependencies (`dpkg-shlibdeps`) would raise the lower bound and break
 > installation.
 >
-> Debian 13 (trixie) is the current stable baseline. The CI matrix checks
-> Debian sid, Fedora, openSUSE, Mageia, Ubuntu, Arch, and NixOS on every
+> Debian stable and the current Fedora stable are priority support targets
+> because of their large user bases. They are pinned to explicit releases in
+> CI and package metadata; update those pins when Debian 14 or the next Fedora
+> release becomes stable. The CI matrix also checks Debian sid, openSUSE,
+> Mageia Cauldron, Ubuntu, Arch, and NixOS on every
 > `main` push. Native package installation is tested separately from source
 > installation, so a package that only builds but cannot be installed is rejected.
 > Gentoo is best verified on a native Gentoo host, where Portage can reuse its
@@ -202,12 +205,13 @@ sudo zypper install \
   gcc-c++ gettext git pkgconf
 ```
 
-## Mageia (10+)
+## Mageia Cauldron (Mageia 11 development)
 
 Install from the `ruizhi-lab/latte-dock-ng` COPR repository using the
 Mageia-specific repository instructions shown on the
 [COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
-Confirm the Mageia chroot's latest build succeeded first. As a fallback,
+The Mageia build target is Cauldron. Confirm its latest build succeeded before
+installing. As a fallback,
 download the Mageia-specific RPM from
 [GitHub Releases](https://github.com/ruizhi-lab/latte-dock-ng/releases). Do
 not use the Fedora or openSUSE RPM. The current COPR RPM version is a Git
@@ -366,7 +370,7 @@ cd docker
 docker compose run --rm arch       # Arch Linux
 docker compose run --rm fedora     # Fedora 44
 docker compose run --rm opensuse   # openSUSE Tumbleweed
-docker compose run --rm mageia     # Mageia 10
+docker compose run --rm mageia     # Mageia Cauldron (Mageia 11 development)
 docker compose run --rm ubuntu     # Ubuntu 26.04
 docker compose run --rm debian     # Debian 13 (current stable)
 docker compose run --rm nixos      # NixOS (nixos-unstable)

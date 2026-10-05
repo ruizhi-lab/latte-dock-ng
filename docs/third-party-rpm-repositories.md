@@ -11,7 +11,8 @@ validation.
 ## COPR project configuration
 
 The project is `ruizhi-lab/latte-dock-ng`. Enable the chroots needed for the
-supported RPM targets (Fedora 44, Mageia 10, and openSUSE Tumbleweed, x86_64).
+supported RPM targets (Fedora 44, Mageia Cauldron for Mageia 11 development,
+and openSUSE Tumbleweed, x86_64).
 On the project's **Packages** page, its SCM package uses:
 
 - Package name: `latte-dock-ng`

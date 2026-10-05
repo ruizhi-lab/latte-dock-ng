@@ -64,6 +64,7 @@ services:
       dockerfile: Dockerfile.mageia
       args:
         BASE_IMAGE: ${LATTE_MAGEIA_IMAGE:-docker.m.daocloud.io/library/mageia}
+        MAGEIA_VERSION: ${LATTE_MAGEIA_VERSION:-cauldron}
         USE_MIRRORS: "true"
     command: bash /src/docker/verify-install.sh MAGEIA
 

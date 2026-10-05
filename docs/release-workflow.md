@@ -5,6 +5,14 @@ its package repositories. RPM repository setup details are in
 [`third-party-rpm-repositories.md`](third-party-rpm-repositories.md); Debian
 and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md).
 
+Debian stable and the current Fedora stable are priority support targets
+because of their large user bases. CI pins their concrete releases (currently
+Debian 13 and Fedora 44); update the container and package metadata when either
+distribution publishes its next stable release. Mageia CI follows Cauldron
+because issue [#61](https://github.com/ruizhi-lab/latte-dock-ng/issues/61)
+reports a taskbar failure on Mageia 11, so Mageia 10 is not the validation
+target.
+
 ## Prepare and publish a release
 
 1. Push the intended source changes to `main`. Maintain `CHANGELOG.md` and
@@ -27,7 +35,8 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
    validates the current overlay template against the candidate source. The
    signed APT preflight verifies signatures and indexes without publishing.
    Docker jobs pull current base images and rebuild dependencies without cache.
-4. After every gate passes, Build retains the seven packages and a candidate
+4. Require tag version to match the validated source version. After every gate
+   passes, Build retains the seven packages and a candidate
    record containing the version, source SHA, Build run ID and package SHA256
    checksums. `Automatic Release` reads that record, requires the source to
    still be the current `main` commit, creates its annotated `vX.Y.Z` tag and
@@ -91,6 +100,10 @@ release rather than silently skipping the overlay update.
   chroots. Confirm each distribution's build status on the COPR page before
   treating it as installable. GitHub Release RPMs remain available as a
   fallback until both their builds and version handling are verified.
+
+The Mageia release package build and container validation target Cauldron,
+the development branch for Mageia 11. Mageia 10 stable is not a release
+validation target.
 
 ## Current validation notes
 

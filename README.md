@@ -100,8 +100,8 @@ Prebuilt packages are attached to every
     (trixie), links `libplasma6`; the `+deb13u1` revision marks the
     Debian 13 (stable) build
 - **`.rpm`** — release packages target Fedora, openSUSE Tumbleweed, and
-  Mageia 10+ using their native RPM packaging. Do not substitute the Fedora
-  RPM on openSUSE or Mageia. COPR is configured for Fedora, openSUSE
+  Mageia Cauldron (Mageia 11 development) using native RPM packaging. Do not
+  substitute the Fedora RPM on openSUSE or Mageia. COPR is configured for Fedora, openSUSE
   Tumbleweed, and Mageia; Fedora has been verified. Keep the standalone RPMs
   until the other COPR builds and release-version handling are verified.
 - **`pkg.tar.zst`** — Arch Linux
@@ -124,9 +124,8 @@ verify the fix. The openSUSE CI status is independent of COPR builds.
 
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every
-modern build. It never blocks a Plasma 6.3+ distro — the oldest of them
-(Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is **not** supported: it
-ships Plasma 5.27, which predates the Plasma 6.3 requirement.
+modern build. openSUSE Leap 15.x is **not** supported: it ships Plasma 5.27,
+which predates the Plasma 6.3 requirement.
 
 ## Installation
 

@@ -10,6 +10,9 @@ ARG GENTOO_MIRRORS_URI_CN=https://mirrors.tuna.tsinghua.edu.cn/gentoo
 ARG GENTOO_BINHOST_URI=https://distfiles.gentoo.org/releases/amd64/binpackages/23.0/x86-64
 ARG GENTOO_BINHOST_URI_CN=https://mirrors.tuna.tsinghua.edu.cn/gentoo/releases/amd64/binpackages/23.0/x86-64
 
+# Match binpkg USE flags: the shared binhost can otherwise mix incompatible
+# systemd/elogind or Qt configurations. Matching signed packages are preferred;
+# anything else falls back to source.
 RUN if [ "${USE_MIRRORS}" = "true" ]; then \
       sync_uri="${GENTOO_SYNC_URI_CN}" ; \
       mirrors_uri="${GENTOO_MIRRORS_URI_CN}" ; \
