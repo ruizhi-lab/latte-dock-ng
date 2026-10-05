@@ -77,9 +77,11 @@ EOF
         --local-user "$fingerprint" --armor --detach-sign \
         --output "dists/$suite/Release.gpg" "dists/$suite/Release"
 
-    gpgv --keyring "$repo_dir/latte-dock-ng-archive-keyring.gpg" \
+    # repo_dir is set only for dry runs; publication validates from the
+    # checked-out gh-pages worktree, where the keyring is at the repository root.
+    gpgv --keyring "latte-dock-ng-archive-keyring.gpg" \
         "dists/$suite/Release.gpg" "dists/$suite/Release"
-    gpgv --keyring "$repo_dir/latte-dock-ng-archive-keyring.gpg" \
+    gpgv --keyring "latte-dock-ng-archive-keyring.gpg" \
         "dists/$suite/InRelease"
     grep -q '^Package: latte-dock-ng$' "$index_dir/Packages"
 done

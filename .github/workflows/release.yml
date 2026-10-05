@@ -134,7 +134,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_sha || github.sha }}
+          # Publication scripts come from current main when retrying an older
+          # candidate; artifacts and identity remain pinned to source_sha.
+          ref: main
           fetch-depth: 0
 
       - name: Check APT signing secrets

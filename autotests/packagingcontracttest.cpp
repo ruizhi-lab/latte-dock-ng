@@ -195,6 +195,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("ruizhi-lab/gentoo-overlay")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/prepare-gentoo-overlay.sh")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("gentoo-overlay-prepare:")));
+    QVERIFY(releaseWorkflowSource.contains(QStringLiteral("Publication scripts come from current main")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("needs: [main-validation]")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("without a Gentoo package build")));
     QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
@@ -240,6 +241,8 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(aptPublisherSource.contains(QStringLiteral("--dry-run <output-directory>")));
     QVERIFY(aptPublisherSource.contains(QStringLiteral("APT repository preflight succeeded")));
     QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring")));
+    QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring \"latte-dock-ng-archive-keyring.gpg\"")));
+    QVERIFY(!aptPublisherSource.contains(QStringLiteral("gpgv --keyring \"$repo_dir/")));
 
     QFile overlayPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/prepare-gentoo-overlay.sh"));
     QVERIFY(overlayPublisher.open(QFile::ReadOnly));
