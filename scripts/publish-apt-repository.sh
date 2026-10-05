@@ -77,11 +77,11 @@ EOF
         --local-user "$fingerprint" --armor --detach-sign \
         --output "dists/$suite/Release.gpg" "dists/$suite/Release"
 
-    # repo_dir is set only for dry runs; publication validates from the
-    # checked-out gh-pages worktree, where the keyring is at the repository root.
-    gpgv --keyring "latte-dock-ng-archive-keyring.gpg" \
+    # gpgv resolves relative keyring paths under GNUPGHOME, so pass the
+    # repository worktree path explicitly in both dry-run and publish modes.
+    gpgv --keyring "$PWD/latte-dock-ng-archive-keyring.gpg" \
         "dists/$suite/Release.gpg" "dists/$suite/Release"
-    gpgv --keyring "latte-dock-ng-archive-keyring.gpg" \
+    gpgv --keyring "$PWD/latte-dock-ng-archive-keyring.gpg" \
         "dists/$suite/InRelease"
     grep -q '^Package: latte-dock-ng$' "$index_dir/Packages"
 done

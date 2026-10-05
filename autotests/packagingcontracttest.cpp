@@ -241,7 +241,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(aptPublisherSource.contains(QStringLiteral("--dry-run <output-directory>")));
     QVERIFY(aptPublisherSource.contains(QStringLiteral("APT repository preflight succeeded")));
     QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring")));
-    QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring \"latte-dock-ng-archive-keyring.gpg\"")));
+    QVERIFY(aptPublisherSource.contains(QStringLiteral("gpgv --keyring \"$PWD/latte-dock-ng-archive-keyring.gpg\"")));
     QVERIFY(!aptPublisherSource.contains(QStringLiteral("gpgv --keyring \"$repo_dir/")));
 
     QFile overlayPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/prepare-gentoo-overlay.sh"));
