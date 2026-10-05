@@ -13,7 +13,10 @@ package_dir="${overlay}/kde-misc/latte-dock-ng"
 dist_name="latte-dock-ng-${version}.tar.gz"
 
 rm -rf "${overlay}" "${PORTAGE_TMPDIR}"
-mkdir -p "${package_dir}" "${DISTDIR}" "${PORTAGE_TMPDIR}" "${overlay}/metadata"
+mkdir -p "${package_dir}" "${DISTDIR}" "${PORTAGE_TMPDIR}" "${overlay}/metadata" "${overlay}/profiles"
+# pkgdev identifies the synthetic repository through profiles/repo_name;
+# Portage's repos.conf entry alone leaves manifest generation outside an ebuild repo.
+printf '%s\n' 'latte-overlay' > "${overlay}/profiles/repo_name"
 
 cat > "${overlay}/metadata/layout.conf" <<'EOF'
 masters = gentoo

@@ -176,6 +176,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("ebuild")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral(">=kde-plasma/kscreenlocker-6.3:6")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("clean configure compile install")));
+    QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("profiles/repo_name")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("pkgdev manifest -d")));
     QVERIFY(gentooEbuildVerifySource.contains(QStringLiteral("pkgcheck scan --repo")));
 
