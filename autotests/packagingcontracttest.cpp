@@ -191,6 +191,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("run-id: ${{ needs.main-validation.outputs.build_run_id }}")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("pattern: release-package-*")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("needs: [main-validation, apt-repository, gentoo-overlay-publish]")));
+    QVERIFY(!releaseWorkflowSource.contains(QStringLiteral("target_commitish:")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("RUIZHI_OVERLAY_TOKEN")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("ruizhi-lab/gentoo-overlay")));
     QVERIFY(releaseWorkflowSource.contains(QStringLiteral("scripts/prepare-gentoo-overlay.sh")));
