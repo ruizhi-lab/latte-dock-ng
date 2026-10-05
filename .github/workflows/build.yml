@@ -249,14 +249,16 @@ jobs:
       - name: Build ${{ matrix.distro }} verification image
         run: |
           build_args=()
+          use_mirrors=false
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
+            use_mirrors=true
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
-            --build-arg USE_MIRRORS=false \
+            --build-arg "USE_MIRRORS=${use_mirrors}" \
             "${build_args[@]}" \
             --tag latte-verify-${{ matrix.distro }} docker
 
@@ -316,14 +318,16 @@ jobs:
       - name: Build ${{ matrix.distro }} packaging image
         run: |
           build_args=()
+          use_mirrors=false
           if [ -n "${{ matrix.build_args }}" ]; then
             build_args+=(--build-arg "${{ matrix.build_args }}")
           fi
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
+            use_mirrors=true
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
-            --build-arg USE_MIRRORS=false \
+            --build-arg "USE_MIRRORS=${use_mirrors}" \
             "${build_args[@]}" \
             --tag latte-package-${{ matrix.distro }} docker
 

@@ -6,7 +6,7 @@ ARG USE_MIRRORS=false
 
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
       sed -i 's|^mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/*.repo && \
-      sed -i 's|^#baseurl=https://mirrors.kernel.org/mageia/|baseurl=http://mirror.nju.edu.cn/mageia/|g' /etc/yum.repos.d/*.repo ; \
+      sed -i 's|^#baseurl=https://mirrors.kernel.org/mageia/|baseurl=https://mirrors.tuna.tsinghua.edu.cn/mageia/|g' /etc/yum.repos.d/*.repo ; \
     fi
 
 # Mageia package naming differs from Fedora/openSUSE:
