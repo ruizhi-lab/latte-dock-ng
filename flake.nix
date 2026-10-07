@@ -51,8 +51,10 @@
             doCheck = true;
             buildPhase = ''
               runHook preBuild
+              # The install phase needs every runtime target, including helpers
+              # not pulled in by the application or the excluded-from-all tests.
               cmake --build . --parallel "$NIX_BUILD_CORES" \
-                --target latte-dock-ng latteprivateappplugin latte-autotests
+                --target all latte-autotests
               runHook postBuild
             '';
             checkPhase = ''
