@@ -248,6 +248,7 @@ jobs:
 
       - name: Build ${{ matrix.distro }} verification image
         run: |
+          set -euo pipefail
           build_args=()
           use_mirrors=false
           if [ -n "${{ matrix.build_args }}" ]; then
@@ -256,10 +257,13 @@ jobs:
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
           fi
-          docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
-            --build-arg "USE_MIRRORS=${use_mirrors}" \
-            "${build_args[@]}" \
-            --tag latte-verify-${{ matrix.distro }} docker
+          build_command=(docker build --pull --no-cache --progress=plain --file "docker/${{ matrix.dockerfile }}")
+          build_command+=(--build-arg "USE_MIRRORS=${use_mirrors}" "${build_args[@]}" --tag "latte-verify-${{ matrix.distro }}" docker)
+          if [ -n "${{ matrix.mageia_version }}" ]; then
+            bash scripts/retry-mageia-mirror-build.sh "${build_command[@]}"
+          else
+            "${build_command[@]}"
+          fi
 
       - name: Verify build and installation
         run: |
@@ -316,6 +320,7 @@ jobs:
 
       - name: Build ${{ matrix.distro }} packaging image
         run: |
+          set -euo pipefail
           build_args=()
           use_mirrors=false
           if [ -n "${{ matrix.build_args }}" ]; then
@@ -324,10 +329,13 @@ jobs:
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
           fi
-          docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
-            --build-arg "USE_MIRRORS=${use_mirrors}" \
-            "${build_args[@]}" \
-            --tag latte-package-${{ matrix.distro }} docker
+          build_command=(docker build --pull --no-cache --progress=plain --file "docker/${{ matrix.dockerfile }}")
+          build_command+=(--build-arg "USE_MIRRORS=${use_mirrors}" "${build_args[@]}" --tag "latte-package-${{ matrix.distro }}" docker)
+          if [ -n "${{ matrix.mageia_version }}" ]; then
+            bash scripts/retry-mageia-mirror-build.sh "${build_command[@]}"
+          else
+            "${build_command[@]}"
+          fi
 
       - name: Build and install native package
         run: |
