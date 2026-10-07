@@ -221,7 +221,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflow.open(QFile::ReadOnly));
     const QString buildWorkflowSource = QString::fromUtf8(buildWorkflow.readAll());
     QCOMPARE(buildWorkflowSource.count(QStringLiteral("use_mirrors=false")), 2);
-    QCOMPARE(buildWorkflowSource.count(QStringLiteral("use_mirrors=true")), 2);
+    QCOMPARE(buildWorkflowSource.count(QStringLiteral("use_mirrors=true")), 0);
     QCOMPARE(buildWorkflowSource.count(QStringLiteral("--build-arg \"USE_MIRRORS=${use_mirrors}\"")), 2);
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("--build-arg USE_MIRRORS=${{ matrix.distro == 'opensuse' }}")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("name: Retain validated release package")));
