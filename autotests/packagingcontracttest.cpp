@@ -227,6 +227,10 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("name: Retain validated release package")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("retention-days: 90")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("nixos-release-check:")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix flake check --impure --print-build-logs")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix build .#default --impure --no-link --print-build-logs")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral(".nodes.nixpkgs.locked.rev")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("NIXPKGS_TARBALL_URL=https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz")));
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("gentoo-ebuild-preflight:")));
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("apt-repository-preflight:")));
@@ -235,6 +239,16 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("release-candidate-metadata:")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("LATTE_RELEASE_VERSION=\"$LATTE_RELEASE_VERSION\"")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("scripts/release-version.py metadata")));
+
+    QFile nixosVerifier(QStringLiteral(LATTE_SOURCE_DIR "/docker/verify-nix-nixos.sh"));
+    QVERIFY(nixosVerifier.open(QFile::ReadOnly));
+    const QString nixosVerifierSource = QString::fromUtf8(nixosVerifier.readAll());
+    QVERIFY(nixosVerifierSource.contains(QStringLiteral("nix-build \"${nixpkgs_args[@]}\"")));
+    QVERIFY(nixosVerifierSource.contains(QStringLiteral("nix-env \"${nixpkgs_args[@]}\" -if")));
+    QVERIFY(nixosVerifierSource.contains(QStringLiteral("nixpkgs=${NIXPKGS_TARBALL_URL}")));
+    QVERIFY(nixosVerifierSource.contains(QStringLiteral("develop --impure --command")));
+    QVERIFY(!nixosVerifierSource.contains(QStringLiteral("flake check --impure")));
+    QVERIFY(!nixosVerifierSource.contains(QStringLiteral("build .#default")));
 
     QFile aptPublisher(QStringLiteral(LATTE_SOURCE_DIR "/scripts/publish-apt-repository.sh"));
     QVERIFY(aptPublisher.open(QFile::ReadOnly));

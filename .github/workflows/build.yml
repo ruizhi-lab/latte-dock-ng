@@ -267,13 +267,18 @@ jobs:
 
       - name: Verify build and installation
         run: |
-          docker run --rm \
+          docker_run=(docker run --rm \
             --volume "${{ github.workspace }}:/src:ro" \
             --tmpfs /build:exec \
             --workdir /build \
-            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION" \
-            latte-verify-${{ matrix.distro }} \
-            bash /src/docker/${{ matrix.verifier }} "${{ matrix.distro }}"
+            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION")
+          if [[ "${{ matrix.distro }}" == "nixos" ]]; then
+            nixpkgs_rev=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
+            test -n "$nixpkgs_rev" && test "$nixpkgs_rev" != "null"
+            docker_run+=(--env "NIXPKGS_TARBALL_URL=https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz")
+          fi
+          docker_run+=("latte-verify-${{ matrix.distro }}" bash "/src/docker/${{ matrix.verifier }}" "${{ matrix.distro }}")
+          "${docker_run[@]}"
 
   package-install-verify:
     needs: [release-input]
@@ -417,8 +422,6 @@ jobs:
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Check flake
         run: nix flake check --impure --print-build-logs
