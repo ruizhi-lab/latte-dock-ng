@@ -83,6 +83,12 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
         QVERIFY2(dockerfileSource.contains(QStringLiteral("ARG USE_MIRRORS=false")), qPrintable(distro));
     }
 
+    QFile mageiaDockerfile(QStringLiteral(LATTE_SOURCE_DIR "/docker/Dockerfile.mageia"));
+    QVERIFY(mageiaDockerfile.open(QFile::ReadOnly));
+    const QString mageiaDockerfileSource = QString::fromUtf8(mageiaDockerfile.readAll());
+    QVERIFY(mageiaDockerfileSource.contains(QStringLiteral("dnf install -y --refresh")));
+    QVERIFY(!mageiaDockerfileSource.contains(QStringLiteral("dnf upgrade")));
+
     QFile dockerVerify(QStringLiteral(LATTE_SOURCE_DIR "/docker/verify-install.sh"));
     QVERIFY(dockerVerify.open(QFile::ReadOnly));
     const QString dockerVerifySource = QString::fromUtf8(dockerVerify.readAll());
@@ -229,8 +235,9 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("nixos-release-check:")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix flake check --impure --print-build-logs")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix build .#default --impure --no-link --print-build-logs")));
-    QVERIFY(buildWorkflowSource.contains(QStringLiteral(".nodes.nixpkgs.locked.rev")));
-    QVERIFY(buildWorkflowSource.contains(QStringLiteral("NIXPKGS_TARBALL_URL=https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix-env --install \"$NIX_PACKAGE_PATH\"")));
+    QVERIFY(buildWorkflowSource.contains(QStringLiteral("nix-env --uninstall latte-dock-ng")));
+    QVERIFY(!buildWorkflowSource.contains(QStringLiteral("distro: nixos")));
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("gentoo-ebuild-preflight:")));
     QVERIFY(!buildWorkflowSource.contains(QStringLiteral("Dockerfile.gentoo")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("apt-repository-preflight:")));
@@ -239,6 +246,12 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("release-candidate-metadata:")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("LATTE_RELEASE_VERSION=\"$LATTE_RELEASE_VERSION\"")));
     QVERIFY(buildWorkflowSource.contains(QStringLiteral("scripts/release-version.py metadata")));
+
+    QFile nixFlake(QStringLiteral(LATTE_SOURCE_DIR "/flake.nix"));
+    QVERIFY(nixFlake.open(QFile::ReadOnly));
+    const QString nixFlakeSource = QString::fromUtf8(nixFlake.readAll());
+    QVERIFY(nixFlakeSource.contains(QStringLiteral("default = package.overrideAttrs")));
+    QVERIFY(nixFlakeSource.contains(QStringLiteral("autotests = self.packages.${system}.default")));
 
     QFile nixosVerifier(QStringLiteral(LATTE_SOURCE_DIR "/docker/verify-nix-nixos.sh"));
     QVERIFY(nixosVerifier.open(QFile::ReadOnly));

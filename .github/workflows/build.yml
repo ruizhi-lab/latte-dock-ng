@@ -239,9 +239,6 @@ jobs:
           - distro: debian-testing
             dockerfile: Dockerfile.debian-testing
             verifier: verify-install.sh
-          - distro: nixos
-            dockerfile: Dockerfile.nixos
-            verifier: verify-nix-nixos.sh
 
     steps:
       - uses: actions/checkout@v4
@@ -267,18 +264,13 @@ jobs:
 
       - name: Verify build and installation
         run: |
-          docker_run=(docker run --rm \
+          docker run --rm \
             --volume "${{ github.workspace }}:/src:ro" \
             --tmpfs /build:exec \
             --workdir /build \
-            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION")
-          if [[ "${{ matrix.distro }}" == "nixos" ]]; then
-            nixpkgs_rev=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
-            test -n "$nixpkgs_rev" && test "$nixpkgs_rev" != "null"
-            docker_run+=(--env "NIXPKGS_TARBALL_URL=https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz")
-          fi
-          docker_run+=("latte-verify-${{ matrix.distro }}" bash "/src/docker/${{ matrix.verifier }}" "${{ matrix.distro }}")
-          "${docker_run[@]}"
+            --env LATTE_RELEASE_VERSION="$LATTE_RELEASE_VERSION" \
+            latte-verify-${{ matrix.distro }} \
+            bash /src/docker/${{ matrix.verifier }} "${{ matrix.distro }}"
 
   package-install-verify:
     needs: [release-input]
@@ -436,7 +428,22 @@ jobs:
       - name: Build NixOS package
         run: |
           test "$(nix eval .#default.version --impure --raw)" = "$LATTE_RELEASE_VERSION"
-          nix build .#default --impure --no-link --print-build-logs
+          package_path=$(nix build .#default --impure --no-link --print-build-logs --print-out-paths)
+          test -x "$package_path/bin/latte-dock-ng"
+          printf 'NIX_PACKAGE_PATH=%s\n' "$package_path" >> "$GITHUB_ENV"
+
+      - name: Install and uninstall validated Nix package
+        run: |
+          nix-env --install "$NIX_PACKAGE_PATH"
+          if ! command -v latte-dock-ng >/dev/null; then
+            echo "latte-dock-ng not on PATH after nix-env install" >&2
+            exit 1
+          fi
+          nix-env --uninstall latte-dock-ng
+          if command -v latte-dock-ng >/dev/null; then
+            echo "latte-dock-ng still on PATH after nix-env uninstall" >&2
+            exit 1
+          fi
 
   apt-repository-preflight:
     name: APT repository preflight (no publish)

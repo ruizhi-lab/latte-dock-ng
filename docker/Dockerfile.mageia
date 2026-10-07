@@ -14,8 +14,7 @@ RUN if [ "$USE_MIRRORS" = "true" ]; then \
 #   Fedora qt6-qtbase-devel           -> Mageia qtbase6-common-devel lib64qt6base6-devel
 #   Fedora qt6-qtdeclarative-devel    -> Mageia lib64qt6qml-devel lib64qt6quick-devel
 #   Fedora kf6-plasma-devel           -> Mageia lib64plasma-devel
-RUN dnf upgrade -y --refresh && \
-    dnf install -y --setopt=install_weak_deps=False \
+RUN dnf install -y --refresh --setopt=install_weak_deps=False \
       cmake extra-cmake-modules \
       qtbase6-common-devel lib64qt6base6-devel \
       lib64qt6qml-devel lib64qt6quick-devel lib64qt6quickwidgets-devel \

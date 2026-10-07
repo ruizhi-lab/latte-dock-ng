@@ -8,10 +8,6 @@
       forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" ];
     in {
       packages = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in { default = import ./default.nix { inherit pkgs; }; });
-
-      checks = forAllSystems (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
           package = import ./default.nix { inherit pkgs; };
@@ -32,8 +28,9 @@
           qmlImportPath = pkgs.lib.makeSearchPath "lib/qt-6/qml" runtimeTestInputs;
           qtPluginPath = pkgs.lib.makeSearchPath "lib/qt-6/plugins" runtimeTestInputs;
         in {
-          autotests = package.overrideAttrs (old: {
-            pname = "${old.pname}-tests";
+          # Build and test the actual package in one derivation so flake check
+          # and release packaging reuse the same compiler output.
+          default = package.overrideAttrs (old: {
             cmakeFlags = (old.cmakeFlags or [ ]) ++ [
               "-DBUILD_TESTING=ON"
               "-DLATTE_STRICT_WARNINGS=ON"
@@ -76,11 +73,12 @@
                 -- ctest --output-on-failure
               runHook postCheck
             '';
-            installPhase = ''
-              mkdir -p "$out"
-            '';
           });
         });
+
+      checks = forAllSystems (system: {
+        autotests = self.packages.${system}.default;
+      });
 
       devShells = forAllSystems (system:
         let
