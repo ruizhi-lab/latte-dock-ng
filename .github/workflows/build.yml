@@ -255,7 +255,6 @@ jobs:
           fi
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
-            use_mirrors=true
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg "USE_MIRRORS=${use_mirrors}" \
@@ -324,7 +323,6 @@ jobs:
           fi
           if [ -n "${{ matrix.mageia_version }}" ]; then
             build_args+=(--build-arg "MAGEIA_VERSION=${{ matrix.mageia_version }}")
-            use_mirrors=true
           fi
           docker build --pull --no-cache --file docker/${{ matrix.dockerfile }} \
             --build-arg "USE_MIRRORS=${use_mirrors}" \
@@ -358,7 +356,12 @@ jobs:
                   test "$(rpm -qp --qf "%{VERSION}" "$package")" = "$VERSION"
                 done
                 if command -v dnf >/dev/null; then
-                  dnf install -y --setopt=install_weak_deps=False ./latte-dock-ng-*.rpm
+                  if [ "$DISTRO" = mageia ]; then
+                    # The image build already installed Mageia dependencies; avoid a flaky Cauldron mirror refresh here.
+                    dnf install -y --disablerepo='*' --setopt=install_weak_deps=False ./latte-dock-ng-*.rpm
+                  else
+                    dnf install -y --setopt=install_weak_deps=False ./latte-dock-ng-*.rpm
+                  fi
                 else
                   zypper --non-interactive --no-gpg-checks install --allow-unsigned-rpm ./latte-dock-ng-*.rpm
                 fi
