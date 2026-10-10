@@ -211,28 +211,6 @@ elif [[ "$install_mode" == "system" && -d "$build_dir" && ! -w "$build_dir" ]]; 
     echo "Info: '${script_dir}/build' is not writable, using '${build_dir}'."
 fi
 
-# ── Pre-install cleanup ───────────────────────────────────────────────────────
-if [[ "$preclean_install" == "true" ]]; then
-    uninstall_cmd=(bash "${script_dir}/uninstall.sh" "--${install_mode}")
-    if [[ -f "${build_dir}/install_manifest.txt" ]]; then
-        uninstall_cmd+=(--manifest "${build_dir}/install_manifest.txt")
-    fi
-    # Never purge user data by default during pre-clean (updating should not
-    # delete user config).  Only purge when the user explicitly requests it.
-    if [[ "$purge_user_data" == "true" ]]; then
-        uninstall_cmd+=(--purge-user-data)
-    else
-        uninstall_cmd+=(--no-purge-user-data)
-        # The XDG autostart entry is user preference, not an installed file.
-        # Preserve it while replacing the application package during upgrades.
-        uninstall_cmd+=(--preserve-autostart)
-    fi
-    echo "Info: running pre-install cleanup: ${uninstall_cmd[*]}"
-    "${uninstall_cmd[@]}"
-elif [[ "$purge_user_data" == "true" ]]; then
-    echo "Warning: --purge-user-data is ignored when --no-clean is set."
-fi
-
 # ── Build ─────────────────────────────────────────────────────────────────────
 mkdir -p "$build_dir"
 cd "$build_dir"
@@ -308,6 +286,24 @@ run_as_user() {
     fi
 }
 
+# File mutations must propagate failures and run as the home owner under sudo.
+# Cache refresh remains best-effort through run_as_user above.
+run_user_file_command() {
+    local target_user="$1"
+    shift
+    if [[ "${EUID}" -eq 0 && "$target_user" != "root" ]]; then
+        if command -v runuser >/dev/null 2>&1; then
+            runuser -u "$target_user" -- "$@"
+        else
+            local quoted_command
+            printf -v quoted_command '%q ' "$@"
+            su "$target_user" -c "$quoted_command"
+        fi
+    else
+        "$@"
+    fi
+}
+
 resolve_username() {
     local user_home="$1"
 
@@ -347,15 +343,20 @@ sync_tree() {
 sync_tree_if_exists() {
     local src="$1"
     local dst="$2"
+    local target_home="$3"
 
     [[ -d "$src" ]] || return 0
     [[ -d "$dst" ]] || return 0
 
     echo "Info: syncing existing user override: $dst"
+    local owner
+    owner="$(resolve_username "$target_home")"
     if command -v rsync >/dev/null 2>&1; then
-        rsync -a --delete "$src"/ "$dst"/
+        run_user_file_command "$owner" rsync -a --no-owner --no-group --delete "$src"/ "$dst"/
     else
-        rm -rf "$dst"; mkdir -p "$dst"; cp -a "$src"/. "$dst"/
+        run_user_file_command "$owner" rm -rf "$dst"
+        run_user_file_command "$owner" mkdir -p "$dst"
+        run_user_file_command "$owner" cp -R --preserve=mode,timestamps "$src"/. "$dst"/
     fi
 }
 
@@ -391,6 +392,30 @@ refresh_service_caches() {
 # ── Install ───────────────────────────────────────────────────────────────────
 detect_user_homes
 
+# Build failures must leave the installed application intact. Cleanup starts
+# only after configuration and compilation have both completed successfully.
+# ── Pre-install cleanup ───────────────────────────────────────────────────────
+if [[ "$preclean_install" == "true" ]]; then
+    uninstall_cmd=(bash "${script_dir}/uninstall.sh" "--${install_mode}")
+    if [[ -f "${build_dir}/install_manifest.txt" ]]; then
+        uninstall_cmd+=(--manifest "${build_dir}/install_manifest.txt")
+    fi
+    # Never purge user data by default during pre-clean (updating should not
+    # delete user config).  Only purge when the user explicitly requests it.
+    if [[ "$purge_user_data" == "true" ]]; then
+        uninstall_cmd+=(--purge-user-data)
+    else
+        uninstall_cmd+=(--no-purge-user-data)
+        # The XDG autostart entry is user preference, not an installed file.
+        # Preserve it while replacing the application package during upgrades.
+        uninstall_cmd+=(--preserve-autostart)
+    fi
+    echo "Info: running pre-install cleanup: ${uninstall_cmd[*]}"
+    "${uninstall_cmd[@]}"
+elif [[ "$purge_user_data" == "true" ]]; then
+    echo "Warning: --purge-user-data is ignored when --no-clean is set."
+fi
+
 run_as_root cmake --install .
 
 # Sync full package trees (CMake may leave directories incomplete)
@@ -404,11 +429,11 @@ sync_tree "${script_dir}/indicators"          "${share_dir}/latte/indicators"
 if [[ "$install_mode" == "system" ]]; then
     # For system installs, keep any user-local overrides in sync to avoid stale QML
     for user_home in "${user_homes[@]:-}"; do
-        sync_tree_if_exists "${script_dir}/containment/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment"
-        sync_tree_if_exists "${script_dir}/plasmoid/package"    "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid"
-        sync_tree_if_exists "${script_dir}/separator/package"   "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator"
-        sync_tree_if_exists "${script_dir}/shell/package"       "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"
-        sync_tree_if_exists "${script_dir}/indicators"          "${user_home}/.local/share/latte/indicators"
+        sync_tree_if_exists "${script_dir}/containment/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" "$user_home"
+        sync_tree_if_exists "${script_dir}/plasmoid/package"    "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" "$user_home"
+        sync_tree_if_exists "${script_dir}/separator/package"   "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" "$user_home"
+        sync_tree_if_exists "${script_dir}/shell/package"       "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" "$user_home"
+        sync_tree_if_exists "${script_dir}/indicators"          "${user_home}/.local/share/latte/indicators" "$user_home"
     done
 
     # Create a ~/.local/bin symlink to the system binary for convenience
@@ -426,12 +451,12 @@ if [[ "$install_mode" == "system" ]]; then
             if [[ "$resolved_local" != "$system_bin" ]]; then
                 local backup_path="${local_bin}.stale.$(date +%Y%m%d-%H%M%S)"
                 echo "Info: found conflicting user-local launcher '${local_bin}', moving to '${backup_path}'."
-                mv -f "$local_bin" "$backup_path"
+                run_user_file_command "$(resolve_username "$user_home")" mv -f "$local_bin" "$backup_path"
             fi
         fi
 
-        mkdir -p "$local_bin_dir"
-        ln -sfn "$system_bin" "$local_bin"
+        run_user_file_command "$(resolve_username "$user_home")" mkdir -p "$local_bin_dir"
+        run_user_file_command "$(resolve_username "$user_home")" ln -sfn "$system_bin" "$local_bin"
         echo "Info: linked '${local_bin}' -> '${system_bin}'."
     }
 
@@ -446,6 +471,11 @@ refresh_service_caches
 # ── Compat QML modules (org.kde.latte.compat.taskmanager) ──
 # Installed by cmake --install via compat/qml/CMakeLists.txt into latte's
 # own namespace — no Plasma system directories are touched.
+
+# Keep the authoritative file list under the prefix: build directories may be
+# external or deleted before uninstall. Package-tree extras use fallback cleanup.
+run_as_root mkdir -p "${install_prefix}/share/latte-dock-ng"
+run_as_root cp "${build_dir}/install_manifest.txt" "${install_prefix}/share/latte-dock-ng/install-manifest.txt"
 
 # ── Save install metadata ─────────────────────────────────────────────────────
 printf '%s\n' "$install_mode"   > "${build_dir}/.install-mode"

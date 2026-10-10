@@ -2,7 +2,7 @@
 # Author: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
 # Summary: Uninstallation script for Latte Dock NG
 #
-# Run as root / sudo  → removes system install from /usr  AND all user data
+# Run as root / sudo  → removes system install from /usr  and invoking-user data
 # Run as normal user  → removes user install from ~/.local only
 # Override with --system / --user and --no-purge-user-data flags.
 
@@ -50,7 +50,7 @@ Usage:
 
 Install mode (auto-detected from EUID / saved metadata when not specified):
   --user      Remove user-local install from ~/.local  (no sudo needed)
-  --system    Remove system install from /usr AND all user data (requires root/sudo)
+  --system    Remove system install from /usr and invoking-user data (requires root/sudo)
 
 Options:
   --manifest <path>     Use a specific install manifest
@@ -151,6 +151,7 @@ fi
 if [[ "$manifest_provided" == "false" ]]; then
     shopt -s nullglob
     declare -a raw_candidates=()
+    [[ -f "${install_prefix}/share/latte-dock-ng/install-manifest.txt" ]] && raw_candidates+=("${install_prefix}/share/latte-dock-ng/install-manifest.txt")
 
     # Separate manifests by build directory convention (matches install.sh):
     #   build/           → system installs
@@ -160,7 +161,8 @@ if [[ "$manifest_provided" == "false" ]]; then
             [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
         done
     else
-        for candidate in "${script_dir}/build/install_manifest.txt"; do
+        for candidate in "${script_dir}/build/install_manifest.txt" "${script_dir}"/build-*/install_manifest.txt; do
+            [[ "$(cat "${candidate%/*}/.install-mode" 2>/dev/null || true)" == "system" ]] || continue
             [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
         done
     fi
@@ -234,7 +236,13 @@ for manifest_file in "${manifest_paths[@]}"; do
         if [[ "$file" == */org/kde/plasma/private/taskmanager/* ]]; then
             continue
         fi
-        remove_file "$file"
+        # A stale or supplied manifest must never remove files outside this
+        # install prefix. Canonicalization also rejects escaping parent links.
+        normalized="$(realpath -m -- "$file")"
+        case "$normalized" in
+            "${install_prefix}"/*) remove_file "$file" ;;
+            *) echo "Warning: skipping manifest path outside install prefix: $file" >&2 ;;
+        esac
     done < "$manifest_file"
 done
 
@@ -251,6 +259,7 @@ managed_dirs=(
 # KWin resolves screencast authorization through its Exec path; a stale user
 # entry shadows the system entry and denies capture after switching installs.
 managed_files=(
+    "${install_prefix}/share/latte-dock-ng/install-manifest.txt"
     "${install_prefix}/bin/latte-dock-ng"
     "${install_prefix}/bin/latte-dock-ng-add-launcher"
     "${install_prefix}/bin/latte-dock-ng-preview"
@@ -274,6 +283,32 @@ done
 for file_path in "${managed_files[@]}"; do
     remove_file "$file_path"
 done
+
+# Remove only named Latte assets, never shared icon or locale directories.
+cleanup_prefix_assets() {
+    local prefix="$1" size name domain path lib
+    for size in 16x16 22x22 24x24 32x32 48x48 scalable; do
+        for name in latte-dock.svg latte-dock.png latte-dock-ng.svg latte-dock-ng.png; do
+            remove_file "${prefix}/share/icons/hicolor/${size}/apps/${name}"
+        done
+    done
+    remove_file "${prefix}/share/icons/hicolor/scalable/apps/org.kde.latte.plasmoid.svg"
+    for domain in latte-dock plasma_containmentactions_lattecontextmenu plasma_applet_org.kde.latte.plasmoid plasma_applet_org.kde.latte.containment latte_indicator_org.kde.latte.default latte_indicator_org.kde.latte.plasma; do
+        for path in "${prefix}"/share/locale/*/LC_MESSAGES/"${domain}.mo"; do
+            [[ -f "$path" ]] && remove_file "$path"
+        done
+    done
+    for lib in lib lib64 lib/x86_64-linux-gnu; do
+        for path in "${prefix}/${lib}/plugins" "${prefix}/${lib}/qt6/plugins"; do
+            remove_file "${path}/kf6/packagestructure/latte_indicator.so"
+            remove_file "${path}/plasma/containmentactions/org.kde.latte.contextmenu.so"
+            remove_file "${path}/plasma/containmentactions/plasma_containmentactions_lattecontextmenu.so"
+        done
+    done
+    return 0
+}
+cleanup_prefix_assets "$install_prefix"
+[[ "$install_mode" != "system" ]] || cleanup_prefix_assets /usr/local
 
 # For system installs also clean /usr/local paths (legacy)
 if [[ "$install_mode" == "system" ]]; then
@@ -325,6 +360,7 @@ remove_user_stale_launchers() {
 }
 
 for user_home in "${user_homes[@]:-}"; do
+    remove_file "${user_home}/.config/latte-dock-ng/dev-env.sh"
     if [[ "$install_mode" == "user" ]]; then
         # Full removal of user-local managed dirs
         for dir_path in \
@@ -429,14 +465,20 @@ if [[ "$install_mode" == "user" ]]; then
         "${install_prefix}/lib64/qt6/qml"
         "${install_prefix}/lib/qt6/qml"
         "${install_prefix}/lib/x86_64-linux-gnu/qt6/qml"
+        "${install_prefix}/lib64/qml"
+        "${install_prefix}/lib/qml"
     )
 else
     qml_dirs=(
         "/usr/lib64/qt6/qml"
         "/usr/lib/qt6/qml"
         "/usr/lib/x86_64-linux-gnu/qt6/qml"
+        "/usr/lib64/qml"
+        "/usr/lib/qml"
         "/usr/local/lib64/qt6/qml"
         "/usr/local/lib/qt6/qml"
+        "/usr/local/lib64/qml"
+        "/usr/local/lib/qml"
     )
     if command -v qtpaths6 >/dev/null 2>&1; then
         qml_dirs+=("$(qtpaths6 --query QT_INSTALL_QML 2>/dev/null || true)")
@@ -458,6 +500,13 @@ for qml_dir in "${qml_dirs[@]}"; do
             "${qml_dir}/org/kde/latte/compat/taskmanager"; do
         remove_tree "$qml_module_dir"
     done
+
+    # Only Latte-marked legacy fallbacks belong to us; Plasma owns unmarked
+    # modules at this shared URI and they must survive uninstall.
+    legacy_module="${qml_dir}/org/kde/plasma/private/taskmanager"
+    if [[ -f "${legacy_module}/.latte-fallback-module" ]]; then
+        remove_tree "$legacy_module"
+    fi
 
     # Drop empty parent dirs left after module removal
     for parent_dir in \

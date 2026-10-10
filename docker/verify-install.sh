@@ -165,7 +165,29 @@ verify_system_installed() {
     require_path "Latte context menu plugin" "${plugin_patterns[@]}"
 }
 
+verify_extra_assets_removed() {
+    local prefix="$1" path
+    shopt -s nullglob
+    for path in \
+        "${prefix}"/lib*/plugins/kf6/packagestructure/latte_indicator.so \
+        "${prefix}"/lib*/qt6/plugins/kf6/packagestructure/latte_indicator.so \
+        "${prefix}"/lib/*/qt6/plugins/kf6/packagestructure/latte_indicator.so \
+        "${prefix}"/lib*/plugins/plasma/containmentactions/org.kde.latte.contextmenu.so \
+        "${prefix}"/lib*/qt6/plugins/plasma/containmentactions/org.kde.latte.contextmenu.so \
+        "${prefix}"/lib/*/qt6/plugins/plasma/containmentactions/org.kde.latte.contextmenu.so \
+        "${prefix}"/share/icons/hicolor/*/apps/latte-dock*.svg \
+        "${prefix}"/share/icons/hicolor/*/apps/latte-dock*.png \
+        "${prefix}"/share/icons/hicolor/scalable/apps/org.kde.latte.plasmoid.svg \
+        "${prefix}"/share/locale/*/LC_MESSAGES/latte-dock.mo \
+        "${prefix}"/share/locale/*/LC_MESSAGES/plasma*latte*.mo \
+        "${prefix}"/share/locale/*/LC_MESSAGES/latte_indicator_*.mo; do
+        forbid_path "remaining Latte install artifact" "$path"
+    done
+    shopt -u nullglob
+}
+
 verify_system_removed() {
+    verify_extra_assets_removed /usr
     local qml_patterns=()
     local plugin_patterns=()
     mapfile -t qml_patterns < <(system_qml_module_patterns)
@@ -198,6 +220,8 @@ verify_user_installed() {
 
 verify_user_removed() {
     local home_dir="$1"
+    verify_extra_assets_removed "${home_dir}/.local"
+    forbid_path "user environment script" "${home_dir}/.config/latte-dock-ng/dev-env.sh"
 
     forbid_path "user binary" "${home_dir}/.local/bin/latte-dock-ng"
     forbid_path "user helper binary" "${home_dir}/.local/bin/latte-dock-ng-add-launcher"
@@ -224,7 +248,7 @@ verify_system_removed
 echo "--- ${distro}: manifestless uninstall fallback ---"
 cmake --install /build/system
 verify_system_installed
-rm -f /build/system/install_manifest.txt
+rm -f /build/system/install_manifest.txt /usr/share/latte-dock-ng/install-manifest.txt
 bash /src/uninstall.sh --system --no-purge-user-data --dry-run
 bash /src/uninstall.sh --system --no-purge-user-data
 verify_system_removed
@@ -239,6 +263,13 @@ verify_user_installed "$HOME"
 echo "--- ${distro}: user uninstall ---"
 bash /src/uninstall.sh --user --no-purge-user-data --dry-run --manifest /build/user/install_manifest.txt
 bash /src/uninstall.sh --user --no-purge-user-data --manifest /build/user/install_manifest.txt
+verify_user_removed "$HOME"
+
+echo "--- ${distro}: user manifestless uninstall fallback ---"
+cmake --install /build/user
+verify_user_installed "$HOME"
+rm -f /build/user/install_manifest.txt "$HOME/.local/share/latte-dock-ng/install-manifest.txt"
+bash /src/uninstall.sh --user --no-purge-user-data
 verify_user_removed "$HOME"
 
 echo "=== ${distro}: BUILD + INSTALL + UNINSTALL SUCCESS ==="

@@ -120,6 +120,9 @@ jobs:
           set -euo pipefail
           cmake --build --preset "${{ matrix.preset }}" 2>&1 | tee "build/modernization/logs/${{ matrix.preset }}-build.log"
 
+      - name: Verify install script failure and cleanup behavior
+        run: python3 autotests/installscriptbehavior.py
+
       - name: Run targeted clang-tidy checks
         if: matrix.preset == 'clang-debug'
         run: python3 scripts/test-clang-tidy.py --build-dir "build/modernization/${{ matrix.preset }}"
