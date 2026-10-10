@@ -247,11 +247,15 @@ managed_dirs=(
     "${install_prefix}/share/latte/indicators"
 )
 
+# The preview desktop entry is an install artifact, not purgeable user data.
+# KWin resolves screencast authorization through its Exec path; a stale user
+# entry shadows the system entry and denies capture after switching installs.
 managed_files=(
     "${install_prefix}/bin/latte-dock-ng"
     "${install_prefix}/bin/latte-dock-ng-add-launcher"
     "${install_prefix}/bin/latte-dock-ng-preview"
     "${install_prefix}/share/applications/org.kde.latte-dock.desktop"
+    "${install_prefix}/share/applications/org.kde.latte-dock.preview.desktop"
     "${install_prefix}/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"
     "${install_prefix}/share/metainfo/org.kde.latte-dock.appdata.xml"
     "${install_prefix}/share/dbus-1/interfaces/org.kde.LatteDock.xml"
@@ -287,6 +291,7 @@ if [[ "$install_mode" == "system" ]]; then
                 "${prefix}/bin/latte-dock-ng-add-launcher" \
                 "${prefix}/bin/latte-dock-ng-preview" \
                 "${prefix}/share/applications/org.kde.latte-dock.desktop" \
+                "${prefix}/share/applications/org.kde.latte-dock.preview.desktop" \
                 "${prefix}/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
                 "${prefix}/share/metainfo/org.kde.latte-dock.appdata.xml"; do
             remove_file "$file_path"
@@ -336,6 +341,7 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/bin/latte-dock-ng-preview" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
+                "${user_home}/.local/share/applications/org.kde.latte-dock.preview.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
                 "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
@@ -357,6 +363,7 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/bin/latte-dock-ng-preview" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
+                "${user_home}/.local/share/applications/org.kde.latte-dock.preview.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
                 "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
@@ -447,6 +454,7 @@ for qml_dir in "${qml_dirs[@]}"; do
             "${qml_dir}/org/kde/latte/abilities" \
             "${qml_dir}/org/kde/latte/private/tasks" \
             "${qml_dir}/org/kde/latte/private/containment" \
+            "${qml_dir}/org/kde/latte/private/app" \
             "${qml_dir}/org/kde/latte/compat/taskmanager"; do
         remove_tree "$qml_module_dir"
     done
