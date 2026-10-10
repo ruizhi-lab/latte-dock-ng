@@ -286,6 +286,10 @@ permission to extend a known defect; keep unrelated cleanup out of the patch.
   output dependencies and preserve PIC, AUTOMOC and host symbol requirements.
   Prefer linking shared production logic into tests when a suitable target
   exists; direct source compilation remains valid for focused isolated tests.
+- For every code change, check whether build or runtime dependencies, dependency
+  scopes, or minimum versions need to change. Do not add dependencies unless the
+  implementation requires them; when dependency requirements change, update and
+  validate the affected build and packaging definitions.
 - Use capability probes and small adapters for compatibility. Document any
   version-specific exception and its removal condition next to implementation.
   When adding dependencies, inspect and update affected CI, Docker, Nix and
