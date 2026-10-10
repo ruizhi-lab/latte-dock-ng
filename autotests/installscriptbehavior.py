@@ -27,6 +27,14 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("fixture")
 
+    cache_files = [
+        home / ".cache/latte-dock/legacy-cache",
+        home / ".cache/lattedock/qmlcache/compiled.qmlc",
+    ]
+    for cache_file in cache_files:
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cache_file.write_text("rebuildable")
+
     config = home / ".config/lattedockrc"
     config.parent.mkdir(parents=True, exist_ok=True)
     config.write_text("keep")
@@ -45,6 +53,7 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     for relative_path in files[4:]:
         assert (prefix / relative_path).exists(), relative_path
     assert config.exists()
+    assert all(not cache_file.parent.exists() for cache_file in cache_files)
 
     # Only explicitly marked legacy taskmanager modules belong to Latte.
     legacy_module = prefix / "lib64/qml/org/kde/plasma/private/taskmanager"

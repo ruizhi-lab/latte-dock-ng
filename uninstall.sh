@@ -55,8 +55,8 @@ Install mode (auto-detected from EUID / saved metadata when not specified):
 Options:
   --manifest <path>     Use a specific install manifest
   --dry-run             Print what would be removed without deleting
-  --purge-user-data     Also remove user config/cache (default ON for --system)
-  --no-purge-user-data  Skip user data removal even in --system mode
+  --purge-user-data     Also remove user config/layout data (default ON for --system)
+  --no-purge-user-data  Keep user config/layout data; app caches are always removed
   --preserve-autostart  Keep user XDG autostart entries (used during upgrades)
 EOF
 }
@@ -361,6 +361,13 @@ remove_user_stale_launchers() {
 
 for user_home in "${user_homes[@]:-}"; do
     remove_file "${user_home}/.config/latte-dock-ng/dev-env.sh"
+
+    # Compiled QML and graphics caches can survive an upgrade with stale
+    # runtime artifacts, so clear application-owned caches on every uninstall
+    # and install pre-clean. These caches are reproducible, unlike user data.
+    remove_tree "${user_home}/.cache/latte-dock"
+    remove_tree "${user_home}/.cache/lattedock"
+
     if [[ "$install_mode" == "user" ]]; then
         # Full removal of user-local managed dirs
         for dir_path in \
@@ -444,8 +451,6 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.config/latte-dock-ng" \
                 "${user_home}/.local/share/latte-layouts" \
                 "${user_home}/.local/share/latte" \
-                "${user_home}/.cache/latte-dock" \
-                "${user_home}/.cache/lattedock" \
                 "${user_home}/.local/state/latte"; do
             if [[ -d "$purge_path" ]]; then
                 [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $purge_path"; continue; }
