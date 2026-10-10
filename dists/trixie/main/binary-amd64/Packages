@@ -78,3 +78,23 @@ Description: Latte Dock NG - Plasma 6 desktop dock
  widgets. It animates its contents using a parabolic zoom effect and
  stays out of the way when not needed.
 
+Package: latte-dock-ng
+Version: 1.2.58-1+deb13u1
+Architecture: amd64
+Maintainer: ruizhi.zhong88@gmail.com
+Installed-Size: 10301
+Depends: qml6-module-org-kde-kirigami, qml6-module-org-kde-kcmutils, qml6-module-org-kde-newstuff, kio6, libc6 (>= 2.34), libkf6archive6 (>= 6.0.0), libkf6configcore6 (>= 6.0.0), libkf6configgui6 (>= 6.0.0), libkf6configqml6 (>= 6.0.0), libkf6coreaddons6 (>= 6.0.0), libkf6dbusaddons6 (>= 6.0.0), libkf6globalaccel6 (>= 6.0.0), libkf6guiaddons6 (>= 6.0.0), libkf6i18n6 (>= 6.0.0), libkf6i18nqml6 (>= 6.8.0), libkf6iconthemes6 (>= 6.5.0), libkf6iconwidgets6 (>= 6.0.0), libkf6jobwidgets6 (>= 6.0.0), libkf6kiocore6 (>= 6.0.0), libkf6kiofilewidgets6 (>= 6.0.0), libkf6kiogui6 (>= 6.0.0), libkf6newstuffcore6 (>= 6.0.0), libkf6newstuffwidgets6 (>= 6.0.0), libkf6notifications6 (>= 6.0.0), libkf6package6 (>= 6.0.0), libkf6service-bin, libkf6service6 (>= 6.0.0), libkf6svg6 (>= 6.0.0), libkf6widgetsaddons6 (>= 6.0.0), libkf6windowsystem6 (>= 6.0.0), libkf6xmlgui6 (>= 6.10.0), libkwaylandclient6 (>= 4:6.1.0), liblayershellqtinterface6 (>= 6.1.0), libplasma6 (>= 6.1.0), libplasmaactivities6 (>= 6.0.5), libplasmaactivitiesstats1 (>= 6.1.0), libplasmaquick6 (>= 6.1.0), libqt6core6t64 (>= 6.8.2), libqt6dbus6 (>= 6.4.0), libqt6gui6 (>= 6.4.0), libqt6qml6 (>= 6.6.0), libqt6quick6 (>= 6.6.0), libqt6widgets6 (>= 6.8.2), libstdc++6 (>= 5), libwayland-client0 (>= 1.20.0)
+Filename: pool/trixie/main/l/latte-dock-ng/latte-dock-ng_1.2.58-1+deb13u1_amd64.deb
+Size: 3353654
+MD5sum: fafbb2feedaa35e21470092ed81cf1de
+SHA1: f6509e61306eee0726632c03022d993958fecebf
+SHA256: 20615cadf2ec9fc95e7e3891111c52cae41741774eec6ac591edfbc752b90b8f
+Section: kde
+Priority: optional
+Homepage: https://github.com/ruizhi-lab/latte-dock-ng
+Description: Latte Dock NG - Plasma 6 desktop dock
+ Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3+
+ that provides an elegant and intuitive experience for your tasks and
+ widgets. It animates its contents using a parabolic zoom effect and
+ stays out of the way when not needed.
+
