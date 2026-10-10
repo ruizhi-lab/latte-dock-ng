@@ -26,5 +26,5 @@ RUN dnf install -y --setopt=install_weak_deps=False \
       kf6-kcrash-devel kf6-kwindowsystem-devel kf6-kpackage-devel kf6-ksvg-devel \
       plasma-wayland-protocols-devel wayland-devel \
       layer-shell-qt-devel \
-      gcc-c++ make gettext git pkgconf-pkg-config rpm-build rpmlint && \
+      gcc-c++ make gettext git pkgconf-pkg-config rpm-build && \
     dnf clean all

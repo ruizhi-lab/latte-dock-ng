@@ -85,7 +85,6 @@ ${keywords_line}
 ${properties_line}
 
 COMMON_DEPEND="
-	>=dev-libs/plasma-wayland-protocols-1.6
 	>=dev-libs/wayland-1.22
 	>=dev-qt/qtbase-6.6:6[dbus,gui,widgets]
 	>=dev-qt/qtdeclarative-6.6:6
@@ -111,7 +110,6 @@ COMMON_DEPEND="
 	>=kde-frameworks/kwindowsystem-6.0:6
 	>=kde-frameworks/kxmlgui-6.0:6
 	>=kde-plasma/kpipewire-6.5:6
-	>=kde-plasma/kscreenlocker-6.3:6
 	>=kde-plasma/kwayland-6.5:6
 	>=kde-plasma/layer-shell-qt-6.5:6
 	>=kde-plasma/libplasma-6.5:6
@@ -120,7 +118,10 @@ COMMON_DEPEND="
 	>=kde-plasma/plasma-workspace-6.5:6
 "
 RDEPEND="\${COMMON_DEPEND}"
-DEPEND="\${COMMON_DEPEND}"
+# Build-only: ECM reads these XML definitions to generate Wayland client bindings.
+DEPEND="\${COMMON_DEPEND}
+	>=dev-libs/plasma-wayland-protocols-1.6
+"
 BDEPEND="
 ${git_bdepend}
 	>=dev-qt/qtbase-6.6:6

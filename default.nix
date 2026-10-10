@@ -3,7 +3,7 @@
 let
   inherit (pkgs) lib stdenv cmake wayland;
   inherit (pkgs) kdePackages;
-  buildInputs = [
+  runtimeInputs = [
     kdePackages.qtbase
     kdePackages.qtdeclarative
     kdePackages.qtwayland
@@ -13,7 +13,6 @@ let
     kdePackages.plasma-activities-stats
     kdePackages.plasma-workspace
     kdePackages.kwayland
-    kdePackages.plasma-wayland-protocols
     kdePackages.layer-shell-qt
     wayland
 
@@ -37,6 +36,8 @@ let
     kdePackages.kwindowsystem
     kdePackages.kxmlgui
   ];
+  # CMake reads these XML definitions to generate Wayland client bindings.
+  buildInputs = runtimeInputs ++ [ kdePackages.plasma-wayland-protocols ];
   package = stdenv.mkDerivation {
     pname = "latte-dock-ng";
     version = "1.2.55";
@@ -52,7 +53,7 @@ let
 
     inherit buildInputs;
 
-    passthru.runtimeInputs = buildInputs;
+    passthru.runtimeInputs = runtimeInputs;
 
     meta = with lib; {
       description = "Dock-style app launcher based on Plasma frameworks (KDE Plasma 6 fork)";
