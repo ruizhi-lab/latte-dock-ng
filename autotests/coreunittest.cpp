@@ -8,7 +8,23 @@
 #include "quickwindowsystem.h"
 #include "tools.h"
 
+#include <KConfigGroup>
+#include <KIconLoader>
+#include <KIconTheme>
+#include <KSharedConfig>
+
+#include <QDir>
+#include <QFile>
+#include <QGuiApplication>
 #include <QIcon>
+#include <QImage>
+#include <QScopeGuard>
+#include <QSignalSpy>
+#include <QTemporaryDir>
+#include <QQmlComponent>
+#include <QQmlEngine>
+#include <QQuickItem>
+#include <QQuickWindow>
 #include <QTest>
 
 #include <memory>
@@ -27,6 +43,7 @@ private Q_SLOTS:
     void environmentEncodesVersionBytes();
     void environmentReturnsThemeIconNamesAsSources();
     void environmentDescribesIconAndStringSources();
+    void environmentRefreshesWidgetIconPathsAfterThemeChange();
     void quickWindowSystemReportsWaylandCompositing();
     void singletonsCreateExpectedObjects();
 };
@@ -121,6 +138,116 @@ void CoreUnitTest::environmentDescribesIconAndStringSources()
     const QString textDescriptor = environment.iconDescriptor(QVariant(QStringLiteral("plain")));
     QVERIFY(textDescriptor.contains(QStringLiteral("QString")));
     QVERIFY(textDescriptor.contains(QStringLiteral("string=\"plain\"")));
+}
+
+void
+CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange()
+{
+    if (QGuiApplication::platformName() == QLatin1String("offscreen") || QGuiApplication::platformName() == QLatin1String("minimal")) {
+        QSKIP("The kdeglobals watcher requires a desktop platform; run this case on an isolated desktop session bus");
+    }
+
+    QTemporaryDir fixture;
+    QVERIFY(fixture.isValid());
+    const QByteArray originalConfigHome = qgetenv("XDG_CONFIG_HOME");
+    const QByteArray originalDataHome = qgetenv("XDG_DATA_HOME");
+    const QString originalTheme = QIcon::themeName();
+    const QStringList originalSearchPaths = QIcon::themeSearchPaths();
+    const auto restore = qScopeGuard([&]() {
+        qputenv("XDG_CONFIG_HOME", originalConfigHome);
+        qputenv("XDG_DATA_HOME", originalDataHome);
+        QIcon::setThemeName(originalTheme);
+        QIcon::setThemeSearchPaths(originalSearchPaths);
+        KIconTheme::reconfigure();
+        KIconLoader::global()->reconfigure(QString());
+    });
+    qputenv("XDG_CONFIG_HOME", fixture.filePath(QStringLiteral("config")).toUtf8());
+    qputenv("XDG_DATA_HOME", fixture.filePath(QStringLiteral("data")).toUtf8());
+
+    // Both themes expose the same widget icon name. Only its resolved file
+    // changes, matching the original-color fallback's production input.
+    for (const QString &name : { QStringLiteral("latte-red"), QStringLiteral("latte-blue") }) {
+        const QString themePath = fixture.filePath(QStringLiteral("data/icons/") + name);
+        QVERIFY(QDir().mkpath(themePath + QStringLiteral("/64x64/apps")));
+        QFile index(themePath + QStringLiteral("/index.theme"));
+        QVERIFY(index.open(QIODevice::WriteOnly));
+        index.write(QStringLiteral("[Icon Theme]\nName=%1\nDirectories=64x64/apps\n"
+                                   "[64x64/apps]\nSize=64\nType=Fixed\nContext=Applications\n")
+                      .arg(name)
+                      .toUtf8());
+        index.close();
+        QImage icon(QSize(64, 64), QImage::Format_ARGB32_Premultiplied);
+        icon.fill(name.endsWith(QLatin1String("red")) ? Qt::red : Qt::blue);
+        QVERIFY(icon.save(themePath + QStringLiteral("/64x64/apps/latte-widget-probe.png")));
+        icon.fill(Qt::green);
+        QVERIFY(icon.save(themePath + QStringLiteral("/64x64/apps/latte-widget-next.png")));
+    }
+    QIcon::setThemeSearchPaths({ fixture.filePath(QStringLiteral("data/icons")) });
+    auto config = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+    KConfigGroup icons(config, QStringLiteral("Icons"));
+    icons.writeEntry("Theme", QStringLiteral("latte-red"));
+    QVERIFY(config->sync());
+    QIcon::setThemeName(QStringLiteral("latte-red"));
+    KIconTheme::reconfigure();
+    auto *loader = KIconLoader::global();
+    loader->reconfigure(QString());
+    QCOMPARE(loader->iconPath(QStringLiteral("latte-widget-probe"), -64, true), fixture.filePath(QStringLiteral("data/icons/latte-red/64x64/apps/latte-widget-probe.png")));
+
+    Latte::Environment environment;
+    QQmlEngine engine;
+    QQuickWindow window;
+    QQmlComponent component(&engine);
+    component.setData(R"(
+        import QtQuick
+        import org.kde.kirigami as Kirigami
+        Item {
+            width: 64; height: 64
+            property string iconName: "latte-widget-probe"
+            Item {
+                anchors.fill: parent
+                Kirigami.Icon {
+                    objectName: "nativeWidgetIcon"
+                    anchors.fill: parent
+                    animated: false
+                    source: parent.parent.iconName
+                }
+            }
+        }
+    )",
+                      QUrl());
+    QTRY_VERIFY_WITH_TIMEOUT(component.isReady(), 5000);
+    std::unique_ptr<QObject> object(component.create());
+    QVERIFY(object);
+    auto *root = qobject_cast<QQuickItem *>(object.get());
+    QVERIFY(root);
+    auto *nativeIcon = root->findChild<QQuickItem *>(QStringLiteral("nativeWidgetIcon"));
+    QVERIFY(nativeIcon);
+    QSignalSpy sourceChanged(nativeIcon, SIGNAL(sourceChanged()));
+    window.resize(64, 64);
+    root->setParentItem(window.contentItem());
+    window.show();
+    QTRY_VERIFY_WITH_TIMEOUT(window.isExposed(), 5000);
+    const auto renderedColor = [&window]() {
+        const QImage pixels = window.grabWindow();
+        return pixels.isNull() ? QColor() : pixels.pixelColor(pixels.width() / 2, pixels.height() / 2);
+    };
+    QTRY_COMPARE_WITH_TIMEOUT(renderedColor(), QColor(Qt::red), 5000);
+    QSignalSpy changed(&environment, &Latte::Environment::iconThemeVersionChanged);
+    icons.writeEntry("Theme", QStringLiteral("latte-blue"));
+    QVERIFY(config->sync());
+    QTRY_VERIFY_WITH_TIMEOUT(!changed.isEmpty(), 5000);
+    QCOMPARE(QIcon::themeName(), QStringLiteral("latte-blue"));
+    QCOMPARE(loader->iconPath(QStringLiteral("latte-widget-probe"), -64, true), fixture.filePath(QStringLiteral("data/icons/latte-blue/64x64/apps/latte-widget-probe.png")));
+    // Reproduce the missing native repaint: changing the theme and resolving
+    // a new file is insufficient while the widget's source binding is stable.
+    QCOMPARE(renderedColor(), QColor(Qt::red));
+    environment.refreshAppletIcons(root);
+    QTRY_COMPARE_WITH_TIMEOUT(renderedColor(), QColor(Qt::blue), 5000);
+    QCOMPARE(sourceChanged.count(), 0);
+    QVERIFY(root->setProperty("iconName", QStringLiteral("latte-widget-next")));
+    QTRY_COMPARE_WITH_TIMEOUT(renderedColor(), QColor(Qt::green), 5000);
+    QCOMPARE(nativeIcon->property("source").toString(), QStringLiteral("latte-widget-next"));
+    root->setParentItem(nullptr);
 }
 
 void CoreUnitTest::quickWindowSystemReportsWaylandCompositing()

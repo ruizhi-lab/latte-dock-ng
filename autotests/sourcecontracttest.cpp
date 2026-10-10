@@ -1118,6 +1118,9 @@ void SourceContractTest::taskIconsRefreshAfterIconThemeChanges()
     QVERIFY(environmentSource.contains(QStringLiteral("readEntry(QStringLiteral(\"Theme\"), QStringLiteral(\"breeze\"))")));
     QVERIFY(environmentSource.contains(QStringLiteral("QIcon::setThemeName(currentIconTheme())")));
     QVERIFY(environmentSource.contains(QStringLiteral("QPixmapCache::clear()")));
+    const int invalidateTheme = environmentSource.indexOf(QStringLiteral("KIconTheme::reconfigure()"));
+    const int reloadLoader = environmentSource.indexOf(QStringLiteral("KIconLoader::global()->reconfigure(QString())"));
+    QVERIFY(invalidateTheme >= 0 && reloadLoader > invalidateTheme);
     QVERIFY(!environmentSource.contains(QStringLiteral("if (!iconTheme.isEmpty())")));
 }
 
@@ -2090,6 +2093,9 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     QVERIFY(wrapperSource.contains(QStringLiteral("visible: wrapper.needsOriginalIconFallback && iconPath !== \"\"")));
     QVERIFY(wrapperSource.contains(QStringLiteral("running: wrapper.needsOriginalIconFallback")));
     QVERIFY(wrapperSource.contains(QStringLiteral("function onNeedsOriginalIconFallbackChanged()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("target: LatteCore.Environment")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("function onIconThemeVersionChanged()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("LatteCore.Environment.refreshAppletIcons(wrapper.applet)")));
     QVERIFY(wrapperSource.contains(QStringLiteral("!iconName.endsWith(\"-symbolic\")")));
 
     // The fallback is above the native hover copy and therefore needs its own

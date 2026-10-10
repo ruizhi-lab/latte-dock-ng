@@ -11,6 +11,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVariant>
+#include <QQuickItem>
 #include <QtQml>
 
 
@@ -43,6 +44,7 @@ public Q_SLOTS:
     Q_INVOKABLE uint makeVersion(uint major, uint minor, uint release) const;
     Q_INVOKABLE QVariant iconSourceForTheme(const QVariant &source) const;
     Q_INVOKABLE QString iconDescriptor(const QVariant &source) const;
+    Q_INVOKABLE void refreshAppletIcons(QQuickItem *root) const;
 
 Q_SIGNALS:
     void longDurationChanged();

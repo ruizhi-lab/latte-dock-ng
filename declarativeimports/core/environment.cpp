@@ -10,11 +10,13 @@
 #include <KConfigGroup>
 #include <KDirWatch>
 #include <KIconThemes/KIconLoader>
+#include <KIconThemes/KIconTheme>
 #include <KSharedConfig>
 #include <QIcon>
 #include <QDebug>
 #include <QGuiApplication>
 #include <QPixmapCache>
+#include <QQuickItem>
 #include <QStandardPaths>
 
 #define LONGDURATION 240
@@ -62,6 +64,10 @@ Environment::Environment(QObject *parent)
             QIcon::setThemeName(currentIconTheme());
 
             QPixmapCache::clear();
+            // File-backed widget icons use KIconLoader rather than Qt's theme
+            // engine. Clear KIconTheme's cached name before rebuilding the
+            // loader, otherwise kdeglobals is new but resolved paths stay old.
+            KIconTheme::reconfigure();
             qCDebug(latteQml) << "Environment::kdeglobals changed => reconfigure icon loader" << QIcon::themeName();
             KIconLoader::global()->reconfigure(QString());
             markIconThemeChanged();
@@ -130,6 +136,33 @@ QString Environment::iconDescriptor(const QVariant &source) const
     }
 
     return descriptor;
+}
+
+void
+Environment::refreshAppletIcons(QQuickItem *root) const
+{
+    if (!root) {
+        return;
+    }
+
+    // Native Kirigami/KSvg icons retain rendered pixels when their bound
+    // source name does not change. After the coalesced theme notification,
+    // request polish without writing source, preserving each widget's own
+    // configuration/state binding. Walk the visual subtree because Plasma 6
+    // compact representations need not match legacy IconItem discovery.
+    QList<QQuickItem *> pending{ root };
+    while (!pending.isEmpty()) {
+        QQuickItem *item = pending.takeLast();
+        for (const QMetaObject *meta = item->metaObject(); meta; meta = meta->superClass()) {
+            const QByteArray name(meta->className());
+            if (name == "Icon" || name == "IconItem" || name.endsWith("::Icon") || name.endsWith("::IconItem")) {
+                item->polish();
+                qCDebug(latteQml) << "[widget-icon-refresh]" << item << item->property("source");
+                break;
+            }
+        }
+        pending.append(item->childItems());
+    }
 }
 
 QString Environment::currentIconTheme() const

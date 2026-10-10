@@ -579,6 +579,18 @@ Item{
             target: wrapper
             function onNeedsOriginalIconFallbackChanged() { originalIconFallback.refreshIconPath(); }
         }
+        // Environment coalesces theme notifications after the KDE loader has
+        // been rebuilt. Re-resolve the file now; the applet's icon name can
+        // remain unchanged even though the selected theme changes its path.
+        Connections {
+            target: LatteCore.Environment
+            function onIconThemeVersionChanged() {
+                if (!wrapper.communicator.indexerIsSupported) {
+                    LatteCore.Environment.refreshAppletIcons(wrapper.applet);
+                }
+                originalIconFallback.refreshIconPath();
+            }
+        }
 
         // Some applets expose their state through iconChanged without a QML
         // property notification on the resolved backend object. Poll only

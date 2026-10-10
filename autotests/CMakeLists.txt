@@ -119,6 +119,7 @@ target_link_libraries(coreunittest
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
+    Qt6::Quick
     Qt6::Test
     KF6::ConfigCore
     KF6::CoreAddons
