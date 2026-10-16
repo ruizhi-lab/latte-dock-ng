@@ -80,6 +80,7 @@ private Q_SLOTS:
     void plasma68ContainmentScreenAndImportContracts();
     void importedAppletIdsStayUniqueIncludingNestedApplets();
     void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
+    void sharedConfigWindowFollowsEveryDockSwitch();
     void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
@@ -4823,6 +4824,52 @@ void SourceContractTest::importedAppletIdsStayUniqueIncludingNestedApplets()
     QVERIFY(copy > used);
     QVERIFY(unique > copy);
     QVERIFY(restore > unique);
+}
+
+void SourceContractTest::sharedConfigWindowFollowsEveryDockSwitch()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    const auto functionBody = [](const QString &source, const QString &signature) {
+        const int start = source.indexOf(signature);
+
+        if (start < 0) {
+            return QString();
+        }
+
+        const int end = source.indexOf(QStringLiteral("\n}\n"), start);
+        return source.mid(start, end - start);
+    };
+
+    // One PrimaryConfigView serves every dock. Each context property that
+    // init() points at the edited dock must be re-pointed when the window
+    // switches docks, or the dialog keeps editing the first dock it was opened
+    // for and turns null once that dock is deleted.
+    const QString primary = readSource(QStringLiteral("app/view/settings/primaryconfigview.cpp"));
+    const QString sub = readSource(QStringLiteral("app/view/settings/subconfigview.cpp"));
+    const QString init = functionBody(primary, QStringLiteral("void PrimaryConfigView::init()"));
+    const QString switches = functionBody(primary, QStringLiteral("void PrimaryConfigView::initParentView(Latte::View *view)"))
+                             + functionBody(sub, QStringLiteral("void SubConfigView::initParentView(Latte::View *view)"));
+    QVERIFY(!init.isEmpty());
+    QVERIFY(switches.contains(QStringLiteral("SubConfigView::initParentView(view);")));
+
+    static const QRegularExpression viewProperty(QStringLiteral("setContextProperty\\(QStringLiteral\\(\"(\\w+)\"\\), m_latteView\\)"));
+    QStringList properties;
+
+    for (auto match = viewProperty.globalMatch(init); match.hasNext();) {
+        properties << match.next().captured(1);
+    }
+
+    QVERIFY(properties.contains(QStringLiteral("latteView")));
+    QVERIFY(properties.contains(QStringLiteral("configurationLatteView")));
+
+    for (const auto &property : std::as_const(properties)) {
+        const QString update = QStringLiteral("setContextProperty(QStringLiteral(\"%1\"), m_latteView)").arg(property);
+        QVERIFY2(switches.contains(update), qPrintable(property + QStringLiteral(" is not updated when the config window switches docks")));
+    }
 }
 
 void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
