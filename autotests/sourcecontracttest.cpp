@@ -83,6 +83,7 @@ private Q_SLOTS:
     void sharedConfigWindowFollowsEveryDockSwitch();
     void waylandWindowsAcceptedAfterCreationAreTracked();
     void viewBindingsKeepTheirValueWhileFrozen();
+    void layoutInfoWindowNeverAppliesAnEmptySize();
     void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
@@ -4968,6 +4969,24 @@ void SourceContractTest::viewBindingsKeepTheirValueWhileFrozen()
 
     QVERIFY(frozen.contains(QStringLiteral("normalThickness")));
     QVERIFY(frozen.contains(QStringLiteral("maxThickness")));
+}
+
+void SourceContractTest::layoutInfoWindowNeverAppliesAnEmptySize()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/app/infoview.cpp"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // A zero-sized xdg_surface window geometry makes KWin disconnect Latte and
+    // Qt quit the whole dock, so the size reported by QML is validated before
+    // it reaches the window.
+    const int sync = source.indexOf(QStringLiteral("void InfoView::syncGeometry()"));
+    QVERIFY(sync >= 0);
+    const int guard = source.indexOf(QStringLiteral("if (size.isEmpty()) {"), sync);
+    const int apply = source.indexOf(QStringLiteral("setMinimumSize(size);"), sync);
+    QVERIFY(guard > sync);
+    QVERIFY(apply > guard);
+    QVERIFY(source.indexOf(QStringLiteral("if (!rootObject()) {"), sync) > sync);
 }
 
 void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()

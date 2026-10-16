@@ -7,6 +7,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
+import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
 import org.kde.plasma.components as PlasmaComponents
 
@@ -19,8 +20,11 @@ KSvg.FrameSvgItem {
     prefix:""
     enabledBorders: infoWindow ? infoWindow.enabledBorders : KSvg.FrameSvg.AllBorders
 
+    // Plasma 6 has no global `units`; an undefined name here left the height
+    // at 0, and a zero-sized window is a Wayland protocol error that makes
+    // KWin disconnect Latte (the docks vanished when switching layouts).
     width: Screen.width + 1
-    height: Math.min(Screen.height - units.gridUnit * 8, logo.height + messageLbl.height + 2 *units.gridUnit)
+    height: Math.min(Screen.height - Kirigami.Units.gridUnit * 8, logo.height + messageLbl.height + 2 * Kirigami.Units.gridUnit)
 
     property var infoWindow
     property string message
@@ -39,10 +43,10 @@ KSvg.FrameSvgItem {
                 id: logo
                 anchors.centerIn: parent
 
-                width: units.iconSizes.huge
+                width: Kirigami.Units.iconSizes.huge
                 height: width
 
-                source: "latte-dock"
+                source: "latte-dock-ng"
             }
         }
 

@@ -208,6 +208,7 @@ target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_PARABOLIC_ITEM_QML="${CMAKE_SOURCE_DIR}/declarativeimports/abilities/items/basicitem/ParabolicItem.qml"
     LATTE_PARABOLICAREA_QML="${CMAKE_SOURCE_DIR}/containment/package/contents/ui/applet/ParabolicArea.qml"
     LATTE_COMPACT_APPLET_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/applet/CompactApplet.qml"
+    LATTE_INFO_VIEW_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/views/InfoView.qml"
     LATTE_APPLET_ALTERNATIVES_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/explorer/AppletAlternatives.qml"
     LATTE_LAUNCHERS_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/abilities/Launchers.qml"
     LATTE_PULSEAUDIO_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/PulseAudio.qml"

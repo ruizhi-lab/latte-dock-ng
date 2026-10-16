@@ -64,6 +64,7 @@ class QmlSmokeTest : public QObject
 private Q_SLOTS:
     void initTestCase();
     void latteCoreQmlPluginLoadsFromBuildTree();
+    void layoutInfoWindowHasAValidSizeFromSource();
     void appletAlternativesDialogResolvesOutsidePlasmashell();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void parabolicItemZoomRecoveryLoadsFromSource();
@@ -922,6 +923,37 @@ QtObject {
     QVERIFY(object->property("brightness").toReal() > 0.99);
     QCOMPARE(object->property("lumina").toReal(), 0.0);
     QCOMPARE(object->property("hasCompositingProperty").toBool(), true);
+}
+
+void QmlSmokeTest::layoutInfoWindowHasAValidSizeFromSource()
+{
+    // InfoView is the window shown while layouts switch. Its size becomes the
+    // window geometry; a zero dimension is a Wayland protocol error that makes
+    // KWin disconnect Latte, so it must evaluate to a real size without QML
+    // errors (it used the Plasma 5 global `units`, undefined in Plasma 6).
+    QTemporaryDir importRoot;
+    QQmlEngine engine;
+    addLatteCoreImport(engine, importRoot);
+    QStringList warnings;
+    connect(&engine, &QQmlEngine::warnings, &engine, [&warnings](const QList<QQmlError> &errors) {
+        for (const QQmlError &error : errors) {
+            warnings.append(error.toString());
+        }
+    });
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_INFO_VIEW_QML)));
+    std::unique_ptr<QObject> object(component.create());
+    if (!object) {
+        qWarning() << component.errors();
+    }
+
+    QVERIFY(object);
+    object->setProperty("message", QStringLiteral("Switching to layout Default"));
+    QCoreApplication::processEvents();
+
+    QVERIFY2(warnings.isEmpty(), qPrintable(warnings.join(QLatin1Char('\n'))));
+    QVERIFY(object->property("width").toReal() > 0);
+    QVERIFY(object->property("height").toReal() > 0);
 }
 
 void QmlSmokeTest::appletAlternativesDialogResolvesOutsidePlasmashell()
