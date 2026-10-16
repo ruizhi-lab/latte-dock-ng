@@ -82,6 +82,7 @@ private Q_SLOTS:
     void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
     void sharedConfigWindowFollowsEveryDockSwitch();
     void waylandWindowsAcceptedAfterCreationAreTracked();
+    void viewBindingsKeepTheirValueWhileFrozen();
     void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
@@ -4920,6 +4921,53 @@ void SourceContractTest::waylandWindowsAcceptedAfterCreationAreTracked()
     }
 
     QVERIFY(connections > 0);
+}
+
+void SourceContractTest::viewBindingsKeepTheirValueWhileFrozen()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/BindingsExternal.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // These Bindings publish view geometry to C++ and are switched off while
+    // the dock slides or relocates. Qt 6 restores the C++ initial value when a
+    // Binding is switched off (256 for the thicknesses), which made vertical
+    // docks jump on every slide; they must keep the last published value.
+    static const QRegularExpression binding(QStringLiteral("\\bBinding\\s*\\{"));
+    static const QRegularExpression transientWhen(
+        QStringLiteral("when:[^\\n]*(updateIsEnabled|inRelocationHiding|inClientSideScreenEdgeSliding|inNormalState|inSlidingIn|inSlidingOut)"));
+    static const QRegularExpression property(QStringLiteral("property:\\s*\"(\\w+)\""));
+
+    QStringList frozen;
+
+    for (auto match = binding.globalMatch(source); match.hasNext();) {
+        const QRegularExpressionMatch found = match.next();
+        qsizetype end = found.capturedEnd();
+        int depth = 1;
+
+        while (end < source.size() && depth > 0) {
+            if (source.at(end) == QLatin1Char('{')) {
+                ++depth;
+            } else if (source.at(end) == QLatin1Char('}')) {
+                --depth;
+            }
+
+            ++end;
+        }
+
+        const QString body = source.mid(found.capturedStart(), end - found.capturedStart());
+
+        if (!transientWhen.match(body).hasMatch()) {
+            continue;
+        }
+
+        const QString name = property.match(body).captured(1);
+        frozen << name;
+        QVERIFY2(body.contains(QStringLiteral("restoreMode: Binding.RestoreNone")), qPrintable(name + QStringLiteral(" restores its old value while frozen")));
+    }
+
+    QVERIFY(frozen.contains(QStringLiteral("normalThickness")));
+    QVERIFY(frozen.contains(QStringLiteral("maxThickness")));
 }
 
 void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
