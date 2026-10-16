@@ -838,6 +838,17 @@ WindowInfoWrap WaylandInterface::requestInfo(WindowId wid)
         windowRemoved(w->uuid());
     }
 
+    //! The tracker stores every window it requests info for, but
+    //! windowCreatedProxy() only tracks windows that are acceptable when they
+    //! are created. Plasma side panels such as the Activities sidebar are
+    //! created with an empty geometry, fail isSidepanel() and become acceptable
+    //! only once mapped. Track every valid window here so that its unmapped
+    //! signal is observed; otherwise the tracker keeps the closed panel as the
+    //! active window forever and a Dodge Active dock beside it stays hidden.
+    if (w && winfoWrap.isValid() && isAcceptableWindow(w)) {
+        trackWindow(w);
+    }
+
     return winfoWrap;
 }
 
@@ -1251,9 +1262,12 @@ void WaylandInterface::windowUnmapped()
 
 void WaylandInterface::trackWindow(KWayland::Client::PlasmaWindow *w)
 {
-    if (!w) {
+    //! Called again by requestInfo() for windows that are already tracked.
+    if (!w || m_trackedWindows.contains(w->uuid())) {
         return;
     }
+
+    m_trackedWindows.insert(w->uuid());
 
     //! Geometry-relevant signals: these affect view intersection/touching
     //! calculations and must trigger the full window tracking cascade.
@@ -1284,6 +1298,8 @@ void WaylandInterface::untrackWindow(KWayland::Client::PlasmaWindow *w)
         return;
     }
 
+    m_trackedWindows.remove(w->uuid());
+
     disconnect(w, &PlasmaWindow::activeChanged, this, &WaylandInterface::updateWindowGeometry);
     disconnect(w, &PlasmaWindow::fullscreenChanged, this, &WaylandInterface::updateWindowGeometry);
     disconnect(w, &PlasmaWindow::geometryChanged, this, &WaylandInterface::updateWindowGeometry);
@@ -1295,7 +1311,7 @@ void WaylandInterface::untrackWindow(KWayland::Client::PlasmaWindow *w)
     disconnect(w, &PlasmaWindow::plasmaVirtualDesktopEntered, this, &WaylandInterface::updateWindowGeometry);
     disconnect(w, &PlasmaWindow::plasmaVirtualDesktopLeft, this, &WaylandInterface::updateWindowGeometry);
 
-    disconnect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowCache);
+    disconnect(w, &PlasmaWindow::titleChanged, this, &WaylandInterface::updateWindowTitle);
     disconnect(w, &PlasmaWindow::skipTaskbarChanged, this, &WaylandInterface::updateWindowCache);
     disconnect(w, &PlasmaWindow::onAllDesktopsChanged, this, &WaylandInterface::updateWindowCache);
     disconnect(w, &PlasmaWindow::parentWindowChanged, this, &WaylandInterface::updateWindowCache);

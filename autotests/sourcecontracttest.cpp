@@ -81,6 +81,7 @@ private Q_SLOTS:
     void importedAppletIdsStayUniqueIncludingNestedApplets();
     void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
     void sharedConfigWindowFollowsEveryDockSwitch();
+    void waylandWindowsAcceptedAfterCreationAreTracked();
     void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
@@ -4870,6 +4871,55 @@ void SourceContractTest::sharedConfigWindowFollowsEveryDockSwitch()
         const QString update = QStringLiteral("setContextProperty(QStringLiteral(\"%1\"), m_latteView)").arg(property);
         QVERIFY2(switches.contains(update), qPrintable(property + QStringLiteral(" is not updated when the config window switches docks")));
     }
+}
+
+void SourceContractTest::waylandWindowsAcceptedAfterCreationAreTracked()
+{
+    QFile waylandCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(waylandCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(waylandCpp.readAll());
+
+    const auto functionBody = [&src](const QString &signature) {
+        const int start = src.indexOf(signature);
+
+        if (start < 0) {
+            return QString();
+        }
+
+        return src.mid(start, src.indexOf(QStringLiteral("\n}\n"), start) - start);
+    };
+
+    // The tracker stores every window it requests info for. Plasma side panels
+    // (the Activities sidebar) are created with an empty geometry and become
+    // acceptable only once mapped, so requestInfo() must track them; without
+    // their unmapped signal the closed panel stays the active window and a
+    // Dodge Active dock beside it never shows again.
+    const QString requestInfo = functionBody(QStringLiteral("WindowInfoWrap WaylandInterface::requestInfo(WindowId wid)"));
+    QVERIFY(!requestInfo.isEmpty());
+    const int track = requestInfo.indexOf(QStringLiteral("trackWindow(w);"));
+    QVERIFY(track > 0);
+    QVERIFY(requestInfo.lastIndexOf(QStringLiteral("winfoWrap.isValid() && isAcceptableWindow(w)"), track) > 0);
+
+    const QString trackWindow = functionBody(QStringLiteral("void WaylandInterface::trackWindow(KWayland::Client::PlasmaWindow *w)"));
+    const QString untrackWindow = functionBody(QStringLiteral("void WaylandInterface::untrackWindow(KWayland::Client::PlasmaWindow *w)"));
+    QVERIFY(trackWindow.contains(QStringLiteral("m_trackedWindows.contains(w->uuid())")));
+    QVERIFY(trackWindow.contains(QStringLiteral("m_trackedWindows.insert(w->uuid());")));
+    QVERIFY(untrackWindow.contains(QStringLiteral("m_trackedWindows.remove(w->uuid());")));
+    QVERIFY(trackWindow.contains(QStringLiteral("connect(w, &PlasmaWindow::unmapped, this, &WaylandInterface::windowUnmapped)")));
+
+    // Every connection made by trackWindow() is undone by untrackWindow() with
+    // the same slot, so a window can be tracked again without duplicates.
+    static const QRegularExpression connection(QStringLiteral("\\bconnect\\(w, &PlasmaWindow::(\\w+), this, &WaylandInterface::(\\w+)\\)"));
+    int connections{0};
+
+    for (auto match = connection.globalMatch(trackWindow); match.hasNext();) {
+        const QRegularExpressionMatch found = match.next();
+        const QString disconnect = QStringLiteral("disconnect(w, &PlasmaWindow::%1, this, &WaylandInterface::%2)").arg(found.captured(1), found.captured(2));
+        QVERIFY2(untrackWindow.contains(disconnect), qPrintable(disconnect));
+        ++connections;
+    }
+
+    QVERIFY(connections > 0);
 }
 
 void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
