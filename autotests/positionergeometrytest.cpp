@@ -61,6 +61,7 @@ private Q_SLOTS:
     void floatingPanelGapIsIncludedInContentMargin();
     void panelsOnOtherScreensAreIgnoredForContentMargins();
     void contentMarginsRequireActualPerpendicularOverlap();
+    void configWindowReservesFloatingPanelsAndEditedCanvas();
 };
 
 void PositionerGeometryTest::emptyPanelListPreservesScreenGeometry()
@@ -330,6 +331,25 @@ void PositionerGeometryTest::contentMarginsRequireActualPerpendicularOverlap()
     QCOMPARE(externalPanelContentMargins(screen, left, {left}, true), QMargins());
     const QRect top = screenEdgePanelGeometry(screen, Plasma::Types::TopEdge, 48);
     QCOMPARE(externalPanelContentMargins(screen, top, {QRect(-1904, 120, 40, 1080), QRect(-56, 120, 40, 1080)}, false), QMargins(56, 0, 56, 0));
+}
+
+void
+PositionerGeometryTest::configWindowReservesFloatingPanelsAndEditedCanvas()
+{
+    const QRect screen(-1920, 120, 1920, 1080);
+    const QRect available(-1920, 120, 1920, 1032);
+    const QList<QRect> panels{ QRect(-1800, 136, 1600, 40), QRect(0, 0, 1920, 40) };
+    const QRect canvas(-1920, 1100, 1920, 100);
+    const QRect expected(-1920, 176, 1920, 924);
+    QCOMPARE(configViewAvailableGeometry(screen, available, panels, canvas, Plasma::Types::BottomEdge), expected);
+    QVERIFY(!expected.intersects(canvas));
+    QVERIFY(!expected.intersects(panels.first()));
+
+    const QRect rightScreen(1271, 530, 2259, 1271);
+    QCOMPARE(configViewAvailableGeometry(rightScreen, rightScreen, { QRect(1287, 600, 40, 1000) }, QRect(3430, 530, 100, 1271), Plasma::Types::RightEdge), QRect(1327, 530, 2103, 1271));
+    QCOMPARE(configViewAvailableGeometry(screen, available, {}, {}, Plasma::Types::LeftEdge), available);
+    QVERIFY(configViewAvailableGeometry(screen, {}, panels, canvas, Plasma::Types::BottomEdge).isEmpty());
+    QVERIFY(configViewAvailableGeometry(screen, available, panels, screen, Plasma::Types::TopEdge).isEmpty());
 }
 
 QTEST_APPLESS_MAIN(PositionerGeometryTest)

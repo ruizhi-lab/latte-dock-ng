@@ -192,6 +192,50 @@ inline QMargins verticalDockExternalPanelMargins(const QRect &screenGeometry, co
     return QMargins(0, top, 0, bottom);
 }
 
+inline QRect
+configViewAvailableGeometry(const QRect &screen, const QRect &available, const QList<QRect> &panels, const QRect &canvas, Plasma::Types::Location edge)
+{
+    if (!screen.isValid() || !available.isValid()) {
+        return {};
+    }
+
+    // KWin's live panel rectangles include floating gaps; QScreen's work area
+    // alone may cover the entire output on Wayland. Reserve these edges and
+    // the edited dock's canvas, rather than letting its settings cover them.
+    const auto transpose = [](const QRect &rect) { return QRect(rect.y(), rect.x(), rect.height(), rect.width()); };
+    QList<QRect> ownedPanels;
+    QList<QRect> transposedPanels;
+    for (const QRect &panel : panels) {
+        if (panel.isValid() && screen.contains(panel.center())) {
+            ownedPanels.append(panel);
+            transposedPanels.append(transpose(panel));
+        }
+    }
+    const QMargins vertical = verticalDockExternalPanelMargins(screen, ownedPanels);
+    const QMargins horizontal = verticalDockExternalPanelMargins(transpose(screen), transposedPanels);
+    QRect result = available.intersected(screen.marginsRemoved(QMargins(horizontal.top(), vertical.top(), horizontal.bottom(), vertical.bottom())));
+
+    if (canvas.isValid() && screen.intersects(canvas)) {
+        switch (edge) {
+            case Plasma::Types::TopEdge:
+                result.setTop(qMax(result.top(), canvas.bottom() + 1));
+                break;
+            case Plasma::Types::BottomEdge:
+                result.setBottom(qMin(result.bottom(), canvas.top() - 1));
+                break;
+            case Plasma::Types::LeftEdge:
+                result.setLeft(qMax(result.left(), canvas.right() + 1));
+                break;
+            case Plasma::Types::RightEdge:
+                result.setRight(qMin(result.right(), canvas.left() - 1));
+                break;
+            default:
+                break;
+        }
+    }
+    return result.isValid() ? result : QRect();
+}
+
 inline QRect screenEdgePanelGeometry(const QRect &screenGeometry, Plasma::Types::Location location, int thickness)
 {
     if (!screenGeometry.isValid() || thickness <= 0) {

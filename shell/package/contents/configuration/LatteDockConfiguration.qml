@@ -55,20 +55,11 @@ Loader {
 
         readonly property bool kirigamiLibraryIsFound: true
 
-        //! max size based on screen resolution
-        //!    TODO: if we can access availableScreenGeometry.height this can be improved, currently
-        //!    we use 100px. or 50px. in order to give space for other views to be shown and to also
-        //!    have some space around the settings window
-        property int maxHeight: plasmoid.formFactor === PlasmaCore.Types.Horizontal ?
-                                    viewConfig.availableScreenGeometry.height - canvasHeadThickness - units.largeSpacing :
-                                    viewConfig.availableScreenGeometry.height - 2 * units.largeSpacing
-
-        property int maxWidth: 0.6 * latteView.screenGeometry.width
-
-        property int canvasThickness: plasmoid.formFactor === PlasmaCore.Types.Vertical ? latteView.positioner.canvasGeometry.width : latteView.positioner.canvasGeometry.height
-        property int canvasHeadThickness: {
-            return Math.max(0, canvasThickness - latteView.maxNormalThickness)
-        }
+        // C++ reserves Plasma panels, other docks and this dock's edit canvas.
+        // Clamp the viewport to that work area; longer pages scroll inside it.
+        property int maxHeight: Math.max(1, dialog.viewConfig.availableScreenGeometry.height - 2 * dialog.units.largeSpacing)
+        property int maxWidth: Math.max(1, Math.min(0.6 * dialog.latteView.screenGeometry.width,
+                                                   dialog.viewConfig.availableScreenGeometry.width - 2 * dialog.units.largeSpacing))
 
         //! propose size based on font size
         property int proposedWidth: 0.82 * proposedHeight + units.smallSpacing * 2
@@ -76,7 +67,7 @@ Loader {
 
         //! chosen size to be applied, if the user has set or not a different scale for the settings window
         property int chosenWidth: userScaleWidth !== 1 ? userScaleWidth * proposedWidth : proposedWidth
-        property int chosenHeight: userScaleHeight !== 1 ? userScaleHeight * heightLevel * proposedHeight : heightLevel * proposedHeight
+        property int chosenHeight: userScaleHeight * proposedHeight
 
         readonly property int optionsWidth: appliedWidth - units.smallSpacing * 10 - units.gridUnit * 1.5
 
@@ -84,7 +75,13 @@ Loader {
         property real userScaleWidth: 1
         property real userScaleHeight: 1
 
-        readonly property real heightLevel: (dialog.advancedLevel ? 100 : 1) //in order to use all available space
+        // Pages own their natural height independently of the scroll viewport.
+        // Include only the fixed window chrome here: deriving this from the
+        // viewport would feed the applied window height back into itself and
+        // prevent shorter advanced pages from shrinking after a tab switch.
+        readonly property real naturalHeight: (dialog.currentPage ? dialog.currentPage.height : 0)
+                                              + header.implicitHeight + tabBar.implicitHeight + actionButtons.implicitHeight
+                                              + content.spacing * 3 + dialog.units.smallSpacing
 
         onHeightChanged: viewConfig.syncGeometry();
 
@@ -92,7 +89,7 @@ Loader {
         //! width can be between 200px - maxWidth
         //! height can be between 400px - maxHeight
         property int appliedWidth: Math.min(maxWidth, Math.max(200, chosenWidth))
-        property int appliedHeight: universalSettings.inAdvancedModeForEditSettings ? maxHeight : Math.min(maxHeight, Math.max(400, chosenHeight))
+        property int appliedHeight: Math.min(dialog.maxHeight, Math.max(400, dialog.advancedLevel ? dialog.naturalHeight : dialog.chosenHeight))
 
         Layout.minimumWidth: width
         Layout.minimumHeight: height
@@ -165,16 +162,14 @@ Loader {
             Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
             Layout.minimumWidth: width
-            Layout.minimumHeight: calculatedHeight
             Layout.preferredWidth: width
-            Layout.preferredHeight: calculatedHeight
             width: (dialog.appliedWidth - units.smallSpacing * 2)
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: dialog.units.smallSpacing
             spacing: units.smallSpacing
-
-            property int calculatedHeight: header.height + headerSpacer.height+ tabBar.height + pagesBackground.height + actionButtons.height + spacing * 3
 
             Keys.onPressed: {
                 if (event.key === Qt.Key_Escape) {
@@ -403,16 +398,10 @@ Loader {
             Item {
                 id: pagesBackground
                 Layout.fillWidth: true
-                Layout.fillHeight: false
+                Layout.fillHeight: true
                 Layout.minimumWidth: dialog.appliedWidth - units.smallSpacing * 4
-                Layout.minimumHeight: height
-                Layout.maximumHeight: height
-
-                width: dialog.appliedWidth - units.smallSpacing * 3
-                height: availableFreeHeight + units.smallSpacing * 4
-
-                //fix the height binding loop when showing the configuration window
-                property int availableFreeHeight: dialog.appliedHeight - header.height - headerSpacer.height - tabBar.height - actionButtons.height - 2 * units.smallSpacing
+                Layout.minimumHeight: 0
+                Layout.preferredHeight: dialog.currentPage ? dialog.currentPage.height : 0
 
                 // Header
                 Rectangle {

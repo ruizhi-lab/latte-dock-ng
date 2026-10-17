@@ -14,6 +14,7 @@
 #include "../effects.h"
 #include "../panelshadows_p.h"
 #include "../view.h"
+#include "../viewgeometryhelpers.h"
 #include "../../lattecorona.h"
 #include "../../layouts/manager.h"
 #include "../../layout/genericlayout.h"
@@ -61,6 +62,9 @@ PrimaryConfigView::PrimaryConfigView(Latte::View *view)
     if (m_corona) {
         connections << connect(m_corona, &Latte::Corona::raiseViewsTemporaryChanged, this, &PrimaryConfigView::raiseDocksTemporaryChanged);
         connections << connect(m_corona, &Latte::Corona::availableScreenRectChangedFrom, this, &PrimaryConfigView::updateAvailableScreenGeometry);
+        connections << connect(m_corona->wm(), &WindowSystem::AbstractWindowInterface::plasmaPanelGeometriesChanged, this, [this]() {
+            updateAvailableScreenGeometry();
+        });
 
         connections << connect(m_corona->layoutsManager(), &Latte::Layouts::Manager::currentLayoutIsSwitching, this, [this]() {
             if (isVisible()) {
@@ -244,6 +248,8 @@ void PrimaryConfigView::initParentView(Latte::View *view)
     viewconnections << connect(m_latteView->positioner(), &Latte::ViewPart::Positioner::currentScreenChanged, this, [this]() {
         updateAvailableScreenGeometry();
     });
+    viewconnections << connect(m_latteView->positioner(), &Latte::ViewPart::Positioner::canvasGeometryChanged,
+                               this, &PrimaryConfigView::instantUpdateAvailableScreenGeometry);
 
     viewconnections << connect(m_corona->universalSettings(), &Latte::UniversalSettings::inAdvancedModeForEditSettingsChanged, m_latteView, &Latte::View::inSettingsAdvancedModeChanged);
     viewconnections << connect(m_latteView->containment(), &Plasma::Containment::immutabilityChanged, this, &PrimaryConfigView::immutabilityChanged);
@@ -266,7 +272,7 @@ void PrimaryConfigView::initParentView(Latte::View *view)
 
 void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
 {
-    if (!m_latteView || !m_latteView->positioner()) {
+    if (!m_latteView || !m_latteView->positioner() || !m_latteView->layout() || !m_latteView->containment()) {
         return;
     }
 
@@ -281,8 +287,13 @@ void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
 
     QString activityid = m_latteView->layout()->lastUsedActivity();
 
-    m_availableScreenGeometry = m_corona->availableScreenRectWithCriteria(currentScrId, activityid, ignoreModes, {}, false, true);
-    Q_EMIT availableScreenGeometryChanged();
+    const QRect available = m_corona->availableScreenRectWithCriteria(currentScrId, activityid, ignoreModes, {}, false, true);
+    const QRect geometry = configViewAvailableGeometry(m_latteView->screenGeometry(), available,
+                           m_corona->wm()->livePlasmaPanelGeometries(), m_latteView->positioner()->canvasGeometry(), m_latteView->location());
+    if (m_availableScreenGeometry != geometry) {
+        m_availableScreenGeometry = geometry;
+        Q_EMIT availableScreenGeometryChanged();
+    }
 }
 
 void PrimaryConfigView::updateAvailableScreenGeometry(View *origin)
@@ -334,9 +345,9 @@ void PrimaryConfigView::syncGeometry()
     const auto location = m_latteView->containment()->location();
     const auto scrGeometry = m_latteView->screenGeometry();
     const auto availGeometry = m_availableScreenGeometry;
-    const auto canvasGeometry = m_latteView->positioner()->canvasGeometry();
-
-    int canvasThickness = m_latteView->formFactor() == Plasma::Types::Vertical ? canvasGeometry.width() : canvasGeometry.height();
+    if (!availGeometry.isValid()) {
+        return;
+    }
 
     QPoint position{0, 0};
 
@@ -356,19 +367,19 @@ void PrimaryConfigView::syncGeometry()
             }
 
             if (location == Plasma::Types::TopEdge) {
-                yPos = scrGeometry.y() + canvasThickness;
+                yPos = availGeometry.top();
             } else if (location == Plasma::Types::BottomEdge) {
-                yPos = scrGeometry.y() + scrGeometry.height() - canvasThickness - size.height();
+                yPos = availGeometry.bottom() + 1 - size.height();
             }
         }
         break;
 
         case Plasma::Types::Vertical: {
             if (location == Plasma::Types::LeftEdge) {
-                xPos = scrGeometry.x() + canvasThickness;
+                xPos = availGeometry.left();
                 yPos =  availGeometry.y() + (availGeometry.height() - size.height()) / 2;
             } else if (location == Plasma::Types::RightEdge) {
-                xPos = scrGeometry.x() + scrGeometry.width() - canvasThickness - size.width();
+                xPos = availGeometry.right() + 1 - size.width();
                 yPos =  availGeometry.y() + (availGeometry.height() - size.height()) / 2;
             }
         }
@@ -379,6 +390,10 @@ void PrimaryConfigView::syncGeometry()
             break;
     }
 
+    // Both basic centering and advanced edge alignment must stay in the same
+    // reserved rectangle that caps QML's viewport, including on offset outputs.
+    xPos = qBound(availGeometry.left(), xPos, qMax(availGeometry.left(), availGeometry.right() + 1 - size.width()));
+    yPos = qBound(availGeometry.top(), yPos, qMax(availGeometry.top(), availGeometry.bottom() + 1 - size.height()));
     position = {xPos, yPos};
 
     updateEnabledBorders();
