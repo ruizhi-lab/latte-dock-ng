@@ -6,7 +6,6 @@
 */
 
 import QtQuick
-import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import QtQuick.Window
 import org.kde.plasma.core as PlasmaCore

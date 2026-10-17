@@ -3,7 +3,7 @@
 Date: 2026-09-30
 
 The reviewed machine baseline is [`qmllint-baseline.json`](qmllint-baseline.json).
-It records all 236 tracked QML files, the qmllint JSON revision, the tool and
+It records all 239 tracked QML files, the qmllint JSON revision, the tool and
 host fingerprint, import roots, successful process exit codes, and normalized
 diagnostic identities with multiplicities. The accepted fingerprint is
 qmllint 6.11.1 on Ubuntu 24.04 with the KDE Neon build stack, using the GCC
@@ -71,6 +71,16 @@ whole-file `missing-property` suppression is permitted.
 5. Raw JSON chunks, stderr, manifest, normalized current report, comparator
    output and tool version are retained under each build directory and uploaded
    as CI evidence.
+
+The baseline was refreshed against the matching qmllint 6.11.1 Ubuntu/Neon CI
+report after `shell/package/contents/explorer/AppletAlternatives.qml` became
+part of deep-lint coverage. Its Plasma-provided helper and applet interfaces are
+dynamic QObject context APIs, so their missing-property and unqualified-access
+diagnostics remain visible in the reviewed baseline. The unused
+`QtQuick.Controls as QQC2` import was removed from that file. The same report
+also changed type visibility for Plasma applet actions, the volume module and
+`PlasmaCore.WindowThumbnail`; those runtime-provided interfaces remain
+diagnostic identities rather than being hidden with file-wide suppressions.
 
 The initial Gentoo candidate used qmllint 6.11.2 and had the same 724
 diagnostic identities and multiplicities as the accepted Ubuntu/Neon report.

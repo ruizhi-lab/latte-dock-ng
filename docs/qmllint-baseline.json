@@ -1094,13 +1094,6 @@
     },
     {
       "category": "missing-property",
-      "count": 3,
-      "file": "containment/package/contents/ui/applet/AppletItem.qml",
-      "message": "Member \"status\" not found on type \"QQuickItem\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/applet/AppletItem.qml",
       "message": "Member \"taskRoles\" not found on type \"QObject\"",
@@ -1733,7 +1726,7 @@
       "category": "missing-property",
       "count": 2,
       "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"action\" not found on type \"QObject\"",
+      "message": "Member \"action\" not found on type \"Plasma::Applet\"",
       "severity": "warning"
     },
     {
@@ -1762,13 +1755,6 @@
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"anchors\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 47,
-      "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"configuration\" not found on type \"QObject\"",
       "severity": "warning"
     },
     {
@@ -1810,21 +1796,7 @@
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"formFactor\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"height\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 5,
-      "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"immutable\" not found on type \"QObject\"",
       "severity": "warning"
     },
     {
@@ -1885,13 +1857,6 @@
     },
     {
       "category": "missing-property",
-      "count": 4,
-      "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"location\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"onlyLaunchers\" not found on type \"QQuickItem\"",
@@ -1913,13 +1878,6 @@
     },
     {
       "category": "missing-property",
-      "count": 1,
-      "file": "containment/package/contents/ui/main.qml",
-      "message": "Member \"userConfiguring\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 16,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"visibility\" not found on type \"QObject\"",
@@ -1934,7 +1892,7 @@
     },
     {
       "category": "missing-property",
-      "count": 15,
+      "count": 16,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"windowsTracker\" not found on type \"QObject\"",
       "severity": "warning"
@@ -3991,20 +3949,6 @@
       "severity": "warning"
     },
     {
-      "category": "import",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "SinkInputModel was not found. Did you add all imports and dependencies?",
-      "severity": "warning"
-    },
-    {
-      "category": "import",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "SinkModel was not found. Did you add all imports and dependencies?",
-      "severity": "warning"
-    },
-    {
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
@@ -4069,9 +4013,16 @@
     },
     {
       "category": "unqualified",
-      "count": 46,
+      "count": 43,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "unresolved-type",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Type \"Sink\" of property \"defaultSink\" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.",
       "severity": "warning"
     },
     {
@@ -4237,13 +4188,6 @@
     },
     {
       "category": "missing-property",
-      "count": 59,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"configuration\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"containsMouse\" not found on type \"QQuickItem\"",
@@ -4279,13 +4223,6 @@
     },
     {
       "category": "missing-property",
-      "count": 8,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"location\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"modelIndex\" not found on type \"QQuickItem\"",
@@ -4296,13 +4233,6 @@
       "count": 4,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"status\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/main.qml",
-      "message": "Member \"userConfiguring\" not found on type \"QObject\"",
       "severity": "warning"
     },
     {
@@ -4327,11 +4257,25 @@
       "severity": "warning"
     },
     {
-      "category": "unqualified",
+      "category": "import",
       "count": 1,
+      "file": "plasmoid/package/contents/ui/previews/PlasmaCoreThumbnail.qml",
+      "message": "PlasmaCore.WindowThumbnail was not found. Did you add all imports and dependencies?",
+      "severity": "warning"
+    },
+    {
+      "category": "unqualified",
+      "count": 3,
       "file": "plasmoid/package/contents/ui/previews/PlasmaCoreThumbnail.qml",
       "message": "Unqualified access",
       "severity": "warning"
+    },
+    {
+      "category": "unused-imports",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/previews/PlasmaCoreThumbnail.qml",
+      "message": "Unused import",
+      "severity": "info"
     },
     {
       "category": "missing-property",
@@ -4846,7 +4790,7 @@
     },
     {
       "category": "unqualified",
-      "count": 89,
+      "count": 90,
       "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4971,16 +4915,37 @@
       "severity": "warning"
     },
     {
+      "category": "missing-property",
+      "count": 3,
+      "file": "shell/package/contents/explorer/AppletAlternatives.qml",
+      "message": "Member \"applet\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "shell/package/contents/explorer/AppletAlternatives.qml",
+      "message": "Member \"appletProvides\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "shell/package/contents/explorer/AppletAlternatives.qml",
+      "message": "Member \"loadAlternative\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
-      "count": 39,
-      "file": "shell/package/contents/views/AppletDelegate.qml",
+      "count": 31,
+      "file": "shell/package/contents/explorer/AppletAlternatives.qml",
       "message": "Unqualified access",
       "severity": "warning"
     },
     {
       "category": "unqualified",
-      "count": 3,
-      "file": "shell/package/contents/views/InfoView.qml",
+      "count": 39,
+      "file": "shell/package/contents/views/AppletDelegate.qml",
       "message": "Unqualified access",
       "severity": "warning"
     },
@@ -5014,7 +4979,7 @@
     },
     {
       "category": "unqualified",
-      "count": 48,
+      "count": 43,
       "file": "shell/package/contents/views/WidgetExplorer.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -5268,6 +5233,7 @@
       "shell/package/contents/controls/DragCorner.qml",
       "shell/package/contents/controls/IndicatorConfigUiManager.qml",
       "shell/package/contents/controls/InnerShadow.qml",
+      "shell/package/contents/explorer/AppletAlternatives.qml",
       "shell/package/contents/views/AppletDelegate.qml",
       "shell/package/contents/views/InfoView.qml",
       "shell/package/contents/views/Panel.qml",
@@ -5509,6 +5475,7 @@
       "shell/package/contents/controls/DragCorner.qml": 0,
       "shell/package/contents/controls/IndicatorConfigUiManager.qml": 0,
       "shell/package/contents/controls/InnerShadow.qml": 0,
+      "shell/package/contents/explorer/AppletAlternatives.qml": 0,
       "shell/package/contents/views/AppletDelegate.qml": 0,
       "shell/package/contents/views/InfoView.qml": 0,
       "shell/package/contents/views/Panel.qml": 0,
