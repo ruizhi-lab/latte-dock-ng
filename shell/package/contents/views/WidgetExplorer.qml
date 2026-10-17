@@ -38,7 +38,10 @@ PC3.Page {
     width: Math.max(heading.paintedWidth, Kirigami.Units.iconSizes.enormous * 3 + Kirigami.Units.smallSpacing * 4 + Kirigami.Units.gridUnit * 2)
   //  height: 800//Screen.height
     opacity: draggingWidget ? 0.3 : 1
-    visible: viewConfig.visible
+    // WidgetExplorerView supplies the root QObject values after setSource();
+    // guard eager bindings until that authoritative context arrives, or QML
+    // dereferences undefined objects and logs startup warnings.
+    visible: viewConfig ? viewConfig.visible : false
 
     //property QtObject containment
 
@@ -213,7 +216,7 @@ PC3.Page {
     }
 
     Connections {
-        target: containmentFromView
+        target: main.containmentFromView || null
         ignoreUnknownSignals: true
 
         function onAppletsChanged() {
@@ -263,7 +266,7 @@ PC3.Page {
         width: parent.width
         height: parent.height + headerMargin
         imagePath: "dialogs/background"
-        enabledBorders: viewConfig.enabledBorders
+        enabledBorders: main.viewConfig ? main.viewConfig.enabledBorders : 0
 
         // The FrameSvg "dialogs/background" has an intrinsic top margin that the
         // header sits inside. This offset compensates so the background extends
@@ -271,20 +274,32 @@ PC3.Page {
         readonly property int frameSvgTopOverhang: 50
         readonly property int headerMargin: header.height + frameSvgTopOverhang
 
-        onEnabledBordersChanged: viewConfig.updateEffects()
-        Component.onCompleted: viewConfig.updateEffects()
+        onEnabledBordersChanged: {
+            if (main.viewConfig) {
+                main.viewConfig.updateEffects();
+            }
+        }
+        Component.onCompleted: {
+            if (main.viewConfig) {
+                main.viewConfig.updateEffects();
+            }
+        }
     }
 
     Loader {
         id: widgetExplorerLoader
-        active: main.visible
+        // WidgetExplorerView assigns these root properties immediately after
+        // setSource(). Do not instantiate Plasma's private WidgetExplorer
+        // until that context is complete; its bindings require a live
+        // containment and viewConfig as soon as the component is created.
+        active: main.visible && main.viewConfig && main.latteView && main.containmentFromView
         sourceComponent: PlasmaShell.WidgetExplorer {
             //id:widgetExplorer
              //view: desktop
             // Plasma's private WidgetExplorer type omits this property from
             // its qmltypes, although the runtime accepts a Plasma containment.
             // qmllint disable missing-type
-            containment: containmentFromView
+            containment: main.containmentFromView || null
             // qmllint enable missing-type
             onShouldClose: main.closed();
         }
@@ -541,7 +556,7 @@ PC3.Page {
 
     //! Bindings
     Binding{
-        target: viewConfig
+        target: main.viewConfig || null
         property: "hideOnWindowDeactivate"
         value: !main.preventWindowHide
     }

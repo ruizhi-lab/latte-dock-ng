@@ -45,7 +45,7 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: custom.latteView.indicator
-        function onCustomPluginsCountChanged() {
+        function onCustomPluginsChanged() {
             custom.reloadModel();
             custom.updateButtonInformation();
         }

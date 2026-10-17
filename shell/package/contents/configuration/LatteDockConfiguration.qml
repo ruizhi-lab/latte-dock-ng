@@ -24,7 +24,11 @@ import "../controls" as LatteExtraControls
 Loader {
     id: configurationLoader
 
-    active: plasmoid && plasmoid.configuration && latteView
+    // setParentView() clears isReady while replacing the view's context. Keep
+    // the settings tree unloaded until its QObject inputs have been rebound;
+    // otherwise child bindings can dereference a cleared view during a layout
+    // switch and emit null-property TypeErrors.
+    active: plasmoid && plasmoid.configuration && latteView && viewConfig && viewConfig.isReady
 
     sourceComponent: FocusScope {
         id: dialog
@@ -120,7 +124,7 @@ Loader {
 
         Connections {
             target: latteView.positioner
-            function onCurrentScreenNameChanged() { dialog.updateScales(); }
+            function onCurrentScreenChanged() { dialog.updateScales(); }
         }
 
         function updateScales() {

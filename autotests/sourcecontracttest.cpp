@@ -97,6 +97,8 @@ private Q_SLOTS:
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
     void widgetExplorerUsesPlasmaTranslationContexts();
+    void settingsQmlWaitsForLiveViewContext();
+    void qmlConnectionsMatchQtNotifySignals();
     void settingsDialogUiLabelsAreTranslatable();
     void poFilesHaveNoStaleDockPanelMsgids();
     void translationExtractionReferencesValidDirectories();
@@ -1362,6 +1364,38 @@ void SourceContractTest::widgetExplorerUsesPlasmaTranslationContexts()
     QVERIFY(!source.contains(QStringLiteral("i18nd(\"plasma_shell_org.kde.plasma.desktop\", \"Get New Widgets…\")")));
     QVERIFY(!source.contains(QStringLiteral("i18nd(\"plasma_shell_org.kde.plasma.desktop\", \"All Widgets\")")));
     QVERIFY(!source.contains(QStringLiteral("i18n(\"No widgets available\")")));
+}
+
+void SourceContractTest::settingsQmlWaitsForLiveViewContext()
+{
+    QFile dockConfiguration(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/LatteDockConfiguration.qml"));
+    QVERIFY(dockConfiguration.open(QFile::ReadOnly));
+    const QString dockSource = QString::fromUtf8(dockConfiguration.readAll());
+    QVERIFY(dockSource.contains(QStringLiteral("active: plasmoid && plasmoid.configuration && latteView && viewConfig && viewConfig.isReady")));
+
+    QFile widgetExplorer(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/views/WidgetExplorer.qml"));
+    QVERIFY(widgetExplorer.open(QFile::ReadOnly));
+    const QString widgetSource = QString::fromUtf8(widgetExplorer.readAll());
+    QVERIFY(widgetSource.contains(QStringLiteral("visible: viewConfig ? viewConfig.visible : false")));
+    QVERIFY(widgetSource.contains(QStringLiteral("target: main.containmentFromView || null")));
+    QVERIFY(widgetSource.contains(QStringLiteral("enabledBorders: main.viewConfig ? main.viewConfig.enabledBorders : 0")));
+    QVERIFY(widgetSource.contains(QStringLiteral("target: main.viewConfig || null")));
+    QVERIFY(widgetSource.contains(QStringLiteral("active: main.visible && main.viewConfig && main.latteView && main.containmentFromView")));
+}
+
+void SourceContractTest::qmlConnectionsMatchQtNotifySignals()
+{
+    QFile dockConfiguration(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/LatteDockConfiguration.qml"));
+    QVERIFY(dockConfiguration.open(QFile::ReadOnly));
+    const QString dockSource = QString::fromUtf8(dockConfiguration.readAll());
+    QVERIFY(dockSource.contains(QStringLiteral("function onCurrentScreenChanged() { dialog.updateScales(); }")));
+    QVERIFY(!dockSource.contains(QStringLiteral("onCurrentScreenNameChanged")));
+
+    QFile customIndicator(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/controls/CustomIndicatorButton.qml"));
+    QVERIFY(customIndicator.open(QFile::ReadOnly));
+    const QString indicatorSource = QString::fromUtf8(customIndicator.readAll());
+    QVERIFY(indicatorSource.contains(QStringLiteral("function onCustomPluginsChanged()")));
+    QVERIFY(!indicatorSource.contains(QStringLiteral("onCustomPluginsCountChanged")));
 }
 
 void SourceContractTest::itemsAlignmentIsSeparateAndJustifyOnly()
