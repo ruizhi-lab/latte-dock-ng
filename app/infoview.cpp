@@ -107,7 +107,20 @@ inline Qt::WindowFlags InfoView::wFlags() const
 
 void InfoView::syncGeometry()
 {
+    if (!rootObject()) {
+        return;
+    }
+
     const QSize size(rootObject()->width(), rootObject()->height());
+
+    //! A window geometry with a zero dimension is an xdg_surface protocol
+    //! error: KWin disconnects the client and Qt quits the whole dock. Keep
+    //! the previous size if the QML ever reports an empty one.
+    if (size.isEmpty()) {
+        qCWarning(latteApp) << "Ignoring empty layout info window size" << size;
+        return;
+    }
+
     const auto sGeometry = screen()->geometry();
 
     setMaximumSize(size);

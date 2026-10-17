@@ -578,7 +578,10 @@ Loader {
 
                         Component.onCompleted:actionsComboBtn.updateModel();
 
-                        function onActivated() {
+                        // Qt 6 passes signal arguments to a Connections function only
+                        // when it declares them; without the parameter, reading index
+                        // throws a ReferenceError and every Add... entry does nothing.
+                        function onActivated(index) {
                             var item = actionsModel.get(index);
 
                             if (item && item.actionId === "add:") {

@@ -29,6 +29,15 @@ Item {
                                    && !visibilityManager.inSlidingOut
                                    && !visibilityManager.inRelocationHiding
 
+    //! The Bindings below whose `when` follows a transient state (sliding,
+    //! relocation, non-normal visibility) must keep the last published value
+    //! while disabled. Qt 6 restores the target's value from before the
+    //! Binding by default, i.e. the C++ initial value (256 for the
+    //! thicknesses): every slide in/out then published a wrong thickness,
+    //! the vertical docks recomputed the area left by the horizontal ones and
+    //! jumped up or down before hiding. Qt 5 kept the value, which this code
+    //! was written for.
+
     //! Latte::View Main Bindings 
     Binding{
         target: latteView
@@ -36,6 +45,7 @@ Item {
         //! prevents updating window geometry during closing window in wayland and such fixes a crash
         when: latteView && !visibilityManager.inRelocationHiding && !visibilityManager.inClientSideScreenEdgeSliding //&& !inStartup
         value: metrics.maxThicknessForView
+        restoreMode: Binding.RestoreNone
     }
 
     Binding{
@@ -43,6 +53,7 @@ Item {
         property:"normalThickness"
         when: latteView && updateIsEnabled
         value: metrics.mask.screenEdge + metrics.mask.thickness.maxNormalForItemsWithoutScreenEdge
+        restoreMode: Binding.RestoreNone
     }
 
     Binding{
@@ -50,12 +61,14 @@ Item {
         property:"maxNormalThickness"
         when: latteView && updateIsEnabled
         value: metrics.mask.thickness.maxNormal
+        restoreMode: Binding.RestoreNone
     }
 
     Binding {
         target: latteView
         property: "headThicknessGap"
         when: latteView && updateIsEnabled && !visibilityManager.inClientSideScreenEdgeSliding
+        restoreMode: Binding.RestoreNone
         value: {
             if (LatteCore.WindowSystem.isPlatformWayland) {
                 return 0;
@@ -250,6 +263,7 @@ Item {
         target: latteView && latteView.effects ? latteView.effects : null
         property:"appletsLayoutGeometry"
         when: latteView && latteView.effects && visibilityManager.inNormalState
+        restoreMode: Binding.RestoreNone
         value: {
             if (!latteView || !latteView.localGeometry) {
                 return Qt.rect(-1, -1, 0, 0);

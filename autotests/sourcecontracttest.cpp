@@ -4,7 +4,9 @@
 */
 
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QTest>
 
@@ -77,6 +79,11 @@ private Q_SLOTS:
     void knsCompatImportsAreAvailableForSystemInstall();
     void plasma68ContainmentScreenAndImportContracts();
     void importedAppletIdsStayUniqueIncludingNestedApplets();
+    void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
+    void sharedConfigWindowFollowsEveryDockSwitch();
+    void waylandWindowsAcceptedAfterCreationAreTracked();
+    void viewBindingsKeepTheirValueWhileFrozen();
+    void layoutInfoWindowNeverAppliesAnEmptySize();
     void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
@@ -989,8 +996,17 @@ void SourceContractTest::pointerWindowTrackerRemovesDestroyedWindows()
     const QString viewSource = QString::fromUtf8(viewSourceFile.readAll());
 
     QVERIFY(viewSource.contains(QStringLiteral("connect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed, Qt::UniqueConnection)")));
-    QVERIFY(viewSource.contains(QStringLiteral("void View::onPointerWindowDestroyed(QObject *window)")));
-    QVERIFY(viewSource.contains(QStringLiteral("m_pointerWindows.remove(w)")));
+
+    //! destroyed() is emitted from ~QObject, when the object is no longer a
+    //! QWindow: a qobject_cast there returns null and silently keeps the
+    //! dangling entry, which ~View later disconnects from (SIGSEGV after the
+    //! applet alternatives dialog closed with the pointer inside it).
+    const int slot = viewSource.indexOf(QStringLiteral("void View::onPointerWindowDestroyed(QObject *window)"));
+    QVERIFY(slot >= 0);
+    const QString body = viewSource.mid(slot, viewSource.indexOf(QStringLiteral("\n}\n"), slot) - slot);
+    QVERIFY(body.contains(QStringLiteral("m_pointerWindows.removeIf(")));
+    QVERIFY(body.contains(QStringLiteral("static_cast<QObject *>(tracked) == window")));
+    QVERIFY(!body.contains(QStringLiteral("qobject_cast<QWindow *>(window)")));
 }
 
 void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()
@@ -4813,6 +4829,166 @@ void SourceContractTest::importedAppletIdsStayUniqueIncludingNestedApplets()
     QVERIFY(restore > unique);
 }
 
+void SourceContractTest::sharedConfigWindowFollowsEveryDockSwitch()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    const auto functionBody = [](const QString &source, const QString &signature) {
+        const int start = source.indexOf(signature);
+
+        if (start < 0) {
+            return QString();
+        }
+
+        const int end = source.indexOf(QStringLiteral("\n}\n"), start);
+        return source.mid(start, end - start);
+    };
+
+    // One PrimaryConfigView serves every dock. Each context property that
+    // init() points at the edited dock must be re-pointed when the window
+    // switches docks, or the dialog keeps editing the first dock it was opened
+    // for and turns null once that dock is deleted.
+    const QString primary = readSource(QStringLiteral("app/view/settings/primaryconfigview.cpp"));
+    const QString sub = readSource(QStringLiteral("app/view/settings/subconfigview.cpp"));
+    const QString init = functionBody(primary, QStringLiteral("void PrimaryConfigView::init()"));
+    const QString switches = functionBody(primary, QStringLiteral("void PrimaryConfigView::initParentView(Latte::View *view)"))
+                             + functionBody(sub, QStringLiteral("void SubConfigView::initParentView(Latte::View *view)"));
+    QVERIFY(!init.isEmpty());
+    QVERIFY(switches.contains(QStringLiteral("SubConfigView::initParentView(view);")));
+
+    static const QRegularExpression viewProperty(QStringLiteral("setContextProperty\\(QStringLiteral\\(\"(\\w+)\"\\), m_latteView\\)"));
+    QStringList properties;
+
+    for (auto match = viewProperty.globalMatch(init); match.hasNext();) {
+        properties << match.next().captured(1);
+    }
+
+    QVERIFY(properties.contains(QStringLiteral("latteView")));
+    QVERIFY(properties.contains(QStringLiteral("configurationLatteView")));
+
+    for (const auto &property : std::as_const(properties)) {
+        const QString update = QStringLiteral("setContextProperty(QStringLiteral(\"%1\"), m_latteView)").arg(property);
+        QVERIFY2(switches.contains(update), qPrintable(property + QStringLiteral(" is not updated when the config window switches docks")));
+    }
+}
+
+void SourceContractTest::waylandWindowsAcceptedAfterCreationAreTracked()
+{
+    QFile waylandCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
+    QVERIFY(waylandCpp.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(waylandCpp.readAll());
+
+    const auto functionBody = [&src](const QString &signature) {
+        const int start = src.indexOf(signature);
+
+        if (start < 0) {
+            return QString();
+        }
+
+        return src.mid(start, src.indexOf(QStringLiteral("\n}\n"), start) - start);
+    };
+
+    // The tracker stores every window it requests info for. Plasma side panels
+    // (the Activities sidebar) are created with an empty geometry and become
+    // acceptable only once mapped, so requestInfo() must track them; without
+    // their unmapped signal the closed panel stays the active window and a
+    // Dodge Active dock beside it never shows again.
+    const QString requestInfo = functionBody(QStringLiteral("WindowInfoWrap WaylandInterface::requestInfo(WindowId wid)"));
+    QVERIFY(!requestInfo.isEmpty());
+    const int track = requestInfo.indexOf(QStringLiteral("trackWindow(w);"));
+    QVERIFY(track > 0);
+    QVERIFY(requestInfo.lastIndexOf(QStringLiteral("winfoWrap.isValid() && isAcceptableWindow(w)"), track) > 0);
+
+    const QString trackWindow = functionBody(QStringLiteral("void WaylandInterface::trackWindow(KWayland::Client::PlasmaWindow *w)"));
+    const QString untrackWindow = functionBody(QStringLiteral("void WaylandInterface::untrackWindow(KWayland::Client::PlasmaWindow *w)"));
+    QVERIFY(trackWindow.contains(QStringLiteral("m_trackedWindows.contains(w->uuid())")));
+    QVERIFY(trackWindow.contains(QStringLiteral("m_trackedWindows.insert(w->uuid());")));
+    QVERIFY(untrackWindow.contains(QStringLiteral("m_trackedWindows.remove(w->uuid());")));
+    QVERIFY(trackWindow.contains(QStringLiteral("connect(w, &PlasmaWindow::unmapped, this, &WaylandInterface::windowUnmapped)")));
+
+    // Every connection made by trackWindow() is undone by untrackWindow() with
+    // the same slot, so a window can be tracked again without duplicates.
+    static const QRegularExpression connection(QStringLiteral("\\bconnect\\(w, &PlasmaWindow::(\\w+), this, &WaylandInterface::(\\w+)\\)"));
+    int connections{0};
+
+    for (auto match = connection.globalMatch(trackWindow); match.hasNext();) {
+        const QRegularExpressionMatch found = match.next();
+        const QString disconnect = QStringLiteral("disconnect(w, &PlasmaWindow::%1, this, &WaylandInterface::%2)").arg(found.captured(1), found.captured(2));
+        QVERIFY2(untrackWindow.contains(disconnect), qPrintable(disconnect));
+        ++connections;
+    }
+
+    QVERIFY(connections > 0);
+}
+
+void SourceContractTest::viewBindingsKeepTheirValueWhileFrozen()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/BindingsExternal.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // These Bindings publish view geometry to C++ and are switched off while
+    // the dock slides or relocates. Qt 6 restores the C++ initial value when a
+    // Binding is switched off (256 for the thicknesses), which made vertical
+    // docks jump on every slide; they must keep the last published value.
+    static const QRegularExpression binding(QStringLiteral("\\bBinding\\s*\\{"));
+    static const QRegularExpression transientWhen(
+        QStringLiteral("when:[^\\n]*(updateIsEnabled|inRelocationHiding|inClientSideScreenEdgeSliding|inNormalState|inSlidingIn|inSlidingOut)"));
+    static const QRegularExpression property(QStringLiteral("property:\\s*\"(\\w+)\""));
+
+    QStringList frozen;
+
+    for (auto match = binding.globalMatch(source); match.hasNext();) {
+        const QRegularExpressionMatch found = match.next();
+        qsizetype end = found.capturedEnd();
+        int depth = 1;
+
+        while (end < source.size() && depth > 0) {
+            if (source.at(end) == QLatin1Char('{')) {
+                ++depth;
+            } else if (source.at(end) == QLatin1Char('}')) {
+                --depth;
+            }
+
+            ++end;
+        }
+
+        const QString body = source.mid(found.capturedStart(), end - found.capturedStart());
+
+        if (!transientWhen.match(body).hasMatch()) {
+            continue;
+        }
+
+        const QString name = property.match(body).captured(1);
+        frozen << name;
+        QVERIFY2(body.contains(QStringLiteral("restoreMode: Binding.RestoreNone")), qPrintable(name + QStringLiteral(" restores its old value while frozen")));
+    }
+
+    QVERIFY(frozen.contains(QStringLiteral("normalThickness")));
+    QVERIFY(frozen.contains(QStringLiteral("maxThickness")));
+}
+
+void SourceContractTest::layoutInfoWindowNeverAppliesAnEmptySize()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/app/infoview.cpp"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+
+    // A zero-sized xdg_surface window geometry makes KWin disconnect Latte and
+    // Qt quit the whole dock, so the size reported by QML is validated before
+    // it reaches the window.
+    const int sync = source.indexOf(QStringLiteral("void InfoView::syncGeometry()"));
+    QVERIFY(sync >= 0);
+    const int guard = source.indexOf(QStringLiteral("if (size.isEmpty()) {"), sync);
+    const int apply = source.indexOf(QStringLiteral("setMinimumSize(size);"), sync);
+    QVERIFY(guard > sync);
+    QVERIFY(apply > guard);
+    QVERIFY(source.indexOf(QStringLiteral("if (!rootObject()) {"), sync) > sync);
+}
+
 void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
 {
     const auto readSource = [](const QString &relativePath) {
@@ -4863,6 +5039,65 @@ void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
     QVERIFY(alternativesHelper.contains(QStringLiteral("return itemFor(m_applet);")));
     QVERIFY(alternativesHelper.contains(QStringLiteral("PlasmaQuick::AppletQuickItem *contItem = itemFor(cont);")));
     QVERIFY(alternativesHelper.contains(QStringLiteral("Q_ARG(QRectF, QRectF(newPos, QSizeF()))")));
+}
+
+void SourceContractTest::qmlParameterlessHandlersDoNotReadUndeclaredIndex()
+{
+    // Qt 6 passes signal arguments to a "function onSignal()" handler only when
+    // the function declares them. A bare `index` in a parameterless handler
+    // throws a ReferenceError at runtime (this broke the dock settings Add...
+    // button). Declare the parameter, or qualify the name (model.index) when a
+    // delegate's index is meant.
+    static const QRegularExpression handler(QStringLiteral("function\\s+(on[A-Z]\\w*)\\s*\\(\\s*\\)\\s*\\{"));
+    static const QRegularExpression bareIndex(QStringLiteral("(?<![.\\w])index\\b"));
+    static const QRegularExpression localIndex(QStringLiteral("\\b(var|let|const)\\s+index\\b"));
+
+    QStringList offenders;
+    int scannedHandlers{0};
+
+    for (const QString &root : {QStringLiteral("containment"),
+                                QStringLiteral("declarativeimports"),
+                                QStringLiteral("indicators"),
+                                QStringLiteral("plasmoid"),
+                                QStringLiteral("separator"),
+                                QStringLiteral("shell")}) {
+        QDirIterator it(QStringLiteral(LATTE_SOURCE_DIR "/") + root, {QStringLiteral("*.qml")}, QDir::Files, QDirIterator::Subdirectories);
+
+        while (it.hasNext()) {
+            const QString path = it.next();
+            QFile file(path);
+            QVERIFY2(file.open(QFile::ReadOnly), qPrintable(path));
+            const QString source = QString::fromUtf8(file.readAll());
+
+            for (auto match = handler.globalMatch(source); match.hasNext();) {
+                const QRegularExpressionMatch found = match.next();
+                ++scannedHandlers;
+
+                qsizetype end = found.capturedEnd();
+                int depth = 1;
+
+                while (end < source.size() && depth > 0) {
+                    if (source.at(end) == QLatin1Char('{')) {
+                        ++depth;
+                    } else if (source.at(end) == QLatin1Char('}')) {
+                        --depth;
+                    }
+
+                    ++end;
+                }
+
+                const QString body = source.mid(found.capturedEnd(), end - found.capturedEnd());
+
+                if (bareIndex.match(body).hasMatch() && !localIndex.match(body).hasMatch()) {
+                    const qsizetype line = source.left(found.capturedStart()).count(QLatin1Char('\n')) + 1;
+                    offenders << QStringLiteral("%1:%2 %3()").arg(QDir(QStringLiteral(LATTE_SOURCE_DIR)).relativeFilePath(path)).arg(line).arg(found.captured(1));
+                }
+            }
+        }
+    }
+
+    QVERIFY2(scannedHandlers > 0, "no QML signal handlers were scanned");
+    QVERIFY2(offenders.isEmpty(), qPrintable(offenders.join(QStringLiteral(", "))));
 }
 
 QTEST_MAIN(SourceContractTest)

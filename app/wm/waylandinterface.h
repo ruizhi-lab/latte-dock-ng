@@ -17,6 +17,7 @@
 #include <QHash>
 #include <QObject>
 #include <QPointer>
+#include <QSet>
 
 // KDE
 #include <KWindowEffects>
@@ -149,6 +150,9 @@ private:
 
     QPointer<KWayland::Client::PlasmaWindowManagement> m_windowManagement;
     PlasmaPanelTracker *m_panelTracker{nullptr};
+
+    //! Windows whose PlasmaWindow signals are connected, see trackWindow().
+    QSet<WindowId> m_trackedWindows;
 
     //! VirtualDesktopsSupport
     QPointer<KWayland::Client::PlasmaVirtualDesktopManagement> m_virtualDesktopManagement;

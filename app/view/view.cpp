@@ -981,10 +981,15 @@ bool View::windowBelongsToThisDock(QWindow *window) const
 void View::onPointerWindowDestroyed(QObject *window)
 {
     //! Remove a tracked window as soon as it is destroyed so the deferred
-    //! close check never dereferences a dangling pointer.
-    if (auto *w = qobject_cast<QWindow *>(window)) {
-        m_pointerWindows.remove(w);
-    }
+    //! close check and ~View never use a dangling pointer. destroyed() is
+    //! emitted from ~QObject, after the QWindow part is gone, so
+    //! qobject_cast<QWindow *> returns null here: match by address instead.
+    //! Otherwise a popup destroyed with the pointer inside it (the applet
+    //! alternatives dialog closing on a click) stayed in the set and ~View
+    //! crashed disconnecting from it.
+    m_pointerWindows.removeIf([window](QWindow *tracked) {
+        return static_cast<QObject *>(tracked) == window;
+    });
 }
 
 Types::ViewType View::type() const
