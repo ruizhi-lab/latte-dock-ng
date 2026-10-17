@@ -11,6 +11,7 @@
 // local
 #include <QStringList>
 #include <coretypes.h>
+#include "plasma/plasmaapicompat.h"
 #include "plasma/quick/configview.h"
 #include "layouts/storage.h"
 #include "view/panelshadows_p.h"
@@ -101,10 +102,14 @@ public:
 
     bool inQuit() const;
 
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    uint numScreens() const override;
+#else
     int numScreens() const override;
-    QRect screenGeometry(int id) const override;
-    QRegion availableScreenRegion(int id) const override;
-    QRect availableScreenRect(int id) const override;
+#endif
+    QRect screenGeometry(PlasmaScreenId id) const override;
+    QRegion availableScreenRegion(PlasmaScreenId id) const override;
+    QRect availableScreenRect(PlasmaScreenId id) const override;
 
     //! This is a very generic function in order to return the availableScreenRect of specific screen
     //! by calculating only the user specified visibility modes and edges. Empty QLists for both
@@ -124,7 +129,25 @@ public:
             bool ignoreExternalPanels = true,
             bool desktopUse = false) const;
 
+    //! Latte's screen for a containment: the layout's pending or live view
+    //! mapping, falling back to the screen Plasma persisted. Plasma pulls it
+    //! through this override before 6.8; from 6.8 on it is pushed with
+    //! syncContainmentScreen().
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    int screenForContainment(const Plasma::Containment *containment) const;
+#else
     int screenForContainment(const Plasma::Containment *containment) const override;
+#endif
+
+    //! Publish screenForContainment() to Plasma after Latte changed the
+    //! screen of a view or its pending screen update.
+    void syncContainmentScreen(Plasma::Containment *containment);
+
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    //! Public access to the protected Plasma API used by
+    //! Layouts::Storage to import layout files since libplasma 6.8.
+    Plasma::Containment *createContainmentForImport(const QString &plugin);
+#endif
 
     KWayland::Client::PlasmaShell *waylandCoronaInterface() const;
 

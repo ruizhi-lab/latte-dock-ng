@@ -245,7 +245,8 @@ ContainmentItem {
     }
 
     property int maxLength: {
-        const maximize = maximizeWhenMaximized && latteView.windowsTracker.currentScreen.existsWindowMaximized;
+        const maximize = maximizeWhenMaximized && latteView && latteView.windowsTracker
+                         && latteView.windowsTracker.currentScreen.existsWindowMaximized;
         if (root.isHorizontal) {
             return maximize ? width : width * (maxLengthPerCentage/100)
         } else {

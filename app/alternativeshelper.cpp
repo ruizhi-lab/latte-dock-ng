@@ -17,8 +17,29 @@
 // Plasma
 #include <Plasma/Containment>
 #include <Plasma/PluginLoader>
+#include <PlasmaQuick/AppletQuickItem>
 
 namespace Latte {
+
+namespace {
+
+//! Plasma 6 resolves applet items through AppletQuickItem::itemForApplet()
+//! and no longer publishes the Plasma 5 "_plasma_graphicObject" property
+//! (verified on libplasma 6.8); keep the property only as a fallback, like
+//! launcherApiItemForApplet() in lattecorona.cpp.
+PlasmaQuick::AppletQuickItem *itemFor(Plasma::Applet *applet)
+{
+    PlasmaQuick::AppletQuickItem *item = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
+
+    if (!item) {
+        item = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
+    }
+
+    return item;
+}
+
+}
+
 
 AlternativesHelper::AlternativesHelper(Plasma::Applet *applet, QObject *parent)
     : QObject(parent),
@@ -52,7 +73,8 @@ QString AlternativesHelper::currentPlugin() const
 
 QQuickItem *AlternativesHelper::applet() const
 {
-    return m_applet->property("_plasma_graphicObject").value<QQuickItem *>();
+    //! A null item made the dialog open in a screen corner.
+    return itemFor(m_applet);
 }
 
 void AlternativesHelper::loadAlternative(const QString &plugin)
@@ -67,8 +89,11 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
         return;
     }
 
-    QQuickItem *appletItem = m_applet->property("_plasma_graphicObject").value<QQuickItem *>();
-    QQuickItem *contItem = cont->property("_plasma_graphicObject").value<QQuickItem *>();
+    //! Plasma 6's ContainmentItem::createApplet() takes a QRectF geometry hint;
+    //! with the Plasma 5 QPoint call the old applet was destroyed without a
+    //! replacement.
+    PlasmaQuick::AppletQuickItem *appletItem = itemFor(m_applet);
+    PlasmaQuick::AppletQuickItem *contItem = itemFor(cont);
 
     if (!appletItem || !contItem) {
         return;
@@ -84,7 +109,7 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
 
     connect(m_applet, &QObject::destroyed, [=]() {
         Plasma::Applet *newApplet = nullptr;
-        QMetaObject::invokeMethod(contItem, "createApplet", Q_RETURN_ARG(Plasma::Applet *, newApplet), Q_ARG(QString, plugin), Q_ARG(QVariantList, QVariantList()), Q_ARG(QPoint, newPos));
+        QMetaObject::invokeMethod(contItem, "createApplet", Q_RETURN_ARG(Plasma::Applet *, newApplet), Q_ARG(QString, plugin), Q_ARG(QVariantList, QVariantList()), Q_ARG(QRectF, QRectF(newPos, QSizeF())));
 
         if (newApplet) {
             newApplet->setGlobalShortcut(shortcut);

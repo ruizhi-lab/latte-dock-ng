@@ -360,8 +360,8 @@ void Positioner::syncLatteViews()
 
 void Positioner::updateContainmentScreen()
 {
-    if (m_view->containment()) {
-        m_view->containment()->reactToScreenChange();
+    if (m_corona && m_view->containment()) {
+        m_corona->syncContainmentScreen(m_view->containment());
     }
 }
 

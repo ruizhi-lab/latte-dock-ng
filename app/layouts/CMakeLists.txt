@@ -1,6 +1,8 @@
 set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}   
-    ${CMAKE_CURRENT_SOURCE_DIR}/importer.cpp        
+    ${lattedock-app_SRCS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/appletids.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/importedcontainments.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/importer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/storage.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/syncedlaunchers.cpp

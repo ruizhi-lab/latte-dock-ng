@@ -423,7 +423,7 @@ int GenericLayout::screenForContainment(Plasma::Containment *containment)
     }
 
     //! fallback scenario
-    return containment->lastScreen();
+    return containmentLastScreen(containment);
 }
 
 bool GenericLayout::containsView(const int &containmentId) const
@@ -1191,7 +1191,7 @@ bool GenericLayout::explicitDockOccupyEdge(int screen, Plasma::Types::Location l
     for (const auto containment : m_containments) {
         if (Layouts::Storage::self()->isLatteContainment(containment)) {
             bool onPrimary = containment->config().readEntry(QStringLiteral("onPrimary"), true);
-            int id = containment->lastScreen();
+            int id = containmentLastScreen(containment);
             Plasma::Types::Location contLocation = containment->location();
 
             if (!onPrimary && id == screen && contLocation == location) {
@@ -1309,8 +1309,8 @@ void GenericLayout::syncLatteViewsToScreens()
         auto containment = containmentForId(viewdata.id.toUInt());
 
         if (containment) {
-            if ((viewdata.onPrimary && containment->lastScreen() == m_corona->screenPool()->primaryScreenId())
-                || (!viewdata.onPrimary && containment->lastScreen() == viewdata.screen)) {
+            if ((viewdata.onPrimary && containmentLastScreen(containment) == m_corona->screenPool()->primaryScreenId())
+                || (!viewdata.onPrimary && containmentLastScreen(containment) == viewdata.screen)) {
                 clearpendings << viewdata.id;
             }
         }
@@ -1541,15 +1541,15 @@ void GenericLayout::updateView(const Latte::Data::View &viewData)
     if (containment) {
         Layouts::Storage::self()->updateView(this, viewData);
 
-        //! by using pendingContainmentUpdates we make sure that when containment->screen() will be
-        //! called though reactToScreenChange() the proper screen will be returned
+        //! by using pendingContainmentUpdates we make sure that the screen published
+        //! through syncContainmentScreen() is the pending one
         if (!m_pendingContainmentUpdates.containsId(viewData.id)) {
             m_pendingContainmentUpdates << viewData;
         } else {
             m_pendingContainmentUpdates[viewData.id] = viewData;
         }
 
-        containment->reactToScreenChange();
+        m_corona->syncContainmentScreen(containment);
     }
 
     if (!nextactivelayoutname.isEmpty()) {

@@ -4,118 +4,41 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#ifndef PLASMAQUICKCONTAINMENTVIEW_H
-#define PLASMAQUICKCONTAINMENTVIEW_H
+#ifndef LATTEPLASMAQUICKCONTAINMENTVIEW_H
+#define LATTEPLASMAQUICKCONTAINMENTVIEW_H
 
-#include <KQuickAddons/quickviewsharedengine.h>
+//! PlasmaQuick::ContainmentView is implemented by the system libPlasmaQuick,
+//! so its declaration must come from the matching installed header. A local
+//! copy of the class silently mismatches the library ABI whenever libplasma
+//! changes the class (libplasma 6.8 rebased it from QuickViewSharedEngine onto
+//! QQuickWindow and dropped config(), which broke the build and would crash a
+//! binary compiled against the stale copy). The header is public since 6.0.
+#include <PlasmaQuick/ContainmentView>
 
-#include "plasma/corona.h"
-#include "plasma/containment.h"
+#include "../plasmaapicompat.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the public Plasma API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+#include <PlasmaQuick/PlasmaQuick>
+#endif
 
-namespace PlasmaQuick {
+#include <QQmlEngine>
 
-class ContainmentViewPrivate;
+#include <memory>
 
-class ContainmentView : public PlasmaQuick::QuickViewSharedEngine
+namespace Latte {
+
+//! QML engine that loads the view's QML. libplasma 6.8 ContainmentView no
+//! longer exposes engine(); it always uses PlasmaQuick::globalEngine(), the
+//! engine shared with applets.
+inline std::shared_ptr<QQmlEngine> containmentViewEngine([[maybe_unused]] PlasmaQuick::ContainmentView *view)
 {
-    Q_OBJECT
-    Q_PROPERTY(Plasma::Types::Location location READ location WRITE setLocation NOTIFY locationChanged)
-    Q_PROPERTY(Plasma::Types::FormFactor formFactor READ formFactor NOTIFY formFactorChanged)
-    Q_PROPERTY(QRectF screenGeometry READ screenGeometry NOTIFY screenGeometryChanged)
-
-public:
-    /**
-     * @param corona the corona of this view
-     * @param parent the QWindow this ContainmentView is parented to
-     **/
-    explicit ContainmentView(Plasma::Corona *corona, QWindow *parent = nullptr);
-    ~ContainmentView() override;
-
-    /**
-     * @return the corona of this view
-     **/
-    Plasma::Corona *corona() const;
-
-    /**
-     * @return the KConfigGroup of this view
-     **/
-    virtual KConfigGroup config() const;
-
-    /**
-     * sets the containment for this view
-     * @param cont the containment of this view
-     **/
-    void setContainment(Plasma::Containment *cont);
-
-    /**
-     * @return the containment of this ContainmentView
-     **/
-    Plasma::Containment *containment() const;
-
-    /**
-     * @return the location of this ContainmentView
-     **/
-    Plasma::Types::Location location() const;
-
-    /**
-     * Sets the location of the ContainmentView
-     * @param location the location of the ContainmentView
-     **/
-    void setLocation(Plasma::Types::Location location);
-
-    /**
-     * @return the formfactor of the ContainmentView
-     **/
-    Plasma::Types::FormFactor formFactor() const;
-
-    /**
-     * @return the screenGeometry of the ContainmentView
-     **/
-    QRectF screenGeometry();
-
-protected Q_SLOTS:
-    /**
-     * It will be called when the configuration is requested
-     */
-    virtual void showConfigurationInterface(Plasma::Applet *applet);
-
-Q_SIGNALS:
-    /**
-     * emitted when the location is changed
-     **/
-    void locationChanged(Plasma::Types::Location location);
-
-    /**
-     * emitted when the formfactor is changed
-     **/
-    void formFactorChanged(Plasma::Types::FormFactor formFactor);
-
-    /**
-     * emitted when the containment is changed
-     **/
-    void containmentChanged();
-
-    /**
-     * emitted when the screenGeometry is changed
-     **/
-    void screenGeometryChanged();
-
-private:
-    ContainmentViewPrivate *const d;
-    friend class ContainmentViewPrivate;
-};
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    return PlasmaQuick::globalEngine();
+#else
+    return view->engine();
+#endif
+}
 
 }
 
-#endif // CONTAINMENTVIEW_H
+#endif

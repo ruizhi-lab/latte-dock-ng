@@ -64,6 +64,7 @@ class QmlSmokeTest : public QObject
 private Q_SLOTS:
     void initTestCase();
     void latteCoreQmlPluginLoadsFromBuildTree();
+    void appletAlternativesDialogResolvesOutsidePlasmashell();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void parabolicItemZoomRecoveryLoadsFromSource();
     void taskRemovalDefersGeometryFeedback_data();
@@ -921,6 +922,33 @@ QtObject {
     QVERIFY(object->property("brightness").toReal() > 0.99);
     QCOMPARE(object->property("lumina").toReal(), 0.0);
     QCOMPARE(object->property("hasCompositingProperty").toBool(), true);
+}
+
+void QmlSmokeTest::appletAlternativesDialogResolvesOutsidePlasmashell()
+{
+    // Since libplasma 6.8 Plasma's AppletAlternatives.qml requires the
+    // AlternativesHelper type, which is compiled into plasmashell; in Latte it
+    // was "not a type" and the dialog never opened. Latte's own copy must
+    // resolve every import and type in a process that is not plasmashell.
+    QQmlEngine engine;
+
+    // The dialog lists alternatives with WidgetExplorer from the plasma-workspace
+    // runtime package, like Latte's widget explorer; build-only environments
+    // may ship just the -dev package.
+    QQmlComponent probe(&engine);
+    probe.setData(QByteArrayLiteral("import org.kde.plasma.private.shell\nimport QtQml\nQtObject {}"), QUrl(QStringLiteral("probe.qml")));
+
+    if (probe.status() != QQmlComponent::Ready) {
+        QSKIP("org.kde.plasma.private.shell (plasma-workspace runtime) is not installed");
+    }
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_APPLET_ALTERNATIVES_QML)));
+
+    if (!component.isReady()) {
+        qWarning() << component.errors();
+    }
+
+    QVERIFY(component.isReady());
 }
 
 void QmlSmokeTest::showWindowAnimationFrozenZoomDecisionLoadsFromSource()

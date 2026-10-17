@@ -20,6 +20,7 @@
 #include "layout/abstractlayout.h"
 #include "layout/centrallayout.h"
 #include "layout/genericlayout.h"
+#include "layouts/appletids.h"
 #include "layouts/importer.h"
 #include "layouts/manager.h"
 #include "layouts/synchronizer.h"
@@ -87,6 +88,19 @@
 #include <KWayland/Client/plasmawindowmanagement.h>
 
 namespace {
+
+//! libplasma 6.8 hosts the system tray items in a containment nested inside
+//! the tray applet instead of in a separate corona containment.
+void appendLoadedAppletIds(const Plasma::Containment *containment, QStringList &ids)
+{
+    for (const auto applet : containment->applets()) {
+        ids << QString::number(applet->id());
+
+        if (const auto nested = qobject_cast<const Plasma::Containment *>(applet)) {
+            appendLoadedAppletIds(nested, ids);
+        }
+    }
+}
 
 QUrl launcherUrlFromString(const QString &launcherUrl)
 {
@@ -790,12 +804,16 @@ PlasmaExtended::Theme *Corona::themeExtended() const
     return m_themeExtended;
 }
 
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+uint Corona::numScreens() const
+#else
 int Corona::numScreens() const
+#endif
 {
     return qGuiApp->screens().count();
 }
 
-QRect Corona::screenGeometry(int id) const
+QRect Corona::screenGeometry(PlasmaScreenId id) const
 {
     const auto screens = qGuiApp->screens();
     const QScreen *screen{m_screenPool->primaryScreen()};
@@ -838,7 +856,7 @@ Layout::GenericLayout *Corona::layout(QString name) const
     return result;
 }
 
-QRegion Corona::availableScreenRegion(int id) const
+QRegion Corona::availableScreenRegion(PlasmaScreenId id) const
 {
     //! ignore modes are added in order for notifications to be placed
     //! in better positioning and not overlap with sidebars or usually hidden views
@@ -1011,7 +1029,7 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
     return available;
 }
 
-QRect Corona::availableScreenRect(int id) const
+QRect Corona::availableScreenRect(PlasmaScreenId id) const
 {
     //! ignore modes are added in order for notifications to be placed
     //! in better positioning and not overlap with sidebars or usually hidden views
@@ -1217,7 +1235,7 @@ void Corona::loadDefaultLayout()
 int Corona::screenForContainment(const Plasma::Containment *containment) const
 {
     // The layout's pending/live view mapping is authoritative while available;
-    // lastScreen() is Plasma's persisted fallback during startup or teardown.
+    // Plasma's persisted last screen is the fallback during startup or teardown.
 
     //case in which this containment is child of an applet, hello systray :)
     if (Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent())) {
@@ -1246,7 +1264,34 @@ int Corona::screenForContainment(const Plasma::Containment *containment) const
         return scrId;
     }
 
-    return containment->lastScreen();
+    return containmentLastScreen(containment);
+}
+
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+Plasma::Containment *Corona::createContainmentForImport(const QString &plugin)
+{
+    return createContainmentDelayed(plugin);
+}
+#endif
+
+void Corona::syncContainmentScreen(Plasma::Containment *containment)
+{
+    if (!containment) {
+        return;
+    }
+
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    //! Containment::screen() is a stored value since libplasma 6.8; without
+    //! this push it keeps the screen restored from config, so applets and
+    //! availableScreenRect consumers use the wrong output after a move.
+    const int screenId = screenForContainment(containment);
+
+    if (screenId >= 0) {
+        containment->setScreen(static_cast<uint>(screenId));
+    }
+#else
+    containment->reactToScreenChange();
+#endif
 }
 
 void Corona::showAlternativesForApplet(Plasma::Applet *applet)
@@ -1343,10 +1388,14 @@ QStringList Corona::appletsIds()
     QStringList ids;
 
     for (const auto containment : containments()) {
-        auto applets = containment->config().group(QStringLiteral("Applets"));
-        ids << applets.groupList();
+        //! The config also lists applets that are not loaded, while a freshly
+        //! added applet is only written there on the next config sync; an id
+        //! is taken if either source has it.
+        ids << Layouts::AppletIds::collect(containment->config().group(QStringLiteral("Applets")));
+        appendLoadedAppletIds(containment, ids);
     }
 
+    ids.removeDuplicates();
     return ids;
 }
 

@@ -75,6 +75,9 @@ private Q_SLOTS:
     void cmakeFindsQtCoreToolsBeforeKdeInstallDirs();
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
     void knsCompatImportsAreAvailableForSystemInstall();
+    void plasma68ContainmentScreenAndImportContracts();
+    void importedAppletIdsStayUniqueIncludingNestedApplets();
+    void appletAlternativesUseLattesOwnDialogOnPlasma68();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
     void synchronizerUnloadUsesSynchronousDelete();
@@ -514,6 +517,7 @@ void SourceContractTest::duplicateInstanceExitsWithoutQGuiAppExit()
     const QString duplicateInstanceBlock = source.mid(lockFail, clearCache - lockFail);
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("qGuiApp->exit();")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("SharedQmlEngine")));
+    QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("globalEngine()")));
     QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("i18n(\"An instance is already running!, use --replace to restart Latte\")")));
     QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("return 0;")));
 }
@@ -1045,14 +1049,19 @@ void SourceContractTest::knsCompatImportsAreAvailableForSystemInstall()
     QVERIFY(mainSource.contains(QStringLiteral("void addLatteQmlImportPaths(QQmlEngine *engine)")));
 
     // addLatteQmlImportPaths is called on the shared engine after creation.
+    // libplasma < 6.8 primes it through SharedQmlEngine; 6.8 removed that
+    // class and exposes the same engine as PlasmaQuick::globalEngine().
     const int appCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
     QVERIFY(appCreation >= 0);
     const int ensureCompatCall = mainSource.indexOf(QStringLiteral("ensureKnsCompat();"), appCreation);
     const int sharedEngineCreation = mainSource.indexOf(QStringLiteral("std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);"), appCreation);
-    const int addImportPathsCall = mainSource.indexOf(QStringLiteral("addLatteQmlImportPaths(sharedEngine->engine().get());"), sharedEngineCreation);
+    const int globalEngineCreation = mainSource.indexOf(QStringLiteral("std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();"), appCreation);
+    const int addImportPathsCall = mainSource.indexOf(QStringLiteral("addLatteQmlImportPaths(sharedQmlEngine);"), appCreation);
     QVERIFY(ensureCompatCall > appCreation);
     QVERIFY(sharedEngineCreation > ensureCompatCall);
+    QVERIFY(globalEngineCreation > ensureCompatCall);
     QVERIFY(addImportPathsCall > sharedEngineCreation);
+    QVERIFY(addImportPathsCall > globalEngineCreation);
 
     // The old env var approach must NOT be present.
     QVERIFY(!mainSource.contains(QStringLiteral("ensureKnsCompatQmlImportPaths")));
@@ -3848,13 +3857,11 @@ void SourceContractTest::appletItemForAppletInSafeContextsUsesPublicApi()
 void SourceContractTest::appletItemForAppletExcludedContextsPreservePropertyAccess()
 {
     // Excluded contexts: itemForApplet returns nullptr — keep _plasma_graphicObject.
-
-    // alternativeshelper.cpp: applet() getter and loadAlternative (applet not registered yet)
-    QFile alt(QStringLiteral(LATTE_SOURCE_DIR "/app/alternativeshelper.cpp"));
-    QVERIFY(alt.open(QFile::ReadOnly));
-    const QString altSource = QString::fromUtf8(alt.readAll());
-    QVERIFY(altSource.contains(QStringLiteral("_plasma_graphicObject")));
-    QVERIFY(!altSource.contains(QStringLiteral("itemForApplet")));
+    // alternativeshelper.cpp is no longer one of them: it runs for applets that
+    // are already loaded, and on libplasma 6.8 _plasma_graphicObject is not
+    // published at all (the dialog opened in a corner and could not replace
+    // the applet). It now prefers itemForApplet(), see
+    // appletAlternativesUseLattesOwnDialogOnPlasma68().
 
     // view.cpp: containment-level lookups (containment graphic item positioning)
     QFile view(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
@@ -4705,6 +4712,157 @@ SourceContractTest::taskBackgroundThicknessKeepsItsMetricsContract()
     // overrides stay authoritative for task-edge visuals.
     QVERIFY(shadowsSource.contains(QStringLiteral("readonly property int thickness: appletAbilities.metrics.backgroundThickness")));
     QVERIFY(!shadowsSource.contains(QStringLiteral("readonly property int thickness: appletAbilities.metrics.totals.thickness")));
+}
+
+void SourceContractTest::plasma68ContainmentScreenAndImportContracts()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    // libplasma 6.8 stores Containment::screen(); every screen change Latte
+    // makes must be pushed through Corona::syncContainmentScreen(), which is
+    // the only place allowed to call the pre-6.8 reactToScreenChange().
+    const QString corona = readSource(QStringLiteral("app/lattecorona.cpp"));
+    QVERIFY(corona.contains(QStringLiteral("containment->setScreen(static_cast<uint>(screenId));")));
+    QCOMPARE(corona.count(QStringLiteral("reactToScreenChange()")), 1);
+
+    for (const QString &path : {QStringLiteral("app/view/positioner.cpp"), QStringLiteral("app/layout/genericlayout.cpp"), QStringLiteral("app/view/view.cpp")}) {
+        const QString source = readSource(path);
+        QVERIFY2(!source.isEmpty(), qPrintable(path));
+        QVERIFY2(!source.contains(QStringLiteral("reactToScreenChange()")), qPrintable(path));
+        QVERIFY2(source.contains(QStringLiteral("syncContainmentScreen(")), qPrintable(path));
+    }
+
+    // The view QML is loaded after the platform window exists, so the 6.8
+    // ContainmentView::resizeEvent() must not run without a root item.
+    const QString view = readSource(QStringLiteral("app/view/view.cpp"));
+    const int resizeEvent = view.indexOf(QStringLiteral("void View::resizeEvent(QResizeEvent *event)"));
+    QVERIFY(resizeEvent >= 0);
+    QVERIFY(view.indexOf(QStringLiteral("if (!rootObject()) {"), resizeEvent) > resizeEvent);
+
+    // 6.8 frees the view's i18n context object before the root QML item, so
+    // ~View detaches it or Panel.qml's Component.onDestruction crashes.
+    const int viewDestructor = view.indexOf(QStringLiteral("View::~View()"));
+    QVERIFY(viewDestructor >= 0);
+    QVERIFY(view.indexOf(QStringLiteral("context->setContextObject(nullptr);"), viewDestructor) > viewDestructor);
+
+    // Corona::importLayout() is gone in 6.8: containments get new ids, so
+    // sub-containment references are rewritten before any containment is
+    // restored. The system tray migration can delete an imported containment
+    // during the restore of another one, so they are tracked with QPointers and
+    // restored by ImportedContainments::restore() (importedcontainmentsunittest).
+    const QString storage = readSource(QStringLiteral("app/layouts/storage.cpp"));
+    const int importStart = storage.indexOf(QStringLiteral("QList<Plasma::Containment *> Storage::importContainmentsToCorona("));
+    QVERIFY(importStart >= 0);
+    const int create = storage.indexOf(QStringLiteral("corona->createContainmentForImport("), importStart);
+    const int rewrite = storage.indexOf(QStringLiteral("subIdentityGroup.writeEntry("), importStart);
+    const int restore = storage.indexOf(QStringLiteral("ImportedContainments::restore(corona, restoreOrder);"), importStart);
+    QVERIFY(create > importStart);
+    QVERIFY(rewrite > create);
+    QVERIFY(restore > rewrite);
+    QVERIFY(storage.indexOf(QStringLiteral("QPointer<Plasma::Containment>(containment)"), importStart) > importStart);
+}
+
+void SourceContractTest::importedAppletIdsStayUniqueIncludingNestedApplets()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    // libplasma 6.8 nests the system tray items inside the tray applet, so the
+    // ids in use must include nested applets (stored and loaded ones).
+    const QString corona = readSource(QStringLiteral("app/lattecorona.cpp"));
+    const int coronaIds = corona.indexOf(QStringLiteral("QStringList Corona::appletsIds()"));
+    QVERIFY(coronaIds >= 0);
+    QVERIFY(corona.indexOf(QStringLiteral("Layouts::AppletIds::collect("), coronaIds) > coronaIds);
+    QVERIFY(corona.indexOf(QStringLiteral("appendLoadedAppletIds(containment, ids);"), coronaIds) > coronaIds);
+
+    const QString storage = readSource(QStringLiteral("app/layouts/storage.cpp"));
+    const int fileIds = storage.indexOf(QStringLiteral("QStringList Storage::appletsIds(const QString &filepath)"));
+    QVERIFY(fileIds >= 0);
+    QVERIFY(storage.indexOf(QStringLiteral("AppletIds::collect("), fileIds) > fileIds);
+
+    // newUniqueIdsFile() copies nested applets with their original ids and
+    // must make them unique after the copy.
+    const int newIds = storage.indexOf(QStringLiteral("QString Storage::newUniqueIdsFile("));
+    const int newIdsCopy = storage.indexOf(QStringLiteral("appletGroup.copyTo(&newAppletGroup);"), newIds);
+    const int newIdsUnique = storage.indexOf(QStringLiteral("AppletIds::makeUnique(newContainmentGroups, usedIds);"), newIds);
+    const int newIdsEnd = storage.indexOf(QStringLiteral("return tempFile;"), newIds);
+    QVERIFY(newIds >= 0);
+    QVERIFY(newIdsCopy > newIds);
+    QVERIFY(newIdsUnique > newIdsCopy);
+    QVERIFY(newIdsEnd > newIdsUnique);
+
+    // Plasma 6.8 picks the imported containment ids itself: the ids in use are
+    // collected after the containments exist, and the applet ids are made
+    // unique before any applet is restored with the id of its config group.
+    const int importStart = storage.indexOf(QStringLiteral("QList<Plasma::Containment *> Storage::importContainmentsToCorona("));
+    const int create = storage.indexOf(QStringLiteral("corona->createContainmentForImport("), importStart);
+    const int used = storage.indexOf(QStringLiteral("corona->containmentsIds() + corona->appletsIds()"), importStart);
+    const int copy = storage.indexOf(QStringLiteral("fileContainments.group(entry.first).copyTo(&coronaGroup);"), importStart);
+    const int unique = storage.indexOf(QStringLiteral("AppletIds::makeUnique(importedGroups, usedIds);"), importStart);
+    const int restore = storage.indexOf(QStringLiteral("ImportedContainments::restore(corona, restoreOrder);"), importStart);
+    QVERIFY(importStart >= 0);
+    QVERIFY(create > importStart);
+    QVERIFY(used > create);
+    QVERIFY(copy > used);
+    QVERIFY(unique > copy);
+    QVERIFY(restore > unique);
+}
+
+void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    // Plasma's dialog needs a plasmashell-internal type since 6.8, so Latte's
+    // package must provide its own file instead of the desktop fallback.
+    const QString package = readSource(QStringLiteral("app/package/lattepackage.cpp"));
+    const int versionGuard = package.indexOf(QStringLiteral("#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 8, 0)"));
+    const int definition = package.indexOf(QStringLiteral("addFileDefinition(\"appletalternativesui\", QStringLiteral(\"explorer/AppletAlternatives.qml\"))"));
+    QVERIFY(versionGuard >= 0);
+    QVERIFY(definition > versionGuard);
+
+    const QString dialog = readSource(QStringLiteral("shell/package/contents/explorer/AppletAlternatives.qml"));
+    QVERIFY(!dialog.isEmpty());
+    QVERIFY(!dialog.contains(QStringLiteral("import org.kde.plasma.shell\n")));
+    QVERIFY(!dialog.contains(QStringLiteral("AlternativesHelper alternativesHelper")));
+    QVERIFY(dialog.contains(QStringLiteral("readonly property QtObject helper: alternativesHelper")));
+
+    // The helper is a root context property published between setSource() and
+    // completeInitialization(), when the dialog's bindings are first evaluated.
+    const QString corona = readSource(QStringLiteral("app/lattecorona.cpp"));
+    const int show = corona.indexOf(QStringLiteral("void Corona::showAlternativesForApplet(Plasma::Applet *applet)"));
+    const int delayed = corona.indexOf(QStringLiteral("qmlObj->setInitializationDelayed(true);"), show);
+    const int source = corona.indexOf(QStringLiteral("qmlObj->setSource("), show);
+    const int helper = corona.indexOf(QStringLiteral("setContextProperty(QStringLiteral(\"alternativesHelper\"), helper);"), show);
+    const int complete = corona.indexOf(QStringLiteral("qmlObj->completeInitialization();"), show);
+    QVERIFY(show >= 0);
+    QVERIFY(delayed > show);
+    QVERIFY(source > delayed);
+    QVERIFY(helper > source);
+    QVERIFY(complete > helper);
+
+    // Plasma 6 does not publish "_plasma_graphicObject" (kept only as a
+    // fallback after itemForApplet()) and its ContainmentItem::createApplet()
+    // takes a QRectF: with the Plasma 5 calls the dialog opened in a corner
+    // and choosing an alternative did nothing.
+    const QString alternativesHelper = readSource(QStringLiteral("app/alternativeshelper.cpp"));
+    const int itemFor = alternativesHelper.indexOf(QStringLiteral("PlasmaQuick::AppletQuickItem *itemFor(Plasma::Applet *applet)"));
+    const int preferred = alternativesHelper.indexOf(QStringLiteral("PlasmaQuick::AppletQuickItem::itemForApplet(applet);"), itemFor);
+    const int fallback = alternativesHelper.indexOf(QStringLiteral("applet->property(\"_plasma_graphicObject\")"), itemFor);
+    QVERIFY(itemFor >= 0);
+    QVERIFY(preferred > itemFor);
+    QVERIFY(fallback > preferred);
+    QCOMPARE(alternativesHelper.count(QStringLiteral("_plasma_graphicObject\")")), 1);
+    QVERIFY(alternativesHelper.contains(QStringLiteral("return itemFor(m_applet);")));
+    QVERIFY(alternativesHelper.contains(QStringLiteral("PlasmaQuick::AppletQuickItem *contItem = itemFor(cont);")));
+    QVERIFY(alternativesHelper.contains(QStringLiteral("Q_ARG(QRectF, QRectF(newPos, QSizeF()))")));
 }
 
 QTEST_MAIN(SourceContractTest)

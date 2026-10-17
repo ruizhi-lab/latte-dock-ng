@@ -208,6 +208,7 @@ target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_PARABOLIC_ITEM_QML="${CMAKE_SOURCE_DIR}/declarativeimports/abilities/items/basicitem/ParabolicItem.qml"
     LATTE_PARABOLICAREA_QML="${CMAKE_SOURCE_DIR}/containment/package/contents/ui/applet/ParabolicArea.qml"
     LATTE_COMPACT_APPLET_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/applet/CompactApplet.qml"
+    LATTE_APPLET_ALTERNATIVES_QML="${CMAKE_SOURCE_DIR}/shell/package/contents/explorer/AppletAlternatives.qml"
     LATTE_LAUNCHERS_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/abilities/Launchers.qml"
     LATTE_PULSEAUDIO_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/PulseAudio.qml"
     LATTE_TASKMOUSEAREA_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/task/TaskMouseArea.qml"
@@ -951,6 +952,32 @@ add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
 target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data)
 target_link_libraries(storagelogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(storagelogictest)
+
+set(qmlobjectsharedenginetest_SRCS qmlobjectsharedenginetest.cpp)
+add_executable(qmlobjectsharedenginetest EXCLUDE_FROM_ALL ${qmlobjectsharedenginetest_SRCS})
+target_link_libraries(qmlobjectsharedenginetest Qt6::Gui Qt6::Qml Qt6::Test Plasma::PlasmaQuick KF6::I18n)
+# Same rule as the application: the libplasma 6.8 compat engine creates a
+# KLocalizedQmlContext.
+if(Plasma_VERSION VERSION_GREATER_EQUAL 6.8.0)
+    target_link_libraries(qmlobjectsharedenginetest KF6::I18nQml)
+endif()
+latte_add_offscreen_test(qmlobjectsharedenginetest)
+
+set(appletidsunittest_SRCS
+    appletidsunittest.cpp
+    ../app/layouts/appletids.cpp
+)
+add_executable(appletidsunittest EXCLUDE_FROM_ALL ${appletidsunittest_SRCS})
+target_link_libraries(appletidsunittest Qt6::Core Qt6::Test KF6::ConfigCore)
+latte_add_test(appletidsunittest)
+
+set(importedcontainmentsunittest_SRCS
+    importedcontainmentsunittest.cpp
+    ../app/layouts/importedcontainments.cpp
+)
+add_executable(importedcontainmentsunittest EXCLUDE_FROM_ALL ${importedcontainmentsunittest_SRCS})
+target_link_libraries(importedcontainmentsunittest Qt6::Gui Qt6::Test KF6::ConfigCore Plasma::Plasma)
+latte_add_offscreen_test(importedcontainmentsunittest)
 
 set(synchronizerlogictest_SRCS synchronizerlogictest.cpp)
 add_executable(synchronizerlogictest EXCLUDE_FROM_ALL ${synchronizerlogictest_SRCS})

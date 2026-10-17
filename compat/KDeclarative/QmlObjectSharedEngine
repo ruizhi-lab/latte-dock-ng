@@ -1,5 +1,7 @@
 #pragma once
 
+#if __has_include(<PlasmaQuick/SharedQmlEngine>) || __has_include(<plasmaquick/sharedqmlengine.h>)
+
 #if __has_include(<PlasmaQuick/SharedQmlEngine>)
 #include <PlasmaQuick/SharedQmlEngine>
 #else
@@ -12,3 +14,113 @@ public:
     using PlasmaQuick::SharedQmlEngine::SharedQmlEngine;
 };
 }
+
+#else
+
+// libplasma 6.8 removed PlasmaQuick::SharedQmlEngine and exposes the shared
+// applet engine as PlasmaQuick::globalEngine(). This keeps the small subset of
+// the old API that Latte uses (delayed creation in a private, translated
+// context) on top of that engine, so indicator configuration UIs and the
+// applet alternatives dialog keep sharing the engine that owns applet types.
+
+#include <PlasmaQuick/PlasmaQuick>
+
+#include <KLocalizedQmlContext>
+
+#include <QDebug>
+#include <QJSEngine>
+#include <QObject>
+#include <QPointer>
+#include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQmlError>
+#include <QUrl>
+
+#include <memory>
+
+namespace KDeclarative {
+class QmlObjectSharedEngine : public QObject {
+public:
+    explicit QmlObjectSharedEngine(QObject *parent = nullptr)
+        : QObject(parent)
+        , m_engine(PlasmaQuick::globalEngine())
+        , m_rootContext(new QQmlContext(m_engine.get(), this))
+        , m_i18nContext(new KLocalizedQmlContext(m_rootContext))
+    {
+        m_rootContext->setContextObject(m_i18nContext);
+        QQmlEngine::setContextForObject(m_i18nContext, m_rootContext);
+    }
+
+    ~QmlObjectSharedEngine() override
+    {
+        // Same ownership rule as the removed SharedQmlEngine: the root object
+        // is deleted with this wrapper unless QML took ownership of it.
+        if (m_rootObject && QJSEngine::objectOwnership(m_rootObject) == QJSEngine::CppOwnership) {
+            delete m_rootObject;
+        }
+    }
+
+    void setTranslationDomain(const QString &translationDomain)
+    {
+        m_i18nContext->setTranslationDomain(translationDomain);
+    }
+
+    void setInitializationDelayed(const bool delay)
+    {
+        m_delay = delay;
+    }
+
+    // With delayed initialization the caller must finish creation through
+    // completeInitialization() once the root context is populated.
+    void setSource(const QUrl &source)
+    {
+        m_component = std::make_unique<QQmlComponent>(m_engine.get());
+        m_component->loadUrl(source);
+        m_rootObject = m_component->beginCreate(m_rootContext);
+
+        if (!m_delay) {
+            completeInitialization();
+        }
+    }
+
+    void completeInitialization()
+    {
+        if (!m_component) {
+            return;
+        }
+
+        if (m_component->status() != QQmlComponent::Ready || m_component->isError()) {
+            qWarning().noquote() << "Error loading QML file" << m_component->url().toString() << m_component->errors();
+            return;
+        }
+
+        m_component->completeCreate();
+    }
+
+    std::shared_ptr<QQmlEngine> engine() const
+    {
+        return m_engine;
+    }
+
+    QObject *rootObject() const
+    {
+        return m_rootObject;
+    }
+
+    QQmlContext *rootContext() const
+    {
+        return m_rootContext;
+    }
+
+private:
+    std::shared_ptr<QQmlEngine> m_engine;
+    QQmlContext *m_rootContext{nullptr};
+    KLocalizedQmlContext *m_i18nContext{nullptr};
+    std::unique_ptr<QQmlComponent> m_component;
+    QPointer<QObject> m_rootObject;
+    bool m_delay{false};
+};
+}
+
+#endif

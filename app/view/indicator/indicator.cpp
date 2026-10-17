@@ -253,7 +253,7 @@ QQmlComponent *Indicator::component() const
 
         if (!uiPath.isEmpty()) {
             const QString fullPath = m_pluginPath + QLatin1String("/package/") + uiPath;
-            m_component = new QQmlComponent(m_view->engine().get(), fullPath);
+            m_component = new QQmlComponent(containmentViewEngine(m_view).get(), fullPath);
         }
     }
 
@@ -271,7 +271,7 @@ QQmlComponent *Indicator::plasmaComponent() const
 
         if (!uiPath.isEmpty()) {
             uiPath = QFileInfo(metadata.fileName()).absolutePath() + QLatin1String("/package/") + uiPath;
-            m_plasmaComponent = new QQmlComponent(m_view->engine().get(), uiPath);
+            m_plasmaComponent = new QQmlComponent(containmentViewEngine(m_view).get(), uiPath);
         }
     }
 

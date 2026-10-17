@@ -53,7 +53,7 @@ part of local mirror maintenance.
    compilation AND runtime behavior afterwards; check the debug log for new
    errors/warnings.
 6. **Release requires autotest** — Before every release run
-   `cd build && ctest --output-on-failure` (42 registered autotest targets
+   `cd build && ctest --output-on-failure` (45 registered autotest targets
    incl. 170+ source-contract checks on GCC and Clang; fragile areas: digital
    clock, systray, volume, appmenu, clipboard, separator/spacer, middle-click
    close, auto-pin on drag, scroll minimize).

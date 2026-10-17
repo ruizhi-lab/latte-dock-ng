@@ -129,6 +129,12 @@ target_link_libraries(latte-dock-ng
     LayerShellQt::Interface
 )
 
+# libplasma 6.8 removed PlasmaQuick::SharedQmlEngine; the replacement in
+# compat/KDeclarative/QmlObjectSharedEngine creates a KLocalizedQmlContext.
+if(Plasma_VERSION VERSION_GREATER_EQUAL 6.8.0)
+    target_link_libraries(latte-dock-ng KF6::I18nQml)
+endif()
+
 target_link_libraries(latte-dock-ng-add-launcher Qt6::Core Qt6::DBus)
 
 configure_file(org.kde.latte-dock.desktop.cmake org.kde.latte-dock.desktop)

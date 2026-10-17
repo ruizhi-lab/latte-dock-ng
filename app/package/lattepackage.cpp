@@ -16,6 +16,9 @@
 #include <KPackage/PackageLoader>
 #include <KLocalizedString>
 
+// Plasma
+#include <Plasma/version.h>
+
 namespace Latte {
 
 Package::Package(QObject *parent, const QVariantList &args)
@@ -57,6 +60,13 @@ void Package::initPackage(KPackage::Package *package)
 
     //! applets
     package->addFileDefinition("compactapplet", QStringLiteral("applet/CompactApplet.qml"));
+
+#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    //! The org.kde.plasma.desktop fallback dialog requires a type that only
+    //! exists inside plasmashell since 6.8, see explorer/AppletAlternatives.qml.
+    //! Older releases keep using the fallback file, which works there.
+    package->addFileDefinition("appletalternativesui", QStringLiteral("explorer/AppletAlternatives.qml"));
+#endif
 
     package->setFallbackPackage(fallback);
     qCDebug(latteApp) << "package is valid" << package->isValid();

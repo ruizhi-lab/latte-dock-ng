@@ -63,7 +63,11 @@
 #include <KSharedConfig>
 #include <KWindowSystem>
 #include <QQmlEngine>
+#if __has_include(<plasmaquick/sharedqmlengine.h>)
 #include <plasmaquick/sharedqmlengine.h>
+#else
+#include <PlasmaQuick/PlasmaQuick>
+#endif
 
 //! COLORS
 #define CNORMAL  "\x1b[0m"
@@ -637,11 +641,20 @@ int main(int argc, char **argv)
     //! Prime the Plasma global shared QML engine singleton after one-instance
     //! checks. Duplicate invocations only forward DBus actions and exit; they
     //! must not create a shared engine that would need full app teardown.
+#if __has_include(<plasmaquick/sharedqmlengine.h>)
     std::shared_ptr<PlasmaQuick::SharedQmlEngine> sharedEngine =
         std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);
+    QQmlEngine *const sharedQmlEngine = sharedEngine->engine().get();
+#else
+    //! libplasma 6.8 replaced SharedQmlEngine with globalEngine(), which only
+    //! keeps a weak reference: holding this shared_ptr for the whole run keeps
+    //! one engine (and the import paths added below) for all views and applets.
+    std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();
+    QQmlEngine *const sharedQmlEngine = sharedEngine.get();
+#endif
 
     // Add latte-dock QML import paths to the shared engine (engine-scoped, no env var leakage)
-    addLatteQmlImportPaths(sharedEngine->engine().get());
+    addLatteQmlImportPaths(sharedQmlEngine);
 
     int result;
     {
@@ -724,6 +737,7 @@ int main(int argc, char **argv)
         result = app.exec();
     }
 
+#if __has_include(<plasmaquick/sharedqmlengine.h>)
     // Detach the SharedQmlEngine from the QApplication before app is
     // destroyed.  Without this, ~QApplication() → deleteChildren() deletes
     // the SharedQmlEngine that is managed by a static shared_ptr, and the
@@ -731,6 +745,7 @@ int main(int argc, char **argv)
     if (sharedEngine) {
         sharedEngine->setParent(nullptr);
     }
+#endif
 
     // Drain any remaining DeferredDelete events.  The Corona destructor
     // already processes its own via deleteLater() + immediate flush, so

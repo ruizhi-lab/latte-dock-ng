@@ -12,6 +12,7 @@
 #include "../data/genericdata.h"
 #include "../data/generictable.h"
 #include "../data/viewstable.h"
+#include "../plasma/plasmaapicompat.h"
 
 // Qt
 #include <QStringList>
@@ -140,6 +141,10 @@ private:
     bool hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *layout, Data::Warning &warning);
     bool hasOrphanedSubContainments(const Layout::GenericLayout *layout, Data::Warning &warning);
 private:
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    QList<Plasma::Containment *> importContainmentsToCorona(Latte::Corona *corona, const KSharedConfigPtr &filePtr);
+#endif
+
     QTemporaryDir m_storageTmpDir;
 
     Data::GenericTable<Data::Generic> s_knownErrors;

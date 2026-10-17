@@ -22,6 +22,7 @@
 #include "../data/viewdata.h"
 #include "../shortcuts/globalshortcuts.h"
 #include "../layout/genericlayout.h"
+#include "../plasma/plasmaapicompat.h"
 #include "../plasma/quick/containmentview.h"
 #include "../plasma/quick/configview.h"
 #include "../declarativeimports/interfaces.h"
@@ -278,6 +279,9 @@ protected Q_SLOTS:
 
 protected:
     bool event(QEvent *ev) override;
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    void resizeEvent(QResizeEvent *event) override;
+#endif
 
 Q_SIGNALS:
     void eventTriggered(QEvent *ev);

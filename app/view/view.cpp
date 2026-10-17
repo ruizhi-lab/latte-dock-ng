@@ -151,7 +151,10 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     m_positioner = new ViewPart::Positioner(this);
 
     setIcon(qGuiApp->windowIcon());
+#ifndef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    //! libplasma 6.8 ContainmentView always sizes its root item to the window.
     setResizeMode(QuickViewSharedEngine::SizeRootObjectToView);
+#endif
     setColor(QColor(Qt::transparent));
 
     //! Track pointer-leave on the dock's applet popup / menu windows so
@@ -263,6 +266,13 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
             m_primaryConfigView->setParentView(this, true);
         }
 
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+        //! Before 6.8, ContainmentView::setContainment() refreshed the screen
+        //! of the new containment itself. 6.8 stores the screen in the
+        //! containment and leaves publishing it to the owner of the view.
+        m_corona->syncContainmentScreen(containment());
+#endif
+
         Q_EMIT containmentActionsChanged();
     }, Qt::DirectConnection);
 
@@ -270,7 +280,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
         connect(m_corona, &Latte::Corona::viewLocationChanged, this, &View::dockLocationChanged);
     }
 
-    addLatteQmlImportPaths(engine().get());
+    addLatteQmlImportPaths(containmentViewEngine(this).get());
 }
 
 View::~View()
@@ -349,6 +359,19 @@ View::~View()
     if (m_windowsTracker) {
         delete m_windowsTracker;
     }
+
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+    //! libplasma 6.8 ContainmentViewPrivate deletes the view's
+    //! KLocalizedQmlContext (the context object of rootContext()) before the
+    //! root QML item. Component.onDestruction in the view QML (shell
+    //! views/Panel.qml) then resolves unqualified names such as `console`
+    //! through the freed context object: an intermittent use-after-free
+    //! SIGSEGV whenever a dock is deleted, including layout switches and
+    //! logout. Detaching it while it is still alive makes those lookups skip it.
+    if (QQmlContext *context = rootContext()) {
+        context->setContextObject(nullptr);
+    }
+#endif
 }
 
 void View::init(Plasma::Containment *plasma_containment)
@@ -490,18 +513,19 @@ void View::init(Plasma::Containment *plasma_containment)
         }
     }
 
-    setSource(QUrl::fromLocalFile(corona()->kPackage().filePath("lattedockui")));
+    const QUrl viewSource = QUrl::fromLocalFile(corona()->kPackage().filePath("lattedockui"));
+    setSource(viewSource);
 
     //! immediateSyncGeometry helps avoiding binding loops from containment qml side
     m_positioner->immediateSyncGeometry();
 
-    qCDebug(latteView) << "SOURCE:" << source();
+    qCDebug(latteView) << "SOURCE:" << viewSource;
 }
 
 void View::reloadSource()
 {
     if (m_layout && containment()) {
-        engine()->clearComponentCache();
+        containmentViewEngine(this)->clearComponentCache();
         m_layout->recreateView(containment(), settingsWindowIsShown());
     }
 }
@@ -1648,7 +1672,7 @@ Latte::Data::View View::data() const
     vdata.screen = containment()->screen();
 
     if (!Layouts::Storage::isValid(vdata.screen)) {
-        vdata.screen = containment()->lastScreen();
+        vdata.screen = containmentLastScreen(containment());
     }
 
     vdata.screensGroup = screensGroup();
@@ -1758,6 +1782,23 @@ void View::setInterfacesGraphicObj(Latte::Interfaces *ifaces)
 
     Q_EMIT interfacesGraphicObjChanged();
 }
+
+#ifdef LATTE_PLASMA_STORED_CONTAINMENT_SCREEN
+void View::resizeEvent(QResizeEvent *event)
+{
+    //! libplasma 6.8 ContainmentView::resizeEvent() resizes its root item
+    //! without a null check, but Latte creates the platform window (winId())
+    //! and positions it before init() loads the view QML with setSource().
+    //! setSource() sizes the new root item to the window, so skipping the
+    //! base handler until then loses nothing and avoids a startup crash.
+    if (!rootObject()) {
+        QQuickWindow::resizeEvent(event);
+        return;
+    }
+
+    ContainmentView::resizeEvent(event);
+}
+#endif
 
 bool View::event(QEvent *e)
 {
