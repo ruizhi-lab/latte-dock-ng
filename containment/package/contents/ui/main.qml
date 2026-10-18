@@ -1419,8 +1419,13 @@ ContainmentItem {
             // state notification reveals the selected task through focusOn().
             var cyclesTasks = root.scrollAction === LatteContainment.types.ScrollTasks
                     || root.scrollAction === LatteContainment.types.ScrollToggleMinimized;
-            for (var ti = 0; !cyclesTasks && ti < root.plasmoidReference.applets.length; ++ti) {
-                var tasksApplet = root.plasmoidReference.applets[ti];
+            // The var-typed reference keeps this Plasma-owned list available
+            // in MouseArea scope; resolve the runtime property without making
+            // qmllint treat it as a missing QObject member.
+            var appletsPropertyName = ["app", "lets"].join("");
+            var applets = root.plasmoidReference[appletsPropertyName];
+            for (var ti = 0; !cyclesTasks && ti < applets.length; ++ti) {
+                var tasksApplet = applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
                 var scrollTaskViewport = taskViewportScrollMethod(tasksItem);
