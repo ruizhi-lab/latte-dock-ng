@@ -46,8 +46,7 @@ MouseArea {
 
         //! show previews if enabled
         // Avoid preview-state checks entirely when both preview and window
-        // highlighting are disabled. Tooltip and task auto-scroll handling
-        // below remain active in that configuration.
+        // highlighting are disabled. Tooltip handling stays active.
         if((root.showPreviews || root.highlightWindows)
                 && isAbleToShowPreview && !showPreviewsIsBlockedFromReleaseEvent && !isLauncher
                 && (((root.showPreviews || (windowsPreviewDlg.visible && !isLauncher))
@@ -69,10 +68,6 @@ MouseArea {
         }
 
         taskItem.showPreviewsIsBlockedFromReleaseEvent = false;
-
-        if (root.autoScrollTasksEnabled) {
-            scrollableList.autoScrollFor(taskItem, false);
-        }
     }
 
     onExited: {

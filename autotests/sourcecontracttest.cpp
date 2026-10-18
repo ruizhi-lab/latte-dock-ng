@@ -17,6 +17,7 @@ class SourceContractTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void taskScrollMaskProvidesWindowAssociatedTexture();
     void taskRemovalDefersAnimationOutsideGeometryBindings();
     void externalTouchingBindingsGuardClearedScreenGeometry();
     void viewTeardownBindingsGuardClearedVisibility();
@@ -5146,6 +5147,25 @@ void SourceContractTest::qmlParameterlessHandlersDoNotReadUndeclaredIndex()
 
     QVERIFY2(scannedHandlers > 0, "no QML signal handlers were scanned");
     QVERIFY2(offenders.isEmpty(), qPrintable(offenders.join(QStringLiteral(", "))));
+}
+
+void
+SourceContractTest::taskScrollMaskProvidesWindowAssociatedTexture()
+{
+    QFile tasks(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(tasks.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(tasks.readAll());
+    const int maskStart = source.indexOf(QStringLiteral("maskSource: TasksLayout.ScrollOpacityMask"));
+    const int maskEnd = source.indexOf(QLatin1Char('}'), maskStart);
+    QVERIFY(maskStart >= 0 && maskEnd > maskStart);
+    const QString mask = source.mid(maskStart, maskEnd - maskStart);
+    // An inline mask has no visual parent by default. Its texture must belong
+    // to the task window without drawing the white mask over the icons.
+    QVERIFY(mask.contains(QStringLiteral("parent: scrollableList")));
+    QVERIFY(mask.contains(QStringLiteral("visible: false")));
+    QFile maskFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/ScrollOpacityMask.qml"));
+    QVERIFY(maskFile.open(QFile::ReadOnly));
+    QVERIFY(QString::fromUtf8(maskFile.readAll()).contains(QStringLiteral("layer.enabled: true")));
 }
 
 QTEST_MAIN(SourceContractTest)

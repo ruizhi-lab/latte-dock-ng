@@ -6,6 +6,9 @@
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QQuickView>
+#include <QSignalSpy>
+#include <QWheelEvent>
 #include <QtQml/qqml.h>
 
 #include <QColor>
@@ -63,6 +66,13 @@ class QmlSmokeTest : public QObject
 
 private Q_SLOTS:
     void initTestCase();
+    void containerWheelYieldsToTaskOverflowScrolling();
+    void containmentWheelScrollsTaskViewport();
+    void edgeHoverScrollsWithStationaryPointer_data();
+    void edgeHoverScrollsWithStationaryPointer();
+    void scrollingTasksCanRequestShorterViewports();
+    void scrollingTasksKeepFillRequestsInModernDocks();
+    void scrollingTasksShareRemainingModernDockLength();
     void latteCoreQmlPluginLoadsFromBuildTree();
     void layoutInfoWindowHasAValidSizeFromSource();
     void appletAlternativesDialogResolvesOutsidePlasmashell();
@@ -884,6 +894,437 @@ Item {}
 )"));
 
     engine.addImportPath(importRoot.path());
+}
+
+void
+QmlSmokeTest::containmentWheelScrollsTaskViewport()
+{
+    QFile containment(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QFile tasks(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(containment.open(QFile::ReadOnly));
+    QVERIFY(tasks.open(QFile::ReadOnly));
+    const QString outer = QString::fromUtf8(containment.readAll());
+    const QString inner = QString::fromUtf8(tasks.readAll());
+    const int bridgeStart = outer.indexOf(QStringLiteral("    // Bridge to receive wheel"));
+    const int bridgeEnd = outer.indexOf(QStringLiteral("    // In edit mode, block"), bridgeStart);
+    const int helperStart = inner.indexOf(QStringLiteral("    function scrollTaskViewport("));
+    const int helperEnd = inner.indexOf(QStringLiteral("    // Called from containment's wheel bridge with raw"), helperStart);
+    QVERIFY(bridgeStart >= 0 && bridgeEnd > bridgeStart);
+    QVERIFY(helperStart >= 0 && helperEnd > helperStart);
+    QQuickView view;
+    const QVariantMap types{ { QStringLiteral("ScrollNone"), 0 },
+                             { QStringLiteral("ScrollDesktops"), 1 },
+                             { QStringLiteral("ScrollActivities"), 2 },
+                             { QStringLiteral("ScrollToggleMinimized"), 4 },
+                             { QStringLiteral("ManualScrollOnlyParallel"), 1 } };
+    const QVariantMap module{ { QStringLiteral("types"), types } };
+    view.rootContext()->setContextProperty(QStringLiteral("LatteContainment"), module);
+    view.rootContext()->setContextProperty(QStringLiteral("LatteTasks"), module);
+    QQmlComponent component(view.engine());
+    const QByteArray harness = QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: root
+    width: 240; height: 240
+    property bool editMode: false
+    property bool inEditMode: false
+    property bool inDraggingPhase: false
+    property bool vertical: false
+    property bool manualScrollTasksEnabled: true
+    property int manualScrollTasksType: 2
+    property int scrollAction: 3
+    property int windowActions: 0
+    property bool audioHandled: false
+    property var appletAbilities: ({myView: {isShownFully: true}})
+    property var plasmoid: ({applets: [{pluginName: "org.kde.latte.plasmoid"}]})
+    property var fastLayoutManager: ({resolveAppletQuickItem: function(applet) { return root; }})
+    property alias position: scrollableList.contentX
+    function activateWheelTask(next) { windowActions++; }
+    function adjustVolumeForAudioBadge(x, y, delta, item) { return audioHandled; }
+    function emptyAreasWheel(wheel) { windowActions++; }
+    Item { id: layoutsContainer; anchors.fill: parent }
+    Flickable {
+        id: scrollableList
+        x: 40; y: 40; width: 160; height: 160
+        contentWidth: 800; contentHeight: 160
+        interactive: false
+        readonly property bool contentsExceed: true
+        function decreasePos() { contentX = Math.max(0, contentX - 80); }
+        function increasePos() { contentX = Math.min(640, contentX + 80); }
+    }
+)") + inner.mid(helperStart, helperEnd - helperStart).toUtf8() +
+                               outer.mid(bridgeStart, bridgeEnd - bridgeStart).toUtf8() + QByteArrayLiteral("\n}");
+    const QUrl url(QStringLiteral("qrc:/containment-viewport-wheel.qml"));
+    component.setData(harness, url);
+    QObject *object = component.create();
+    QVERIFY2(object, qPrintable(component.errorString()));
+    view.setContent(url, &component, object);
+    view.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&view));
+    auto sendWheel = [&](QPoint delta) {
+        const QPoint position(120, 120);
+        QWheelEvent wheel(QPointF(position), QPointF(view.mapToGlobal(position)), QPoint(), delta, Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+        QCoreApplication::sendEvent(&view, &wheel);
+    };
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("position").toInt(), 80);
+    QCOMPARE(object->property("windowActions").toInt(), 0);
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("position").toInt(), 80);
+    QCOMPARE(object->property("windowActions").toInt(), 0);
+    QTest::qWait(420);
+    QVERIFY(object->setProperty("audioHandled", true));
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("position").toInt(), 80);
+    QVERIFY(object->setProperty("audioHandled", false));
+    sendWheel(QPoint(0, 120));
+    QCOMPARE(object->property("position").toInt(), 0);
+    QVERIFY(object->setProperty("manualScrollTasksType", 1));
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("windowActions").toInt(), 1);
+    QTest::qWait(420);
+    sendWheel(QPoint(-120, 0));
+    QCOMPARE(object->property("position").toInt(), 80);
+    QVERIFY(object->setProperty("manualScrollTasksEnabled", false));
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("windowActions").toInt(), 2);
+}
+
+void
+QmlSmokeTest::containerWheelYieldsToTaskOverflowScrolling()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/MouseHandler.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.lastIndexOf(QStringLiteral("    MouseArea {"));
+    const int end = source.lastIndexOf(QStringLiteral("\n}"));
+    QVERIFY(start >= 0 && end > start);
+    QTemporaryDir scripts;
+    QVERIFY(scripts.isValid());
+    QVERIFY(writeTextFile(scripts.path() + QStringLiteral("/tools.js"), QByteArrayLiteral("function wheelActivateNextPrevTask(delta, eventDelta) { return 12345; }")));
+    QQuickView view;
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    QQmlComponent component(view.engine());
+    const QByteArray harness = QByteArrayLiteral("import QtQuick\nimport \"") + QUrl::fromLocalFile(scripts.path() + QStringLiteral("/tools.js")).toEncoded() + QByteArrayLiteral(R"(" as TaskTools
+Item {
+    id: root
+    width: 240; height: 240
+    property bool manualScrollTasksEnabled: true
+    property bool overflow: true
+    property int receivedTaskWheels: 0
+    property alias containerDelta: wheelHandler.wheelDelta
+    property var plasmoid: ({containment: {configuration: {scrollAction: 4}}})
+    property var scrollableList: ({contentsExceed: overflow})
+    MouseArea {
+        anchors.fill: parent
+        onWheel: root.receivedTaskWheels++
+    }
+)") + source.mid(start, end - start).toUtf8() +
+                               QByteArrayLiteral("\n}");
+    const QUrl url(QStringLiteral("qrc:/container-wheel-routing.qml"));
+    component.setData(harness, url);
+    QObject *object = component.create();
+    QVERIFY2(object, qPrintable(component.errorString()));
+    view.setContent(url, &component, object);
+    view.resize(240, 240);
+    view.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&view));
+    const QPoint position(120, 120);
+    auto sendWheel = [&]() {
+        QWheelEvent wheel(QPointF(position), QPointF(view.mapToGlobal(position)), QPoint(), QPoint(0, -120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+        QCoreApplication::sendEvent(&view, &wheel);
+    };
+    sendWheel();
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
+    QCOMPARE(object->property("containerDelta").toInt(), 0);
+    // Without manual overflow scrolling, preserve the global window action.
+    QVERIFY(object->setProperty("manualScrollTasksEnabled", false));
+    sendWheel();
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
+    QCOMPARE(object->property("containerDelta").toInt(), 12345);
+    QVERIFY(object->setProperty("containerDelta", 0));
+    QVERIFY(object->setProperty("manualScrollTasksEnabled", true));
+    QVERIFY(object->setProperty("overflow", false));
+    sendWheel();
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
+    QCOMPARE(object->property("containerDelta").toInt(), 12345);
+    QVERIFY(object->setProperty("overflow", true));
+    sendWheel();
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 2);
+}
+
+void
+QmlSmokeTest::edgeHoverScrollsWithStationaryPointer_data()
+{
+    QTest::addColumn<bool>("vertical");
+    QTest::addColumn<QPoint>("position");
+    QTest::addColumn<int>("direction");
+    QTest::newRow("left") << false << QPoint(5, 120) << -1;
+    QTest::newRow("right") << false << QPoint(235, 120) << 1;
+    QTest::newRow("top") << true << QPoint(120, 5) << -1;
+    QTest::newRow("bottom") << true << QPoint(120, 235) << 1;
+}
+
+void
+QmlSmokeTest::edgeHoverScrollsWithStationaryPointer()
+{
+    QFETCH(bool, vertical);
+    QFETCH(QPoint, position);
+    QFETCH(int, direction);
+    QQuickView view;
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    QQmlComponent component(view.engine());
+    const QByteArray source = QByteArrayLiteral(R"(
+import QtQuick
+import ")") + QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout")).toEncoded() +
+                              QByteArrayLiteral(R"(" as TasksLayout
+Item {
+    id: inputRoot
+    width: 240; height: 240
+    property alias detector: detector
+    property int clicks: 0
+    property int wheels: 0
+    property int parabolicMoves: 0
+    property alias viewport: testViewport
+    Flickable {
+        id: testViewport
+        anchors.fill: parent
+        contentWidth: 800
+        contentHeight: 800
+        interactive: false
+        Item {
+            width: 800; height: 800
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: inputRoot.clicks++
+                onWheel: inputRoot.wheels++
+            }
+            // Match the separate, button-transparent hover area above each task.
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                hoverEnabled: true
+                onPositionChanged: inputRoot.parabolicMoves++
+            }
+        }
+    }
+    TasksLayout.ScrollEdgeHover {
+        id: detector
+        parent: testViewport
+        viewport: testViewport
+        edgeLength: 40
+        canScrollBackward: true
+        canScrollForward: true
+        repeatInterval: 30
+    }
+}
+)");
+    const QUrl url(QStringLiteral("qrc:/edge-hover-events.qml"));
+    component.setData(source, url);
+    QObject *object = component.create();
+    QVERIFY2(object, qPrintable(component.errorString()));
+    view.setContent(url, &component, object);
+    view.resize(240, 240);
+    view.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&view));
+    QObject *detector = object->property("detector").value<QObject *>();
+    QVERIFY(detector);
+    QObject *viewport = object->property("viewport").value<QObject *>();
+    QVERIFY(viewport);
+    QCOMPARE(detector->property("viewport").value<QObject *>(), viewport);
+    // Exercise viewport coordinates after content has moved, not just at zero.
+    QVERIFY(viewport->setProperty("contentX", 64.0));
+    QVERIFY(viewport->setProperty("contentY", 64.0));
+    QVERIFY(detector->setProperty("vertical", vertical));
+    QSignalSpy requests(detector, SIGNAL(scrollRequested(int)));
+    QVERIFY(requests.isValid());
+
+    // A real mouse event over a hover-enabled MouseArea must reach the passive
+    // detector too; remaining still must produce more than one scroll step.
+    const QPoint center(120, 120);
+    QTest::mouseMove(&view, center);
+    QTest::mouseMove(&view, position);
+    QTRY_VERIFY_WITH_TIMEOUT(requests.count() >= 2, 1000);
+    QCOMPARE(requests.last().at(0).toInt(), direction);
+    QVERIFY(object->property("parabolicMoves").toInt() > 0);
+
+    QVERIFY(detector->setProperty("scrollingInProgress", true));
+    int count = requests.count();
+    QTest::qWait(90);
+    QCOMPARE(requests.count(), count);
+    QVERIFY(detector->setProperty("scrollingInProgress", false));
+    QTRY_VERIFY_WITH_TIMEOUT(requests.count() > count, 1000);
+
+    QVERIFY(detector->setProperty(direction < 0 ? "canScrollBackward" : "canScrollForward", false));
+    count = requests.count();
+    QTest::qWait(90);
+    QCOMPARE(requests.count(), count);
+    QVERIFY(detector->setProperty(direction < 0 ? "canScrollBackward" : "canScrollForward", true));
+    QTRY_VERIFY_WITH_TIMEOUT(requests.count() > count, 1000);
+
+    QVERIFY(detector->setProperty("enabled", false));
+    count = requests.count();
+    QTest::qWait(90);
+    QCOMPARE(requests.count(), count);
+    QVERIFY(detector->setProperty("enabled", true));
+    QTest::mouseMove(&view, center);
+    count = requests.count();
+    QTest::qWait(90);
+    QCOMPARE(requests.count(), count);
+    QTest::mouseClick(&view, Qt::LeftButton, Qt::NoModifier, center);
+    QCOMPARE(object->property("clicks").toInt(), 1);
+    QWheelEvent wheel(QPointF(center), QPointF(view.mapToGlobal(center)), QPoint(), QPoint(0, 120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+    QCoreApplication::sendEvent(&view, &wheel);
+    QCOMPARE(object->property("wheels").toInt(), 1);
+    QTest::mouseMove(&view, position);
+    QTRY_VERIFY_WITH_TIMEOUT(requests.count() > count, 1000);
+    object->setProperty("visible", false);
+    count = requests.count();
+    QTest::qWait(90);
+    QCOMPARE(requests.count(), count);
+}
+
+void
+QmlSmokeTest::scrollingTasksCanRequestShorterViewports()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.indexOf(QStringLiteral("    readonly property int minimumLength:"));
+    const int end = source.indexOf(QStringLiteral("    property real textColorBrightness:"), start);
+    QVERIFY(start >= 0 && end > start);
+    QQmlEngine engine;
+    auto object = createQmlObject(engine,
+                                  QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    property bool scrollingEnabled: false
+    property real taskLayoutLengthHint: 592
+    property var appletAbilities: ({metrics: {totals: {length: 74}}})
+)") + source.mid(start, end - start).toUtf8() +
+                                    QByteArrayLiteral("\n}"),
+                                  QUrl(QStringLiteral("qrc:/scroll-minimum.qml")));
+    QVERIFY(object);
+    QCOMPARE(object->property("minimumLength").toInt(), 592);
+    QVERIFY(object->setProperty("scrollingEnabled", true));
+    QCOMPARE(object->property("minimumLength").toInt(), 222);
+    QVERIFY(object->setProperty("taskLayoutLengthHint", 148.0));
+    QCOMPARE(object->property("minimumLength").toInt(), 148);
+    QVERIFY(object->setProperty("scrollingEnabled", false));
+    QCOMPARE(object->property("minimumLength").toInt(), 148);
+}
+
+void
+QmlSmokeTest::scrollingTasksKeepFillRequestsInModernDocks()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.indexOf(QStringLiteral("    property bool isRequestingFill:"));
+    const int end = source.indexOf(QStringLiteral("    property int maxAutoFillLength:"), start);
+    QVERIFY(start >= 0 && end > start);
+    QQmlEngine engine;
+    auto object = createQmlObject(engine,
+                                  QByteArrayLiteral(R"(
+import QtQuick
+import QtQuick.Layouts
+Item {
+    property QtObject root: QtObject {
+        property bool isModernDockStyle: true
+        property bool isHorizontal: true
+        property bool isVertical: !isHorizontal
+    }
+    property bool indexerIsSupported: true
+    property bool isGlobalMenuApplet: false
+    property bool isHidden: false
+    property Item applet: Item {
+        property bool scrollingEnabled: false
+        Layout.fillWidth: scrollingEnabled
+        Layout.fillHeight: scrollingEnabled
+    }
+)") + source.mid(start, end - start).toUtf8() +
+                                    QByteArrayLiteral("\n}"),
+                                  QUrl(QStringLiteral("qrc:/scroll-fill.qml")));
+    QVERIFY(object);
+    QObject *applet = object->property("applet").value<QObject *>();
+    QObject *root = object->property("root").value<QObject *>();
+    QVERIFY(applet && root);
+    QCOMPARE(object->property("isRequestingFill").toBool(), false);
+    QVERIFY(applet->setProperty("scrollingEnabled", true));
+    QCOMPARE(object->property("isRequestingFill").toBool(), true);
+    QVERIFY(root->setProperty("isHorizontal", false));
+    QCOMPARE(object->property("isRequestingFill").toBool(), true);
+    QVERIFY(object->setProperty("isHidden", true));
+    QCOMPARE(object->property("isRequestingFill").toBool(), false);
+    QVERIFY(object->setProperty("isHidden", false));
+    QVERIFY(applet->setProperty("scrollingEnabled", false));
+    QCOMPARE(object->property("isRequestingFill").toBool(), false);
+}
+
+void
+QmlSmokeTest::scrollingTasksShareRemainingModernDockLength()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/abilities/privates/LayouterPrivate.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.indexOf(QStringLiteral("    function normalizedModernFillLength("));
+    const int end = source.indexOf(QStringLiteral("    function _updateSizeForAppletsInFill()"), start);
+    QVERIFY(start >= 0 && end > start);
+    QQmlEngine engine;
+    auto object = createQmlObject(engine,
+                                  QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    property var metrics: ({iconSize: 64})
+    property var root: ({isHorizontal: true})
+    property real contentsMaxLength: 1920
+    property real sizeWithNoFillApplets: 1500
+    property bool useSecondTask: false
+    property var firstTask: ({isAutoFillApplet: true, isHidden: false,
+        indexerIsSupported: true, applet: {scrollingEnabled: true},
+        appletMinimumLength: 222, appletPreferredLength: 592, appletMaximumLength: -1})
+    property var secondTask: ({isAutoFillApplet: true, isHidden: false,
+        indexerIsSupported: true, applet: {scrollingEnabled: true},
+        appletMinimumLength: 148, appletPreferredLength: 148, appletMaximumLength: -1})
+    property var clock: ({isAutoFillApplet: true, isHidden: false,
+        indexerIsSupported: false, appletMinimumLength: 100,
+        appletPreferredLength: 100, appletMaximumLength: -1})
+    property var startLayout: ({grid: {children: []}})
+    property var mainLayout: ({grid: {children: useSecondTask ? [firstTask, clock, secondTask] : [firstTask, clock]}})
+    property var endLayout: ({grid: {children: []}})
+    property real firstLength: -1
+    property real secondLength: -1
+    property real clockLength: -1
+    function apply() {
+        updateModernFillApplets();
+        firstLength = firstTask.maxAutoFillLength;
+        secondLength = secondTask.maxAutoFillLength === undefined ? -1 : secondTask.maxAutoFillLength;
+        clockLength = clock.maxAutoFillLength;
+    }
+)") + source.mid(start, end - start).toUtf8() +
+                                    QByteArrayLiteral("\n}"),
+                                  QUrl(QStringLiteral("qrc:/scroll-allocation.qml")));
+    QVERIFY(object);
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "apply"));
+    QCOMPARE(object->property("firstLength").toReal(), 320.0);
+    QCOMPARE(object->property("clockLength").toReal(), 100.0);
+    // Spare space must not restore the oversized task slots fixed for normal docks.
+    QVERIFY(object->setProperty("contentsMaxLength", 2400.0));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "apply"));
+    QCOMPARE(object->property("firstLength").toReal(), 592.0);
+    // The short second list keeps its natural length and leaves the rest to the longer list.
+    QVERIFY(object->setProperty("contentsMaxLength", 2100.0));
+    QVERIFY(object->setProperty("useSecondTask", true));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "apply"));
+    QCOMPARE(object->property("firstLength").toReal(), 352.0);
+    QCOMPARE(object->property("secondLength").toReal(), 148.0);
+    QCOMPARE(object->property("clockLength").toReal(), 100.0);
+    // If fixed widgets alone exhaust the dock, retain the minimum reachable task slots.
+    QVERIFY(object->setProperty("contentsMaxLength", 1500.0));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "apply"));
+    QCOMPARE(object->property("firstLength").toReal(), 222.0);
+    QCOMPARE(object->property("secondLength").toReal(), 148.0);
 }
 
 void QmlSmokeTest::initTestCase()

@@ -444,6 +444,8 @@ Item {
 
     function updateModernFillApplets() {
         var layoutList = [startLayout.grid, mainLayout.grid, endLayout.grid];
+        var scrollableTasks = [];
+        var remainingLength = Math.max(0, contentsMaxLength - sizeWithNoFillApplets);
 
         for (var layoutIndex = 0; layoutIndex < layoutList.length; ++layoutIndex) {
             var layout = layoutList[layoutIndex];
@@ -453,11 +455,34 @@ Item {
 
                 if (curApplet && curApplet.isAutoFillApplet && !curApplet.isHidden) {
                     var length = normalizedModernFillLength(curApplet);
+                    if (curApplet.indexerIsSupported && curApplet.applet
+                            && curApplet.applet.hasOwnProperty("scrollingEnabled")
+                            && curApplet.applet.scrollingEnabled) {
+                        scrollableTasks.push({item: curApplet, preferred: length});
+                        continue;
+                    }
                     curApplet.maxAutoFillLength = length;
                     curApplet.minAutoFillLength = length;
                     curApplet.inFillCalculations = false;
+                    remainingLength -= length;
                 }
             }
+        }
+
+        // Other widgets retain their native slots. Scrolling task content is
+        // larger than its viewport, so allocate only the remaining dock length;
+        // assigning its preferred (full-content) size would prevent overflow.
+        // Allocate shorter lists first so unused shares reach longer lists.
+        scrollableTasks.sort(function(a, b) { return a.preferred - b.preferred; });
+        for (var taskIndex = 0; taskIndex < scrollableTasks.length; ++taskIndex) {
+            var entry = scrollableTasks[taskIndex];
+            var minimum = Math.max(metrics.iconSize, entry.item.appletMinimumLength);
+            var share = Math.max(0, remainingLength) / (scrollableTasks.length - taskIndex);
+            var taskLength = Math.max(minimum, Math.min(entry.preferred, share));
+            entry.item.maxAutoFillLength = taskLength;
+            entry.item.minAutoFillLength = taskLength;
+            entry.item.inFillCalculations = false;
+            remainingLength -= taskLength;
         }
     }
 

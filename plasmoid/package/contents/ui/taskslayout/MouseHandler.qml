@@ -551,8 +551,13 @@ Item {
             return sa === 3 || sa === 4;
         }
 
-        enabled: canScroll
+        // TaskMouseArea owns manual overflow scrolling and its direction gate.
+        // This window-switching overlay must yield while that route is active,
+        // or it consumes every wheel event before a task can scroll the list.
+        enabled: canScroll && !(root.manualScrollTasksEnabled && scrollableList.contentsExceed)
 
-        onWheel: wheelDelta = TaskTools.wheelActivateNextPrevTask(wheelDelta, wheel.angleDelta.y);
+        onWheel: (wheel) => {
+            wheelDelta = TaskTools.wheelActivateNextPrevTask(wheelDelta, wheel.angleDelta.y);
+        }
     }
 }

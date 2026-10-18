@@ -1401,6 +1401,20 @@ ContainmentItem {
                 }
             }
 
+            // Rejecting the event cannot reach task MouseAreas through the
+            // Qt 6 DropArea. Explicitly ask the owning applet to scroll its
+            // viewport, after audio badges and before global window actions.
+            for (var ti = 0; ti < plasmoid.applets.length; ++ti) {
+                var tasksApplet = plasmoid.applets[ti];
+                if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
+                var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
+                if (tasksItem && tasksItem.scrollTaskViewport
+                        && tasksItem.scrollTaskViewport(wheel.x, wheel.y,
+                                                       wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
+                    return;
+                }
+            }
+
             if (root.scrollAction === LatteContainment.types.ScrollNone) {
                 root.emptyAreasWheel(wheel);
                 return;

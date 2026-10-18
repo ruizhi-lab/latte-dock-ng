@@ -8,6 +8,10 @@ import QtQuick
 import org.kde.plasma.core as PlasmaCore
 
 Item {
+    // MultiEffect samples maskSource directly as a texture. Without a layer,
+    // this composite of rectangles has no texture and overflowing tasks vanish
+    // as soon as hover zoom enables the scroll mask.
+    layer.enabled: true
 
     readonly property int gradientLength: appletAbilities.metrics.iconSize / 3
 

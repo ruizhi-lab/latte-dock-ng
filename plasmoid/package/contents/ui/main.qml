@@ -99,7 +99,12 @@ PlasmoidItem {
     property int internalWidthMargins: root.vertical ? appletAbilities.metrics.totals.thicknessEdges : appletAbilities.metrics.totals.lengthPaddings
     property int internalHeightMargins: !root.vertical ? appletAbilities.metrics.totals.thicknessEdges : appletAbilities.metrics.totals.lengthPaddings
 
-    readonly property int minimumLength: Math.round(taskLayoutLengthHint)
+    // A scrolling viewport must be allowed to become shorter than its content.
+    // Reserving every task as the minimum leaves no overflow to scroll; keep
+    // up to three icon slots reachable and let the containment assign the rest.
+    readonly property int minimumLength: Math.round(scrollingEnabled
+                                                   ? Math.min(taskLayoutLengthHint, 3 * appletAbilities.metrics.totals.length)
+                                                   : taskLayoutLengthHint)
 
     property real textColorBrightness: ColorizerTools.colorBrightness(themeTextColor)
 
@@ -767,6 +772,47 @@ PlasmoidItem {
         TaskTools.activateNextPrevTask(next);
     }
 
+    // Qt 6's outer containment wheel bridge sits above the task MouseAreas.
+    // Delegate viewport scrolling here before its window action: the task
+    // applet owns the saved axis policy, viewport bounds and scroll position.
+    function scrollTaskViewport(containmentX, containmentY, deltaX, deltaY, containmentItem) {
+        if (!root.manualScrollTasksEnabled || !scrollableList.contentsExceed
+                || root.inEditMode || root.inDraggingPhase
+                || !root.appletAbilities.myView.isShownFully) {
+            return false;
+        }
+
+        var pos = scrollableList.mapFromItem(containmentItem, containmentX, containmentY);
+        if (pos.x < 0 || pos.x > scrollableList.width || pos.y < 0 || pos.y > scrollableList.height) {
+            return false;
+        }
+
+        var verticalWheel = Math.abs(deltaY) >= Math.abs(deltaX);
+        if (root.manualScrollTasksType === LatteTasks.types.ManualScrollOnlyParallel
+                && verticalWheel !== root.vertical) {
+            return false;
+        }
+
+        // Consume events at the bounds and during throttling too; falling back
+        // there would unexpectedly activate/minimize a window while scrolling.
+        var delta = verticalWheel ? deltaY : deltaX;
+        if (!viewportWheelDelayer.running && Math.abs(delta) > 96) {
+            if (delta > 0) {
+                scrollableList.decreasePos();
+            } else {
+                scrollableList.increasePos();
+            }
+            viewportWheelDelayer.start();
+        }
+        return true;
+    }
+
+    Timer {
+        id: viewportWheelDelayer
+        interval: 400
+        repeat: false
+    }
+
     // Called from containment's wheel bridge with raw containment-local
     // coordinates and the containment root item.  Uses mapFromItem to
     // transform into plasmoid-local, then into badge-local for hit testing.
@@ -1165,6 +1211,31 @@ PlasmoidItem {
             border.color: "blue"
         } */
 
+        TasksLayout.ScrollEdgeHover {
+            // Share task and parabolic MouseAreas' ancestor without adding an
+            // input overlay. The detector handles Flickable's content parenting.
+            parent: scrollableList
+            viewport: scrollableList
+            enabled: root.autoScrollTasksEnabled && scrollableList.contentsExceed
+                     && root.appletAbilities.myView.isShownFully
+                     && !root.inEditMode
+                     && !root.appletAbilities.myView.inConfigureAppletsMode
+                     && !root.inDraggingPhase && !root.contextMenu
+            vertical: root.vertical
+            edgeLength: scrollableList.autoScrollTriggerLength
+            canScrollBackward: scrollableList.currentPos > scrollableList.scrollFirstPos
+            canScrollForward: scrollableList.currentPos < scrollableList.scrollLastPos
+            scrollingInProgress: !scrollableList.animationsFinished
+            onScrollRequested: (direction) => {
+                var step = root.appletAbilities.metrics.totals.length;
+                if (direction < 0) {
+                    scrollableList.decreasePosWithStep(step);
+                } else {
+                    scrollableList.increasePosWithStep(step);
+                }
+            }
+        }
+
         TasksLayout.ScrollableList {
             id: scrollableList
             width: !root.vertical ? length : thickness
@@ -1178,6 +1249,11 @@ PlasmoidItem {
             layer.effect: MultiEffect {
                 maskEnabled: true
                 maskSource: TasksLayout.ScrollOpacityMask{
+                    // Inline Item properties have no visual parent. Attach the
+                    // mask to this window so its layer can supply a texture,
+                    // but keep it out of the captured task content.
+                    parent: scrollableList
+                    visible: false
                     width: scrollableList.width
                     height: scrollableList.height
                 }

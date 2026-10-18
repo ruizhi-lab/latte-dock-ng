@@ -86,10 +86,11 @@ Item {
             return false;
         }
 
-        // In modern dock style, task applets must not keep panel-like fill slots.
-        // Otherwise, after Justify -> Center transitions they can remain visually
-        // left-aligned inside an oversized reserved width.
-        if (root.isModernDockStyle && indexerIsSupported) {
+        // Ordinary tasks keep content-sized slots after alignment changes.
+        // Scrolling tasks explicitly request a viewport instead; excluding them
+        // from fill allocation would keep every icon reserved beyond the screen.
+        if (root.isModernDockStyle && indexerIsSupported
+                && !(applet.hasOwnProperty("scrollingEnabled") && applet.scrollingEnabled)) {
             return false;
         }
 
