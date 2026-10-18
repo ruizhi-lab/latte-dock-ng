@@ -1326,6 +1326,7 @@ QmlSmokeTest::scrollingTasksCanRequestShorterViewports()
                                   QByteArrayLiteral(R"(
 import QtQuick
 Item {
+    id: root
     property bool scrollingEnabled: false
     property real taskLayoutLengthHint: 592
     property var appletAbilities: ({metrics: {totals: {length: 74}}})
@@ -1404,6 +1405,7 @@ QmlSmokeTest::scrollingTasksShareRemainingModernDockLength()
 import QtQuick
 Item {
     property var metrics: ({iconSize: 64})
+    property var metricsReference: ({iconSize: 64})
     property var root: ({isHorizontal: true})
     property real contentsMaxLength: 1920
     property real sizeWithNoFillApplets: 1500
