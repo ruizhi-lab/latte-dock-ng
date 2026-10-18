@@ -1412,9 +1412,10 @@ ContainmentItem {
                 var tasksApplet = plasmoid.applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
-                if (tasksItem && tasksItem.scrollTaskViewport
-                        && tasksItem.scrollTaskViewport(wheel.x, wheel.y,
-                                                       wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
+                var scrollTaskViewport = tasksItem ? tasksItem["scrollTaskViewport"] : null;
+                if (typeof scrollTaskViewport === "function"
+                        && scrollTaskViewport(wheel.x, wheel.y,
+                                              wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
                     return;
                 }
             }

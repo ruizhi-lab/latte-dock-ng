@@ -1,3 +1,14 @@
+## [v1.2.61] - 2026-10-18
+
+### Fixed
+- Keep task hover previews on the correct display before their first show.
+- Restore visible task hover effects and wheel/edge scrolling when the task list
+  overflows, including in modern docks.
+
+### Tests
+- Add regression coverage for preview output selection, overflowing task view
+  sizing, hover-edge scrolling, and wheel routing through the containment.
+
 ## [v1.2.59] - 2026-10-12
 
 ### Fixed

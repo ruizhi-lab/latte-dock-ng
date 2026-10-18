@@ -90,7 +90,7 @@ Item {
         // Scrolling tasks explicitly request a viewport instead; excluding them
         // from fill allocation would keep every icon reserved beyond the screen.
         if (root.isModernDockStyle && indexerIsSupported
-                && !(applet.hasOwnProperty("scrollingEnabled") && applet.scrollingEnabled)) {
+                && !(applet.hasOwnProperty("scrollingEnabled") && applet["scrollingEnabled"])) {
             return false;
         }
 
