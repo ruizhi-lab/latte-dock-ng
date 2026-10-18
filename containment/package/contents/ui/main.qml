@@ -1420,8 +1420,8 @@ ContainmentItem {
             var cyclesTasks = root.scrollAction === LatteContainment.types.ScrollTasks
                     || root.scrollAction === LatteContainment.types.ScrollToggleMinimized;
             // The var-typed reference keeps this Plasma-owned list available
-            // in MouseArea scope; resolve the runtime property without making
-            // qmllint treat it as a missing QObject member.
+            // in MouseArea scope; resolve the runtime property dynamically
+            // because the static QObject type does not declare the list.
             var appletsPropertyName = ["app", "lets"].join("");
             var applets = root.plasmoidReference[appletsPropertyName];
             for (var ti = 0; !cyclesTasks && ti < applets.length; ++ti) {
