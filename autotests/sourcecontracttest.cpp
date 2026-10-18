@@ -4083,6 +4083,20 @@ void SourceContractTest::isolatedWindowPreviewProcessIsFailClosed()
     QFile helper(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/preview/main.cpp"));
     QVERIFY(helper.open(QFile::ReadOnly));
     const QString helperSource = QString::fromUtf8(helper.readAll());
+    // First mapping must already carry the anchor's output and geometry.
+    // A visibility guard here silently postpones output selection until show().
+    const int placeStart = helperSource.indexOf(QStringLiteral("auto place = [&]() {"));
+    const int placeEnd = helperSource.indexOf(QStringLiteral("\n    };"), placeStart);
+    QVERIFY(placeStart >= 0 && placeEnd > placeStart);
+    const QString placement = helperSource.mid(placeStart, placeEnd - placeStart);
+    QVERIFY(!placement.contains(QStringLiteral("view.isVisible()")));
+    const int selectOutput = placement.indexOf(QStringLiteral("layer->setScreen(output)"));
+    const int readSize = placement.indexOf(QStringLiteral("const QSize size"));
+    QVERIFY(selectOutput >= 0 && readSize > selectOutput);
+    const int showWindow = helperSource.indexOf(QStringLiteral("view.show();"));
+    const int prepareWindow = helperSource.lastIndexOf(QStringLiteral("place();"), showWindow);
+    const int setAnchor = helperSource.lastIndexOf(QStringLiteral("anchor = QRect"), showWindow);
+    QVERIFY(setAnchor >= 0 && prepareWindow > setAnchor && showWindow > prepareWindow);
     QVERIFY(helperSource.contains(QStringLiteral("LayerShellQt::Window::get")));
     QVERIFY(helperSource.contains(QStringLiteral("setMargins")));
     QVERIFY(helperSource.contains(QStringLiteral("setDesiredSize")));

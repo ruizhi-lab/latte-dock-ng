@@ -169,12 +169,21 @@ int main(int argc, char **argv)
             {QStringLiteral("hovered"), view.hovered}});
     };
     auto place = [&]() {
-        if (!view.isVisible()) {
-            return;
-        }
         QScreen *output = QGuiApplication::screenAt(anchor.center());
         if (!output) {
             return;
+        }
+        // The icon anchor is authoritative for the output. Layer-shell selects
+        // its output when first mapped; setting it after show() leaves the first
+        // hover on the default monitor until the surface is hidden and remapped.
+        // Set it before reading QML's screen-dependent card size as well.
+        if (output != appliedOutput) {
+            appliedOutput = output;
+#ifdef LATTE_LAYERSHELL_HAS_SET_SCREEN
+            layer->setScreen(output);
+#else
+            view.setScreen(output);
+#endif
         }
         // The QML root owns the card geometry; read it directly so the layer
         // surface is sized before it is mapped.
@@ -193,14 +202,6 @@ int main(int argc, char **argv)
         const QRect bounds = output->geometry();
         pos.setX(qBound(bounds.left(), pos.x(), qMax(bounds.left(), bounds.right() - size.width() + 1)));
         pos.setY(qBound(bounds.top(), pos.y(), qMax(bounds.top(), bounds.bottom() - size.height() + 1)));
-        if (output != appliedOutput) {
-            appliedOutput = output;
-#ifdef LATTE_LAYERSHELL_HAS_SET_SCREEN
-            layer->setScreen(output);
-#else
-            view.setScreen(output);
-#endif
-        }
         if (size != appliedSize) {
             appliedSize = size;
 #ifdef LATTE_LAYERSHELL_HAS_DESIRED_SIZE
@@ -353,7 +354,9 @@ int main(int argc, char **argv)
     QTimer heartbeat;
     heartbeat.setInterval(250);
     QObject::connect(&heartbeat, &QTimer::timeout, &app, [&]() {
-        place();
+        if (view.isVisible()) {
+            place();
+        }
         report();
     });
     heartbeat.start();
