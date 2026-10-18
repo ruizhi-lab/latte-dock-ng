@@ -98,9 +98,13 @@ PY
 fi
 
 if [[ -f "$root/docs/qmllint-baseline.json" && -f "$evidence/current.json" ]]; then
-    python3 "$root/scripts/qmllint-baseline.py" compare \
+    if ! python3 "$root/scripts/qmllint-baseline.py" compare \
         --baseline "$root/docs/qmllint-baseline.json" --current "$evidence/current.json" \
-        --output "$evidence/comparison.json" >"$evidence/comparison.log" 2>&1 || failed=1
+        --output "$evidence/comparison.json" >"$evidence/comparison.log" 2>&1; then
+        failed=1
+        echo "qmllint-deep: baseline comparison details:" >&2
+        cat "$evidence/comparison.log" >&2
+    fi
 fi
 
 if [[ $failed -ne 0 ]]; then
