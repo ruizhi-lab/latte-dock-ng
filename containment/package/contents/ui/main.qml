@@ -699,10 +699,9 @@ ContainmentItem {
     }
 
     function configureAction() {
-        // Plasma adds this optional applet method dynamically; resolve it by
-        // runtime key and preserve the plasmoid as its call receiver.
-        var actionPropertyName = ["ac", "tion"].join("");
-        var appletAction = plasmoid[actionPropertyName];
+        // Plasma adds this optional applet method dynamically; preserve the
+        // plasmoid as its call receiver.
+        var appletAction = plasmoid.action;
         if (typeof appletAction === "function") {
             return appletAction.call(plasmoid, "configure");
         }
