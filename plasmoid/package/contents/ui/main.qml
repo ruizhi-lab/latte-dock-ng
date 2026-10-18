@@ -102,9 +102,9 @@ PlasmoidItem {
     // A scrolling viewport must be allowed to become shorter than its content.
     // Reserving every task as the minimum leaves no overflow to scroll; keep
     // up to three icon slots reachable and let the containment assign the rest.
-    readonly property int minimumLength: Math.round(scrollingEnabled
-                                                   ? Math.min(taskLayoutLengthHint, 3 * appletAbilities.metrics.totals.length)
-                                                   : taskLayoutLengthHint)
+    readonly property int minimumLength: Math.round(root.scrollingEnabled
+                                                   ? Math.min(root.taskLayoutLengthHint, 3 * root.appletAbilities.metrics.totals.length)
+                                                   : root.taskLayoutLengthHint)
 
     property real textColorBrightness: ColorizerTools.colorBrightness(themeTextColor)
 
@@ -1492,7 +1492,7 @@ PlasmoidItem {
 
         onTriggered: {
             root.pendingTaskLayoutRefreshPass = root.pendingTaskLayoutRefreshPass + 1;
-            refreshTaskLayoutPass(root.pendingTaskLayoutRefreshReason, root.pendingTaskLayoutRefreshPass);
+            root.refreshTaskLayoutPass(root.pendingTaskLayoutRefreshReason, root.pendingTaskLayoutRefreshPass);
 
             if (root.pendingTaskLayoutRefreshPass >= 8) {
                 stop();

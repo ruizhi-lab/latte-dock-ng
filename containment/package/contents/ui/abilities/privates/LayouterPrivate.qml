@@ -12,6 +12,7 @@ Item {
     property Item layouts: null
     property Item animations: null
     property Item indexer: null
+    property var metricsReference: null
 
     readonly property int fillApplets: startLayout.fillApplets + mainLayout.fillApplets + endLayout.fillApplets
     readonly property int shownApplets: startLayout.shownApplets + mainLayout.shownApplets + endLayout.shownApplets
@@ -476,7 +477,7 @@ Item {
         scrollableTasks.sort(function(a, b) { return a.preferred - b.preferred; });
         for (var taskIndex = 0; taskIndex < scrollableTasks.length; ++taskIndex) {
             var entry = scrollableTasks[taskIndex];
-            var minimum = Math.max(metrics.iconSize, entry.item.appletMinimumLength);
+            var minimum = Math.max(metricsReference.iconSize, entry.item.appletMinimumLength);
             var share = Math.max(0, remainingLength) / (scrollableTasks.length - taskIndex);
             var taskLength = Math.max(minimum, Math.min(entry.preferred, share));
             entry.item.maxAutoFillLength = taskLength;

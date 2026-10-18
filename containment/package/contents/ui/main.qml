@@ -1699,6 +1699,7 @@ ContainmentItem {
         animations: _animations
         indexer: _indexer
         layouts: layoutsContainer
+        metricsReference: root.metricsReference
     }
 
     Ability.Metrics {
