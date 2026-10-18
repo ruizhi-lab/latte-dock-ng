@@ -66,8 +66,9 @@ class QmlSmokeTest : public QObject
 
 private Q_SLOTS:
     void initTestCase();
-    void containerWheelYieldsToTaskOverflowScrolling();
+    void containerWheelPreservesTaskCyclingWithOverflow();
     void containmentWheelScrollsTaskViewport();
+    void activeTaskScrollsIntoView();
     void edgeHoverScrollsWithStationaryPointer_data();
     void edgeHoverScrollsWithStationaryPointer();
     void scrollingTasksCanRequestShorterViewports();
@@ -897,6 +898,79 @@ Item {}
 }
 
 void
+QmlSmokeTest::activeTaskScrollsIntoView()
+{
+    QFile viewportFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/ScrollableList.qml"));
+    QFile delegateFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/TaskItem.qml"));
+    QVERIFY(viewportFile.open(QFile::ReadOnly));
+    QVERIFY(delegateFile.open(QFile::ReadOnly));
+    const QString viewport = QString::fromUtf8(viewportFile.readAll());
+    const QString delegate = QString::fromUtf8(delegateFile.readAll());
+    const int functionsStart = viewport.indexOf(QStringLiteral("    function increasePosWithStep("));
+    const int functionsEnd = viewport.indexOf(QStringLiteral("    function autoScrollFor("), functionsStart);
+    const int handlerStart = delegate.indexOf(QStringLiteral("    onIsActiveChanged: {"));
+    const int handlerEnd = delegate.indexOf(QStringLiteral("    onIsSeparatorChanged:"), handlerStart);
+    QVERIFY(functionsStart >= 0 && functionsEnd > functionsStart);
+    QVERIFY(handlerStart >= 0 && handlerEnd > handlerStart);
+    QQmlEngine engine;
+    QQmlComponent component(&engine);
+    const QByteArray harness = QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: root
+    property bool vertical: false
+    property var appletAbilities: ({metrics: {iconSize: 40}})
+    property alias viewport: scrollableList
+    property alias task: taskItem
+    Flickable {
+        id: scrollableList
+        width: 160; height: 160
+        contentWidth: 800; contentHeight: 800
+        property bool contentsExceed: true
+        property real scrollFirstPos: 0
+        property real scrollLastPos: 640
+)") + viewport.mid(functionsStart, functionsEnd - functionsStart).toUtf8() +
+                               QByteArrayLiteral(R"(
+        Item {
+            id: taskItem
+            x: 600; y: 600; width: 40; height: 40
+            property bool isActive: false
+            function checkWindowsStates() {}
+)") + delegate.mid(handlerStart, handlerEnd - handlerStart).toUtf8() +
+                               QByteArrayLiteral("\n}\n}\n}");
+    component.setData(harness, QUrl(QStringLiteral("qrc:/active-task-scroll.qml")));
+    std::unique_ptr<QObject> object(component.create());
+    QVERIFY2(object, qPrintable(component.errorString()));
+    QObject *list = qvariant_cast<QObject *>(object->property("viewport"));
+    QObject *task = qvariant_cast<QObject *>(object->property("task"));
+    QVERIFY(list && task);
+    for (bool vertical : { false, true }) {
+        QVERIFY(object->setProperty("vertical", vertical));
+        const char *offset = vertical ? "contentY" : "contentX";
+        const char *coordinate = vertical ? "y" : "x";
+        QVERIFY(list->setProperty(offset, 0));
+        QVERIFY(task->setProperty(coordinate, 600));
+        QVERIFY(task->setProperty("isActive", true));
+        QCOMPARE(list->property(offset).toInt(), 520);
+        // Visible tasks do not move the list, while wrapping to its start does.
+        QVERIFY(task->setProperty("isActive", false));
+        QVERIFY(task->setProperty("isActive", true));
+        QCOMPARE(list->property(offset).toInt(), 520);
+        QVERIFY(task->setProperty("isActive", false));
+        QVERIFY(task->setProperty(coordinate, 0));
+        QVERIFY(task->setProperty("isActive", true));
+        QCOMPARE(list->property(offset).toInt(), 0);
+        QVERIFY(task->setProperty("isActive", false));
+        QVERIFY(list->setProperty("contentsExceed", false));
+        QVERIFY(task->setProperty(coordinate, 600));
+        QVERIFY(task->setProperty("isActive", true));
+        QCOMPARE(list->property(offset).toInt(), 0);
+        QVERIFY(task->setProperty("isActive", false));
+        QVERIFY(list->setProperty("contentsExceed", true));
+    }
+}
+
+void
 QmlSmokeTest::containmentWheelScrollsTaskViewport()
 {
     QFile containment(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
@@ -912,11 +986,9 @@ QmlSmokeTest::containmentWheelScrollsTaskViewport()
     QVERIFY(bridgeStart >= 0 && bridgeEnd > bridgeStart);
     QVERIFY(helperStart >= 0 && helperEnd > helperStart);
     QQuickView view;
-    const QVariantMap types{ { QStringLiteral("ScrollNone"), 0 },
-                             { QStringLiteral("ScrollDesktops"), 1 },
-                             { QStringLiteral("ScrollActivities"), 2 },
-                             { QStringLiteral("ScrollToggleMinimized"), 4 },
-                             { QStringLiteral("ManualScrollOnlyParallel"), 1 } };
+    const QVariantMap types{ { QStringLiteral("ScrollNone"), 0 },       { QStringLiteral("ScrollDesktops"), 1 },
+                             { QStringLiteral("ScrollActivities"), 2 }, { QStringLiteral("ScrollToggleMinimized"), 4 },
+                             { QStringLiteral("ScrollTasks"), 3 },      { QStringLiteral("ManualScrollOnlyParallel"), 1 } };
     const QVariantMap module{ { QStringLiteral("types"), types } };
     view.rootContext()->setContextProperty(QStringLiteral("LatteContainment"), module);
     view.rootContext()->setContextProperty(QStringLiteral("LatteTasks"), module);
@@ -930,11 +1002,24 @@ Item {
     property bool inEditMode: false
     property bool inDraggingPhase: false
     property bool vertical: false
-    property bool manualScrollTasksEnabled: true
+    property bool scrollingEnabled: true
+    property bool overflow: true
+    readonly property bool manualScrollTasksEnabled: scrollingEnabled && manualScrollTasksType !== 0
     property int manualScrollTasksType: 2
-    property int scrollAction: 3
+    property int scrollAction: 0
     property int windowActions: 0
     property bool audioHandled: false
+    property int minimized: 0
+    property int maximized: 0
+    property var latteView: ({windowsTracker: {allScreens: {lastActiveWindow: activeWindow}}})
+    QtObject {
+        id: activeWindow
+        property bool isValid: true
+        property bool isMinimized: false
+        property bool isMaximized: false
+        function requestToggleMinimized() { root.minimized++; }
+        function requestToggleMaximized() { root.maximized++; }
+    }
     property var appletAbilities: ({myView: {isShownFully: true}})
     property var plasmoid: ({applets: [{pluginName: "org.kde.latte.plasmoid"}]})
     property var fastLayoutManager: ({resolveAppletQuickItem: function(applet) { return root; }})
@@ -948,7 +1033,7 @@ Item {
         x: 40; y: 40; width: 160; height: 160
         contentWidth: 800; contentHeight: 160
         interactive: false
-        readonly property bool contentsExceed: true
+        readonly property bool contentsExceed: root.scrollingEnabled && root.overflow
         function decreasePos() { contentX = Math.max(0, contentX - 80); }
         function increasePos() { contentX = Math.min(640, contentX + 80); }
     }
@@ -961,9 +1046,9 @@ Item {
     view.setContent(url, &component, object);
     view.show();
     QVERIFY(QTest::qWaitForWindowExposed(&view));
-    auto sendWheel = [&](QPoint delta) {
+    auto sendWheel = [&](QPoint delta, Qt::KeyboardModifiers modifiers = Qt::NoModifier) {
         const QPoint position(120, 120);
-        QWheelEvent wheel(QPointF(position), QPointF(view.mapToGlobal(position)), QPoint(), delta, Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+        QWheelEvent wheel(QPointF(position), QPointF(view.mapToGlobal(position)), QPoint(), delta, Qt::NoButton, modifiers, Qt::NoScrollPhase, false);
         QCoreApplication::sendEvent(&view, &wheel);
     };
     sendWheel(QPoint(0, -120));
@@ -985,13 +1070,54 @@ Item {
     QTest::qWait(420);
     sendWheel(QPoint(-120, 0));
     QCOMPARE(object->property("position").toInt(), 80);
-    QVERIFY(object->setProperty("manualScrollTasksEnabled", false));
+    QTest::qWait(420);
+    QVERIFY(object->setProperty("scrollAction", 3));
     sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("position").toInt(), 80);
     QCOMPARE(object->property("windowActions").toInt(), 2);
+    QTest::qWait(220);
+    QVERIFY(object->setProperty("scrollAction", 4));
+    sendWheel(QPoint(0, 120));
+    QCOMPARE(object->property("position").toInt(), 80);
+    QCOMPARE(object->property("windowActions").toInt(), 3);
+    QTest::qWait(220);
+    QVERIFY(object->setProperty("scrollAction", 0));
+    QVERIFY(object->setProperty("manualScrollTasksType", 0));
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("windowActions").toInt(), 4);
+
+    // Explicit cycling must survive every overflow/manual-scroll combination.
+    // Downward toggle-minimize and Ctrl+wheel keep their existing semantics.
+    for (int action : { 3, 4 }) {
+        QVERIFY(object->setProperty("scrollAction", action));
+        for (bool scrolling : { false, true }) {
+            QVERIFY(object->setProperty("scrollingEnabled", scrolling));
+            for (bool overflow : { false, true }) {
+                QVERIFY(object->setProperty("overflow", overflow));
+                for (int manual : { 0, 1, 2 }) {
+                    QVERIFY(object->setProperty("manualScrollTasksType", manual));
+                    QTest::qWait(220);
+                    const int before = object->property(action == 3 ? "windowActions" : "minimized").toInt();
+                    sendWheel(QPoint(0, -120));
+                    QCOMPARE(object->property(action == 3 ? "windowActions" : "minimized").toInt(), before + 1);
+                    QCOMPARE(object->property("position").toInt(), 80);
+                }
+            }
+        }
+    }
+    QTest::qWait(220);
+    sendWheel(QPoint(0, 120), Qt::ControlModifier);
+    QCOMPARE(object->property("maximized").toInt(), 1);
+    QCOMPARE(object->property("position").toInt(), 80);
+    QTest::qWait(220);
+    const int beforeAudio = object->property("minimized").toInt();
+    QVERIFY(object->setProperty("audioHandled", true));
+    sendWheel(QPoint(0, -120));
+    QCOMPARE(object->property("minimized").toInt(), beforeAudio);
 }
 
 void
-QmlSmokeTest::containerWheelYieldsToTaskOverflowScrolling()
+QmlSmokeTest::containerWheelPreservesTaskCyclingWithOverflow()
 {
     QFile file(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/MouseHandler.qml"));
     QVERIFY(file.open(QFile::ReadOnly));
@@ -1035,22 +1161,22 @@ Item {
         QCoreApplication::sendEvent(&view, &wheel);
     };
     sendWheel();
-    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
-    QCOMPARE(object->property("containerDelta").toInt(), 0);
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 0);
+    QCOMPARE(object->property("containerDelta").toInt(), 12345);
     // Without manual overflow scrolling, preserve the global window action.
     QVERIFY(object->setProperty("manualScrollTasksEnabled", false));
     sendWheel();
-    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 0);
     QCOMPARE(object->property("containerDelta").toInt(), 12345);
     QVERIFY(object->setProperty("containerDelta", 0));
     QVERIFY(object->setProperty("manualScrollTasksEnabled", true));
     QVERIFY(object->setProperty("overflow", false));
     sendWheel();
-    QCOMPARE(object->property("receivedTaskWheels").toInt(), 1);
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 0);
     QCOMPARE(object->property("containerDelta").toInt(), 12345);
     QVERIFY(object->setProperty("overflow", true));
     sendWheel();
-    QCOMPARE(object->property("receivedTaskWheels").toInt(), 2);
+    QCOMPARE(object->property("receivedTaskWheels").toInt(), 0);
 }
 
 void

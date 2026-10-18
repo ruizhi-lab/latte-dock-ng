@@ -2465,7 +2465,8 @@ void SourceContractTest::scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizin
     QVERIFY(downMinimize > downBlock);
 }
 
-void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize()
+void
+SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize()
 {
     // The ScrollToggleMinimized handlers in both main.qml and
     // EnvironmentActions.qml must target the allScreens (global)
@@ -2474,7 +2475,7 @@ void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAn
     // minimize/maximize windows because their per-screen tracker
     // has never been populated (commit b4bd3a3e6 → f4ab344ee).
 
-    auto checkFileUsesAllScreens = [](const QString & filePath) {
+    auto checkFileUsesAllScreens = [](const QString &filePath) {
         QFile f(filePath);
         QVERIFY2(f.open(QFile::ReadOnly), qPrintable(filePath));
         const QString src = QString::fromUtf8(f.readAll());
@@ -2484,9 +2485,12 @@ void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAn
         // Both ScrollToggleMinimized branches (upward Ctrl and
         // downward) should access allScreens.lastActiveWindow for
         // the minimize / maximize-toggle actions.
-        const int first = src.indexOf(QStringLiteral("ScrollToggleMinimized"));
-        const int second = src.indexOf(QStringLiteral("ScrollToggleMinimized"),
-                                       first + QStringLiteral("ScrollToggleMinimized").length());
+        // Match action branches, not references in the preceding routing policy.
+        const QString branch = QStringLiteral("else if (root.scrollAction === LatteContainment.types.ScrollToggleMinimized)");
+        const int first = src.indexOf(branch);
+        const int second = src.indexOf(branch, first + branch.length());
+        QVERIFY(first >= 0);
+        QVERIFY(second > first);
 
         // At least one allScreens.lastActiveWindow access must appear
         // within each ScrollToggleMinimized block.
@@ -2498,10 +2502,8 @@ void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAn
         QVERIFY(downAllScreens > second);
     };
 
-    checkFileUsesAllScreens(
-        QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
-    checkFileUsesAllScreens(
-        QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
+    checkFileUsesAllScreens(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    checkFileUsesAllScreens(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
 }
 
 void

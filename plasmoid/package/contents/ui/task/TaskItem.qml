@@ -477,6 +477,10 @@ AbilityItem.BasicItem {
     onIsActiveChanged: {
         checkWindowsStates();
         if (isActive) {
+            // The model's confirmed active state is authoritative after wheel
+            // cycling or minimization changes focus asynchronously. Reveal it
+            // independently of manual/edge scrolling settings; focusOn gates
+            // this on the scrolling master switch and actual overflow.
             scrollableList.focusOn(taskItem);
         }
     }

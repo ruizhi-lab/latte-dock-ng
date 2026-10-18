@@ -1403,8 +1403,12 @@ ContainmentItem {
 
             // Rejecting the event cannot reach task MouseAreas through the
             // Qt 6 DropArea. Explicitly ask the owning applet to scroll its
-            // viewport, after audio badges and before global window actions.
-            for (var ti = 0; ti < plasmoid.applets.length; ++ti) {
+            // viewport unless the user selected task cycling. Those actions
+            // keep their wheel semantics even with overflow; TaskItem's active
+            // state notification reveals the selected task through focusOn().
+            var cyclesTasks = root.scrollAction === LatteContainment.types.ScrollTasks
+                    || root.scrollAction === LatteContainment.types.ScrollToggleMinimized;
+            for (var ti = 0; !cyclesTasks && ti < plasmoid.applets.length; ++ti) {
                 var tasksApplet = plasmoid.applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
