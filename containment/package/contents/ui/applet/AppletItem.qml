@@ -90,7 +90,7 @@ Item {
         // Scrolling tasks explicitly request a viewport instead; excluding them
         // from fill allocation would keep every icon reserved beyond the screen.
         if (root.isModernDockStyle && indexerIsSupported
-                && !(applet.hasOwnProperty("scrollingEnabled") && applet["scrollingEnabled"])) {
+                && !appletRequestsScrollingViewport(applet)) {
             return false;
         }
 
@@ -100,6 +100,15 @@ Item {
         }
 
         return false;
+    }
+
+    function appletRequestsScrollingViewport(appletObject) {
+        // Scrolling is an optional Tasks-plasmoid property; read it through the
+        // var-typed reference so qmllint does not treat it as a missing member
+        // on Plasma's QQuickItem wrapper.
+        var propertyName = "scrollingEnabled";
+        return appletObject && appletObject.hasOwnProperty(propertyName)
+                && appletObject[propertyName];
     }
 
     property int maxAutoFillLength: -1 //it is used in calculations for fillWidth,fillHeight applets

@@ -1343,6 +1343,14 @@ ContainmentItem {
             layoutsContainer.activateWheelTask(next);
         }
 
+        function taskViewportScrollMethod(taskItem) {
+            // The runtime Tasks method is optional and exposed here as QObject.
+            // Resolve it dynamically for qmllint, then call it with its applet
+            // receiver so the QML method keeps its expected context.
+            var methodName = "scrollTaskViewport";
+            return taskItem ? taskItem[methodName] : null;
+        }
+
         Timer {
             id: rootWheelDelayer
             interval: 200
@@ -1412,10 +1420,10 @@ ContainmentItem {
                 var tasksApplet = plasmoid.applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
-                var scrollTaskViewport = tasksItem ? tasksItem["scrollTaskViewport"] : null;
+                var scrollTaskViewport = taskViewportScrollMethod(tasksItem);
                 if (typeof scrollTaskViewport === "function"
-                        && scrollTaskViewport(wheel.x, wheel.y,
-                                              wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
+                        && scrollTaskViewport.call(tasksItem, wheel.x, wheel.y,
+                                                   wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
                     return;
                 }
             }
