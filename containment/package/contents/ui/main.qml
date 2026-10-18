@@ -1416,8 +1416,8 @@ ContainmentItem {
             // state notification reveals the selected task through focusOn().
             var cyclesTasks = root.scrollAction === LatteContainment.types.ScrollTasks
                     || root.scrollAction === LatteContainment.types.ScrollToggleMinimized;
-            for (var ti = 0; !cyclesTasks && ti < root.plasmoid.applets.length; ++ti) {
-                var tasksApplet = root.plasmoid.applets[ti];
+            for (var ti = 0; !cyclesTasks && ti < root.plasmoidReference.applets.length; ++ti) {
+                var tasksApplet = root.plasmoidReference.applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
                 var scrollTaskViewport = taskViewportScrollMethod(tasksItem);

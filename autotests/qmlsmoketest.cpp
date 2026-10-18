@@ -1022,6 +1022,7 @@ Item {
     }
     property var appletAbilities: ({myView: {isShownFully: true}})
     property var plasmoid: ({applets: [{pluginName: "org.kde.latte.plasmoid"}]})
+    property var plasmoidReference: plasmoid
     property var fastLayoutManager: ({resolveAppletQuickItem: function(applet) { return root; }})
     property alias position: scrollableList.contentX
     function activateWheelTask(next) { windowActions++; }
