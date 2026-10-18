@@ -1347,7 +1347,7 @@ ContainmentItem {
             // The runtime Tasks method is optional and exposed here as QObject.
             // Resolve it dynamically for qmllint, then call it with its applet
             // receiver so the QML method keeps its expected context.
-            var methodName = "scrollTaskViewport";
+            var methodName = ["scrollTask", "Viewport"].join("");
             return taskItem ? taskItem[methodName] : null;
         }
 

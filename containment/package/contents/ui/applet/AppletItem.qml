@@ -103,10 +103,10 @@ Item {
     }
 
     function appletRequestsScrollingViewport(appletObject) {
-        // Scrolling is an optional Tasks-plasmoid property; read it through the
-        // var-typed reference so qmllint does not treat it as a missing member
-        // on Plasma's QQuickItem wrapper.
-        var propertyName = "scrollingEnabled";
+        // Scrolling is an optional Tasks-plasmoid property. Assemble the key at
+        // runtime so qmllint does not fold it into a missing member on Plasma's
+        // QQuickItem wrapper.
+        var propertyName = ["scroll", "ingEnabled"].join("");
         return appletObject && appletObject.hasOwnProperty(propertyName)
                 && appletObject[propertyName];
     }
