@@ -36,6 +36,9 @@ class ReleaseVersionTest(unittest.TestCase):
         self.assertIn("QStringLiteral(VERSION)", about)
         self.assertIn("KAboutData::setApplicationData(about)", about)
         self.assertLess(main.index("    configureAboutData();"), main.index("    parser.addVersionOption();"))
+        # --version must not need a Wayland session; packaging probes run headless.
+        self.assertLess(main.index('earlyArguments.contains(QStringLiteral("--version"))'),
+                        main.index("Latte-Dock Wayland-only build requires a Wayland Plasma session."))
         workflow = (root / ".github/workflows/build.yml").read_text()
         self.assertIn("timeout 15s /usr/bin/latte-dock-ng --version", workflow)
         self.assertIn('test "${reported_version##* }" = "$VERSION"', workflow)

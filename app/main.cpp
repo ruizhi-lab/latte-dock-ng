@@ -21,6 +21,7 @@
 
 // C
 #include <csignal>
+#include <cstdio>
 
 // POSIX
 #include <fcntl.h>
@@ -118,6 +119,19 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     applyUserLocalPluginPaths();
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
+
+    // Packaging probes and headless CI need --version before a compositor
+    // exists. Keep this before the Wayland retry loop; otherwise --version
+    // exits with the "requires a Wayland Plasma session" error.
+    const QStringList earlyArguments = QCoreApplication::arguments();
+    if (earlyArguments.contains(QStringLiteral("--version")) || earlyArguments.contains(QStringLiteral("-v"))) {
+        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+        configureAboutData();
+        std::printf("%s %s\n",
+                    qPrintable(KAboutData::applicationData().componentName()),
+                    qPrintable(KAboutData::applicationData().version()));
+        return 0;
+    }
 
     if (qEnvironmentVariableIntValue("LATTE_PRIVATE_APP_HOST_SMOKE") == 1) {
         KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
