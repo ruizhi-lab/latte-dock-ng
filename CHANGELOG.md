@@ -1,3 +1,25 @@
+## [v1.2.62] - 2026-10-21
+
+### Added
+- Add an offline user guide under Configure Latte → Help, with a left-hand
+  table of contents, a language selector covering every KDE UI language, and
+  complete English, Simplified Chinese and Traditional Chinese pages. Other
+  UI languages open the explicitly marked English fallback.
+- Document dock settings, layout and screen dialogs, copy/clone behavior and
+  Advanced-mode visibility, and add handbook, help-menu and language coverage
+  tests.
+- Add a release gate requiring help documentation review before publication.
+
+### Fixed
+- Preserve applet configuration, locked-zoom and icon-color preferences when
+  docks and clones are restored. Changes that arrive before a clone's applet
+  configuration map is ready are now replayed instead of being lost.
+
+### Tests
+- Add handbook lookup, document structure, language fallback and help-menu QML
+  tests.
+- Cover clone applet-preference restoration and partial-discovery behavior.
+
 ## [v1.2.61] - 2026-10-18
 
 ### Fixed

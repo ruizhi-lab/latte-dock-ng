@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG User Guide</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG User Guide</h1><p>These instructions describe the current options. Advanced mode, dock style and installed plugins can change which controls are visible. Options marked Advanced are hidden in the basic editor.</p><div class="language-menu"><label for="language-select">Language</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html" selected>English</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option><option data-lang="ar" data-href="../en/index.html">العربية — English</option><option data-lang="az" data-href="../en/index.html">Azərbaycan dili — English</option><option data-lang="ca" data-href="../en/index.html">Català — English</option><option data-lang="ca@valencia" data-href="../en/index.html">Valencià — English</option><option data-lang="cs" data-href="../en/index.html">Čeština — English</option><option data-lang="da" data-href="../en/index.html">Dansk — English</option><option data-lang="de" data-href="../en/index.html">Deutsch — English</option><option data-lang="el" data-href="../en/index.html">Ελληνικά — English</option><option data-lang="en_GB" data-href="../en/index.html">English (United Kingdom) — English</option><option data-lang="eo" data-href="../en/index.html">Esperanto — English</option><option data-lang="es" data-href="../en/index.html">Español — English</option><option data-lang="et" data-href="../en/index.html">Eesti — English</option><option data-lang="eu" data-href="../en/index.html">Euskara — English</option><option data-lang="fi" data-href="../en/index.html">Suomi — English</option><option data-lang="fr" data-href="../en/index.html">Français — English</option><option data-lang="ga" data-href="../en/index.html">Gaeilge — English</option><option data-lang="gl" data-href="../en/index.html">Galego — English</option><option data-lang="he" data-href="../en/index.html">עברית — English</option><option data-lang="hsb" data-href="../en/index.html">Hornjoserbsce — English</option><option data-lang="ia" data-href="../en/index.html">Interlingua — English</option><option data-lang="id" data-href="../en/index.html">Bahasa Indonesia — English</option><option data-lang="it" data-href="../en/index.html">Italiano — English</option><option data-lang="ja" data-href="../en/index.html">日本語 — English</option><option data-lang="ka" data-href="../en/index.html">ქართული — English</option><option data-lang="ko" data-href="../en/index.html">한국어 — English</option><option data-lang="lt" data-href="../en/index.html">Lietuvių — English</option><option data-lang="nl" data-href="../en/index.html">Nederlands — English</option><option data-lang="nn" data-href="../en/index.html">Norsk Nynorsk — English</option><option data-lang="pl" data-href="../en/index.html">Polski — English</option><option data-lang="pt" data-href="../en/index.html">Português — English</option><option data-lang="pt_BR" data-href="../en/index.html">Português (Brasil) — English</option><option data-lang="ro" data-href="../en/index.html">Română — English</option><option data-lang="ru" data-href="../en/index.html">Русский — English</option><option data-lang="sk" data-href="../en/index.html">Slovenčina — English</option><option data-lang="sl" data-href="../en/index.html">Slovenščina — English</option><option data-lang="sv" data-href="../en/index.html">Svenska — English</option><option data-lang="tr" data-href="../en/index.html">Türkçe — English</option><option data-lang="uk" data-href="../en/index.html">Українська — English</option></select><small class="language-note">Languages marked English open the English guide.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>On this page</h2><a class="chapter" href="#edit-dock">Edit Dock</a><a class="subsection" href="#behavior">Behavior</a><a class="subsection" href="#appearance">Appearance</a><a class="subsection" href="#effects">Effects</a><a class="subsection" href="#tasks">Tasks</a><a class="chapter" href="#configure-latte">Configure Latte</a><a class="subsection" href="#layouts">Layouts Editor</a><a class="subsection" href="#layout-details">Layout Details</a><a class="subsection" href="#docks-dialog">Docks Dialog</a><a class="subsection" href="#screens-dialog">Screens Dialog</a><a class="subsection" href="#preferences">Preferences</a><a class="subsection" href="#context-menu-actions">Context Menu Actions</a><a class="chapter" href="#copies-and-clones">Independent Copies and Clones</a><a class="subsection" href="#create-independent-copy">Create an independent copy</a><a class="subsection" href="#create-clone">Create clones</a><a class="subsection" href="#differences">Differences at a glance</a></nav></aside><main>
+<section id="edit-dock"><h2>Edit Dock</h2><p class="note">Changes take effect immediately. Close hides the editor; it does not undo changes. Pin keeps the editor open. Add… → Duplicate Dock creates an independent copy of an original dock; Remove removes the current dock.</p>
+<p class="note">Advanced mode reveals more controls. Options marked Advanced are hidden in the basic editor.</p>
+<h3 id="behavior">Behavior</h3>
+<p class="note">Visibility, delay, actions, item behavior, floating gap and environment options for this dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibility</td></tr>
+<tr><td>Screen / Location</td><td>Choose the screen and edge for this dock. With multiple screens, On All Screens and On All Secondary Screens create linked clones. See Independent Copies and Clones.</td></tr>
+<tr><td>Alignment</td><td>Position the dock along the screen edge. Items alignment controls where widgets sit inside the dock.</td></tr>
+<tr><td>Always Visible</td><td>Keep the dock visible and reserve desktop space where the window manager supports it.</td></tr>
+<tr><td>Auto Hide</td><td>Hide the dock until the pointer reaches its activation area.</td></tr>
+<tr><td>Dodge Active</td><td>Hide when the active window touches the dock area, and show the dock when the pointer enters.</td></tr>
+<tr><td>Dodge Maximized</td><td>Hide only when a maximized window is active on this screen, and show the dock when the pointer enters.</td></tr>
+<tr><td>Dodge All Windows</td><td>Hide when any window touches the dock area, and show the dock when the pointer enters.</td></tr>
+<tr><td>Windows Go Below</td><td>Keep the dock above windows; windows can be placed below it.</td></tr>
+<tr><td>Windows Can Cover</td><td>Let windows cover the dock. The dock comes forward when the pointer reaches its screen edge.</td></tr>
+<tr><td>Windows Always Cover</td><td>Keep windows above the dock at all times; the dock stays behind them.</td></tr>
+<tr class="group"><td colspan="2">Delay</td></tr>
+<tr><td>Delay / Show / Hide</td><td>Set how long to wait before showing or hiding, in milliseconds. Longer delays reduce accidental activation.</td></tr>
+<tr class="group"><td colspan="2">Actions</td></tr>
+<tr><td>Track <span class="advanced">Advanced</span></td><td>Choose which active window empty-area actions follow: Active Window From Current Screen or Active Window From All Screens.</td></tr>
+<tr><td>Left Button / Drag Active Window <span class="advanced">Advanced</span></td><td>Enable dragging from empty dock space to move or maximize/restore the tracked active window.</td></tr>
+<tr><td>Middle Button / Close Active Window <span class="advanced">Advanced</span></td><td>Enable middle-clicking empty dock space to close the tracked active window.</td></tr>
+<tr><td>Mouse wheel <span class="advanced">Advanced</span></td><td>Choose what the wheel does over empty dock space: No Action, Cycle Through Desktops, Cycle Through Activities, Cycle Through Tasks, or Cycle And Minimize Tasks.</td></tr>
+<tr class="group"><td colspan="2">Items</td></tr>
+<tr><td>Thin title tooltips on hovering</td><td>Show compact widget title tooltips. Task window previews are controlled separately by the task Hover action.</td></tr>
+<tr><td>Zoom widgets on hovering</td><td>Allow widgets to zoom with the dock. Disable this to keep widget icons sharp; task icons and launchers still zoom.</td></tr>
+<tr><td>Expand popup through mouse wheel</td><td>Scroll over a supported widget to show or hide its popup.</td></tr>
+<tr><td>Adjust size automatically when needed</td><td>Shrink items when they exceed the available length and grow them again when they fit.</td></tr>
+<tr><td>Activate based on position global shortcuts</td><td>Allow position-based global shortcuts to activate this dock’s items. Only one dock per layout should use this.</td></tr>
+<tr class="group"><td colspan="2">Floating</td></tr>
+<tr><td>Always use floating gap for user interaction <span class="advanced">Advanced</span></td><td>Include the floating gap in the area used for widget and window interaction.</td></tr>
+<tr><td>Hide floating gap for maximized windows <span class="advanced">Advanced</span></td><td>Remove the floating gap when a maximized window needs the screen edge.</td></tr>
+<tr><td>Delay floating gap hiding until mouse leaves <span class="advanced">Advanced</span></td><td>Wait until the pointer leaves before hiding the gap, to avoid accidental clicks on nearby items.</td></tr>
+<tr><td>Mirror floating gap when it is shown <span class="advanced">Advanced</span></td><td>In Always Visible mode, mirror the gap on the opposite side of the dock.</td></tr>
+<tr class="group"><td colspan="2">Environment</td></tr>
+<tr><td>Raise on desktop change <span class="advanced">Advanced</span></td><td>Temporarily reveal the dock when the virtual desktop changes. This is not used by Always Visible or Windows Go Below.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Appearance</h3>
+<p class="note">Margins, Colors, Radius/Shadow, Dynamic Length Adjustments, Dynamic Visibility and Exceptions require Advanced mode.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Items</td></tr>
+<tr><td>Dock Style</td><td>Choose Classic or Modern. Changing the style applies that style’s preset and may adjust panel size, zoom, icon size, floating gap and indicator style. Review the other appearance options after switching.</td></tr>
+<tr><td>Absolute size / Relative size</td><td>Set icon size in pixels or as a share of the screen. Relative size is useful on high-DPI or multi-screen setups.</td></tr>
+<tr><td>Zoom on hover</td><td>Set how much items grow under the pointer.</td></tr>
+<tr class="group"><td colspan="2">Length</td></tr>
+<tr><td>Maximum / Minimum / Offset</td><td>Set the dock’s maximum and minimum length and move it along the screen edge.</td></tr>
+<tr><td>Dynamic Length Adjustments <span class="advanced">Advanced</span></td><td>Maximize panel length in presence of maximized windows: extend the dock to full length when a maximized window is present. The background must be enabled.</td></tr>
+<tr class="group"><td colspan="2">Margins</td></tr>
+<tr><td>Margins / Length / Thickness / Floating gap <span class="advanced">Advanced</span></td><td>Set the external margin along the dock, the margin across its thickness, and the gap between the dock and the screen edge.</td></tr>
+<tr class="group"><td colspan="2">Colors</td></tr>
+<tr><td>Colors / Palette <span class="advanced">Advanced</span></td><td>Choose Plasma Theme Colors, Dark Colors, Light Colors, Layout Custom Colors, Reverse, or Smart Colors Based On Desktop Background. Layout Custom Colors uses the layout’s color scheme; Smart follows the wallpaper.</td></tr>
+<tr class="group"><td colspan="2">Background</td></tr>
+<tr><td>Background</td><td>Background is an on/off switch. When enabled, use the controls below to set thickness, opacity, radius and shadow.</td></tr>
+<tr><td>Opacity / Busy Opacity</td><td>Set background opacity. The same slider is called Busy Opacity when Hide background when not needed and Prefer opaque background when touching any window are both enabled. Def. restores the theme default.</td></tr>
+<tr><td>Radius / Shadow <span class="advanced">Advanced</span></td><td>Set background corner radius and shadow size. Def. uses the theme default.</td></tr>
+<tr><td>Blur / Shadows / Outline / All Corners <span class="advanced">Advanced</span></td><td>Enable background blur, background shadow, outline and rounded corners. All Corners is available only for certain floating/justify geometries.</td></tr>
+<tr class="group"><td colspan="2">Dynamic Visibility</td></tr>
+<tr><td>Prefer opaque background when touching any window <span class="advanced">Advanced</span></td><td>Remove background transparency while a window touches the dock.</td></tr>
+<tr><td>Hide background when not needed <span class="advanced">Advanced</span></td><td>Hide the background except when a window touches the dock or the desktop background is busy.</td></tr>
+<tr><td>Hide background shadow for maximized windows <span class="advanced">Advanced</span></td><td>Hide the background shadow while an active maximized window touches the dock.</td></tr>
+<tr class="group"><td colspan="2">Exceptions</td></tr>
+<tr><td>Prefer Plasma background and colors for expanded applets <span class="advanced">Advanced</span></td><td>Use an opaque Plasma-style background and Plasma colors while widget popups are expanded.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effects</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Shadows</td></tr>
+<tr><td>Shadows</td><td>Turn widget shadows on or off. Size and Opacity are disabled when shadows are off.</td></tr>
+<tr><td>Size / Opacity</td><td>Set widget shadow size and opacity.</td></tr>
+<tr><td>Default Color / Theme Color / custom color</td><td>Choose the default shadow color, a color from the theme palette, or click the color swatch to pick a custom color.</td></tr>
+<tr class="group"><td colspan="2">Animations</td></tr>
+<tr><td>Animations / x1 / x2 / x3</td><td>Turn all dock animations on or off. x1 is normal speed, x2 is slower, x3 is slowest.</td></tr>
+<tr class="group"><td colspan="2">Indicators</td></tr>
+<tr><td>Indicators</td><td>Turn active-task indicators on or off. When enabled, choose the Latte indicator or a custom indicator plugin; plugin-specific options appear in its tab.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tasks</h3>
+<p class="note">Badges, Animations, Scrolling, Actions and some Interaction/Filters options require Advanced mode. Show only launchers and hide all tasks disables window-related actions and filters.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Badges</td></tr>
+<tr><td>Notifications from tasks <span class="advanced">Advanced</span></td><td>Show unread notification counts on task icons.</td></tr>
+<tr><td>Progress information for tasks <span class="advanced">Advanced</span></td><td>Show progress badges, for example while Dolphin copies files.</td></tr>
+<tr><td>Audio playing from tasks <span class="advanced">Advanced</span></td><td>Show an audio badge for applications that are playing sound.</td></tr>
+<tr><td>Prominent color for notification badge <span class="advanced">Advanced</span></td><td>Use a stronger, usually red notification badge. Requires Notifications from tasks.</td></tr>
+<tr><td>Change volume when scrolling audio badge <span class="advanced">Advanced</span></td><td>Click the audio badge to mute/unmute, or scroll over it to change volume. Requires Audio playing from tasks.</td></tr>
+<tr class="group"><td colspan="2">Interaction</td></tr>
+<tr><td>Launchers are added only in current tasks applet</td><td>Add dropped launchers only to this tasks widget, not as separate widgets or to other task widgets.</td></tr>
+<tr><td>Window actions in the context menu <span class="advanced">Advanced</span></td><td>Show window-specific actions in the task context menu.</td></tr>
+<tr><td>Preview window behaves as popup <span class="advanced">Advanced</span></td><td>Open previews as a popup instead of a tooltip. The Hover action must request previews; this only changes how they are shown.</td></tr>
+<tr><td>Based on position shortcuts apply only on current tasks <span class="advanced">Advanced</span></td><td>Limit position-based global shortcuts to this tasks widget.</td></tr>
+<tr class="group"><td colspan="2">Filters</td></tr>
+<tr><td>Show only tasks from the current screen</td><td>Show windows from this dock’s screen.</td></tr>
+<tr><td>Show only tasks from the current desktop</td><td>Show windows from the current virtual desktop.</td></tr>
+<tr><td>Show only tasks from launchers <span class="advanced">Advanced</span></td><td>Show windows only for applications already in the launcher list.</td></tr>
+<tr><td>Show only launchers and hide all tasks <span class="advanced">Advanced</span></td><td>Show launcher icons and hide running tasks. This also disables window-related actions and filters.</td></tr>
+<tr><td>Show only grouped tasks for same application <span class="advanced">Advanced</span></td><td>Group windows of the same application by default.</td></tr>
+<tr class="group"><td colspan="2">Animations</td></tr>
+<tr><td>Bounce launchers when triggered <span class="advanced">Advanced</span></td><td>Animate launchers when they are triggered.</td></tr>
+<tr><td>Bounce tasks that need attention <span class="advanced">Advanced</span></td><td>Animate tasks that request attention.</td></tr>
+<tr><td>Slide in and out single windows <span class="advanced">Advanced</span></td><td>Animate new and closed single windows.</td></tr>
+<tr><td>Grouped tasks bounce their new windows <span class="advanced">Advanced</span></td><td>Animate a new window inside a task group.</td></tr>
+<tr><td>Grouped tasks slide out their closed windows <span class="advanced">Advanced</span></td><td>Animate a closed window inside a task group.</td></tr>
+<tr class="group"><td colspan="2">Launchers</td></tr>
+<tr><td>Unique Group</td><td>Give this tasks widget its own launcher list.</td></tr>
+<tr><td>Layout Group</td><td>Share launchers with tasks widgets in the same layout. This button is only shown when the dock already uses Layout Group.</td></tr>
+<tr><td>Global Group</td><td>Share launchers with tasks widgets in all layouts.</td></tr>
+<tr class="group"><td colspan="2">Scrolling</td></tr>
+<tr><td>Scrolling <span class="advanced">Advanced</span></td><td>Enable scrolling when tasks overflow the available space.</td></tr>
+<tr><td>Manual <span class="advanced">Advanced</span></td><td>Choose Disabled scrolling, Only vertical/horizontal scrolling, or Horizontal and vertical scrolling. The single-direction choice depends on dock orientation.</td></tr>
+<tr><td>Automatic <span class="advanced">Advanced</span></td><td>Turn automatic scrolling on or off.</td></tr>
+<tr class="group"><td colspan="2">Actions</td></tr>
+<tr><td>Left Click <span class="advanced">Advanced</span></td><td>Action for a left click on a task: None, Close Window or Group, New Instance, Minimize/Restore, Cycle Through Tasks, Toggle Task Grouping, Present Windows, Preview Windows, Highlight Windows, or Preview and Highlight Windows.</td></tr>
+<tr><td>Middle Click <span class="advanced">Advanced</span></td><td>Action for a middle click on a task. The choices are the same as for Left Click.</td></tr>
+<tr><td>Hover <span class="advanced">Advanced</span></td><td>Hover actions: None, Preview Windows, Highlight Windows, or Preview and Highlight Windows. Task title tooltips are controlled in Behavior.</td></tr>
+<tr><td>Wheel <span class="advanced">Advanced</span></td><td>Wheel actions: None, Cycle Through Tasks, or Cycle And Minimize Tasks.</td></tr>
+<tr><td>Modifier + click <span class="advanced">Advanced</span></td><td>Hold Shift, Ctrl, Alt or Meta and click left, middle or right to run an additional action. Choose the modifier, button and action; this is separate from the main actions above.</td></tr>
+</tbody></table></div>
+<p class="note">The current-activity filter is hidden in Plasma 6 because KActivities support is unreliable.</p></section><section id="configure-latte"><h2>Configure Latte</h2><p class="note">Layouts Editor manages layouts and their docks. Preferences controls application-wide behavior. Apply saves pending changes in the current tab; Reset restores that tab’s saved state; Restore Defaults prepares defaults for review. Screens... manages stored screen references.</p>
+<h3 id="layouts">Layouts Editor</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr><td>Single layout at all times</td><td>Use one layout for all activities.</td></tr>
+<tr><td>Multiple layouts based on activities</td><td>Assign different layouts to activities; several layouts can stay loaded.</td></tr>
+<tr><td>Switch</td><td>Activate the selected layout. Apply pending changes first; Latte will not switch with unsaved changes.</td></tr>
+<tr><td>Activities...</td><td>Open Plasma’s Activities manager. Use the Activities column or Enabled to assign this layout to activities.</td></tr>
+<tr><td>New / Duplicate / Remove</td><td>Create, copy or remove a layout. Duplicate here copies the whole layout, not an individual dock. Active and locked layouts cannot be removed.</td></tr>
+<tr><td>Enabled</td><td>Assign this layout to one or more activities so Plasma Activities can activate it. Shown only in multiple-layout mode.</td></tr>
+<tr><td>Read Only</td><td>Protect the layout configuration from changes.</td></tr>
+<tr><td>Details...</td><td>Open the layout details dialog for icon, custom colors, popup margin and context-menu visibility.</td></tr>
+<tr><td>Docks...</td><td>Open the dock list for this layout: name, screen, edge, alignment, included widgets, and new/duplicate/remove/import/export.</td></tr>
+<tr><td>Import... / Export...</td><td>Import a layout from a local file or the KDE Store; export it for backup or as a template. File → Import Configuration / Export Configuration handles a full application backup.</td></tr>
+<tr><td>Name / In Menu / Activities</td><td>The layout list has Name, In Menu and Activities columns. Edit Name and Activities directly in the list; In Menu controls whether the layout appears in the dock’s Layouts menu.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Layout Details</h3>
+<p>Open with Layouts Editor → Details... to edit the selected layout.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr><td>Layout</td><td>Choose which layout to edit.</td></tr>
+<tr><td>Icon</td><td>Choose an icon for the layout. The clear button removes it.</td></tr>
+<tr><td>Custom Colors</td><td>Choose a custom color scheme file for this layout.</td></tr>
+<tr><td>PopUp Margin</td><td>Set the margin used by layout popups; disabled means use the default.</td></tr>
+<tr><td>Show in layouts context menu when possible</td><td>Show this layout in the dock’s Layouts menu when the current activity allows it.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Docks Dialog</h3>
+<p>Open with Layouts Editor → Docks... to manage the docks in the selected layout.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Columns</td></tr>
+<tr><td>Name</td><td>Dock name. Double-click to rename it.</td></tr>
+<tr><td>Screen</td><td>Screen the dock belongs to, including Primary, All Screens and All Secondary Screens.</td></tr>
+<tr><td>Edge</td><td>Screen edge used by the dock.</td></tr>
+<tr><td>Alignment</td><td>Dock alignment along its edge.</td></tr>
+<tr><td>Includes</td><td>Widgets and subcontainments included in the dock. This column is read-only.</td></tr>
+<tr class="group"><td colspan="2">Buttons</td></tr>
+<tr><td>New</td><td>Create a dock from a template.</td></tr>
+<tr><td>Duplicate</td><td>Create an independent copy of the selected dock, or another clone if the selected dock is a clone.</td></tr>
+<tr><td>Remove</td><td>Remove the selected dock. Clones are removed with their original.</td></tr>
+<tr><td>Import...</td><td>Import a dock from a local template file.</td></tr>
+<tr><td>Export...</td><td>Export the selected dock for backup or as a template. The template dialog lets you choose which widget settings to include; leave out widgets with personal data such as email or calendar accounts.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Screens Dialog</h3>
+<p>Open with File → Screens... to clean up screen references saved by Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr><td>Screen list</td><td>Lists screen references stored in Latte, including screens that are no longer connected.</td></tr>
+<tr><td>Select obsolete screens</td><td>Check only screens that no longer exist. Active screens and screens used by a layout cannot be removed.</td></tr>
+<tr><td>Deselect All</td><td>Clear the selection before choosing a different set.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferences</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr><td>Show informative window for layouts automatic activation</td><td>Show an information window when a layout activates automatically.</td></tr>
+<tr><td>Parabolic Effect / Small / Medium / Large</td><td>Set the global spread of hover zoom across neighbouring items.</td></tr>
+<tr><td>Enable autostart during startup</td><td>Start Latte when you sign in.</td></tr>
+<tr><td>Use 3D style for notification and shortcut badges</td><td>Use a dimensional style for notification and shortcut badges.</td></tr>
+<tr><td>Thickness margin influence</td><td>Choose how much item thickness margins affect the layout: 0%, 50% or 100%.</td></tr>
+<tr><td>Inform Plasma desktop for available desktop space</td><td>Publish available desktop space to Plasma so panels and windows can use it.</td></tr>
+<tr><td>Context Menu / Actions...</td><td>Choose which dock context-menu actions are always shown. Actions left out are available only in edit mode.</td></tr>
+<tr><td>Screens / reaction delay for changes</td><td>Set how long Latte waits before reacting to screen changes, in milliseconds. Increase it if hardware reports unstable transitions.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Context Menu Actions</h3>
+<p>Open with Preferences → Context Menu → Actions... to choose which dock actions are always visible.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in the window</th><th>What it controls</th></tr></thead><tbody>
+<tr><td>Accessible always</td><td>Actions in this list are shown in the dock context menu at all times.</td></tr>
+<tr><td>Accessible only in edit mode</td><td>Actions in this list appear only while the dock is being edited. Move actions between the lists to change this.</td></tr>
+<tr><td>Move between lists</td><td>Select an action and use the arrow buttons to move it. Reset and Restore Defaults restore the default set.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Independent Copies and Clones</h2><p class="note">A duplicate and a clone look similar on screen but behave differently. A duplicate is a new, independent dock. A clone is the same dock shown on another screen. Choose based on whether you want to configure this dock separately.</p>
+<h3 id="create-independent-copy">Create an independent copy</h3>
+<p>Use any of these methods on the original dock, not on a clone:</p>
+<ul><li>Right-click the dock and choose <strong>Duplicate Dock</strong>.</li><li>Open <strong>Edit Dock</strong> and choose <strong>Add… → Duplicate Dock</strong>.</li><li>Open <strong>Configure Latte → Layouts Editor → Docks…</strong>, select the dock, and choose <strong>Duplicate</strong>.</li></ul>
+<p>The copy receives new dock and widget IDs and copies the current settings once. After that, you can change its screen, edge, size, appearance, behavior, widgets and launchers independently. It is a separate entry in the layout and can be removed with <strong>Remove Dock</strong>.</p>
+<p>Duplicating a clone from the Docks dialog creates another clone of the same original, not an independent dock. To build an independent dock from a clone, first open <strong>Edit Original Dock…</strong> and duplicate the original.</p>
+<p>If the original uses <strong>Global Group</strong>, the copy also uses it and shares launchers. Choose <strong>Unique Group</strong> on the copy if you want a separate launcher list. <strong>Layout Group</strong> is only available when the dock already uses it.</p>
+<h3 id="create-clone">Create clones</h3>
+<p>Clones are created by the screen mode of an original dock, not by <strong>Duplicate Dock</strong>:</p>
+<ul><li><strong>Edit Dock → Screen → On All Screens</strong>: the original stays on the primary screen, and Latte creates a clone on every secondary screen.</li><li><strong>Edit Dock → Screen → On All Secondary Screens</strong>: the original stays on one secondary screen, and Latte creates clones on the remaining secondary screens.</li></ul>
+<p>Latte creates and removes clones automatically when the screen layout changes. To remove clones, set the original back to <strong>On Primary Screen</strong> or to one specific screen. A clone has no <strong>Remove Dock</strong> entry in its context menu; use <strong>Edit Original Dock…</strong> there to configure it.</p>
+<p>Opening the editor from a clone always opens the original dock’s settings, because clones share the dock configuration. Widget settings changed on a clone also update the original.</p>
+<h3 id="differences">Differences at a glance</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspect</th><th>Independent copy</th><th>Clone</th></tr></thead><tbody>
+<tr><td>Created by</td><td>Duplicate Dock</td><td>Screen → On All Screens or On All Secondary Screens</td></tr>
+<tr><td>Identity</td><td>New dock and widget IDs</td><td>A linked view of the original dock</td></tr>
+<tr><td>Settings</td><td>Copied once, then independent</td><td>Shared: editing the original updates every clone; widget settings changed on a clone also update the original</td></tr>
+<tr><td>Screen and edge</td><td>Can be changed independently</td><td>Follows the original; cannot be moved or resized separately</td></tr>
+<tr><td>Launchers</td><td>Copied at creation; later sharing only through Layout Group or Global Group</td><td>Always mirror the original</td></tr>
+<tr><td>Context menu</td><td>Full dock actions, including Duplicate and Remove</td><td>Shows Edit Original Dock…; Duplicate, Move, Export and Remove are hidden</td></tr>
+<tr><td>How to remove</td><td>Remove Dock</td><td>Set the original back to a single screen</td></tr>
+</tbody></table></div>
+<p><strong>Widget icon colors:</strong> <strong>Use Icon Theme Colors</strong> in a widget’s context menu stops Latte from colorizing that widget’s icon. The setting is stored per widget: clones share it with the original. An independent copy keeps the value it had when it was created and can change it separately.</p></section></main></div><footer>Latte Dock NG · Offline documentation. Unavailable interface languages fall back to English.</footer></body></html>

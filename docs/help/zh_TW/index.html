@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG 使用手冊</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG 使用手冊</h1><p>本文依目前選項說明。進階模式、Dock 樣式及已安裝外掛程式會影響哪些選項可見；標示為「進階」的選項在基本編輯器中不可見。</p><div class="language-menu"><label for="language-select">語言</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html" selected>繁體中文</option><option data-lang="ar" data-href="../en/index.html">العربية — English</option><option data-lang="az" data-href="../en/index.html">Azərbaycan dili — English</option><option data-lang="ca" data-href="../en/index.html">Català — English</option><option data-lang="ca@valencia" data-href="../en/index.html">Valencià — English</option><option data-lang="cs" data-href="../en/index.html">Čeština — English</option><option data-lang="da" data-href="../en/index.html">Dansk — English</option><option data-lang="de" data-href="../en/index.html">Deutsch — English</option><option data-lang="el" data-href="../en/index.html">Ελληνικά — English</option><option data-lang="en_GB" data-href="../en/index.html">English (United Kingdom) — English</option><option data-lang="eo" data-href="../en/index.html">Esperanto — English</option><option data-lang="es" data-href="../en/index.html">Español — English</option><option data-lang="et" data-href="../en/index.html">Eesti — English</option><option data-lang="eu" data-href="../en/index.html">Euskara — English</option><option data-lang="fi" data-href="../en/index.html">Suomi — English</option><option data-lang="fr" data-href="../en/index.html">Français — English</option><option data-lang="ga" data-href="../en/index.html">Gaeilge — English</option><option data-lang="gl" data-href="../en/index.html">Galego — English</option><option data-lang="he" data-href="../en/index.html">עברית — English</option><option data-lang="hsb" data-href="../en/index.html">Hornjoserbsce — English</option><option data-lang="ia" data-href="../en/index.html">Interlingua — English</option><option data-lang="id" data-href="../en/index.html">Bahasa Indonesia — English</option><option data-lang="it" data-href="../en/index.html">Italiano — English</option><option data-lang="ja" data-href="../en/index.html">日本語 — English</option><option data-lang="ka" data-href="../en/index.html">ქართული — English</option><option data-lang="ko" data-href="../en/index.html">한국어 — English</option><option data-lang="lt" data-href="../en/index.html">Lietuvių — English</option><option data-lang="nl" data-href="../en/index.html">Nederlands — English</option><option data-lang="nn" data-href="../en/index.html">Norsk Nynorsk — English</option><option data-lang="pl" data-href="../en/index.html">Polski — English</option><option data-lang="pt" data-href="../en/index.html">Português — English</option><option data-lang="pt_BR" data-href="../en/index.html">Português (Brasil) — English</option><option data-lang="ro" data-href="../en/index.html">Română — English</option><option data-lang="ru" data-href="../en/index.html">Русский — English</option><option data-lang="sk" data-href="../en/index.html">Slovenčina — English</option><option data-lang="sl" data-href="../en/index.html">Slovenščina — English</option><option data-lang="sv" data-href="../en/index.html">Svenska — English</option><option data-lang="tr" data-href="../en/index.html">Türkçe — English</option><option data-lang="uk" data-href="../en/index.html">Українська — English</option></select><small class="language-note">標示 English 的語言會開啟英文手冊。</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="目錄"><h2>目錄</h2><a class="chapter" href="#edit-dock">編輯 Dock</a><a class="subsection" href="#behavior">行為</a><a class="subsection" href="#appearance">外觀</a><a class="subsection" href="#effects">效果</a><a class="subsection" href="#tasks">工作</a><a class="chapter" href="#configure-latte">設定 Latte</a><a class="subsection" href="#layouts">佈局編輯器</a><a class="subsection" href="#layout-details">佈局詳細資訊</a><a class="subsection" href="#docks-dialog">Dock 對話方塊</a><a class="subsection" href="#screens-dialog">螢幕對話方塊</a><a class="subsection" href="#preferences">偏好設定</a><a class="subsection" href="#context-menu-actions">右鍵選單操作</a><a class="chapter" href="#copies-and-clones">獨立副本與複本</a><a class="subsection" href="#create-independent-copy">建立獨立副本</a><a class="subsection" href="#create-clone">建立複本</a><a class="subsection" href="#differences">主要差異</a></nav></aside><main>
+<section id="edit-dock"><h2>編輯 Dock</h2><p class="note">此 Dock 的修改立即生效。「關閉」只關閉編輯器，不撤銷修改；圖釘用於保持視窗開啟。「新增… → 再製 Dock」會從原始 Dock 建立獨立副本；「移除」移除目前 Dock。</p>
+<p class="note">開啟「進階」後會顯示更多控制項；標示為「進階」的選項在基本編輯器中不可見。</p>
+<h3 id="behavior">行為</h3>
+<p class="note">此 Dock 的可見性、延遲、操作、項目行為、浮動間距和環境選項。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">可見性</td></tr>
+<tr><td>螢幕 / 位置<small>Screen / Location</small></td><td>選擇此 Dock 的螢幕與邊緣。多螢幕時，「所有螢幕上」和「所有次要螢幕上」會建立連動複本；詳見「獨立副本與複本」。</td></tr>
+<tr><td>對齊<small>Alignment</small></td><td>設定 Dock 在螢幕邊緣上的位置。「項目對齊」設定 Dock 內元件的位置。</td></tr>
+<tr><td>永遠可見<small>Always Visible</small></td><td>保持顯示，並在視窗管理員支援時為 Dock 保留桌面空間。</td></tr>
+<tr><td>自動隱藏<small>Auto Hide</small></td><td>隱藏 Dock，直到滑鼠進入觸發區域。</td></tr>
+<tr><td>躲避作用中的視窗<small>Dodge Active</small></td><td>作用中視窗接觸 Dock 區域時隱藏，滑鼠進入時顯示。</td></tr>
+<tr><td>躲避最大化的視窗<small>Dodge Maximized</small></td><td>僅當此螢幕上有最大化的作用中視窗時隱藏，滑鼠進入時顯示。</td></tr>
+<tr><td>躲避所有視窗<small>Dodge All Windows</small></td><td>任何視窗接觸 Dock 區域時隱藏，滑鼠進入時顯示。</td></tr>
+<tr><td>視窗在下面<small>Windows Go Below</small></td><td>讓 Dock 保持在視窗上方，視窗可以放到 Dock 下方。</td></tr>
+<tr><td>視窗可覆蓋<small>Windows Can Cover</small></td><td>允許視窗覆蓋 Dock；滑鼠到達螢幕邊緣時，Dock 會來到前方。</td></tr>
+<tr><td>視窗永可覆蓋<small>Windows Always Cover</small></td><td>讓視窗始終位於 Dock 上方，Dock 保持在視窗後方。</td></tr>
+<tr class="group"><td colspan="2">延遲</td></tr>
+<tr><td>延遲 / 顯示 / 隱藏<small>Delay / Show / Hide</small></td><td>設定顯示和隱藏前的等待時間，單位為毫秒。增加延遲可減少誤觸。</td></tr>
+<tr class="group"><td colspan="2">操作</td></tr>
+<tr><td>追蹤 <span class="advanced">進階</span><small>Track</small></td><td>選擇空白區域操作跟隨哪個作用中視窗：目前螢幕的作用中視窗，或所有螢幕的作用中視窗。</td></tr>
+<tr><td>左鍵 / 拖曳作用中視窗 <span class="advanced">進階</span><small>Left Button / Drag Active Window</small></td><td>啟用後，可在 Dock 空白處按住左鍵拖曳，移動作用中視窗或最大化/還原作用中視窗。</td></tr>
+<tr><td>中鍵 / 關閉作用中視窗 <span class="advanced">進階</span><small>Middle Button / Close Active Window</small></td><td>啟用後，可在 Dock 空白處按中鍵關閉追蹤的作用中視窗。</td></tr>
+<tr><td>滑鼠滾輪 <span class="advanced">進階</span><small>Mouse wheel</small></td><td>選擇在 Dock 空白處捲動滾輪時的操作：無動作、切換桌面、切換活動、切換工作，或切換並最小化工作。</td></tr>
+<tr class="group"><td colspan="2">項目</td></tr>
+<tr><td>游標懸停時顯示窄標題提示<small>Thin title tooltips on hovering</small></td><td>顯示精簡的元件標題提示。工作視窗預覽由工作頁的「懸停」動作單獨控制。</td></tr>
+<tr><td>游標懸停時放大元件<small>Zoom widgets on hovering</small></td><td>允許元件隨 Dock 縮放。關閉後元件圖示保持銳利，但工作圖示和啟動器仍會縮放。</td></tr>
+<tr><td>透過滑鼠滾輪展開彈出方塊<small>Expand popup through mouse wheel</small></td><td>在支援的元件上捲動滾輪，以顯示或隱藏其彈出視窗。</td></tr>
+<tr><td>必要時自動調整大小<small>Adjust size automatically when needed</small></td><td>項目超出可用長度時縮小，能夠放下時再恢復大小。</td></tr>
+<tr><td>以位置全域快捷鍵為基礎啟用<small>Activate based on position global shortcuts</small></td><td>允許全域位置快捷鍵啟動此 Dock 中的項目。每個佈局只應有一個 Dock 使用此功能。</td></tr>
+<tr class="group"><td colspan="2">浮動</td></tr>
+<tr><td>使用者互動一律使用浮動間距 <span class="advanced">進階</span><small>Always use floating gap for user interaction</small></td><td>將浮動間隙計入元件和視窗的互動區域。</td></tr>
+<tr><td>為最大化視窗隱藏浮動間距 <span class="advanced">進階</span><small>Hide floating gap for maximized windows</small></td><td>最大化視窗需要螢幕邊緣時，移除浮動間隙。</td></tr>
+<tr><td>延遲隱藏浮動間距直到滑鼠離開 <span class="advanced">進階</span><small>Delay floating gap hiding until mouse leaves</small></td><td>等滑鼠離開後再隱藏浮動間隙，避免誤點附近的项目。</td></tr>
+<tr><td>顯示時鏡像浮動間距 <span class="advanced">進階</span><small>Mirror floating gap when it is shown</small></td><td>在「永遠可見」模式下，在 Dock 另一側鏡像浮動間隙。</td></tr>
+<tr class="group"><td colspan="2">環境</td></tr>
+<tr><td>桌面變更時提升 <span class="advanced">進階</span><small>Raise on desktop change</small></td><td>切換虛擬桌面時暫時顯示 Dock。「永遠可見」和「視窗在下面」模式不使用此選項。</td></tr>
+</tbody></table></div>
+<h3 id="appearance">外觀</h3>
+<p class="note">外邊距、顏色、半徑/陰影、動態長度調整、動態可見性和例外情況需要開啟「進階」。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">項目</td></tr>
+<tr><td>Dock 樣式<small>Dock Style</small></td><td>選擇「經典」或「現代」。切換樣式會套用該樣式的預設，可能調整面板大小、縮放、圖示大小、浮動間隙和指示器樣式；切換後請檢查其他外觀選項。</td></tr>
+<tr><td>絕對大小 / 相對大小<small>Absolute size / Relative size</small></td><td>以像素或螢幕比例設定圖示大小。高 DPI 或多螢幕環境適合使用相對大小。</td></tr>
+<tr><td>懸停縮放<small>Zoom on hover</small></td><td>設定滑鼠懸停時項目的放大量。</td></tr>
+<tr class="group"><td colspan="2">長度</td></tr>
+<tr><td>最大 / 最小 / 位移<small>Maximum / Minimum / Offset</small></td><td>設定 Dock 的最大、最小長度，並沿螢幕邊緣移動它。</td></tr>
+<tr><td>動態長度調整 <span class="advanced">進階</span><small>Dynamic Length Adjustments</small></td><td>存在最大化視窗時把面板長度擴展到最大。需要先啟用背景。</td></tr>
+<tr class="group"><td colspan="2">外邊距</td></tr>
+<tr><td>外邊距 / 長度 / 厚度 / 浮動間距 <span class="advanced">進階</span><small>Margins / Length / Thickness / Floating gap</small></td><td>分別設定沿 Dock 長度方向的外邊距、厚度方向的外邊距，以及 Dock 與螢幕邊緣之間的間隙。</td></tr>
+<tr class="group"><td colspan="2">顏色</td></tr>
+<tr><td>顏色 / 調色盤 <span class="advanced">進階</span><small>Colors / Palette</small></td><td>選擇 Plasma 佈景主題顏色、深色、淺色、佈局自訂顏色、反轉，或基於桌面背景的智慧顏色。佈局自訂顏色使用佈局自己的配色方案；智慧顏色跟隨桌布。</td></tr>
+<tr class="group"><td colspan="2">背景</td></tr>
+<tr><td>背景<small>Background</small></td><td>「背景」是開關。啟用後，可用下方的控制項設定厚度、不透明度、半徑和陰影。</td></tr>
+<tr><td>不透明度 / 忙碌時不透明度<small>Opacity / Busy Opacity</small></td><td>設定背景不透明度。同時啟用「非必要時隱藏背景」和「接觸任何視窗時都偏好不透明的背景」時，同一滑桿會顯示為「忙碌時不透明度」。「預設」使用佈景主題預設值。</td></tr>
+<tr><td>半徑 / 陰影 <span class="advanced">進階</span><small>Radius / Shadow</small></td><td>設定背景圓角半徑和陰影大小。「預設」使用佈景主題預設值。</td></tr>
+<tr><td>模糊效果 / 陰影 / 輪廓 / 所有角落 <span class="advanced">進階</span><small>Blur / Shadows / Outline / All Corners</small></td><td>啟用背景模糊、背景陰影、輪廓和圓角。「所有角落」只在特定的浮動/兩端對齊幾何條件下可用。</td></tr>
+<tr class="group"><td colspan="2">動態可見性</td></tr>
+<tr><td>接觸任何視窗時都偏好不透明的背景 <span class="advanced">進階</span><small>Prefer opaque background when touching any window</small></td><td>視窗接觸 Dock 時移除背景透明度。</td></tr>
+<tr><td>非必要時隱藏背景 <span class="advanced">進階</span><small>Hide background when not needed</small></td><td>除非視窗接觸 Dock 或桌面背景忙碌，否則隱藏背景。</td></tr>
+<tr><td>為最大化視窗隱藏背景陰影 <span class="advanced">進階</span><small>Hide background shadow for maximized windows</small></td><td>最大化的作用中視窗接觸 Dock 時隱藏背景陰影。</td></tr>
+<tr class="group"><td colspan="2">例外情況</td></tr>
+<tr><td>展開的元件偏好 Plasma 背景與顏色 <span class="advanced">進階</span><small>Prefer Plasma background and colors for expanded applets</small></td><td>元件彈出視窗展開時，使用不透明的 Plasma 樣式背景和 Plasma 配色。</td></tr>
+</tbody></table></div>
+<h3 id="effects">效果</h3>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">陰影</td></tr>
+<tr><td>陰影<small>Shadows</small></td><td>開啟或關閉元件陰影。關閉後，大小和不透明度不可用。</td></tr>
+<tr><td>大小 / 不透明度<small>Size / Opacity</small></td><td>設定元件陰影的大小和不透明度。</td></tr>
+<tr><td>預設色彩 / 佈景主題色彩 / 自訂色彩<small>Default Color / Theme Color / custom color</small></td><td>選擇預設陰影顏色、佈景主題調色盤顏色，或點擊顏色色塊選擇自訂顏色。</td></tr>
+<tr class="group"><td colspan="2">動畫</td></tr>
+<tr><td>動畫 / x1 / x2 / x3<small>Animations / x1 / x2 / x3</small></td><td>開啟或關閉所有 Dock 動畫。x1 為正常速度，x2 較慢，x3 最慢。</td></tr>
+<tr class="group"><td colspan="2">指示器</td></tr>
+<tr><td>指示器<small>Indicators</small></td><td>開啟或關閉作用中工作指示器。啟用後可選擇 Latte 指示器或自訂指示器外掛程式；外掛程式專屬選項會顯示在其分頁中。</td></tr>
+</tbody></table></div>
+<h3 id="tasks">工作</h3>
+<p class="note">徽章、動畫、捲動、操作以及部分互動/過濾選項需要開啟「進階」。開啟「僅顯示啟動器並隱藏所有工作」會停用與視窗相關的操作和過濾。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">徽章</td></tr>
+<tr><td>工作通知 <span class="advanced">進階</span><small>Notifications from tasks</small></td><td>在工作圖示上顯示未讀通知數量。</td></tr>
+<tr><td>工作進度資訊 <span class="advanced">進階</span><small>Progress information for tasks</small></td><td>顯示進度徽章，例如 Dolphin 複製檔案時。</td></tr>
+<tr><td>工作的音訊播放 <span class="advanced">進階</span><small>Audio playing from tasks</small></td><td>為正在播放聲音的應用程式顯示音訊徽章。</td></tr>
+<tr><td>通知徽章使用醒目顏色 <span class="advanced">進階</span><small>Prominent color for notification badge</small></td><td>使用更醒目（通常是紅色）的通知徽章。需要先開啟「工作通知」。</td></tr>
+<tr><td>捲動音訊徽章時變更音量 <span class="advanced">進階</span><small>Change volume when scrolling audio badge</small></td><td>點擊音訊徽章可靜音/取消靜音，捲動滾輪可調整音量。需要先開啟「工作的音訊播放」。</td></tr>
+<tr class="group"><td colspan="2">互動</td></tr>
+<tr><td>啟動器僅於目前的工作元件新增<small>Launchers are added only in current tasks applet</small></td><td>拖入的啟動器只新增到目前工作元件，不會成為獨立元件或進入其他工作元件。</td></tr>
+<tr><td>右鍵選單中的視窗動作 <span class="advanced">進階</span><small>Window actions in the context menu</small></td><td>在工作右鍵選單中顯示視窗專屬操作。</td></tr>
+<tr><td>預覽視窗以彈出式視窗顯示 <span class="advanced">進階</span><small>Preview window behaves as popup</small></td><td>讓預覽以彈出式視窗而不是工具提示的方式顯示。需要先把「懸停」動作設為預覽；此選項只改變顯示方式。</td></tr>
+<tr><td>以位置為基礎的快捷鍵僅套用於目前工作 <span class="advanced">進階</span><small>Based on position shortcuts apply only on current tasks</small></td><td>把以位置為基礎的全域快捷鍵限制在此工作元件內。</td></tr>
+<tr class="group"><td colspan="2">過濾</td></tr>
+<tr><td>只顯示目前螢幕上的工作<small>Show only tasks from the current screen</small></td><td>只顯示此 Dock 所在螢幕上的視窗。</td></tr>
+<tr><td>只顯示目前桌面上的工作<small>Show only tasks from the current desktop</small></td><td>只顯示目前虛擬桌面的視窗。</td></tr>
+<tr><td>只顯示啟動器中的工作 <span class="advanced">進階</span><small>Show only tasks from launchers</small></td><td>只顯示啟動器清單中已有應用程式的視窗。</td></tr>
+<tr><td>僅顯示啟動器並隱藏所有工作 <span class="advanced">進階</span><small>Show only launchers and hide all tasks</small></td><td>只顯示啟動器圖示，隱藏正在執行的工作。這也會停用與視窗相關的操作和過濾。</td></tr>
+<tr><td>同一個應用程式僅顯示分組好的工作 <span class="advanced">進階</span><small>Show only grouped tasks for same application</small></td><td>預設把同一應用程式的視窗分為一組。</td></tr>
+<tr class="group"><td colspan="2">動畫</td></tr>
+<tr><td>工作被觸發時彈跳啟動器 <span class="advanced">進階</span><small>Bounce launchers when triggered</small></td><td>啟動器被觸發時顯示動畫。</td></tr>
+<tr><td>需要注意的工作彈跳 <span class="advanced">進階</span><small>Bounce tasks that need attention</small></td><td>需要注意的工作顯示動畫。</td></tr>
+<tr><td>單一視窗滑入和滑出 <span class="advanced">進階</span><small>Slide in and out single windows</small></td><td>新視窗開啟或關閉時顯示滑入/滑出動畫。</td></tr>
+<tr><td>工作群組中的新視窗彈跳 <span class="advanced">進階</span><small>Grouped tasks bounce their new windows</small></td><td>工作群組中新增視窗時顯示彈跳動畫。</td></tr>
+<tr><td>工作群組中的關閉視窗滑出 <span class="advanced">進階</span><small>Grouped tasks slide out their closed windows</small></td><td>工作群組中視窗關閉時顯示滑出動畫。</td></tr>
+<tr class="group"><td colspan="2">啟動器</td></tr>
+<tr><td>唯一群組<small>Unique Group</small></td><td>此工作元件使用獨立的啟動器清單。</td></tr>
+<tr><td>佈局群組<small>Layout Group</small></td><td>與同一佈局中使用該群組的工作元件共用啟動器。只有 Dock 已經使用「佈局群組」時才會顯示此按鈕。</td></tr>
+<tr><td>全域群組<small>Global Group</small></td><td>與所有佈局中使用該群組的工作元件共用啟動器。</td></tr>
+<tr class="group"><td colspan="2">捲動</td></tr>
+<tr><td>捲動 <span class="advanced">進階</span><small>Scrolling</small></td><td>工作超出可用空間時啟用捲動。</td></tr>
+<tr><td>手動 <span class="advanced">進階</span><small>Manual</small></td><td>選擇「停用捲動」「僅垂直/水平捲動」或「水平和垂直捲動」。單方向選項取決於 Dock 方向。</td></tr>
+<tr><td>自動 <span class="advanced">進階</span><small>Automatic</small></td><td>開啟或關閉自動捲動。</td></tr>
+<tr class="group"><td colspan="2">操作</td></tr>
+<tr><td>點擊滑鼠左鍵 <span class="advanced">進階</span><small>Left Click</small></td><td>左鍵點擊工作時的動作：無、關閉視窗或群組、新執行個體、最小化/還原、切換工作、切換工作分組、展示視窗、預覽視窗、醒目提示視窗，或預覽並醒目提示視窗。</td></tr>
+<tr><td>點擊滑鼠中鍵 <span class="advanced">進階</span><small>Middle Click</small></td><td>中鍵點擊工作時的動作，選擇範圍與左鍵點擊相同。</td></tr>
+<tr><td>懸停 <span class="advanced">進階</span><small>Hover</small></td><td>懸停動作：無、預覽視窗、醒目提示視窗，或預覽並醒目提示視窗。工作標題提示由「行為」頁控制。</td></tr>
+<tr><td>滾輪 <span class="advanced">進階</span><small>Wheel</small></td><td>滾輪動作：無、切換工作，或切換並最小化工作。</td></tr>
+<tr><td>修飾鍵 + 點擊 <span class="advanced">進階</span><small>Modifier + click</small></td><td>按住 Shift、Ctrl、Alt 或 Meta 再左/中/右鍵點擊，執行額外動作。選擇修飾鍵、滑鼠鍵和動作；它與上方的主要操作分別設定。</td></tr>
+</tbody></table></div>
+<p class="note">Plasma 6 中 KActivities 支援不可靠，因此「只顯示目前活動裡的工作」過濾器目前被隱藏。</p></section><section id="configure-latte"><h2>設定 Latte</h2><p class="note">「佈局編輯器」管理佈局及其 Dock；「偏好設定」控制應用程式全域行為。「套用」儲存目前分頁的待處理修改，「重設」恢復該頁的已儲存狀態，「恢復預設」準備預設值供你確認。「螢幕…」管理已儲存的螢幕參照。</p>
+<h3 id="layouts">佈局編輯器</h3>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr><td>一次一種佈局<small>Single layout at all times</small></td><td>所有活動使用同一佈局。</td></tr>
+<tr><td>以活動為基礎的多重佈局<small>Multiple layouts based on activities</small></td><td>依活動指派不同佈局；多個佈局可以同時載入。</td></tr>
+<tr><td>切換<small>Switch</small></td><td>啟用所選佈局。請先套用待處理修改；有未儲存修改時 Latte 不會切換。</td></tr>
+<tr><td>活動...<small>Activities...</small></td><td>開啟 Plasma 的活動管理器。使用「活動」欄或「已啟用」把此佈局指派給活動。</td></tr>
+<tr><td>新增 / 再製 / 移除<small>New / Duplicate / Remove</small></td><td>建立、複製或移除佈局。這裡的「再製」複製整個佈局，不是單一 Dock。使用中和鎖定的佈局不能移除。</td></tr>
+<tr><td>已啟用<small>Enabled</small></td><td>把此佈局指派給一個或多個活動，使 Plasma 活動可以啟用它。僅在多佈局模式下顯示。</td></tr>
+<tr><td>唯讀<small>Read Only</small></td><td>保護佈局設定不被修改。</td></tr>
+<tr><td>詳細資訊...<small>Details...</small></td><td>開啟佈局詳細資訊對話方塊，編輯圖示、自訂顏色、彈出邊距和右鍵選單可見性。</td></tr>
+<tr><td>Dock...<small>Docks...</small></td><td>開啟此佈局的 Dock 清單：名稱、螢幕、邊緣、對齊、包含的元件，以及新增/再製/移除/匯入/匯出。</td></tr>
+<tr><td>匯入... / 匯出...<small>Import... / Export...</small></td><td>從本機檔案或 KDE 商店匯入佈局；匯出佈局用於備份或作為範本。「檔案 → 匯入設定／匯出設定」處理完整應用程式設定備份。</td></tr>
+<tr><td>名稱 / 在選單中 / 活動<small>Name / In Menu / Activities</small></td><td>佈局清單有三欄：名稱、在選單中、活動。可直接在清單中編輯名稱和活動；「在選單中」控制佈局是否出現在 Dock 的「佈局」選單中。</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">佈局詳細資訊</h3>
+<p>透過「佈局編輯器 → 詳細資訊...」開啟，編輯所選佈局。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr><td>佈局<small>Layout</small></td><td>選擇要編輯的佈局。</td></tr>
+<tr><td>圖示<small>Icon</small></td><td>為佈局選擇圖示。清除按鈕會移除圖示。</td></tr>
+<tr><td>自訂顏色<small>Custom Colors</small></td><td>為此佈局選擇自訂配色方案檔案。</td></tr>
+<tr><td>彈出邊距<small>PopUp Margin</small></td><td>設定佈局彈出視窗使用的邊距；「停用」表示使用預設值。</td></tr>
+<tr><td>盡可能在佈局右鍵選單中顯示<small>Show in layouts context menu when possible</small></td><td>目前活動允許時，在 Dock 的「佈局」選單中顯示此佈局。</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dock 對話方塊</h3>
+<p>透過「佈局編輯器 → Dock...」開啟，管理所選佈局中的 Dock。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">欄位</td></tr>
+<tr><td>名稱<small>Name</small></td><td>Dock 名稱。按兩下可重新命名。</td></tr>
+<tr><td>螢幕<small>Screen</small></td><td>Dock 所屬螢幕，包括「主螢幕上」「所有螢幕上」和「所有次要螢幕上」。</td></tr>
+<tr><td>邊緣<small>Edge</small></td><td>Dock 使用的螢幕邊緣。</td></tr>
+<tr><td>對齊<small>Alignment</small></td><td>Dock 沿邊緣的對齊方式。</td></tr>
+<tr><td>包含<small>Includes</small></td><td>Dock 包含的元件和子容器。此欄位為唯讀。</td></tr>
+<tr class="group"><td colspan="2">按鈕</td></tr>
+<tr><td>新增<small>New</small></td><td>從範本建立 Dock。</td></tr>
+<tr><td>再製<small>Duplicate</small></td><td>為所選 Dock 建立獨立副本；如果所選的是複本，則再建立一個複本。</td></tr>
+<tr><td>移除<small>Remove</small></td><td>移除所選 Dock。複本會隨原始 Dock 一起移除。</td></tr>
+<tr><td>匯入...<small>Import...</small></td><td>從本機範本檔案匯入 Dock。</td></tr>
+<tr><td>匯出...<small>Export...</small></td><td>把所選 Dock 匯出為備份或範本。範本對話方塊可選擇要包含哪些元件設定；不要包含電子郵件、行事曆等含個人資料的元件。</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">螢幕對話方塊</h3>
+<p>透過「檔案 → 螢幕...」開啟，清理 Latte 儲存的螢幕參照。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr><td>螢幕清單<small>Screen list</small></td><td>列出 Latte 中儲存的螢幕參照，包括已中斷連線的螢幕。</td></tr>
+<tr><td>選擇廢棄螢幕<small>Select obsolete screens</small></td><td>只勾選已不存在的螢幕。使用中的螢幕以及被佈局參照的螢幕不能移除。</td></tr>
+<tr><td>全部取消選取<small>Deselect All</small></td><td>清除選取，以便重新選擇。</td></tr>
+</tbody></table></div>
+<h3 id="preferences">偏好設定</h3>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr><td>佈局自動啟用時顯示資訊視窗<small>Show informative window for layouts automatic activation</small></td><td>佈局自動啟用時顯示資訊視窗。</td></tr>
+<tr><td>拋物線效果 / 小 / 中 / 大<small>Parabolic Effect / Small / Medium / Large</small></td><td>設定懸停縮放向相鄰項目擴散的全域範圍。</td></tr>
+<tr><td>登入時自動啟動<small>Enable autostart during startup</small></td><td>登入桌面時自動啟動 Latte。</td></tr>
+<tr><td>通知和快捷鍵徽章使用 3D 樣式<small>Use 3D style for notification and shortcut badges</small></td><td>為通知和快捷鍵徽章使用立體樣式。</td></tr>
+<tr><td>厚度邊距影響<small>Thickness margin influence</small></td><td>選擇厚度邊距對佈局的影響程度：0%、50% 或 100%。</td></tr>
+<tr><td>向 Plasma 通告可用桌面空間<small>Inform Plasma desktop for available desktop space</small></td><td>向 Plasma 發佈可用桌面空間，供面板和視窗使用。</td></tr>
+<tr><td>右鍵選單 / 動作...<small>Context Menu / Actions...</small></td><td>選擇 Dock 右鍵選單中始終顯示的操作；未選取的操作只在編輯模式下出現。</td></tr>
+<tr><td>螢幕 / 變更反應延遲<small>Screens / reaction delay for changes</small></td><td>設定 Latte 對螢幕變化做出反應前的等待時間，單位為毫秒。硬體切換訊號不穩定時可適度增加。</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">右鍵選單操作</h3>
+<p>透過「偏好設定 → 右鍵選單 → 動作...」開啟，選擇始終顯示哪些 Dock 操作。</p>
+<div class="table-wrap"><table><thead><tr><th>視窗中的選項</th><th>用途與範圍</th></tr></thead><tbody>
+<tr><td>始終可存取<small>Accessible always</small></td><td>此清單中的操作會始終顯示在 Dock 右鍵選單中。</td></tr>
+<tr><td>僅在編輯模式下可存取<small>Accessible only in edit mode</small></td><td>此清單中的操作只在編輯 Dock 時出現。可在兩個清單之間移動操作。</td></tr>
+<tr><td>在清單之間移動<small>Move between lists</small></td><td>選取操作後用箭頭按鈕移動。「重設」和「恢復預設」會恢復預設操作集。</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>獨立副本與複本</h2><p class="note">「再製」和「複本」在螢幕上看起來相似，但行為不同。再製會建立全新的獨立 Dock；複本是同一個 Dock 在另一個螢幕上的連動檢視。是否需要分開設定這個 Dock，決定你該選哪一種。</p>
+<h3 id="create-independent-copy">建立獨立副本</h3>
+<p>請在原始 Dock 上使用下列任一方式，不要在複本上操作：</p>
+<ul><li>在 Dock 上按滑鼠右鍵，選擇<strong>再製 Dock</strong>。</li><li>開啟<strong>編輯 Dock</strong>，選擇<strong>新增… → 再製 Dock</strong>。</li><li>開啟<strong>設定 Latte → 佈局編輯器 → Dock…</strong>，選取 Dock 後選擇<strong>再製</strong>。</li></ul>
+<p>副本會取得新的 Dock 與元件 ID，並複製目前設定一次。之後可以獨立變更它的螢幕、邊緣、大小、外觀、行為、元件和啟動器。它在佈局中是獨立項目，可用<strong>移除 Dock</strong> 刪除。</p>
+<p>在「Dock」對話方塊中再製複本，得到的仍然是同一個原始 Dock 的複本，而不是獨立副本。若要從複本建立獨立 Dock，請先選擇<strong>編輯原始 Dock…</strong>，再從原始 Dock 執行再製。</p>
+<p>如果原始 Dock 使用<strong>全域群組</strong>，副本也會使用該群組並共用啟動器。若希望副本擁有獨立的啟動器清單，請在副本上選擇<strong>唯一群組</strong>。<strong>佈局群組</strong>只有在 Dock 已經使用它時才可用。</p>
+<h3 id="create-clone">建立複本</h3>
+<p>複本由原始 Dock 的螢幕模式建立，而不是透過<strong>再製 Dock</strong>：</p>
+<ul><li><strong>編輯 Dock → 螢幕 → 所有螢幕上</strong>：原始 Dock 保留在主螢幕，Latte 會在每個次要螢幕上建立一個複本。</li><li><strong>編輯 Dock → 螢幕 → 所有次要螢幕上</strong>：原始 Dock 保留在其中一個次要螢幕，Latte 會在其餘次要螢幕上建立複本。</li></ul>
+<p>螢幕配置變更時，Latte 會自動建立和移除複本。要移除複本，請把原始 Dock 改回<strong>主螢幕上</strong>，或改為某個特定螢幕。複本的右鍵選單中沒有<strong>移除 Dock</strong>；請使用其中的<strong>編輯原始 Dock…</strong> 進行設定。</p>
+<p>從複本開啟編輯器時，實際開啟的是原始 Dock 的設定，因為複本共用 Dock 設定。在複本上修改元件設定也會更新原始 Dock。</p>
+<h3 id="differences">主要差異</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>方面</th><th>獨立副本</th><th>複本</th></tr></thead><tbody>
+<tr><td>建立方式</td><td>再製 Dock</td><td>螢幕 → 所有螢幕上或所有次要螢幕上</td></tr>
+<tr><td>身分</td><td>新的 Dock 與元件 ID</td><td>原始 Dock 的連動檢視</td></tr>
+<tr><td>設定</td><td>建立時複製一次，之後各自獨立</td><td>共用：修改原始 Dock 會更新所有複本；在複本上修改元件設定也會更新原始 Dock</td></tr>
+<tr><td>螢幕與邊緣</td><td>可以獨立變更</td><td>跟隨原始 Dock，不能單獨移動或調整大小</td></tr>
+<tr><td>啟動器</td><td>建立時複製；之後只有使用佈局群組或全域群組才共用</td><td>始終與原始 Dock 一致</td></tr>
+<tr><td>右鍵選單</td><td>包含再製、移除等完整操作</td><td>顯示「編輯原始 Dock…」，隱藏再製、移動、匯出和移除</td></tr>
+<tr><td>移除方式</td><td>移除 Dock</td><td>把原始 Dock 改回單一螢幕</td></tr>
+</tbody></table></div>
+<p><strong>元件圖示顏色：</strong>在元件的右鍵選單中選擇<strong>使用圖示佈景主題色彩</strong>，可阻止 Latte 重新著色該元件的圖示。此設定按元件儲存：複本與原始 Dock 共用這項設定。獨立副本會保留建立時的值，之後可以單獨修改。</p></section></main></div><footer>Latte Dock NG · 離線文件。不支援的介面語言回退為英文。</footer></body></html>

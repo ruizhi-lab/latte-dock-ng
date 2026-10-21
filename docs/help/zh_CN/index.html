@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG 使用手册</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG 使用手册</h1><p>本文按当前选项说明。高级模式、停靠栏样式及已安装插件会影响哪些选项可见；标注为“高级”的选项在基础编辑器中不可见。</p><div class="language-menu"><label for="language-select">语言</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="zh_CN" data-href="../zh_CN/index.html" selected>简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option><option data-lang="ar" data-href="../en/index.html">العربية — English</option><option data-lang="az" data-href="../en/index.html">Azərbaycan dili — English</option><option data-lang="ca" data-href="../en/index.html">Català — English</option><option data-lang="ca@valencia" data-href="../en/index.html">Valencià — English</option><option data-lang="cs" data-href="../en/index.html">Čeština — English</option><option data-lang="da" data-href="../en/index.html">Dansk — English</option><option data-lang="de" data-href="../en/index.html">Deutsch — English</option><option data-lang="el" data-href="../en/index.html">Ελληνικά — English</option><option data-lang="en_GB" data-href="../en/index.html">English (United Kingdom) — English</option><option data-lang="eo" data-href="../en/index.html">Esperanto — English</option><option data-lang="es" data-href="../en/index.html">Español — English</option><option data-lang="et" data-href="../en/index.html">Eesti — English</option><option data-lang="eu" data-href="../en/index.html">Euskara — English</option><option data-lang="fi" data-href="../en/index.html">Suomi — English</option><option data-lang="fr" data-href="../en/index.html">Français — English</option><option data-lang="ga" data-href="../en/index.html">Gaeilge — English</option><option data-lang="gl" data-href="../en/index.html">Galego — English</option><option data-lang="he" data-href="../en/index.html">עברית — English</option><option data-lang="hsb" data-href="../en/index.html">Hornjoserbsce — English</option><option data-lang="ia" data-href="../en/index.html">Interlingua — English</option><option data-lang="id" data-href="../en/index.html">Bahasa Indonesia — English</option><option data-lang="it" data-href="../en/index.html">Italiano — English</option><option data-lang="ja" data-href="../en/index.html">日本語 — English</option><option data-lang="ka" data-href="../en/index.html">ქართული — English</option><option data-lang="ko" data-href="../en/index.html">한국어 — English</option><option data-lang="lt" data-href="../en/index.html">Lietuvių — English</option><option data-lang="nl" data-href="../en/index.html">Nederlands — English</option><option data-lang="nn" data-href="../en/index.html">Norsk Nynorsk — English</option><option data-lang="pl" data-href="../en/index.html">Polski — English</option><option data-lang="pt" data-href="../en/index.html">Português — English</option><option data-lang="pt_BR" data-href="../en/index.html">Português (Brasil) — English</option><option data-lang="ro" data-href="../en/index.html">Română — English</option><option data-lang="ru" data-href="../en/index.html">Русский — English</option><option data-lang="sk" data-href="../en/index.html">Slovenčina — English</option><option data-lang="sl" data-href="../en/index.html">Slovenščina — English</option><option data-lang="sv" data-href="../en/index.html">Svenska — English</option><option data-lang="tr" data-href="../en/index.html">Türkçe — English</option><option data-lang="uk" data-href="../en/index.html">Українська — English</option></select><small class="language-note">标注 English 的语言会打开英文手册。</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="目录"><h2>目录</h2><a class="chapter" href="#edit-dock">编辑 Dock</a><a class="subsection" href="#behavior">行为</a><a class="subsection" href="#appearance">外观</a><a class="subsection" href="#effects">特效</a><a class="subsection" href="#tasks">任务</a><a class="chapter" href="#configure-latte">配置 Latte</a><a class="subsection" href="#layouts">布局编辑器</a><a class="subsection" href="#layout-details">布局详情</a><a class="subsection" href="#docks-dialog">停靠栏对话框</a><a class="subsection" href="#screens-dialog">屏幕对话框</a><a class="subsection" href="#preferences">首选项</a><a class="subsection" href="#context-menu-actions">右键菜单操作</a><a class="chapter" href="#copies-and-clones">独立副本与克隆</a><a class="subsection" href="#create-independent-copy">创建独立副本</a><a class="subsection" href="#create-clone">创建克隆</a><a class="subsection" href="#differences">主要区别</a></nav></aside><main>
+<section id="edit-dock"><h2>编辑 Dock</h2><p class="note">此停靠栏的修改即时生效。“关闭”只关闭编辑器，不撤销修改；图钉用于保持窗口打开。“添加… → 复制停靠栏”会从原始停靠栏创建独立副本；“移除”移除当前停靠栏。</p>
+<p class="note">开启“高级”后会显示更多控件；标注为“高级”的选项在基础编辑器中不可见。</p>
+<h3 id="behavior">行为</h3>
+<p class="note">此停靠栏的可见性、延迟、操作、项目行为、浮动间距和环境选项。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">可见性</td></tr>
+<tr><td>屏幕 / 位置<small>Screen / Location</small></td><td>选择此停靠栏的屏幕与边缘。多屏时，“所有屏幕”和“所有次要屏幕”会创建联动克隆；详见“独立副本与克隆”。</td></tr>
+<tr><td>对齐<small>Alignment</small></td><td>设置停靠栏在屏幕边缘上的位置。“项目对齐”设置栏内小部件的位置。</td></tr>
+<tr><td>总是可见<small>Always Visible</small></td><td>保持显示，并在窗口管理器支持时为停靠栏保留桌面空间。</td></tr>
+<tr><td>自动隐藏<small>Auto Hide</small></td><td>隐藏停靠栏，直到鼠标进入触发区域。</td></tr>
+<tr><td>避开活动窗口<small>Dodge Active</small></td><td>活动窗口接触停靠栏区域时隐藏，鼠标进入时显示。</td></tr>
+<tr><td>避开最大化窗口<small>Dodge Maximized</small></td><td>仅当此屏幕上有最大化的活动窗口时隐藏，鼠标进入时显示。</td></tr>
+<tr><td>避开所有窗口<small>Dodge All Windows</small></td><td>任何窗口接触停靠栏区域时隐藏，鼠标进入时显示。</td></tr>
+<tr><td>窗口位于后方<small>Windows Go Below</small></td><td>让停靠栏保持在窗口上方，窗口可以放到停靠栏下方。</td></tr>
+<tr><td>窗口可覆盖<small>Windows Can Cover</small></td><td>允许窗口覆盖停靠栏；鼠标到达屏幕边缘时，停靠栏会来到前方。</td></tr>
+<tr><td>窗口总是覆盖<small>Windows Always Cover</small></td><td>让窗口始终位于停靠栏上方，停靠栏保持在窗口后方。</td></tr>
+<tr class="group"><td colspan="2">延迟</td></tr>
+<tr><td>延迟 / 显示 / 隐藏<small>Delay / Show / Hide</small></td><td>设置显示和隐藏前的等待时间，单位为毫秒。增大延迟可减少误触。</td></tr>
+<tr class="group"><td colspan="2">操作</td></tr>
+<tr><td>跟踪 <span class="advanced">高级</span><small>Track</small></td><td>选择空白区域操作跟随哪个活动窗口：当前屏幕的活动窗口，或所有屏幕的活动窗口。</td></tr>
+<tr><td>左键 / 拖动活动窗口 <span class="advanced">高级</span><small>Left Button / Drag Active Window</small></td><td>启用后，可在停靠栏空白处按住左键拖动，移动活动窗口或最大化/还原活动窗口。</td></tr>
+<tr><td>中键 / 关闭活动窗口 <span class="advanced">高级</span><small>Middle Button / Close Active Window</small></td><td>启用后，可在停靠栏空白处单击中键关闭跟踪的活动窗口。</td></tr>
+<tr><td>鼠标滚轮 <span class="advanced">高级</span><small>Mouse wheel</small></td><td>选择在停靠栏空白处滚动滚轮时的操作：无操作、切换桌面、切换活动、切换任务，或切换并最小化任务。</td></tr>
+<tr class="group"><td colspan="2">项目</td></tr>
+<tr><td>悬停时显示窄标题提示<small>Thin title tooltips on hovering</small></td><td>显示精简的小部件标题提示。任务窗口预览由任务页的“悬停”动作单独控制。</td></tr>
+<tr><td>悬停时放大小部件<small>Zoom widgets on hovering</small></td><td>允许小部件随停靠栏缩放。关闭后小部件图标保持锐利，但任务图标和启动器仍会缩放。</td></tr>
+<tr><td>通过鼠标滚轮展开弹窗<small>Expand popup through mouse wheel</small></td><td>在受支持的小部件上滚动滚轮，以显示或隐藏其弹出窗口。</td></tr>
+<tr><td>需要时自动调整大小<small>Adjust size automatically when needed</small></td><td>项目超出可用长度时缩小，能够放下时再恢复大小。</td></tr>
+<tr><td>基于位置全局快捷键激活<small>Activate based on position global shortcuts</small></td><td>允许全局位置快捷键激活此停靠栏中的项目。每个布局只应有一个停靠栏使用此功能。</td></tr>
+<tr class="group"><td colspan="2">浮动</td></tr>
+<tr><td>用户交互总是使用浮动间距 <span class="advanced">高级</span><small>Always use floating gap for user interaction</small></td><td>将浮动间隙计入小部件和窗口的交互区域。</td></tr>
+<tr><td>隐藏最大化窗口的浮动间距 <span class="advanced">高级</span><small>Hide floating gap for maximized windows</small></td><td>最大化窗口需要屏幕边缘时，移除浮动间隙。</td></tr>
+<tr><td>暂缓隐藏浮动间距直至鼠标离开 <span class="advanced">高级</span><small>Delay floating gap hiding until mouse leaves</small></td><td>等鼠标离开后再隐藏浮动间隙，避免误点附近的项目。</td></tr>
+<tr><td>显示时镜像浮动间距 <span class="advanced">高级</span><small>Mirror floating gap when it is shown</small></td><td>在“总是可见”模式下，在停靠栏另一侧镜像浮动间隙。</td></tr>
+<tr class="group"><td colspan="2">环境</td></tr>
+<tr><td>切换桌面时弹出 <span class="advanced">高级</span><small>Raise on desktop change</small></td><td>切换虚拟桌面时暂时显示停靠栏。“总是可见”和“窗口位于后方”模式不使用此选项。</td></tr>
+</tbody></table></div>
+<h3 id="appearance">外观</h3>
+<p class="note">外边距、颜色、半径/阴影、动态长度调整、动态可见性和例外情况需要开启“高级”。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">项目</td></tr>
+<tr><td>停靠栏样式<small>Dock Style</small></td><td>选择“经典”或“现代”。切换样式会套用该样式的预设，可能调整面板大小、缩放、图标大小、浮动间距和指示器样式；切换后请检查其他外观选项。</td></tr>
+<tr><td>绝对大小 / 相对大小<small>Absolute size / Relative size</small></td><td>以像素或屏幕比例设置图标大小。高 DPI 或多屏环境适合使用相对大小。</td></tr>
+<tr><td>悬停缩放<small>Zoom on hover</small></td><td>设置鼠标悬停时项目的放大量。</td></tr>
+<tr class="group"><td colspan="2">长度</td></tr>
+<tr><td>最大 / 最小 / 偏移<small>Maximum / Minimum / Offset</small></td><td>设置停靠栏的最大、最小长度，并沿屏幕边缘移动它。</td></tr>
+<tr><td>动态长度调整 <span class="advanced">高级</span><small>Dynamic Length Adjustments</small></td><td>存在最大化窗口时把面板长度扩展到最大。需要先启用背景。</td></tr>
+<tr class="group"><td colspan="2">外边距</td></tr>
+<tr><td>外边距 / 长度 / 厚度 / 浮动间距 <span class="advanced">高级</span><small>Margins / Length / Thickness / Floating gap</small></td><td>分别设置沿停靠栏长度方向的外边距、厚度方向的外边距，以及停靠栏与屏幕边缘之间的间隙。</td></tr>
+<tr class="group"><td colspan="2">颜色</td></tr>
+<tr><td>颜色 / 调色板 <span class="advanced">高级</span><small>Colors / Palette</small></td><td>选择 Plasma 主题颜色、深色、浅色、布局自定义颜色、反转，或基于桌面背景的智能颜色。布局自定义颜色使用布局自己的配色方案；智能颜色跟随壁纸。</td></tr>
+<tr class="group"><td colspan="2">背景</td></tr>
+<tr><td>背景<small>Background</small></td><td>“背景”是开关。启用后，可用下面的控件设置厚度、不透明度、半径和阴影。</td></tr>
+<tr><td>不透明度 / 繁忙时不透明度<small>Opacity / Busy Opacity</small></td><td>设置背景不透明度。同时启用“不需要时隐藏背景”和“贴靠窗口时背景不透明”时，同一滑块会显示为“繁忙时不透明度”。“默认”使用主题默认值。</td></tr>
+<tr><td>半径 / 阴影 <span class="advanced">高级</span><small>Radius / Shadow</small></td><td>设置背景圆角半径和阴影大小。“默认”使用主题默认值。</td></tr>
+<tr><td>模糊 / 阴影 / 描边 / 所有边角 <span class="advanced">高级</span><small>Blur / Shadows / Outline / All Corners</small></td><td>启用背景模糊、背景阴影、描边和圆角。“所有边角”只在特定的浮动/两端对齐几何条件下可用。</td></tr>
+<tr class="group"><td colspan="2">动态可见性</td></tr>
+<tr><td>贴靠窗口时背景不透明 <span class="advanced">高级</span><small>Prefer opaque background when touching any window</small></td><td>窗口接触停靠栏时移除背景透明度。</td></tr>
+<tr><td>不需要时隐藏背景 <span class="advanced">高级</span><small>Hide background when not needed</small></td><td>除非窗口接触停靠栏或桌面背景繁忙，否则隐藏背景。</td></tr>
+<tr><td>最大化窗口时隐藏背景阴影 <span class="advanced">高级</span><small>Hide background shadow for maximized windows</small></td><td>最大化的活动窗口接触停靠栏时隐藏背景阴影。</td></tr>
+<tr class="group"><td colspan="2">例外情况</td></tr>
+<tr><td>小部件展开时首选 Plasma 背景与颜色 <span class="advanced">高级</span><small>Prefer Plasma background and colors for expanded applets</small></td><td>小部件弹出窗口展开时，使用不透明的 Plasma 样式背景和 Plasma 配色。</td></tr>
+</tbody></table></div>
+<h3 id="effects">特效</h3>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">阴影</td></tr>
+<tr><td>阴影<small>Shadows</small></td><td>开启或关闭小部件阴影。关闭后，大小和不透明度不可用。</td></tr>
+<tr><td>大小 / 不透明度<small>Size / Opacity</small></td><td>设置小部件阴影的大小和不透明度。</td></tr>
+<tr><td>默认颜色 / 主题颜色 / 自定义颜色<small>Default Color / Theme Color / custom color</small></td><td>选择默认阴影颜色、主题调色板颜色，或点击颜色色块选择自定义颜色。</td></tr>
+<tr class="group"><td colspan="2">动画</td></tr>
+<tr><td>动画 / x1 / x2 / x3<small>Animations / x1 / x2 / x3</small></td><td>开启或关闭所有停靠栏动画。x1 为正常速度，x2 较慢，x3 最慢。</td></tr>
+<tr class="group"><td colspan="2">指示器</td></tr>
+<tr><td>任务指示器<small>Indicators</small></td><td>开启或关闭活动任务指示器。启用后可选择 Latte 指示器或自定义指示器插件；插件专属选项会显示在其标签页中。</td></tr>
+</tbody></table></div>
+<h3 id="tasks">任务</h3>
+<p class="note">徽章、动画、滚动、操作以及部分交互/过滤选项需要开启“高级”。开启“只显示启动器并隐藏所有任务”会禁用与窗口相关的操作和过滤。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">徽章</td></tr>
+<tr><td>任务通知 <span class="advanced">高级</span><small>Notifications from tasks</small></td><td>在任务图标上显示未读通知数量。</td></tr>
+<tr><td>任务进度信息 <span class="advanced">高级</span><small>Progress information for tasks</small></td><td>显示进度徽章，例如 Dolphin 复制文件时。</td></tr>
+<tr><td>任务音频播放状态 <span class="advanced">高级</span><small>Audio playing from tasks</small></td><td>为正在播放声音的应用显示音频徽章。</td></tr>
+<tr><td>通知角标使用醒目颜色 <span class="advanced">高级</span><small>Prominent color for notification badge</small></td><td>使用更醒目（通常是红色）的通知徽章。需要先开启“任务通知”。</td></tr>
+<tr><td>滚动音频角标时更改音量 <span class="advanced">高级</span><small>Change volume when scrolling audio badge</small></td><td>单击音频徽章可静音/取消静音，滚动滚轮可调整音量。需要先开启“任务音频播放状态”。</td></tr>
+<tr class="group"><td colspan="2">交互</td></tr>
+<tr><td>仅在当前任务小部件中添加启动器<small>Launchers are added only in current tasks applet</small></td><td>拖入的启动器只添加到当前任务小部件，不会成为独立小部件或进入其他任务小部件。</td></tr>
+<tr><td>在右键菜单中显示窗口操作 <span class="advanced">高级</span><small>Window actions in the context menu</small></td><td>在任务右键菜单中显示窗口专属操作。</td></tr>
+<tr><td>预览窗口以弹出窗口方式显示 <span class="advanced">高级</span><small>Preview window behaves as popup</small></td><td>让预览以弹出窗口而不是工具提示的方式显示。需要先把“悬停”动作设为预览；此选项只改变显示方式。</td></tr>
+<tr><td>基于位置的快捷键只适用于当前任务 <span class="advanced">高级</span><small>Based on position shortcuts apply only on current tasks</small></td><td>把基于位置的全局快捷键限制在此任务小部件内。</td></tr>
+<tr class="group"><td colspan="2">过滤</td></tr>
+<tr><td>仅显示当前屏幕的任务<small>Show only tasks from the current screen</small></td><td>只显示此停靠栏所在屏幕上的窗口。</td></tr>
+<tr><td>仅显示当前桌面的任务<small>Show only tasks from the current desktop</small></td><td>只显示当前虚拟桌面的窗口。</td></tr>
+<tr><td>仅显示启动器中的任务 <span class="advanced">高级</span><small>Show only tasks from launchers</small></td><td>只显示启动器列表中已有应用的窗口。</td></tr>
+<tr><td>只显示启动器并隐藏所有任务 <span class="advanced">高级</span><small>Show only launchers and hide all tasks</small></td><td>只显示启动器图标，隐藏正在运行的任务。这也会禁用与窗口相关的操作和过滤。</td></tr>
+<tr><td>仅分组显示同一应用的任务 <span class="advanced">高级</span><small>Show only grouped tasks for same application</small></td><td>默认把同一应用的窗口分为一组。</td></tr>
+<tr class="group"><td colspan="2">动画</td></tr>
+<tr><td>任务被触发时跳动启动器 <span class="advanced">高级</span><small>Bounce launchers when triggered</small></td><td>启动器被触发时显示动画。</td></tr>
+<tr><td>需要注意的任务跳动 <span class="advanced">高级</span><small>Bounce tasks that need attention</small></td><td>需要注意的任务显示动画。</td></tr>
+<tr><td>单个窗口滑入和滑出 <span class="advanced">高级</span><small>Slide in and out single windows</small></td><td>新窗口打开或关闭时显示滑入/滑出动画。</td></tr>
+<tr><td>任务组中的新窗口跳动 <span class="advanced">高级</span><small>Grouped tasks bounce their new windows</small></td><td>任务组中新增窗口时显示跳动动画。</td></tr>
+<tr><td>任务组中的关闭窗口滑出 <span class="advanced">高级</span><small>Grouped tasks slide out their closed windows</small></td><td>任务组中窗口关闭时显示滑出动画。</td></tr>
+<tr class="group"><td colspan="2">启动器</td></tr>
+<tr><td>唯一组<small>Unique Group</small></td><td>此任务小部件使用独立的启动器列表。</td></tr>
+<tr><td>布局组<small>Layout Group</small></td><td>与同一布局中使用该组的任务小部件共享启动器。只有停靠栏已经使用“布局组”时才会显示此按钮。</td></tr>
+<tr><td>全局组<small>Global Group</small></td><td>与所有布局中使用该组的任务小部件共享启动器。</td></tr>
+<tr class="group"><td colspan="2">滚动</td></tr>
+<tr><td>滚动 <span class="advanced">高级</span><small>Scrolling</small></td><td>任务超出可用空间时启用滚动。</td></tr>
+<tr><td>手动 <span class="advanced">高级</span><small>Manual</small></td><td>选择“禁用滚动”“仅垂直/水平滚动”或“水平和垂直滚动”。单方向选项取决于停靠栏方向。</td></tr>
+<tr><td>自动 <span class="advanced">高级</span><small>Automatic</small></td><td>开启或关闭自动滚动。</td></tr>
+<tr class="group"><td colspan="2">操作</td></tr>
+<tr><td>左键单击 <span class="advanced">高级</span><small>Left Click</small></td><td>左键单击任务时的操作：无、关闭窗口或组、新实例、最小化/还原、切换任务、切换任务分组、展示窗口、预览窗口、高亮窗口，或预览并高亮窗口。</td></tr>
+<tr><td>中键单击 <span class="advanced">高级</span><small>Middle Click</small></td><td>中键单击任务时的操作，选择范围与左键单击相同。</td></tr>
+<tr><td>悬停 <span class="advanced">高级</span><small>Hover</small></td><td>悬停操作：无、预览窗口、高亮窗口，或预览并高亮窗口。任务标题提示由“行为”页控制。</td></tr>
+<tr><td>滚轮 <span class="advanced">高级</span><small>Wheel</small></td><td>滚轮操作：无、切换任务，或切换并最小化任务。</td></tr>
+<tr><td>修饰键 + 点击 <span class="advanced">高级</span><small>Modifier + click</small></td><td>按住 Shift、Ctrl、Alt 或 Meta 再左/中/右键单击，执行额外操作。选择修饰键、鼠标键和动作；它与上面的主要操作分别设置。</td></tr>
+</tbody></table></div>
+<p class="note">Plasma 6 中 KActivities 支持不可靠，因此“仅显示当前活动的任务”过滤器当前被隐藏。</p></section><section id="configure-latte"><h2>配置 Latte</h2><p class="note">“布局编辑器”管理布局及其停靠栏；“首选项”控制应用全局行为。“应用”保存当前标签页的待处理修改，“重置”恢复该页的已保存状态，“恢复默认”准备默认值供你确认。“屏幕…”管理已保存的屏幕引用。</p>
+<h3 id="layouts">布局编辑器</h3>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr><td>总是使用单个布局<small>Single layout at all times</small></td><td>所有活动使用同一布局。</td></tr>
+<tr><td>基于活动的多个布局<small>Multiple layouts based on activities</small></td><td>按活动分配不同布局；多个布局可以同时驻留。</td></tr>
+<tr><td>切换<small>Switch</small></td><td>激活所选布局。请先应用待处理修改；有未保存修改时 Latte 不会切换。</td></tr>
+<tr><td>活动...<small>Activities...</small></td><td>打开 Plasma 的活动管理器。使用“活动”列或“已启用”把此布局分配给活动。</td></tr>
+<tr><td>新建 / 复制 / 移除<small>New / Duplicate / Remove</small></td><td>创建、复制或移除布局。这里的“复制”复制整个布局，不是单个停靠栏。活动中的布局和锁定的布局不能移除。</td></tr>
+<tr><td>已启用<small>Enabled</small></td><td>把此布局分配给一个或多个活动，使 Plasma 活动可以激活它。仅在多布局模式下显示。</td></tr>
+<tr><td>只读<small>Read Only</small></td><td>保护布局配置不被修改。</td></tr>
+<tr><td>详情...<small>Details...</small></td><td>打开布局详情对话框，编辑图标、自定义颜色、弹出边距和右键菜单可见性。</td></tr>
+<tr><td>停靠栏...<small>Docks...</small></td><td>打开此布局的停靠栏列表：名称、屏幕、边缘、对齐、包含的小部件，以及新建/复制/移除/导入/导出。</td></tr>
+<tr><td>导入... / 导出...<small>Import... / Export...</small></td><td>从本地文件或 KDE 商店导入布局；导出布局用于备份或作为模板。“文件 → 导入配置／导出配置”处理完整应用配置备份。</td></tr>
+<tr><td>名称 / 在菜单中 / 活动<small>Name / In Menu / Activities</small></td><td>布局列表有三列：名称、在菜单中、活动。可直接在列表中编辑名称和活动；“在菜单中”控制布局是否出现在停靠栏的“布局”菜单中。</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">布局详情</h3>
+<p>通过“布局编辑器 → 详情...”打开，编辑所选布局。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr><td>布局<small>Layout</small></td><td>选择要编辑的布局。</td></tr>
+<tr><td>图标<small>Icon</small></td><td>为布局选择图标。清除按钮会移除图标。</td></tr>
+<tr><td>自定义颜色<small>Custom Colors</small></td><td>为此布局选择自定义配色方案文件。</td></tr>
+<tr><td>弹出边距<small>PopUp Margin</small></td><td>设置布局弹出窗口使用的边距；“禁用”表示使用默认值。</td></tr>
+<tr><td>在布局右键菜单中尽可能显示<small>Show in layouts context menu when possible</small></td><td>当前活动允许时，在停靠栏的“布局”菜单中显示此布局。</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">停靠栏对话框</h3>
+<p>通过“布局编辑器 → 停靠栏...”打开，管理所选布局中的停靠栏。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">列</td></tr>
+<tr><td>名称<small>Name</small></td><td>停靠栏名称。双击可重命名。</td></tr>
+<tr><td>屏幕<small>Screen</small></td><td>停靠栏所属屏幕，包括“主屏幕”“所有屏幕”和“所有次要屏幕”。</td></tr>
+<tr><td>边缘<small>Edge</small></td><td>停靠栏使用的屏幕边缘。</td></tr>
+<tr><td>对齐<small>Alignment</small></td><td>停靠栏沿边缘的对齐方式。</td></tr>
+<tr><td>包含<small>Includes</small></td><td>停靠栏包含的小部件和子容器。此列只读。</td></tr>
+<tr class="group"><td colspan="2">按钮</td></tr>
+<tr><td>新建<small>New</small></td><td>从模板创建停靠栏。</td></tr>
+<tr><td>复制<small>Duplicate</small></td><td>为所选停靠栏创建独立副本；如果所选的是克隆，则再创建一个克隆。</td></tr>
+<tr><td>移除<small>Remove</small></td><td>移除所选停靠栏。克隆会随原始停靠栏一起移除。</td></tr>
+<tr><td>导入...<small>Import...</small></td><td>从本地模板文件导入停靠栏。</td></tr>
+<tr><td>导出...<small>Export...</small></td><td>把所选停靠栏导出为备份或模板。模板对话框可选择要包含哪些小部件设置；不要包含电子邮件、日历等含个人数据的小部件。</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">屏幕对话框</h3>
+<p>通过“文件 → 屏幕...”打开，清理 Latte 保存的屏幕引用。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr><td>屏幕列表<small>Screen list</small></td><td>列出 Latte 中保存的屏幕引用，包括已断开的屏幕。</td></tr>
+<tr><td>选择废弃屏幕<small>Select obsolete screens</small></td><td>只勾选已不存在的屏幕。正在使用的屏幕以及被布局引用的屏幕不能移除。</td></tr>
+<tr><td>全部取消选择<small>Deselect All</small></td><td>清除选择，以便重新选择。</td></tr>
+</tbody></table></div>
+<h3 id="preferences">首选项</h3>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr><td>自动激活布局时显示信息窗口<small>Show informative window for layouts automatic activation</small></td><td>布局自动激活时显示信息窗口。</td></tr>
+<tr><td>抛物线效果 / 小 / 中 / 大<small>Parabolic Effect / Small / Medium / Large</small></td><td>设置悬停缩放向相邻项目扩散的全局范围。</td></tr>
+<tr><td>登录时自动启动<small>Enable autostart during startup</small></td><td>登录桌面时自动启动 Latte。</td></tr>
+<tr><td>通知和快捷键角标使用 3D 样式<small>Use 3D style for notification and shortcut badges</small></td><td>为通知和快捷键角标使用立体样式。</td></tr>
+<tr><td>厚度边距影响<small>Thickness margin influence</small></td><td>选择厚度边距对布局的影响程度：0%、50% 或 100%。</td></tr>
+<tr><td>向 Plasma 通告可用桌面空间<small>Inform Plasma desktop for available desktop space</small></td><td>向 Plasma 发布可用桌面空间，供面板和窗口使用。</td></tr>
+<tr><td>右键菜单 / 操作...<small>Context Menu / Actions...</small></td><td>选择停靠栏右键菜单中始终显示的操作；未选中的操作只在编辑模式下出现。</td></tr>
+<tr><td>屏幕 / 更改反应延迟<small>Screens / reaction delay for changes</small></td><td>设置 Latte 对屏幕变化做出反应前的等待时间，单位为毫秒。硬件切换信号不稳定时可适当增大。</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">右键菜单操作</h3>
+<p>通过“首选项 → 右键菜单 → 操作...”打开，选择始终显示哪些停靠栏操作。</p>
+<div class="table-wrap"><table><thead><tr><th>窗口中的选项</th><th>用途与范围</th></tr></thead><tbody>
+<tr><td>始终可访问<small>Accessible always</small></td><td>此列表中的操作会始终显示在停靠栏右键菜单中。</td></tr>
+<tr><td>仅在编辑模式下可访问<small>Accessible only in edit mode</small></td><td>此列表中的操作只在编辑停靠栏时出现。可在两个列表之间移动操作。</td></tr>
+<tr><td>在列表之间移动<small>Move between lists</small></td><td>选中操作后用箭头按钮移动。“重置”和“恢复默认”会恢复默认操作集。</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>独立副本与克隆</h2><p class="note">“复制”和“克隆”在屏幕上看起来相似，但行为不同。副本是全新的、独立的停靠栏；克隆是同一个停靠栏在另一块屏幕上的联动视图。是否需要单独配置这个停靠栏，决定你应该选择哪一种。</p>
+<h3 id="create-independent-copy">创建独立副本</h3>
+<p>请在原始停靠栏上使用以下任一方式，不要在克隆上操作：</p>
+<ul><li>右键单击停靠栏，选择<strong>复制停靠栏</strong>。</li><li>打开<strong>编辑 Dock</strong>，选择<strong>添加… → 复制停靠栏</strong>。</li><li>打开<strong>配置 Latte → 布局编辑器 → 停靠栏…</strong>，选中停靠栏后选择<strong>复制</strong>。</li></ul>
+<p>副本会获得新的停靠栏和小部件 ID，并一次性复制当前设置。之后可以独立修改它的屏幕、边缘、大小、外观、行为、小部件和启动器。它在布局中是独立条目，可用<strong>移除停靠栏</strong>删除。</p>
+<p>在“停靠栏”对话框中复制克隆，得到的仍然是同一原始停靠栏的克隆，而不是独立副本。若要基于克隆创建独立停靠栏，请先选择<strong>编辑原始停靠栏…</strong>，再复制原始停靠栏。</p>
+<p>如果原始停靠栏使用<strong>全局组</strong>，副本也会使用该组并共享启动器。若希望副本拥有独立的启动器列表，请在副本上选择<strong>唯一组</strong>。<strong>布局组</strong>仅在停靠栏已经使用它时才可用。</p>
+<h3 id="create-clone">创建克隆</h3>
+<p>克隆由原始停靠栏的屏幕模式创建，而不是通过<strong>复制停靠栏</strong>：</p>
+<ul><li><strong>编辑 Dock → 屏幕 → 所有屏幕</strong>：原始停靠栏保留在主屏幕，Latte 会在每个次要屏幕上创建一个克隆。</li><li><strong>编辑 Dock → 屏幕 → 所有次要屏幕</strong>：原始停靠栏保留在其中一个次要屏幕，Latte 会在其余次要屏幕上创建克隆。</li></ul>
+<p>屏幕布局变化时，Latte 会自动创建和移除克隆。要移除克隆，请把原始停靠栏改回<strong>在主屏幕</strong>，或改为某个具体屏幕。克隆的右键菜单中没有<strong>移除停靠栏</strong>；请使用其中的<strong>编辑原始停靠栏…</strong>进行配置。</p>
+<p>从克隆打开编辑器时，实际打开的是原始停靠栏的设置，因为克隆共享停靠栏配置。在克隆上修改小部件设置也会更新原始停靠栏。</p>
+<h3 id="differences">主要区别</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>方面</th><th>独立副本</th><th>克隆</th></tr></thead><tbody>
+<tr><td>创建方式</td><td>复制停靠栏</td><td>屏幕 → 所有屏幕或所有次要屏幕</td></tr>
+<tr><td>身份</td><td>新的停靠栏和小部件 ID</td><td>原始停靠栏的联动视图</td></tr>
+<tr><td>设置</td><td>创建时复制一次，之后各自独立</td><td>共享：修改原始停靠栏会更新所有克隆；在克隆上修改小部件设置也会更新原始停靠栏</td></tr>
+<tr><td>屏幕与边缘</td><td>可以独立修改</td><td>跟随原始停靠栏，不能单独移动或调整大小</td></tr>
+<tr><td>启动器</td><td>创建时复制；之后只有使用布局组或全局组才共享</td><td>始终与原始停靠栏一致</td></tr>
+<tr><td>右键菜单</td><td>包含复制、移除等完整操作</td><td>显示“编辑原始停靠栏…”，隐藏复制、移动、导出和移除</td></tr>
+<tr><td>移除方式</td><td>移除停靠栏</td><td>把原始停靠栏改回单屏幕</td></tr>
+</tbody></table></div>
+<p><strong>小部件图标颜色：</strong>在小部件右键菜单中选择<strong>使用图标主题颜色</strong>可阻止 Latte 为该小部件图标重新着色。此设置按小部件保存：克隆与原停靠栏共享该设置。独立副本保留创建时的值，之后可以单独修改。</p></section></main></div><footer>Latte Dock NG · 离线文档。不支持的界面语言回退为英文。</footer></body></html>

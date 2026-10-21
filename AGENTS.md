@@ -53,7 +53,7 @@ part of local mirror maintenance.
    compilation AND runtime behavior afterwards; check the debug log for new
    errors/warnings.
 6. **Release requires autotest** — Before every release run
-   `cd build && ctest --output-on-failure` (45 registered autotest targets
+   `cd build && ctest --output-on-failure` (50+ registered autotest targets
    incl. 170+ source-contract checks on GCC and Clang; fragile areas: digital
    clock, systray, volume, appmenu, clipboard, separator/spacer, middle-click
    close, auto-pin on drag, scroll minimize).
@@ -76,6 +76,14 @@ part of local mirror maintenance.
    keep component-specific details beside the code they govern. Update the
    nearby comment and its test when behavior, supported versions or the
    authoritative state changes.
+9. **Release requires help review** — Before every release, review `docs/help/`
+   against the user-visible changes in that release: settings labels, defaults
+   and scope, Advanced-mode visibility, dialogs, copy/clone behavior, launcher
+   sharing and the supported UI languages. Update every affected translated
+   guide, the language `<select>` entries and their English fallback labels, then
+   run the handbook tests with the normal autotest suite. Record skipped
+   languages or checks in the release notes; do not ship stale or missing help
+   for changed UI.
 
 ## Development Debug & Retest Workflow
 
@@ -171,6 +179,17 @@ preparation, package publication, repository availability and current
 validation status. Do not duplicate release-specific platform status here.
 The main-branch commit/push rules above still apply; release tags require their
 own explicit authorization and are not implied by approval to commit or push.
+
+### Help documentation gate
+
+Before dispatching a release build, compare `docs/help/` with the user-visible
+changes since the previous release. Update the English guide, every translated
+page and the language `<select>` entries, including fallback labels for UI
+languages without a translated guide. Run `handbookdocumenttest` with the
+release autotests and manually check that changed settings, dialogs,
+Advanced-mode gates, copy/clone behavior and launcher sharing are described
+accurately. A source-contract test passing does not prove the visible behavior
+is documented; review the guide text against the UI.
 
 ### Gentoo overlay
 

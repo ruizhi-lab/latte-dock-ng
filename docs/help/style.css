@@ -1,0 +1,30 @@
+/* Offline handbook: system fonts and explicit dark-mode contrast. */
+:root { color-scheme: light dark; --bg:#f5f7fa; --surface:#fff; --ink:#202939; --muted:#536279; --line:#dce3ec; --accent:#175fa7; }
+@media(prefers-color-scheme:dark) { :root { --bg:#151b24; --surface:#202936; --ink:#edf2fa; --muted:#b7c5d8; --line:#3c4a60; --accent:#8cc6ff; } }
+* { box-sizing:border-box; } html { scroll-padding-top:1rem; } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.7 system-ui,sans-serif; }
+header,main,footer { max-width:1080px; margin:auto; padding:2rem; }
+.language-menu { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem 1rem; margin:1rem 0; }
+.language-menu label { font-weight:600; }
+.language-menu select { max-width:min(28rem,calc(100vw - 7rem)); padding:.4rem 2rem .4rem .6rem; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); font:inherit; }
+.language-note { flex-basis:100%; margin:0; color:var(--muted); font-size:.85rem; }
+ header { padding-bottom:1rem; } .eyebrow { color:var(--muted); letter-spacing:.08em; font-size:.8rem; } h1 { font-size:2.2rem; line-height:1.25; margin:.5rem 0 1rem; } h2 { margin:0 0 1rem; } h3 { margin:1.8rem 0 .7rem; } a { color:var(--accent); text-underline-offset:.2em; } nav { display:flex; flex-wrap:wrap; gap:.7rem 1.5rem; margin:1rem 0; } section { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:1.8rem; margin-bottom:1.5rem; } .note { border-inline-start:4px solid var(--accent); padding:.5rem 1rem; } .table-wrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; text-align:start; } th,td { padding:.85rem .7rem; vertical-align:top; border-bottom:1px solid var(--line); } th { color:var(--muted); font-size:.9rem; } td:first-child { width:37%; font-weight:600; }
+table.comparison th:first-child,table.comparison td:first-child { width:26%; }
+tr.group td { padding:1.25rem .7rem .35rem; border-bottom:0; font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+.advanced { display:inline-block; margin-inline-start:.35rem; padding:.05rem .4rem; border:1px solid var(--line); border-radius:999px; font-size:.7rem; line-height:1.4; color:var(--muted); font-weight:500; letter-spacing:.02em; vertical-align:middle; }
+ul { margin:.6rem 0; padding-inline-start:1.3rem; } li { margin:.35rem 0; } small { display:block; color:var(--muted); font-weight:400; } footer { color:var(--muted); padding-top:0; } @media(max-width:650px) { header,main,footer { padding:1rem; } section { padding:1rem; } h1 { font-size:1.8rem; } td:first-child { width:42%; } }
+
+/* Keep navigation available beside long option tables, without narrowing them
+   on small screens. Local anchor links also work with scripts disabled. */
+header,footer { max-width:1320px; }
+.guide-layout { max-width:1320px; margin:auto; padding:0 2rem 2rem; display:grid; grid-template-columns:220px minmax(0,1fr); gap:1.5rem; }
+.guide-layout main { min-width:0; max-width:none; width:100%; padding:0; }
+.toc { position:sticky; top:1rem; align-self:start; max-height:calc(100vh - 2rem); overflow-y:auto; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:1rem; }
+.toc nav { display:flex; flex-direction:column; gap:.25rem; margin:0; }
+.toc h2 { font-size:.85rem; color:var(--muted); margin:.25rem .5rem .75rem; }
+.toc a { display:block; padding:.4rem .5rem; border-radius:6px; text-decoration:none; overflow-wrap:anywhere; }
+.toc .chapter { font-weight:650; margin-top:.35rem; }
+.toc .subsection { padding-inline-start:1.25rem; font-size:.9rem; color:var(--muted); }
+.toc a:hover,.toc a:focus-visible { background:var(--bg); color:var(--accent); }
+section:target,h3:target { scroll-margin-top:1rem; }
+@media(max-width:880px) { .guide-layout { grid-template-columns:1fr; } .toc { position:static; max-height:none; } .toc nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .toc h2 { grid-column:1/-1; } }
+@media(max-width:650px) { .guide-layout { padding:0 1rem 1rem; gap:1rem; } }

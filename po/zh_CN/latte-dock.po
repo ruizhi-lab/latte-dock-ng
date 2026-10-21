@@ -3837,3 +3837,31 @@ msgstr "厚度边距影响"
 #, kde-format
 msgid "Export Template"
 msgstr "导出模板"
+
+#, kde-format
+msgctxt "@title:menu"
+msgid "Help"
+msgstr "帮助"
+
+#, kde-format
+msgctxt "@action:inmenu"
+msgid "User Guide"
+msgstr "使用手册"
+
+#, kde-format
+msgctxt "@info"
+msgid "The Latte Dock NG user guide is not installed. Reinstall Latte Dock NG to restore the help files."
+msgstr "尚未安装 Latte Dock NG 使用手册。请重新安装 Latte Dock NG 以恢复帮助文件。"
+
+#, kde-format
+msgctxt "@info"
+msgid "Could not open the user guide. Check that a default web browser is configured."
+msgstr "无法打开使用手册。请检查是否已设置默认网页浏览器。"
+
+#, kde-format
+msgid "Report Bug (GitHub Issue)..."
+msgstr "报告问题（GitHub Issue）…"
+
+#, kde-format
+msgid "Open Latte Dock NG issue tracker on GitHub"
+msgstr "打开 Latte Dock NG 在 GitHub 上的问题跟踪页面"

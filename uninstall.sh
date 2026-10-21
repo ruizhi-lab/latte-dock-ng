@@ -253,6 +253,7 @@ managed_dirs=(
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.separator"
     "${install_prefix}/share/plasma/shells/org.kde.latte.shell"
     "${install_prefix}/share/latte/indicators"
+    "${install_prefix}/share/latte-dock-ng/help"
 )
 
 # The preview desktop entry is an install artifact, not purgeable user data.

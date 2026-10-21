@@ -394,6 +394,15 @@ jobs:
                 cp ./latte-dock-ng_*.deb /out/
               fi
               test -x /usr/bin/latte-dock-ng
+              # KAboutData exposes this compiled version in Help/About as well.
+              # Keep the probe isolated from any container bootstrap configuration.
+              version_check_root="$(mktemp -d)"
+              reported_version="$(env QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
+                XDG_CONFIG_HOME="$version_check_root/config" XDG_CACHE_HOME="$version_check_root/cache" \
+                XDG_DATA_HOME="$version_check_root/data" timeout 15s /usr/bin/latte-dock-ng --version)"
+              echo "Installed application version: $reported_version"
+              test "${reported_version##* }" = "$VERSION"
+              rm -rf -- "$version_check_root"
               test -f /usr/share/applications/org.kde.latte-dock.desktop
               echo "NATIVE_PACKAGE_INSTALL_OK: $VERSION installed"
             '

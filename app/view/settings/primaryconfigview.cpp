@@ -19,6 +19,7 @@
 #include "../../layouts/manager.h"
 #include "../../layout/genericlayout.h"
 #include "../../settings/universalsettings.h"
+#include "../../settings/handbook.h"
 #include "../../wm/abstractwindowinterface.h"
 
 // Qt
@@ -86,6 +87,10 @@ PrimaryConfigView::PrimaryConfigView(Latte::View *view)
     setParentView(view);
     init();
 }
+
+void
+PrimaryConfigView::openHelp(const QString &section)
+{ Settings::openHandbook(section); }
 
 PrimaryConfigView::~PrimaryConfigView()
 {

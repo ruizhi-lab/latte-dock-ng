@@ -13,6 +13,18 @@ because issue [#61](https://github.com/ruizhi-lab/latte-dock-ng/issues/61)
 reports a taskbar failure on Mageia 11, so Mageia 10 is not the validation
 target.
 
+## Help documentation gate
+
+Before dispatching a release build, review `docs/help/` against the
+user-visible changes since the previous release. Update every affected language
+page, the language `<select>` entries and their English fallback labels, and
+the help tests. A release must not ship stale or missing help for changed
+settings, dialogs, Advanced-mode visibility, copy/clone behavior, launcher
+sharing or supported UI languages. Run `handbookdocumenttest` with the release
+autotests and record any language that still only has the English fallback in
+the release notes. A passing source-contract test does not prove the guide text
+matches the UI; review the visible descriptions as well.
+
 ## Prepare and publish a release
 
 1. Push the intended source changes to `main`. Maintain `CHANGELOG.md` and
@@ -124,13 +136,46 @@ the upstream openSUSE repositories to match the Release workflow. Rerun the
 openSUSE CI checks to verify that this resolves the mirror inconsistency; do
 not mark them verified based on package metadata or repository setup alone.
 
-The later COPR build (`11067226`) failed separately on Mageia and openSUSE.
+The COPR Mageia Cauldron rebuild (`11114020`, package `1.2.59-1`) also remains
+unverified. DNF failed while installing the spec's BuildRequires because the
+Cauldron mirror metadata referenced `ntfs-3g-2026.9.18-1.mga11.x86_64.rpm`,
+which returned 404 from every configured mirror. The failure occurred before
+the source build started, so it does not indicate a spec or application compile
+failure. Retry after Mageia's mirror metadata and package files are synchronized;
+do not work around this by adding or removing project BuildRequires.
+
+An earlier COPR build (`11067226`) failed separately on Mageia and openSUSE.
 Mageia could not resolve Fedora-style `kf6-*-devel` BuildRequires; the spec
 now has Mageia-specific package names. The openSUSE package compiled and
 installed its files, then `%install` failed because the spec assumed Fedora's
 `redhat-linux-build/install_manifest.txt` path. It now finds CMake's manifest
 instead of assuming a distribution-specific build directory. Both chroots
 need a successful COPR rebuild to validate these fixes.
+
+## User-visible version verification
+
+Before publication, require the candidate record, package metadata, installed
+`latte-dock-ng --version`, and **Configure Latte → Help → About Latte Dock NG**
+to report the same `X.Y.Z`. The native package job checks the installed binary,
+not only the package filename or package-manager version. Check the About
+window manually in English and Chinese during desktop validation.
+
+`KAboutData` in `app/main.cpp` supplies both the About dialog and CLI version
+from the configured `VERSION`. Do not add a separate translated or hard-coded
+About version. A local Debug install without `LATTE_RELEASE_VERSION` deliberately
+uses the source default, which can be older than the latest release tag. For a
+release-candidate retest, pass the exact candidate version explicitly, for example:
+
+```bash
+LATTE_RELEASE_VERSION=1.2.56 bash install.sh --user --jobs 8 Debug
+~/.local/bin/latte-dock-ng --version
+```
+
+Use the running executable's path when checking the About window: a user-local
+Debug binary can shadow a correctly versioned system release. Rebuild with the
+intended candidate version rather than changing source defaults or inferring a
+release from a moving tag. Local code changes still require their own validation;
+a matching version string alone does not make a Debug build a published release.
 
 ## Version handling
 

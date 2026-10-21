@@ -1034,6 +1034,15 @@ add_executable(clonedviewpolicytest EXCLUDE_FROM_ALL clonedviewpolicytest.cpp)
 target_link_libraries(clonedviewpolicytest Qt6::Core Qt6::Test)
 latte_add_test(clonedviewpolicytest)
 
+add_executable(handbooktest EXCLUDE_FROM_ALL handbooktest.cpp ../app/settings/handbook.cpp)
+target_link_libraries(handbooktest Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test KF6::I18n KF6::XmlGui)
+latte_add_test(handbooktest)
+
+add_executable(helpmenuqmltest EXCLUDE_FROM_ALL helpmenuqmltest.cpp)
+target_compile_definitions(helpmenuqmltest PRIVATE LATTE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+target_link_libraries(helpmenuqmltest Qt6::Gui Qt6::Quick Qt6::Qml Qt6::Test)
+latte_add_offscreen_test(helpmenuqmltest)
+
 # Some tests compile app sources directly, so they need the shared logging
 # categories (latte_debug.h) just like the application targets.
 foreach(_latte_test_target IN LISTS latte_autotest_targets)
@@ -1071,6 +1080,9 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME qmllintbaselinetest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_baseline.py)
     set_property(TEST qmllintbaselinetest PROPERTY TIMEOUT 30)
+    add_test(NAME handbookdocumenttest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_handbook.py)
+    set_property(TEST handbookdocumenttest PROPERTY TIMEOUT 30)
     add_test(NAME releaseversiontest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_release_version.py)
     set_property(TEST releaseversiontest PROPERTY TIMEOUT 30)

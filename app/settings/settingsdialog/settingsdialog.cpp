@@ -12,6 +12,7 @@
 // local
 #include "ui_settingsdialog.h"
 #include "../universalsettings.h"
+#include "../handbook.h"
 #include "../generic/generictools.h"
 #include "../screensdialog/screensdialog.h"
 #include "../../lattecorona.h"
@@ -160,6 +161,17 @@ void SettingsDialog::initHelpMenu()
         m_globalMenuBar->addMenu(m_helpMenu->menu());
     }
 
+    QAction *guideAction = new QAction(QIcon::fromTheme(QStringLiteral("help-contents")), i18nc("@action:inmenu", "User Guide"), this);
+    guideAction->setShortcut(QKeySequence::HelpContents);
+    connect(guideAction, &QAction::triggered, this, []() { Settings::openHandbook(QStringLiteral("configure-latte")); });
+
+    // A persistent footer entry stays accessible when Plasma exports the menu
+    // bar to a global menu; help is separate from the settings tabs.
+    auto *helpButton = new QPushButton(QIcon::fromTheme(QStringLiteral("help-contents")), i18nc("@title:menu", "Help"), this);
+    helpButton->setObjectName(QStringLiteral("settingsHelpButton"));
+    helpButton->setMenu(m_helpMenu->menu());
+    m_ui->buttonBox->addButton(helpButton, QDialogButtonBox::HelpRole);
+
     QAction *githubIssueAction = new QAction(i18n("Report Bug (GitHub Issue)..."), m_helpMenu->menu());
     githubIssueAction->setIcon(QIcon::fromTheme(QStringLiteral("tools-report-bug")));
     githubIssueAction->setToolTip(i18n("Open Latte Dock NG issue tracker on GitHub"));
@@ -170,6 +182,10 @@ void SettingsDialog::initHelpMenu()
     m_helpMenu->menu()->insertAction(m_helpMenu->menu()->actions().isEmpty() ? nullptr : m_helpMenu->menu()->actions().constFirst(),
                                      githubIssueAction);
     m_helpMenu->menu()->insertSeparator(m_helpMenu->menu()->actions().size() > 1 ? m_helpMenu->menu()->actions().at(1) : nullptr);
+
+    const auto firstAction = m_helpMenu->menu()->actions().constFirst();
+    m_helpMenu->menu()->insertAction(firstAction, guideAction);
+    m_helpMenu->menu()->insertSeparator(firstAction);
 
     //! hide help menu actions that are not used
     m_helpMenu->action(KHelpMenu::menuHelpContents)->setVisible(false);

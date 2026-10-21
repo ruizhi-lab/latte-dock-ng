@@ -27,6 +27,10 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("fixture")
 
+    guide = prefix / "share/latte-dock-ng/help/zh_CN/index.html"
+    guide.parent.mkdir(parents=True)
+    guide.write_text("offline help")
+
     cache_files = [
         home / ".cache/latte-dock/legacy-cache",
         home / ".cache/lattedock/qmlcache/compiled.qmlc",
@@ -53,6 +57,7 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     for relative_path in files[4:]:
         assert (prefix / relative_path).exists(), relative_path
     assert config.exists()
+    assert not guide.exists()
     assert all(not cache_file.parent.exists() for cache_file in cache_files)
 
     # Only explicitly marked legacy taskmanager modules belong to Latte.

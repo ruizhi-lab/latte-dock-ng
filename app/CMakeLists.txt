@@ -160,3 +160,7 @@ install(FILES latte-indicators.knsrc DESTINATION  ${KDE_INSTALL_KNSRCDIR})
 
 
 add_subdirectory(packageplugins)
+
+# Offline user documentation follows the application UI language.
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/help/ DESTINATION ${KDE_INSTALL_DATADIR}/latte-dock-ng/help
+    FILES_MATCHING PATTERN "*.html" PATTERN "*.css")

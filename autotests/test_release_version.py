@@ -29,6 +29,17 @@ class ReleaseVersionTest(unittest.TestCase):
                 MODULE.validate_version(version)
         self.assertEqual(MODULE.validate_version("1.2.56"), "1.2.56")
 
+    def test_about_and_cli_use_the_configured_release_version(self):
+        root = SCRIPT.parents[1]
+        main = (root / "app/main.cpp").read_text()
+        about = main[main.rindex("inline void configureAboutData()") :]
+        self.assertIn("QStringLiteral(VERSION)", about)
+        self.assertIn("KAboutData::setApplicationData(about)", about)
+        self.assertLess(main.index("    configureAboutData();"), main.index("    parser.addVersionOption();"))
+        workflow = (root / ".github/workflows/build.yml").read_text()
+        self.assertIn("timeout 15s /usr/bin/latte-dock-ng --version", workflow)
+        self.assertIn('test "${reported_version##* }" = "$VERSION"', workflow)
+
     def test_override_does_not_modify_source_defaults(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

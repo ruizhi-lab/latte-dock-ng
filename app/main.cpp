@@ -1124,6 +1124,9 @@ inline void configureAboutData()
 {
     // Keep the historical internal component id to preserve D-Bus service compatibility
     // with existing callers that address org.kde.lattedock.
+    // The configured VERSION is shared by --version and the Help/About dialog.
+    // Release builds override it; local Debug installs can use an older source
+    // default, so neither UI translations nor runtime tags may supply a version.
     KAboutData about(QStringLiteral("lattedock")
                      , QStringLiteral("Latte Dock NG")
                      , QStringLiteral(VERSION)

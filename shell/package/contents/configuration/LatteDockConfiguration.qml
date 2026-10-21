@@ -211,6 +211,15 @@ Loader {
                     Layout.minimumHeight: advancedSettings.height + 2*units.smallSpacing
                 }
 
+                // Help belongs to the window toolbar, outside the settings tabs.
+                LatteExtraControls.HelpMenuButton {
+                    Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                    Layout.topMargin: units.smallSpacing * 3
+                    text: i18nc("@title:menu", "Help")
+                    guideText: i18nc("@action:inmenu", "User Guide")
+                    onGuideRequested: function(section) { dialog.viewConfig.openHelp(section); }
+                }
+
                 ColumnLayout {
                     PlasmaComponents3.ToolButton {
                         id: pinButton
