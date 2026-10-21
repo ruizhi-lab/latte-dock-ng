@@ -5,6 +5,7 @@
 
 #include <latte_debug.h>
 #include "clonedview.h"
+#include "appletpreferences.h"
 #include "containmentinterface.h"
 #include "visibilitymanager.h"
 #include "../data/viewdata.h"
@@ -13,6 +14,8 @@
 
 // Qt
 #include <QDebug>
+#include <QQmlPropertyMap>
+#include <QScopedValueRollback>
 
 namespace {
 QString appletSyncKey(const Latte::ViewPart::AppletInterfaceData &data)
@@ -179,6 +182,15 @@ void ClonedView::initSync()
         extendedInterface()->addApplet(data, x, y);
         m_syncingFromOriginal = false;
         onOriginalAppletsOrderChanged();
+    });
+
+    // Configuration maps may become available after ID mapping. The original
+    // owns clone settings; replay then so changes made before readiness survive.
+    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletConfigurationReady, this, &ClonedView::syncAppletConfiguration);
+    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletConfigurationReady, this, [this](int id) {
+        if (hasOriginalAppletId(id)) {
+            syncAppletConfiguration(originalAppletId(id));
+        }
     });
 
     //! Indicator
@@ -533,6 +545,7 @@ void ClonedView::onCloneAppletInScheduledDestructionChanged(const int &id, const
 
 void ClonedView::onOriginalAppletRemoved(const int &id)
 {
+    m_pendingOriginalAppletConfig.remove(id);
     debugSyncState(QStringLiteral("onOriginalAppletRemoved %1").arg(id));
 
     if (!structuralSyncReady()) {
@@ -555,10 +568,18 @@ void ClonedView::onOriginalAppletRemoved(const int &id)
 
 void ClonedView::onOriginalAppletConfigPropertyChanged(const int &id, const QString &key, const QVariant &value)
 {
-    if (!m_currentAppletIds.contains(id)) {
+    if (!m_currentAppletIds.contains(id)
+        || !extendedInterface()->appletDataForId(m_currentAppletIds.value(id)).configuration) {
+        // Coalesce only missed changes. Copying a whole map would overwrite
+        // clone-local references such as the system tray's containment ID.
+        m_pendingOriginalAppletConfig[id].insert(key, value);
         return;
     }
 
+    m_pendingOriginalAppletConfig[id].remove(key);
+    if (m_pendingOriginalAppletConfig[id].isEmpty()) {
+        m_pendingOriginalAppletConfig.remove(id);
+    }
     extendedInterface()->updateAppletConfigProperty(m_currentAppletIds[id], key, value);
 }
 
@@ -588,7 +609,7 @@ void ClonedView::updateContainmentConfigProperty(const QString &key, const QVari
 
 void ClonedView::updateOriginalAppletConfigProperty(const int &clonedid, const QString &key, const QVariant &value)
 {
-    if (!hasOriginalAppletId(clonedid)) {
+    if (m_syncingFromOriginal || !hasOriginalAppletId(clonedid)) {
         return;
     }
 
@@ -621,7 +642,8 @@ void ClonedView::onCloneAppletsInLockedZoomChanged(const QList<int> &clonedapple
         return;
     }
 
-    QList<int> neworiginalorder = translateToOriginalsOrder(clonedapplets);
+    // Partial discovery must not erase preferences for applets not mapped yet.
+    QList<int> neworiginalorder = ViewPart::syncAppletPreferences(clonedapplets, m_originalView->extendedInterface()->appletsInLockedZoom(), m_currentAppletIds, false);
 
     m_originalView->extendedInterface()->setAppletsInLockedZoom(neworiginalorder);
 }
@@ -632,9 +654,36 @@ void ClonedView::onCloneAppletsDisabledColoringChanged(const QList<int> &cloneda
         return;
     }
 
-    QList<int> neworiginalorder = translateToOriginalsOrder(clonedapplets);
+    // Partial discovery must not erase preferences for applets not mapped yet.
+    QList<int> neworiginalorder = ViewPart::syncAppletPreferences(clonedapplets, m_originalView->extendedInterface()->appletsDisabledColoring(), m_currentAppletIds, false);
 
     m_originalView->extendedInterface()->setAppletsDisabledColoring(neworiginalorder);
+}
+
+void
+ClonedView::syncAppletConfiguration(int originalId)
+{
+    if (!structuralSyncReady() || !m_currentAppletIds.contains(originalId) || !m_pendingOriginalAppletConfig.contains(originalId)) {
+        return;
+    }
+
+    const int cloneId = m_currentAppletIds.value(originalId);
+    QPointer<QQmlPropertyMap> source = m_originalView->extendedInterface()->appletDataForId(originalId).configuration;
+    QPointer<QQmlPropertyMap> target = extendedInterface()->appletDataForId(cloneId).configuration;
+    if (!source || !target) {
+        return;
+    }
+
+    // Applying a map emits synchronous QML notifications. Guard map lifetimes
+    // and the mapping after each write, and do not echo clone writes upstream.
+    const QScopedValueRollback<bool> syncing(m_syncingFromOriginal, true);
+    const QStringList keys = m_pendingOriginalAppletConfig.take(originalId).keys();
+    for (const QString &key : keys) {
+        if (!source || !target || m_currentAppletIds.value(originalId, ERRORAPPLETID) != cloneId) {
+            return;
+        }
+        extendedInterface()->updateAppletConfigProperty(cloneId, key, source->value(key));
+    }
 }
 
 void ClonedView::onOriginalAppletsOrderChanged()
@@ -658,6 +707,16 @@ void ClonedView::onOriginalAppletsOrderChanged()
     m_syncingFromOriginal = true;
     extendedInterface()->setAppletsOrder(newclonesorder);
     m_syncingFromOriginal = false;
+
+    // The original owns these preferences; clone IDs are recreated at
+    // startup. Early preference notifications can precede initialization or ID
+    // discovery, so replay after mapping recovery to replace stale saved IDs.
+    onOriginalAppletsInLockedZoomChanged(m_originalView->extendedInterface()->appletsInLockedZoom());
+    onOriginalAppletsDisabledColoringChanged(m_originalView->extendedInterface()->appletsDisabledColoring());
+    const QList<int> originalIds = m_currentAppletIds.keys();
+    for (const int id : originalIds) {
+        syncAppletConfiguration(id);
+    }
 }
 
 void ClonedView::onOriginalAppletsInLockedZoomChanged(const QList<int> &originalapplets)
@@ -666,7 +725,8 @@ void ClonedView::onOriginalAppletsInLockedZoomChanged(const QList<int> &original
         return;
     }
 
-    QList<int> newclonesorder = translateToClonesOrder(originalapplets);
+    // Keep target-only IDs until discovery can translate their source applets.
+    QList<int> newclonesorder = ViewPart::syncAppletPreferences(originalapplets, extendedInterface()->appletsInLockedZoom(), m_currentAppletIds, true);
 
     m_syncingFromOriginal = true;
     extendedInterface()->setAppletsInLockedZoom(newclonesorder);
@@ -679,7 +739,8 @@ void ClonedView::onOriginalAppletsDisabledColoringChanged(const QList<int> &orig
         return;
     }
 
-    QList<int> newclonesorder = translateToClonesOrder(originalapplets);
+    // Keep target-only IDs until discovery can translate their source applets.
+    QList<int> newclonesorder = ViewPart::syncAppletPreferences(originalapplets, extendedInterface()->appletsDisabledColoring(), m_currentAppletIds, true);
 
     m_syncingFromOriginal = true;
     extendedInterface()->setAppletsDisabledColoring(newclonesorder);

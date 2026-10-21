@@ -98,6 +98,8 @@ public:
     int indexOfApplet(const int &id);
     Q_INVOKABLE QObject *configurationForAppletVisualIndex(const int visualIndex);
     QList<int> appletsOrder() const;
+    QList<int> appletsDisabledColoring() const;
+    QList<int> appletsInLockedZoom() const;
     ViewPart::AppletInterfaceData appletDataAtIndex(const int &index);
     ViewPart::AppletInterfaceData appletDataForId(const int &id);
 
@@ -154,6 +156,7 @@ Q_SIGNALS:
     void appletConfigPropertyChanged(const int &id, const QString &key, const QVariant &value);
     void appletCreated(const QString &pluginId);
     void appletDataCreated(const int &id);
+    void appletConfigurationReady(const int &id);
     void appletDropped(QObject *data, int x, int y);
     void containmentConfigPropertyChanged(const QString &key, const QVariant &value);
     void appletsOrderChanged();

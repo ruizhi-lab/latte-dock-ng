@@ -1687,6 +1687,14 @@ QList<int> ContainmentInterface::appletsOrder() const
     return m_appletOrder;
 }
 
+QList<int>
+ContainmentInterface::appletsInLockedZoom() const
+{ return m_appletsInLockedZoom; }
+
+QList<int>
+ContainmentInterface::appletsDisabledColoring() const
+{ return m_appletsDisabledColoring; }
+
 void ContainmentInterface::cleanupInvalidSeparatorApplets()
 {
     if (m_cleaningSeparatorApplets || !m_layoutManager || !m_view || !m_view->containment()) {
@@ -2168,6 +2176,7 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
             if (m_appletData[id].configuration) {
                 qCDebug(latteView) << "org.kde.sync delayed applet configuration was successful for : " << id;
                 initAppletConfigurationSignals(id, m_appletData[id].configuration);
+                Q_EMIT appletConfigurationReady(id);
             }
         }
 

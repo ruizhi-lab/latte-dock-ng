@@ -1030,6 +1030,10 @@ target_link_libraries(plasmapaneltrackertest Qt6::Core Qt6::Qml Qt6::Test)
 target_compile_definitions(plasmapaneltrackertest PRIVATE PANEL_TRACKER_SCRIPT="${CMAKE_SOURCE_DIR}/app/wm/plasmapaneltracker.js")
 latte_add_test(plasmapaneltrackertest)
 
+add_executable(clonedviewpolicytest EXCLUDE_FROM_ALL clonedviewpolicytest.cpp)
+target_link_libraries(clonedviewpolicytest Qt6::Core Qt6::Test)
+latte_add_test(clonedviewpolicytest)
+
 # Some tests compile app sources directly, so they need the shared logging
 # categories (latte_debug.h) just like the application targets.
 foreach(_latte_test_target IN LISTS latte_autotest_targets)

@@ -3222,6 +3222,26 @@ void SourceContractTest::clonedViewDefersInitialAppletOrderSyncUntilStructuralRe
     QVERIFY(src.contains(QStringLiteral("if (structuralSyncReady())")));
     QVERIFY(src.contains(QStringLiteral("onOriginalAppletsOrderChanged();")));
 
+    // Preference notifications can arrive before clone IDs exist. Every mapping
+    // recovery must replay the original preference using the current IDs.
+    const int orderStart = src.indexOf(QStringLiteral("void ClonedView::onOriginalAppletsOrderChanged()"));
+    const int orderEnd = src.indexOf(QStringLiteral("void ClonedView::onOriginalAppletsInLockedZoomChanged"), orderStart);
+    QVERIFY(src.mid(orderStart, orderEnd - orderStart).contains(QStringLiteral("onOriginalAppletsDisabledColoringChanged(m_originalView->extendedInterface()->appletsDisabledColoring());")));
+
+    QVERIFY(src.mid(orderStart, orderEnd - orderStart).contains(QStringLiteral("onOriginalAppletsInLockedZoomChanged(m_originalView->extendedInterface()->appletsInLockedZoom());")));
+
+    QVERIFY(src.contains(QStringLiteral("ViewPart::syncAppletPreferences(clonedapplets, m_originalView->extendedInterface()->appletsInLockedZoom(), m_currentAppletIds, false);")));
+    QVERIFY(src.contains(QStringLiteral("ViewPart::syncAppletPreferences(originalapplets, extendedInterface()->appletsInLockedZoom(), m_currentAppletIds, true);")));
+    QVERIFY(src.contains(QStringLiteral("ViewPart::syncAppletPreferences(clonedapplets, m_originalView->extendedInterface()->appletsDisabledColoring(), m_currentAppletIds, false);")));
+    QVERIFY(src.contains(QStringLiteral("ViewPart::syncAppletPreferences(originalapplets, extendedInterface()->appletsDisabledColoring(), m_currentAppletIds, true);")));
+
+    QVERIFY(src.contains(QStringLiteral("appletConfigurationReady")));
+    QVERIFY(src.contains(QStringLiteral("syncAppletConfiguration(id);")));
+    QVERIFY(src.contains(QStringLiteral("QPointer<QQmlPropertyMap> source")));
+    QVERIFY(src.contains(QStringLiteral("m_pendingOriginalAppletConfig.take(originalId).keys()")));
+    QVERIFY(!src.contains(QStringLiteral("const QStringList keys = source->keys();")));
+    QVERIFY(src.contains(QStringLiteral("QScopedValueRollback<bool> syncing")));
+
     // Original-side initializationCompleted handler must contain the same
     // deferred-sync pattern so whichever side initializes last triggers
     // the initial order sync.

@@ -62,6 +62,7 @@ private Q_SLOTS:
     void updateOriginalAppletConfigProperty(const int &clonedid, const QString &key, const QVariant &value);
 
     void updateAppletIdsHash();
+    void syncAppletConfiguration(int originalId);
 private:
     bool refreshAppletIdsHash();
     bool isTranslatableToClonesOrder(const QList<int> &originalOrder);
@@ -82,6 +83,7 @@ private:
     QPointer<Latte::OriginalView> m_originalView;
     QHash<int, int> m_currentAppletIds;
     QSet<int> m_cloneRemovalsFromOriginal;
+    QHash<int, QVariantMap> m_pendingOriginalAppletConfig;
     bool m_cloneInitialized{false};
     bool m_originalInitialized{false};
     bool m_syncingFromOriginal{false};

@@ -955,7 +955,14 @@ void LayoutManager::applyTrashKeepOriginalColorsMigration()
     }
 
     QList<int> trashIds;
-    const QList<QObject *> applets = plasmoidApplets();
+    QList<QObject *> applets;
+    if (auto containment = containmentObject()) {
+        for (auto *applet : containment->applets()) {
+            applets << applet;
+        }
+    } else {
+        applets = plasmoidApplets();
+    }
 
     for (QObject *applet : applets) {
         if (isTrashWidget(applet)) {
@@ -1177,6 +1184,23 @@ void LayoutManager::restore()
         if (shouldRetry) {
             return;
         }
+    }
+
+    // A copied dock has independent IDs and configuration. Backend applets
+    // can exist before all their Quick items do; treating that partial UI as
+    // the saved membership drops late applets and their color/zoom preferences.
+    bool missingStoredApplet{ false };
+    for (const int id : appletIdsOrder) {
+        if (id > 0 && !isValidApplet(id)) {
+            missingStoredApplet = true;
+            break;
+        }
+    }
+
+    if (!applets.isEmpty() && missingStoredApplet && m_restoreRetryCount < 60) {
+        ++m_restoreRetryCount;
+        QTimer::singleShot(150, this, &LayoutManager::restore);
+        return;
     }
 
     if (appletIdsOrder.isEmpty() && !applets.isEmpty()) {
@@ -1514,6 +1538,17 @@ void LayoutManager::save()
 
     //! save applet order
     QString appletsserialized = toStr(appletIds);
+
+    // After the bounded restore retries, render what is available, but keep
+    // the persisted order while a live backend still lacks its visual item.
+    // Otherwise the next restart cannot recover that applet's original slot.
+    if (auto containment = containmentObject()) {
+        for (const auto *applet : containment->applets()) {
+            if (!applet->destroyed() && !appletIds.contains(static_cast<int>(applet->id()))) {
+                return;
+            }
+        }
+    }
 
     writeConfigValue(QStringLiteral("appletOrder"), appletsserialized);
 }
@@ -2180,11 +2215,22 @@ void LayoutManager::cleanupOptions()
 {
     applyTrashKeepOriginalColorsMigration();
 
+    // The containment owns membership; the visual order may still be partial
+    // during startup. Keep preferences for live backends without Quick items,
+    // including after restore's retry limit, and drop genuinely removed IDs.
+    QList<int> existingAppletIds = m_appletOrder;
+    if (auto containment = containmentObject()) {
+        existingAppletIds.clear();
+        for (const auto *applet : containment->applets()) {
+            existingAppletIds << static_cast<int>(applet->id());
+        }
+    }
+
     auto inlockedzoomcurrent = m_lockedZoomApplets;
     QList<int> inlockedzoomnext;
 
     for (int i = 0; i < inlockedzoomcurrent.count(); ++i) {
-        if (m_appletOrder.contains(inlockedzoomcurrent[i])) {
+        if (existingAppletIds.contains(inlockedzoomcurrent[i])) {
             inlockedzoomnext << inlockedzoomcurrent[i];
         }
     }
@@ -2195,7 +2241,7 @@ void LayoutManager::cleanupOptions()
     QList <int> disabledcoloringnext;
 
     for (int i = 0; i < disabledcoloringcurrent.count(); ++i) {
-        if (m_appletOrder.contains(disabledcoloringcurrent[i])) {
+        if (existingAppletIds.contains(disabledcoloringcurrent[i])) {
             disabledcoloringnext << disabledcoloringcurrent[i];
         }
     }

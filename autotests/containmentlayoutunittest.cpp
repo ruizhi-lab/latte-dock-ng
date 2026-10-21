@@ -6,8 +6,31 @@
 #include "layoutmanager.h"
 
 #include <QQuickItem>
+#include <QQmlPropertyMap>
 #include <QSignalSpy>
 #include <QTest>
+
+class TestConfig : public QQmlPropertyMap
+{
+  public:
+    TestConfig()
+      : QQmlPropertyMap(this, nullptr)
+    {
+    }
+};
+
+// Exercise the real restore/save path without a Plasma shell or user config.
+class RestoreRoot : public QQuickItem
+{
+    Q_OBJECT
+  public:
+    Q_INVOKABLE QVariant createAppletItem(QVariant applet)
+    {
+        auto *item = new QQuickItem(this);
+        item->setProperty("backendAppletRef", applet);
+        return QVariant::fromValue(item);
+    }
+};
 
 class ContainmentLayoutUnitTest : public QObject
 {
@@ -15,12 +38,69 @@ class ContainmentLayoutUnitTest : public QObject
 
 private Q_SLOTS:
     void tracksRequestedAppletOptionLists();
+    void independentCopyWaitsForLateApplet_data();
+    void independentCopyWaitsForLateApplet();
     void tracksScheduledDestructionIds();
     void restoresScheduledDestructionAppletAtOriginalIndex();
     void roundTripsMasqueradedIndexes();
     void scheduledDestructionHidesAndShowsAppletItem();
     void scheduledDestructionToleratesMissingLayouts();
 };
+
+void
+ContainmentLayoutUnitTest::independentCopyWaitsForLateApplet_data()
+{
+    QTest::addColumn<bool>("originalColors");
+    QTest::newRow("copied-trash-original-colors") << true;
+    QTest::newRow("copied-trash-explicit-colorization") << false;
+}
+
+void
+ContainmentLayoutUnitTest::independentCopyWaitsForLateApplet()
+{
+    QFETCH(bool, originalColors);
+    const QString savedColors = originalColors ? QStringLiteral("45") : QString();
+    TestConfig config;
+    config.insert(QStringLiteral("appletOrder"), QStringLiteral("44;46;45"));
+    config.insert(QStringLiteral("lockedZoomApplets"), QStringLiteral("45"));
+    config.insert(QStringLiteral("userBlocksColorizingApplets"), savedColors);
+    config.insert(QStringLiteral("trashKeepOriginalColorsDefaulted"), true);
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&config)));
+    QQuickItem launcher;
+    launcher.setProperty("id", 44);
+    launcher.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&launcher)));
+    QQuickItem tasks;
+    tasks.setProperty("id", 46);
+    tasks.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&tasks)));
+    QQuickItem trash;
+    trash.setProperty("id", 45);
+    trash.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&trash)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &launcher, &tasks }));
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    manager.restore();
+    QCOMPARE(config.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;46;45"));
+    QCOMPARE(config.value(QStringLiteral("userBlocksColorizingApplets")).toString(), savedColors);
+    QVERIFY(!manager.hasRestoredApplets());
+
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &launcher, &tasks, &trash }));
+    manager.restore();
+    QCOMPARE(manager.appletOrder(), (QList<int>{ 44, 46, 45 }));
+    QCOMPARE(manager.lockedZoomApplets(), (QList<int>{ 45 }));
+    QCOMPARE(manager.userBlocksColorizingApplets(), originalColors ? QList<int>{ 45 } : QList<int>());
+    manager.saveOptions();
+    QCOMPARE(config.value(QStringLiteral("lockedZoomApplets")).toString(), QStringLiteral("45"));
+    QCOMPARE(config.value(QStringLiteral("userBlocksColorizingApplets")).toString(), savedColors);
+}
 
 void ContainmentLayoutUnitTest::tracksRequestedAppletOptionLists()
 {
