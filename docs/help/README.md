@@ -18,13 +18,12 @@ next language. Missing files and browser-launch failures produce translated
 messages rather than silently failing.
 
 The language switcher is a native `<select>` dropdown, not a flat row of links.
-It lists every language directory under `po/` plus `en`. A language with its own
-`docs/help/<code>/index.html` points at that translation; every other language
-points at the English guide and its option is labelled with an explicit
-“English” suffix. The select uses one inline `onchange` handler to navigate;
-the table of contents and all guide links still work without scripts. Keep the
-select complete when a UI language is added or removed; `handbookdocumenttest`
-compares its `data-lang` entries with `po/`.
+It lists only guides that actually exist: currently `en`, `zh_CN` and `zh_TW`.
+Other UI languages are not listed until a translated page is added; the runtime
+lookup in `handbook.cpp` still falls back to English for them. The select uses
+one inline `onchange` handler to navigate; the table of contents and all guide
+links still work without scripts. When adding a translation, add its option to
+the select and keep `handbookdocumenttest` green.
 
 Keep every language's section IDs, group rows, advanced badges, option coverage
 and table row counts aligned. The left directory stays visible beside the option
@@ -43,13 +42,13 @@ its original. Use the UI terms for clones (`克隆` in `zh_CN`, `複本` in
 
 ## Translation status
 
-`en`, `zh_CN` and `zh_TW` have complete guide pages. Every other KDE UI
-language is listed in the selector and opens the English guide with an explicit
-“English” fallback label; it is not a machine-generated translation. To add a
-language, create `docs/help/<code>/index.html` with the same section IDs, group
-rows, advanced badges and table row counts, then update the selector and run
-`handbookdocumenttest`. Do not add an untranslated copy under a language code;
-the fallback already covers it.
+`en`, `zh_CN` and `zh_TW` have complete guide pages. No machine-generated
+translations are shipped. Other KDE UI languages fall back to the English guide
+at runtime but are not advertised in the selector until a real translation is
+provided. To add a language, create `docs/help/<code>/index.html` with the same
+section IDs, group rows, advanced badges and table row counts, add its option to
+the selector, and run `handbookdocumenttest`. Do not add an untranslated copy
+under a language code; the runtime fallback already covers it.
 
 The HTML and stylesheet are installed under `latte-dock-ng/help` in the standard
 data directory. All assets and navigation are local; no network access or extra

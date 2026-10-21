@@ -61,7 +61,7 @@ class GuideParser(HTMLParser):
 class HandbookTest(unittest.TestCase):
     def test_languages_have_matching_sections_and_option_coverage(self):
         reference = GuideParser((HELP / "en" / "index.html").read_text(encoding="utf-8"))
-        ui_languages = {path.name for path in (ROOT / "po").iterdir() if path.is_dir()} | {"en"}
+        ui_languages = {"en", "zh_CN", "zh_TW"}
         for language in ("en", "zh_CN", "zh_TW"):
             with self.subTest(language=language):
                 guide = GuideParser((HELP / language / "index.html").read_text(encoding="utf-8"))

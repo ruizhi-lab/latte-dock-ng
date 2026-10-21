@@ -80,10 +80,10 @@ part of local mirror maintenance.
    against the user-visible changes in that release: settings labels, defaults
    and scope, Advanced-mode visibility, dialogs, copy/clone behavior, launcher
    sharing and the supported UI languages. Update every affected translated
-   guide, the language `<select>` entries and their English fallback labels, then
-   run the handbook tests with the normal autotest suite. Record skipped
-   languages or checks in the release notes; do not ship stale or missing help
-   for changed UI.
+   guide and language `<select>` entry, and verify that UI languages without a
+   translated guide still fall back to English. Run the handbook tests with the
+   normal autotest suite. Record skipped languages or checks in the release
+   notes; do not ship stale or missing help for changed UI.
 
 ## Development Debug & Retest Workflow
 
@@ -184,8 +184,8 @@ own explicit authorization and are not implied by approval to commit or push.
 
 Before dispatching a release build, compare `docs/help/` with the user-visible
 changes since the previous release. Update the English guide, every translated
-page and the language `<select>` entries, including fallback labels for UI
-languages without a translated guide. Run `handbookdocumenttest` with the
+page and the language `<select>` entries, and verify that UI languages without a
+translated guide still fall back to English. Run `handbookdocumenttest` with the
 release autotests and manually check that changed settings, dialogs,
 Advanced-mode gates, copy/clone behavior and launcher sharing are described
 accurately. A source-contract test passing does not prove the visible behavior

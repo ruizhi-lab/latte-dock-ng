@@ -2,9 +2,9 @@
 
 ### Added
 - Add an offline user guide under Configure Latte → Help, with a left-hand
-  table of contents, a language selector covering every KDE UI language, and
-  complete English, Simplified Chinese and Traditional Chinese pages. Other
-  UI languages open the explicitly marked English fallback.
+  table of contents, a dropdown language selector, and complete English,
+  Simplified Chinese and Traditional Chinese pages. Other UI languages fall
+  back to the English guide.
 - Document dock settings, layout and screen dialogs, copy/clone behavior and
   Advanced-mode visibility, and add handbook, help-menu and language coverage
   tests.

@@ -17,8 +17,9 @@ target.
 
 Before dispatching a release build, review `docs/help/` against the
 user-visible changes since the previous release. Update every affected language
-page, the language `<select>` entries and their English fallback labels, and
-the help tests. A release must not ship stale or missing help for changed
+page and the language `<select>` entries, verify that UI languages without a
+translated guide still fall back to English, and run the help tests. A release
+must not ship stale or missing help for changed
 settings, dialogs, Advanced-mode visibility, copy/clone behavior, launcher
 sharing or supported UI languages. Run `handbookdocumenttest` with the release
 autotests and record any language that still only has the English fallback in
