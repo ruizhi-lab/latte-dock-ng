@@ -5232,6 +5232,7 @@
       "shell/package/contents/controls/CustomIndicatorButton.qml",
       "shell/package/contents/controls/CustomVisibilityModeButton.qml",
       "shell/package/contents/controls/DragCorner.qml",
+      "shell/package/contents/controls/HelpMenuButton.qml",
       "shell/package/contents/controls/IndicatorConfigUiManager.qml",
       "shell/package/contents/controls/InnerShadow.qml",
       "shell/package/contents/explorer/AppletAlternatives.qml",
@@ -5481,7 +5482,8 @@
       "shell/package/contents/views/AppletDelegate.qml": 0,
       "shell/package/contents/views/InfoView.qml": 0,
       "shell/package/contents/views/Panel.qml": 0,
-      "shell/package/contents/views/WidgetExplorer.qml": 0
+      "shell/package/contents/views/WidgetExplorer.qml": 0,
+      "shell/package/contents/controls/HelpMenuButton.qml": 0
     },
     "processExitCodes": [
       0,
