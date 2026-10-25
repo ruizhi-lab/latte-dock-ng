@@ -569,8 +569,9 @@ Item{
     }
 
     // Use the resolved theme file only for the explicit opt-in. Symbolic-only
-    // or unresolved icons keep their native representation. Keep polling while
-    // opted in, including when hidden, so a later usable icon can activate it.
+    // or unresolved icons keep their native representation. Keep following
+    // the backend while opted in, including when hidden, so a later usable
+    // icon can activate it.
     Item {
         id: originalIconFallback
         anchors.fill: _wrapperContainer
@@ -580,10 +581,16 @@ Item{
         visible: wrapper.needsOriginalIconFallback && iconPath !== ""
         property string iconPath: ""
 
+        // Plasma::Applet owns the icon and emits iconChanged when dynamic
+        // widgets such as volume or brightness switch state. statusSource
+        // resolves that applet even when backendAppletRef is the visual
+        // AppletQuickItem, which has no icon notification. Following the
+        // signal replaces a 10 Hz poll per opted-in applet that kept waking
+        // the idle dock; a new target is re-read because its icon may differ.
+        readonly property QtObject iconBackend: wrapper.needsOriginalIconFallback ? appletItem.statusSource : null
+
         function refreshIconPath() {
-            const iconName = wrapper.needsOriginalIconFallback ? appletItem.currentBackendAppletIcon() : "";
-            const nextPath = iconName && !iconName.endsWith("-symbolic")
-                           ? appletItem.currentBackendAppletIconPath() : "";
+            const nextPath = wrapper.needsOriginalIconFallback ? appletItem.currentOriginalIconFallbackPath() : "";
 
             if (iconPath !== nextPath) {
                 iconPath = nextPath;
@@ -591,9 +598,15 @@ Item{
         }
 
         Component.onCompleted: refreshIconPath()
+        onIconBackendChanged: refreshIconPath()
         Connections {
             target: wrapper
             function onNeedsOriginalIconFallbackChanged() { originalIconFallback.refreshIconPath(); }
+        }
+        Connections {
+            target: originalIconFallback.iconBackend
+            ignoreUnknownSignals: true
+            function onIconChanged() { originalIconFallback.refreshIconPath(); }
         }
         // Environment coalesces theme notifications after the KDE loader has
         // been rebuilt. Re-resolve the file now; the applet's icon name can
@@ -606,17 +619,6 @@ Item{
                 }
                 originalIconFallback.refreshIconPath();
             }
-        }
-
-        // Some applets expose their state through iconChanged without a QML
-        // property notification on the resolved backend object. Poll only
-        // while this fallback is opted in so dynamic widgets such as
-        // volume and brightness keep their current state.
-        Timer {
-            interval: 100
-            repeat: true
-            running: wrapper.needsOriginalIconFallback
-            onTriggered: originalIconFallback.refreshIconPath()
         }
 
         Binding {

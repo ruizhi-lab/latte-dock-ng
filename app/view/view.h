@@ -446,8 +446,11 @@ private:
 
     Layout::GenericLayout *m_layout{nullptr};
 
-    QQuickItem *m_colorizer{nullptr};
-    QQuickItem *m_metrics{nullptr};
+    //! Colorizer and metrics items belong to the containment QML and are
+    //! destroyed with it, independently of this window; QPointer keeps the
+    //! getters from returning dangling items after a containment reload.
+    QPointer<QQuickItem> m_colorizer;
+    QPointer<QQuickItem> m_metrics;
 
     QPointer<PlasmaQuick::ConfigView> m_appletConfigView;
     QPointer<ViewPart::PrimaryConfigView> m_primaryConfigView;

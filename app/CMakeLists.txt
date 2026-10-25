@@ -8,6 +8,7 @@ set(lattedock-app_SRCS
     screenpool.cpp
     primaryoutputwatcher.cpp
     main.cpp
+    session/shutdownmonitor.cpp
     coretypes.h
 )
 

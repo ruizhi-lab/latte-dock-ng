@@ -263,7 +263,9 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
 
         bool appletContainsMouse = false;
 
-        if (m_appletContainsMethod.isValid()) {
+        //! A recreated containment can leave the cached method valid while its
+        //! item is gone; use the geometric fallback until it is rediscovered.
+        if (m_appletContainsMethod.isValid() && m_appletContainsMethodItem) {
             QVariant retVal;
             m_appletContainsMethod.invoke(m_appletContainsMethodItem, Qt::DirectConnection, Q_RETURN_ARG(QVariant, retVal)
                                           , Q_ARG(QVariant, appletTemp->id()), Q_ARG(QVariant, event->pos()));

@@ -1025,6 +1025,21 @@ add_test(NAME windowviewbackendtest
 set_property(TEST windowviewbackendtest PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
 list(APPEND latte_autotest_targets windowviewbackendtest)
 
+add_executable(shutdownmonitortest EXCLUDE_FROM_ALL
+    shutdownmonitortest.cpp
+    ../app/session/shutdownmonitor.cpp
+    ../app/session/shutdownmonitor.h
+)
+target_include_directories(shutdownmonitortest PRIVATE ${CMAKE_SOURCE_DIR}/app)
+target_link_libraries(shutdownmonitortest Qt6::Core Qt6::DBus Qt6::Test)
+# The test claims org.kde.Shutdown and org.kde.ksmserver; keep it off the
+# real desktop's session bus.
+add_test(NAME shutdownmonitortest
+    COMMAND ${DBUS_RUN_SESSION_EXECUTABLE} ${_latte_dbus_session_args} -- ${CMAKE_COMMAND} -E env
+        LATTE_PRIVATE_TEST_BUS=1 $<TARGET_FILE:shutdownmonitortest>)
+set_property(TEST shutdownmonitortest PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
+list(APPEND latte_autotest_targets shutdownmonitortest)
+
 add_executable(plasmapaneltrackertest EXCLUDE_FROM_ALL plasmapaneltrackertest.cpp)
 target_link_libraries(plasmapaneltrackertest Qt6::Core Qt6::Qml Qt6::Test)
 target_compile_definitions(plasmapaneltrackertest PRIVATE PANEL_TRACKER_SCRIPT="${CMAKE_SOURCE_DIR}/app/wm/plasmapaneltracker.js")

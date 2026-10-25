@@ -31,6 +31,7 @@
 #include "plasma/extended/screenpool.h"
 #include "plasma/extended/theme.h"
 #include "pluginids.h"
+#include "session/shutdownmonitor.h"
 #include "settings/universalsettings.h"
 #include "templates/templatesmanager.h"
 #include "view/originalview.h"
@@ -52,7 +53,6 @@
 #include <QCursor>
 #include <QScreen>
 #include <QDBusConnection>
-#include <QDBusMessage>
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -475,18 +475,10 @@ void Corona::onAboutToQuit()
                          || qApp->property("latte_session_ending").toBool();
 
     if (!sessionEnding) {
-        QDBusMessage msg = QDBusMessage::createMethodCall(
-                               QStringLiteral("org.kde.ksmserver"),
-                               QStringLiteral("/KSMServer"),
-                               QStringLiteral("org.kde.KSMServerInterface"),
-                               QStringLiteral("isShuttingDown"));
-        QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
-
-        if (reply.type() == QDBusMessage::ReplyMessage
-            && !reply.arguments().isEmpty()
-            && reply.arguments().first().toBool()) {
-            sessionEnding = true;
-        }
+        //! Bounded query: during a session teardown ksmserver can stop
+        //! answering, and the 25 s default D-Bus timeout kept the dock mapped
+        //! long enough to block KWin's closeWaylandWindows step.
+        sessionEnding = Session::isKsmServerShuttingDown(QDBusConnection::sessionBus());
     }
 
     if (sessionEnding) {

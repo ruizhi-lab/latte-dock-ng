@@ -247,12 +247,21 @@ Item {
     }
 
     // QML cannot invalidate a getter-backed property when a Plasma applet
-    // changes its icon without exposing a notify signal.  The fallback image
-    // calls these functions while opted in so dynamic widget states are
-    // read directly from the backend.
+    // changes its icon: the invokable has no notify signal.  The fallback
+    // image calls these functions when the backend applet emits iconChanged,
+    // so dynamic widget states are read directly from the backend.
     function currentBackendAppletIconPath() {
         return fastLayoutManager && backendAppletRef
                 ? fastLayoutManager.appletIconPath(backendAppletRef) : "";
+    }
+
+    // Theme file for the original-colors fallback. Symbolic-only or
+    // unresolved icons return "" and keep their native representation.
+    function currentOriginalIconFallbackPath() {
+        const iconName = appletItem.currentBackendAppletIcon();
+
+        return iconName && !iconName.endsWith("-symbolic")
+                ? appletItem.currentBackendAppletIconPath() : "";
     }
 
     property bool isSeparator: pluginName === "audoban.applet.separator"

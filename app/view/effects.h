@@ -201,8 +201,9 @@ private:
     //only for the mask, not to actually paint
     KSvg::FrameSvg::EnabledBorders m_enabledBorders{KSvg::FrameSvg::AllBorders};
 
-    //assigned from qml side in order to access the official panel background svg
-    QQuickItem *m_panelBackgroundSvg{nullptr};
+    //assigned from qml side in order to access the official panel background svg;
+    //the QML engine owns it, so the mask code must see null after it is gone
+    QPointer<QQuickItem> m_panelBackgroundSvg;
 
     //! Subtracted and United Mask regions
     QHash<QString, QRegion> m_subtractedMaskRegions;

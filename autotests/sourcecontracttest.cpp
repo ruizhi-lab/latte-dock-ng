@@ -46,7 +46,7 @@ private Q_SLOTS:
     void sessionShutdownQuitDecisionMatrix_data();
     void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
-    void sessionShutdownPollerHidesViewsAndRestoresOnCancel();
+    void sessionShutdownMonitorHidesViewsAndRestoresOnCancel();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
     void itemsAlignmentConfigDefaultsToCenter();
@@ -71,7 +71,7 @@ private Q_SLOTS:
     void autostartInterfacesUseXdgState();
     void autostartPreservesEntryFields();
     void firstRunEnablesDefaultAutostart();
-    void waylandCheckHasRetryMechanism();
+    void waylandCheckFailsWithoutDeadRetryLoop();
     void normalStartupDoesNotMutateAutostart();
     void autoSizeLoopsUseInequalityNotStrictEquality();
     void cmakeWarningRelaxationLivesInModule();
@@ -802,17 +802,33 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(mainSource.contains(QStringLiteral("QCoreApplication::setQuitLockEnabled(false);")));
     QVERIFY(mainSource.contains(QStringLiteral("qputenv(\"LATTE_SESSION_ENDING\", \"1\");")));
     QVERIFY(mainSource.contains(QStringLiteral("app.setProperty(\"latte_session_ending\", true);")));
-    QVERIFY(mainSource.contains(QStringLiteral("#include \"session/shutdownstate.h\"")));
-    QVERIFY(mainSource.contains(QStringLiteral("inline bool isPlasmaShutdownServiceActive();")));
+    QVERIFY(mainSource.contains(QStringLiteral("#include \"session/shutdownmonitor.h\"")));
+    //! No session-long poll: the monitor samples only while plasma-shutdown
+    //! owns org.kde.Shutdown (see shutdownmonitortest for the behavior).
+    QVERIFY(!mainSource.contains(QStringLiteral("isPlasmaShutdownServiceActive")));
+    QVERIFY(!mainSource.contains(QStringLiteral("QTimer sessionShutdownPoll")));
     QVERIFY(mainSource.contains(QStringLiteral("auto disableSessionManagement = [](QSessionManager & sm)")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::commitDataRequest")));
     QVERIFY(mainSource.contains(QStringLiteral("sm.setRestartHint(QSessionManager::RestartNever);")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::saveStateRequest")));
-    QVERIFY(mainSource.contains(QStringLiteral("sessionShutdownPoll.setInterval(500);")));
-    QVERIFY(mainSource.contains(QStringLiteral("bool sessionShutdownSawBlockingWindows = false;")));
     QVERIFY(mainSource.contains(QStringLiteral("corona.wm()->hasSessionBlockingWindows()")));
-    QVERIFY(mainSource.contains(QStringLiteral("[shutdown] session blocking windows closed; quitting.")));
     QVERIFY(mainSource.contains(QStringLiteral("qunsetenv(\"LATTE_SESSION_ENDING\");")));
+
+    QFile monitorHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.h"));
+    QVERIFY(monitorHeaderFile.open(QFile::ReadOnly));
+    const QString monitorHeader = QString::fromUtf8(monitorHeaderFile.readAll());
+    QVERIFY(monitorHeader.contains(QStringLiteral("static constexpr int PollIntervalMs = 500;")));
+    QVERIFY(monitorHeader.contains(QStringLiteral("inline constexpr int KsmServerQueryTimeoutMs = 1000;")));
+    QVERIFY(monitorHeader.contains(QStringLiteral("bool m_sawBlockingWindows{false};")));
+
+    QFile monitorSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.cpp"));
+    QVERIFY(monitorSourceFile.open(QFile::ReadOnly));
+    const QString monitorSource = QString::fromUtf8(monitorSourceFile.readAll());
+    QVERIFY(monitorSource.contains(QStringLiteral("#include \"shutdownstate.h\"")));
+    QVERIFY(monitorSource.contains(QStringLiteral("return QStringLiteral(\"org.kde.Shutdown\");")));
+    QVERIFY(monitorSource.contains(QStringLiteral("QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration")));
+    QVERIFY(monitorSource.contains(QStringLiteral("connection.call(message, QDBus::Block, timeoutMs)")));
+    QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] session blocking windows closed; quitting.")));
     QVERIFY(!mainSource.contains(QStringLiteral("flagSetTimer.hasExpired(5000)")));
     QVERIFY(!mainSource.contains(QStringLiteral("triggering quit() from poller")));
     QVERIFY(!mainSource.contains(QStringLiteral("plasma-shutdown is active; quitting committed session logout")));
@@ -832,7 +848,7 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(appCreation > disableSessionManager);
 
     const int saveStateStart = mainSource.indexOf(QStringLiteral("QObject::connect(&app, &QGuiApplication::saveStateRequest"));
-    const int pollerStart = mainSource.indexOf(QStringLiteral("QTimer sessionShutdownPoll"));
+    const int pollerStart = mainSource.indexOf(QStringLiteral("Latte::Session::ShutdownMonitor sessionShutdownMonitor"));
     const int commitDataStart = mainSource.indexOf(QStringLiteral("QObject::connect(&app, &QGuiApplication::commitDataRequest"));
     QVERIFY(saveStateStart >= 0);
     QVERIFY(commitDataStart >= 0);
@@ -847,19 +863,28 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(!saveStateBlock.contains(QStringLiteral("app.quit()")));
     QVERIFY(!saveStateBlock.contains(QStringLiteral("markSessionEnding")));
 
-    const int pollerBodyStart = mainSource.indexOf(QStringLiteral("QObject::connect(&sessionShutdownPoll"));
-    const int pollerBodyEnd = mainSource.indexOf(QStringLiteral("sessionShutdownPoll.start();"), pollerBodyStart);
-    QVERIFY(pollerBodyStart >= 0);
-    QVERIFY(pollerBodyEnd > pollerBodyStart);
-    const QString pollerBody = mainSource.mid(pollerBodyStart, pollerBodyEnd - pollerBodyStart);
-    QVERIFY(pollerBody.contains(QStringLiteral("const bool hasBlockingWindows = corona.wm()->hasSessionBlockingWindows();")));
-    QVERIFY(pollerBody.contains(QStringLiteral("const bool shutdownServiceActive = isPlasmaShutdownServiceActive();")));
-    QVERIFY(pollerBody.contains(QStringLiteral("sessionShutdownSawBlockingWindows = true;")));
-    QVERIFY(pollerBody.contains(QStringLiteral("if (app.property(\"latte_session_ending\").toBool()")));
-    QVERIFY(pollerBody.contains(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")));
-    QVERIFY(pollerBody.contains(QStringLiteral("app.quit();")));
-    QVERIFY(pollerBody.indexOf(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")) < pollerBody.indexOf(
-                QStringLiteral("app.quit();")));
+    //! main.cpp only supplies the hooks; the decision order lives in the
+    //! monitor. The ending flag and quit must stay wired to QApplication.
+    const int hooksEnd = mainSource.indexOf(QStringLiteral("KDBusService service(KDBusService::Unique);"), pollerStart);
+    QVERIFY(hooksEnd > pollerStart);
+    const QString hooks = mainSource.mid(pollerStart, hooksEnd - pollerStart);
+    QVERIFY(hooks.contains(QStringLiteral("Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus())")));
+    QVERIFY(hooks.contains(QStringLiteral("return corona.wm()->hasSessionBlockingWindows();")));
+    QVERIFY(hooks.contains(QStringLiteral("return app.property(\"latte_session_ending\").toBool();")));
+    QVERIFY(hooks.contains(QStringLiteral(".markSessionEnding = markSessionEnding,")));
+    QVERIFY(hooks.contains(QStringLiteral("app.quit();")));
+
+    const int evaluateStart = monitorSource.indexOf(QStringLiteral("void ShutdownMonitor::evaluate()"));
+    const int evaluateEnd = monitorSource.indexOf(QStringLiteral("void ShutdownMonitor::updatePolling()"), evaluateStart);
+    QVERIFY(evaluateStart >= 0);
+    QVERIFY(evaluateEnd > evaluateStart);
+    const QString evaluateBody = monitorSource.mid(evaluateStart, evaluateEnd - evaluateStart);
+    QVERIFY(evaluateBody.contains(QStringLiteral("const bool hasBlockingWindows = m_hooks.hasBlockingWindows();")));
+    QVERIFY(evaluateBody.contains(QStringLiteral("m_sawBlockingWindows = true;")));
+    QVERIFY(evaluateBody.contains(QStringLiteral("if (m_hooks.isSessionEnding())")));
+    QVERIFY(evaluateBody.contains(QStringLiteral("shouldQuitForCommittedShutdown(m_sawBlockingWindows, m_shutdownServiceRegistered, hasBlockingWindows)")));
+    QVERIFY(evaluateBody.indexOf(QStringLiteral("shouldQuitForCommittedShutdown(m_sawBlockingWindows, m_shutdownServiceRegistered, hasBlockingWindows)"))
+            < evaluateBody.indexOf(QStringLiteral("m_hooks.quit();")));
 
     QFile abstractWmHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.h"));
     QVERIFY(abstractWmHeaderFile.open(QFile::ReadOnly));
@@ -881,6 +906,8 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(coronaSource.contains(QStringLiteral("qApp->property(\"latte_session_ending\").toBool()")));
     QVERIFY(coronaSource.contains(QStringLiteral("m_layoutsManager->synchronizer()->hideAllViews();")));
     QVERIFY(coronaSource.contains(QStringLiteral("fast shutdown path for session logout")));
+    QVERIFY(coronaSource.contains(QStringLiteral("sessionEnding = Session::isKsmServerShuttingDown(QDBusConnection::sessionBus());")));
+    QVERIFY(!coronaSource.contains(QStringLiteral("QStringLiteral(\"isShuttingDown\")")));
 
     QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
     QVERIFY(viewSourceFile.open(QFile::ReadOnly));
@@ -891,28 +918,41 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(viewSource.contains(QStringLiteral("QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);")));
 }
 
-void SourceContractTest::sessionShutdownPollerHidesViewsAndRestoresOnCancel()
+void SourceContractTest::sessionShutdownMonitorHidesViewsAndRestoresOnCancel()
 {
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
     QVERIFY(mainSourceFile.open(QFile::ReadOnly));
     const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
 
-    //! Phase 1 (logout announced): the poller must unmap all views so KWin's
+    QFile monitorSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.cpp"));
+    QVERIFY(monitorSourceFile.open(QFile::ReadOnly));
+    const QString monitorSource = QString::fromUtf8(monitorSourceFile.readAll());
+
+    //! Phase 1 (logout announced): the monitor must unmap all views so KWin's
     //! closeWaylandWindows() never waits on the dock windows during shutdown.
-    const int phase1Log = mainSource.indexOf(QStringLiteral("[shutdown] isShuttingDown() = true; setting flag (not quitting yet)."));
-    const int flagSet = mainSource.indexOf(QStringLiteral("markSessionEnding();"), phase1Log);
-    const int hideViews = mainSource.indexOf(QStringLiteral("synchronizer()->hideAllViews();"), flagSet);
+    const int phase1Log = monitorSource.indexOf(QStringLiteral("[shutdown] isShuttingDown() = true; setting flag (not quitting yet)."));
+    const int flagSet = monitorSource.indexOf(QStringLiteral("m_hooks.markSessionEnding();"), phase1Log);
+    const int hideViews = monitorSource.indexOf(QStringLiteral("m_hooks.hideViews();"), flagSet);
     QVERIFY(phase1Log >= 0);
     QVERIFY(flagSet > phase1Log);
     QVERIFY(hideViews > flagSet);
 
     //! Cancel branch: views hidden by the announcement must be restored.
-    const int cancelLog = mainSource.indexOf(QStringLiteral("[shutdown] logout cancelled; clearing session-ending flag."));
-    const int currentViews = mainSource.indexOf(QStringLiteral("synchronizer()->currentViews()"), cancelLog);
-    const int restoreViews = mainSource.indexOf(QStringLiteral("view->setVisible(true)"), currentViews);
+    const int cancelLog = monitorSource.indexOf(QStringLiteral("[shutdown] logout cancelled; clearing session-ending flag."));
+    const int restoreViews = monitorSource.indexOf(QStringLiteral("m_hooks.restoreViews();"), cancelLog);
     QVERIFY(cancelLog >= 0);
-    QVERIFY(currentViews > cancelLog);
-    QVERIFY(restoreViews > currentViews);
+    QVERIFY(restoreViews > cancelLog);
+
+    //! The hooks implement both steps on the real views.
+    const int hideHook = mainSource.indexOf(QStringLiteral(".hideViews = [&corona]()"));
+    QVERIFY(hideHook >= 0);
+    QVERIFY(mainSource.indexOf(QStringLiteral("synchronizer()->hideAllViews();"), hideHook) > hideHook);
+    const int restoreHook = mainSource.indexOf(QStringLiteral(".restoreViews = [&corona]()"));
+    const int currentViews = mainSource.indexOf(QStringLiteral("synchronizer()->currentViews()"), restoreHook);
+    const int setVisible = mainSource.indexOf(QStringLiteral("view->setVisible(true)"), currentViews);
+    QVERIFY(restoreHook >= 0);
+    QVERIFY(currentViews > restoreHook);
+    QVERIFY(setVisible > currentViews);
 }
 
 void SourceContractTest::needsAttentionStatusBlocksHidingWithoutWindowReconfiguration()
@@ -1877,23 +1917,27 @@ void SourceContractTest::firstRunEnablesDefaultAutostart()
     QVERIFY(firstRunBody.contains(QStringLiteral("Layouts::Importer::autostartEntryExists()")));
 }
 
-void SourceContractTest::waylandCheckHasRetryMechanism()
+void SourceContractTest::waylandCheckFailsWithoutDeadRetryLoop()
 {
-    //! The Wayland platform check during startup must retry instead of
-    //! failing immediately, so cold-boot timing races with the compositor
-    //! do not cause a permanent autostart failure.
+    //! KWindowSystem caches the QPA platform chosen when QApplication is
+    //! constructed (isPlatformWayland is CONSTANT), so retrying afterwards can
+    //! never succeed and only delayed the failure by several seconds.
     QFile mainCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
     QVERIFY(mainCpp.open(QFile::ReadOnly));
     const QString content = QString::fromUtf8(mainCpp.readAll());
 
-    const int waylandCheck = content.indexOf(QStringLiteral("isPlatformWayland()"));
-    QVERIFY(waylandCheck >= 0);
+    const int appCreation = content.indexOf(QStringLiteral("QApplication app(argc, argv);"));
+    const int waylandCheck = content.indexOf(QStringLiteral("if (!KWindowSystem::isPlatformWayland()) {"));
+    const int failure = content.indexOf(QStringLiteral("Latte-Dock Wayland-only build requires a Wayland Plasma session."), waylandCheck);
+    const int failureReturn = content.indexOf(QStringLiteral("return 1;"), failure);
+    QVERIFY(appCreation >= 0);
+    QVERIFY(waylandCheck > appCreation);
+    QVERIFY(failure > waylandCheck);
+    QVERIFY(failureReturn > failure);
 
-    const int maxRetries = content.indexOf(QStringLiteral("maxRetries"), waylandCheck);
-    QVERIFY(maxRetries > waylandCheck);
-
-    const int msleep = content.indexOf(QStringLiteral("QThread::msleep"), waylandCheck);
-    QVERIFY(msleep > waylandCheck);
+    QVERIFY(!content.contains(QStringLiteral("maxRetries")));
+    QVERIFY(!content.contains(QStringLiteral("QThread::msleep")));
+    QVERIFY(!content.contains(QStringLiteral("Waiting for Wayland platform")));
 }
 
 void SourceContractTest::normalStartupDoesNotMutateAutostart()
@@ -2109,7 +2153,7 @@ void SourceContractTest::appletIconOverrideStripsSymbolicForOriginalColors()
     QVERIFY(wrapperFile.open(QFile::ReadOnly));
     const QString wrapperSource = QString::fromUtf8(wrapperFile.readAll());
         QVERIFY(wrapperSource.contains(QStringLiteral("refreshIconPath")));
-        QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
+        QVERIFY(wrapperSource.contains(QStringLiteral("function onIconChanged()")));
         QVERIFY(appletItemSource.contains(QStringLiteral("currentBackendAppletIconPath")));
         QVERIFY(wrapperSource.contains(QStringLiteral("hoveredOriginalIconEffect")));
     QVERIFY(hdr.contains(QStringLiteral("applyOriginalIconColors")));
@@ -2140,10 +2184,23 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     // getter-backed property cache.
     QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIconPath()")));
     QVERIFY(appletItemSource.contains(QStringLiteral("function currentBackendAppletIcon()")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("function currentOriginalIconFallbackPath()")));
+    QVERIFY(appletItemSource.contains(QStringLiteral("!iconName.endsWith(\"-symbolic\")")));
     QVERIFY(!appletItemSource.contains(QStringLiteral("appletItem.fastLayoutManager")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIcon()")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentBackendAppletIconPath()")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("interval: 100")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("appletItem.currentOriginalIconFallbackPath()")));
+
+    // The backend Plasma applet's iconChanged drives the refresh; statusSource
+    // resolves it even when backendAppletRef is the visual item. A poll here
+    // woke the idle dock ten times per second for every opted-in applet.
+    QVERIFY(wrapperSource.contains(QStringLiteral("readonly property QtObject iconBackend: wrapper.needsOriginalIconFallback ? appletItem.statusSource : null")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("onIconBackendChanged: refreshIconPath()")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("target: originalIconFallback.iconBackend")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("ignoreUnknownSignals: true")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("function onIconChanged() { originalIconFallback.refreshIconPath(); }")));
+    const int fallbackStart = wrapperSource.indexOf(QStringLiteral("id: originalIconFallback"));
+    const int fallbackImage = wrapperSource.indexOf(QStringLiteral("source: originalIconFallback.iconPath"), fallbackStart);
+    QVERIFY(fallbackStart >= 0 && fallbackImage > fallbackStart);
+    QVERIFY(!wrapperSource.mid(fallbackStart, fallbackImage - fallbackStart).contains(QStringLiteral("Timer {")));
 
     const int gateStart = wrapperSource.indexOf(QStringLiteral("readonly property bool needsOriginalIconFallback:"));
     const int gateEnd = wrapperSource.indexOf(QStringLiteral("property bool disableLengthScale:"), gateStart);
@@ -2152,12 +2209,10 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     QVERIFY(!gate.contains(QStringLiteral("appletMainIconIsFound")));
     QVERIFY(!gate.contains(QStringLiteral("backendAppletIcon")));
     QVERIFY(wrapperSource.contains(QStringLiteral("visible: wrapper.needsOriginalIconFallback && iconPath !== \"\"")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("running: wrapper.needsOriginalIconFallback")));
     QVERIFY(wrapperSource.contains(QStringLiteral("function onNeedsOriginalIconFallbackChanged()")));
     QVERIFY(wrapperSource.contains(QStringLiteral("target: LatteCore.Environment")));
     QVERIFY(wrapperSource.contains(QStringLiteral("function onIconThemeVersionChanged()")));
     QVERIFY(wrapperSource.contains(QStringLiteral("LatteCore.Environment.refreshAppletIcons(wrapper.applet)")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("!iconName.endsWith(\"-symbolic\")")));
 
     // The fallback is above the native hover copy and therefore needs its own
     // MultiEffect. It must use the same mouse state, brightness and fixed-slot
@@ -3284,6 +3339,9 @@ void SourceContractTest::mainCppSelfPipeSigintHandlerAndReplaceLockTimeout()
 
     // Self-pipe infrastructure must be present.
     QVERIFY(src.contains(QStringLiteral("static int sigPipe[2]")));
+    // Close-on-exec keeps the pipe out of helper processes.
+    QVERIFY(src.contains(QStringLiteral("pipe2(sigPipe, O_CLOEXEC | O_NONBLOCK)")));
+    QVERIFY(!src.contains(QStringLiteral("pipe(sigPipe)")));
     QVERIFY(src.contains(QStringLiteral("sigaction(SIGINT, &sa, nullptr)")));
     QVERIFY(src.contains(QStringLiteral("new QSocketNotifier(sigPipe[0]")));
     QVERIFY(src.contains(QStringLiteral("SIGINT received via self-pipe")));

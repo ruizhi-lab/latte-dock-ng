@@ -8,6 +8,7 @@
 
 // Qt
 #include <QObject>
+#include <QPointer>
 #include <QTimer>
 #include <QtQml>
 
@@ -72,7 +73,11 @@ private:
     QObject *m_view{nullptr};
 
     QObject *m_plasmoidInterface{nullptr};
-    PlasmaQuick::AppletQuickItem *m_plasmoid{nullptr};
+    //! The applet graphic object can be destroyed while the plasmoid interface
+    //! survives; unlike the references above it has no destroyed handler, so
+    //! QPointer keeps syncPlasmoidReference() from removing a filter on a
+    //! deleted object.
+    QPointer<PlasmaQuick::AppletQuickItem> m_plasmoid;
 
     QTimer m_viewSyncTimer;
     int m_viewSyncAttempts{0};

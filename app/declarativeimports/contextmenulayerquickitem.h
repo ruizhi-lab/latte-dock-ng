@@ -82,7 +82,10 @@ private:
 
     QPointer<QMenu> m_contextMenu;
     QMetaMethod m_appletContainsMethod;
-    QQuickItem *m_appletContainsMethodItem{nullptr};
+    //! The containment root item that implements appletContainsPos(). It is
+    //! recreated with the containment QML while the cached QMetaMethod stays
+    //! valid, so the item must be guarded independently of the method.
+    QPointer<QQuickItem> m_appletContainsMethodItem;
 
     Latte::View *m_latteView{nullptr};
     bool m_closeActiveWindowEnabled{false};

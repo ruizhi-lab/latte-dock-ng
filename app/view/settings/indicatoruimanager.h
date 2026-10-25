@@ -62,7 +62,9 @@ private:
     void showNextIndicator();
 
 private:
-    QQuickItem *m_parentItem{nullptr};
+    //! Config dialog item assigned from QML; it can be destroyed with the
+    //! dialog while this manager lives on, so guard it.
+    QPointer<QQuickItem> m_parentItem;
     PrimaryConfigView *m_primary{nullptr};
 
     QList<IndicatorUiData> m_uidata;

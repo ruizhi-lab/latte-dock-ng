@@ -14,7 +14,7 @@
 #include "lattecorona.h"
 #include "layouts/importer.h"
 #include "layouts/manager.h"
-#include "session/shutdownstate.h"
+#include "session/shutdownmonitor.h"
 #include "templates/templatesmanager.h"
 #include "view/view.h"
 #include "wm/abstractwindowinterface.h"
@@ -38,9 +38,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QDBusConnection>
-#include <QDBusConnectionInterface>
 #include <QDBusMessage>
-#include <QDBusReply>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -50,8 +48,6 @@
 #include <QSocketNotifier>
 #include <QStandardPaths>
 #include <QTextStream>
-#include <QThread>
-#include <QTimer>
 #include <QQmlComponent>
 #include <QUrl>
 
@@ -86,8 +82,6 @@ inline bool shouldUseUserLocalQmlImports(int argc, char **argv);
 inline void collectUserLocalPaths(int argc, char **argv);
 inline void applyUserLocalPluginPaths();
 inline void ensureKdeSessionEnvironment();
-inline bool isKdeSessionShuttingDown();
-inline bool isPlasmaShutdownServiceActive();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
 
@@ -121,7 +115,7 @@ int main(int argc, char **argv)
     qunsetenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS");
 
     // Packaging probes and headless CI need --version before a compositor
-    // exists. Keep this before the Wayland retry loop; otherwise --version
+    // exists. Keep this before the Wayland check; otherwise --version
     // exits with the "requires a Wayland Plasma session" error.
     const QStringList earlyArguments = QCoreApplication::arguments();
     if (earlyArguments.contains(QStringLiteral("--version")) || earlyArguments.contains(QStringLiteral("-v"))) {
@@ -158,34 +152,15 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // During system startup the Wayland compositor may not be immediately
-    // detectable, especially when launched via XDG autostart or systemd
-    // before the session is fully settled.  Retry a few times before
-    // giving up to cover both cold-boot races and transient compositor
-    // re-initialization (e.g. kwin_wayland restarts).
+    // The QPA platform is fixed when QApplication is constructed and
+    // KWindowSystem caches it (isPlatformWayland is a CONSTANT property), so
+    // a later retry can never observe Wayland and only delayed the failure.
+    // detectPlatform() already requests Wayland before construction; ordering
+    // the dock after the compositor is the session's job (XDG autostart and
+    // systemd start it after KWin), not a sleep loop here.
     if (!KWindowSystem::isPlatformWayland()) {
-        const int maxRetries = 10;
-        const int retryDelayMs = 500;
-        bool waylandReady = false;
-
-        for (int i = 0; i < maxRetries; ++i) {
-            QThread::msleep(retryDelayMs);
-            QCoreApplication::processEvents();
-
-            if (KWindowSystem::isPlatformWayland()) {
-                waylandReady = true;
-                qInfo() << "Wayland platform detected after" << ((i + 1) * retryDelayMs) << "ms.";
-                break;
-            }
-
-            qWarning() << "Waiting for Wayland platform..."
-                       << "attempt" << (i + 1) << "of" << maxRetries;
-        }
-
-        if (!waylandReady) {
-            qCritical() << "Latte-Dock Wayland-only build requires a Wayland Plasma session.";
-            return 1;
-        }
+        qCritical() << "Latte-Dock Wayland-only build requires a Wayland Plasma session.";
+        return 1;
     }
 
     if (!qpaVariable) {
@@ -413,12 +388,11 @@ int main(int argc, char **argv)
     //! signalfd or sigprocmask behaviour.
     static int sigPipe[2] = {-1, -1};
 
-    if (pipe(sigPipe) == 0) {
-        // Non-blocking write end so the signal handler cannot deadlock
-        // if the pipe buffer is full.
-        fcntl(sigPipe[0], F_SETFL, O_NONBLOCK | fcntl(sigPipe[0], F_GETFL));
-        fcntl(sigPipe[1], F_SETFL, O_NONBLOCK | fcntl(sigPipe[1], F_GETFL));
-
+    //! O_NONBLOCK keeps the signal handler from blocking when the pipe buffer
+    //! is full. O_CLOEXEC keeps both ends out of helper processes such as
+    //! latte-dock-ng-preview; an inherited write end would let a helper wake
+    //! the dock's SIGINT path and keeps the descriptors open in every child.
+    if (pipe2(sigPipe, O_CLOEXEC | O_NONBLOCK) == 0) {
         // Use sigaction (async-signal-safe) to install a handler that writes
         // a byte to the pipe.  This runs in signal context so only
         // async-signal-safe functions are used.
@@ -676,76 +650,45 @@ int main(int argc, char **argv)
 
         //! Session shutdown observer.  On Wayland, ksmserver may expose the
         //! logout confirmation phase only through isShuttingDown().  Use that
-        //! state to prepare the fast teardown path, but never quit from the
-        //! poller because the user can still cancel the confirmation dialog.
-        QTimer sessionShutdownPoll;
-        sessionShutdownPoll.setInterval(500);
-        bool sessionShutdownSawBlockingWindows = false;
-        QObject::connect(&sessionShutdownPoll, &QTimer::timeout, [&app, &markSessionEnding, &corona, &sessionShutdownSawBlockingWindows]() {
-            const bool shuttingDown = isKdeSessionShuttingDown();
-            const bool hasBlockingWindows = corona.wm()->hasSessionBlockingWindows();
-            const bool shutdownServiceActive = isPlasmaShutdownServiceActive();
-
-            if (shuttingDown && hasBlockingWindows) {
-                sessionShutdownSawBlockingWindows = true;
-            }
-
-            if (app.property("latte_session_ending").toBool()) {
-                if (!shuttingDown) {
-                    // User cancelled the logout confirmation.
-                    qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
-                    app.setProperty("latte_session_ending", false);
-                    qunsetenv("LATTE_SESSION_ENDING");
-                    sessionShutdownSawBlockingWindows = false;
-
-                    //! Restore the views that were hidden when the logout was announced.
-                    if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
-                        const auto views = manager->synchronizer()->currentViews();
-
-                        for (Latte::View *view : views) {
-                            if (!view->isVisible()) {
-                                view->setVisible(true);
-                            }
-                        }
-                    }
-
-                    return;
-                }
-
-                if (Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)) {
-                    qInfo() << "[shutdown] session blocking windows closed; quitting.";
-                    app.quit();
-                    return;
-                }
-
-                return;
-            }
-
-            if (shuttingDown) {
-                // Phase 1: logout confirmed.  ksmserver's isShuttingDown
-                // only turns true after the user confirms (performLogout),
-                // not while the confirmation dialog shows.  Set the flag but
-                // do NOT quit — the logout can still be cancelled through
-                // KWin's "Cancel Logout" notification while it closes the
-                // windows.
-                qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
-                markSessionEnding();
-
-                //! KWin's session shutdown waits for every xdg_toplevel window
-                //! to close (org.kde.KWin.Session.closeWaylandWindows): it
-                //! closes the windows, waits 10s, shows a "Cancel Logout /
-                //! Log Out Anyway" notification, then waits indefinitely.
-                //! Latte dock views are xdg_toplevel windows, so unmap them
-                //! as soon as the logout is announced — otherwise the whole
-                //! shutdown blocks on the dock.  The poller re-shows them if
-                //! the user cancels the confirmation.
+        //! state to prepare the fast teardown path, but never quit while the
+        //! user can still cancel the logout.  The monitor samples ksmserver
+        //! only while plasma-shutdown runs; it is declared after the Corona so
+        //! it is destroyed first and its hooks never outlive the views.
+        Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), {
+            .isSessionShuttingDown = []() {
+                return Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus());
+            },
+            .hasBlockingWindows = [&corona]() {
+                return corona.wm()->hasSessionBlockingWindows();
+            },
+            .isSessionEnding = [&app]() {
+                return app.property("latte_session_ending").toBool();
+            },
+            .markSessionEnding = markSessionEnding,
+            .clearSessionEnding = [&app]() {
+                app.setProperty("latte_session_ending", false);
+                qunsetenv("LATTE_SESSION_ENDING");
+            },
+            .hideViews = [&corona]() {
                 if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
                     manager->synchronizer()->hideAllViews();
                 }
-            }
-        });
+            },
+            .restoreViews = [&corona]() {
+                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                    const auto views = manager->synchronizer()->currentViews();
 
-        sessionShutdownPoll.start();
+                    for (Latte::View *view : views) {
+                        if (!view->isVisible()) {
+                            view->setVisible(true);
+                        }
+                    }
+                }
+            },
+            .quit = [&app]() {
+                app.quit();
+            },
+        });
 
         KDBusService service(KDBusService::Unique);
         result = app.exec();
@@ -981,35 +924,6 @@ inline void autoClearQmlCacheOnVersionChange()
         versionFile.write(currentVersion.toUtf8());
         versionFile.close();
     }
-}
-
-inline bool isKdeSessionShuttingDown()
-{
-    // Use a short timeout (1 s) to avoid blocking the main thread when
-    // ksmserver is unresponsive during compositor teardown.  The default
-    // DBus timeout is 25 s, which would stall the event loop and prevent
-    // quit() from being processed in time.
-    QDBusMessage msg = QDBusMessage::createMethodCall(
-                           QStringLiteral("org.kde.ksmserver"),
-                           QStringLiteral("/KSMServer"),
-                           QStringLiteral("org.kde.KSMServerInterface"),
-                           QStringLiteral("isShuttingDown"));
-    QDBusMessage reply = QDBusConnection::sessionBus().call(msg, QDBus::Block, 1000);
-    return (reply.type() == QDBusMessage::ReplyMessage
-            && !reply.arguments().isEmpty()
-            && reply.arguments().first().toBool());
-}
-
-inline bool isPlasmaShutdownServiceActive()
-{
-    QDBusConnectionInterface *interface = QDBusConnection::sessionBus().interface();
-
-    if (!interface) {
-        return false;
-    }
-
-    const QDBusReply<bool> reply = interface->isServiceRegistered(QStringLiteral("org.kde.Shutdown"));
-    return reply.isValid() && reply.value();
 }
 
 //! POSIX signal handler for SIGTERM/SIGINT/SIGHUP.

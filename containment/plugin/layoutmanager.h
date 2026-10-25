@@ -10,6 +10,7 @@
 #include <QHash>
 #include <QMetaMethod>
 #include <QObject>
+#include <QPointer>
 #include <QQmlPropertyMap>
 #include <QQuickItem>
 #include <QSet>
@@ -222,16 +223,21 @@ private:
     QList<int> m_userBlocksColorizingApplets;
     QHash<int, int> m_appletRemovalIndexes;
 
-    QQuickItem *m_rootItem{nullptr};
-    QQuickItem *m_dndSpacer{nullptr};
+    //! The containment QML assigns these items and the plasmoid; Plasma and
+    //! the QML engine own them and can destroy them before this manager
+    //! during a containment reload or teardown. QPointer makes late timers
+    //! and signals see null instead of a dangling object.
+    QPointer<QQuickItem> m_rootItem;
+    QPointer<QQuickItem> m_dndSpacer;
 
-    QQuickItem *m_mainLayout{nullptr};
-    QQuickItem *m_startLayout{nullptr};
-    QQuickItem *m_endLayout{nullptr};
-    QQuickItem *m_metrics{nullptr};
+    QPointer<QQuickItem> m_mainLayout;
+    QPointer<QQuickItem> m_startLayout;
+    QPointer<QQuickItem> m_endLayout;
+    QPointer<QQuickItem> m_metrics;
 
-    QObject *m_plasmoid{nullptr};
-    QQmlPropertyMap *m_configuration{nullptr};
+    QPointer<QObject> m_plasmoid;
+    //! Owned by the plasmoid above; guarded for the same reason.
+    QPointer<QQmlPropertyMap> m_configuration;
 
     QHash<int, QQuickItem *> m_appletsInScheduledDestruction;
 
