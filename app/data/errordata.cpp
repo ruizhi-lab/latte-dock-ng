@@ -13,36 +13,6 @@ Error::Error()
 {
 }
 
-Error::Error(Error &&o)
-    : Generic(o),
-      information(o.information)
-{
-}
-
-Error::Error(const Error &o)
-    : Generic(o),
-      information(o.information)
-{
-}
-
-Error &Error::operator=(const Error &rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    information = rhs.information;
-
-    return (*this);
-}
-
-Error &Error::operator=(Error &&rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    information = rhs.information;
-
-    return (*this);
-}
-
 bool Error::operator==(const Error &rhs) const
 {
     return (id == rhs.id)

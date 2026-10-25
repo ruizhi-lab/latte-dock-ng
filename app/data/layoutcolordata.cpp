@@ -13,40 +13,6 @@ LayoutColor::LayoutColor()
 {
 }
 
-LayoutColor::LayoutColor(LayoutColor &&o)
-    : Generic(o),
-      path(o.path),
-      textColor(o.textColor)
-{
-}
-
-LayoutColor::LayoutColor(const LayoutColor &o)
-    : Generic(o),
-      path(o.path),
-      textColor(o.textColor)
-{
-}
-
-LayoutColor &LayoutColor::operator=(const LayoutColor &rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    path = rhs.path;
-    textColor = rhs.textColor;
-
-    return (*this);
-}
-
-LayoutColor &LayoutColor::operator=(LayoutColor &&rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    path = rhs.path;
-    textColor = rhs.textColor;
-
-    return (*this);
-}
-
 bool LayoutColor::operator==(const LayoutColor &rhs) const
 {
     return (id == rhs.id)

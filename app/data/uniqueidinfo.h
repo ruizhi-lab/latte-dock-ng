@@ -17,8 +17,6 @@ class UniqueIdInfo
 {
 public:
     UniqueIdInfo();
-    UniqueIdInfo(UniqueIdInfo &&o);
-    UniqueIdInfo(const UniqueIdInfo &o);
 
     //! Unique Id nifo
     QString newId;
@@ -27,8 +25,6 @@ public:
     QString oldName;
 
     //! Operators
-    UniqueIdInfo &operator=(const UniqueIdInfo &rhs);
-    UniqueIdInfo &operator=(UniqueIdInfo &&rhs);
     bool operator==(const UniqueIdInfo &rhs) const;
     bool operator!=(const UniqueIdInfo &rhs) const;
 };

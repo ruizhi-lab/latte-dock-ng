@@ -20,16 +20,12 @@ class LayoutColor : public Generic
 {
 public:
     LayoutColor();
-    LayoutColor(LayoutColor &&o);
-    LayoutColor(const LayoutColor &o);
 
     //! Color data
     QString path;
     QString textColor;
 
     //! Operators
-    LayoutColor &operator=(const LayoutColor &rhs);
-    LayoutColor &operator=(LayoutColor &&rhs);
     bool operator==(const LayoutColor &rhs) const;
     bool operator!=(const LayoutColor &rhs) const;
 

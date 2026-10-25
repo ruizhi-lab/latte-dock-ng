@@ -20,56 +20,10 @@ Screen::Screen()
 {
 }
 
-Screen::Screen(Screen &&o)
-    : Generic(o),
-      hasExplicitViews(o.hasExplicitViews),
-      isActive(o.isActive),
-      isRemovable(o.isRemovable),
-      isSelected(o.isSelected),
-      geometry(o.geometry)
-{
-}
-
-Screen::Screen(const Screen &o)
-    : Generic(o),
-      hasExplicitViews(o.hasExplicitViews),
-      isActive(o.isActive),
-      isRemovable(o.isRemovable),
-      isSelected(o.isSelected),
-      geometry(o.geometry)
-{
-}
-
 Screen::Screen(const QString &screenId, const QString &serialized)
     : Screen()
 {
     init(screenId, serialized);
-}
-
-Screen &Screen::operator=(const Screen &rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    hasExplicitViews = rhs.hasExplicitViews;
-    isActive = rhs.isActive;
-    isSelected = rhs.isSelected;
-    isRemovable = rhs.isRemovable;
-    geometry = rhs.geometry;
-
-    return (*this);
-}
-
-Screen &Screen::operator=(Screen &&rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    hasExplicitViews = rhs.hasExplicitViews;
-    isActive = rhs.isActive;
-    isRemovable = rhs.isRemovable;
-    isSelected = rhs.isSelected;
-    geometry = rhs.geometry;
-
-    return (*this);
 }
 
 bool Screen::operator==(const Screen &rhs) const

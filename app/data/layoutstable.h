@@ -21,12 +21,8 @@ class LayoutsTable : public GenericTable<Layout>
 
 public:
     LayoutsTable();
-    LayoutsTable(LayoutsTable &&o);
-    LayoutsTable(const LayoutsTable &o);
 
     //! Operators
-    LayoutsTable &operator=(const LayoutsTable &rhs);
-    LayoutsTable &operator=(LayoutsTable &&rhs);
     LayoutsTable subtracted(const LayoutsTable &rhs) const;
 
     void setLayoutForFreeActivities(const QString &id);

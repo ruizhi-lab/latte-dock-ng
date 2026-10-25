@@ -13,52 +13,6 @@ Applet::Applet()
 {
 }
 
-Applet::Applet(Applet &&o)
-    : Generic(o),
-      isSelected(o.isSelected),
-      description(o.description),
-      icon(o.icon),
-      storageId(o.storageId),
-      subcontainmentId(o.subcontainmentId)
-{
-}
-
-Applet::Applet(const Applet &o)
-    : Generic(o),
-      isSelected(o.isSelected),
-      description(o.description),
-      icon(o.icon),
-      storageId(o.storageId),
-      subcontainmentId(o.subcontainmentId)
-{
-}
-
-Applet &Applet::operator=(const Applet &rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    description = rhs.description;
-    isSelected = rhs.isSelected;
-    icon = rhs.icon;
-    storageId = rhs.storageId;
-    subcontainmentId = rhs.subcontainmentId;
-
-    return (*this);
-}
-
-Applet &Applet::operator=(Applet &&rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    description = rhs.description;
-    isSelected = rhs.isSelected;
-    icon = rhs.icon;
-    storageId = rhs.storageId;
-    subcontainmentId = rhs.subcontainmentId;
-
-    return (*this);
-}
-
 bool Applet::operator==(const Applet &rhs) const
 {
     return (id == rhs.id)

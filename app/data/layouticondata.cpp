@@ -14,39 +14,9 @@ LayoutIcon::LayoutIcon()
 {
 }
 
-LayoutIcon::LayoutIcon(LayoutIcon &&o)
-    : Generic(o),
-      isBackgroundFile(o.isBackgroundFile)
-{
-}
-
-LayoutIcon::LayoutIcon(const LayoutIcon &o)
-    : Generic(o),
-      isBackgroundFile(o.isBackgroundFile)
-{
-}
-
 bool LayoutIcon::isEmpty() const
 {
     return (id.isEmpty() && name.isEmpty());
-}
-
-LayoutIcon &LayoutIcon::operator=(LayoutIcon &&rhs)
-{
-    id = rhs.id;
-    isBackgroundFile = rhs.isBackgroundFile;
-    name = rhs.name;
-
-    return (*this);
-}
-
-LayoutIcon &LayoutIcon::operator=(const LayoutIcon &rhs)
-{
-    id = rhs.id;
-    isBackgroundFile = rhs.isBackgroundFile;
-    name = rhs.name;
-
-    return (*this);
 }
 
 bool LayoutIcon::operator==(const LayoutIcon &rhs) const

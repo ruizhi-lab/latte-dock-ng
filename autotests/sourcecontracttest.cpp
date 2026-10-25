@@ -58,6 +58,7 @@ private Q_SLOTS:
     void layoutDetailsExposeCustomColorSchemeSelector();
     void showWindowAnimationContractMovedToQmlSmokeTest();
     void parabolicItemContractMovedToQmlSmokeTest();
+    void dataRecordsKeepRuleOfZero();
     void autotestAggregateTargetDocumentsFullSuiteBuild();
     void coverageEstimateUsesReusableScript();
     void cmakeTargetResolutionUsesSharedHelpers();
@@ -5285,6 +5286,74 @@ SourceContractTest::taskScrollMaskProvidesWindowAssociatedTexture()
     QFile maskFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/taskslayout/ScrollOpacityMask.qml"));
     QVERIFY(maskFile.open(QFile::ReadOnly));
     QVERIFY(QString::fromUtf8(maskFile.readAll()).contains(QStringLiteral("layer.enabled: true")));
+}
+
+void
+SourceContractTest::dataRecordsKeepRuleOfZero()
+{
+    // app/data records are plain values. Hand-written copy and move members
+    // listed every field again, and a field added later could be dropped by
+    // one of them without a compile error. The compiler-generated defaults
+    // copy and move all members, so the headers must not declare those
+    // special members. Custom comparison operators are allowed and expected.
+    //
+    // Only a declaration that carries the record's own type in both positions
+    // is a copy or move special member; any other parameter type is an ordinary
+    // function such as LayoutsTable::subtracted(const LayoutsTable &rhs). The
+    // back-reference is what separates the two cases.
+    static const QRegularExpression selfTypedSpecialMember(
+        QStringLiteral(R"(\b(operator\s*=\s*\(\s*(?:const\s+)?([A-Za-z_]\w*)\s*&&?\s*\)|([A-Za-z_]\w*)\s*\(\s*(?:const\s+)?\3\s*&&?\s*\w*\s*\)))"));
+
+    QDirIterator headers(QStringLiteral(LATTE_SOURCE_DIR "/app/data"),
+                         QStringList{QStringLiteral("*.h")}, QDir::Files);
+    QVERIFY(headers.hasNext());
+
+    while (headers.hasNext()) {
+        const QString path = headers.next();
+        QFile file(path);
+        QVERIFY2(file.open(QFile::ReadOnly), qPrintable(path));
+        const QString source = QString::fromUtf8(file.readAll());
+
+        // Drop comments so a doc comment cannot trip the scan.
+        QString code;
+        code.reserve(source.size());
+        bool inBlockComment = false;
+        bool inLineComment = false;
+        for (int i = 0; i < source.size(); ++i) {
+            const QChar current = source.at(i);
+            const QChar next = (i + 1 < source.size()) ? source.at(i + 1) : QChar();
+            if (inBlockComment) {
+                if (current == QLatin1Char('*') && next == QLatin1Char('/')) {
+                    inBlockComment = false;
+                    ++i;
+                }
+                continue;
+            }
+            if (inLineComment) {
+                if (current == QLatin1Char('\n')) {
+                    inLineComment = false;
+                    code.append(current);
+                }
+                continue;
+            }
+            if (current == QLatin1Char('/') && next == QLatin1Char('*')) {
+                inBlockComment = true;
+                ++i;
+                continue;
+            }
+            if (current == QLatin1Char('/') && next == QLatin1Char('/')) {
+                inLineComment = true;
+                ++i;
+                continue;
+            }
+            code.append(current);
+        }
+
+        QRegularExpressionMatch match = selfTypedSpecialMember.match(code);
+        QVERIFY2(!match.hasMatch(),
+                 qPrintable(QStringLiteral("%1 declares a hand-written copy/move member: %2")
+                                .arg(path, match.captured(1).trimmed())));
+    }
 }
 
 QTEST_MAIN(SourceContractTest)

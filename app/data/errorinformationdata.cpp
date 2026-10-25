@@ -13,40 +13,6 @@ ErrorInformation::ErrorInformation()
 {
 }
 
-ErrorInformation::ErrorInformation(ErrorInformation &&o)
-    : Generic(o),
-      containment(o.containment),
-      applet(o.applet)
-{
-}
-
-ErrorInformation::ErrorInformation(const ErrorInformation &o)
-    : Generic(o),
-      containment(o.containment),
-      applet(o.applet)
-{
-}
-
-ErrorInformation &ErrorInformation::operator=(const ErrorInformation &rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    containment = rhs.containment;
-    applet = rhs.applet;
-
-    return (*this);
-}
-
-ErrorInformation &ErrorInformation::operator=(ErrorInformation &&rhs)
-{
-    id = rhs.id;
-    name = rhs.name;
-    containment = rhs.containment;
-    applet = rhs.applet;
-
-    return (*this);
-}
-
 bool ErrorInformation::operator==(const ErrorInformation &rhs) const
 {
     return (id == rhs.id)

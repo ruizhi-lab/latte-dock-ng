@@ -18,34 +18,7 @@ ViewsTable::ViewsTable()
 {
 }
 
-ViewsTable::ViewsTable(ViewsTable &&o)
-    : GenericTable<View>(o),
-      isInitialized(o.isInitialized)
-{
-
-}
-
-ViewsTable::ViewsTable(const ViewsTable &o)
-    : GenericTable<View>(o),
-      isInitialized(o.isInitialized)
-{
-}
-
 //! Operators
-ViewsTable &ViewsTable::operator=(const ViewsTable &rhs)
-{
-    m_list = rhs.m_list;
-    isInitialized = rhs.isInitialized;
-    return (*this);
-}
-
-ViewsTable &ViewsTable::operator=(ViewsTable &&rhs)
-{
-    m_list = rhs.m_list;
-    isInitialized = rhs.isInitialized;
-    return (*this);
-}
-
 bool ViewsTable::operator==(const ViewsTable &rhs) const
 {
     GenericTable<View> tempView = (*this);

@@ -29,8 +29,6 @@ public:
     static const float THICKNESSMARGININFLUENCE;
 
     Preferences();
-    Preferences(Preferences &&o);
-    Preferences(const Preferences &o);
 
     //! Preferences data
     bool badgeStyle3D{BADGE3DSTYLE};
@@ -47,8 +45,6 @@ public:
     void setToDefaults();
 
     //! Operators
-    Preferences &operator=(const Preferences &rhs);
-    Preferences &operator=(Preferences &&rhs);
     bool operator==(const Preferences &rhs) const;
     bool operator!=(const Preferences &rhs) const;
 };

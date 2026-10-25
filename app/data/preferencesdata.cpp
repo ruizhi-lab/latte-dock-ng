@@ -21,62 +21,6 @@ Preferences::Preferences()
 {
 }
 
-Preferences::Preferences(Preferences &&o)
-    : badgeStyle3D(o.badgeStyle3D),
-      layoutsInformationWindow(o.layoutsInformationWindow),
-      autostart(o.autostart),
-      isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
-      metaHoldForBadges(o.metaHoldForBadges),
-      parabolicSpread(o.parabolicSpread),
-      screensDelay(o.screensDelay),
-      thicknessMarginInfluence(o.thicknessMarginInfluence),
-      contextMenuAlwaysActions(o.contextMenuAlwaysActions)
-{
-}
-
-Preferences::Preferences(const Preferences &o)
-    : badgeStyle3D(o.badgeStyle3D),
-      layoutsInformationWindow(o.layoutsInformationWindow),
-      autostart(o.autostart),
-      isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
-      metaHoldForBadges(o.metaHoldForBadges),
-      parabolicSpread(o.parabolicSpread),
-      screensDelay(o.screensDelay),
-      thicknessMarginInfluence(o.thicknessMarginInfluence),
-      contextMenuAlwaysActions(o.contextMenuAlwaysActions)
-{
-}
-
-Preferences &Preferences::operator=(const Preferences &rhs)
-{
-    badgeStyle3D = rhs.badgeStyle3D;
-    layoutsInformationWindow = rhs.layoutsInformationWindow;
-    autostart = rhs.autostart;
-    contextMenuAlwaysActions = rhs.contextMenuAlwaysActions;
-    isAvailableGeometryBroadcastedToPlasma = rhs.isAvailableGeometryBroadcastedToPlasma;
-    metaHoldForBadges = rhs.metaHoldForBadges;
-    parabolicSpread = rhs.parabolicSpread;
-    thicknessMarginInfluence = rhs.thicknessMarginInfluence;
-    screensDelay = rhs.screensDelay;
-
-    return (*this);
-}
-
-Preferences &Preferences::operator=(Preferences &&rhs)
-{
-    badgeStyle3D = rhs.badgeStyle3D;
-    layoutsInformationWindow = rhs.layoutsInformationWindow;
-    autostart = rhs.autostart;
-    contextMenuAlwaysActions = rhs.contextMenuAlwaysActions;
-    isAvailableGeometryBroadcastedToPlasma = rhs.isAvailableGeometryBroadcastedToPlasma;
-    metaHoldForBadges = rhs.metaHoldForBadges;
-    parabolicSpread = rhs.parabolicSpread;
-    thicknessMarginInfluence = rhs.thicknessMarginInfluence;
-    screensDelay = rhs.screensDelay;
-
-    return (*this);
-}
-
 bool Preferences::operator==(const Preferences &rhs) const
 {
     return (badgeStyle3D == rhs.badgeStyle3D)

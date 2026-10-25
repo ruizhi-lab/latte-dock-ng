@@ -13,15 +13,5 @@ GenericBasicTable::GenericBasicTable()
 {
 }
 
-GenericBasicTable::GenericBasicTable(GenericBasicTable &&o)
-    : GenericTable<Generic>(o)
-{
-}
-
-GenericBasicTable::GenericBasicTable(const GenericBasicTable &o)
-    : GenericTable<Generic>(o)
-{
-}
-
 }
 }

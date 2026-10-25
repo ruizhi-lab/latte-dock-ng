@@ -16,18 +16,15 @@
 namespace Latte {
 namespace Data {
 
+//! Copy and move are compiler-generated (Rule of Zero); see genericdata.h.
 template <class T>
 class GenericTable
 {
 
 public:
     GenericTable();
-    GenericTable(GenericTable<T> &&o);
-    GenericTable(const GenericTable<T> &o);
 
     //! Operators
-    GenericTable<T> &operator=(const GenericTable<T> &rhs);
-    GenericTable<T> &operator=(GenericTable<T> &&rhs);
     GenericTable<T> &operator<<(const T &rhs);
     GenericTable<T> &operator<<(const GenericTable<T> &rhs);
     GenericTable<T> &insert(const int &pos, const T &rhs);

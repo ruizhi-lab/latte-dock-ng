@@ -15,31 +15,7 @@ LayoutsTable::LayoutsTable()
 {
 }
 
-LayoutsTable::LayoutsTable(LayoutsTable &&o)
-    : GenericTable<Layout>(o)
-{
-
-}
-
-LayoutsTable::LayoutsTable(const LayoutsTable &o)
-    : GenericTable<Layout>(o)
-{
-
-}
-
 //! Operators
-LayoutsTable &LayoutsTable::operator=(const LayoutsTable &rhs)
-{
-    m_list = rhs.m_list;
-    return (*this);
-}
-
-LayoutsTable &LayoutsTable::operator=(LayoutsTable &&rhs)
-{
-    m_list = rhs.m_list;
-    return (*this);
-}
-
 LayoutsTable LayoutsTable::subtracted(const LayoutsTable &rhs) const
 {
     LayoutsTable subtract;

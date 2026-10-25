@@ -25,8 +25,6 @@ public:
     enum State { Unknown = 0, Invalid = 1, Stopped = 2, Starting = 3, Running = 4 };
 
     Activity();
-    Activity(Activity &&o);
-    Activity(const Activity &o);
 
     //! Layout data
     bool isCurrent{false};
@@ -35,10 +33,6 @@ public:
 
     bool isValid() const;
     bool isRunning() const;
-
-    //! Operators
-    Activity &operator=(const Activity &rhs);
-    Activity &operator=(Activity &&rhs);
 };
 
 //! This is an Activities map in the following structure:

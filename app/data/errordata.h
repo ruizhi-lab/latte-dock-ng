@@ -29,14 +29,10 @@ public:
     static inline const QString APPLETANDCONTAINMENTWITHSAMEID = QStringLiteral("W205");
 
     Error();
-    Error(Error &&o);
-    Error(const Error &o);
 
     bool isValid() const;
 
     //! Operators
-    Error &operator=(const Error &rhs);
-    Error &operator=(Error &&rhs);
     bool operator==(const Error &rhs) const;
     bool operator!=(const Error &rhs) const;
 

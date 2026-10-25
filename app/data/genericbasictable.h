@@ -20,8 +20,6 @@ class GenericBasicTable : public GenericTable<Generic>
 {
 public:
     GenericBasicTable();
-    GenericBasicTable(GenericBasicTable &&o);
-    GenericBasicTable(const GenericBasicTable &o);
 };
 
 }
