@@ -194,6 +194,37 @@ Use Not started, In progress, Pending validation, Complete or Deferred.
 Do not mark a parent package complete when one slice is still pending.
 The handoff template and reusable task prompt are in the implementation guide.
 
+## Assessment refresh (R track)
+
+The [2026-10-25 assessment](architecture-assessment-2026-10.md) re-reviewed
+architecture, performance and code modernity at `v1.2.62`. R slices use the
+common gates above and the handoff template in the implementation guide. They
+do not reopen completed M, P, A or S batches without a concrete regression.
+
+| ID | Dependencies | Deliverable and slice boundary | Acceptance |
+| --- | --- | --- | --- |
+| R1a | None | Event-driven logout monitor, bounded ksmserver queries, dead Wayland retry loop removed, close-on-exec self-pipe, `QPointer` for QML-owned items, event-driven original-icon fallback | Behavior tests on a private bus, zero-delta QML lint, idle wakeup A/B, logout confirm and cancel retest |
+| R1b | None | Quit teardown use-after-free of the view settings factory | Backtrace, reproduction test, D-Bus and menu quit retest |
+| R2a | R1a | `ecm_set_disabled_deprecation_versions()` at the Qt 6.6 / KF 6.0 floors | Zero warnings on GCC/Clang Debug/Release locally and on the Debian 13 floor in CI; any replaced API explained beside the change |
+| R2b | R1a | Give the context-less lambda connections a context object with the right lifetime, then define `QT_NO_CONTEXTLESS_CONNECT` (enforced from Qt 6.7) | Per-site lifetime note in the handoff, builds and CTest, desktop smoke of the touched paths |
+| R2c | M4a | clazy inventory on production code; gate only checks with zero findings, or one fixed family per slice, with a negative fixture | Requires clazy in the CI image or on a review host |
+| R3 | M4a | Rule of Zero for `app/data`: default the copy/move members that only copy fields, keep custom equality, lock with clang-tidy scoped to `app/data` | Field-by-field equivalence review, `dataunittest` and dependent tests, tidy negative check |
+| R4 | R2b | Settings views: replace `setContextProperty()` with initial or required properties where project QML owns the consumer | Settings, indicator and widget explorer desktop retest; no new QML diagnostics |
+| R5 | P0 | Explain the idle CPU measured in the Fedora VM: idle frame rate, render timing, QML profile | Fedora VM session; no optimization patch without a measured cause |
+| R6 | R2–R5 evidence | Strategic candidates, one at a time with recorded benefit: executable-backed `private.app` module; typed interfaces or a model for containment `LayoutManager`; per-component QML typing, then compiled QML (verify `plasma_add_applet()` at Plasma 6.3); parabolic scale computation in C++; behavioral tests replacing source contracts; split `main()` startup and shutdown; `target_sources()`, a shared static library instead of copied sources, and removal of compat shims below the floors | Separate design review per candidate |
+
+| Batch | Status | Evidence | Next action |
+| --- | --- | --- | --- |
+| R1a | Complete | [Report](modernization-results/R1a.md): commit `db966ccd6` | None |
+| R1b | Complete | [Report](modernization-results/R1b.md): commit `a2bb619ae` | None |
+| R2a | Not started | — | Add the deprecation gate to the root `CMakeLists.txt` and build all four presets |
+| R2b | Not started | — | Review each context-less lambda connection listed in the assessment |
+| R2c | Pending environment | clazy is not installed on the review host | Add clazy to the CI image or a review host, then inventory |
+| R3 | Not started | — | Compare each special member in `app/data` with its class fields |
+| R4 | Not started | — | Inventory the QML consumers of each context property |
+| R5 | Pending environment | Needs the Fedora VM | Count idle frames in the VM |
+| R6 | Deferred | — | Reopen one candidate with a measured benefit |
+
 ## Git and rollback
 
 On main, editing/testing is allowed within the requested batch; committing and

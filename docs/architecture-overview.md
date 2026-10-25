@@ -10,7 +10,7 @@ component boundary changes; keep workaround histories beside their implementatio
 
 | Area | Responsibility | Start here |
 | --- | --- | --- |
-| Application composition | Startup, Plasma host, application services and shutdown coordination | [main.cpp](../app/main.cpp), [lattecorona.cpp](../app/lattecorona.cpp) |
+| Application composition | Startup, Plasma host, application services and shutdown coordination | [main.cpp](../app/main.cpp), [lattecorona.cpp](../app/lattecorona.cpp), [session/](../app/session) |
 | Dock views | Per-view state, positioning, visibility, effects and containment bridge | [view.h](../app/view/view.h), [containmentinterface.cpp](../app/view/containmentinterface.cpp) |
 | Layout instances | Individual layout objects and their views | [genericlayout.cpp](../app/layout/genericlayout.cpp), [centrallayout.cpp](../app/layout/centrallayout.cpp) |
 | Layout coordination | Active layouts, synchronization, storage, import/export and shared launchers | [manager.cpp](../app/layouts/manager.cpp), [synchronizer.cpp](../app/layouts/synchronizer.cpp), [storage.cpp](../app/layouts/storage.cpp) |
@@ -77,6 +77,12 @@ thread, teardown entry point and callbacks that can still arrive. Read the
 actual shutdown implementation and nearby rationale before choosing an order;
 this overview is not a universal destruction sequence. Follow the clean-quit
 and coredump A/B procedure in the testing guide for crash fixes.
+
+Session logout handling lives in `Session::ShutdownMonitor`, created in
+`main()` after the `Corona` so that it is destroyed first. It samples ksmserver
+only while plasma-shutdown owns `org.kde.Shutdown`. `~Corona()` deletes its
+services in dependency order through `Session::deleteNow()`, which tolerates a
+service already freed by `QCoreApplication::exec()` during a normal quit.
 
 For any new shared state, document who changes it and how others observe it.
 Derived geometry, hover state and cached window metadata need explicit
