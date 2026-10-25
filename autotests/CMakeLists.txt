@@ -1040,6 +1040,14 @@ add_test(NAME shutdownmonitortest
 set_property(TEST shutdownmonitortest PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
 list(APPEND latte_autotest_targets shutdownmonitortest)
 
+add_executable(teardowntest EXCLUDE_FROM_ALL
+    teardowntest.cpp
+    ../app/session/teardown.h
+)
+target_include_directories(teardowntest PRIVATE ${CMAKE_SOURCE_DIR}/app)
+target_link_libraries(teardowntest Qt6::Core Qt6::Test)
+latte_add_test(teardowntest)
+
 add_executable(plasmapaneltrackertest EXCLUDE_FROM_ALL plasmapaneltrackertest.cpp)
 target_link_libraries(plasmapaneltrackertest Qt6::Core Qt6::Qml Qt6::Test)
 target_compile_definitions(plasmapaneltrackertest PRIVATE PANEL_TRACKER_SCRIPT="${CMAKE_SOURCE_DIR}/app/wm/plasmapaneltracker.js")

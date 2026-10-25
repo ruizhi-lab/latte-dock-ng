@@ -47,6 +47,7 @@ private Q_SLOTS:
     void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void sessionShutdownMonitorHidesViewsAndRestoresOnCancel();
+    void coronaTeardownSkipsFactoryFreedByQuitCleanup();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
     void itemsAlignmentConfigDefaultsToCenter();
@@ -953,6 +954,44 @@ void SourceContractTest::sessionShutdownMonitorHidesViewsAndRestoresOnCancel()
     QVERIFY(restoreHook >= 0);
     QVERIFY(currentViews > restoreHook);
     QVERIFY(setVisible > currentViews);
+}
+
+void SourceContractTest::coronaTeardownSkipsFactoryFreedByQuitCleanup()
+{
+    //! A normal quit deleteLater()s the view settings factory from
+    //! onAboutToQuit(); QCoreApplication::exec() frees it before main()
+    //! destroys the Corona. ~Corona() then called deleteLater() on the dangling
+    //! raw pointer and the process hung on a garbage post-event mutex.
+    //! teardowntest covers the helper's runtime behavior.
+    QFile coronaHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.h"));
+    QVERIFY(coronaHeaderFile.open(QFile::ReadOnly));
+    const QString coronaHeader = QString::fromUtf8(coronaHeaderFile.readAll());
+
+    QFile coronaSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(coronaSourceFile.open(QFile::ReadOnly));
+    const QString coronaSource = QString::fromUtf8(coronaSourceFile.readAll());
+
+    const int quitStart = coronaSource.indexOf(QStringLiteral("void Corona::onAboutToQuit()"));
+    const int quitEnd = coronaSource.indexOf(QStringLiteral("void Corona::load()"), quitStart);
+    QVERIFY(quitStart >= 0 && quitEnd > quitStart);
+    if (coronaSource.mid(quitStart, quitEnd - quitStart).contains(QStringLiteral("m_viewSettingsFactory->deleteLater();"))) {
+        QVERIFY(coronaHeader.contains(QStringLiteral("QPointer<ViewSettingsFactory> m_viewSettingsFactory;")));
+    }
+
+    const int destructorStart = coronaSource.indexOf(QStringLiteral("Corona::~Corona()"));
+    const int destructorEnd = coronaSource.indexOf(QStringLiteral("void Corona::onAboutToQuit()"), destructorStart);
+    QVERIFY(destructorStart >= 0 && destructorEnd > destructorStart);
+    const QString destructor = coronaSource.mid(destructorStart, destructorEnd - destructorStart);
+    QVERIFY(destructor.contains(QStringLiteral("Session::deleteNow(m_viewSettingsFactory);")));
+    QVERIFY(!destructor.contains(QStringLiteral("->deleteLater()")));
+
+    QFile teardownFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/teardown.h"));
+    QVERIFY(teardownFile.open(QFile::ReadOnly));
+    const QString teardown = QString::fromUtf8(teardownFile.readAll());
+    const int nullGuard = teardown.indexOf(QStringLiteral("if (!service) {"));
+    const int deferredDelete = teardown.indexOf(QStringLiteral("service->deleteLater();"));
+    QVERIFY(nullGuard >= 0);
+    QVERIFY(deferredDelete > nullGuard);
 }
 
 void SourceContractTest::needsAttentionStatusBlocksHidingWithoutWindowReconfiguration()

@@ -32,6 +32,7 @@
 #include "plasma/extended/theme.h"
 #include "pluginids.h"
 #include "session/shutdownmonitor.h"
+#include "session/teardown.h"
 #include "settings/universalsettings.h"
 #include "templates/templatesmanager.h"
 #include "view/originalview.h"
@@ -436,23 +437,20 @@ Corona::~Corona()
     // This ensures correct ordering (LayoutsManager before its deps)
     // while avoiding the double-free that occurs when manual delete is
     // mixed with DeferredDelete processing in main()'s post-exec loop.
-    auto flushDelete = [](QObject * obj) {
-        obj->deleteLater();
-        QCoreApplication::sendPostedEvents(obj, QEvent::DeferredDelete);
-    };
-
-    flushDelete(m_layoutsManager);
-    flushDelete(m_templatesManager);
-    flushDelete(m_viewSettingsFactory);
-    flushDelete(m_indicatorFactory);
-    flushDelete(m_globalShortcuts);
-    flushDelete(m_dialogShadows);
-    flushDelete(m_wm);
-    flushDelete(m_plasmaGeometries);
-    flushDelete(m_themeExtended);
-    flushDelete(m_plasmaScreenPool);
-    flushDelete(m_screenPool);
-    flushDelete(m_universalSettings);
+    // Session::deleteNow() skips a service that a normal quit already
+    // deleted (the view settings factory, see onAboutToQuit()).
+    Session::deleteNow(m_layoutsManager);
+    Session::deleteNow(m_templatesManager);
+    Session::deleteNow(m_viewSettingsFactory);
+    Session::deleteNow(m_indicatorFactory);
+    Session::deleteNow(m_globalShortcuts);
+    Session::deleteNow(m_dialogShadows);
+    Session::deleteNow(m_wm);
+    Session::deleteNow(m_plasmaGeometries);
+    Session::deleteNow(m_themeExtended);
+    Session::deleteNow(m_plasmaScreenPool);
+    Session::deleteNow(m_screenPool);
+    Session::deleteNow(m_universalSettings);
 
     disconnect(m_activitiesConsumer, &KActivities::Consumer::serviceStatusChanged, this, &Corona::load);
     delete m_activitiesConsumer;
@@ -499,6 +497,10 @@ void Corona::onAboutToQuit()
 
     //! BEGIN: Give the time to slide-out views when closing
     m_layoutsManager->synchronizer()->hideAllViews();
+    //! This handler runs inside QCoreApplication::exit(), so exec() processes
+    //! the deferred delete during its cleanup, before main() destroys the
+    //! Corona. m_viewSettingsFactory is a QPointer for that reason; ~Corona()
+    //! must not touch the freed factory again (the quit used to hang there).
     m_viewSettingsFactory->deleteLater();
 
     m_viewsScreenSyncTimer.stop();

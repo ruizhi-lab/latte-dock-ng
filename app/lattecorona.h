@@ -275,7 +275,11 @@ private:
 
     ScreenPool *m_screenPool{nullptr};
     UniversalSettings *m_universalSettings{nullptr};
-    ViewSettingsFactory *m_viewSettingsFactory{nullptr};
+    //! Guarded because a normal quit deletes the factory before ~Corona():
+    //! onAboutToQuit() deleteLater()s it and QCoreApplication::exec() flushes
+    //! that delete during its cleanup. The other services are deleted only in
+    //! ~Corona() and stay valid until then.
+    QPointer<ViewSettingsFactory> m_viewSettingsFactory;
     GlobalShortcuts *m_globalShortcuts{nullptr};
 
     Indicator::Factory *m_indicatorFactory{nullptr};
