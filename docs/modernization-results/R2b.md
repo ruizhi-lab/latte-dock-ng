@@ -1,6 +1,7 @@
 # R2b: Context-less Connections
 
-Status: Complete for the code and build gates. Desktop retest pending.
+Status: Pending validation. The code, build and most desktop checks pass; the
+indicator removal confirmation and the alternatives dialog are not exercised.
 Date: 2026-10-25. Branch: `main`. Implementation commit: `484a8d59b`.
 
 ## Defect
@@ -61,11 +62,49 @@ The first version of this report counted seventeen sites and described the two
 `[&]` captures as dangling references. Neither was accurate; the table above
 replaces it.
 
+## Desktop smoke
+
+Run on 2026-10-25 by the user with the user-mode Debug build of `e4c24e773`
+(`install.sh --user Debug`, launched with `--debug`) on Gentoo with Plasma
+6.7.5, Wayland and Qt 6.11.2. The debug log has no errors and one warning
+(see the environment note below), and no latte-dock-ng coredump was written.
+
+| Touched path | Check | Result |
+| --- | --- | --- |
+| `contextmenulayerquickitem.cpp` | Remove a widget and undo it from the notification; remove one and let the notification expire | Passed |
+| `tablayoutshandler.cpp`, `tabpreferenceshandler.cpp`, `activitiesdelegate.cpp` | Layouts mode switch, activities menu OK/Reset/Cancel, parabolic spread, thickness margin influence and screen delay; apply and reopen | Passed |
+| `primaryconfigview.cpp`, `widgetexplorerview.cpp` | Open Edit Dock and Add Widgets, check their effects, reopen | Passed |
+| `visibilitymanager.cpp` | Always Visible dock, change its size, maximize a window | Passed: the window stays clear of the dock |
+| `lattecorona.cpp` | Startup and three layout reloads during the settings checks | Passed: windows are tracked and the layouts load |
+| `menu.cpp`, actions | Configure Latte... from the dock menu | Passed |
+| `indicator.cpp`, `indicatorPluginChanged` | Install a local test indicator while the dock runs, select it, switch back to Latte | Passed: it appears in the custom list without a restart and the dock follows the selection |
+| `menu.cpp`, `userConfiguringChanged` | Enter and leave edit mode repeatedly | Ran without warnings; the effect is not visible because the dock menu cannot be opened in edit mode |
+| `indicator/factory.cpp` confirmation, `indicator.cpp` `indicatorPluginRemoved` | Remove the local test indicator from the custom list | Not exercised: the confirmation handler never ran (no "Trying to remove indicator" in the log) |
+| `alternativeshelper.cpp` | Show Alternatives on an applet | Not reachable: the dock menu cannot be opened in edit mode |
+
+Findings that predate R2b:
+
+- In edit mode, a `MouseArea` in `containment/package/contents/ui/main.qml`
+  accepts every press outside the tasks plasmoid. It was added on 2026-07-03
+  and is in v1.2.62. The dock menu therefore never opens in edit mode, and
+  "Show Alternatives..." and the edit-only dock actions, which only appear in
+  edit mode, cannot be reached. A separate task restores the menu.
+- In the Effects page, switching from Latte to an indicator without a config
+  UI and back leaves the options area blank, because
+  `IndicatorConfigUiManager.qml` keeps the previous page. A separate task fixes
+  it.
+- The test indicator was a copy of Plasma Tab Style, which only frames the
+  active task, so the dock showed no dots or lines until the user switched back
+  to Latte. That is expected.
+- The dock was launched from an agent shell and inherited its environment. When
+  an application was started from the dock, KIO warned that `SENTRY-TRACE`
+  cannot be passed to systemd. Start later retests from the session
+  environment.
+
 ## Pending
 
-The desktop smoke of the touched paths was not run. It covers the alternatives
-dialog (`alternativeshelper.cpp`), the applet close/undo notification
-(`contextmenulayerquickitem.cpp`), the settings tabs for activities, parabolic
-spread and screen tracking, the indicator removal confirmation, the settings
-and widget-explorer Ready path, and the containment context menu. Record the
-result in this section before treating the desktop gate as passed.
+Remove a local custom indicator through the remove icon in the custom list and
+confirm the dialog, which exercises the `factory.cpp` confirmation and the
+`indicatorPluginRemoved` fallback. Run Show Alternatives once the dock menu
+opens in edit mode again. Record both here before treating the desktop gate as
+passed.
