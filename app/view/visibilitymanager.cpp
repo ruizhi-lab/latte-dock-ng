@@ -263,7 +263,7 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
                 updateStrutsBasedOnLayoutsAndActivities();
             }
 
-            m_connections[base] = connect(this, &VisibilityManager::strutsThicknessChanged, &VisibilityManager::updateStrutsAfterTimer);
+            m_connections[base] = connect(this, &VisibilityManager::strutsThicknessChanged, this, &VisibilityManager::updateStrutsAfterTimer);
 
             // disabling this call because it was creating too many struts calls and   ???
             // could create reduced responsiveness for DynamicStruts Scenario(for example ??

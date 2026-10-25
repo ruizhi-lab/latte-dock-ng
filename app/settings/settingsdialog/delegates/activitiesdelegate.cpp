@@ -193,14 +193,14 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
     menu->addAction(menuDialogButtonsWidgetAction);
 
-    connect(menuDialogButtons->button(QDialogButtonBox::Ok), &QPushButton::clicked,  [menu, button]() {
+    connect(menuDialogButtons->button(QDialogButtonBox::Ok), &QPushButton::clicked, menu, [menu, button]() {
         button->setProperty(OKPRESSED, true);
         menu->hide();
     });
 
     connect(menuDialogButtons->button(QDialogButtonBox::Cancel), &QPushButton::clicked,  menu, &QMenu::hide);
 
-    connect(menuDialogButtons->button(QDialogButtonBox::Reset), &QPushButton::clicked,  [menu, originalChecked]() {
+    connect(menuDialogButtons->button(QDialogButtonBox::Reset), &QPushButton::clicked, menu, [menu, originalChecked]() {
         for (int i = 0; i < menu->actions().count(); ++i) {
             if (!originalChecked.contains(i)) {
                 menu->actions().at(i)->setChecked(false);

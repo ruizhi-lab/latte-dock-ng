@@ -48,13 +48,13 @@ Indicator::Indicator(Latte::View *parent)
 
     connect(m_view->extendedInterface(), &ContainmentInterface::hasLatteTasksChanged, this, &Indicator::latteTasksArePresentChanged);
 
-    connect(m_view, &Latte::View::indicatorPluginChanged, [this](const QString & indicatorId) {
+    connect(m_view, &Latte::View::indicatorPluginChanged, this, [this](const QString & indicatorId) {
         if (m_corona && m_corona->indicatorFactory()->isCustomType(indicatorId)) {
             Q_EMIT customPluginsChanged();
         }
     });
 
-    connect(m_view, &Latte::View::indicatorPluginRemoved, [this](const QString & indicatorId) {
+    connect(m_view, &Latte::View::indicatorPluginRemoved, this, [this](const QString & indicatorId) {
         if (m_corona && m_type == indicatorId && !m_corona->indicatorFactory()->pluginExists(indicatorId)) {
             setType(QStringLiteral("org.kde.latte.default"));
         }

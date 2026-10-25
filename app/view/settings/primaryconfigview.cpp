@@ -54,7 +54,7 @@ PrimaryConfigView::PrimaryConfigView(Latte::View *view)
 
     connect(this, &PrimaryConfigView::availableScreenGeometryChanged, this, &PrimaryConfigView::syncGeometry);
 
-    connect(this, &QQuickView::statusChanged, [&](QQuickView::Status status) {
+    connect(this, &QQuickView::statusChanged, this, [this](QQuickView::Status status) {
         if (status == QQuickView::Ready) {
             updateEffects();
         }

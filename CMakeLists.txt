@@ -301,6 +301,11 @@ ecm_set_disabled_deprecation_versions(
     KF ${KF6_MIN_VERSION}
 )
 
+# Reject QObject::connect() without a context object: such a functor keeps
+# running after the objects it captures are destroyed. Qt 6.7 and newer
+# enforce the macro; the Qt 6.6 floor ignores it.
+add_compile_definitions(QT_NO_CONTEXTLESS_CONNECT)
+
 # Share Same Core Types between declarativeimports and app.
 # Only the org.kde.latte.core copy carries QML type declarations. The app and
 # containment copies are plain C++ headers and keep the Q_GADGET without QML

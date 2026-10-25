@@ -582,7 +582,7 @@ void Corona::load()
             onScreenAdded(screen);
         }
 
-        connect(m_layoutsManager->synchronizer(), &Layouts::Synchronizer::initializationFinished, [this]() {
+        connect(m_layoutsManager->synchronizer(), &Layouts::Synchronizer::initializationFinished, this, [this]() {
             if (!m_startupAddViewTemplateName.isEmpty()) {
                 //! user requested through cmd startup to add view from specific view template and we can add it after the startup
                 //! sequence has loaded all required layouts properly
@@ -634,7 +634,7 @@ void Corona::setupWaylandIntegration()
         m_waylandCorona = registry->createPlasmaShell(name, version, this);
     });
 
-    QObject::connect(registry, &KWayland::Client::Registry::plasmaWindowManagementAnnounced,
+    QObject::connect(registry, &KWayland::Client::Registry::plasmaWindowManagementAnnounced, this,
     [this, registry](quint32 name, quint32 version) {
         KWayland::Client::PlasmaWindowManagement *pwm = registry->createPlasmaWindowManagement(name, version, this);
 
@@ -646,7 +646,7 @@ void Corona::setupWaylandIntegration()
     });
 
 
-    QObject::connect(registry, &KWayland::Client::Registry::plasmaVirtualDesktopManagementAnnounced,
+    QObject::connect(registry, &KWayland::Client::Registry::plasmaVirtualDesktopManagementAnnounced, this,
     [this, registry](quint32 name, quint32 version) {
         KWayland::Client::PlasmaVirtualDesktopManagement *vdm = registry->createPlasmaVirtualDesktopManagement(name, version, this);
 

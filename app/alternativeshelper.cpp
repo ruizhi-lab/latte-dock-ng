@@ -107,7 +107,10 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
 
     m_applet->destroy();
 
-    connect(m_applet, &QObject::destroyed, [=]() {
+    //! The containment item receives the replacement, so it is the context.
+    //! This helper is not: the alternatives dialog can delete it before the
+    //! old applet finishes its deferred destruction.
+    connect(m_applet, &QObject::destroyed, contItem, [=]() {
         Plasma::Applet *newApplet = nullptr;
         QMetaObject::invokeMethod(contItem, "createApplet", Q_RETURN_ARG(Plasma::Applet *, newApplet), Q_ARG(QString, plugin), Q_ARG(QVariantList, QVariantList()), Q_ARG(QRectF, QRectF(newPos, QSizeF())));
 

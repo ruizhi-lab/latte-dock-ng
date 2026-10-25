@@ -121,7 +121,7 @@ void Menu::restore(const KConfigGroup &)
 
     //! Print Message...
     m_actions[Latte::Data::ContextMenu::PRINTACTION] = new QAction(QIcon::fromTheme(QStringLiteral("edit")), QStringLiteral("Print Message..."), this);
-    connect(m_actions[Latte::Data::ContextMenu::PRINTACTION], &QAction::triggered, [=]() {
+    connect(m_actions[Latte::Data::ContextMenu::PRINTACTION], &QAction::triggered, this, [=]() {
         qCDebug(latteContainment) << "Action Triggered !!!";
     });
 
@@ -186,14 +186,14 @@ void Menu::restore(const KConfigGroup &)
     //! Configure Latte
     m_actions[Latte::Data::ContextMenu::PREFERENCESACTION] = new QAction(QIcon::fromTheme(QStringLiteral("configure")), i18nc("global settings window", "&Configure Latte..."), this);
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::PREFERENCESACTION, m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], 0);
-    connect(m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], &QAction::triggered, [=]() {
+    connect(m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], &QAction::triggered, this, [=]() {
         callLatte(QStringLiteral("showSettingsWindow"),
         {QVariant::fromValue((int)PreferencesPage)});
     });
 
     //! Duplicate Action
     m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION] = new QAction(QIcon::fromTheme(QStringLiteral("edit-copy")), QStringLiteral("Duplicate Dock as Template"), this);
-    connect(m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION], &QAction::triggered, [=, this]() {
+    connect(m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION], &QAction::triggered, this, [=, this]() {
         callLatte(QStringLiteral("duplicateView"),
         {QVariant::fromValue(containment()->id())});
     });
@@ -202,7 +202,7 @@ void Menu::restore(const KConfigGroup &)
 
     //! Export View Template Action
     m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION] = new QAction(QIcon::fromTheme(QStringLiteral("document-export")), QStringLiteral("Export as Template..."), this);
-    connect(m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION], &QAction::triggered, [=, this]() {
+    connect(m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION], &QAction::triggered, this, [=, this]() {
         callLatte(QStringLiteral("exportViewTemplate"),
         {QVariant::fromValue(containment()->id())});
     });
@@ -211,7 +211,7 @@ void Menu::restore(const KConfigGroup &)
 
     //! Remove Action
     m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION] = new QAction(QIcon::fromTheme(QStringLiteral("delete")), QStringLiteral("Remove Dock"), this);
-    connect(m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], &QAction::triggered, [=, this]() {
+    connect(m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], &QAction::triggered, this, [=, this]() {
         callLatte(QStringLiteral("removeView"),
         {QVariant::fromValue(containment()->id())});
     });
@@ -219,7 +219,8 @@ void Menu::restore(const KConfigGroup &)
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::REMOVEVIEWACTION, m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], 0);
 
     //! Signals
-    connect(this->containment(), &Plasma::Containment::userConfiguringChanged, [=, this]() {
+    //! The containment outlives this actions plugin when it is reconfigured.
+    connect(this->containment(), &Plasma::Containment::userConfiguringChanged, this, [=, this]() {
         updateVisibleActions();
     });
 }

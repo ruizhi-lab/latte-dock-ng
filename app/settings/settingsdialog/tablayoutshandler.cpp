@@ -88,7 +88,7 @@ void TabLayouts::initUi()
     connect(this, &Settings::Handler::TabLayouts::dataChanged, this, &TabLayouts::updatePerLayoutButtonsState);
     connect(m_corona->activitiesConsumer(), &KActivities::Consumer::activitiesChanged, this, &TabLayouts::updatePerLayoutButtonsState);
 
-    connect(m_inMemoryButtons, &QButtonGroup::idToggled,
+    connect(m_inMemoryButtons, &QButtonGroup::idToggled, this,
     [=, this](int id, bool checked) {
 
         if (checked) {

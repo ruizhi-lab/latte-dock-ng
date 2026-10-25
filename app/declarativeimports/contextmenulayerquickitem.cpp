@@ -536,19 +536,23 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
             // applet is actually destroyed later.
             QPointer<QObject> layoutMgr = m_latteView->extendedInterface()->layoutManager();
             connect(closeApplet, &QAction::triggered, this, [applet, layoutMgr]() mutable {
-                if (layoutMgr) {
-                    QMetaObject::invokeMethod(layoutMgr,
-                                              "hideAppletItem",
-                                              Qt::DirectConnection,
-                                              Q_ARG(QObject *, applet));
+                //! Every follow-up below only drives the layout manager, so
+                //! it is their context: they end with it instead of outliving it.
+                if (!layoutMgr) {
+                    return;
                 }
+
+                QMetaObject::invokeMethod(layoutMgr,
+                                          "hideAppletItem",
+                                          Qt::DirectConnection,
+                                          Q_ARG(QObject *, applet));
                 // Both connections clean each other up via the shared pointers.
                 auto undoConn = std::make_shared<QMetaObject::Connection>();
                 auto destroyConn = std::make_shared<QMetaObject::Connection>();
 
                 // Undo: Plasma emits destroyedChanged(false) when the user
                 // clicks the Undo notification.
-                *undoConn = QObject::connect(applet, &Plasma::Applet::destroyedChanged,
+                *undoConn = QObject::connect(applet, &Plasma::Applet::destroyedChanged, layoutMgr.data(),
                                              [applet, layoutMgr, undoConn, destroyConn](bool destroyed)
                 {
                     if (!destroyed && layoutMgr) {
@@ -563,7 +567,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                 });
 
                 // Final destruction: notification dismissed or timed out.
-                *destroyConn = QObject::connect(applet, &QObject::destroyed,
+                *destroyConn = QObject::connect(applet, &QObject::destroyed, layoutMgr.data(),
                                                 [applet, layoutMgr, undoConn, destroyConn]()
                 {
                     if (layoutMgr) {

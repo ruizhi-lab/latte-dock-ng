@@ -67,7 +67,7 @@ WidgetExplorerView::WidgetExplorerView(Latte::View *view)
     connect(this, &QQuickView::widthChanged, this, &WidgetExplorerView::updateEffects);
     connect(this, &QQuickView::heightChanged, this, &WidgetExplorerView::updateEffects);
 
-    connect(this, &QQuickView::statusChanged, [&](QQuickView::Status status) {
+    connect(this, &QQuickView::statusChanged, this, [this](QQuickView::Status status) {
         if (status == QQuickView::Ready) {
             updateEffects();
         }

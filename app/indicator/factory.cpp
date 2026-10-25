@@ -430,7 +430,7 @@ void Factory::removeIndicator(QString id)
                                        KMessageBox::Options{KMessageBox::NoExec},
                                        QString());
 
-        connect(buttonbox, &QDialogButtonBox::accepted, [this, id, pluginName]() {
+        connect(buttonbox, &QDialogButtonBox::accepted, this, [this, id, pluginName]() {
             auto showRemovedSucceed = [](QString name) {
                 auto notification = new KNotification(QStringLiteral("remove-done"), KNotification::CloseOnTimeout);
                 notification->setText(i18nc("indicator_name, removed success", "<b>%1</b> indicator removed successfully", name));
