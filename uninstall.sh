@@ -225,6 +225,38 @@ remove_dir_if_empty() {
     run_as_root rmdir --ignore-fail-on-non-empty -- "$path" 2>/dev/null || true
 }
 
+# User-home files are removed without sudo, as the invoking user.
+remove_user_tree() {
+    local path="$1"
+    [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $path"; return; }
+    rm -rf -- "$path"
+}
+
+# latte/indicators also holds indicators installed through "Get New Indicators"
+# (KNewStuff) in the user's data directory, and distribution packages may add
+# their own under /usr. Only Latte's entries are removed here: the shipped
+# packages, org.kde.latte.plasma from earlier releases, and the build files
+# that older install.sh versions copied there. Removing the whole directory
+# deleted downloaded indicators on every upgrade; --purge-user-data still
+# deletes the whole user data directory, downloads included.
+latte_indicator_entries=(
+    default
+    org.kde.latte.plasmatabstyle
+    org.kde.latte.plasma
+    CMakeLists.txt
+    Messages.sh
+)
+
+# Usage: remove_latte_indicator_packages <indicators dir> <remove function>
+remove_latte_indicator_packages() {
+    local indicators_dir="$1"
+    local remove_function="$2"
+    local entry
+    for entry in "${latte_indicator_entries[@]}"; do
+        "$remove_function" "${indicators_dir}/${entry}"
+    done
+}
+
 # ── Remove manifest-listed files ─────────────────────────────────────────────
 for manifest_file in "${manifest_paths[@]}"; do
     [[ -f "$manifest_file" ]] || continue
@@ -252,7 +284,6 @@ managed_dirs=(
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid"
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.separator"
     "${install_prefix}/share/plasma/shells/org.kde.latte.shell"
-    "${install_prefix}/share/latte/indicators"
     "${install_prefix}/share/latte-dock-ng/help"
 )
 
@@ -280,6 +311,7 @@ managed_files=(
 for dir_path in "${managed_dirs[@]}"; do
     remove_tree "$dir_path"
 done
+remove_latte_indicator_packages "${install_prefix}/share/latte/indicators" remove_tree
 
 for file_path in "${managed_files[@]}"; do
     remove_file "$file_path"
@@ -318,10 +350,11 @@ if [[ "$install_mode" == "system" ]]; then
                 "${prefix}/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid" \
                 "${prefix}/share/plasma/plasmoids/org.kde.latte.separator" \
-                "${prefix}/share/plasma/shells/org.kde.latte.shell" \
-                "${prefix}/share/latte/indicators"; do
+                "${prefix}/share/plasma/shells/org.kde.latte.shell"; do
             remove_tree "$dir_path"
         done
+        remove_latte_indicator_packages "${prefix}/share/latte/indicators" remove_tree
+        remove_dir_if_empty "${prefix}/share/latte/indicators"
         for file_path in \
                 "${prefix}/bin/latte-dock-ng" \
                 "${prefix}/bin/latte-dock-ng-add-launcher" \
@@ -375,11 +408,11 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
-                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" \
-                "${user_home}/.local/share/latte/indicators"; do
+                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }
             rm -rf -- "$dir_path"
         done
+        remove_latte_indicator_packages "${user_home}/.local/share/latte/indicators" remove_user_tree
 
         for file_path in \
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
@@ -397,11 +430,11 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
                 "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
-                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" \
-                "${user_home}/.local/share/latte/indicators"; do
+                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }
             rm -rf -- "$dir_path"
         done
+        remove_latte_indicator_packages "${user_home}/.local/share/latte/indicators" remove_user_tree
 
         for file_path in \
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \

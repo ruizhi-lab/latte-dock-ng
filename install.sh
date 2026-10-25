@@ -360,6 +360,25 @@ sync_tree_if_exists() {
     fi
 }
 
+# latte/indicators also holds indicators installed through "Get New
+# Indicators" (KNewStuff). Mirror each shipped package directory on its own, so
+# --delete prunes stale files inside Latte's packages but never touches a
+# downloaded sibling. Mirroring the whole source directory deleted downloads and
+# copied CMakeLists.txt and Messages.sh into the data directory.
+# Usage: sync_indicator_packages <sync function> <indicators dir> [extra args...]
+sync_indicator_packages() {
+    local sync_function="$1"
+    local indicators_dir="$2"
+    shift 2
+
+    local package
+    for package in "${script_dir}"/indicators/*/; do
+        [[ -d "$package" ]] || continue
+        package="${package%/}"
+        "$sync_function" "$package" "${indicators_dir}/${package##*/}" "$@"
+    done
+}
+
 refresh_service_caches() {
     if command -v update-desktop-database >/dev/null 2>&1; then
         run_as_root update-desktop-database "${install_prefix}/share/applications" >/dev/null 2>&1 || true
@@ -424,7 +443,7 @@ sync_tree "${script_dir}/containment/package" "${share_dir}/plasma/plasmoids/org
 sync_tree "${script_dir}/plasmoid/package"    "${share_dir}/plasma/plasmoids/org.kde.latte.plasmoid"
 sync_tree "${script_dir}/separator/package"   "${share_dir}/plasma/plasmoids/org.kde.latte.separator"
 sync_tree "${script_dir}/shell/package"       "${share_dir}/plasma/shells/org.kde.latte.shell"
-sync_tree "${script_dir}/indicators"          "${share_dir}/latte/indicators"
+sync_indicator_packages sync_tree "${share_dir}/latte/indicators"
 
 if [[ "$install_mode" == "system" ]]; then
     # For system installs, keep any user-local overrides in sync to avoid stale QML
@@ -433,7 +452,9 @@ if [[ "$install_mode" == "system" ]]; then
         sync_tree_if_exists "${script_dir}/plasmoid/package"    "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" "$user_home"
         sync_tree_if_exists "${script_dir}/separator/package"   "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" "$user_home"
         sync_tree_if_exists "${script_dir}/shell/package"       "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" "$user_home"
-        sync_tree_if_exists "${script_dir}/indicators"          "${user_home}/.local/share/latte/indicators" "$user_home"
+        # Only a shipped package the user already overrides is refreshed;
+        # downloaded indicators in the same directory are left alone.
+        sync_indicator_packages sync_tree_if_exists "${user_home}/.local/share/latte/indicators" "$user_home"
     done
 
     # Create a ~/.local/bin symlink to the system binary for convenience

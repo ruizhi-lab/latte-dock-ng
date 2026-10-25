@@ -131,7 +131,87 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     assert result.returncode == 74
     assert not (home / "cleanup-called").exists()
 
+    # latte/indicators also holds indicators installed through "Get New
+    # Indicators" (KNewStuff). Install, pre-install cleanup and uninstall may
+    # only replace Latte's own packages there, never the downloaded ones.
+    install_source = test_root / "install-src"
+    install_source.mkdir()
+    shutil.copy(repo / "install.sh", install_source)
+    shutil.copy(repo / "uninstall.sh", install_source)
+    shutil.copytree(repo / "indicators", install_source / "indicators")
+    for package in ["containment", "plasmoid", "separator", "shell"]:
+        (install_source / package / "package").mkdir(parents=True)
+    install_tools = test_root / "install-tools"
+    install_tools.mkdir()
+    succeeding_tools = {
+        # Configure, build and install succeed; install writes the manifest
+        # that install.sh copies under the prefix.
+        "cmake": '#!/bin/bash\n[[ "${1:-}" != "--install" ]] || : > install_manifest.txt\nexit 0\n',
+        "kbuildsycoca6": "#!/bin/bash\nexit 0\n",
+        "update-desktop-database": "#!/bin/bash\nexit 0\n",
+    }
+    for name, script in succeeding_tools.items():
+        tool = install_tools / name
+        tool.write_text(script)
+        tool.chmod(0o755)
+    install_environment = dict(environment, PATH=f"{install_tools}:{os.environ['PATH']}")
+
+    indicators = prefix / "share/latte/indicators"
+    downloaded = indicators / "org.example.downloaded/metadata.json"
+    stale_shipped_file = indicators / "default/package/stale.qml"
+    stray_build_files = [indicators / "CMakeLists.txt", indicators / "Messages.sh"]
+
+    # Older install.sh versions copied the build files into the data directory;
+    # cleanup removes them, and --no-clean must at least not create them.
+    def seed_indicators(with_stray_build_files=True):
+        seeded = [downloaded, stale_shipped_file]
+        if with_stray_build_files:
+            seeded += stray_build_files
+        for path in seeded:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("fixture")
+
+    def assert_installed_indicators():
+        assert downloaded.exists()
+        assert (indicators / "default/metadata.json").exists()
+        assert (indicators / "org.kde.latte.plasmatabstyle/metadata.json").exists()
+        assert not stale_shipped_file.exists()
+        assert all(not path.exists() for path in stray_build_files)
+
+    for clean_option in ["--clean", "--no-clean"]:
+        seed_indicators(with_stray_build_files=(clean_option == "--clean"))
+        subprocess.run(
+            ["bash", str(install_source / "install.sh"), "--user", clean_option,
+             "--build-dir", str(test_root / "install-build"), "--jobs", "1"],
+            env=install_environment,
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
+        assert_installed_indicators()
+
+    seed_indicators()
+    subprocess.run(
+        ["bash", str(install_source / "uninstall.sh"), "--user", "--no-purge-user-data"],
+        env=install_environment,
+        check=True,
+        stdout=subprocess.DEVNULL,
+    )
+    assert downloaded.exists()
+    assert not (indicators / "default").exists()
+    assert not (indicators / "org.kde.latte.plasmatabstyle").exists()
+    assert all(not path.exists() for path in stray_build_files)
+
+    # An explicit purge still removes all user data, downloads included.
+    subprocess.run(
+        ["bash", str(install_source / "uninstall.sh"), "--user", "--purge-user-data"],
+        env=install_environment,
+        check=True,
+        stdout=subprocess.DEVNULL,
+    )
+    assert not (prefix / "share/latte").exists()
+
 print(
     "PASS: manifestless cleanup, config/shared-module preservation, "
-    "persisted manifest, escaping-path rejection, and build-failure preservation"
+    "persisted manifest, escaping-path rejection, build-failure preservation, "
+    "and downloaded-indicator preservation"
 )
