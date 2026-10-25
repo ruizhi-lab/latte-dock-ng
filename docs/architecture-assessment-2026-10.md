@@ -22,7 +22,7 @@ not authorize implementation, commits or releases by itself.
 | --- | --- | --- |
 | Build, CI and tooling | Strong | Schema-v2 presets, strict `-Werror` gate with negative fixtures on GCC and Clang, targeted ASan/UBSan, deep qmllint baseline gate, distribution install matrix, Nix checks |
 | Qt 6 / KF6 API idioms | Good | No `foreach`, `qAsConst`, `Q_DECL_*` or `Q_NULLPTR`; 3 of 792 connections use string signatures, each for a runtime-resolved signature; `QT_NO_KEYWORDS`, `QT_NO_CAST_FROM_ASCII`, `QT_STRICT_ITERATORS` and `QT_USE_QSTRINGBUILDER` are active |
-| C++17/20 language features | Limited | No `std::optional`, `std::span`, `std::string_view`, `std::variant`, ranges or structured bindings in production code; 2 `enum class`; 43 hand-written copy/move members in `app/data` whose move constructors copy |
+| C++17/20 language features | Limited | No `std::optional`, `std::span`, `std::string_view`, `std::variant`, ranges or structured bindings in production code; 2 `enum class`; 43 hand-written copy/move members in `app/data` whose move constructors copy (removed in R3) |
 | Component boundaries | Moderate | `Corona` acts as a service locator; C++ reads and drives QML objects by name; the `org.kde.latte.private.app` plugin resolves symbols from the executable |
 | QML modernity | Surface ported, typing incomplete | Unversioned imports, Plasma 6 roots, `MultiEffect` and `function onX()` handlers throughout; 6,048 `unqualified` and 1,144 `missing-property` diagnostics in the reviewed baseline |
 | Runtime performance | Low idle CPU on hardware; avoidable wakeups | Before R1a: 0.27 % CPU, 16 main-thread and 8 D-Bus-thread wakeups per second at idle |
@@ -82,14 +82,18 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
 
 ## C++ and Qt findings
 
-- Hand-written copy and move members in `app/data` (43) duplicate the defaults;
-  the move constructors copy (no `std::move` in `app/data`). A field added later
-  can silently be dropped by one of them. R3.
+- Hand-written copy and move members in `app/data` (43 counted at `v1.2.62`;
+  31 declarations over 16 records after review) duplicated the defaults; the
+  move constructors copied (no `std::move` in `app/data`), and a field added
+  later could be silently dropped by one of them. Fixed in
+  [R3](modernization-results/R3.md); the source contract now rejects a new one.
 - 17 connections pass a lambda without a context object, for example in
-  [alternativeshelper.cpp](../app/alternativeshelper.cpp). R2b.
+  [alternativeshelper.cpp](../app/alternativeshelper.cpp). Fixed in
+  [R2b](modernization-results/R2b.md) and enforced by
+  `QT_NO_CONTEXTLESS_CONNECT`; desktop retest still pending.
 - No deprecation gate: `ecm_set_disabled_deprecation_versions()` is not used,
   so APIs deprecated at or below the Qt 6.6 / KF 6.0 floors are not compiled
-  out. R2a.
+  out. Fixed in [R2a](modernization-results/R2a.md).
 - Raw pointers to QML-owned items without `QPointer` and a non-close-on-exec
   self-pipe. Fixed in R1a.
 - A startup Wayland retry loop that could never succeed after `QApplication`
