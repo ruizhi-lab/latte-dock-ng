@@ -42,6 +42,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS CoreTool
 include(KDEInstallDirs)
 include(CheckIncludeFiles)
 include(CMakePackageConfigHelpers)
+include(ECMDeprecationSettings)
 include(ECMOptionalAddSubdirectory)
 include(ECMQtDeclareLoggingCategory)
 include(KDECMakeSettings)
@@ -291,6 +292,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
 
 #add format security check
 add_compile_options(-Wformat -Werror=format-security)
+
+# Compile out Qt and KF APIs deprecated at or before the supported floors, so
+# code cannot fall back to them even where a warning is suppressed. Newer Qt 6
+# and KF 6 deprecations still warn and fail under LATTE_STRICT_WARNINGS.
+ecm_set_disabled_deprecation_versions(
+    QT ${QT_MIN_VERSION}
+    KF ${KF6_MIN_VERSION}
+)
 
 # Share Same Core Types between declarativeimports and app.
 # Only the org.kde.latte.core copy carries QML type declarations. The app and
