@@ -18,8 +18,10 @@ namespace Data {
 //! Data records are plain values: copy and move are compiler-generated (Rule
 //! of Zero), so every member, including one added later, is copied and moved.
 //! The former hand-written versions copied on move and had to list each field
-//! again; a missed field was silently dropped. .clang-tidy rejects a partial
-//! set of special members under app/data.
+//! again, so a field missing from one of them was dropped without a compile
+//! error. SourceContractTest::dataRecordsKeepRuleOfZero() rejects a
+//! hand-written copy or move member in any app/data header; a record that
+//! needs one must explain why and be exempted there by name.
 class Generic
 {
 public:

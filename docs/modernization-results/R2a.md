@@ -1,8 +1,7 @@
 # R2a: Deprecation Gate at the Supported Floors
 
 Status: Complete.
-Date: 2026-10-26. Branch: `main`. Implementation commit: see
-`git log --grep 'build: compile out APIs deprecated at the floors'`.
+Date: 2026-10-25. Branch: `main`. Implementation commit: `a087f3511`.
 
 ## Defect
 
@@ -16,30 +15,39 @@ floor.
 ## Fix
 
 `CMakeLists.txt` includes `ECMDeprecationSettings` and calls
-`ecm_set_disabled_deprecation_versions(QT ${QT_MIN_VERSION} KF ${KF6_MIN_VERSION})`.
-The macro sets `QT_DISABLE_DEPRECATED_BEFORE` and
-`QT_DISABLE_DEPRECATED_UP_TO` plus the KF equivalents, so those APIs are
-compiled out rather than merely warned about. Deprecations newer than the floors
-still emit warnings and fail under `LATTE_STRICT_WARNINGS`.
+`ecm_set_disabled_deprecation_versions(QT ${QT_MIN_VERSION} KF ${KF6_MIN_VERSION})`
+before the first `add_subdirectory()`, so every target in the tree inherits the
+definitions it adds:
 
-No call site had to change: the Debug builds of both compilers stayed at zero
-warnings, so the project does not currently use an API deprecated at or below
-the floors.
+| Definition | Effect |
+| --- | --- |
+| `QT_DISABLE_DEPRECATED_BEFORE=0x60600` | Qt derives `QT_DISABLE_DEPRECATED_UP_TO` from it and compiles out APIs deprecated in Qt 6.6 or earlier |
+| `KF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x60000` | Every KF6 export header compiles out APIs deprecated in KF 6.0 or earlier |
+| `QT_DEPRECATED_WARNINGS_SINCE=0x70000`, `KF_DEPRECATED_WARNINGS_SINCE=0x70000` | Deprecations newer than the floors still warn, and `LATTE_STRICT_WARNINGS` turns the warning into an error |
+
+No call site had to change: the existing sources build against the gate on
+both compilers, so the project does not use an API deprecated at or below the
+floors.
 
 ## Evidence
 
+Fresh preset trees on the review host: GCC 16.2.1, Clang 22.1.8, CMake 4.3.4,
+Qt 6.11.2, KF and ECM 6.29.0.
+
 | Check | Result |
 | --- | --- |
-| GCC 6.x Debug, `LATTE_STRICT_WARNINGS=ON`, `-j8` | Build succeeded, 0 compiler warnings |
-| Clang 22 Debug, `LATTE_STRICT_WARNINGS=ON`, `-j8` | Build succeeded, 0 compiler warnings |
-| `ctest` on GCC Debug | 56/56 passed |
-| `ctest` on Clang Debug | 56/56 passed |
-| Replaced APIs | None; the gate compiled clean against the existing sources |
+| `gcc-debug`, `gcc-release`, `clang-debug`, `clang-release` (`LATTE_STRICT_WARNINGS=ON`, `-j8`) | All four built, 0 compiler warnings or errors |
+| CTest in each of the four presets | 56/56 passed |
+| Gate definitions in `compile_commands.json` | Present in 427 of 427 translation units in both Debug trees |
+| Fixture calling `QVariant::type()` (deprecated in Qt 6.0) with the application's flags | Rejected by GCC and Clang: the member is compiled out |
+| Fixture calling `KPasswordLineEdit::setRevealPasswordAvailable()` (deprecated in KF 6.0) | Rejected by GCC and Clang: the member is compiled out |
+| Fixture using `operator""_qba` (deprecated in Qt 6.8, newer than the floor) | Still declared; fails with `-Werror=deprecated-declarations` on both compilers |
+| CI run 40180566388 at `3023bddc3` | GCC and Clang Debug/Release jobs passed; the Debian 13 install job built Qt 6.8.2 / KF 6.13 with 10 strict targets and passed |
+| Replaced APIs | None |
 
-The Release presets and the Debian 13 floor job in CI cover the remaining
-acceptance rows; they are not run on this review host because a Release build
-does not change which symbols the deprecation gate hides and the Debian job runs
-on its own image.
+The first version of this report listed only the Debug builds, named the GCC
+version as 6.x and left the Release and Debian 13 rows to CI without a run
+reference. The table above replaces it.
 
 ## Next action
 

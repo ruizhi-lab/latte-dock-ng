@@ -5297,12 +5297,50 @@ SourceContractTest::dataRecordsKeepRuleOfZero()
     // copy and move all members, so the headers must not declare those
     // special members. Custom comparison operators are allowed and expected.
     //
-    // Only a declaration that carries the record's own type in both positions
-    // is a copy or move special member; any other parameter type is an ordinary
-    // function such as LayoutsTable::subtracted(const LayoutsTable &rhs). The
-    // back-reference is what separates the two cases.
-    static const QRegularExpression selfTypedSpecialMember(
-        QStringLiteral(R"(\b(operator\s*=\s*\(\s*(?:const\s+)?([A-Za-z_]\w*)\s*&&?\s*\)|([A-Za-z_]\w*)\s*\(\s*(?:const\s+)?\3\s*&&?\s*\w*\s*\)))"));
+    // A copy or move member names the record's own type twice: as constructor
+    // name and parameter, or as assignment return type and parameter. The
+    // back-references tie the two together, which keeps ordinary functions
+    // such as LayoutsTable::subtracted(const LayoutsTable &rhs) out of the
+    // match. The type may be qualified or carry template arguments
+    // (GenericTable<T>), and the parameter may be named, unnamed, east-const
+    // or, for a copy-and-swap assignment, passed by value.
+    static const QRegularExpression specialMember(QStringLiteral(
+        R"(\b(?:(\w+)(?:\s*<[^<>()]*>)?\s*&\s*operator\s*=\s*\(\s*(?:const\s+)?(?:\w+::)*\1\b(?:\s*<[^<>()]*>)?\s*(?:const\s*)?(?:&&?)?\s*\w*\s*\))"
+        R"(|(\w+)\s*\(\s*(?:const\s+)?(?:\w+::)*\2\b(?:\s*<[^<>()]*>)?\s*(?:const\s*)?&&?\s*\w*\s*\)))"));
+
+    // Prove the pattern itself: an earlier version missed a named operator=
+    // parameter and the GenericTable<T> members, so reintroducing them passed.
+    const QStringList specialMembers{
+        QStringLiteral("Activity(const Activity &o);"),
+        QStringLiteral("Activity(Activity &&o);"),
+        QStringLiteral("Activity(Activity const &);"),
+        QStringLiteral("Activity(const Data::Activity &o);"),
+        QStringLiteral("Activity &operator=(const Activity &rhs);"),
+        QStringLiteral("Activity &operator=(Activity &&rhs);"),
+        QStringLiteral("Activity &operator=(const Activity &);"),
+        QStringLiteral("Activity &operator=(Activity rhs);"),
+        QStringLiteral("GenericTable(const GenericTable<T> &o);"),
+        QStringLiteral("GenericTable(GenericTable<T> &&o);"),
+        QStringLiteral("GenericTable<T> &operator=(const GenericTable<T> &rhs);"),
+        QStringLiteral("GenericTable<T> &operator=(GenericTable<T> &&rhs);"),
+    };
+    for (const QString &declaration : specialMembers) {
+        QVERIFY2(specialMember.match(declaration).hasMatch(), qPrintable(declaration));
+    }
+
+    const QStringList ordinaryMembers{
+        QStringLiteral("LayoutsTable subtracted(const LayoutsTable &rhs) const;"),
+        QStringLiteral("GenericTable<T> &operator<<(const GenericTable<T> &rhs);"),
+        QStringLiteral("bool operator==(const Layout &rhs) const;"),
+        QStringLiteral("bool operator!=(const Layout &rhs) const;"),
+        QStringLiteral("Generic(const QString &newid, const QString &newname);"),
+        QStringLiteral("Activity(Activity::State state);"),
+        QStringLiteral("Activity &operator=(const ActivityState &state);"),
+        QStringLiteral("void appendTemporaryView(const Data::View &view);"),
+    };
+    for (const QString &declaration : ordinaryMembers) {
+        QVERIFY2(!specialMember.match(declaration).hasMatch(), qPrintable(declaration));
+    }
 
     QDirIterator headers(QStringLiteral(LATTE_SOURCE_DIR "/app/data"),
                          QStringList{QStringLiteral("*.h")}, QDir::Files);
@@ -5349,10 +5387,10 @@ SourceContractTest::dataRecordsKeepRuleOfZero()
             code.append(current);
         }
 
-        QRegularExpressionMatch match = selfTypedSpecialMember.match(code);
+        const QRegularExpressionMatch match = specialMember.match(code);
         QVERIFY2(!match.hasMatch(),
                  qPrintable(QStringLiteral("%1 declares a hand-written copy/move member: %2")
-                                .arg(path, match.captured(1).trimmed())));
+                                .arg(path, match.captured(0).simplified())));
     }
 }
 

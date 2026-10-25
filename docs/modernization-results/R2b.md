@@ -1,58 +1,71 @@
-# R2b: Context-less Lambda Connections
+# R2b: Context-less Connections
 
 Status: Complete for the code and build gates. Desktop retest pending.
-Date: 2026-10-26. Branch: `main`. Implementation commit: see
-`git log --grep 'fix: give every connection a context object'`.
+Date: 2026-10-25. Branch: `main`. Implementation commit: `484a8d59b`.
 
 ## Defect
 
-Seventeen `QObject::connect()` calls passed a functor without a context object.
-Such a connection is only disconnected when the sender dies, so the lambda kept
-running after the objects it captured were destroyed. Two sites captured by
-reference (`[&]`) in a constructor, which is a dangling reference from the first
-emission onwards. The rest captured raw pointers and read them after their
-lifetime. Qt 6.7 and newer turn this into a compile error through
-`QT_NO_CONTEXTLESS_CONNECT`; the declared Qt 6.6 floor does not, so the macro
-was not defined and nothing enforced the rule.
+Twenty-four `QObject::connect()` calls had no context object: 23 lambdas (17 in
+`app/` and 6 in `containmentactions/contextmenu/menu.cpp`) and one
+member-function connection in `visibilitymanager.cpp`. Such a connection is
+only disconnected when the sender is destroyed, so a callback that uses an
+object the sender does not own can run after that object is gone. Qt 6.7 and
+newer reject the three-argument form under `QT_NO_CONTEXTLESS_CONNECT`; the
+declared Qt 6.6 floor does not, so the macro was not defined and nothing
+enforced the rule.
+
+Three sites were not bounded by their sender: the alternatives helper, the
+indicator removal confirmation and the containment `userConfiguringChanged`
+handler (see the table). At every other site the sender already bounded the
+callback, because it is the receiver itself, a descendant of the context or
+owned by the receiver. Naming the context there makes that lifetime explicit
+and lets the macro be defined.
 
 ## Fix
 
 **Macro.** `CMakeLists.txt` defines `QT_NO_CONTEXTLESS_CONNECT`. It is enforced
-from Qt 6.7, which the review host (6.11.2) provides, and ignored by the Qt 6.6
-floor, so the floor still configures.
+from Qt 6.7 and ignored by the Qt 6.6 floor, so the floor still configures.
 
 **Sites.** Each connection now names a context object whose lifetime matches the
 captures:
 
-| Site | Context | Why |
-| --- | --- | --- |
-| [alternativeshelper.cpp](../../app/alternativeshelper.cpp) | `contItem` | The containment item receives the replacement applet. The helper itself is not the context: the alternatives dialog can delete it before the old applet finishes its deferred destruction. |
-| [contextmenulayerquickitem.cpp](../../app/declarativeimports/contextmenulayerquickitem.cpp) | `layoutMgr` (guard hoisted) | The undo and destroy follow-ups only drive the layout manager, so they must end with it instead of outliving it. |
-| [lattecorona.cpp](../../app/lattecorona.cpp) | `this` | `Corona` owns the synchronizer, registry and the objects the lambda creates. |
-| [indicator/factory.cpp](../../app/indicator/factory.cpp) | `this` | The factory outlives the confirmation dialog it creates. |
-| [activitiesdelegate.cpp](../../app/settings/settingsdialog/delegates/activitiesdelegate.cpp) | `menu` | The lambda only manipulates the menu; the button that sends the signal can be replaced by the delegate. |
-| [tablayoutshandler.cpp](../../app/settings/settingsdialog/tablayoutshandler.cpp), [tabpreferenceshandler.cpp](../../app/settings/settingsdialog/tabpreferenceshandler.cpp) | `this` | The handler owns the preferences it updates. |
-| [indicator.cpp](../../app/view/indicator/indicator.cpp) | `this` | The indicator owns the state it re-emits. |
-| [primaryconfigview.cpp](../../app/view/settings/primaryconfigview.cpp), [widgetexplorerview.cpp](../../app/view/settings/widgetexplorerview.cpp) | `this`, `[&]` → `[this]` | The views are the sender and the receiver of their own status change; capturing by reference in a constructor was a dangling reference. |
-| [visibilitymanager.cpp](../../app/view/visibilitymanager.cpp) | `this` | The manager owns the struts timer connection it replaces. |
-| [menu.cpp](../../containmentactions/contextmenu/menu.cpp) | `this` | The actions plugin owns the actions and outlives the containment signal. |
+| Site | Sender | Context | Lifetime before the change |
+| --- | --- | --- | --- |
+| [alternativeshelper.cpp](../../app/alternativeshelper.cpp) | Old applet, `destroyed` | `contItem` | Not bounded: the containment item that receives the replacement could be gone before the old applet's deferred destruction ends. The helper is not the context because the alternatives dialog can delete it first. |
+| [contextmenulayerquickitem.cpp](../../app/declarativeimports/contextmenulayerquickitem.cpp) (2) | Applet | `layoutMgr`, with an early return when it is gone | Safe through the `QPointer` check, but the connections stayed as no-ops until the applet died; they now end with the layout manager. |
+| [indicator/factory.cpp](../../app/indicator/factory.cpp) | Button box of the removal confirmation | `this` | Not bounded: the dialog has no parent, so nothing tied the accept handler to the factory it calls. |
+| [lattecorona.cpp](../../app/lattecorona.cpp) (3) | Layout synchronizer, Wayland registry | `this` | Bounded: `Corona` owns both senders. |
+| [activitiesdelegate.cpp](../../app/settings/settingsdialog/delegates/activitiesdelegate.cpp) (2) | OK and Reset buttons inside the menu | `menu` | Bounded: the buttons are descendants of `menu`, which is a child of the editor button that the OK handler also uses. |
+| [tablayoutshandler.cpp](../../app/settings/settingsdialog/tablayoutshandler.cpp) (1), [tabpreferenceshandler.cpp](../../app/settings/settingsdialog/tabpreferenceshandler.cpp) (3) | Button groups, screen-delay spin box | `this` | Bounded: the handler owns the button groups; the spin box belongs to the dialog that owns the handler. |
+| [indicator.cpp](../../app/view/indicator/indicator.cpp) (2) | Parent view | `this` | Bounded: the view is the indicator's parent. |
+| [primaryconfigview.cpp](../../app/view/settings/primaryconfigview.cpp), [widgetexplorerview.cpp](../../app/view/settings/widgetexplorerview.cpp) | The view itself | `this`; `[&]` became `[this]` | Bounded: sender and receiver are the same object. The `[&]` lambdas only used `this`, so they held no dangling reference; `[this]` states the capture. |
+| [visibilitymanager.cpp](../../app/view/visibilitymanager.cpp) | The manager itself | `this` | Unchanged: the three-argument member-function form already used the sender as the receiver. |
+| [menu.cpp](../../containmentactions/contextmenu/menu.cpp) (5 actions) | Actions owned by the plugin | `this` | Bounded: the plugin owns the actions. |
+| [menu.cpp](../../containmentactions/contextmenu/menu.cpp) (`userConfiguringChanged`) | Containment | `this` | Not bounded: the containment outlives the actions plugin when its actions are reconfigured. |
 
 No behavior was changed beyond the lifetime scope of the callbacks.
 
 ## Evidence
 
+Fresh preset trees on the review host: GCC 16.2.1, Clang 22.1.8, Qt 6.11.2.
+
 | Check | Result |
 | --- | --- |
-| Context-less connection scan over all production `.cpp` | 0 live sites (one match was inside a commented-out block in `menu.cpp`) |
-| Qt version on the review host | 6.11.2, so the macro is enforced |
-| GCC Debug, `LATTE_STRICT_WARNINGS=ON` | Build succeeded, 0 compiler warnings, 56/56 CTest |
-| Clang 22 Debug, `LATTE_STRICT_WARNINGS=ON` | Build succeeded, 0 compiler warnings, 56/56 CTest |
+| Scan for three-argument `connect()` calls, comments stripped | 24 in the parent of `484a8d59b`, 0 now; the installed KF6 and Plasma headers contain none |
+| Fixture with a context-less lambda `connect()` and the application's flags | Rejected by GCC and Clang; the same call with a context object compiles |
+| `QT_NO_CONTEXTLESS_CONNECT` in `compile_commands.json` | Present in 427 of 427 translation units in both Debug trees |
+| GCC and Clang Debug/Release presets, `LATTE_STRICT_WARNINGS=ON` | 0 compiler warnings; 56/56 CTest in all four |
+| CI run 40180566388 at `3023bddc3` | Passed, including the Debian 13 build with Qt 6.8.2, which also enforces the macro |
+
+The first version of this report counted seventeen sites and described the two
+`[&]` captures as dangling references. Neither was accurate; the table above
+replaces it.
 
 ## Pending
 
-The desktop smoke of the touched paths was not run in this pass. It covers the
-alternatives dialog (`alternativeshelper.cpp`), the applet close/undo
-notification (`contextmenulayerquickitem.cpp`), the settings tabs for activities,
-parabolic spread and screen tracking, the indicator removal confirmation, the
-settings and widget-explorer Ready path, and the containment context menu.
-Record the result in this section before treating the desktop gate as passed.
+The desktop smoke of the touched paths was not run. It covers the alternatives
+dialog (`alternativeshelper.cpp`), the applet close/undo notification
+(`contextmenulayerquickitem.cpp`), the settings tabs for activities, parabolic
+spread and screen tracking, the indicator removal confirmation, the settings
+and widget-explorer Ready path, and the containment context menu. Record the
+result in this section before treating the desktop gate as passed.
