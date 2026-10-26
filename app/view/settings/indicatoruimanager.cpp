@@ -61,39 +61,6 @@ void IndicatorUiManager::setParentItem(QQuickItem *parentItem)
     m_parentItem = parentItem;
 }
 
-void IndicatorUiManager::hideAllUi()
-{
-    for (int i = 0; i < m_uidata.count(); ++i) {
-        if (m_uidata[i].ui) {
-            //! config ui has already been created and can be provided again
-            QQuickItem *qmlItem = qobject_cast<QQuickItem *>(m_uidata[i].ui->rootObject());
-
-            if (qmlItem) {
-                qmlItem->setVisible(false);
-            }
-        }
-    }
-}
-
-void IndicatorUiManager::showNextIndicator()
-{
-    if (!m_parentItem) {
-        return;
-    }
-
-    if (auto *metaObject = m_parentItem->metaObject()) {
-        int methodIndex = metaObject->indexOfMethod("showNextIndicator()");
-
-        if (methodIndex == -1) {
-            qCDebug(latteView) << "indicator parent page function showNextIndicator() was not found...";
-            return;
-        }
-
-        QMetaMethod method = metaObject->method(methodIndex);
-        method.invoke(m_parentItem);
-    }
-}
-
 void IndicatorUiManager::ui(const QString &type, Latte::View *view)
 {
     if (!m_parentItem) {
@@ -111,7 +78,6 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
 
         if (qmlItem) {
             qmlItem->setParentItem(m_parentItem);
-            showNextIndicator();
         }
 
         return;
@@ -161,7 +127,6 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
 
             if (qmlItem) {
                 qmlItem->setParentItem(m_parentItem);
-                showNextIndicator();
             }
         }
     }

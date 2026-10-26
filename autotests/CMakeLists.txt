@@ -1066,6 +1066,11 @@ target_compile_definitions(helpmenuqmltest PRIVATE LATTE_SOURCE_DIR="${CMAKE_SOU
 target_link_libraries(helpmenuqmltest Qt6::Gui Qt6::Quick Qt6::Qml Qt6::Test)
 latte_add_offscreen_test(helpmenuqmltest)
 
+add_executable(indicatorconfiguimanagertest EXCLUDE_FROM_ALL indicatorconfiguimanagertest.cpp)
+target_compile_definitions(indicatorconfiguimanagertest PRIVATE LATTE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+target_link_libraries(indicatorconfiguimanagertest Qt6::Gui Qt6::Quick Qt6::Qml Qt6::Test)
+latte_add_offscreen_test(indicatorconfiguimanagertest)
+
 # Some tests compile app sources directly, so they need the shared logging
 # categories (latte_debug.h) just like the application targets.
 foreach(_latte_test_target IN LISTS latte_autotest_targets)
