@@ -69,7 +69,6 @@
         "Description[zh_TW]": "通常在按下右鍵時顯示的 Latte 選單",
         "EnabledByDefault": true,
         "Icon": "help-contextual",
-        "Id": "org.kde.latte.contextmenu",
         "License": "GPL",
         "Name": "Standard Latte Menu",
         "Name[ar]": "قائمة لاتيه قياسية",
