@@ -18,17 +18,17 @@ checks rejects.
 - **Inventory.** clazy's level0 and level1 sets (52 checks) over all 153
   production sources found 570 distinct findings in 84 files, all from 19
   checks. The other 33 checks found nothing.
-- **Gate.** `scripts/test-clazy.py` gates the 30 zero-finding checks whose
-  fixture fires under the project flags, in the Clang Debug CI job after the
-  build. A gated check cannot be vacuous: the runner proves it on its own
-  fixture first.
+- **Gate.** `scripts/test-clazy.py` gates the zero-finding checks whose fixture
+  fires under the project flags, in the Clang Debug CI job after the build: 30
+  at the inventory, 31 since `R2c-auto-unexpected-qstringbuilder`. A gated
+  check cannot be vacuous: the runner proves it on its own fixture first.
 - **Not gated, zero findings.** `foreach` and `qstring-comparison-to-implicit-char`
   cannot fire under the project flags; no trigger was found for `qstring-left`.
 - **Next actions.** The 19 checks with findings become `R2c-<check>` slices.
-  One finding is a likely latent defect, not a style issue: a `QStringBuilder`
-  held in an `auto` variable over a temporary in
-  `app/plasma/extended/backgroundcache.cpp:44` (see the slice table).
-- No production code, build rule or dependency of the product changed.
+  The first, [R2c-auto-unexpected-qstringbuilder](R2c-auto-unexpected-qstringbuilder.md),
+  is done: its finding was a dangling `QStringBuilder` on Qt 6.6 and older.
+- The inventory commit changed no production code, build rule or dependency of
+  the product; the slice commits that follow it change one file each.
 
 ## Handoff
 
@@ -43,7 +43,8 @@ checks rejects.
   runner this one follows); R2b for the context-object rules behind
   `connect-3arg-lambda`.
 - **Files and externally observable behavior changed:** new
-  `scripts/test-clazy.py` and 30 fixtures in `autotests/clazy/`; two steps in
+  `scripts/test-clazy.py` and 30 fixtures in `autotests/clazy/` (one more per
+  finished slice); two steps in
   the Clang Debug job of `.github/workflows/build.yml`; a "clazy gate" section
   in [the testing guide](../development-testing-guide.md). The product, its
   tests and its dependencies are unchanged. The Clang Debug job gains an apt
@@ -61,7 +62,9 @@ checks rejects.
 - **Commands executed with exit status:** see Evidence.
 - **GCC/Clang Debug/Release warning/error results:** no C++ changed, so only
   the Clang Debug preset was rebuilt. Host (Clang 22.1.8) and container
-  (Clang 18.1.3 with Qt 6.11.1) `clang-debug` builds: 0 warnings, 0 errors.
+  (Clang 18.1.3 with Qt 6.11.1) `clang-debug` builds: 0 compiler warnings, 0 errors
+  (the build's qmllint step prints the known QML warnings, which the baseline
+  gate tracks).
   GCC and Release builds were not rerun.
 - **Tests registered / run / passed:** host `ctest --preset clang-debug`: 57
   registered, 57 run, 57 passed, 0 skipped, 0 failed. No test was added or
@@ -72,8 +75,8 @@ checks rejects.
   runner's failure paths are covered by the controlled mutations below, not by
   an automated test.
 - **QML diagnostics added/removed:** none; no QML file changed.
-- **Negative fixtures or controlled mutation evidence:** 30 fixtures, one per
-  gated check, and five mutations of the tree or the runner (see Evidence).
+- **Negative fixtures or controlled mutation evidence:** 30 fixtures at this
+  commit, one per gated check, and five mutations of the tree or the runner (see Evidence).
 - **Desktop user feedback / log review / clean-quit and coredump evidence:**
   not applicable, there is no runtime change.
 - **Performance:** the gate takes 97 s with eight jobs on an idle 16-core host
@@ -87,7 +90,7 @@ checks rejects.
   Pending validation.
 - **Next exact action:** review this branch, then (if a push is approved) read
   the `Install clazy` and `Run gated clazy checks` steps of the Clang Debug job
-  and record the run URL here. Then start `R2c-qfileinfo-exists`. Do not start
+  and record the run URL here. Then take the next row of the slice table. Do not start
   another batch implicitly.
 - **Commit approval status / push approval status:** committed on the feature
   branch as the session brief allows; not pushed; `main` untouched.
@@ -170,7 +173,7 @@ and fire on their fixture.
 | `use-static-qregularexpression` | 0 | 6 | 2 | Slice `R2c-use-static-qregularexpression` |
 | `incorrect-emit` | 1 | 4 | 3 | Slice `R2c-incorrect-emit` |
 | `overridden-signal` | 1 | 2 | 2 | Slice `R2c-overridden-signal` |
-| `auto-unexpected-qstringbuilder` | 1 | 1 | 1 | Slice `R2c-auto-unexpected-qstringbuilder` |
+| `auto-unexpected-qstringbuilder` | 1 | 1 | 1 | Fixed and gated: [R2c-auto-unexpected-qstringbuilder](R2c-auto-unexpected-qstringbuilder.md) |
 | `empty-qstringliteral` | 0 | 1 | 1 | Slice `R2c-empty-qstringliteral` |
 | `qproperty-without-notify` | 1 | 1 | 1 | Slice `R2c-qproperty-without-notify` |
 | `foreach` | 1 | 0 | 0 | Zero, unreachable: `QT_NO_FOREACH` rejects the construct and clazy disables the check for Qt 5.9 and later |
@@ -289,7 +292,8 @@ Count after each path is the number of locations in that file (omitted for one).
 
 ## Gate design
 
-- **Explicit list.** `GATED_CHECKS` names 30 checks. A level (`level0`, `level1`)
+- **Explicit list.** `GATED_CHECKS` names 30 checks at the inventory and one
+  more per finished slice. A level (`level0`, `level1`)
   would add checks silently when clazy is updated, and clazy ignores a misspelled
   name, so the runner lists the enabled checks with `--list-checks` and fails on
   any difference.
@@ -322,7 +326,7 @@ Count after each path is the number of locations in that file (omitted for one).
 
 The runner commands ran in the container from the repository root, with the
 checkout mounted read-only and the build tree on a separate mount. The last two
-rows ran on the host. Container build logs: 0 warnings in configure and build.
+rows ran on the host. Container build logs: 0 compiler warnings in configure and build.
 
 | Command | Result |
 | --- | --- |
@@ -335,7 +339,7 @@ rows ran on the host. Container build logs: 0 warnings in configure and build.
 | Same, with `autotests/clazy/qgetenv.cpp` replaced by a clean file | **Exit 1** in 8 s: "the gate did not reject its negative fixture(s): qgetenv.cpp" |
 | Same, with `"no-such-check"` added to `GATED_CHECKS` | **Exit 1** immediately: "clazy rejected the check selection" (clazy itself exits 0 and prints "Invalid check") |
 | Same, with `autotests/clazy` empty | **Exit 1** immediately: one fixture missing per gated check |
-| Host `cmake --preset clang-debug`, `cmake --build --preset clang-debug`, `ctest --preset clang-debug` | Exit 0, 0 warnings, 57/57 tests passed |
+| Host `cmake --preset clang-debug`, `cmake --build --preset clang-debug`, `ctest --preset clang-debug` | Exit 0, 0 compiler warnings, 57/57 tests passed |
 | `.github/workflows/build.yml` parsed with PyYAML | Valid; both clazy steps are in the `build` job after the build and the clang-tidy step, gated on `matrix.preset == 'clang-debug'` |
 
 The mutations replaced one file inside the container (read-only bind mount);
@@ -359,11 +363,12 @@ paths; the table above is the evidence for them.
 Each slice fixes all findings of one check, confirms zero with
 `--inventory CHECK`, adds `autotests/clazy/CHECK.cpp` and the name in
 `GATED_CHECKS`. A reviewed exception may use `// clazy:exclude=CHECK` with a
-reason instead of a rewrite. Suggested order, smallest and most mechanical first:
+reason instead of a rewrite. Done: `R2c-auto-unexpected-qstringbuilder`, see
+[its report](R2c-auto-unexpected-qstringbuilder.md). Suggested order for the rest,
+smallest and most mechanical first:
 
 | Slice | Locations / files | Notes |
 | --- | ---: | --- |
-| `R2c-auto-unexpected-qstringbuilder` | 1 / 1 | `app/plasma/extended/backgroundcache.cpp:44`: `const auto configFile = QStandardPaths::writableLocation(...) + QLatin1Char('/') + PLASMACONFIG;` deduces a `QStringBuilder` (the project defines `QT_USE_QSTRINGBUILDER`) that refers to the temporary returned by `writableLocation()`; the builder is used after the full expression. clazy calls this a possible crash. Declare it `const QString` |
 | `R2c-empty-qstringliteral` | 1 / 1 | `app/settings/actionsdialog/actionshandler.cpp:82`, `QIcon::fromTheme(QStringLiteral(""))` |
 | `R2c-qfileinfo-exists` | 35 / 11 | `QFileInfo(path).exists()` to the static `QFileInfo::exists(path)` |
 | `R2c-use-static-qregularexpression` | 6 / 2 | `app/knscompat.cpp` 5, `app/wm/tasktools.cpp` 1; hoist into a function-local `static const` |
