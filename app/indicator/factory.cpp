@@ -149,6 +149,7 @@ void Factory::reload(const QString &indicatorPath)
 
             if (metadataAreValid(metadata)) {
                 pluginChangedId = metadata.pluginId();
+                m_pathPluginIds[indicatorPath] = pluginChangedId;
                 QString uiFile = indicatorPath + QLatin1String("/package/") + metadata.value(QStringLiteral("X-Latte-MainScript"));
 
                 // User-local installs (under $HOME) always take precedence over system-wide
@@ -241,34 +242,59 @@ void Factory::discoverNewIndicators(const QString &main)
 
 void Factory::removeIndicatorRecords(const QString &path)
 {
-    if (m_indicatorsPaths.contains(path)) {
-        QString pluginId =  path.section(QLatin1Char('/'), -1);
-        m_plugins.remove(pluginId);
-        m_pluginUiPaths.remove(pluginId);
+    if (!m_indicatorsPaths.contains(path)) {
+        return;
+    }
 
-        const int pos = m_customPluginIds.indexOf(pluginId);
+    m_indicatorsPaths.removeAll(path);
+    KDirWatch::self()->removeDir(path);
 
-        if (pos >= 0) {
-            m_customPluginIds.removeAt(pos);
+    //! Use the id read from the package: the directory name can differ.
+    const QString pluginId = m_pathPluginIds.take(path);
 
-            if (pos < m_customPluginNames.size()) {
-                m_customPluginNames.removeAt(pos);
-            }
-        } else {
-            qWarning() << "Indicator removal list mismatch, plugin id not found in custom ids:" << pluginId;
+    if (pluginId.isEmpty()) {
+        return;
+    }
+
+    m_plugins.remove(pluginId);
+    m_pluginUiPaths.remove(pluginId);
+    m_customLocalPluginIds.removeAll(pluginId);
+
+    //! Removing a user-local override must not unregister an indicator that is
+    //! still installed elsewhere, usually as the system copy. Reloading the
+    //! remaining paths in discovery order restores its records with the usual
+    //! local precedence and announces a change rather than a removal.
+    QStringList remainingPaths;
+
+    for (const QString &candidate : std::as_const(m_indicatorsPaths)) {
+        if (m_pathPluginIds.value(candidate) == pluginId) {
+            remainingPaths << candidate;
+        }
+    }
+
+    if (!remainingPaths.isEmpty()) {
+        for (const QString &remainingPath : std::as_const(remainingPaths)) {
+            reload(remainingPath);
         }
 
-        m_customLocalPluginIds.removeAll(pluginId);
-
-        m_indicatorsPaths.removeAll(path);
-
-        KDirWatch::self()->removeDir(path);
-
-        //! delay informing the removal in case it is just an update
-        QTimer::singleShot(1000, this, [this, pluginId]() {
-            Q_EMIT indicatorRemoved(pluginId);
-        });
+        return;
     }
+
+    //! Built-in indicators are not listed as custom ones.
+    const int pos = m_customPluginIds.indexOf(pluginId);
+
+    if (pos >= 0) {
+        m_customPluginIds.removeAt(pos);
+
+        if (pos < m_customPluginNames.size()) {
+            m_customPluginNames.removeAt(pos);
+        }
+    }
+
+    //! delay informing the removal in case it is just an update
+    QTimer::singleShot(1000, this, [this, pluginId]() {
+        Q_EMIT indicatorRemoved(pluginId);
+    });
 }
 
 bool Factory::isCustomType(const QString &id) const

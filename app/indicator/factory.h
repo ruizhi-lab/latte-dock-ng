@@ -73,6 +73,10 @@ private:
     //! plugins paths
     QStringList m_mainPaths;
     QStringList m_indicatorsPaths;
+    //! plugin id of each loaded indicator path; the directory name is not the
+    //! id (Latte's own indicator ships in "default"), and several paths can
+    //! provide the same id, a user-local override and a system copy
+    QHash<QString, QString> m_pathPluginIds;
 
     QWidget *m_parentWidget;
 };

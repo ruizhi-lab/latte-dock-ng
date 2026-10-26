@@ -11,11 +11,14 @@
 #include <KConfigGroup>
 #include <KConfigLoader>
 #include <KDeclarative/ConfigPropertyMap>
+#include <KDirWatch>
 #include <KPluginMetaData>
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QTest>
@@ -66,6 +69,31 @@ QString createIndicatorArchive(const QString &archivePath, const QString &rootDi
     archive.close();
     return archivePath;
 }
+
+bool writeIndicatorPackage(const QString &directory, const QString &pluginId)
+{
+    return !writeFile(directory + QStringLiteral("/metadata.json"), indicatorMetadata(pluginId)).isEmpty()
+        && !writeFile(directory + QStringLiteral("/package/ui/main.qml"), QByteArray("import QtQml\nQtObject {}\n")).isEmpty();
+}
+
+//! Factory treats packages under QDir::homePath() as user-local overrides.
+class HomeGuard
+{
+public:
+    explicit HomeGuard(const QString &home)
+        : m_previous(qgetenv("HOME"))
+    {
+        qputenv("HOME", home.toLocal8Bit());
+    }
+
+    ~HomeGuard()
+    {
+        qputenv("HOME", m_previous);
+    }
+
+private:
+    QByteArray m_previous;
+};
 }
 
 namespace Latte {
@@ -91,6 +119,8 @@ private Q_SLOTS:
     void importIndicatorFileRejectsInvalidMetadata();
     void importIndicatorFileReportsUpdatedStateForExistingIndicator();
     void indicatorConfigurationMapWritesConfigToGroupOnModification();
+    void factoryFallsBackToRemainingCopyWhenOverrideIsRemoved();
+    void factoryForgetsCustomIndicatorWithoutAnotherCopy();
 };
 
 void IndicatorUnitTest::metadataFileAbsolutePathPrefersJson()
@@ -276,6 +306,61 @@ void IndicatorUnitTest::indicatorConfigurationMapWritesConfigToGroupOnModificati
         QCOMPARE(map->value(QStringLiteral("size")).toDouble(), 0.35);
         QCOMPARE(map->value(QStringLiteral("glowEnabled")).toBool(), true);
     }
+}
+
+void IndicatorUnitTest::factoryFallsBackToRemainingCopyWhenOverrideIsRemoved()
+{
+    QTemporaryDir home;
+    QTemporaryDir system;
+    QVERIFY(home.isValid());
+    QVERIFY(system.isValid());
+    const HomeGuard homeGuard(home.path());
+
+    // Latte's own indicator is installed in a directory named "default", so
+    // the directory name is not the plugin id.
+    const QString pluginId = QStringLiteral("org.kde.latte.default");
+    const QString localDir = home.path() + QStringLiteral("/data/latte/indicators/default");
+    const QString systemDir = system.path() + QStringLiteral("/latte/indicators/default");
+    QVERIFY(writeIndicatorPackage(localDir, pluginId));
+    QVERIFY(writeIndicatorPackage(systemDir, pluginId));
+    s_standardPaths = {home.path() + QStringLiteral("/data"), system.path()};
+
+    Latte::Indicator::Factory factory(nullptr);
+    QCOMPARE(QFileInfo(factory.metadata(pluginId).fileName()).absolutePath(), localDir);
+
+    QTest::failOnWarning(QRegularExpression(QStringLiteral("Indicator removal list mismatch")));
+    QVERIFY(QDir(localDir).removeRecursively());
+    Q_EMIT KDirWatch::self()->deleted(localDir);
+
+    QVERIFY(factory.pluginExists(pluginId));
+    QCOMPARE(QFileInfo(factory.metadata(pluginId).fileName()).absolutePath(), systemDir);
+    QCOMPARE(factory.uiPath(pluginId), systemDir + QStringLiteral("/package/ui"));
+}
+
+void IndicatorUnitTest::factoryForgetsCustomIndicatorWithoutAnotherCopy()
+{
+    QTemporaryDir home;
+    QVERIFY(home.isValid());
+    const HomeGuard homeGuard(home.path());
+
+    const QString pluginId = QStringLiteral("org.kde.latte.testremoval");
+    const QString localDir = home.path() + QStringLiteral("/data/latte/indicators/") + pluginId;
+    QVERIFY(writeIndicatorPackage(localDir, pluginId));
+    s_standardPaths = {home.path() + QStringLiteral("/data")};
+
+    Latte::Indicator::Factory factory(nullptr);
+    QVERIFY(factory.customPluginIds().contains(pluginId));
+    QVERIFY(factory.customLocalPluginIds().contains(pluginId));
+
+    QSignalSpy removed(&factory, &Latte::Indicator::Factory::indicatorRemoved);
+    QVERIFY(QDir(localDir).removeRecursively());
+    Q_EMIT KDirWatch::self()->deleted(localDir);
+
+    QVERIFY(!factory.pluginExists(pluginId));
+    QVERIFY(!factory.customPluginIds().contains(pluginId));
+    QVERIFY(!factory.customLocalPluginIds().contains(pluginId));
+    QVERIFY(removed.wait(3000));
+    QCOMPARE(removed.first().first().toString(), pluginId);
 }
 
 QTEST_MAIN(IndicatorUnitTest)
