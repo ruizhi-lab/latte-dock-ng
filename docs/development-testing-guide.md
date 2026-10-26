@@ -63,6 +63,51 @@ reported as an error.
 python3 scripts/test-clang-tidy.py --build-dir build/modernization/clang-debug
 ```
 
+## clazy gate
+
+`scripts/test-clazy.py` runs `clazy-standalone` over the production sources of
+the Clang Debug compile database and fails on any finding. It needs
+`clazy-standalone` in `PATH` and a built Clang Debug tree (generated headers
+must exist). The CI Clang Debug job installs `clazy` from the KDE Neon
+repository and runs the same command after the build.
+
+```bash
+python3 scripts/test-clazy.py --build-dir build/modernization/clang-debug
+```
+
+What the gate covers and how it proves itself:
+
+- The checks are named in `GATED_CHECKS`, never by level, and the runner asks
+  clazy which checks it enabled because clazy ignores an unknown name silently.
+  Only checks with zero findings on the tree are listed; the others are tracked
+  as `R2c-<check>` slices in
+  [the R2c report](modernization-results/R2c.md).
+- Each gated check has a fixture, `autotests/clazy/<check>.cpp`, that the runner
+  compiles with the flags of `app/lattecorona.cpp` and must see rejected by that
+  check. The fixtures run before the production sources, so a clean result means
+  the checks can fire under the production flags (`QT_NO_FOREACH`,
+  `QT_NO_KEYWORDS` and `QT_STRICT_ITERATORS` make some checks unreachable).
+  The directory must hold exactly one fixture per gated check.
+- Every production source is analyzed once, with the flags of its production
+  target. `autotests/`, the test targets that rebuild a production source and
+  the generated sources in the build directory are skipped; the runner prints
+  the counts. A source that clazy cannot parse fails the run.
+
+Count the findings of other checks without gating them (the run never fails on
+findings; `--report` writes the locations as JSON):
+
+```bash
+python3 scripts/test-clazy.py --build-dir build/modernization/clang-debug \
+    --inventory level0,level1 --report /tmp/clazy-inventory.json
+```
+
+To gate another check, fix all of its findings in one slice, confirm that the
+inventory reports zero, add `autotests/clazy/<check>.cpp` with the smallest
+violation that compiles under the production flags, and add the name to
+`GATED_CHECKS` in alphabetical order. Do not add a level wildcard. A host
+without clazy can run the gate in the Ubuntu 24.04 container recipe recorded in
+the R2c report.
+
 ## Deep QML lint and baseline review
 
 The syntax-only check and the build-aware deep check serve different purposes.

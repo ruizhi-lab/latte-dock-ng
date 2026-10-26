@@ -127,6 +127,19 @@ jobs:
         if: matrix.preset == 'clang-debug'
         run: python3 scripts/test-clang-tidy.py --build-dir "build/modernization/${{ matrix.preset }}"
 
+      # apt resolves clazy from the KDE Neon repository added above (newer than
+      # Ubuntu's own package and built against LLVM 19), while the job compiles
+      # with Ubuntu's clang 18. The runner parses the compile database with
+      # clazy's own frontend and gates only the checks named in
+      # scripts/test-clazy.py, each proven by a fixture in autotests/clazy/.
+      - name: Install clazy
+        if: matrix.preset == 'clang-debug'
+        run: apt-get install -y --no-install-recommends clazy
+
+      - name: Run gated clazy checks
+        if: matrix.preset == 'clang-debug'
+        run: python3 scripts/test-clazy.py --build-dir "build/modernization/${{ matrix.preset }}"
+
       - name: Verify strict warnings reject and clear a diagnostic
         run: python3 scripts/test-strict-warnings.py --compiler "$CXX" --build-type "${{ matrix.build_type }}"
 
