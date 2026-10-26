@@ -24,11 +24,30 @@ import "../controls" as LatteExtraControls
 Loader {
     id: configurationLoader
 
-    // setParentView() clears isReady while replacing the view's context. Keep
+    // Inputs published by C++ (SubConfigView::setRootInput(), see
+    // app/view/settings/subconfigview.h); they replace the context properties
+    // of the same names. Files loaded below keep reading them unqualified:
+    // QML resolves a name through the context chain up to this file's root
+    // object, so only this root declares them. Every window root declares the
+    // same six, or setInitialProperties() fails for the missing one. They are
+    // nullable and notify, because this window is shared by all docks and is
+    // re-pointed at another dock (setParentView()).
+    property QtObject latteView
+    property QtObject plasmoid
+    property QtObject viewConfig
+    property QtObject universalSettings
+    property QtObject layoutsManager
+    property QtObject themeExtended
+
+    // setParentView() clears isReady while replacing the view's inputs. Keep
     // the settings tree unloaded until its QObject inputs have been rebound;
     // otherwise child bindings can dereference a cleared view during a layout
     // switch and emit null-property TypeErrors.
+    // The inputs are C++ objects without a registered QML type, so qmllint only
+    // sees QtObject here; their members are resolved at runtime.
+    // qmllint disable missing-property
     active: plasmoid && plasmoid.configuration && latteView && viewConfig && viewConfig.isReady
+    // qmllint enable missing-property
 
     sourceComponent: FocusScope {
         id: dialog
@@ -44,11 +63,11 @@ Loader {
         // descendant items continue to work without individual changes.
         readonly property var units: Kirigami.Units
 
-        property var latteView: configurationLatteView
-        property var layoutsManager: configurationLayoutsManager
-        property var themeExtended: configurationThemeExtended
-        property var universalSettings: configurationUniversalSettings
-        property var viewConfig: configurationViewConfig
+        property var latteView: configurationLoader.latteView
+        property var layoutsManager: configurationLoader.layoutsManager
+        property var themeExtended: configurationLoader.themeExtended
+        property var universalSettings: configurationLoader.universalSettings
+        property var viewConfig: configurationLoader.viewConfig
 
         readonly property bool basicLevel: !advancedLevel
         readonly property bool advancedLevel: universalSettings.inAdvancedModeForEditSettings

@@ -13,12 +13,11 @@
 
 // Qt
 #include <QQmlEngine>
+#include <QQuickItem>
 #include "../../lattecorona.h"
 #include "../../layouts/manager.h"
 #include "../../plasma/extended/theme.h"
 #include "../../settings/universalsettings.h"
-#include "../../shortcuts/globalshortcuts.h"
-#include "../../shortcuts/shortcutstracker.h"
 #include "../../wm/abstractwindowinterface.h"
 #include "../../knscompat.h"
 
@@ -53,8 +52,8 @@ namespace Latte {
 namespace ViewPart {
 
 constexpr int kScreenSyncIntervalMs = 100;
-constexpr int kMaxPlasmoidContextSyncAttempts = 200;
-constexpr int kPlasmoidContextSyncRetryMs = 50;
+constexpr int kMaxPlasmoidInputSyncAttempts = 200;
+constexpr int kPlasmoidInputSyncRetryMs = 50;
 
 SubConfigView::SubConfigView(Latte::View *view, const QString &title, const bool &isNormalWindow)
     : QQuickView(nullptr),
@@ -136,14 +135,48 @@ void SubConfigView::init()
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
 
-    rootContext()->setContextProperty(QStringLiteral("viewConfig"), this);
-    rootContext()->setContextProperty(QStringLiteral("shortcutsEngine"), m_corona->globalShortcuts()->shortcutsTracker());
+    setRootInput(QStringLiteral("viewConfig"), this);
 
     if (m_corona) {
-        rootContext()->setContextProperty(QStringLiteral("universalSettings"), m_corona->universalSettings());
-        rootContext()->setContextProperty(QStringLiteral("layoutsManager"), m_corona->layoutsManager());
-        rootContext()->setContextProperty(QStringLiteral("themeExtended"), m_corona->themeExtended());
+        setRootInput(QStringLiteral("universalSettings"), m_corona->universalSettings());
+        setRootInput(QStringLiteral("layoutsManager"), m_corona->layoutsManager());
+        setRootInput(QStringLiteral("themeExtended"), m_corona->themeExtended());
     }
+}
+
+void SubConfigView::setRootInput(const QString &name, QObject *value)
+{
+    m_rootInputs.insert(name, value);
+
+    QQuickItem *root = rootObject();
+
+    if (!root) {
+        //! loadRootSource() hands the collected inputs to the root it creates
+        return;
+    }
+
+    //! QObject::setProperty() answers false for a name the root does not declare
+    //! and only adds a dynamic property that no binding reads. Report the
+    //! missing declaration instead of leaving the window on a stale dock.
+    if (!root->setProperty(name.toLatin1().constData(), QVariant::fromValue(value))) {
+        qCWarning(latteView) << validTitle() << "root does not declare the input" << name;
+    }
+}
+
+void SubConfigView::loadRootSource(const QUrl &source)
+{
+    QVariantMap inputs;
+
+    for (auto it = m_rootInputs.cbegin(); it != m_rootInputs.cend(); ++it) {
+        inputs.insert(it.key(), QVariant::fromValue(it.value().data()));
+    }
+
+    //! The root is created with its inputs already set, before its bindings
+    //! run. Set after setSource(), the first evaluation of a guard such as the
+    //! settings Loader's `active` would see undefined objects, and the dynamic
+    //! indicator pages created during component completion a transient null.
+    setInitialProperties(inputs);
+    setSource(source);
 }
 
 Qt::WindowFlags SubConfigView::wFlags() const
@@ -194,14 +227,18 @@ void SubConfigView::initParentView(Latte::View *view)
 
     viewconnections << connect(m_latteView->positioner(), &ViewPart::Positioner::canvasGeometryChanged, this, &SubConfigView::syncGeometry);
 
-    rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
-    m_plasmoidContextSyncAttempts = 0;
-    m_hasGraphicPlasmoidContext = false;
-    m_loggedPlasmoidContext = false;
-    syncPlasmoidContext();
+    //! One window serves every dock it is moved to, so both inputs that point at
+    //! the dock are published again on every switch. latteView goes first and
+    //! plasmoid second, as it did when they were context properties.
+    //! PrimaryConfigView keeps its tree unloaded (isReady) while this runs.
+    setRootInput(QStringLiteral("latteView"), m_latteView);
+    m_plasmoidInputSyncAttempts = 0;
+    m_hasGraphicPlasmoidInput = false;
+    m_loggedPlasmoidInput = false;
+    syncPlasmoidInput();
 }
 
-void SubConfigView::syncPlasmoidContext()
+void SubConfigView::syncPlasmoidInput()
 {
     if (!m_latteView || !m_latteView->containment()) {
         return;
@@ -209,52 +246,54 @@ void SubConfigView::syncPlasmoidContext()
 
     QObject *containmentObject = m_latteView->containment();
     QObject *containmentGraphicObject = findGraphicContextObject(containmentObject);
-    QObject *plasmoidContextObject = nullptr;
+    QObject *plasmoidObject = nullptr;
     const bool hasGraphicObject = containmentGraphicObject != nullptr;
 
     if (hasGraphicObject) {
         // Keep legacy semantics: configuration QML expects the containment
         // graphic object, not an arbitrary child object.
-        plasmoidContextObject = containmentGraphicObject;
+        plasmoidObject = containmentGraphicObject;
     }
 
-    if (!plasmoidContextObject) {
-        plasmoidContextObject = containmentObject;
+    if (!plasmoidObject) {
+        plasmoidObject = containmentObject;
     }
 
-    rootContext()->setContextProperty(QStringLiteral("plasmoid"), plasmoidContextObject);
+    setRootInput(QStringLiteral("plasmoid"), plasmoidObject);
 
-    if (!m_loggedPlasmoidContext && plasmoidContextObject) {
-        const QMetaObject *metaObj = plasmoidContextObject->metaObject();
-        qCDebug(latteView) << "latte::config plasmoid context class:" << metaObj->className()
+    if (!m_loggedPlasmoidInput && plasmoidObject) {
+        const QMetaObject *metaObj = plasmoidObject->metaObject();
+        qCDebug(latteView) << "latte::config plasmoid input class:" << metaObj->className()
                            << "has configuration:" << (metaObj->indexOfProperty("configuration") >= 0)
                            << "has location:" << (metaObj->indexOfProperty("location") >= 0)
                            << "has formFactor:" << (metaObj->indexOfProperty("formFactor") >= 0);
-        m_loggedPlasmoidContext = true;
+        m_loggedPlasmoidInput = true;
     }
 
     if (hasGraphicObject) {
-        if (!m_hasGraphicPlasmoidContext) {
-            qCDebug(latteView) << "latte::config switched plasmoid context to graphic object";
-            m_hasGraphicPlasmoidContext = true;
+        if (!m_hasGraphicPlasmoidInput) {
+            qCDebug(latteView) << "latte::config switched plasmoid input to graphic object";
+            m_hasGraphicPlasmoidInput = true;
         }
 
         return;
     }
 
     // In some startup paths the graphic object arrives noticeably later than the
-    // config window construction. Keep probing for a while and upgrade context
-    // to the real graphic object as soon as it is available.
-    if (m_plasmoidContextSyncAttempts == 0) {
+    // config window construction. Keep probing for a while and upgrade the input
+    // to the real graphic object as soon as it is available. The Loader guards
+    // of the primary and canvas roots wait for plasmoid.configuration, which
+    // the containment published meanwhile may not provide.
+    if (m_plasmoidInputSyncAttempts == 0) {
         const QMetaObject *metaObj = containmentObject->metaObject();
-        qCDebug(latteView) << "latte::config containment context fallback class:" << metaObj->className()
+        qCDebug(latteView) << "latte::config containment input fallback class:" << metaObj->className()
                            << "has _plasma_graphicObject property:" << (metaObj->indexOfProperty("_plasma_graphicObject") >= 0)
                            << "has graphicObject property:" << (metaObj->indexOfProperty("graphicObject") >= 0);
     }
 
-    if (m_plasmoidContextSyncAttempts < kMaxPlasmoidContextSyncAttempts) {
-        ++m_plasmoidContextSyncAttempts;
-        QTimer::singleShot(kPlasmoidContextSyncRetryMs, this, &SubConfigView::syncPlasmoidContext);
+    if (m_plasmoidInputSyncAttempts < kMaxPlasmoidInputSyncAttempts) {
+        ++m_plasmoidInputSyncAttempts;
+        QTimer::singleShot(kPlasmoidInputSyncRetryMs, this, &SubConfigView::syncPlasmoidInput);
     }
 }
 

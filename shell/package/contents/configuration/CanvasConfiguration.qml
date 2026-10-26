@@ -16,20 +16,32 @@ import "canvas" as CanvasComponent
 Loader {
     id: configurationLoader
 
-    // Capture context properties on the Loader before creating the inline
-    // component. Inline component contexts do not reliably inherit dynamic
-    // context properties during their initial binding evaluation.
-    readonly property var configurationPlasmoid: plasmoid
-    readonly property var configurationLatteView: latteView
-    readonly property var configurationThemeExtended: themeExtended
+    // Inputs published by C++ (SubConfigView::setRootInput(), see
+    // app/view/settings/subconfigview.h); they replace the context properties
+    // of the same names. Every window root declares the same six, or
+    // setInitialProperties() fails for the missing one; this tree only reads
+    // latteView, plasmoid and themeExtended. They are nullable and notify,
+    // because the window is re-pointed at another dock (setParentView()).
+    property QtObject latteView
+    property QtObject plasmoid
+    property QtObject viewConfig
+    property QtObject universalSettings
+    property QtObject layoutsManager
+    property QtObject themeExtended
 
-    active: configurationPlasmoid && configurationPlasmoid.configuration && configurationLatteView
+    // The inputs are C++ objects without a registered QML type, so qmllint only
+    // sees QtObject here; their members are resolved at runtime.
+    // qmllint disable missing-property
+    active: plasmoid && plasmoid.configuration && latteView
+    // qmllint enable missing-property
 
     sourceComponent: Item{
         id: root
-        property var latteView: configurationLoader.configurationLatteView
-        property var plasmoid: configurationLoader.configurationPlasmoid
-        property var themeExtended: configurationLoader.configurationThemeExtended
+        // Read from the Loader explicitly: a property that reads its own name
+        // would bind to itself instead of this root input.
+        property var latteView: configurationLoader.latteView
+        property var plasmoid: configurationLoader.plasmoid
+        property var themeExtended: configurationLoader.themeExtended
         readonly property var canvasRootReference: root
         readonly property var latteViewReference: latteView
         readonly property var plasmoidReference: plasmoid

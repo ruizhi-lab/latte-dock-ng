@@ -86,11 +86,7 @@ void WidgetExplorerView::init()
     updateEnabledBorders();
 
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
-    setSource(source);
-    rootObject()->setProperty("viewConfig", QVariant::fromValue(this));
-    rootObject()->setProperty("themeExtended", QVariant::fromValue(m_corona->themeExtended()));
-    rootObject()->setProperty("latteView", QVariant::fromValue(m_latteView));
-    rootObject()->setProperty("containmentFromView", QVariant::fromValue(m_latteView->containment()));
+    loadRootSource(source);
     syncGeometry();
 }
 
@@ -155,7 +151,10 @@ void WidgetExplorerView::initParentView(Latte::View *view)
 {
     SubConfigView::initParentView(view);
 
-    rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
+    //! WidgetExplorer.qml lists the applets of this containment. It is this
+    //! window's own input next to the six of SubConfigView, and follows the
+    //! dock the same way.
+    setRootInput(QStringLiteral("containmentFromView"), m_latteView->containment());
 
     updateEnabledBorders();
     syncGeometry();

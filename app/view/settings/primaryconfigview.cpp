@@ -24,7 +24,6 @@
 
 // Qt
 #include <QQuickItem>
-#include <QQmlContext>
 #include <QQmlEngine>
 #include <QScreen>
 
@@ -107,17 +106,10 @@ void PrimaryConfigView::init()
     QByteArray tempFilePath = "lattedockconfigurationui";
 
     // Configuration QML creates dynamic indicator pages during component
-    // completion. Make every dependency available before setSource() so those
-    // pages never observe a transient undefined value.
-    rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
-    rootContext()->setContextProperty(QStringLiteral("configurationLatteView"), m_latteView);
-    rootContext()->setContextProperty(QStringLiteral("configurationViewConfig"), this);
-    rootContext()->setContextProperty(QStringLiteral("configurationUniversalSettings"), m_corona->universalSettings());
-    rootContext()->setContextProperty(QStringLiteral("configurationLayoutsManager"), m_corona->layoutsManager());
-    rootContext()->setContextProperty(QStringLiteral("configurationThemeExtended"), m_corona->themeExtended());
-
+    // completion. loadRootSource() makes every input available before the root
+    // is created so those pages never observe a transient undefined value.
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
-    setSource(source);
+    loadRootSource(source);
     syncGeometry();
 
     // The QML root may resolve its implicit size asynchronously in Qt 6, so
@@ -222,15 +214,22 @@ void PrimaryConfigView::initParentView(Latte::View *view)
 {
     setIsReady(false);
 
+    //! This window is shared by all docks, so SubConfigView publishes the new
+    //! dock as the latteView and plasmoid inputs on every parent switch:
+    //! otherwise the dialog keeps editing the first dock it was opened for
+    //! (Add... > Duplicate Dock copies that dock) and turns null once that
+    //! dock is deleted.
     SubConfigView::initParentView(view);
 
-    //! LatteDockConfiguration.qml binds the dialog's latteView to
-    //! configurationLatteView, because a property named latteView cannot bind
-    //! to the latteView context property. This window is shared by all docks,
-    //! so both must follow every parent switch: otherwise the dialog keeps
-    //! editing the first dock it was opened for (Add... > Duplicate Dock
-    //! copies that dock) and turns null once that dock is deleted.
-    rootContext()->setContextProperty(QStringLiteral("configurationLatteView"), m_latteView);
+    //! A deleted dock takes the settings tree down first. QObject::destroyed
+    //! is emitted before the QML engine releases its guards on the dock, so
+    //! clearing isReady here unloads LatteDockConfiguration.qml (its Loader
+    //! waits for isReady) before any binding re-evaluates against the dying
+    //! dock and logs null-property TypeErrors. The window stays orphaned until
+    //! another dock adopts it, and initParentView() sets isReady again.
+    viewconnections << connect(m_latteView, &QObject::destroyed, this, [this]() {
+        setIsReady(false);
+    });
 
     viewconnections << connect(m_latteView, &Latte::View::layoutChanged, this, [this]() {
         if (m_latteView->layout()) {

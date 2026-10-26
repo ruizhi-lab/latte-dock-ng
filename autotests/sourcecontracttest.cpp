@@ -6,11 +6,92 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTest>
 
 #include "../app/session/shutdownstate.h"
+
+namespace {
+
+// Source text without // and /* */ comments, so a comment that mentions a call
+// never counts as the call. String literals are kept; the scanned sources do
+// not hold a comment marker inside one.
+QString withoutComments(const QString &source)
+{
+    static const QRegularExpression comments(QStringLiteral("//[^\\n]*|/\\*.*?\\*/"),
+                                             QRegularExpression::DotMatchesEverythingOption);
+    QString stripped = source;
+    stripped.remove(comments);
+    return stripped;
+}
+
+// Names of the properties declared directly on the root object of a QML file;
+// properties of nested objects and of function bodies are not included.
+QStringList qmlRootObjectProperties(const QString &source)
+{
+    static const QRegularExpression rootStart(QStringLiteral("^[A-Za-z_][\\w.]*\\s*\\{"), QRegularExpression::MultilineOption);
+    static const QRegularExpression declaration(QStringLiteral("^(?:(?:readonly|required|default)\\s+)*property\\s+[\\w.<>]+\\s+(\\w+)"));
+
+    QStringList names;
+    const QRegularExpressionMatch root = rootStart.match(source);
+
+    if (!root.hasMatch()) {
+        return names;
+    }
+
+    int depth = 0;
+    QChar quote;
+
+    for (qsizetype i = root.capturedEnd() - 1; i < source.size(); ++i) {
+        const QChar c = source.at(i);
+
+        if (!quote.isNull()) {
+            if (c == QLatin1Char('\\')) {
+                ++i;
+            } else if (c == quote) {
+                quote = QChar();
+            }
+
+            continue;
+        }
+
+        if (c == QLatin1Char('"') || c == QLatin1Char('\'')) {
+            quote = c;
+        } else if (c == QLatin1Char('/') && i + 1 < source.size() && source.at(i + 1) == QLatin1Char('/')) {
+            i = source.indexOf(QLatin1Char('\n'), i);
+
+            if (i < 0) {
+                break;
+            }
+        } else if (c == QLatin1Char('/') && i + 1 < source.size() && source.at(i + 1) == QLatin1Char('*')) {
+            i = source.indexOf(QStringLiteral("*/"), i + 2);
+
+            if (i < 0) {
+                break;
+            }
+
+            ++i;
+        } else if (c == QLatin1Char('{')) {
+            ++depth;
+        } else if (c == QLatin1Char('}')) {
+            if (--depth == 0) {
+                break;
+            }
+        } else if (depth == 1 && i > 0 && source.at(i - 1).isSpace()) {
+            const QRegularExpressionMatch property = declaration.match(source.mid(i, 160));
+
+            if (property.hasMatch() && !names.contains(property.captured(1))) {
+                names << property.captured(1);
+            }
+        }
+    }
+
+    return names;
+}
+
+}
 
 class SourceContractTest : public QObject
 {
@@ -84,6 +165,8 @@ private Q_SLOTS:
     void importedAppletIdsStayUniqueIncludingNestedApplets();
     void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
     void sharedConfigWindowFollowsEveryDockSwitch();
+    void settingsWindowsUseRootInputsInsteadOfContextProperties();
+    void settingsQmlRootsDeclareEveryInput();
     void waylandWindowsAcceptedAfterCreationAreTracked();
     void viewBindingsKeepTheirValueWhileFrozen();
     void layoutInfoWindowNeverAppliesAnEmptySize();
@@ -5035,32 +5118,218 @@ void SourceContractTest::sharedConfigWindowFollowsEveryDockSwitch()
         return source.mid(start, end - start);
     };
 
-    // One PrimaryConfigView serves every dock. Each context property that
-    // init() points at the edited dock must be re-pointed when the window
-    // switches docks, or the dialog keeps editing the first dock it was opened
-    // for and turns null once that dock is deleted.
+    // One PrimaryConfigView serves every dock. Each root input that points at
+    // the edited dock must be published again when the window switches docks,
+    // or the dialog keeps editing the first dock it was opened for and turns
+    // null once that dock is deleted.
     const QString primary = readSource(QStringLiteral("app/view/settings/primaryconfigview.cpp"));
     const QString sub = readSource(QStringLiteral("app/view/settings/subconfigview.cpp"));
-    const QString init = functionBody(primary, QStringLiteral("void PrimaryConfigView::init()"));
-    const QString switches = functionBody(primary, QStringLiteral("void PrimaryConfigView::initParentView(Latte::View *view)"))
-                             + functionBody(sub, QStringLiteral("void SubConfigView::initParentView(Latte::View *view)"));
+    const QString primarySwitch = functionBody(primary, QStringLiteral("void PrimaryConfigView::initParentView(Latte::View *view)"));
+    const QString subSwitch = functionBody(sub, QStringLiteral("void SubConfigView::initParentView(Latte::View *view)"));
+    const QString plasmoidSync = functionBody(sub, QStringLiteral("void SubConfigView::syncPlasmoidInput()"));
+    QVERIFY(!primarySwitch.isEmpty());
+    QVERIFY(!subSwitch.isEmpty());
+    QVERIFY(!plasmoidSync.isEmpty());
+
+    QVERIFY(primarySwitch.contains(QStringLiteral("SubConfigView::initParentView(view);")));
+    QVERIFY(subSwitch.contains(QStringLiteral("setRootInput(QStringLiteral(\"latteView\"), m_latteView);")));
+    QVERIFY(subSwitch.contains(QStringLiteral("syncPlasmoidInput();")));
+
+    // plasmoid is the containment's graphic object, which can arrive after the
+    // window: the retry path publishes it too.
+    QVERIFY(plasmoidSync.contains(QStringLiteral("setRootInput(QStringLiteral(\"plasmoid\"), plasmoidObject);")));
+    QVERIFY(plasmoidSync.contains(QStringLiteral("QTimer::singleShot(kPlasmoidInputSyncRetryMs, this, &SubConfigView::syncPlasmoidInput);")));
+
+    // init() runs once per window, so it may only publish inputs that do not
+    // depend on the dock.
+    static const QRegularExpression publishedInput(QStringLiteral("setRootInput\\(QStringLiteral\\(\"(\\w+)\"\\),\\s*([^;]*)\\);"));
+    int inits{0};
+
+    for (const auto &[file, signature] : {std::pair{QStringLiteral("app/view/settings/subconfigview.cpp"), QStringLiteral("void SubConfigView::init()")},
+                                          std::pair{QStringLiteral("app/view/settings/primaryconfigview.cpp"), QStringLiteral("void PrimaryConfigView::init()")},
+                                          std::pair{QStringLiteral("app/view/settings/canvasconfigview.cpp"), QStringLiteral("void CanvasConfigView::init()")},
+                                          std::pair{QStringLiteral("app/view/settings/widgetexplorerview.cpp"), QStringLiteral("void WidgetExplorerView::init()")}}) {
+        const QString init = functionBody(readSource(file), signature);
+        QVERIFY2(!init.isEmpty(), qPrintable(signature));
+        ++inits;
+
+        for (auto match = publishedInput.globalMatch(init); match.hasNext();) {
+            const auto input = match.next();
+            QVERIFY2(!input.captured(2).contains(QStringLiteral("m_latteView")),
+                     qPrintable(input.captured(1) + QStringLiteral(" points at the dock but init() publishes it")));
+        }
+    }
+
+    QCOMPARE(inits, 4);
+
+    // A deleted dock must take the primary window's tree down before QML
+    // re-evaluates bindings against it: the Loader waits for isReady, and
+    // QObject::destroyed runs before the engine releases its guards.
+    QVERIFY(primarySwitch.contains(QStringLiteral("connect(m_latteView, &QObject::destroyed, this, [this]() {\n        setIsReady(false);\n    });")));
+}
+
+void SourceContractTest::settingsWindowsUseRootInputsInsteadOfContextProperties()
+{
+    const auto readSource = [](const QString &path) {
+        QFile file(path);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    const auto functionBody = [](const QString &source, const QString &signature) {
+        const int start = source.indexOf(signature);
+
+        if (start < 0) {
+            return QString();
+        }
+
+        const int end = source.indexOf(QStringLiteral("\n}\n"), start);
+        return source.mid(start, end - start);
+    };
+
+    // The settings windows hand their C++ objects to the QML root as root
+    // inputs (SubConfigView::setRootInput()). The only context properties left
+    // in app/view/settings are the two that third-party indicator configuration
+    // UIs read: they live in a separate QML engine, which no root property of
+    // these windows reaches. Corona::showAlternativesForApplet() publishes
+    // alternativesHelper for a dialog that is not a settings window; see
+    // appletAlternativesUseLattesOwnDialogOnPlasma65().
+    static const QRegularExpression contextCall(QStringLiteral("setContextProperty\\("));
+    static const QRegularExpression contextProperty(QStringLiteral("setContextProperty\\(\\s*QStringLiteral\\(\"(\\w+)\"\\)"));
+    QStringList literalProperties;
+    QStringList scanned;
+    int contextCalls{0};
+
+    QDirIterator it(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings"), {QStringLiteral("*.cpp")}, QDir::Files);
+
+    while (it.hasNext()) {
+        const QString path = it.next();
+        const QString source = withoutComments(readSource(path));
+        QVERIFY2(!source.isEmpty(), qPrintable(path));
+        scanned << QFileInfo(path).fileName();
+
+        for (auto match = contextCall.globalMatch(source); match.hasNext(); match.next()) {
+            ++contextCalls;
+        }
+
+        for (auto match = contextProperty.globalMatch(source); match.hasNext();) {
+            literalProperties << QFileInfo(path).fileName() + QLatin1Char(':') + match.next().captured(1);
+        }
+    }
+
+    for (const QString &window : {QStringLiteral("subconfigview.cpp"), QStringLiteral("primaryconfigview.cpp"),
+                                  QStringLiteral("canvasconfigview.cpp"), QStringLiteral("widgetexplorerview.cpp"),
+                                  QStringLiteral("indicatoruimanager.cpp")}) {
+        QVERIFY2(scanned.contains(window), qPrintable(window + QStringLiteral(" was not scanned")));
+    }
+
+    QVERIFY2(contextCalls == literalProperties.size(), "a setContextProperty() call names its property with something other than QStringLiteral(\"...\")");
+    literalProperties.removeDuplicates();
+    literalProperties.removeAll(QStringLiteral("indicatoruimanager.cpp:dialog"));
+    literalProperties.removeAll(QStringLiteral("indicatoruimanager.cpp:indicator"));
+    QVERIFY2(literalProperties.isEmpty(),
+             qPrintable(QStringLiteral("context properties in the settings windows (use SubConfigView::setRootInput()): ")
+                        + literalProperties.join(QStringLiteral(", "))));
+
+    // Context properties that fed the settings QML before the inputs became
+    // root properties must not come back under another name either.
+    const QString sub = readSource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings/subconfigview.cpp"));
+    const QString primary = readSource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings/primaryconfigview.cpp"));
+    const QString canvas = readSource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings/canvasconfigview.cpp"));
+    const QString widget = readSource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/settings/widgetexplorerview.cpp"));
+
+    for (const QString &name : {QStringLiteral("configurationLatteView"), QStringLiteral("configurationViewConfig"),
+                                QStringLiteral("configurationUniversalSettings"), QStringLiteral("configurationLayoutsManager"),
+                                QStringLiteral("configurationThemeExtended"), QStringLiteral("canvasLatteView"),
+                                QStringLiteral("primaryConfigView"), QStringLiteral("shortcutsEngine")}) {
+        QVERIFY2(!sub.contains(name) && !primary.contains(name) && !canvas.contains(name) && !widget.contains(name), qPrintable(name));
+    }
+
+    // The collected inputs reach the root while it is created, before its
+    // bindings run, and only through loadRootSource().
+    const QString load = functionBody(sub, QStringLiteral("void SubConfigView::loadRootSource(const QUrl &source)"));
+    const int initial = load.indexOf(QStringLiteral("setInitialProperties(inputs);"));
+    const int setSource = load.indexOf(QStringLiteral("setSource(source);"));
+    QVERIFY(!load.isEmpty());
+    QVERIFY(initial >= 0);
+    QVERIFY(setSource > initial);
+
+    // setSource() remains only in loadRootSource() and the destructor's unload.
+    QCOMPARE(withoutComments(sub).count(QStringLiteral("setSource(")), 2);
+
+    for (const auto &[source, signature] : {std::pair{primary, QStringLiteral("void PrimaryConfigView::init()")},
+                                            std::pair{canvas, QStringLiteral("void CanvasConfigView::init()")},
+                                            std::pair{widget, QStringLiteral("void WidgetExplorerView::init()")}}) {
+        const QString init = functionBody(source, signature);
+        QVERIFY2(!init.isEmpty(), qPrintable(signature));
+        QVERIFY2(init.contains(QStringLiteral("loadRootSource(source);")), qPrintable(signature));
+        QVERIFY2(!withoutComments(source).contains(QStringLiteral("setSource(")), qPrintable(signature));
+    }
+
+    // Dock-independent inputs are published by SubConfigView::init() for every
+    // window before the root is loaded.
+    const QString init = functionBody(sub, QStringLiteral("void SubConfigView::init()"));
     QVERIFY(!init.isEmpty());
-    QVERIFY(switches.contains(QStringLiteral("SubConfigView::initParentView(view);")));
 
-    static const QRegularExpression viewProperty(QStringLiteral("setContextProperty\\(QStringLiteral\\(\"(\\w+)\"\\), m_latteView\\)"));
-    QStringList properties;
-
-    for (auto match = viewProperty.globalMatch(init); match.hasNext();) {
-        properties << match.next().captured(1);
+    for (const QString &name : {QStringLiteral("viewConfig"), QStringLiteral("universalSettings"),
+                                QStringLiteral("layoutsManager"), QStringLiteral("themeExtended")}) {
+        QVERIFY2(init.contains(QStringLiteral("setRootInput(QStringLiteral(\"%1\"),").arg(name)), qPrintable(name));
     }
 
-    QVERIFY(properties.contains(QStringLiteral("latteView")));
-    QVERIFY(properties.contains(QStringLiteral("configurationLatteView")));
+    // The widget explorer lists the applets of the dock's containment and
+    // follows the dock like the shared inputs.
+    const QString explorerSwitch = functionBody(widget, QStringLiteral("void WidgetExplorerView::initParentView(Latte::View *view)"));
+    QVERIFY(explorerSwitch.contains(QStringLiteral("setRootInput(QStringLiteral(\"containmentFromView\"), m_latteView->containment());")));
+}
 
-    for (const auto &property : std::as_const(properties)) {
-        const QString update = QStringLiteral("setContextProperty(QStringLiteral(\"%1\"), m_latteView)").arg(property);
-        QVERIFY2(switches.contains(update), qPrintable(property + QStringLiteral(" is not updated when the config window switches docks")));
+void SourceContractTest::settingsQmlRootsDeclareEveryInput()
+{
+    const auto readSource = [](const QString &relativePath) {
+        QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
+        return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    };
+
+    // setInitialProperties() logs "does not have a property called ..." and
+    // leaves the input unset for a root that does not declare it, so every
+    // window root declares the same six inputs (SubConfigView).
+    const QStringList inputs{QStringLiteral("latteView"), QStringLiteral("plasmoid"), QStringLiteral("viewConfig"),
+                             QStringLiteral("universalSettings"), QStringLiteral("layoutsManager"), QStringLiteral("themeExtended")};
+
+    const QString dock = readSource(QStringLiteral("shell/package/contents/configuration/LatteDockConfiguration.qml"));
+    const QString canvas = readSource(QStringLiteral("shell/package/contents/configuration/CanvasConfiguration.qml"));
+    const QString explorer = readSource(QStringLiteral("shell/package/contents/views/WidgetExplorer.qml"));
+
+    for (const auto &[name, source] : {std::pair{QStringLiteral("LatteDockConfiguration.qml"), dock},
+                                       std::pair{QStringLiteral("CanvasConfiguration.qml"), canvas},
+                                       std::pair{QStringLiteral("WidgetExplorer.qml"), explorer}}) {
+        const QStringList declared = qmlRootObjectProperties(source);
+        QVERIFY2(!declared.isEmpty(), qPrintable(name + QStringLiteral(": no root object properties found")));
+
+        for (const QString &input : inputs) {
+            QVERIFY2(declared.contains(input), qPrintable(name + QStringLiteral(" does not declare the root input ") + input));
+        }
     }
+
+    // The widget explorer's own input.
+    QVERIFY(qmlRootObjectProperties(explorer).contains(QStringLiteral("containmentFromView")));
+
+    // The primary and canvas roots are Loaders: typed, nullable inputs unload
+    // the tree when a deleted dock clears them. The old aliases for the context
+    // properties are gone.
+    QVERIFY(dock.contains(QStringLiteral("property QtObject latteView")));
+    QVERIFY(canvas.contains(QStringLiteral("property QtObject latteView")));
+
+    for (const QString &alias : {QStringLiteral("configurationLatteView"), QStringLiteral("configurationViewConfig"),
+                                 QStringLiteral("configurationUniversalSettings"), QStringLiteral("configurationLayoutsManager"),
+                                 QStringLiteral("configurationThemeExtended"), QStringLiteral("configurationPlasmoid")}) {
+        QVERIFY2(!dock.contains(alias) && !canvas.contains(alias), qPrintable(alias));
+    }
+
+    // The dialog and the canvas' inner root read the Loader's inputs
+    // explicitly; a property that reads its own name binds to itself.
+    QVERIFY(dock.contains(QStringLiteral("property var latteView: configurationLoader.latteView")));
+    QVERIFY(dock.contains(QStringLiteral("property var viewConfig: configurationLoader.viewConfig")));
+    QVERIFY(canvas.contains(QStringLiteral("property var latteView: configurationLoader.latteView")));
+    QVERIFY(canvas.contains(QStringLiteral("property var plasmoid: configurationLoader.plasmoid")));
 }
 
 void SourceContractTest::waylandWindowsAcceptedAfterCreationAreTracked()
