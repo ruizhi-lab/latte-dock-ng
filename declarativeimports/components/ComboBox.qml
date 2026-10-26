@@ -463,7 +463,7 @@ T.ComboBox {
 
             signal iconClicked(int index);
 
-            onIconClicked: control.iconClicked(index);
+            onIconClicked: (index) => control.iconClicked(index)
         }
         background: Rectangle {
             anchors {
