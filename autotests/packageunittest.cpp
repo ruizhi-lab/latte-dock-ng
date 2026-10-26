@@ -8,8 +8,11 @@
 #include <KPackage/Package>
 #include <KPackage/PackageLoader>
 
+#include <Plasma/version.h>
+
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -19,6 +22,7 @@ class PackageUnitTest : public QObject
 
 private Q_SLOTS:
     void lattePackageResolvesShellDefinitions();
+    void appletAlternativesDialogMatchesPlasmaRelease();
     void indicatorPackageLoadsFromPluginAndResolvesDirectories();
     void indicatorPackageResolvesBundledDefaultIndicator();
     void packagePathChangesHandleForeignMetadata();
@@ -34,6 +38,25 @@ void PackageUnitTest::lattePackageResolvesShellDefinitions()
     QVERIFY(package.filePath("configmodel").endsWith(QStringLiteral("configuration/config.qml")));
     QVERIFY(package.filePath("templates").endsWith(QStringLiteral("templates")));
     QVERIFY(package.filePath("compactapplet").endsWith(QStringLiteral("applet/CompactApplet.qml")));
+}
+
+void PackageUnitTest::appletAlternativesDialogMatchesPlasmaRelease()
+{
+    // From plasma-desktop 6.5.0 the shared explorer/AppletAlternatives.qml
+    // requires the plasmashell-only org.kde.plasma.shell module and cannot
+    // load in Latte, so the shell package must resolve the dialog to Latte's
+    // own copy. Older releases keep the shared file, which works there.
+    KPackage::Package package(new Latte::Package);
+    package.setPath(QStringLiteral(LATTE_SOURCE_DIR "/shell/package"));
+    const QString dialog = QFileInfo(package.filePath("appletalternativesui")).canonicalFilePath();
+    const QString lattesDialog = QFileInfo(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/explorer/AppletAlternatives.qml")).canonicalFilePath();
+    QVERIFY(!lattesDialog.isEmpty());
+
+#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    QCOMPARE(dialog, lattesDialog);
+#else
+    QVERIFY(dialog != lattesDialog);
+#endif
 }
 
 void PackageUnitTest::indicatorPackageLoadsFromPluginAndResolvesDirectories()

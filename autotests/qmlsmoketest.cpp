@@ -1665,7 +1665,7 @@ void QmlSmokeTest::layoutInfoWindowHasAValidSizeFromSource()
 
 void QmlSmokeTest::appletAlternativesDialogResolvesOutsidePlasmashell()
 {
-    // Since libplasma 6.8 Plasma's AppletAlternatives.qml requires the
+    // Since Plasma 6.5 Plasma's AppletAlternatives.qml requires the
     // AlternativesHelper type, which is compiled into plasmashell; in Latte it
     // was "not a type" and the dialog never opened. Latte's own copy must
     // resolve every import and type in a process that is not plasmashell.

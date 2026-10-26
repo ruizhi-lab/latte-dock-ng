@@ -61,10 +61,14 @@ void Package::initPackage(KPackage::Package *package)
     //! applets
     package->addFileDefinition("compactapplet", QStringLiteral("applet/CompactApplet.qml"));
 
-#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     //! The org.kde.plasma.desktop fallback dialog requires a type that only
-    //! exists inside plasmashell since 6.8, see explorer/AppletAlternatives.qml.
-    //! Older releases keep using the fallback file, which works there.
+    //! exists inside plasmashell, see explorer/AppletAlternatives.qml: from
+    //! plasma-desktop v6.5.0 it imports org.kde.plasma.shell and declares a
+    //! required AlternativesHelper property, which v6.4.5 still did not. On
+    //! 6.5 to 6.7 a 6.8 gate kept the fallback, so "Show Alternatives..."
+    //! failed to load the dialog. Older releases keep using the fallback
+    //! file, which works there.
     package->addFileDefinition("appletalternativesui", QStringLiteral("explorer/AppletAlternatives.qml"));
 #endif
 
