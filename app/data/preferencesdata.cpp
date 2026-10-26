@@ -13,6 +13,7 @@ const bool Preferences::LAYOUTSINFORMATIONWINDOW;
 const bool Preferences::AUTOSTART;
 const bool Preferences::ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA;
 const bool Preferences::METAHOLDFORBADGES;
+const bool Preferences::QUITWITHOUTWAITING;
 const int Preferences::PARABOLICSPREAD;
 const int Preferences::SCREENSDELAY;
 const float Preferences::THICKNESSMARGININFLUENCE = 1.0f;
@@ -29,6 +30,7 @@ bool Preferences::operator==(const Preferences &rhs) const
            && (contextMenuAlwaysActions == rhs.contextMenuAlwaysActions)
            && (isAvailableGeometryBroadcastedToPlasma == rhs.isAvailableGeometryBroadcastedToPlasma)
            && (metaHoldForBadges == rhs.metaHoldForBadges)
+           && (quitWithoutWaiting == rhs.quitWithoutWaiting)
            && (parabolicSpread == rhs.parabolicSpread)
            && (thicknessMarginInfluence == rhs.thicknessMarginInfluence)
            && (screensDelay == rhs.screensDelay);
@@ -47,6 +49,7 @@ bool Preferences::inDefaultValues() const
            && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE)
            && (isAvailableGeometryBroadcastedToPlasma == ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA)
            && (metaHoldForBadges == METAHOLDFORBADGES)
+           && (quitWithoutWaiting == QUITWITHOUTWAITING)
            && (parabolicSpread == PARABOLICSPREAD)
            && (thicknessMarginInfluence == THICKNESSMARGININFLUENCE)
            && (screensDelay == SCREENSDELAY);
@@ -60,6 +63,7 @@ void Preferences::setToDefaults()
     contextMenuAlwaysActions = Data::ContextMenu::ACTIONSALWAYSVISIBLE;
     isAvailableGeometryBroadcastedToPlasma = ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA;
     metaHoldForBadges = METAHOLDFORBADGES;
+    quitWithoutWaiting = QUITWITHOUTWAITING;
     parabolicSpread = PARABOLICSPREAD;
     thicknessMarginInfluence = THICKNESSMARGININFLUENCE;
     screensDelay = SCREENSDELAY;
