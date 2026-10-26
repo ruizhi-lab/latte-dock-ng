@@ -93,6 +93,7 @@ private Q_SLOTS:
     void taskPresentationFiltersPhantoms();
     void taskMouseAreaRegressionGuardsPresent();
     void taskMouseAreaStructuralGuardsPresent();
+    void taskRightClickReachesDockMenuInEditMode();
     void tasksConfigComboModelsComplete();
     void tasksConfigCfgPropertyAndNoStaleTasksConfig();
     void tasksConfigClickActionModelOrderMatchesEnum();
@@ -2508,6 +2509,74 @@ void QmlSmokeTest::taskMouseAreaStructuralGuardsPresent()
 
     // highlightedWindows signal integration
     QVERIFY(source.contains(QStringLiteral("windowsHovered")));
+}
+
+void QmlSmokeTest::taskRightClickReachesDockMenuInEditMode()
+{
+    // Run the production press handler above a stand-in for the containment
+    // context menu layer. In edit mode a right press must reach that layer,
+    // which offers the edit-only dock actions; the task menu stays for
+    // normal mode and left presses stay with the task for drag-to-reorder.
+    QFile file(QStringLiteral(LATTE_TASKMOUSEAREA_QML));
+    QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int pressedStart = source.indexOf(QStringLiteral("    onPressed: (mouse) => {"));
+    const int pressedEnd = source.indexOf(QStringLiteral("    onReleased: (mouse) => {"), pressedStart);
+    QVERIFY(pressedStart >= 0 && pressedEnd > pressedStart);
+    QQuickView view;
+    QQmlComponent component(view.engine());
+    const QByteArray harness = QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: root
+    width: 100; height: 100
+    property bool inEditMode: true
+    property int menuPresses: 0
+    property int taskMenus: 0
+    readonly property bool taskPressed: taskMouseArea.pressed
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+        onPressed: root.menuPresses++
+    }
+    MouseArea {
+        id: taskMouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        property bool pressed: false
+        property bool dragReady: false
+        property int lastButtonClicked: Qt.NoButton
+        property int pressX: -1
+        property int pressY: -1
+        readonly property bool isSeparator: false
+        readonly property var model: ({IsLauncher: false})
+        Timer { id: _resistanerTimer; interval: 1000 }
+        function slotPublishGeometries() {}
+        function modifierAccepted(mouse) { return false; }
+        function isContainmentEditing() { return root.inEditMode; }
+        function showContextMenu(args) { root.taskMenus++; }
+)") + source.mid(pressedStart, pressedEnd - pressedStart).toUtf8() + QByteArrayLiteral("    }\n}");
+    const QUrl url(QStringLiteral("qrc:/task-edit-mode-right-press.qml"));
+    component.setData(harness, url);
+    QObject *object = component.create();
+    QVERIFY2(object, qPrintable(component.errorString()));
+    view.setContent(url, &component, object);
+    view.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&view));
+    const QPoint task(50, 50);
+
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, task);
+    QCOMPARE(object->property("menuPresses").toInt(), 1);
+    QCOMPARE(object->property("taskMenus").toInt(), 0);
+
+    QTest::mouseClick(&view, Qt::LeftButton, Qt::NoModifier, task);
+    QVERIFY(object->property("taskPressed").toBool());
+    QCOMPARE(object->property("menuPresses").toInt(), 1);
+
+    QVERIFY(object->setProperty("inEditMode", false));
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, task);
+    QCOMPARE(object->property("taskMenus").toInt(), 1);
+    QCOMPARE(object->property("menuPresses").toInt(), 1);
 }
 
 void QmlSmokeTest::tasksConfigClickActionModelOrderMatchesEnum()

@@ -134,6 +134,16 @@ MouseArea {
 
     onPressed: (mouse) => {
         //console.log("Pressed Task Delegate..");
+        // In edit mode the containment owns right-clicks. Rejecting the press
+        // lets it reach the containment's context menu layer, which offers the
+        // edit-only dock actions and the Latte Tasks applet entries such as
+        // "Show Alternatives...". The task menu stays blocked while editing;
+        // accepting the press here left tasks without any menu in edit mode.
+        if (mouse.button === Qt.RightButton && isContainmentEditing()) {
+            mouse.accepted = false;
+            return;
+        }
+
         slotPublishGeometries();
 
         var modAccepted = modifierAccepted(mouse);
@@ -148,7 +158,7 @@ MouseArea {
             if(!modAccepted){
                 _resistanerTimer.start();
             }
-        } else if (mouse.button === Qt.RightButton && !modAccepted && !isContainmentEditing()) {
+        } else if (mouse.button === Qt.RightButton && !modAccepted) {
             // When we're a launcher, there's no window controls, so we can show all
             // places without the menu getting super huge.
             if (model.IsLauncher === true && !isSeparator) {
