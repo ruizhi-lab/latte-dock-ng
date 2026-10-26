@@ -43,7 +43,9 @@ not authorize implementation, commits or releases by itself.
   strips `-Wl,--no-undefined` so `org.kde.latte.private.app` can resolve
   application symbols at load time.
 - **Context properties.** 22 `setContextProperty()` calls in the settings views
-  feed unqualified QML lookups.
+  feed unqualified QML lookups. Replaced in [R4](modernization-results/R4.md)
+  by root properties, except `indicator` and `dialog`, which third-party
+  indicator configuration UIs read.
 - **Startup and shutdown in `main()`.** The function spans about 680 lines of
   CLI handling, single-instance D-Bus, signal handling and session shutdown.
 - **Compatibility shims.** `compat/` forwards KF5-era include paths through a
@@ -103,6 +105,9 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
 - A quit-path use-after-free: `~Corona()` called `deleteLater()` on the view
   settings factory that `QCoreApplication::exec()` had already freed. Fixed in
   [R1b](modernization-results/R1b.md).
+- A `const auto` in `BackgroundCache` held a `QStringBuilder` of temporaries,
+  a dangling reference on Qt 6.6 and older; the clazy inventory found it. Fixed
+  in [R2c-auto-unexpected-qstringbuilder](modernization-results/R2c-auto-unexpected-qstringbuilder.md).
 
 ## QML findings
 
@@ -119,8 +124,10 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
 
 ## Build and test findings
 
-- `.clang-tidy` enables two checks. clazy is not used in CI and was not
-  installed on the review host. R2c.
+- `.clang-tidy` enables two checks. clazy was not used in CI; since
+  [R2c](modernization-results/R2c.md) the Clang Debug job gates the 31 clazy
+  checks with zero findings, and 570 findings from 19 other checks wait as
+  `R2c-<check>` slices.
 - Application sources are collected through `PARENT_SCOPE` lists in about 30
   subdirectories; `configure_file()` copies `.cpp` files between targets; some
   directories use `add_definitions()`.
