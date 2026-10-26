@@ -1314,12 +1314,25 @@ void Corona::showAlternativesForApplet(Plasma::Applet *applet)
     qmlObj->rootContext()->setContextProperty(QStringLiteral("alternativesHelper"), helper);
 
     m_alternativesObjects << qmlObj;
+    //! The list does not own the dialogs; the view or Corona does. A dialog
+    //! deleted with its view must leave the list at once, or the applet removal
+    //! and visibility handlers below dereference it later.
+    connect(qmlObj, &QObject::destroyed, this, [this, qmlObj]() {
+        m_alternativesObjects.removeAll(qmlObj);
+    });
     qmlObj->completeInitialization();
 
     //! Alternative dialog signals
-    connect(helper, &QObject::destroyed, this, [latteView]() {
-        latteView->setAlternativesIsShown(false);
-    });
+    //! The flag belongs to the view, which also owns qmlObj and with it the
+    //! helper. With the view as context, Qt drops this connection before a
+    //! removed view deletes its children, so the lambda never reaches a
+    //! destroyed view; without a view there is no flag to reset. Bound to
+    //! Corona, it ran on a destroyed view or dereferenced a null one.
+    if (latteView) {
+        connect(helper, &QObject::destroyed, latteView, [latteView]() {
+            latteView->setAlternativesIsShown(false);
+        });
+    }
 
     QWindow *rootWindow = qobject_cast<QWindow *>(qmlObj->rootObject());
 

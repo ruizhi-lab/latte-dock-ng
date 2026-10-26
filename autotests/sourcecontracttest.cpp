@@ -220,6 +220,7 @@ private Q_SLOTS:
     void layoutscontrollerUniqueLayoutNameHasIterationCap();
     void lattecoronaUnloadUsesCappedLiveListLoop();
     void lattecoronaScreenForContainmentHasDepthGuard();
+    void lattecoronaAlternativesCallbacksFollowTheirOwners();
     void originalViewCleanClonesDrainsFromLocalCopy();
     void layoutManagerResolveAppletQuickItemUsesVisitedSet();
     void levelOptionsHasIsBackgroundIsForegroundReentryGuards();
@@ -4646,6 +4647,24 @@ void SourceContractTest::lattecoronaScreenForContainmentHasDepthGuard()
     // screenForContainment parent-applet chain walk must be
     // depth-limited (max 16 hops) instead of unbounded recursion.
     QVERIFY(src.contains(QStringLiteral("depth < 16")));
+}
+
+void SourceContractTest::lattecoronaAlternativesCallbacksFollowTheirOwners()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The alternatives dialog's QML object is a child of the dock view. The
+    // flag reset must use that view as its context, so it is dropped before a
+    // removed view deletes the dialog, and must not run without a view; the
+    // Corona-bound version reached a destroyed or null view.
+    QVERIFY(src.contains(QStringLiteral("connect(helper, &QObject::destroyed, latteView, [latteView]()")));
+    QVERIFY(!src.contains(QStringLiteral("connect(helper, &QObject::destroyed, this, [latteView]()")));
+
+    // m_alternativesObjects keeps non-owning pointers: a dialog deleted with
+    // its view must leave the list before a later lookup dereferences it.
+    QVERIFY(src.contains(QStringLiteral("m_alternativesObjects.removeAll(qmlObj);")));
 }
 
 void SourceContractTest::originalViewCleanClonesDrainsFromLocalCopy()
