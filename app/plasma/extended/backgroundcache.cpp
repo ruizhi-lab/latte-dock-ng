@@ -41,9 +41,14 @@ BackgroundCache::BackgroundCache(QObject *parent)
       m_initialized(false),
       m_plasmaConfig(KSharedConfig::openConfig(PLASMACONFIG))
 {
-    const auto configFile = QStandardPaths::writableLocation(
-                                QStandardPaths::GenericConfigLocation) +
-                            QLatin1Char('/') + PLASMACONFIG;
+    // QT_USE_QSTRINGBUILDER makes `+` return a QStringBuilder. Up to Qt 6.6 (our floor) a
+    // builder keeps references to its operands, which here are temporaries that are gone
+    // after this statement, so `auto` would pass a dangling builder to addFile() below
+    // (ASan reports stack-use-after-scope). Name the type; the clazy
+    // auto-unexpected-qstringbuilder gate in scripts/test-clazy.py keeps `auto` out.
+    const QString configFile = QStandardPaths::writableLocation(
+                                   QStandardPaths::GenericConfigLocation) +
+                               QLatin1Char('/') + PLASMACONFIG;
 
     m_defaultWallpaperPath = Latte::standardPath(DEFAULTWALLPAPER);
 
