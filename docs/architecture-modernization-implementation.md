@@ -487,6 +487,101 @@ All three require the common GCC/Clang/QML checks, appropriate distribution
 installation checks, desktop retest and performance protocol for implementation.
 No blanket visible:false conversion, extra services or dependency-floor bump.
 
+## R2c: clazy inventory and zero-finding gate
+
+**Environment:** clazy is not installed on the review host or in the CI image.
+Build a local container that mirrors the CI build job (`ubuntu:24.04`, the KDE
+neon `user noble` repository and the package list in `.github/workflows/build.yml`)
+and add Ubuntu's `clazy` package. Use China-hosted mirrors only as local build
+arguments (AGENTS.md); do not change workflow mirror settings. Record the clazy,
+clang and Qt versions.
+
+**Files:** a runner `scripts/test-clazy.py` modelled on
+`scripts/test-clang-tidy.py`, a disposable negative fixture next to the
+clang-tidy one, a step in the Clang Debug CI job, the testing guide and
+`docs/modernization-results/R2c.md`.
+
+**Steps:**
+1. Configure the `clang-debug` preset in the container and run
+   `clazy-standalone` with the `level0` and `level1` checks over the production
+   translation units of `compile_commands.json`. Exclude `autotests/`,
+   generated sources (`*_autogen`, moc, QML type registration) and third-party
+   code, and record every exclusion. Write the findings per check and file to
+   the report.
+2. Gate only checks with zero findings. Name them explicitly in the runner (no
+   level wildcards), fail on any finding, and prove the gate with the negative
+   fixture in the same CI step.
+3. Change no production code. Each check family with findings becomes its own
+   later slice (`R2c-<check>`) with one fix and one gate entry.
+
+**Acceptance:** an inventory with tool versions and exclusions; the runner
+passes on the tree and fails on the fixture in the container; the CI step is in
+the Clang Debug job; no unexplained exclusions.
+
+## R4: Settings window inputs without context properties
+
+**Scope:** `SubConfigView` and the three windows built on it:
+`PrimaryConfigView` (`configuration/LatteDockConfiguration.qml`),
+`CanvasConfigView` (`configuration/CanvasConfiguration.qml`) and
+`WidgetExplorerView` (`views/WidgetExplorer.qml`).
+
+**Inventory** (main at `fc925bfe9`; QML uses counted in `shell/package/contents`):
+
+| Context property | Set in | QML uses |
+| --- | --- | --- |
+| `latteView` | `SubConfigView::initParentView()`, `CanvasConfigView::init()`, `PrimaryConfigView::init()`, `WidgetExplorerView` | 178 in 14 files |
+| `plasmoid` | `SubConfigView::syncPlasmoidContext()`, retried until the containment graphic object exists | 270 in 16 files |
+| `viewConfig`, `universalSettings`, `layoutsManager`, `themeExtended` | `SubConfigView::init()` | 92, 19, 4 and 32 |
+| `shortcutsEngine` | `SubConfigView::init()` | 0 (the containment QML has its own alias) |
+| `canvasLatteView`, `primaryConfigView` | `CanvasConfigView` | 0 |
+| `configurationLatteView`, `configurationViewConfig`, `configurationUniversalSettings`, `configurationLayoutsManager`, `configurationThemeExtended` | `PrimaryConfigView` and its view switch | aliases read by the roots, because a root property named `latteView` could not bind to a context property of the same name |
+
+**Out of scope:** `indicator` and `dialog` in `IndicatorUiManager`, which
+third-party indicator configuration UIs read, and `alternativesHelper` in
+`Corona::showAlternativesForApplet()`, which plasma-desktop's dialog reads below
+Plasma 6.5. Keep them and state the reason beside the code.
+
+**Design:**
+- Every window root declares the same typed, nullable inputs: `latteView`,
+  `plasmoid`, `viewConfig`, `universalSettings`, `layoutsManager` and
+  `themeExtended`. `SubConfigView` publishes them through one helper: before
+  the root exists through `setInitialProperties()` ahead of `setSource()`,
+  afterwards through `rootObject()->setProperty()`. Keep the current order (the
+  view before `setSource()`), the dock switch in `initParentView()` and the
+  plasmoid retry path; both must update the root input.
+- Child files keep resolving unqualified names through the parent context,
+  whose context object is the window root, so pages need no edits here. Do not
+  take on the qmllint "unqualified" backlog in this slice.
+- Remove the unused properties and the `configuration*` aliases; the roots and
+  the `dialog` FocusScope read the root inputs instead.
+- Document beside `SubConfigView` that root inputs replace context properties,
+  how a dock switch updates them and which context properties remain and why.
+
+**Acceptance:** GCC/Clang builds and CTest; a source contract that the settings
+windows call `rootContext()->setContextProperty()` only for the documented
+exceptions; a same-host qmllint A/B of the three roots with no added
+diagnostics; a desktop retest: open the dock settings on each dock and switch
+docks with the window open, every page, indicator options including a custom
+indicator, canvas edit handles, and Add Widgets with drag and drop, with no new
+QML warnings in the log ("Could not set initial property", ReferenceError,
+TypeError).
+
+## R5: Explain the Fedora VM idle CPU
+
+**Environment:** the libvirt VM `fedora` (`qemu:///system`) with a Plasma
+Wayland session running the dock; the user starts and logs into it.
+
+**Steps:** record 60 s idle samples of the dock's CPU, context switches and
+rendered frames (`QSG_RENDER_TIMING`, the compositor's frame statistics), a 30 s
+idle `qmlprofiler` trace, the scene-graph backend and GL renderer (llvmpipe or
+virgl) and the same samples with the dock hidden, Plasma's panel alone and
+software rendering. P0 measured about 20 % of one core in this VM against
+0.27 % on hardware.
+
+**Acceptance:** a measured cause such as idle frames from a named animation or
+timer, or a documented finding that the cost is outside the dock. No
+optimization patch without a measured cause.
+
 ## Final slice review
 
 Before writing Complete, answer these questions in the handoff:
