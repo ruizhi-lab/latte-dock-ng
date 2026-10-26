@@ -68,6 +68,7 @@ private Q_SLOTS:
     void initTestCase();
     void containerWheelPreservesTaskCyclingWithOverflow();
     void containmentWheelScrollsTaskViewport();
+    void editModeBlockerLeavesRightClicksToContextMenu();
     void activeTaskScrollsIntoView();
     void edgeHoverScrollsWithStationaryPointer_data();
     void edgeHoverScrollsWithStationaryPointer();
@@ -1115,6 +1116,141 @@ Item {
     QVERIFY(object->setProperty("audioHandled", true));
     sendWheel(QPoint(0, -120));
     QCOMPARE(object->property("minimized").toInt(), beforeAudio);
+}
+
+void
+QmlSmokeTest::editModeBlockerLeavesRightClicksToContextMenu()
+{
+    // Run the production edit-mode blocker above stand-ins for the applet
+    // layouts and the context menu layer that lies beneath them. Only that
+    // layer offers "Show Alternatives..." and the edit-only dock actions, so
+    // the blocker must leave right-clicks to it while keeping every other
+    // applet interaction blocked and applet sort-drag working.
+    QFile containment(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(containment.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(containment.readAll());
+    const int blockerStart = source.indexOf(QStringLiteral("    // In edit mode, block"));
+    const int blockerEnd = source.indexOf(QStringLiteral("    Colorizer.Manager {"), blockerStart);
+    QVERIFY(blockerStart >= 0 && blockerEnd > blockerStart);
+    QQuickView view;
+    QQmlComponent component(view.engine());
+    const QByteArray harness = QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: root
+    width: 300; height: 100
+    property bool editMode: true
+    property int menuPresses: 0
+    property int menuButton: Qt.NoButton
+    property int appletClicks: 0
+    property int appletHolds: 0
+    property int appletWheels: 0
+    property int taskPresses: 0
+    readonly property bool appletDragActive: appletDrag.active
+    Item {
+        id: layoutsContainer
+        anchors.fill: parent
+        readonly property alias startLayout: _startLayout
+        readonly property alias mainLayout: _mainLayout
+        readonly property alias endLayout: _endLayout
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
+            onPressed: (mouse) => {
+                root.menuPresses++;
+                root.menuButton = mouse.button;
+            }
+        }
+        Item { id: _startLayout }
+        Item {
+            id: _mainLayout
+            anchors.fill: parent
+            Item {
+                width: 100; height: 100
+                readonly property bool indexerIsSupported: false
+                readonly property bool isHidden: false
+                MouseArea {
+                    anchors.fill: parent
+                    pressAndHoldInterval: 50
+                    onClicked: root.appletClicks++
+                    onPressAndHold: root.appletHolds++
+                    onWheel: (wheel) => { root.appletWheels++; }
+                }
+                DragHandler {
+                    id: appletDrag
+                    target: null
+                    dragThreshold: 10
+                }
+            }
+            Item {
+                x: 100; width: 100; height: 100
+                readonly property bool indexerIsSupported: true
+                readonly property bool isHidden: false
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onPressed: root.taskPresses++
+                }
+            }
+        }
+        Item { id: _endLayout }
+    }
+)") + source.mid(blockerStart, blockerEnd - blockerStart).toUtf8() + QByteArrayLiteral("\n}");
+    const QUrl url(QStringLiteral("qrc:/containment-edit-mode-blocker.qml"));
+    component.setData(harness, url);
+    QObject *object = component.create();
+    QVERIFY2(object, qPrintable(component.errorString()));
+    view.setContent(url, &component, object);
+    view.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&view));
+    const QPoint applet(50, 50);
+    const QPoint task(150, 50);
+    const QPoint emptyArea(250, 50);
+
+    // Right-clicks on an external applet and on the empty dock area reach the
+    // context menu layer, which builds the applet and dock menus.
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, applet);
+    QCOMPARE(object->property("menuPresses").toInt(), 1);
+    QCOMPARE(object->property("menuButton").toInt(), int(Qt::RightButton));
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, emptyArea);
+    QCOMPARE(object->property("menuPresses").toInt(), 2);
+
+    // Left clicks, press-and-hold and wheel never reach the external applet.
+    QTest::mouseClick(&view, Qt::LeftButton, Qt::NoModifier, applet);
+    QTest::mousePress(&view, Qt::LeftButton, Qt::NoModifier, applet);
+    QTest::qWait(150);
+    QTest::mouseRelease(&view, Qt::LeftButton, Qt::NoModifier, applet);
+    QWheelEvent wheel(QPointF(applet), QPointF(view.mapToGlobal(applet)), QPoint(), QPoint(0, -120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+    QCoreApplication::sendEvent(&view, &wheel);
+    QCOMPARE(object->property("appletClicks").toInt(), 0);
+    QCOMPARE(object->property("appletHolds").toInt(), 0);
+    QCOMPARE(object->property("appletWheels").toInt(), 0);
+    QCOMPARE(object->property("menuPresses").toInt(), 2);
+
+    // The applet's sort-drag handler takes over the blocked left press once
+    // the pointer passes its drag threshold.
+    QTest::mousePress(&view, Qt::LeftButton, Qt::NoModifier, applet);
+    for (int step = 1; step <= 4; ++step) {
+        QTest::mouseMove(&view, applet + QPoint(step * 8, 0));
+    }
+    QVERIFY(object->property("appletDragActive").toBool());
+    QTest::mouseRelease(&view, Qt::LeftButton, Qt::NoModifier, applet + QPoint(32, 0));
+    QVERIFY(!object->property("appletDragActive").toBool());
+    QCOMPARE(object->property("appletClicks").toInt(), 0);
+
+    // Every button over the tasks plasmoid passes through; TaskMouseArea
+    // applies the task-side edit-mode rules.
+    QTest::mouseClick(&view, Qt::LeftButton, Qt::NoModifier, task);
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, task);
+    QCOMPARE(object->property("taskPresses").toInt(), 2);
+    QCOMPARE(object->property("menuPresses").toInt(), 2);
+
+    // Outside edit mode the blocker is inert.
+    QVERIFY(object->setProperty("editMode", false));
+    QTest::mouseClick(&view, Qt::LeftButton, Qt::NoModifier, applet);
+    QCOMPARE(object->property("appletClicks").toInt(), 1);
+    QTest::mouseClick(&view, Qt::RightButton, Qt::NoModifier, applet);
+    QCOMPARE(object->property("menuPresses").toInt(), 3);
 }
 
 void
