@@ -92,7 +92,7 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
   one member-function connection), for example in
   [alternativeshelper.cpp](../app/alternativeshelper.cpp). Fixed in
   [R2b](modernization-results/R2b.md) and enforced by
-  `QT_NO_CONTEXTLESS_CONNECT`; desktop retest still pending.
+  `QT_NO_CONTEXTLESS_CONNECT`; the desktop retest passed.
 - No deprecation gate: `ecm_set_disabled_deprecation_versions()` is not used,
   so APIs deprecated at or below the Qt 6.6 / KF 6.0 floors are not compiled
   out. Fixed in [R2a](modernization-results/R2a.md).

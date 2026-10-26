@@ -1,7 +1,7 @@
 # R2b: Context-less Connections
 
-Status: Pending validation. The code, build and desktop checks pass except the
-indicator removal confirmation, which is not exercised yet.
+Status: Complete. The code, build and desktop checks of every touched path
+pass.
 Date: 2026-10-25. Branch: `main`. Implementation commit: `484a8d59b`.
 
 ## Defect
@@ -87,6 +87,12 @@ A second round on 2026-10-26 ran the branch `claude/nice-merkle-7b9fb9`, which
 contains R2b and the edit-mode menu fixes now merged in `f634322d4`. The user
 confirmed the results; that log had no warnings and no coredump was written.
 
+A third round on 2026-10-26 ran `main` at `ed5579e4c`, which includes both
+merges and `56c34148c`. The dock was started through `systemd-run --user`, so it
+had the session environment rather than the agent shell's. The log has no
+errors and one QML deprecation warning, listed below, and no coredump was
+written.
+
 | Touched path | Check | Result |
 | --- | --- | --- |
 | `contextmenulayerquickitem.cpp` | Remove a widget and undo it from the notification; remove one and let the notification expire | Passed |
@@ -97,8 +103,9 @@ confirmed the results; that log had no warnings and no coredump was written.
 | `menu.cpp`, actions | Configure Latte... from the dock menu | Passed |
 | `indicator.cpp`, `indicatorPluginChanged` | Install a local test indicator while the dock runs, select it, switch back to Latte | Passed: it appears in the custom list without a restart and the dock follows the selection |
 | `menu.cpp`, `userConfiguringChanged` | Enter edit mode and right-click the empty dock area, then leave edit mode | Passed in the second round: the edit-only dock actions appear and Edit Dock... is hidden; outside edit mode the menu is unchanged |
-| `indicator/factory.cpp` confirmation, `indicator.cpp` `indicatorPluginRemoved` | Remove the local test indicator from the custom list | Not exercised: the confirmation handler never ran (no "Trying to remove indicator" in the log) |
+| `indicator/factory.cpp` confirmation, `indicator.cpp` `indicatorPluginRemoved` | Select the local test indicator on a dock, then remove it with the remove icon at the left of its row in the custom list and confirm | Passed in the third round: the confirmation dialog appears, the log records "Trying to remove indicator", the package directory is removed, and the dock that used it falls back to Latte |
 | `alternativeshelper.cpp` | Show Alternatives on an applet in edit mode and choose an alternative | Passed in the second round: the dialog opens and the chosen alternative replaces the applet in place |
+| `lattecorona.cpp`, alternatives dialog callbacks (`56c34148c`) | Open Show Alternatives in edit mode, close it, then click outside the edit window | Passed in the third round: the dialog closes and the edit window closes on focus loss as usual, so the view's flag was reset |
 
 Findings that predate R2b:
 
@@ -119,16 +126,15 @@ Findings that predate R2b:
 - The test indicator was a copy of Plasma Tab Style, which only frames the
   active task, so the dock showed no dots or lines until the user switched back
   to Latte. That is expected.
-- The dock was launched from an agent shell and inherited its environment. When
-  an application was started from the dock, KIO warned that `SENTRY-TRACE`
-  cannot be passed to systemd. Start later retests from the session
-  environment.
+- In the first two rounds the dock was launched from an agent shell and
+  inherited its environment; when an application was started from the dock,
+  KIO warned that `SENTRY-TRACE` cannot be passed to systemd. The third round
+  used the session environment and did not show it.
+- Clicking the remove icon logged a Qt deprecation warning:
+  `declarativeimports/components/ComboBox.qml` uses the injected `index`
+  parameter in `onIconClicked` instead of a formal parameter. It is unrelated
+  to the connection changes and is left for a QML fix.
 
 ## Pending
 
-Remove a local custom indicator through the remove icon in the custom list and
-confirm the dialog, which exercises the `factory.cpp` confirmation and the
-`indicatorPluginRemoved` fallback. The R2b Smoke Test indicator in
-`~/.local/share/latte/indicators/org.kde.latte.r2bsmoke` is kept for this. Also
-open and close Show Alternatives once with `56c34148c` installed. Record both
-here before treating the desktop gate as passed.
+None for R2b.
