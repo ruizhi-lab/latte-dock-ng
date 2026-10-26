@@ -38,9 +38,9 @@ PC3.Page {
     width: Math.max(heading.paintedWidth, Kirigami.Units.iconSizes.enormous * 3 + Kirigami.Units.smallSpacing * 4 + Kirigami.Units.gridUnit * 2)
   //  height: 800//Screen.height
     opacity: draggingWidget ? 0.3 : 1
-    // WidgetExplorerView supplies the root QObject values after setSource();
-    // guard eager bindings until that authoritative context arrives, or QML
-    // dereferences undefined objects and logs startup warnings.
+    // WidgetExplorerView publishes the root inputs before the root is created,
+    // but they stay nullable (the window can be re-pointed at another dock).
+    // Guard eager bindings, or QML dereferences null objects and logs warnings.
     visible: viewConfig ? viewConfig.visible : false
 
     //property QtObject containment
@@ -60,10 +60,19 @@ PC3.Page {
 
     property Item categoryButton
 
+    // Inputs published by C++ before the root is created (SubConfigView::
+    // setRootInput(), see app/view/settings/subconfigview.h); they replace the
+    // context properties of the same names. Every window root declares the same
+    // six, or setInitialProperties() fails for the missing one; this window
+    // reads latteView, viewConfig and themeExtended. containmentFromView is
+    // this window's own input, the containment whose applets are listed.
     property var containmentFromView
     property var latteView
-    property var themeExtended
+    property var plasmoid
     property var viewConfig
+    property var universalSettings
+    property var layoutsManager
+    property var themeExtended
 
     property bool draggingWidget: false
 
@@ -288,10 +297,10 @@ PC3.Page {
 
     Loader {
         id: widgetExplorerLoader
-        // WidgetExplorerView assigns these root properties immediately after
-        // setSource(). Do not instantiate Plasma's private WidgetExplorer
-        // until that context is complete; its bindings require a live
-        // containment and viewConfig as soon as the component is created.
+        // WidgetExplorerView publishes these root inputs. Do not instantiate
+        // Plasma's private WidgetExplorer until they are all set; its bindings
+        // require a live containment and viewConfig as soon as the component
+        // is created.
         active: main.visible && main.viewConfig && main.latteView && main.containmentFromView
         sourceComponent: PlasmaShell.WidgetExplorer {
             //id:widgetExplorer

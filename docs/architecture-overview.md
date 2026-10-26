@@ -84,6 +84,14 @@ only while plasma-shutdown owns `org.kde.Shutdown`. `~Corona()` deletes its
 services in dependency order through `Session::deleteNow()`, which tolerates a
 service already freed by `QCoreApplication::exec()` during a normal quit.
 
+The settings windows in [app/view/settings](../app/view/settings) hand the dock
+(`latteView`), its `plasmoid`, the window (`viewConfig`) and three application
+services to their QML roots as nullable root properties, not as context
+properties. [subconfigview.h](../app/view/settings/subconfigview.h) documents
+how they are published, how a dock switch updates them and which context
+properties remain on purpose; a new input needs a declaration in all three
+roots.
+
 For any new shared state, document who changes it and how others observe it.
 Derived geometry, hover state and cached window metadata need explicit
 invalidation. Inspect the relevant TaskItem/AppletItem comments and tests before

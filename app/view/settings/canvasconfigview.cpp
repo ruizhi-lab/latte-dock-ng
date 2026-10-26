@@ -46,14 +46,11 @@ void CanvasConfigView::init()
 
     updateEnabledBorders();
 
-    // Canvas configuration creates its header and ruler immediately. Provide
-    // the view before setSource() so required child dependencies are valid
-    // during component construction.
-    rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
-    rootContext()->setContextProperty(QStringLiteral("canvasLatteView"), m_latteView);
-
+    // Canvas configuration creates its header and ruler immediately.
+    // loadRootSource() provides the view before the root is created so
+    // required child dependencies are valid during component construction.
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
-    setSource(source);
+    loadRootSource(source);
     syncGeometry();
 
     if (m_parent) {
@@ -69,8 +66,6 @@ QRect CanvasConfigView::geometryWhenVisible() const
 void CanvasConfigView::initParentView(Latte::View *view)
 {
     SubConfigView::initParentView(view);
-
-    rootContext()->setContextProperty(QStringLiteral("primaryConfigView"), m_parent);
 
     updateEnabledBorders();
     syncGeometry();
