@@ -52,14 +52,17 @@ public Q_SLOTS:
     Q_INVOKABLE void downloadIndicator();
     Q_INVOKABLE void removeIndicator(QString pluginId);
     Q_INVOKABLE void setParentItem(QQuickItem *parentItem);
+    //! Creates the config UI item of \a type on first use and re-parents it
+    //! into the parent item on every call, even when it is already shown;
+    //! indicators without X-Latte-ConfigUi get no item. Showing the item, or
+    //! an empty page, in the options StackView belongs to the QML caller
+    //! (IndicatorConfigUiManager.qml showCurrentIndicator()), which must
+    //! update the shown page after every call.
     Q_INVOKABLE void ui(const QString &type, Latte::View *view);
 
     Q_INVOKABLE int index(const QString &type);
 private:
     bool contains(const QString &type);
-
-    void hideAllUi();
-    void showNextIndicator();
 
 private:
     //! Config dialog item assigned from QML; it can be destroyed with the

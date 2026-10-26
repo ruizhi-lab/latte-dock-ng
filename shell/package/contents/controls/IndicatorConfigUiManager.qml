@@ -4,6 +4,7 @@
 */
 
 import QtQuick
+import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
@@ -54,44 +55,57 @@ Item {
         readonly property int optionsWidth: dialog.optionsWidth
         readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
 
-        readonly property Item nextPage: stackView.currentItem === page1 ? page2 : page1
-        readonly property Item previousPage: nextPage === page1 ? page2 : page1
+        //! Shows the options of the selected indicator. C++
+        //! IndicatorUiManager::ui() only re-parents the type's cached options
+        //! item into this item, even when it is already shown, and provides
+        //! nothing for indicators without X-Latte-ConfigUi. This QML owns where
+        //! the item goes, so every request has to end in showNextIndicator():
+        //! skipping it for an indicator without options kept the previous
+        //! indicator's options on screen.
+        function showCurrentIndicator() {
+            var type = latteView.indicator.type;
+            tabBar.selectTab(type);
+            viewConfig.indicatorUiManager.ui(type, latteView);
+            showNextIndicator(type);
+        }
 
-        function showNextIndicator() {
-            var nextIndicator;
+        //! Decide by the shown page's type, not by the pages' isCurrent
+        //! binding: ui() has just moved the options out of the shown page even
+        //! when they belong to the requested type, and isCurrent (whose
+        //! viewConfig.isReady term re-evaluates in signal connection order)
+        //! then skipped the update, parked the options in hiddenPages and left
+        //! the options area blank for good.
+        function showNextIndicator(type) {
+            var nextIndicator = children.length > 0 ? children[0] : null;
+            var currentPage = stackView.currentItem;
 
-            //var pageShown = stackView.currentItem ? 1 : 0;
-            //var total = page1.children.length + page2.children.length + hiddenPages.children.length + pageShown;
-            //console.log(" org.kde.latte >>>>>>>>>>>>>>>>> ALL PAGES :: " + total);
-
-            if (children.length > 0) {
-                nextIndicator = children[0];
-            }
-
-            if (nextIndicator && (!stackView.currentItem || !stackView.currentItem.isCurrent)) {
-                //!empty nextPage by moving its pages into hiddenPages
-                var childrenCount = nextPage.children.length;
-                for (var i=0; i<childrenCount; ++i) {
-                    var previousIndicator = nextPage.children[0];
-                    previousIndicator.visible = false;
-                    previousIndicator.parent = hiddenPages;
+            if (currentPage && currentPage.type === type) {
+                //! keep the shown page and put its options back
+                if (nextIndicator) {
+                    nextIndicator.parent = currentPage;
+                    nextIndicator.visible = true;
+                    stackView.Layout.minimumHeight = nextIndicator.height;
                 }
-
-                nextIndicator.parent = nextPage;
-                nextIndicator.visible = true;
-                stackView.Layout.minimumHeight = nextIndicator.height;
-                nextPage.type = latteView.indicator.type;
-
+            } else {
                 var currentIndex = -1;
 
-                if (stackView.currentItem) {
-                    currentIndex = viewConfig.indicatorUiManager.index(stackView.currentItem.type);
+                if (currentPage) {
+                    currentIndex = viewConfig.indicatorUiManager.index(currentPage.type);
                 }
 
-                var nextIndex = viewConfig.indicatorUiManager.index(latteView.indicator.type);
+                var nextIndex = viewConfig.indicatorUiManager.index(type);
 
                 stackView.forwardSliding = (nextIndex<currentIndex);
-                stackView.replace(stackView.currentItem, nextPage);
+                stackView.Layout.minimumHeight = nextIndicator ? nextIndicator.height : 0;
+
+                //! slide in a new page holding the options, or nothing for an
+                //! indicator without options
+                var page = stackView.replace(currentPage, indicatorPageComponent, {"type": type});
+
+                if (nextIndicator) {
+                    nextIndicator.parent = page;
+                    nextIndicator.visible = true;
+                }
             }
 
             if (children.length>0) {
@@ -107,16 +121,14 @@ Item {
 
         Component.onCompleted: {
             viewConfig.indicatorUiManager.setParentItem(hiddenIndicatorPage);
-            tabBar.selectTab(latteView.indicator.type);
-            viewConfig.indicatorUiManager.ui(latteView.indicator.type, latteView);
+            showCurrentIndicator();
         }
 
         Connections {
             target: latteView.indicator
             function onPluginChanged() {
                 if (viewConfig.isReady) {
-                    tabBar.selectTab(latteView.indicator.type);
-                    viewConfig.indicatorUiManager.ui(latteView.indicator.type, latteView);
+                    hiddenIndicatorPage.showCurrentIndicator();
                 }
             }
         }
@@ -125,8 +137,46 @@ Item {
             target: viewConfig
             function onIsReadyChanged() {
                 if (viewConfig.isReady) {
-                    tabBar.selectTab(latteView.indicator.type);
-                    viewConfig.indicatorUiManager.ui(latteView.indicator.type, latteView);
+                    hiddenIndicatorPage.showCurrentIndicator();
+                }
+            }
+        }
+    }
+
+    //! Every switch shows a new page, which StackView owns and deletes after it
+    //! slid out. Two reused pages kept the end state of their replaceExit
+    //! transition (opacity 0) and relied on replaceEnter to undo it, but Qt
+    //! skips replaceEnter while the view has no height, which is the case
+    //! right after an indicator without options collapsed the area: the
+    //! options came back fully transparent. A page reused while it was still
+    //! sliding out could also be faded out again by its exit animation.
+    Component {
+        id: indicatorPageComponent
+
+        ColumnLayout {
+            id: indicatorPage
+            width: stackView.width
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: uiManager.cfgBackgroundColor
+            Kirigami.Theme.textColor: uiManager.cfgTextColor
+            Kirigami.Theme.highlightColor: uiManager.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: uiManager.cfgHighlightedTextColor
+
+            readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
+            readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
+            readonly property int optionsWidth: dialog.optionsWidth
+
+            property string type: ""
+
+            //! the cached options outlive their page: park them before
+            //! StackView deletes it instead of leaving them without a parent
+            QQC2.StackView.onRemoved: {
+                var count = indicatorPage.children.length;
+                for (var i=0; i<count; ++i) {
+                    var options = indicatorPage.children[0];
+                    options.visible = false;
+                    options.parent = hiddenPages;
                 }
             }
         }
@@ -135,40 +185,6 @@ Item {
     Item {
         id: hidden
         visible: false
-        ColumnLayout {
-            id: page1
-            width: stackView.width
-            Kirigami.Theme.inherit: false
-            Kirigami.Theme.colorSet: Kirigami.Theme.Window
-            Kirigami.Theme.backgroundColor: uiManager.cfgBackgroundColor
-            Kirigami.Theme.textColor: uiManager.cfgTextColor
-            Kirigami.Theme.highlightColor: uiManager.cfgHighlightColor
-            Kirigami.Theme.highlightedTextColor: uiManager.cfgHighlightedTextColor
-
-            readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
-            readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
-            readonly property int optionsWidth: dialog.optionsWidth
-
-            property string type: ""
-        }
-
-        ColumnLayout {
-            id: page2
-            width: stackView.width
-            Kirigami.Theme.inherit: false
-            Kirigami.Theme.colorSet: Kirigami.Theme.Window
-            Kirigami.Theme.backgroundColor: uiManager.cfgBackgroundColor
-            Kirigami.Theme.textColor: uiManager.cfgTextColor
-            Kirigami.Theme.highlightColor: uiManager.cfgHighlightColor
-            Kirigami.Theme.highlightedTextColor: uiManager.cfgHighlightedTextColor
-
-            readonly property bool isCurrent: latteView.indicator.type === type && viewConfig.isReady/*update flag*/
-            readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
-            readonly property int optionsWidth: dialog.optionsWidth
-
-            property string type: ""
-        }
-
         ColumnLayout {
             id: hiddenPages
             width: stackView.width
