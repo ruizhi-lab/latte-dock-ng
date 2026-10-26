@@ -1,7 +1,7 @@
 # R2b: Context-less Connections
 
-Status: Pending validation. The code, build and most desktop checks pass; the
-indicator removal confirmation and the alternatives dialog are not exercised.
+Status: Pending validation. The code, build and desktop checks pass except the
+indicator removal confirmation, which is not exercised yet.
 Date: 2026-10-25. Branch: `main`. Implementation commit: `484a8d59b`.
 
 ## Defect
@@ -46,6 +46,19 @@ captures:
 
 No behavior was changed beyond the lifetime scope of the callbacks.
 
+**Later site.** The desktop smoke reached `Corona::showAlternativesForApplet()`
+in [lattecorona.cpp](../../app/lattecorona.cpp). The scan could not flag it,
+because its connections had a context object, just the wrong one. The flag
+reset after the alternatives dialog closes was bound to Corona but only drove
+the view, captured as a raw pointer, while the dialog's QML object is a child
+of that view. Removing the dock with the dialog open therefore ran it on a
+destroyed view, and a dialog without a view dereferenced a null pointer. It now
+uses the view as the context and connects only when a view exists. The
+`m_alternativesObjects` list also kept dialogs that were deleted with their
+view; a dialog now leaves the list when it is destroyed. Commit `56c34148c`;
+`SourceContractTest::lattecoronaAlternativesCallbacksFollowTheirOwners()` locks
+both.
+
 ## Evidence
 
 Fresh preset trees on the review host: GCC 16.2.1, Clang 22.1.8, Qt 6.11.2.
@@ -57,6 +70,7 @@ Fresh preset trees on the review host: GCC 16.2.1, Clang 22.1.8, Qt 6.11.2.
 | `QT_NO_CONTEXTLESS_CONNECT` in `compile_commands.json` | Present in 427 of 427 translation units in both Debug trees |
 | GCC and Clang Debug/Release presets, `LATTE_STRICT_WARNINGS=ON` | 0 compiler warnings; 56/56 CTest in all four |
 | CI run 40180566388 at `3023bddc3` | Passed, including the Debian 13 build with Qt 6.8.2, which also enforces the macro |
+| GCC and Clang Debug/Release presets at `56c34148c`, after both fix merges | 0 compiler warnings; 57/57 CTest in all four; the new source contract fails on the previous code and passes now |
 
 The first version of this report counted seventeen sites and described the two
 `[&]` captures as dangling references. Neither was accurate; the table above
@@ -69,6 +83,10 @@ Run on 2026-10-25 by the user with the user-mode Debug build of `e4c24e773`
 6.7.5, Wayland and Qt 6.11.2. The debug log has no errors and one warning
 (see the environment note below), and no latte-dock-ng coredump was written.
 
+A second round on 2026-10-26 ran the branch `claude/nice-merkle-7b9fb9`, which
+contains R2b and the edit-mode menu fixes now merged in `f634322d4`. The user
+confirmed the results; that log had no warnings and no coredump was written.
+
 | Touched path | Check | Result |
 | --- | --- | --- |
 | `contextmenulayerquickitem.cpp` | Remove a widget and undo it from the notification; remove one and let the notification expire | Passed |
@@ -78,9 +96,9 @@ Run on 2026-10-25 by the user with the user-mode Debug build of `e4c24e773`
 | `lattecorona.cpp` | Startup and three layout reloads during the settings checks | Passed: windows are tracked and the layouts load |
 | `menu.cpp`, actions | Configure Latte... from the dock menu | Passed |
 | `indicator.cpp`, `indicatorPluginChanged` | Install a local test indicator while the dock runs, select it, switch back to Latte | Passed: it appears in the custom list without a restart and the dock follows the selection |
-| `menu.cpp`, `userConfiguringChanged` | Enter and leave edit mode repeatedly | Ran without warnings; the effect is not visible because the dock menu cannot be opened in edit mode |
+| `menu.cpp`, `userConfiguringChanged` | Enter edit mode and right-click the empty dock area, then leave edit mode | Passed in the second round: the edit-only dock actions appear and Edit Dock... is hidden; outside edit mode the menu is unchanged |
 | `indicator/factory.cpp` confirmation, `indicator.cpp` `indicatorPluginRemoved` | Remove the local test indicator from the custom list | Not exercised: the confirmation handler never ran (no "Trying to remove indicator" in the log) |
-| `alternativeshelper.cpp` | Show Alternatives on an applet | Not reachable: the dock menu cannot be opened in edit mode |
+| `alternativeshelper.cpp` | Show Alternatives on an applet in edit mode and choose an alternative | Passed in the second round: the dialog opens and the chosen alternative replaces the applet in place |
 
 Findings that predate R2b:
 
@@ -88,11 +106,16 @@ Findings that predate R2b:
   accepts every press outside the tasks plasmoid. It was added on 2026-07-03
   and is in v1.2.62. The dock menu therefore never opens in edit mode, and
   "Show Alternatives..." and the edit-only dock actions, which only appear in
-  edit mode, cannot be reached. A separate task restores the menu.
+  edit mode, cannot be reached. Fixed by `2a6015796` and `50b920180`, merged in
+  `f634322d4`.
+- On Plasma 6.5 to 6.7, choosing "Show Alternatives..." did nothing: below
+  Plasma 6.8 Latte used plasma-desktop's `AppletAlternatives.qml`, which imports
+  the plasmashell-only `org.kde.plasma.shell` module since Plasma 6.5. Fixed by
+  `f7bcc824b`, merged in `f634322d4`.
 - In the Effects page, switching from Latte to an indicator without a config
   UI and back leaves the options area blank, because
-  `IndicatorConfigUiManager.qml` keeps the previous page. A separate task fixes
-  it.
+  `IndicatorConfigUiManager.qml` keeps the previous page. Fixed by `58182590b`,
+  merged in `12f063d93`.
 - The test indicator was a copy of Plasma Tab Style, which only frames the
   active task, so the dock showed no dots or lines until the user switched back
   to Latte. That is expected.
@@ -105,6 +128,7 @@ Findings that predate R2b:
 
 Remove a local custom indicator through the remove icon in the custom list and
 confirm the dialog, which exercises the `factory.cpp` confirmation and the
-`indicatorPluginRemoved` fallback. Run Show Alternatives once the dock menu
-opens in edit mode again. Record both here before treating the desktop gate as
-passed.
+`indicatorPluginRemoved` fallback. The R2b Smoke Test indicator in
+`~/.local/share/latte/indicators/org.kde.latte.r2bsmoke` is kept for this. Also
+open and close Show Alternatives once with `56c34148c` installed. Record both
+here before treating the desktop gate as passed.
