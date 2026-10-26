@@ -1485,16 +1485,25 @@ ContainmentItem {
     }
 
     // In edit mode, block mouse interactions on external applets so only
-    // drag-to-reorder works. Events over the tasks plasmoid area are passed
-    // through so internal task drag (MouseArea-based) continues to function.
-    // Task clicks/scrolls are blocked by guards in TaskMouseArea.qml which
-    // check inEditMode (backed by a polling timer for reliability).
+    // drag-to-reorder works: their left clicks, press-and-hold and wheel end
+    // here. Applet sort-drag still works because the press also reaches the
+    // AppletItem DragHandler as a passive grab, and the handler takes the grab
+    // over past its drag threshold, so this area must never keep the grab.
+    // Events over the tasks plasmoid area are passed through so internal task
+    // drag (MouseArea-based) continues to function; TaskMouseArea.qml applies
+    // the task-side edit-mode guards.
+    //
+    // The right button is deliberately not accepted. Right-clicks belong to
+    // LatteApp.ContextMenuLayer beneath the applets (LayoutsContainer.qml), and
+    // only in edit mode does its menu offer "Show Alternatives..." and the
+    // edit-only dock actions (Move Dock To Layout, Export Dock as Template,
+    // Remove Dock). Accepting it here made all of them unreachable.
     MouseArea {
         anchors.fill: parent
         z: 20000
         enabled: root.editMode
         hoverEnabled: true
-        acceptedButtons: Qt.AllButtons
+        acceptedButtons: Qt.AllButtons & ~Qt.RightButton
 
         function eventIsOverTasksPlasmoid(x, y) {
             var layouts = [layoutsContainer.startLayout, layoutsContainer.mainLayout, layoutsContainer.endLayout];

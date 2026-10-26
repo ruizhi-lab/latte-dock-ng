@@ -87,7 +87,7 @@ private Q_SLOTS:
     void waylandWindowsAcceptedAfterCreationAreTracked();
     void viewBindingsKeepTheirValueWhileFrozen();
     void layoutInfoWindowNeverAppliesAnEmptySize();
-    void appletAlternativesUseLattesOwnDialogOnPlasma68();
+    void appletAlternativesUseLattesOwnDialogOnPlasma65();
     void layerShellSetScreenGuardPreventsBuildRegression();
     void genericLayoutUnloadUsesSynchronousDelete();
     void synchronizerUnloadUsesSynchronousDelete();
@@ -4032,7 +4032,7 @@ void SourceContractTest::appletItemForAppletExcludedContextsPreservePropertyAcce
     // are already loaded, and on libplasma 6.8 _plasma_graphicObject is not
     // published at all (the dialog opened in a corner and could not replace
     // the applet). It now prefers itemForApplet(), see
-    // appletAlternativesUseLattesOwnDialogOnPlasma68().
+    // appletAlternativesUseLattesOwnDialogOnPlasma65().
 
     // view.cpp: containment-level lookups (containment graphic item positioning)
     QFile view(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
@@ -5158,17 +5158,18 @@ void SourceContractTest::layoutInfoWindowNeverAppliesAnEmptySize()
     QVERIFY(source.indexOf(QStringLiteral("if (!rootObject()) {"), sync) > sync);
 }
 
-void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma68()
+void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma65()
 {
     const auto readSource = [](const QString &relativePath) {
         QFile file(QStringLiteral(LATTE_SOURCE_DIR "/") + relativePath);
         return file.open(QFile::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
     };
 
-    // Plasma's dialog needs a plasmashell-internal type since 6.8, so Latte's
-    // package must provide its own file instead of the desktop fallback.
+    // Plasma's dialog needs a plasmashell-internal type since plasma-desktop
+    // 6.5.0, so Latte's package must provide its own file instead of the
+    // desktop fallback. packageunittest checks the resolved file.
     const QString package = readSource(QStringLiteral("app/package/lattepackage.cpp"));
-    const int versionGuard = package.indexOf(QStringLiteral("#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 8, 0)"));
+    const int versionGuard = package.indexOf(QStringLiteral("#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 5, 0)"));
     const int definition = package.indexOf(QStringLiteral("addFileDefinition(\"appletalternativesui\", QStringLiteral(\"explorer/AppletAlternatives.qml\"))"));
     QVERIFY(versionGuard >= 0);
     QVERIFY(definition > versionGuard);

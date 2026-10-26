@@ -19,7 +19,7 @@ import org.kde.plasma.private.shell
 PlasmaCore.Dialog {
     id: dialog
 
-    //! Latte's copy of Plasma's applet alternatives dialog. Since libplasma 6.8
+    //! Latte's copy of Plasma's applet alternatives dialog. Since Plasma 6.5
     //! the Plasma version requires the AlternativesHelper type of
     //! org.kde.plasma.shell, a module compiled into plasmashell: in Latte the
     //! import resolves to an empty module and the shared fallback file failed
