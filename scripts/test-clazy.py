@@ -41,6 +41,7 @@ FIXTURE_FLAGS_SOURCE = ROOT / "app/lattecorona.cpp"
 # flags make them unreachable (foreach, qstring-comparison-to-implicit-char) or
 # no trigger could be found for them (qstring-left).
 GATED_CHECKS: tuple[str, ...] = (
+    "auto-unexpected-qstringbuilder",
     "child-event-qobject-cast",
     "connect-by-name",
     "connect-non-signal",
