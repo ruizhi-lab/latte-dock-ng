@@ -44,11 +44,14 @@ private Q_SLOTS:
     void onBroadcastToPlasmaChanged();
 
 private Q_SLOTS:
-    bool screenIsActive(const QString &screenName) const;
     void setPlasmaAvailableScreenRect(const QString &screenName, const QRect &rect);
     void setPlasmaAvailableScreenRegion(const QString &screenName, const QRegion &region);
 
 private:
+    //! A const getter is not a slot (clazy const-signal-or-slot), so it is Q_INVOKABLE:
+    //! the meta-object still lists it, as it listed the private slot before.
+    Q_INVOKABLE bool screenIsActive(const QString &screenName) const;
+
     bool m_plasmaInterfaceAvailable{false};
 
     //! this is needed in order to avoid too many costly calculations for available screen geometries
