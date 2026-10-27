@@ -16,7 +16,9 @@ using Latte::LayoutMenuItemWidget;
 #include <QDebug>
 #include <QFont>
 #include <QMenu>
-#include <QtDBus>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusMessage>
 #include <QTimer>
 #include <QLatin1String>
 

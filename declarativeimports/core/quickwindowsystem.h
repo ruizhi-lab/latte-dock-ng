@@ -9,7 +9,7 @@
 
 // Qt
 #include <QObject>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 namespace Latte {
 

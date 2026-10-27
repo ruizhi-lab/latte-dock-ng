@@ -15,7 +15,7 @@
 #include <QPointer>
 #include <QMouseEvent>
 #include <QObject>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 // Plasma
 #include <Plasma/Plasma>

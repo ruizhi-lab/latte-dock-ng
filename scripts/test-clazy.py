@@ -50,6 +50,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "lambda-unique-connection",
     "lowercase-qml-type-name",
     "mutable-container-key",
+    "no-module-include",
     "post-event",
     "qcolor-from-literal",
     "qdatetime-utc",

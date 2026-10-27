@@ -11,7 +11,7 @@
 #include <QObject>
 
 #include <QMetaObject>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 #include <array>
 

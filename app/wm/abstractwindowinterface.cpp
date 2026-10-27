@@ -15,7 +15,11 @@
 
 // Qt
 #include <QDebug>
-#include <QtDBus>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusServiceWatcher>
+#include <QDBusVariant>
 
 // KDE
 #include <KWindowSystem>

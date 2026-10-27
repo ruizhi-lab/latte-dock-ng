@@ -10,7 +10,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QTimer>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 
 // Plasma
