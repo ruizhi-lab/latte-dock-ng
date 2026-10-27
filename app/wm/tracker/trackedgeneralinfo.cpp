@@ -28,7 +28,8 @@ TrackedGeneralInfo::TrackedGeneralInfo(Tracker::Windows *tracker)
         updateTrackingCurrentActivity();
     });
 
-    Q_EMIT lastActiveWindowChanged();
+    //! No Q_EMIT lastActiveWindowChanged() here (clazy incorrect-emit): nothing can be connected to
+    //! it while this constructor runs, and lastActiveWindow() already returns the object created above.
 }
 
 TrackedGeneralInfo::~TrackedGeneralInfo()

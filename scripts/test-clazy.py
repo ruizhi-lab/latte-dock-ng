@@ -48,6 +48,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "connect-not-normalized",
     "const-signal-or-slot",
     "empty-qstringliteral",
+    "incorrect-emit",
     "install-event-filter",
     "lambda-in-connect",
     "lambda-unique-connection",
