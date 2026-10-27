@@ -1,8 +1,8 @@
 # R2c-use-static-qregularexpression: Constant Patterns Compiled on Every Call
 
-Status: Pending validation. The fix, the fixture and the gate pass locally with
-Clang and GCC; the CI run and the combined desktop smoke of R2c batches A and B
-are not done.
+Status: Pending validation. Merged into `main` in `fc8b803d0`; the checks on
+`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
+The CI run waits for a push.
 Date: 2026-10-27. Branch: `claude/r2c-batch-b-c113e5`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the second slice of batch B (after `R2c-empty-qstringliteral`, before
@@ -119,10 +119,20 @@ this change touches no QML.
   fixture and the pre-fix gate run are the negative evidence. A possible
   follow-up outside this slice's file list: extend `knscompatunittest` with
   `linktarget`, `optional plugin` and `classname` lines in the templates `qmldir`.
-- **Not run:** the CI job, Release presets, the desktop retest of AGENTS.md (the
-  main session runs one combined smoke after both batches merge), a launcher
-  lookup through `serviceFromIdOrDesktopEntry()` in a running dock.
-- **Next exact action:** review, then `R2c-connect-not-normalized` and the
-  combined smoke. Do not start another batch implicitly.
+- **Combined validation:** on `main` at `fc8b803d0`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 37-check gate and the
+  Debian 13 build on Qt 6.8.2 passed; see [R2c fix batch 1](R2c.md#fix-batch-1).
+  The user-mode install had removed the generated KNS compatibility overrides,
+  so the docks on the host and in the Fedora VM regenerated them at startup
+  with the five `knscompat.cpp` patterns. On both, the templates `qmldir` lost
+  the four directive lines of the system file and the legacy controls `qmldir`
+  only its `prefer` line.
+- **Not run:** the CI job (`main` is not pushed); a launcher lookup through
+  `serviceFromIdOrDesktopEntry()` in a running dock. It serves the
+  `preferred://mailer`, `terminal` and `systemsettings` launchers, and both
+  smoke layouts have only `preferred://browser` and `preferred://filemanager`.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as the session brief allows; not pushed; `main` untouched.
+  branch; merged into `main` in `fc8b803d0` with the user's approval; not
+  pushed.

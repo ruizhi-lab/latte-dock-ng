@@ -1,7 +1,8 @@
 # R2c-auto-unexpected-qstringbuilder: `auto` Kept a QStringBuilder
 
-Status: Pending validation. The fix, the fixture and the gate pass locally with
-Clang and GCC; the CI run and a desktop check on Qt 6.6 or older are not done.
+Status: Complete. CI run 40345972905 at `09b030e61` passed with the check on
+the gate. No Qt 6.6 or older system is available for a desktop check; the
+oldest supported stack here is Debian 13 with Qt 6.8.2.
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `771e74c3d`. Implementation commit: `eb83f088c`. Part of [R2c](R2c.md), the
 first of its `R2c-<check>` slices.
@@ -106,10 +107,11 @@ and this change touches no QML.
   the clazy gate rejects a new `auto` over a builder.
 - **Tests:** no test added or changed; `ctest` 57/57 on Clang and GCC Debug. The
   fixture and the pre-fix run are the negative evidence.
-- **Not run:** the CI job, Release presets, the desktop retest of AGENTS.md (the
-  dock was not restarted; there is no behavior change on the Qt versions in use
-  here), and any run on a real Qt 6.6 system.
-- **Next exact action:** review, then the next row of the R2c slice table,
-  `R2c-empty-qstringliteral`. Do not start another batch implicitly.
+- **CI:** run 40345972905 at `09b030e61` passed every job; the Clang Debug job
+  ran the gate with this check. The Release presets and the desktop smoke ran
+  later on `main` with [R2c fix batch 1](R2c.md#fix-batch-1).
+- **Not run:** any run on a real Qt 6.6 system (none is available).
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature
-  branch at the user's request; not pushed; `main` untouched.
+  branch at the user's request; merged into `main` in `8d1fe1568` and pushed
+  with `09b030e61`.

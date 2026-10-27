@@ -1,7 +1,8 @@
 # R2c-qfileinfo-exists: Static `QFileInfo::exists()`
 
-Status: Pending validation. The fix, the fixture and the gate pass locally with
-Clang and GCC; the CI run and the combined desktop smoke are not done.
+Status: Pending validation. Merged into `main` in `1dd485bc1`; the checks on
+`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
+The CI run waits for a push.
 Date: 2026-10-27. Branch: `claude/r2c-batch-a-a5a9fa`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of
 [R2c](R2c.md); the first slice of batch A.
@@ -101,10 +102,13 @@ and this change touches no QML.
   filesystem is the authority, queried once per call as before.
 - **Tests:** no test added or changed; `ctest` 57/57 on GCC and Clang Debug.
   The fixture and the mutation run are the negative evidence.
-- **Not run:** the CI job, Release presets, the desktop retest of AGENTS.md
-  (there is no behavior change; the main session runs one combined smoke after
-  both batches merge).
-- **Next exact action:** review, then the next slice of this batch,
-  `R2c-range-loop-reference`.
+- **Combined validation:** on `main` at `fc8b803d0`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 37-check gate, the Debian 13
+  build on Qt 6.8.2 and the desktop smoke on the host and in the Fedora VM
+  passed; see [R2c fix batch 1](R2c.md#fix-batch-1).
+- **Not run:** the CI job (`main` is not pushed).
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as the batch brief allows; not pushed; `main` untouched.
+  branch; merged into `main` in `1dd485bc1` with the user's approval; not
+  pushed.

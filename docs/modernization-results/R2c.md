@@ -1,7 +1,8 @@
 # R2c: clazy Inventory and Zero-Finding Gate
 
-Status: Pending validation. Every local check passes; the new CI steps have not
-run because nothing is pushed.
+Status: Complete. CI run 40345972905 at `09b030e61` ran both clazy steps of the
+Clang Debug job and passed. [Fix batch 1](#fix-batch-1) is merged into `main`
+and waits for its CI run.
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -20,13 +21,16 @@ checks rejects.
   checks. The other 33 checks found nothing.
 - **Gate.** `scripts/test-clazy.py` gates the zero-finding checks whose fixture
   fires under the project flags, in the Clang Debug CI job after the build: 30
-  at the inventory, 31 since `R2c-auto-unexpected-qstringbuilder`. A gated
-  check cannot be vacuous: the runner proves it on its own fixture first.
+  at the inventory, 31 since `R2c-auto-unexpected-qstringbuilder`, 37 since fix
+  batch 1. A gated check cannot be vacuous: the runner proves it on its own
+  fixture first.
 - **Not gated, zero findings.** `foreach` and `qstring-comparison-to-implicit-char`
   cannot fire under the project flags; no trigger was found for `qstring-left`.
 - **Next actions.** The 19 checks with findings become `R2c-<check>` slices.
   The first, [R2c-auto-unexpected-qstringbuilder](R2c-auto-unexpected-qstringbuilder.md),
   is done: its finding was a dangling `QStringBuilder` on Qt 6.6 and older.
+  [Fix batch 1](#fix-batch-1) fixed six more checks (81 findings); 488 findings
+  from 12 checks remain.
 - The inventory commit changed no production code, build rule or dependency of
   the product; the slice commits that follow it change one file each.
 
@@ -34,7 +38,7 @@ checks rejects.
 
 - **Batch / slice and selected scope:** R2c, a clazy inventory of production
   code and a CI gate for the checks with zero findings.
-- **Status:** Pending validation (remote CI).
+- **Status:** Complete; CI run 40345972905 passed.
 - **Source baseline / start HEAD / implementation HEAD:** `fc925bfe9` /
   `fc925bfe9` / `1feb770dc`.
 - **Branch / existing user edits preserved:** `claude/r2c-clazy-inventory-3a703c`
@@ -81,19 +85,18 @@ checks rejects.
   not applicable, there is no runtime change.
 - **Performance:** the gate takes 97 s with eight jobs on an idle 16-core host
   (92 s for the level0+level1 inventory); 154 s once, with the host busy. The
-  analysis is CPU bound, so a 4-vCPU CI runner will need longer; the actual CI
-  time is not yet measured.
+  analysis is CPU bound, so the CI runner needs longer: in CI run 40345972905
+  `Install clazy` took 6 s and `Run gated clazy checks` 4 min 31 s.
 - **CI, distribution and Nix checks:** the runner passes in a container that
-  reproduces the Clang Debug job (below); the CI run itself is unavailable until
-  a push. Distribution and Nix jobs are not affected.
+  reproduces the Clang Debug job (below), and in CI run 40345972905 at
+  `09b030e61`, where both clazy steps of `Build (Clang Debug)` and every other
+  job passed. Distribution and Nix jobs are not affected.
 - **Unresolved failures, review assumptions and unavailable checks:** see
-  Pending validation.
-- **Next exact action:** review this branch, then (if a push is approved) read
-  the `Install clazy` and `Run gated clazy checks` steps of the Clang Debug job
-  and record the run URL here. Then take the next row of the slice table. Do not start
-  another batch implicitly.
+  CI validation.
+- **Next exact action:** none for the gate. The fix slices continue in batches;
+  see [Fix batch 1](#fix-batch-1) and [Next actions](#next-actions).
 - **Commit approval status / push approval status:** committed on the feature
-  branch as the session brief allows; not pushed; `main` untouched.
+  branch; merged into `main` in `8d1fe1568` and pushed with `09b030e61`.
 
 ## Environment
 
@@ -346,17 +349,105 @@ The mutations replaced one file inside the container (read-only bind mount);
 the working tree was not edited. The runner has no automated test of its failure
 paths; the table above is the evidence for them.
 
-## Pending validation
+## CI validation
 
-- The CI run of `Install clazy` and `Run gated clazy checks` (needs a push). The
-  container matches the job's image, but package versions float: Neon's clazy
-  and Qt move independently of this repository.
-- CI wall time of the gate on a 4-vCPU runner.
+- CI run 40345972905 at `09b030e61` (2026-10-26): `Install clazy` and
+  `Run gated clazy checks` in `Build (Clang Debug)` passed, in 6 s and
+  4 min 31 s, and so did every other job.
+- The container matches the job's image, but package versions float: Neon's
+  clazy and Qt move independently of this repository, so a later run can meet a
+  check that changed meaning.
 - Ubuntu's own `clazy 1.11` was not tried; the job does not select it.
 - The runner needs Python 3.9 or later (`Path.is_relative_to`), like the
   clang-tidy runner needs 3.8 for `shlex.join`; CI uses 3.12.
 - GCC jobs are unchanged and do not run clazy: it needs a Clang compilation
   database.
+
+## Fix batch 1
+
+Status: Pending validation. Every check on `main` and the desktop smoke passed;
+the CI run waits for a push.
+
+Two sessions implemented the batch of the
+[implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
+in parallel from `09b030e61`, on disjoint source files. Batch A
+(`claude/r2c-batch-a-a5a9fa`) merged into `main` in `1dd485bc1` and batch B
+(`claude/r2c-batch-b-c113e5`) in `fc8b803d0`. The only file both changed is
+`scripts/test-clazy.py`, where each added names to `GATED_CHECKS`; git merged it
+without a conflict. The gate now holds 37 checks with 37 fixtures.
+
+| Slice | Locations / files | Batch | Commit |
+| --- | ---: | --- | --- |
+| [R2c-qfileinfo-exists](R2c-qfileinfo-exists.md) | 35 / 11 | A | `4a08e472e` |
+| [R2c-range-loop-reference](R2c-range-loop-reference.md) | 15 / 6 | A | `e9bf4acf5` |
+| [R2c-no-module-include](R2c-no-module-include.md) | 14 / 14 | A | `1c87da632` |
+| [R2c-empty-qstringliteral](R2c-empty-qstringliteral.md) | 1 / 1 | B | `cd966836e` |
+| [R2c-use-static-qregularexpression](R2c-use-static-qregularexpression.md) | 6 / 2 | B | `4bafbe6d9` |
+| [R2c-connect-not-normalized](R2c-connect-not-normalized.md) | 10 / 4 | B | `a4cfaa80c` |
+
+### Checks on `main` at `fc8b803d0`
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8, CMake 4.3.4, Qt 6.11.2) | Exit 0 each; 0 compiler, linker or CMake warnings; 57/57 tests passed in each preset |
+| `python3 -I autotests/installscriptbehavior.py` | Pass |
+| `latte-r2c-clazy:noble` container (clazy 1.17, Qt 6.11.1): fresh Clang Debug build, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 8` | Exit 0 in 370 s including the build; 0 compiler warnings; 37 fixtures rejected by their own checks; no finding in 153 production sources |
+| Same container, `--inventory` of the 12 checks that remain | 488 findings, each check at its inventory count |
+| Debian 13 container from `docker/Dockerfile.debian` (local mirrors), `verify-install.sh debian13` as in the CI job: CMake 3.31.6, GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5, plasma-workspace 6.3.6 | Exit 0 in 219 s: system and user build, install and uninstall; 0 compiler warnings. This is the first build of the batch A include changes against a Qt older than 6.11 |
+| Fedora 44 VM (Qt 6.11.2, KF 6.31.0, Plasma 6.7.5, GCC 16.2.1): `install.sh --user --jobs 4 Debug` from a `git archive` of `fc8b803d0` in `~/latte-r2c-src` | Exit 0; 0 compiler warnings |
+
+The Debian container's uninstall steps printed 1388 "skipping manifest path
+outside install prefix" lines. The read-only source mount held the host's
+`build-user-ruizhi/install_manifest.txt`, and the uninstaller refused its paths
+outside the container's prefix as designed; a CI checkout has no such
+directory.
+
+### Desktop smoke
+
+The user-mode Debug build of `fc8b803d0` ran from the Plasma session
+environment (`systemd-run --user`) on the Gentoo host (Plasma 6.7.5, Wayland,
+two screens) and in the Fedora 44 VM (Wayland, `--log-file` with
+`QT_LOGGING_RULES=latte*=true`). The Fedora dock configuration was backed up
+first, with checksums, to `~/.local/share/latte-r2c-validation/` in the VM. The
+user ran the checks; the log column is what the debug logs show.
+
+| Check | Host | Host log | Fedora |
+| --- | --- | --- | --- |
+| 1. Startup: dock, widgets, launchers, system tray | Pass | Layout `我的布局` loaded its two docks on `DP-2` and `HDMI-A-1`; the layout has no system tray | Pass |
+| 2. Dock context menu, normal and in Edit Dock mode | Pass | No entry | Pass |
+| 3. Switch to another layout and back | Pass | Switch to `Default` at 20:38:53 and back at 20:39:00, views recreated | Not in the VM subset |
+| 4. Actions editor (Configure Latte → Preferences → Context Menu → Actions...): separator rows without an icon | Pass | No entry | Not in the VM subset |
+| 5. Remove a widget and press Undo; remove one for good | Pass | Widget 43 left the dock order at 20:39:08 and returned at 20:39:09 (Undo); widget 47 left it at 20:13:03 and was destroyed at 20:14:02, when the notification expired | Pass by the user's report; the VM log has no widget event |
+| 6. Add widgets by dragging and without dragging | Pass | One widget created (`org.kde.plasma.konsoleprofiles`, id 47, at index 1); the log does not tell a drop from the default index | Pass by the user's report; the VM log has no widget event |
+| 7. Colors, a color scheme switch, blur, hover zoom | Pass | The scheme change at 19:23:55 reapplied the palette | Pass |
+| 8. Indicator switch on the Effects page | Pass | No entry | Not in the VM subset |
+| 9. Launchers: icons, task merge, pin and unpin | Pass | No entry | Not in the VM subset |
+
+- **Logs:** the host log has 994 lines (984 debug, 6 info, 4 startup lines
+  without a prefix) and no warning, critical or fatal line; neither log has
+  `No such method` or a `QObject::connect` warning. The Fedora log has 281
+  lines (279 debug, 2 info) and no warning; its stdout holds six Mesa
+  `failed to create dri2 screen` warnings, the VM graphics stack that
+  [P0](P0.md) recorded.
+- **Cores:** `coredumpctl` shows no `latte-dock-ng` core since the restarts
+  (host 19:14:26, Fedora 19:11:49). Each VM has one `plasmashell` core at
+  19:04:28 from a `plasmashell --version` probe over SSH without a display,
+  before the dock restart; `verify-install.sh` disables core dumps for the same
+  probe.
+- **Paths seen running:** the install had removed the generated KNS
+  compatibility overrides, so both docks regenerated them at startup with the
+  five static patterns of `R2c-use-static-qregularexpression`. On both machines
+  the templates `qmldir` lost the four directive lines of the system file and
+  the legacy controls `qmldir` only its `prefer` line. The D-Bus screen geometry
+  publication of `screengeometries.cpp`, one of the files whose includes
+  changed, logged the available screen rectangles on both.
+- **Not reached:** `serviceFromIdOrDesktopEntry()`, because both layouts use
+  only `preferred://browser` and `preferred://filemanager` launchers and those
+  take other branches; `layoutmanager.cpp:731`, the last fallback of the applet
+  item lookup; a build on Qt 6.6 (the floor) or 6.7, since the oldest Qt built
+  is 6.8.2.
+- **Not run:** the CI run (`main` is not pushed); the Debian 13 VM, which has no
+  build tools, so a build there needs packages installed as root.
 
 ## Next actions
 
@@ -364,18 +455,14 @@ Each slice fixes all findings of one check, confirms zero with
 `--inventory CHECK`, adds `autotests/clazy/CHECK.cpp` and the name in
 `GATED_CHECKS`. A reviewed exception may use `// clazy:exclude=CHECK` with a
 reason instead of a rewrite. Done: `R2c-auto-unexpected-qstringbuilder`, see
-[its report](R2c-auto-unexpected-qstringbuilder.md). Suggested order for the rest,
-smallest and most mechanical first:
+[its report](R2c-auto-unexpected-qstringbuilder.md), and the six slices of
+[fix batch 1](#fix-batch-1). Suggested order for the rest, smallest and most
+mechanical first; the counts were checked again on `fc8b803d0` and equal those
+of the inventory:
 
 | Slice | Locations / files | Notes |
 | --- | ---: | --- |
-| `R2c-empty-qstringliteral` | 1 / 1 | `app/settings/actionsdialog/actionshandler.cpp:82`, `QIcon::fromTheme(QStringLiteral(""))` |
-| `R2c-qfileinfo-exists` | 35 / 11 | `QFileInfo(path).exists()` to the static `QFileInfo::exists(path)` |
-| `R2c-use-static-qregularexpression` | 6 / 2 | `app/knscompat.cpp` 5, `app/wm/tasktools.cpp` 1; hoist into a function-local `static const` |
-| `R2c-range-loop-reference` | 15 / 6 | Bind non-trivial loop variables (`QString`, `QRegion`, one record) by `const &` |
 | `R2c-unused-non-trivial-variable` | 14 / 10 | Delete after confirming construction has no side effect |
-| `R2c-no-module-include` | 14 / 14 | Replace `<QtQml>` (11) and `<QtDBus>` (3) module includes with the headers actually used |
-| `R2c-connect-not-normalized` | 10 / 4 | `QObject *` to `QObject*` in string signatures; check each against the call it feeds |
 | `R2c-range-loop-detach` | 305 / 47 | Mainly `std::as_const()` around the range. Largest: `app/layouts/storage.cpp` 64, `app/layout/genericlayout.cpp` 28, `app/layouts/synchronizer.cpp` 26. A loop that modifies its container needs a copy or an index loop, not `as_const`; read each loop. Split by directory |
 | `R2c-detaching-temporary` | 43 / 6 | 36 of the 43 are in `containment/plugin/layoutmanager.cpp`. 38 call `QList::operator[]` and 5 call `QList::first()` on a temporary; use `at()`, `constFirst()` or a named const reference |
 | `R2c-container-anti-pattern` | 38 / 13 | Temporary containers from `keys()`, `values()` and similar; iterate the source directly. `app/wm/tracker/windowstracker.cpp` 9 |

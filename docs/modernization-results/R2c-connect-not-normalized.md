@@ -1,8 +1,8 @@
 # R2c-connect-not-normalized: Unnormalized Type Names in `Q_ARG`
 
-Status: Pending validation. The fix, the fixture and the gate pass locally with
-Clang and GCC; the CI run and the combined desktop smoke of R2c batches A and B
-are not done, and no automated test reaches the ten calls.
+Status: Pending validation. Merged into `main` in `fc8b803d0`; the checks on
+`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
+The CI run waits for a push. No automated test reaches the ten calls.
 Date: 2026-10-27. Branch: `claude/r2c-batch-b-c113e5`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the third slice of batch B (after `R2c-empty-qstringliteral` and
@@ -153,7 +153,7 @@ change touches no QML.
 - **Tests:** no test added or changed; `ctest` 57/57 on Clang and GCC Debug. No
   automated test reaches these ten calls (they run inside the live dock), so the
   evidence is the proof above plus the fixture and the pre-fix gate run.
-- **For the combined desktop smoke:** these actions reach the ten sites. Remove a
+- **Smoke plan:** these actions reach the ten sites. Remove a
   widget from its context menu and press Undo in the Plasma notification, then
   remove one for good (`contextmenulayerquickitem.cpp` 548, 562, 577 and
   `containmentinterface.cpp` 2472). Drag a widget from the widget explorer onto the
@@ -163,9 +163,21 @@ change touches no QML.
   `layoutmanager.cpp:731` is the last fallback of the applet item lookup and runs only
   when every earlier lookup fails, so the smoke may not reach it. The debug log should
   hold no `QMetaObject::invokeMethod: No such method` line.
-- **Not run:** the CI job, Release presets, the desktop retest of AGENTS.md (the
-  main session runs one combined smoke after both batches merge), Qt 6.6.
-- **Next exact action:** review, then the combined smoke. Do not start another
-  batch implicitly.
+- **Desktop smoke result** ([R2c fix batch 1](R2c.md#fix-batch-1)): the user
+  ran these actions on the host and in the Fedora VM and reported that all
+  passed. The host log shows a removal undone, which passes 548 and then 562
+  and 2472 through `destroyedChanged(false)`, and a removal that expired, which
+  passes 548 and then 577. It also shows one widget added at index 1. That is
+  the default index of that dock too, so the log does not tell which of the
+  drop and add sites ran. The Fedora log shows no widget event. Neither log has
+  a `No such method` line or any warning from these calls; nothing shows
+  whether `layoutmanager.cpp:731` ran.
+- **Combined validation:** on `main` at `fc8b803d0`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 37-check gate and the
+  Debian 13 build on Qt 6.8.2 passed.
+- **Not run:** the CI job (`main` is not pushed), Qt 6.6.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as the session brief allows; not pushed; `main` untouched.
+  branch; merged into `main` in `fc8b803d0` with the user's approval; not
+  pushed.

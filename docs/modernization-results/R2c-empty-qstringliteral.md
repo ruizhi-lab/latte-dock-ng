@@ -1,8 +1,8 @@
 # R2c-empty-qstringliteral: an Empty `QStringLiteral` as the Separator Icon
 
-Status: Pending validation. The fix, the fixture and the gate pass locally with
-Clang and GCC; the CI run and the combined desktop smoke of R2c batches A and B
-are not done.
+Status: Pending validation. Merged into `main` in `fc8b803d0`; the checks on
+`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
+The CI run waits for a push.
 Date: 2026-10-27. Branch: `claude/r2c-batch-b-c113e5`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the first slice of batch B (then `R2c-use-static-qregularexpression` and
@@ -111,10 +111,16 @@ change touches no QML.
 - **Tests:** no test added or changed; `ctest` 57/57 on Clang and GCC Debug. The
   fixture and the pre-fix gate run are the negative evidence; the rendering probe
   is not in the repository.
-- **Not run:** the CI job, Release presets, the desktop retest of AGENTS.md (the
-  actions editor was not opened in a running dock; the main session runs one
-  combined smoke after both batches merge), Qt 6.6.
-- **Next exact action:** review, then the combined smoke. Do not start another
-  batch implicitly.
+- **Combined validation:** on `main` at `fc8b803d0`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 37-check gate and the
+  Debian 13 build on Qt 6.8.2 passed; see [R2c fix batch 1](R2c.md#fix-batch-1).
+  In the desktop smoke on the host the user opened the actions editor
+  (Configure Latte → Preferences → Context Menu → Actions...) and confirmed
+  that the separator rows show no icon, as before; the editor writes no log
+  entry.
+- **Not run:** the CI job (`main` is not pushed), Qt 6.6.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as the session brief allows; not pushed; `main` untouched.
+  branch; merged into `main` in `fc8b803d0` with the user's approval; not
+  pushed.

@@ -534,7 +534,9 @@ follows each merged batch.
 `empty-qstringliteral` (1), `use-static-qregularexpression` (6, 2) and
 `connect-not-normalized` (10, 4), where every new signature string must equal
 `QMetaObject::normalizedSignature()` of the old one. `unused-non-trivial-variable`
-waits for the next batch because its files overlap both.
+waits for the next batch because its files overlap both. Both batches are merged
+into `main` (`1dd485bc1`, `fc8b803d0`), and their combined checks and desktop
+smoke are recorded in [R2c](modernization-results/R2c.md#fix-batch-1).
 
 ## R4: Settings window inputs without context properties
 
