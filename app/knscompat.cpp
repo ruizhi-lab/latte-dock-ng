@@ -455,11 +455,16 @@ static QString templatesQmldirForSystem(const QString &systemQmldirPath)
     QFile systemQmldir(systemQmldirPath);
 
     if (systemQmldir.open(QFile::ReadOnly)) {
+        static const QRegularExpression preferPattern(QStringLiteral("^prefer .*\n?"), QRegularExpression::MultilineOption);
+        static const QRegularExpression linktargetPattern(QStringLiteral("^linktarget .*\n?"), QRegularExpression::MultilineOption);
+        static const QRegularExpression optionalPluginPattern(QStringLiteral("^optional plugin .*\n?"), QRegularExpression::MultilineOption);
+        static const QRegularExpression classnamePattern(QStringLiteral("^classname .*\n?"), QRegularExpression::MultilineOption);
+
         QString text = QString::fromUtf8(systemQmldir.readAll());
-        text.remove(QRegularExpression(QStringLiteral("^prefer .*\n?"), QRegularExpression::MultilineOption));
-        text.remove(QRegularExpression(QStringLiteral("^linktarget .*\n?"), QRegularExpression::MultilineOption));
-        text.remove(QRegularExpression(QStringLiteral("^optional plugin .*\n?"), QRegularExpression::MultilineOption));
-        text.remove(QRegularExpression(QStringLiteral("^classname .*\n?"), QRegularExpression::MultilineOption));
+        text.remove(preferPattern);
+        text.remove(linktargetPattern);
+        text.remove(optionalPluginPattern);
+        text.remove(classnamePattern);
         return text;
     }
 
@@ -638,8 +643,10 @@ void ensureKnsCompat()
     {
         QFile sysQmldir(sysControls + QStringLiteral("/qmldir"));
         if (sysQmldir.open(QFile::ReadOnly)) {
+            static const QRegularExpression preferPattern(QStringLiteral("^prefer .*\n?"), QRegularExpression::MultilineOption);
+
             QString content = QString::fromUtf8(sysQmldir.readAll());
-            content.remove(QRegularExpression(QStringLiteral("^prefer .*\n?"), QRegularExpression::MultilineOption));
+            content.remove(preferPattern);
             writeIfChanged(controlsDir + QStringLiteral("/qmldir"), content);
         }
     }
