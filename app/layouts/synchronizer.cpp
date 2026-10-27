@@ -94,8 +94,8 @@ bool Synchronizer::layoutExists(QString layoutName) const
 
 bool Synchronizer::isAssigned(QString layoutName) const
 {
-    for (const auto &activityid : m_assignedLayouts.keys()) {
-        if (m_assignedLayouts[activityid].contains(layoutName)) {
+    for (const auto &assignedNames : m_assignedLayouts) {
+        if (assignedNames.contains(layoutName)) {
             return true;
         }
     }
@@ -136,8 +136,8 @@ QStringList Synchronizer::freeActivities()
 {
     QStringList frees = activities();
 
-    for (const auto &assigned : m_assignedLayouts.keys()) {
-        frees.removeAll(assigned);
+    for (auto assigned = m_assignedLayouts.keyBegin(); assigned != m_assignedLayouts.keyEnd(); ++assigned) {
+        frees.removeAll(*assigned);
     }
 
     return frees;

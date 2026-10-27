@@ -969,7 +969,8 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
     }
 
     if (subInfo.count() > 0) {
-        for (const auto subId : subInfo.keys()) {
+        for (auto subIdIt = subInfo.keyBegin(); subIdIt != subInfo.keyEnd(); ++subIdIt) {
+            const uint subId = *subIdIt;
             Plasma::Containment *subcontainment{nullptr};
 
             for (const auto containment : layout->corona()->containments()) {

@@ -19,6 +19,9 @@
 #include "../layouts/storage.h"
 #include "../settings/universalsettings.h"
 
+// C++
+#include <algorithm>
+
 // Qt
 #include <QJsonArray>
 #include <QDir>
@@ -2009,7 +2012,8 @@ void ContainmentInterface::onPlasmaTasksCountChanged()
 
 bool ContainmentInterface::appletIsExpanded(const int id) const
 {
-    return m_expandedAppletIds.values().contains(id);
+    //! the hash maps expandable items to applet ids and the question is about an applet id
+    return std::find(m_expandedAppletIds.cbegin(), m_expandedAppletIds.cend(), id) != m_expandedAppletIds.cend();
 }
 
 void ContainmentInterface::toggleAppletExpanded(const int id)
@@ -2169,7 +2173,12 @@ void ContainmentInterface::updateAppletsTracking()
 
 void ContainmentInterface::updateAppletDelayedConfiguration()
 {
-    for (const auto id : m_appletData.keys()) {
+    //! Walk a snapshot of the ids and look every entry up again by id: the body changes the entries it visits,
+    //! emits appletConfigurationReady() and adds a task, and the handlers of those run arbitrary code that
+    //! could add or remove applets, which iterators into m_appletData would not survive.
+    const auto ids = m_appletData.keys();
+
+    for (const auto id : ids) {
         if (!m_appletData[id].configuration) {
             m_appletData[id].configuration = appletConfiguration(m_appletData[id].applet);
 

@@ -937,20 +937,20 @@ void Views::save()
     }
 
     //! remove deprecated views from external layouts that must be removed because of Cut->Paste Action
-    for (const QString &vid : cuttedpastedviews.keys()) {
+    for (const auto &cuttedview : std::as_const(cuttedpastedviews)) {
         bool viewidisinteger{true};
-        int vid_int = cuttedpastedviews[vid].originView().toInt(&viewidisinteger);
-        QString vid_str = cuttedpastedviews[vid].originView();
+        int vid_int = cuttedview.originView().toInt(&viewidisinteger);
+        QString vid_str = cuttedview.originView();
 
         if (vid_str.isEmpty() || !viewidisinteger || vid_int <= 0) {
             //! ignore origin views that have not been created already
             continue;
         }
 
-        qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() removing cut-pasted view :: " << cuttedpastedviews[vid];
+        qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() removing cut-pasted view :: " << cuttedview;
 
         //! Be Careful: Remove deprecated views from Cut->Paste Action
-        QString origincurrentid = cuttedpastedviews[vid].originLayout();
+        QString origincurrentid = cuttedview.originLayout();
         Data::Layout originlayout = m_handler->layoutsController()->originalData(origincurrentid);
         Latte::CentralLayout *origin = m_handler->layoutsController()->centralLayout(originlayout.id);
 
@@ -962,8 +962,8 @@ void Views::save()
     }
 
     //! move active views between different active layouts
-    for (const QString &vid : cuttedpastedactiveviews.keys()) {
-        Data::View pastedactiveview = cuttedpastedactiveviews[vid];
+    for (const auto &cuttedview : std::as_const(cuttedpastedactiveviews)) {
+        Data::View pastedactiveview = cuttedview;
         uint originviewid = pastedactiveview.originView().toUInt();
         CentralLayout *origin = originLayout(pastedactiveview);
         QString originlayoutname = origin->name();
@@ -999,8 +999,9 @@ void Views::save()
     }
 
     //! update model for newly added views
-    for (const QString &vid : newviewsresponses.keys()) {
-        m_model->setOriginalView(vid, newviewsresponses[vid]);
+    //! setOriginalView() takes a non-const reference, so the loop uses mutable iterators
+    for (auto response = newviewsresponses.begin(); response != newviewsresponses.end(); ++response) {
+        m_model->setOriginalView(response.key(), response.value());
     }
 
     //! update all table with latest data and make the original one

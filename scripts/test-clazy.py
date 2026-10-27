@@ -46,6 +46,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "connect-by-name",
     "connect-non-signal",
     "connect-not-normalized",
+    "container-anti-pattern",
     "detaching-temporary",
     "empty-qstringliteral",
     "install-event-filter",

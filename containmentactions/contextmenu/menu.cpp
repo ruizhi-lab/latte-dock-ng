@@ -317,16 +317,16 @@ void Menu::updateVisibleActions()
     bool configuring = containment()->isUserConfiguring();
 
     // normal actions that the user can specify their visibility
-    for (const auto &actionName : m_actions.keys()) {
+    for (const auto &[actionName, action] : std::as_const(m_actions).asKeyValueRange()) {
         if (Latte::Data::ContextMenu::ACTIONSSPECIAL.contains(actionName)) {
             continue;
         } else if (Latte::Data::ContextMenu::ACTIONSALWAYSHIDDEN.contains(actionName)) {
-            m_actions[actionName]->setVisible(false);
+            action->setVisible(false);
             continue;
         }
 
         bool isvisible = m_actionsAlwaysShown.contains(actionName) || configuring;
-        m_actions[actionName]->setVisible(isvisible);
+        action->setVisible(isvisible);
     }
 
     // normal actions with more criteria
@@ -345,8 +345,8 @@ void Menu::updateVisibleActions()
     }
 
     // because sometimes they are disabled unexpectedly, we should reenable them
-    for (const auto &actionName : m_actions.keys()) {
-        m_actions[actionName]->setEnabled(true);
+    for (QAction *action : std::as_const(m_actions)) {
+        action->setEnabled(true);
     }
 }
 

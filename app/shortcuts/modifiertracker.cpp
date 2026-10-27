@@ -87,8 +87,8 @@ void ModifierTracker::unblockModifierTracking(Qt::Key key)
 
 bool ModifierTracker::noModifierPressed()
 {
-    for (const Qt::Key &modifier : m_pressed.keys()) {
-        if (m_pressed[modifier]) {
+    for (const bool pressed : std::as_const(m_pressed)) {
+        if (pressed) {
             return false;
         }
     }
@@ -116,9 +116,9 @@ bool ModifierTracker::sequenceModifierPressed(const QKeySequence &seq)
 
 bool ModifierTracker::singleModifierPressed(Qt::Key key)
 {
-    for (const Qt::Key &modifier : m_pressed.keys()) {
-        if ((modifier != key && m_pressed[modifier])
-            || (modifier == key && !m_pressed[modifier])) {
+    for (const auto &[modifier, pressed] : std::as_const(m_pressed).asKeyValueRange()) {
+        if ((modifier != key && pressed)
+            || (modifier == key && !pressed)) {
             return false;
         }
     }
