@@ -102,7 +102,7 @@ QString standardPath(QString subPath, bool localfirst)
         for (const auto &pt : paths) {
             QString ptF = pt + separator + subPath;
 
-            if (QFileInfo(ptF).exists()) {
+            if (QFileInfo::exists(ptF)) {
                 return ptF;
             }
         }
@@ -110,14 +110,14 @@ QString standardPath(QString subPath, bool localfirst)
         for (int i = paths.count() - 1; i >= 0; i--) {
             QString ptF = paths[i] + separator + subPath;
 
-            if (QFileInfo(ptF).exists()) {
+            if (QFileInfo::exists(ptF)) {
                 return ptF;
             }
         }
     }
 
     //! in any case that above fails
-    if (QFileInfo(QLatin1String("/usr/share") + separator + subPath).exists()) {
+    if (QFileInfo::exists(QLatin1String("/usr/share") + separator + subPath)) {
         return QLatin1String("/usr/share") + separator + subPath;
     }
 

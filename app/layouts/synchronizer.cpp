@@ -94,7 +94,7 @@ bool Synchronizer::layoutExists(QString layoutName) const
 
 bool Synchronizer::isAssigned(QString layoutName) const
 {
-    for (auto activityid : m_assignedLayouts.keys()) {
+    for (const auto &activityid : m_assignedLayouts.keys()) {
         if (m_assignedLayouts[activityid].contains(layoutName)) {
             return true;
         }
@@ -136,7 +136,7 @@ QStringList Synchronizer::freeActivities()
 {
     QStringList frees = activities();
 
-    for (auto assigned : m_assignedLayouts.keys()) {
+    for (const auto &assigned : m_assignedLayouts.keys()) {
         frees.removeAll(assigned);
     }
 
@@ -166,7 +166,7 @@ QStringList Synchronizer::validActivities(const QStringList &layoutActivities)
     QStringList valids;
     QStringList allactivities = activities();
 
-    for (auto activity : layoutActivities) {
+    for (const auto &activity : layoutActivities) {
         if (allactivities.contains(activity)) {
             valids << activity;
         }
@@ -453,7 +453,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
     //! remove any other explicit set layouts for the current activity
     QStringList explicits = m_assignedLayouts[activityid];
 
-    for (auto explicitlayoutname : explicits) {
+    for (const auto &explicitlayoutname : explicits) {
         QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
         m_layouts[explicitlayoutid].activities.removeAll(activityid);
@@ -469,7 +469,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
 
     reloadAssignedLayouts();
 
-    for (auto freelayoutname : freelayoutnames) {
+    for (const auto &freelayoutname : freelayoutnames) {
         //! inform free activities layouts that their activities probably changed
         CentralLayout *central = centralLayout(freelayoutname);
 
@@ -633,7 +633,7 @@ void Synchronizer::unloadPreloadedLayouts()
         }
     }
 
-    for (auto lname : preloadednames) {
+    for (const auto &lname : preloadednames) {
         if (!currentnames.contains(lname)) {
             Layouts::Storage::self()->moveToLayoutFile(lname);
         }
@@ -824,7 +824,7 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
             //! remove any other explicit set layouts for the current activity
             QStringList explicits = m_assignedLayouts[currentactivityid];
 
-            for (auto explicitlayoutname : explicits) {
+            for (const auto &explicitlayoutname : explicits) {
                 QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
                 m_layouts[explicitlayoutid].activities.removeAll(currentactivityid);
@@ -841,7 +841,7 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
 
         reloadAssignedLayouts();
 
-        for (auto freelayoutname : freelayoutnames) {
+        for (const auto &freelayoutname : freelayoutnames) {
             //! inform free activities layouts that their activities probably changed
             CentralLayout *central = centralLayout(freelayoutname);
 

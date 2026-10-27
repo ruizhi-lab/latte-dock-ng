@@ -10,7 +10,7 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QMetaType>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 namespace Latte {
 namespace Containment {

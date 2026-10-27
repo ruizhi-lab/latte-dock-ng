@@ -144,7 +144,7 @@ void Factory::reload(const QString &indicatorPath)
     if (!indicatorPath.isEmpty() && indicatorPath != QStringLiteral(".") && indicatorPath != QStringLiteral("..")) {
         QString metadataFile = metadataFileAbsolutePath(indicatorPath);
 
-        if (QFileInfo(metadataFile).exists()) {
+        if (QFileInfo::exists(metadataFile)) {
             KPluginMetaData metadata = readIndicatorMetaData(metadataFile);
 
             if (metadataAreValid(metadata)) {
@@ -162,7 +162,7 @@ void Factory::reload(const QString &indicatorPath)
                     m_plugins[metadata.pluginId()] = metadata;
                 }
 
-                if (QFileInfo(uiFile).exists()
+                if (QFileInfo::exists(uiFile)
                     && (override || !m_pluginUiPaths.contains(metadata.pluginId()))) {
                     m_pluginUiPaths[metadata.pluginId()] = QFileInfo(uiFile).absolutePath();
                 }
@@ -311,7 +311,7 @@ bool Factory::metadataAreValid(KPluginMetaData &metadata)
 
 bool Factory::metadataAreValid(QString &file)
 {
-    if (QFileInfo(file).exists()) {
+    if (QFileInfo::exists(file)) {
         KPluginMetaData metadata = readIndicatorMetaData(file);
         return metadata.isValid();
     }
@@ -332,13 +332,13 @@ QString Factory::metadataFileAbsolutePath(const QString &directoryPath)
 {
     QString metadataFile = directoryPath + QLatin1String("/metadata.json");
 
-    if (QFileInfo(metadataFile).exists()) {
+    if (QFileInfo::exists(metadataFile)) {
         return metadataFile;
     }
 
     metadataFile = directoryPath + QLatin1String("/metadata.desktop");
 
-    if (QFileInfo(metadataFile).exists()) {
+    if (QFileInfo::exists(metadataFile)) {
         return metadataFile;
     }
 
@@ -394,7 +394,7 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
     QString packagePath = archiveTempDir.path();
     QString metadataFile = metadataFileAbsolutePath(archiveTempDir.path());
 
-    if (!QFileInfo(metadataFile).exists()) {
+    if (!QFileInfo::exists(metadataFile)) {
         QDirIterator iter(archiveTempDir.path(), QDir::Dirs | QDir::NoDotAndDotDot);
 
         while (iter.hasNext()) {
@@ -402,7 +402,7 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
 
             QString tempMetadata = metadataFileAbsolutePath(currentPath);
 
-            if (QFileInfo(tempMetadata).exists()) {
+            if (QFileInfo::exists(tempMetadata)) {
                 metadataFile = tempMetadata;
                 packagePath = currentPath;
             }

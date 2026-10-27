@@ -55,7 +55,7 @@ void Resources::setSvgImagePaths(QStringList paths)
             QString adjustedPath = isLocalFile ? m_indicator->uiPath() + QLatin1String("/") + relPath : relPath;
 
             if (!isLocalFile
-                || (isLocalFile && QFileInfo(adjustedPath).exists())) {
+                || (isLocalFile && QFileInfo::exists(adjustedPath))) {
                 svg->setImagePath(adjustedPath);
                 m_svgs << svg;
             }

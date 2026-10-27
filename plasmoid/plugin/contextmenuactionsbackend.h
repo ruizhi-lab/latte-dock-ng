@@ -10,7 +10,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QVariantList>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 // KDE
 #include <KService>

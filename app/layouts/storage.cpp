@@ -154,7 +154,7 @@ bool Storage::isValid(const int &id)
 int Storage::subContainmentId(const KConfigGroup &appletGroup) const
 {
     //! cycle through subcontainments identities
-    for (auto subidentity : m_subIdentities) {
+    for (const auto &subidentity : m_subIdentities) {
         KConfigGroup appletConfigGroup = appletGroup;
 
         if (!subidentity.cfgGroup.isEmpty()) {
@@ -618,7 +618,7 @@ void Storage::moveToLayoutFile(const QString &layoutName)
     QString linkedFilePath = Importer::layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
     QString layoutFilePath = Importer::layoutUserFilePath(layoutName);
 
-    if (linkedFilePath.isEmpty() || layoutFilePath.isEmpty() || !QFileInfo(linkedFilePath).exists() || !QFileInfo(layoutFilePath).exists()) {
+    if (linkedFilePath.isEmpty() || layoutFilePath.isEmpty() || !QFileInfo::exists(linkedFilePath) || !QFileInfo::exists(layoutFilePath)) {
         return;
     }
 
@@ -1867,7 +1867,7 @@ QStringList Storage::storedLayoutsInMultipleFile()
     QStringList layouts;
     QString linkedFilePath = Importer::layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
 
-    if (linkedFilePath.isEmpty() || !QFileInfo(linkedFilePath).exists()) {
+    if (linkedFilePath.isEmpty() || !QFileInfo::exists(linkedFilePath)) {
         return layouts;
     }
 

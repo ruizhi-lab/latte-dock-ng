@@ -1316,7 +1316,7 @@ void GenericLayout::syncLatteViewsToScreens()
         }
     }
 
-    for (auto pendingid : clearpendings) {
+    for (const auto &pendingid : clearpendings) {
         m_pendingContainmentUpdates.remove(pendingid);
     }
 

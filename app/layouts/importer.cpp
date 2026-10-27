@@ -215,13 +215,13 @@ QString Importer::standardPath(QString subPath, bool localfirst)
     for (const auto &pt : paths) {
         QString ptF = pt + QLatin1String("/") + subPath;
 
-        if (QFileInfo(ptF).exists()) {
+        if (QFileInfo::exists(ptF)) {
             return ptF;
         }
     }
 
     //! in any case that above fails
-    if (QFileInfo(QLatin1String("/usr/share/") + subPath).exists()) {
+    if (QFileInfo::exists(QLatin1String("/usr/share/") + subPath)) {
         return QLatin1String("/usr/share/") + subPath;
     }
 
@@ -753,7 +753,7 @@ Latte::MultipleLayouts::Status Importer::multipleLayoutsStatus()
 {
     QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
 
-    if (!QFileInfo(linkedFilePath).exists()) {
+    if (!QFileInfo::exists(linkedFilePath)) {
         return Latte::MultipleLayouts::Uninitialized;
     }
 
@@ -766,7 +766,7 @@ void Importer::setMultipleLayoutsStatus(const Latte::MultipleLayouts::Status &st
 {
     QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
 
-    if (!QFileInfo(linkedFilePath).exists()) {
+    if (!QFileInfo::exists(linkedFilePath)) {
         return;
     }
 

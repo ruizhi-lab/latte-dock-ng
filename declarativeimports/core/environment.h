@@ -12,7 +12,7 @@
 #include <QTimer>
 #include <QVariant>
 #include <QQuickItem>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 
 namespace Latte {

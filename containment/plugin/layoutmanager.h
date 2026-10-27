@@ -16,7 +16,7 @@
 #include <QSet>
 #include <QTimer>
 #include <QVariant>
-#include <QtQml>
+#include <QtQml/qqmlregistration.h>
 
 // Plasma
 // Full definition needed: moc's metatype helpers require the return type of

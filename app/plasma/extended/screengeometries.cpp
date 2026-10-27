@@ -16,7 +16,11 @@
 
 // Qt
 #include <QDebug>
-#include <QtDBus>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusMetaType>
+#include <QDBusPendingCallWatcher>
+#include <QDBusServiceWatcher>
 
 
 #define LATTESERVICE QStringLiteral("org.kde.lattedock")

@@ -1489,7 +1489,7 @@ void Corona::importLayoutFile(const QString &filepath, const QString &suggestedL
     }
 
     //! check out layoutpath existence
-    if (QFileInfo(layoutPath).exists()) {
+    if (QFileInfo::exists(layoutPath)) {
         qCDebug(latteApp) << " Layout is going to be imported and loaded from file :: " << layoutPath << " with suggested name :: " << suggestedLayoutName;
 
         QString importedLayout = m_layoutsManager->importer()->importLayout(layoutPath, suggestedLayoutName);
