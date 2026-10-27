@@ -534,11 +534,11 @@ bool GenericLayout::viewAtLowerScreenPriority(Latte::View *test, Latte::View *ba
         int testPriority = -1;
 
         for (int i = 0; i < qGuiApp->screens().count(); ++i) {
-            if (base->screen() == qGuiApp->screens()[i]) {
+            if (base->screen() == qGuiApp->screens().at(i)) {
                 basePriority = i;
             }
 
-            if (test->screen() == qGuiApp->screens()[i]) {
+            if (test->screen() == qGuiApp->screens().at(i)) {
                 testPriority = i;
             }
         }

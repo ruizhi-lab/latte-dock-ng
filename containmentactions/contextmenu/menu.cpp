@@ -262,13 +262,13 @@ QList<QAction *> Menu::contextualActions()
         {QVariant::fromValue(containment()->id())});
 
         if (reply.type() == QDBusMessage::ReplyMessage && !reply.arguments().isEmpty()) {
-            m_data = reply.arguments().first().toStringList();
+            m_data = reply.arguments().constFirst().toStringList();
         }
 
         QDBusMessage tReply = callLatte(QStringLiteral("viewTemplatesData"));
 
         if (tReply.type() == QDBusMessage::ReplyMessage && !tReply.arguments().isEmpty()) {
-            m_viewTemplates = tReply.arguments().first().toStringList();
+            m_viewTemplates = tReply.arguments().constFirst().toStringList();
         }
     }
 
