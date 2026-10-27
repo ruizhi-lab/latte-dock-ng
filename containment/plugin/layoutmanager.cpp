@@ -728,7 +728,7 @@ QObject *LayoutManager::resolveAppletQuickItemObjectInternal(QObject *applet, QS
         if (hasItemForQObject) {
             foundFromContainment = QMetaObject::invokeMethod(m_plasmoid, "itemFor",
                                    Q_RETURN_ARG(QObject *, itemForResult),
-                                   Q_ARG(QObject *, applet));
+                                   Q_ARG(QObject*, applet));
         }
 
         if (!foundFromContainment && hasItemForVariant) {

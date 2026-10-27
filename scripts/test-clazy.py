@@ -45,6 +45,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "child-event-qobject-cast",
     "connect-by-name",
     "connect-non-signal",
+    "connect-not-normalized",
     "empty-qstringliteral",
     "install-event-filter",
     "lambda-in-connect",
