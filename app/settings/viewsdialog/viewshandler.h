@@ -88,7 +88,7 @@ private Q_SLOTS:
     void onCurrentLayoutIndexChanged(int row);
     void onSelectionChanged();
 
-    void newView(const Data::Generic &templateData);
+    void newView(const Latte::Data::Generic &templateData);
 
 private:
     void init();

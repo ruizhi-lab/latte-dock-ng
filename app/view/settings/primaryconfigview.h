@@ -117,7 +117,7 @@ protected:
 
 private Q_SLOTS:
     void immutabilityChanged(Plasma::Types::ImmutabilityType type);
-    void updateAvailableScreenGeometry(View *origin = nullptr);
+    void updateAvailableScreenGeometry(Latte::View *origin = nullptr);
 
     void showCanvasWindow();
     void hideCanvasWindow();

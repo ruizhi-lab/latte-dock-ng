@@ -127,8 +127,8 @@ Q_SIGNALS:
 
     void currentLayoutIsSwitching(QString layoutName);
 
-    void newLayoutAdded(const Data::Layout &layout);
-    void layoutActivitiesChanged(const Data::Layout &layout);
+    void newLayoutAdded(const Latte::Data::Layout &layout);
+    void layoutActivitiesChanged(const Latte::Data::Layout &layout);
 
 private Q_SLOTS:
     void onActivityRemoved(const QString &activityid);

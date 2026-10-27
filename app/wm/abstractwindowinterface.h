@@ -138,11 +138,14 @@ public:
     Tracker::Windows *windowsTracker() const;
 
 Q_SIGNALS:
-    void activeWindowChanged(WindowId wid);
-    void windowChanged(WindowId winfo);
-    void windowTitleChanged(WindowId wid);
-    void windowAdded(WindowId wid);
-    void windowRemoved(WindowId wid);
+    //! Parameter types are spelled fully qualified (clazy fully-qualified-moc-types): moc keeps the
+    //! spelling as written, so a short name would put the alias "WindowId" into the meta-object
+    //! signature and into every string-based lookup built on it.
+    void activeWindowChanged(Latte::WindowSystem::WindowId wid);
+    void windowChanged(Latte::WindowSystem::WindowId winfo);
+    void windowTitleChanged(Latte::WindowSystem::WindowId wid);
+    void windowAdded(Latte::WindowSystem::WindowId wid);
+    void windowRemoved(Latte::WindowSystem::WindowId wid);
     void currentDesktopChanged();
     void currentActivityChanged();
 
@@ -189,7 +192,7 @@ protected:
 
 private Q_SLOTS:
     void initKWinInterface();
-    void windowRemovedSlot(WindowId wid);
+    void windowRemovedSlot(Latte::WindowSystem::WindowId wid);
 
     void setIsShowingDesktop(const bool &showing);
 

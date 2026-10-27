@@ -120,10 +120,10 @@ public Q_SLOTS:
 private Q_SLOTS:
     void updateInformationFromHistory();
 
-    void applicationDataChanged(const WindowId &wid);
+    void applicationDataChanged(const Latte::WindowSystem::WindowId &wid);
 
-    void windowChanged(const WindowId &wid);
-    void windowRemoved(const WindowId &wid);
+    void windowChanged(const Latte::WindowSystem::WindowId &wid);
+    void windowRemoved(const Latte::WindowSystem::WindowId &wid);
 
 Q_SIGNALS:
     void colorSchemeChanged();

@@ -107,11 +107,11 @@ Q_SIGNALS:
 
     //! overloading WM signals in order to update first m_windows and afterwards
     //! inform consumers for window changes
-    void activeWindowChanged(const WindowId &wid);
-    void windowChanged(const WindowId &wid);
-    void windowRemoved(const WindowId &wid);
+    void activeWindowChanged(const Latte::WindowSystem::WindowId &wid);
+    void windowChanged(const Latte::WindowSystem::WindowId &wid);
+    void windowRemoved(const Latte::WindowSystem::WindowId &wid);
 
-    void applicationDataChanged(const WindowId &wid);
+    void applicationDataChanged(const Latte::WindowSystem::WindowId &wid);
 
 private Q_SLOTS:
     void updateScreenGeometries();

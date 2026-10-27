@@ -40,7 +40,7 @@ public:
     SchemeColors *schemeForFile(const QString &scheme);
 
 Q_SIGNALS:
-    void colorSchemeChanged(const WindowId &wid);
+    void colorSchemeChanged(const Latte::WindowSystem::WindowId &wid);
     void defaultSchemeChanged();
 
 private Q_SLOTS:
