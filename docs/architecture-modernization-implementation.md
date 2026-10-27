@@ -518,6 +518,24 @@ clang-tidy one, a step in the Clang Debug CI job, the testing guide and
 passes on the tree and fails on the fixture in the container; the CI step is in
 the Clang Debug job; no unexplained exclusions.
 
+**Fix slices (`R2c-<check>`):** one check per commit. List its findings with
+`scripts/test-clazy.py --inventory <check>` in the `latte-r2c-clazy:noble`
+container, fix every finding without changing behavior, confirm zero, add
+`autotests/clazy/<check>.cpp` and the name in `GATED_CHECKS`, run the full gate
+in the container and the GCC/Clang Debug builds and CTest on the host, and
+write `docs/modernization-results/R2c-<check>.md`. A reviewed exception may use
+`// clazy:exclude=<check>` with its reason. Sessions that run in parallel take
+disjoint sets of source files, each with its own container build directory; the
+integrating session updates `R2c.md` and the ledger, and one desktop smoke
+follows each merged batch.
+
+**Batch 1:** batch A takes `qfileinfo-exists` (35 locations, 11 files),
+`range-loop-reference` (15, 6) and `no-module-include` (14, 14); batch B takes
+`empty-qstringliteral` (1), `use-static-qregularexpression` (6, 2) and
+`connect-not-normalized` (10, 4), where every new signature string must equal
+`QMetaObject::normalizedSignature()` of the old one. `unused-non-trivial-variable`
+waits for the next batch because its files overlap both.
+
 ## R4: Settings window inputs without context properties
 
 **Scope:** `SubConfigView` and the three windows built on it:
