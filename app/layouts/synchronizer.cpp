@@ -797,8 +797,6 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
         }
     } else if (!validlayoutactivities.isEmpty())  {
         //! set on-explicit activities
-        QStringList allactivities = activities();
-
         if (validlayoutactivities.contains(layoutdata.lastUsedActivity)) {
             switchToActivity = layoutdata.lastUsedActivity;
         } else {

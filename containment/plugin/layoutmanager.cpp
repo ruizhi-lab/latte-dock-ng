@@ -2913,7 +2913,6 @@ QList<int> LayoutManager::toIntList(const QString &serialized)
 
 QString LayoutManager::toStr(const QList<int> &list)
 {
-    QString str;
     QStringList strlist;
 
     for (const auto &num : list) {

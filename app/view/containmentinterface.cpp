@@ -2272,8 +2272,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         return;
     }
 
-    const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
-
     // Check for a pending insertion index set by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler cannot match the Plasma 6
     // signal signature (appletAdded(Plasma::Applet*, const QRectF&) vs the

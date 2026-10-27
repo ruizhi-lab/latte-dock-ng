@@ -914,13 +914,9 @@ void Layouts::reset()
 void Layouts::save()
 {
     //! Update Layouts
-    QStringList knownActivities = m_handler->corona()->layoutsManager()->synchronizer()->activities();
-
     QTemporaryDir layoutTempDir;
 
     qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir.path();
-
-    QString switchToLayout;
 
     QHash<QString, Latte::CentralLayout *> activeLayoutsToRename;
 

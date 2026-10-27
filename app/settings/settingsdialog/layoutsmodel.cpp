@@ -635,7 +635,6 @@ void Layouts::setId(const int &row, const QString &newId)
     QList<int> roles;
     roles << Qt::DisplayRole;
 
-    QString oldId = m_layoutsTable[row].id;
     m_layoutsTable[row].id = newId;
     Q_EMIT dataChanged(index(row, NAMECOLUMN), index(row, NAMECOLUMN), roles);
 }

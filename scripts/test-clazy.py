@@ -73,6 +73,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "skipped-base-method",
     "strict-iterators",
     "temporary-iterator",
+    "unused-non-trivial-variable",
     "use-static-qregularexpression",
     "virtual-signal",
     "writing-to-temporary",

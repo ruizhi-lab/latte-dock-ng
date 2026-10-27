@@ -60,7 +60,6 @@ ScreenPool::~ScreenPool()
 void ScreenPool::load()
 {
     QMap<int, QString> connectorForId = m_connectorForId;
-    QHash<QString, int> idForConnector = m_idForConnector;
 
     m_connectorForId.clear();
     m_idForConnector.clear();

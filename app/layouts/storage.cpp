@@ -1052,8 +1052,6 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
 
         //! split ids to normal registered and conflicted
         for (const auto containment : *layout->containments()) {
-            QString cid = QString::number(containment->id());
-
             for (const auto applet : containment->applets()) {
                 QString aid = QString::number(applet->id());
 
@@ -1152,8 +1150,6 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
 
         //! discover conflicted ids between containments and applets
         for (const auto containment : *layout->containments()) {
-            QString cid = QString::number(containment->id());
-
             for (const auto applet : containment->applets()) {
                 QString aid = QString::number(applet->id());
 

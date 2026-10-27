@@ -377,8 +377,6 @@ void Menu::populateLayouts()
     for (int i = 0; i < layoutsmenulist.count(); ++i) {
         bool isActive = activeNames.contains(layoutsmenulist[i].layoutName);
 
-        QString layoutText = layoutsmenulist[i].layoutName;
-
         bool isCurrent = ((memoryUsage == SingleLayout && isActive)
                           || (memoryUsage == MultipleLayouts && currentNames.contains(layoutsmenulist[i].layoutName)));
 
@@ -416,8 +414,6 @@ void Menu::populateMoveToLayouts()
     LayoutsMemoryUsage memoryUsage = static_cast<LayoutsMemoryUsage>(m_data.value(MEMORYINDEX).toInt());
 
     if (memoryUsage == LayoutsMemoryUsage::MultipleLayouts) {
-        QStringList activeNames = m_data.value(ACTIVELAYOUTSINDEX).split(QStringLiteral(";;"));
-        QStringList currentNames = m_data.value(CURRENTLAYOUTSINDEX).split(QStringLiteral(";;"));
         QString viewLayoutName = m_data.value(VIEWLAYOUTINDEX);
 
         QList<LayoutInfo> layoutsmenulist;
