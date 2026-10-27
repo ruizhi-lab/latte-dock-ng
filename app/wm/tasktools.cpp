@@ -38,7 +38,8 @@ KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
         return KService::Ptr();
     }
 
-    const QStringList commandParts = token.split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts);
+    static const QRegularExpression whitespacePattern(QStringLiteral("\\s+"));
+    const QStringList commandParts = token.split(whitespacePattern, Qt::SkipEmptyParts);
 
     if (!commandParts.isEmpty()) {
         token = commandParts.first();

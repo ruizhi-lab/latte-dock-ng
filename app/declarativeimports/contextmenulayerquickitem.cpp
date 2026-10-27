@@ -545,7 +545,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                 QMetaObject::invokeMethod(layoutMgr,
                                           "hideAppletItem",
                                           Qt::DirectConnection,
-                                          Q_ARG(QObject *, applet));
+                                          Q_ARG(QObject*, applet));
                 // Both connections clean each other up via the shared pointers.
                 auto undoConn = std::make_shared<QMetaObject::Connection>();
                 auto destroyConn = std::make_shared<QMetaObject::Connection>();
@@ -559,7 +559,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                         QMetaObject::invokeMethod(layoutMgr,
                                                   "showAppletItem",
                                                   Qt::DirectConnection,
-                                                  Q_ARG(QObject *, applet));
+                                                  Q_ARG(QObject*, applet));
                     }
 
                     QObject::disconnect(*undoConn);
@@ -574,7 +574,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                         QMetaObject::invokeMethod(layoutMgr,
                                                   "removeAppletItem",
                                                   Qt::DirectConnection,
-                                                  Q_ARG(QObject *, applet));
+                                                  Q_ARG(QObject*, applet));
                     }
 
                     QObject::disconnect(*undoConn);

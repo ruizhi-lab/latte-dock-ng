@@ -1574,7 +1574,7 @@ void View::updatePlasmoidDrag()
                         : m_lastPlasmoidDragPos;
 
     QMetaObject::invokeMethod(lm, "insertAtCoordinates",
-                              Q_ARG(QQuickItem *, dndSpacer),
+                              Q_ARG(QQuickItem*, dndSpacer),
                               Q_ARG(int, (int)mappedPos.x()),
                               Q_ARG(int, (int)mappedPos.y()));
 }
@@ -1611,7 +1611,7 @@ void View::handlePlasmoidDrop(QDropEvent *de)
                                 : QPointF(eventx, eventy);
 
             QMetaObject::invokeMethod(lm, "insertAtCoordinates",
-                                      Q_ARG(QQuickItem *, dndSpacer),
+                                      Q_ARG(QQuickItem*, dndSpacer),
                                       Q_ARG(int, (int)mappedPos.x()),
                                       Q_ARG(int, (int)mappedPos.y()));
 

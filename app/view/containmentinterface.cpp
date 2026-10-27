@@ -1126,7 +1126,7 @@ void ContainmentInterface::addApplet(QObject *metadata, int x, int y)
     QMetaMethod processmethod = m_plasmoid->metaObject()->method(processmimedataindex);
     suppressNextAppletCreatedSignal();
     const bool invoked = processmethod.invoke(m_plasmoid,
-                         Q_ARG(QObject *, metadata),
+                         Q_ARG(QObject*, metadata),
                          Q_ARG(int, x),
                          Q_ARG(int, y));
 
@@ -2290,7 +2290,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
             // type is defined in the containment plugin, not linked directly.
             QMetaObject::invokeMethod(m_layoutManager,
                                       "addAppletItem",
-                                      Q_ARG(QObject *, applet),
+                                      Q_ARG(QObject*, applet),
                                       Q_ARG(int, index));
         } else {
             // No drag-drop index. The QML handler never fires in Plasma 6,
@@ -2305,7 +2305,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                     int defaultIndex = calculateDefaultAppletInsertionIndex(order);
                     QMetaObject::invokeMethod(m_layoutManager,
                                               "addAppletItem",
-                                              Q_ARG(QObject *, applet),
+                                              Q_ARG(QObject*, applet),
                                               Q_ARG(int, defaultIndex));
                 }
             }
@@ -2469,7 +2469,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                     QMetaObject::invokeMethod(m_layoutManager,
                                               "showAppletItem",
                                               Qt::DirectConnection,
-                                              Q_ARG(QObject *, applet));
+                                              Q_ARG(QObject*, applet));
                 }
             });
 

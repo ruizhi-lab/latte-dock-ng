@@ -79,7 +79,7 @@ void ActionsHandler::initItems()
 
     itemid = Latte::Data::ContextMenu::SEPARATOR1ACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("")),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon(),
         i18n(" --- separator --- "),
         itemindex,
         itemid);
