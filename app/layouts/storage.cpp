@@ -154,7 +154,7 @@ bool Storage::isValid(const int &id)
 int Storage::subContainmentId(const KConfigGroup &appletGroup) const
 {
     //! cycle through subcontainments identities
-    for (auto subidentity : m_subIdentities) {
+    for (const auto &subidentity : m_subIdentities) {
         KConfigGroup appletConfigGroup = appletGroup;
 
         if (!subidentity.cfgGroup.isEmpty()) {

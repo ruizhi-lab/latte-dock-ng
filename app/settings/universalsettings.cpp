@@ -78,7 +78,7 @@ void UniversalSettings::load()
 
     QStringList colorsScriptPaths = Layouts::Importer::standardPathsFor(KWINCOLORSSCRIPT);
 
-    for (auto path : colorsScriptPaths) {
+    for (const auto &path : colorsScriptPaths) {
         KDirWatch::self()->addDir(path);
     }
 

@@ -315,7 +315,7 @@ void Menu::updateVisibleActions()
     bool configuring = containment()->isUserConfiguring();
 
     // normal actions that the user can specify their visibility
-    for (auto actionName : m_actions.keys()) {
+    for (const auto &actionName : m_actions.keys()) {
         if (Latte::Data::ContextMenu::ACTIONSSPECIAL.contains(actionName)) {
             continue;
         } else if (Latte::Data::ContextMenu::ACTIONSALWAYSHIDDEN.contains(actionName)) {
@@ -343,7 +343,7 @@ void Menu::updateVisibleActions()
     }
 
     // because sometimes they are disabled unexpectedly, we should reenable them
-    for (auto actionName : m_actions.keys()) {
+    for (const auto &actionName : m_actions.keys()) {
         m_actions[actionName]->setEnabled(true);
     }
 }
