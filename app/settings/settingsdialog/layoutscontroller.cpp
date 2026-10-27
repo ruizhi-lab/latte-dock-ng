@@ -202,7 +202,7 @@ QString Layouts::colorPath(const QString color) const
 {
     QString path = m_iconsPath + color + QLatin1String("print.jpg");
 
-    if (!QFileInfo(path).exists()) {
+    if (!QFileInfo::exists(path)) {
         return m_iconsPath + QLatin1String("blueprint.jpg");
     }
 

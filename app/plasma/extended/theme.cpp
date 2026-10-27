@@ -189,7 +189,7 @@ void Theme::updateDefaultScheme()
 {
     QString defaultFilePath = m_extendedThemeDir.path() + QLatin1String("/") + DEFAULTCOLORSCHEME;
 
-    if (QFileInfo(defaultFilePath).exists()) {
+    if (QFileInfo::exists(defaultFilePath)) {
         QFile(defaultFilePath).remove();
     }
 
@@ -230,7 +230,7 @@ void Theme::updateReversedScheme()
 {
     QString reversedFilePath = m_extendedThemeDir.path() + QLatin1String("/") + REVERSEDCOLORSCHEME;
 
-    if (QFileInfo(reversedFilePath).exists()) {
+    if (QFileInfo::exists(reversedFilePath)) {
         QFile(reversedFilePath).remove();
     }
 
@@ -378,7 +378,7 @@ void Theme::loadThemePaths()
     //! assign color schemes
     QString themeColorScheme = m_themePath + QLatin1String("/colors");
 
-    if (QFileInfo(themeColorScheme).exists()) {
+    if (QFileInfo::exists(themeColorScheme)) {
         setOriginalSchemeFile(themeColorScheme);
     } else {
         //! when plasma theme uses the kde colors

@@ -276,7 +276,7 @@ void AbstractLayout::loadConfig()
         m_schemeFile = QDir::homePath() + m_schemeFile;
     }
 
-    m_schemeFile = m_schemeFile.isEmpty() || !QFileInfo(m_schemeFile).exists() ? Data::Layout::DEFAULTSCHEMEFILE : m_schemeFile;
+    m_schemeFile = m_schemeFile.isEmpty() || !QFileInfo::exists(m_schemeFile) ? Data::Layout::DEFAULTSCHEMEFILE : m_schemeFile;
 
     Q_EMIT schemeFileChanged();
 

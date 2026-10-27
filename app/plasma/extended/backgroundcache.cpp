@@ -475,7 +475,7 @@ void BackgroundCache::cleanupHashes()
 
 void BackgroundCache::setBackgroundFromBroadcast(QString activity, QString screen, QString filename)
 {
-    if (QFileInfo(filename).exists()) {
+    if (QFileInfo::exists(filename)) {
         setBroadcastedBackgroundsEnabled(activity, screen, true);
         m_backgrounds[activity][screen] = filename;
         Q_EMIT backgroundChanged(activity, screen);

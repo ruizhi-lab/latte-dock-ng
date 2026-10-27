@@ -55,6 +55,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "qdatetime-utc",
     "qdeleteall",
     "qenums",
+    "qfileinfo-exists",
     "qgetenv",
     "qhash-namespace",
     "qlatin1string-non-ascii",
