@@ -957,14 +957,14 @@ void LayoutManager::applyTrashKeepOriginalColorsMigration()
     QList<int> trashIds;
     QList<QObject *> applets;
     if (auto containment = containmentObject()) {
-        for (auto *applet : containment->applets()) {
+        for (const auto containmentApplets = containment->applets(); auto *applet : containmentApplets) {
             applets << applet;
         }
     } else {
         applets = plasmoidApplets();
     }
 
-    for (QObject *applet : applets) {
+    for (QObject *applet : std::as_const(applets)) {
         if (isTrashWidget(applet)) {
             const int id = appletId(applet);
 
@@ -977,7 +977,7 @@ void LayoutManager::applyTrashKeepOriginalColorsMigration()
     if (!trashIds.isEmpty()) {
         QList<int> applets = m_userBlocksColorizingApplets;
 
-        for (int trashId : trashIds) {
+        for (int trashId : std::as_const(trashIds)) {
             if (!applets.contains(trashId)) {
                 applets << trashId;
             }
@@ -1057,7 +1057,7 @@ QString LayoutManager::appletIcon(QObject *applet) const
     }
 
     if (auto containment = containmentObject()) {
-        for (Plasma::Applet *candidate : containment->applets()) {
+        for (const auto applets = containment->applets(); Plasma::Applet *candidate : applets) {
             if (candidate && static_cast<int>(candidate->id()) == id) {
                 return candidate->icon();
             }
@@ -1190,7 +1190,7 @@ void LayoutManager::restore()
     // can exist before all their Quick items do; treating that partial UI as
     // the saved membership drops late applets and their color/zoom preferences.
     bool missingStoredApplet{ false };
-    for (const int id : appletIdsOrder) {
+    for (const int id : std::as_const(appletIdsOrder)) {
         if (id > 0 && !isValidApplet(id)) {
             missingStoredApplet = true;
             break;
@@ -1204,7 +1204,7 @@ void LayoutManager::restore()
     }
 
     if (appletIdsOrder.isEmpty() && !applets.isEmpty()) {
-        for (QObject *applet : applets) {
+        for (QObject *applet : std::as_const(applets)) {
             const int currentAppletId = appletId(applet);
 
             if (currentAppletId > 0) {
@@ -1543,7 +1543,7 @@ void LayoutManager::save()
     // the persisted order while a live backend still lacks its visual item.
     // Otherwise the next restart cannot recover that applet's original slot.
     if (auto containment = containmentObject()) {
-        for (const auto *applet : containment->applets()) {
+        for (const auto applets = containment->applets(); const auto *applet : applets) {
             if (!applet->destroyed() && !appletIds.contains(static_cast<int>(applet->id()))) {
                 return;
             }
@@ -2100,7 +2100,7 @@ bool LayoutManager::repairAppletContainers()
         return false;
     }
 
-    for (QObject *applet : applets) {
+    for (QObject *applet : std::as_const(applets)) {
         const int id = appletId(applet);
 
         if (id <= 0) {
@@ -2221,7 +2221,7 @@ void LayoutManager::cleanupOptions()
     QList<int> existingAppletIds = m_appletOrder;
     if (auto containment = containmentObject()) {
         existingAppletIds.clear();
-        for (const auto *applet : containment->applets()) {
+        for (const auto applets = containment->applets(); const auto *applet : applets) {
             existingAppletIds << static_cast<int>(applet->id());
         }
     }
@@ -2799,7 +2799,7 @@ void LayoutManager::destroyJustifySplitters()
         }
     }
 
-    for (QQuickItem *splitter : splittersToDelete) {
+    for (QQuickItem *splitter : std::as_const(splittersToDelete)) {
         splitter->deleteLater();
     }
 }
@@ -2904,7 +2904,7 @@ QList<int> LayoutManager::toIntList(const QString &serialized)
     QStringList items = serialized.split(QLatin1Char(';'));
     items.removeAll(QString());
 
-    for (const auto &item : items) {
+    for (const auto &item : std::as_const(items)) {
         list << item.toInt();
     }
 

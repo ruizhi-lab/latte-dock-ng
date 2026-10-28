@@ -412,7 +412,7 @@ void Positioner::reconsiderScreen()
     qCDebug(latteView) << "reconsiderScreen() called...";
     qCDebug(latteView) << "  Delayer  ";
 
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         qCDebug(latteView) << "      D, found screen: " << scr->name();
     }
 
@@ -420,7 +420,7 @@ void Positioner::reconsiderScreen()
     QScreen *primaryScreen{m_corona->screenPool()->primaryScreen()};
 
     //!check if the associated screen is running
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         if (m_screenNameToFollow == scr->name()
             || (m_view->onPrimary() && scr == primaryScreen)) {
             screenExists = true;
@@ -444,7 +444,7 @@ void Positioner::reconsiderScreen()
         //! 2.an explicit dock must be always on the correct associated screen
         //! there are cases that window manager misplaces the dock, this function
         //! ensures that this dock will return at its correct screen
-        for (const auto scr : qGuiApp->screens()) {
+        for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
             if (scr && scr->name() == m_screenNameToFollow) {
                 qCDebug(latteView) << "reached case 2: updating the explicit screen for dock...";
                 setScreenToFollow(scr);
@@ -1036,7 +1036,7 @@ void Positioner::initSignalingForLocationChangeSliding()
             m_nextScreen = m_corona->screenPool()->primaryScreen();
 
             if (!nextonprimary) {
-                for (const auto scr : qGuiApp->screens()) {
+                for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
                     if (scr && scr->name() == m_nextScreenName) {
                         m_nextScreen = scr;
                         break;

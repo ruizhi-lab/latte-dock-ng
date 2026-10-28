@@ -443,11 +443,11 @@ QRegion Effects::maskCombinedRegion()
 {
     QRegion region = m_mask;
 
-    for (const auto &subregion : m_subtractedMaskRegions) {
+    for (const auto &subregion : std::as_const(m_subtractedMaskRegions)) {
         region = region.subtracted(subregion);
     }
 
-    for (const auto &subregion : m_unitedMaskRegions) {
+    for (const auto &subregion : std::as_const(m_unitedMaskRegions)) {
         region = region.united(subregion);
     }
 

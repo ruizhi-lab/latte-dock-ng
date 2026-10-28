@@ -168,7 +168,7 @@ void OriginalView::setNextLocationForClones(const QString layoutName, int edge, 
         return;
     }
 
-    for (const auto clone : m_clones) {
+    for (const auto clone : std::as_const(m_clones)) {
         clone->positioner()->setNextLocation(layoutName, Latte::Types::SingleScreenGroup, QString(), edge, alignment);
     }
 }
@@ -183,7 +183,7 @@ void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid)
     extendedInterface()->addApplet(pluginId);
 
     // add applet in clones and exclude the one that probably produced this triggering
-    for (const auto clone : m_clones) {
+    for (const auto clone : std::as_const(m_clones)) {
         if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;
@@ -203,7 +203,7 @@ void OriginalView::addApplet(QObject *mimedata, const int &x, const int &y, cons
     extendedInterface()->addApplet(mimedata, x, y);
 
     // add applet in clones and exclude the one that probably produced this triggering
-    for (const auto clone : m_clones) {
+    for (const auto clone : std::as_const(m_clones)) {
         if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;
@@ -222,11 +222,8 @@ void OriginalView::syncClonesToScreens()
 
     QList<int> secondaryscreens = m_corona->screenPool()->secondaryScreenIds();
 
-    for (const auto scrid : secondaryscreens) {
-        if (m_waitingCreation.contains(scrid)) {
-            secondaryscreens.removeAll(scrid);
-        }
-    }
+    //! Removes every waiting screen in one pass; erasing inside a range-for skips the id after each erased one.
+    secondaryscreens.removeIf([this](int scrid) { return m_waitingCreation.contains(scrid); });
 
     if (m_screensGroup == Latte::Types::AllSecondaryScreensGroup) {
         //! occupied screen from original view in "allsecondaryscreensgroup" must be ignored
@@ -235,7 +232,7 @@ void OriginalView::syncClonesToScreens()
 
     QList<Latte::ClonedView *> removable;
 
-    for (const auto clone : m_clones) {
+    for (const auto clone : std::as_const(m_clones)) {
         if (secondaryscreens.contains(clone->positioner()->currentScreenId())) {
             // do nothing valid clone
             secondaryscreens.removeAll(clone->positioner()->currentScreenId());
@@ -245,7 +242,7 @@ void OriginalView::syncClonesToScreens()
         }
     }
 
-    for (const auto scrid : secondaryscreens) {
+    for (const auto scrid : std::as_const(secondaryscreens)) {
         if (removable.count() > 0) {
             //! move deprecated and available clone to valid secondary screen
             auto clone = removable.takeFirst();
@@ -256,7 +253,7 @@ void OriginalView::syncClonesToScreens()
         }
     }
 
-    for (auto removableclone : removable) {
+    for (auto removableclone : std::as_const(removable)) {
         //! remove deprecated clones
         removeClone(removableclone);
     }

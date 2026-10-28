@@ -1398,7 +1398,7 @@ void SourceContractTest::viewDestructorDropsPointerWindowTrackingConnections()
     QVERIFY(destructor >= 0);
 
     const int removeEventFilter = src.indexOf(QStringLiteral("qApp->removeEventFilter(this);"), destructor);
-    const int loopStart = src.indexOf(QStringLiteral("for (QWindow *window : m_pointerWindows) {"), removeEventFilter);
+    const int loopStart = src.indexOf(QStringLiteral("for (QWindow *window : std::as_const(m_pointerWindows)) {"), removeEventFilter);
     const int windowDisconnect = src.indexOf(QStringLiteral(
             "disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);"),
             loopStart);

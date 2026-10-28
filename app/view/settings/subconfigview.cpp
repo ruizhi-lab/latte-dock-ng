@@ -117,11 +117,11 @@ SubConfigView::~SubConfigView()
         m_corona->wm()->unregisterIgnoredWindow(m_waylandWindowId);
     }
 
-    for (const auto &var : connections) {
+    for (const auto &var : std::as_const(connections)) {
         QObject::disconnect(var);
     }
 
-    for (const auto &var : viewconnections) {
+    for (const auto &var : std::as_const(viewconnections)) {
         QObject::disconnect(var);
     }
 }
@@ -219,7 +219,7 @@ void SubConfigView::setParentView(Latte::View *view, const bool &)
 
 void SubConfigView::initParentView(Latte::View *view)
 {
-    for (const auto &var : viewconnections) {
+    for (const auto &var : std::as_const(viewconnections)) {
         QObject::disconnect(var);
     }
 

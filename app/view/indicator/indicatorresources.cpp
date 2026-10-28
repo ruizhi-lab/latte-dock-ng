@@ -46,7 +46,7 @@ void Resources::setSvgImagePaths(QStringList paths)
         svg->deleteLater();
     }
 
-    for (const auto &relPath : paths) {
+    for (const auto &relPath : std::as_const(paths)) {
         if (!relPath.isEmpty()) {
             KSvg::Svg *svg = new KSvg::Svg(this);
 
