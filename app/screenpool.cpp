@@ -47,7 +47,7 @@ void ScreenPool::load()
     m_screensTable.clear();
 
     //restore the known ids to connector mappings
-    for (const QString &key : m_configGroup.keyList()) {
+    for (const auto keys = m_configGroup.keyList(); const QString &key : keys) {
         if (key.toInt() <= 0) {
             continue;
         }
@@ -68,7 +68,7 @@ void ScreenPool::load()
     // containment->screen() will return an incorrect -1
     // at startup, if it' asked before corona::addOutput()
     // is performed, driving to the creation of a new containment
-    for (QScreen *screen : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); QScreen *screen : screens) {
         onScreenRemoved(screen);
 
         if (!m_screensTable.containsName(screen->name())) {
@@ -169,7 +169,7 @@ QList<int> ScreenPool::secondaryScreenIds() const
 
     QScreen *primary{primaryScreen()};
 
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         if (scr == primary) {
             continue;
         }
@@ -213,7 +213,7 @@ void ScreenPool::insertScreenMapping(const QString &connector)
     screenRecord.name = connector;
 
     //! update screen geometry
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         if (scr->name() == connector) {
             screenRecord.geometry = scr->geometry();
             break;
@@ -262,7 +262,7 @@ bool ScreenPool::isScreenActive(int screenId) const
     if (hasScreenId(screenId)) {
         QString scrName = connector(screenId);
 
-        for (const auto scr : qGuiApp->screens()) {
+        for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
             if (scr->name() == scrName) {
                 return true;
             }

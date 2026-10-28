@@ -476,7 +476,7 @@ void TabLayouts::downloadLayout()
 
     if (!changedEntries.isEmpty()) {
         for (const auto &entry : changedEntries) {
-            for (const auto &entryFile : entry.installedFiles()) {
+            for (const auto installedFiles = entry.installedFiles(); const auto &entryFile : installedFiles) {
                 Latte::Layouts::Importer::LatteFileVersion version = Latte::Layouts::Importer::fileVersion(entryFile);
 
                 if (version == Latte::Layouts::Importer::LayoutVersion2) {

@@ -58,7 +58,8 @@ QStringList AlternativesHelper::appletProvides() const
     if (val.isArray()) {
         QStringList result;
 
-        for (const auto &v : val.toArray()) result << v.toString();
+        for (const auto jsonArray = val.toArray(); const auto &v : jsonArray)
+            result << v.toString();
 
         return result;
     }

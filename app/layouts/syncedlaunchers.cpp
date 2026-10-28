@@ -155,7 +155,7 @@ void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launche
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("addSyncedLauncher(QVariant,QVariant)");
 
@@ -175,7 +175,7 @@ void SyncedLaunchers::removeLauncher(QString layoutName, uint senderId, int laun
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("removeSyncedLauncher(QVariant,QVariant)");
 
@@ -195,7 +195,7 @@ void SyncedLaunchers::addLauncherToActivity(QString layoutName, uint senderId, i
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("addSyncedLauncherToActivity(QVariant,QVariant,QVariant)");
 
@@ -215,7 +215,7 @@ void SyncedLaunchers::removeLauncherFromActivity(QString layoutName, uint sender
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("removeSyncedLauncherFromActivity(QVariant,QVariant,QVariant)");
 
@@ -235,7 +235,7 @@ void SyncedLaunchers::urlsDropped(QString layoutName, uint senderId, int launche
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("dropSyncedUrls(QVariant,QVariant)");
 
@@ -255,7 +255,7 @@ void SyncedLaunchers::validateLaunchersOrder(QString layoutName, uint senderId, 
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
-    for (const auto c : clients(lName, senderId, group, launcherGroupId)) {
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         auto tc = client(senderId);
 
         if (c != tc) {

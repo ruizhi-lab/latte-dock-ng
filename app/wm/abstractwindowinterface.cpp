@@ -153,7 +153,7 @@ bool AbstractWindowInterface::isFullScreenWindow(const QRect &wGeometry) const
         return false;
     }
 
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         const auto screenGeometry = scr->geometry();
 
         if (wGeometry == screenGeometry) {
@@ -173,7 +173,7 @@ bool AbstractWindowInterface::isPlasmaPanel(const QRect &wGeometry) const
     bool isTouchingHorizontalEdge{false};
     bool isTouchingVerticalEdge{false};
 
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         const auto screenGeometry = scr->geometry();
 
         if (screenGeometry.contains(wGeometry.center())) {
@@ -208,7 +208,7 @@ bool AbstractWindowInterface::isSidepanel(const QRect &wGeometry) const
 
     QRect screenGeometry;
 
-    for (const auto scr : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto scr : screens) {
         const auto curScrGeometry = scr->geometry();
 
         if (curScrGeometry.contains(wGeometry.center())) {

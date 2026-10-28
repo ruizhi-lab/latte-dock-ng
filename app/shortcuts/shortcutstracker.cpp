@@ -156,7 +156,7 @@ void ShortcutsTracker::clearAllAppletShortcuts()
 {
     KConfigGroup latteGroup = KConfigGroup(m_shortcutsConfigPtr, QStringLiteral("lattedock"));
 
-    for (const auto &key : latteGroup.keyList()) {
+    for (const auto keys = latteGroup.keyList(); const auto &key : keys) {
         if (key.startsWith(APPLETSHORTCUTKEY)) {
             QAction *appletAction = new QAction(this);
 

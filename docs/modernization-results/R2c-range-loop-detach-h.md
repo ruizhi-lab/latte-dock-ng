@@ -1,11 +1,12 @@
-# R2c-range-loop-detach-h: Range Loops Iterate a Const View Where the Body Does Not Modify the Container
+# R2c-range-loop-detach-h: Range Loops Iterate a Const View or a Const Local
 
 Status: Pending validation. Part of [R2c](R2c.md) fix batch 3, group H: the
 second group of the `range-loop-detach` slice, 20 files and 65 of its 274
-findings. Date: 2026-10-29. Branch: `claude/r2c-batch-h-065380`. Start HEAD:
-`95e342f72` (`main`). Implementation commit: the commit that adds this report.
-Not pushed. The gate does not yet include `range-loop-detach`; the main session
-adds it after all groups are merged.
+findings. Two commits on `claude/r2c-batch-h-065380`: `d8b07b428` wraps 23 loops
+in `std::as_const()`; the second commit (the one that rewrites the other 42 loops
+and updates this report) follows the main session's decision. Date: 2026-10-29.
+Start HEAD: `95e342f72` (`main`). Not pushed. The gate does not yet include
+`range-loop-detach`; the main session adds it after all groups are merged.
 
 ## Defect
 
@@ -19,24 +20,33 @@ value.
 
 ## Fix
 
-- **23 loops wrapped.** Each `for (... : container)` became
+- **23 loops wrapped (first commit).** Each `for (... : container)` became
   `for (... : std::as_const(container))`. No body in this group modifies the
   container it iterates (table below), and every loop variable is a `const`
   reference or a copy, so the wrapped loop compiles and iterates the same
   elements in the same order.
-- **42 loops not wrapped.** Their range is a call that returns a container by
-  value. `std::as_const` cannot bind a temporary (its rvalue overload is
-  deleted), and the brief says to report these rather than hoist them. See
-  "Left unchanged".
+- **42 loops rewritten (second commit).** Each range is a call that returns a
+  container by value, and `std::as_const` cannot bind a temporary (its rvalue
+  overload is deleted). Each header now declares a const local that holds the
+  call result, in a C++20 range-for init-statement:
+  `for (const auto NAME = CALL; DECL : NAME)`. The local is const, so the loop
+  uses a const `begin()`; its lifetime is the loop's, as the temporary's was; the
+  call runs once, at the same point. The loop variable and the body are unchanged.
+  The main session decided on this form instead of a `clazy:exclude`. The table
+  is under "Rewritten loops".
 - **0 loops left unchanged for mutation.** None of the 65 flagged loops binds a
-  non-const reference, and none of the 23 bodies writes to the container it
-  iterates.
-- **Diff rule.** The only changes are the wraps. The brief's wrap-only check
-  (`only-wrap.py`, a scratch script, not committed) prints nothing, and `git diff --stat`
-  shows 7 files with 23 insertions and 23 deletions. No include was added; the
-  container build compiled all seven files without one.
+  non-const reference, and no wrapped or rewritten body writes to the container
+  it iterates.
+- **Diff rules.** The first commit is wrap-only: the brief's check
+  (`only-wrap.py`, a scratch script, not committed) prints nothing, and
+  `git diff --stat` shows 23 insertions and 23 deletions. The second commit
+  rewrites 42 `for` headers and splits one single-line loop after its header
+  (`alternativeshelper.cpp`), and it puts spaces inside three braced lists in
+  `knscompat.cpp`; clang-format asked for these on lines the batch changes. A
+  script checks that each rewritten header, once the local and those spaces are
+  removed, equals the original. No include was added.
 
-### Changed loops
+### Wrapped loops (first commit, `d8b07b428`)
 
 | File:line | Container | Why the body does not modify it |
 | --- | --- | --- |
@@ -70,49 +80,68 @@ snapshot loops of `windowstracker.cpp` (`cleanupFaultyWindows()`,
 `updateExtraViewHints()`) do. Without a copy, the const view keeps walking the
 old data and the body's writes are invisible to it.
 
-## Left unchanged
+## Rewritten loops (second commit)
 
-### Range is a call returning by value (42): the main session decides
+Decision: the main session. Its brief asked for the form below instead of
+reporting these loops or excluding them with `clazy:exclude`. Each header now
+reads `for (const auto NAME = CALL; DECL : NAME)`; `DECL` and the body are the
+same as before. Each name is the noun of the call's result, and no loop body uses
+its name, so no body sees a different binding (checked for every loop). None of
+the 42 calls returns a reference, so no loop was left out for that reason.
 
-`std::as_const` cannot bind a temporary, so these loops are reported, not
-wrapped, as the brief requires. Two options for the main session, neither applied
-here:
+The local keeps the call's result for the length of the loop, so the iteration is
+over the same elements as before. A result that shares its data with the object
+it came from shares that data through Qt's implicit sharing: a body that changes
+the object detaches the object, not the local, and the loop keeps walking the
+elements the result held. A list the call builds fresh is not shared, and
+nothing changes for it.
 
-1. Hoist the call into a `const` local and iterate it, for example
-   `const auto actions = desktopMenu->actions();` then
-   `for (auto action : std::as_const(actions))`. The loop body, order and elements
-   are unchanged. The hoist is not a wrap, so it needs its own approval. When the
-   returned copy shares data with its owner, the non-const `begin()` detaches it,
-   and a const local does not. Whether a given call shares data depends on its
-   implementation, so the main session should check each call.
-2. For a list the function builds fresh (`QDir::entryList()`, `QString::split()`,
-   `KConfigGroup::keyList()`), the returned list is not shared and the non-const
-   `begin()` does not copy it. A reviewed `// clazy:exclude=range-loop-detach` with
-   that reason is then an option.
-
-| File | Lines | Range expression |
+| File:line | Call | Local |
 | --- | --- | --- |
-| `app/shortcuts/globalshortcuts.cpp` | 495 | `currentLayouts()` (`LayoutsManager`, returns `QList<CentralLayout *>`) |
-| `app/knscompat.cpp` | 239, 304, 478, 590, 596, 609, 620, 660 | `QString::split()`, `systemQmlBaseCandidates()`, six `QDir::entryList()` calls |
-| `app/declarativeimports/contextmenulayerquickitem.cpp` | 257, 286, 395, 418, 445, 519, 648 | `applets()`, `childItems()` (twice), `actions()` (twice), `contextualActions()`, `containments()` |
-| `app/layouts/syncedlaunchers.cpp` | 158, 178, 198, 218, 238, 258 | `clients(lName, senderId, group, launcherGroupId)` (six calls) |
-| `app/screenpool.cpp` | 50, 71, 172, 216, 265 | `m_configGroup.keyList()`, `qGuiApp->screens()` (four calls) |
-| `app/plasma/extended/screengeometries.cpp` | 126, 200, 227 | `qGuiApp->screens()` |
-| `app/settings/settingsdialog/delegates/activitiesdelegate.cpp` | 171, 260, 373 | `button->menu()->actions()` |
-| `app/wm/abstractwindowinterface.cpp` | 156, 176, 211 | `qGuiApp->screens()` |
-| `app/alternativeshelper.cpp` | 61 | `val.toArray()` (`QJsonArray`) |
-| `app/plasma/extended/backgroundcache.cpp` | 136 | `plasmaConfigContainments.groupList()` |
-| `app/plasma/extended/screenpool.cpp` | 71 | `m_screensGroup.keyList()` |
-| `app/plasma/extended/theme.cpp` | 258 | `reversedPtr->groupList()` |
-| `app/shortcuts/shortcutstracker.cpp` | 159 | `latteGroup.keyList()` |
-| `app/settings/settingsdialog/tablayoutshandler.cpp` | 479 | `entry.installedFiles()` |
+| `app/shortcuts/globalshortcuts.cpp:495` | `m_corona->layoutsManager()->currentLayouts()` | `layouts` |
+| `app/knscompat.cpp:239` | `paths.split(QDir::listSeparator(), Qt::SkipEmptyParts)` | `parts` |
+| `app/knscompat.cpp:304` | `systemQmlBaseCandidates()` | `candidates` |
+| `app/knscompat.cpp:478` | `srcDir.entryList(QDir::Files \| QDir::Dirs \| QDir::NoDotAndDotDot)` | `entries` |
+| `app/knscompat.cpp:590` | `sysDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)` | `entries` |
+| `app/knscompat.cpp:596` | `sysPriv.entryList(privFilter, QDir::Files)` | `entries` |
+| `app/knscompat.cpp:609` | `nsDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)` | `entries` |
+| `app/knscompat.cpp:620` | `nsPriv.entryList(QDir::Filters(QDir::Files \| QDir::Dirs \| QDir::NoDotAndDotDot))` | `privEntries` (the body declares `entries`) |
+| `app/knscompat.cpp:660` | `scDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)` | `entries` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:257` | `m_latteView->containment()->applets()` | `applets` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:286` | `p->childItems()` | `childItems` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:395` | `desktopMenu->actions()` | `actions` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:418` | `m_latteView->contentItem()->childItems()` | `childItems` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:445` | `applet->contextualActions()` | `contextualActions` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:519` | `containmentAction->menu()->actions()` | `actions` |
+| `app/declarativeimports/contextmenulayerquickitem.cpp:648` | `m_latteView->corona()->containments()` | `containments` |
+| `app/layouts/syncedlaunchers.cpp:158` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/layouts/syncedlaunchers.cpp:178` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/layouts/syncedlaunchers.cpp:198` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/layouts/syncedlaunchers.cpp:218` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/layouts/syncedlaunchers.cpp:238` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/layouts/syncedlaunchers.cpp:258` | `clients(lName, senderId, group, launcherGroupId)` | `matchingClients` |
+| `app/screenpool.cpp:50` | `m_configGroup.keyList()` | `keys` |
+| `app/screenpool.cpp:71` | `qGuiApp->screens()` | `screens` |
+| `app/screenpool.cpp:172` | `qGuiApp->screens()` | `screens` |
+| `app/screenpool.cpp:216` | `qGuiApp->screens()` | `screens` |
+| `app/screenpool.cpp:265` | `qGuiApp->screens()` | `screens` |
+| `app/plasma/extended/screengeometries.cpp:126` | `qGuiApp->screens()` | `screens` |
+| `app/plasma/extended/screengeometries.cpp:200` | `qGuiApp->screens()` | `screens` |
+| `app/plasma/extended/screengeometries.cpp:227` | `qGuiApp->screens()` | `screens` |
+| `app/settings/settingsdialog/delegates/activitiesdelegate.cpp:171` | `button->menu()->actions()` | `actions` |
+| `app/settings/settingsdialog/delegates/activitiesdelegate.cpp:260` | `button->menu()->actions()` | `actions` |
+| `app/settings/settingsdialog/delegates/activitiesdelegate.cpp:373` | `button->menu()->actions()` | `actions` |
+| `app/wm/abstractwindowinterface.cpp:156` | `qGuiApp->screens()` | `screens` |
+| `app/wm/abstractwindowinterface.cpp:176` | `qGuiApp->screens()` | `screens` |
+| `app/wm/abstractwindowinterface.cpp:211` | `qGuiApp->screens()` | `screens` |
+| `app/alternativeshelper.cpp:61` | `val.toArray()` | `jsonArray` |
+| `app/plasma/extended/backgroundcache.cpp:136` | `plasmaConfigContainments.groupList()` | `groupNames` |
+| `app/plasma/extended/screenpool.cpp:71` | `m_screensGroup.keyList()` | `keys` |
+| `app/plasma/extended/theme.cpp:258` | `reversedPtr->groupList()` | `groupNames` |
+| `app/shortcuts/shortcutstracker.cpp:159` | `latteGroup.keyList()` | `keys` |
+| `app/settings/settingsdialog/tablayoutshandler.cpp:479` | `entry.installedFiles()` | `installedFiles` |
 
-### Mutation (0)
-
-No flagged loop was left unchanged for mutation: all 65 loops bind a `const`
-reference or a copy, and the 23 wrapped bodies were read for writes (table above).
-
-### Not flagged, not changed (for the gate's later review)
+## Not flagged, not changed (for the gate's later review)
 
 - `app/wm/tasktools.cpp:291` iterates the `services` reference parameter, and its
   body calls `services.prepend(service)` before returning. clazy 1.17 does not
@@ -133,101 +162,129 @@ the worktree mounted read-only, a build tree of its own
 (`read-only file system` while creating `/src/build`), and `mkdir build` in the
 worktree fixed it.
 
+First commit (`d8b07b428`, 23 wraps):
+
 | Command | Result |
 | --- | --- |
 | Container, `cmake --preset clang-debug`, `cmake --build --preset clang-debug -j4`, `test-clazy.py --inventory range-loop-detach --report`, before the fix (`main` at `95e342f72`) | Exit 0. The build log has no `warning:` line. Inventory: **274 findings in 45 files**; **65 in the 20 owned files**, per file as the brief lists them |
-| Container, the same build after the 23 wraps, and `test-clazy.py --inventory range-loop-detach --report` | Exit 0. Incremental build: 15 objects, **0 `warning:` lines**, 0 compiler errors (the log's `error` matches are QML `console.warn` text). Inventory: **251 findings in 39 files**; **42 in the 20 owned files**, the by-value set above |
+| Container, the same build after the 23 wraps, and `test-clazy.py --inventory range-loop-detach --report` | Exit 0. Incremental build: 15 objects, **0 `warning:` lines**, 0 compiler errors (the log's `error` matches are QML `console.warn` text). Inventory: **251 findings in 39 files**; **42 in the 20 owned files**, the by-value set |
 | Per file, before and after (owned files): globalshortcuts 9 to 1, main 6 to 0, windowstracker 4 to 0, tasktools 2 to 0, factory 1 to 0, schemesmodel 1 to 0, commontools 1 to 0; the other 13 files unchanged | Sum 65 to 42 in the owned files. The tree's other 209 findings are the same set before and after (compared line by line) |
-| Wrap check after the edits: the `only-wrap.py` script of the brief, run from the worktree before the commit | No output, exit 0: every changed line is the old line with `std::as_const(...)` added |
+| Wrap check: the `only-wrap.py` script of the brief, run on the committed diff against `95e342f72` | No output, exit 0; 23 changed-line pairs checked, each the old line with `std::as_const(...)` added |
 | `git diff --stat` | 7 files, 23 insertions, 23 deletions |
 | `git clang-format --style=file --diff HEAD` on the 7 changed files | One hunk, a blank line removed in `viewsToHideAreValid()` at `globalshortcuts.cpp:479`. That line is not one of the changed lines, so the hunk is not applied (`formatter.sh` was not run) |
 | Full gate, container: `test-clazy.py --build-dir build/modernization/clang-debug --jobs 4` | **Exit 0**: 43 negative fixtures each rejected by their own gated check; 153 production sources with no finding from 43 gated checks |
-| Host GCC Debug: `cmake --preset gcc-debug && cmake --build --preset gcc-debug -j4 && ctest --preset gcc-debug --output-on-failure`, on a fresh tree | Exit 0 for configure, build and ctest. Build: 0 `warning:` lines, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
-| Host Clang Debug: `cmake --preset clang-debug && cmake --build --preset clang-debug -j4 && ctest --preset clang-debug --output-on-failure`, on a fresh tree | Exit 0 for configure, build and ctest. Build: 0 `warning:` lines, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
+| Host GCC Debug (first commit): `cmake --preset gcc-debug && cmake --build --preset gcc-debug -j4 && ctest --preset gcc-debug --output-on-failure`, on a fresh tree | Exit 0 for configure, build and ctest. Build: 0 `warning:` lines, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
+| Host Clang Debug (first commit): `cmake --preset clang-debug && cmake --build --preset clang-debug -j4 && ctest --preset clang-debug --output-on-failure`, on a fresh tree | Exit 0 for configure, build and ctest. Build: 0 `warning:` lines, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
+
+Second commit (the 42 rewritten loops):
+
+| Command | Result |
+| --- | --- |
+| Header check: every changed pair of lines in `git diff -U0`, the new header with the local and the spaces inside braces removed, compared with the old line | **42 verified, 0 problems** (43 insertions = 42 headers and the one split line; 42 deletions) |
+| Container, `cmake --build --preset clang-debug -j4` after the rewrites (incremental) | Exit 0. 21 objects rebuilt, **0 `warning:` lines**, 0 compiler errors (the four `error` matches are the QML `console.warn` text already in the log) |
+| Container, `test-clazy.py --inventory range-loop-detach --report` after the rewrites | Exit 0. **209 findings in the tree, 0 in the 20 owned files** (42 before this commit). The 209 are in files of the other groups |
+| Container, full gate: `test-clazy.py --build-dir build/modernization/clang-debug --jobs 4` | **Exit 0**: 43 negative fixtures rejected by their own gated checks; 153 production sources with no finding from 43 gated checks |
+| `git clang-format --style=file --diff HEAD` on the 14 changed files | Applied: the split of the `alternativeshelper.cpp` loop and the spaces inside the braced lists of three `knscompat.cpp` headers (changed lines). Not applied, because they change lines this batch did not touch: `contextmenulayerquickitem.cpp:285` (the `std::function` line) and `:295` (`if (f) return f;`), and the Allman brace line of `screengeometries.cpp:127`, which the loop keeps as it was |
+| Host GCC Debug (second commit), the same commands as above on the existing build tree (incremental) | Exit 0 for configure, build and ctest. Incremental build: 21 objects rebuilt, **0 `warning:` lines**, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
+| Host Clang Debug (second commit), the same commands as above on the existing build tree (incremental) | Exit 0 for configure, build and ctest. Incremental build: 21 objects rebuilt, **0 `warning:` lines**, 0 CMake warnings. CTest: **100% passed, 0 failed out of 58** |
 
 Toolchains. Container: image `latte-r2c-clazy:noble` (ID `8e9528e34f50`), Ubuntu
 clang 18.1.3 (LLVM 19.1.1), clazy 1.17.1 (KDE Neon build), Qt 6.11.1 (Neon
-`qt6-base-dev`). Host: GCC 16.2.1 (Gentoo, `/usr/bin/g++`), Clang 22.1.8 (`/usr/lib/llvm/22/bin/clang++`),
-CMake 4.3.4, Qt 6.11.2.
+`qt6-base-dev`). Host: GCC 16.2.1 (Gentoo, `/usr/bin/g++`), Clang 22.1.8
+(`/usr/lib/llvm/22/bin/clang++`), CMake 4.3.4, Qt 6.11.2.
 
 Durable logs are outside the repository in `$HOME/r2c-build-batch-h/evidence/`:
-`pre-fix-run.log`, `post-fix-run.log`, the host `host-gcc-debug-*.log`,
-`host-clang-debug-*.log` and `host-verify.summary`, and the two inventory reports
-`rld.json` (before) and `rld-post.json` (after). The wrap check and the wrap script
-were scratch files and are not kept.
+`pre-fix-run.log` and `post-fix-run.log` (first commit), `second-container-run.log`
+(second commit), the host logs `host-*` and `second-host-*` with their summaries,
+and the inventory reports `rld.json` (before), `rld-post.json` (after the wraps) and
+`rld-second.json` (after the rewrites).
 
 Existing autotests compile some of the changed files: `indicator/factory.cpp`,
 `settings/detailsdialog/schemesmodel.cpp`, `wm/tasktools.cpp` and
 `tools/commontools.cpp` (`autotests/CMakeLists.txt`). Global shortcuts, the window
 tracker and `main.cpp` are compiled into no autotest target. The tests therefore
 cover the compile and, for those four files, whatever their existing cases reach;
-the reach of the wrapped loops was not checked.
+the reach of the changed loops was not checked.
 
 ## Handoff
 
 - **Batch / slice and selected scope:** R2c fix batch 3, group H:
-  `range-loop-detach`, 20 files, 65 findings in the inventory; 23 wrapped, 42
-  reported as by-value ranges.
-- **Status:** Pending validation. The container gate and both host builds with
-  their tests passed; the desktop smoke and CI have not run.
+  `range-loop-detach`, 20 files, 65 findings in the inventory. All 65 are fixed in
+  these files: 23 wrapped in `std::as_const()` (first commit) and 42 rewritten with
+  a const local (second commit, the main session's decision). The tree still has
+  209 findings in other groups' files.
+- **Status:** Pending validation. The container build and gate pass, and the host
+  results are in the Evidence table; the desktop smoke and CI have not run.
 - **Source baseline / start HEAD / implementation HEAD:** `95e342f72` / `95e342f72` /
-  the commit that adds this report (one commit: the 7 sources and this report).
+  `d8b07b428` (wraps) and the second commit (rewrites).
 - **Branch / existing user edits preserved:** `claude/r2c-batch-h-065380` in its
-  own worktree; clean at the start; no other edits.
+  own worktree; clean at the start of each commit; no other edits.
 - **Dependencies and evidence links:** [R2c](R2c.md), the reference slice
   [R2c-range-loop-reference](R2c-range-loop-reference.md) and
   [R2c-container-anti-pattern](R2c-container-anti-pattern.md) (batch C, the same
   kind of work for other checks). Other groups of this slice work on other files
   of the same check.
-- **Files and externally observable behavior changed:** 7 production sources, 23
-  loop headers: `app/shortcuts/globalshortcuts.cpp`, `app/main.cpp`,
-  `app/wm/tracker/windowstracker.cpp`, `app/indicator/factory.cpp`,
-  `app/settings/detailsdialog/schemesmodel.cpp`, `app/wm/tasktools.cpp`,
-  `app/tools/commontools.cpp`. No observable change is intended: the same
-  elements, in the same order, with no copy. This report. Not changed: the gate,
-  the fixtures, `R2c.md`, the ledger, and the other 13 owned files.
+- **Files and externally observable behavior changed:** all 20 owned production
+  sources. The first commit changes 7 (23 wrapped loops); the second commit changes
+  14 (42 loop headers, one split line in `alternativeshelper.cpp`, braced-list
+  spacing in three `knscompat.cpp` headers). `globalshortcuts.cpp` is in both. No
+  observable change is intended: the same elements, in the same order, from the
+  same snapshot as before. This report. Not changed: the gate, the fixtures,
+  `R2c.md`, the ledger.
 - **State authority / invalidation / lifetime / fallback constraints:** each
   wrapped loop reads the container that its owner keeps; the table gives the writer
   or the reason none can run. A later edit that inserts into, removes from or
   assigns the container inside one of these loops must copy it first (constraint
-  above). The `m_windows` loops of `windowstracker.cpp` assume that the first pass
-  of `updateHints(View*)` writes nothing until `cleanupFaultyWindows()` runs after it;
-  AGENTS.md rule 7 asks for a note beside that code. This slice adds none, because
-  the brief allows only the wrap in the diff; the main session may add one.
+  above). The rewritten loops iterate a snapshot: a body that needs to see changes
+  that it makes to the object the call came from must iterate that object, not the
+  local. The `m_windows` loops of `windowstracker.cpp` assume that the first pass of
+  `updateHints(View*)` writes nothing until `cleanupFaultyWindows()` runs after it;
+  AGENTS.md rule 7 asks for a note beside that code. This batch adds none, because
+  the brief and the main session's form changed only the loop headers; the main
+  session may add one.
 - **Toolchain, import environment and artifact identity:** see Toolchains above.
 - **Commands executed with exit status and durable log/artifact locations:** see
-  Evidence (scratch logs listed there).
-- **GCC/Clang Debug/Release warning/error results:** GCC 16.2.1 Debug: 0 warnings;
-  Clang 22.1.8 Debug: 0 warnings; 0 CMake warnings on both; container Clang 18
-  build: 0 warnings and 0 errors. Release presets were not built.
+  Evidence and the logs listed there.
+- **GCC/Clang Debug/Release warning/error results:** first commit: GCC 16.2.1 and
+  Clang 22.1.8 Debug, 0 warnings each, 0 CMake warnings; second commit: container
+  Clang 18 incremental build 0 warnings, 0 errors; host GCC 16.2.1 and Clang 22.1.8 Debug, 0 warnings each. Release presets
+  were not built.
 - **Tests registered / run / passed / skipped / failed and name deltas:** 58
-  registered, 58 run, 58 passed on GCC and on Clang Debug, 0 skipped, 0 failed. No
-  test added, changed or skipped; no gate name added. (The R2c reports of earlier
-  trees count 57; this tree registers 58.)
+  registered on this tree; first commit: 58 run, 58 passed on GCC and on Clang Debug;
+  second commit: 58 run, 58 passed on GCC and on Clang Debug. No test added, changed or skipped; no gate name added.
+  (The R2c reports of earlier trees count 57.)
 - **Production behavior vs copied logic vs source-contract evidence:** production
   code is compiled and analysed; the claims about the bodies rest on reading the
-  callees (table), not on a test.
+  callees (table) and the rewritten loops on the snapshot argument above, not on a
+  test.
 - **QML diagnostics added/removed and environment compatibility:** none; no QML
   changed.
 - **Negative fixtures or controlled mutation evidence:** none for this check yet:
   `autotests/clazy/range-loop-detach.cpp` is added by the main session with the
   gate entry.
 - **Desktop user feedback / log review / clean-quit and coredump evidence:** not
-  run. The main session runs the desktop smoke after merging: startup; a Meta key
-  hold (`globalshortcuts.cpp`, `showViews`, `hideViewsTimerSlot`); a window moved or
-  maximized (`windowstracker.cpp`, `updateHints`); the app launcher; and a dock
-  with its context menu (`contextmenulayerquickitem.cpp`, which is not wrapped).
-- **Performance:** not measured. The wrap adds no work. It removes the possible
-  detach at `begin()` in each of the 23 loops; a detach happens only when the
-  container is shared.
+  run. The main session's desktop smoke after merging should cover the loops that
+  now run through a local: startup (`knscompat.cpp`, `screenpool.cpp`,
+  `main.cpp`, `shortcutstracker.cpp`); a Meta key hold (`globalshortcuts.cpp`,
+  `showViews`, `hideViewsTimerSlot`); a window moved or maximized
+  (`windowstracker.cpp`, `updateHints`); the dock context menu, with its applet and
+  child-item loops (`contextmenulayerquickitem.cpp`); the app launcher; the task
+  manager launchers, adding and removing (`syncedlaunchers.cpp`); the activities
+  menus (`activitiesdelegate.cpp`); a layout download (`tablayoutshandler.cpp`); and
+  a theme or background change (`theme.cpp`, `backgroundcache.cpp`).
+- **Performance:** not measured. The rewrite and the wrap add no work; each removes
+  the possible detach at `begin()`. A detach happens only when the container is
+  shared.
 - **CI, distribution and Nix checks (passed / failed / unavailable):** CI not run;
   the Clang Debug job runs the gate after the merge. Debian 13 and Nix not run.
-- **Unresolved failures, review assumptions and unavailable checks:** 42 by-value
-  findings remain in these files (decision above). The wrapped bodies are checked
-  by reading, not by a test. Desktop smoke and CI not run.
-- **Next exact action:** the main session decides the 42 by-value loops (hoist
-  into `const` locals, or a reviewed exclusion), then adds `range-loop-detach` to
-  `GATED_CHECKS` with `autotests/clazy/range-loop-detach.cpp` once the tree-wide
-  inventory is zero.
-- **Commit approval status / push approval status:** committed on
-  `claude/r2c-batch-h-065380` as requested; not pushed; `main` untouched.
+- **Unresolved failures, review assumptions and unavailable checks:** no failure in
+  the checks run. The wrapped bodies are checked by reading, and the rewritten loops
+  rest on the snapshot argument and the name checks, not on a test. Host builds
+  were incremental on the existing build trees; the warning count of the unchanged
+  files comes from the first commit's full builds. Desktop smoke and CI not run.
+- **Next exact action:** the main session merges the groups. `range-loop-detach`
+  joins `GATED_CHECKS` with `autotests/clazy/range-loop-detach.cpp` once the
+  tree-wide inventory is zero (209 findings remain in the other groups' files).
+- **Commit approval status / push approval status:** two commits on
+  `claude/r2c-batch-h-065380` (`d8b07b428` and the second commit); not pushed;
+  `main` untouched.

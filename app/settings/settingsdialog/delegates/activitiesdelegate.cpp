@@ -168,7 +168,7 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
                 }
             }
         } else {
-            for (auto *action : button->menu()->actions()) {
+            for (const auto actions = button->menu()->actions(); auto *action : actions) {
                 QString actId = action->data().toString();
 
                 if (actId == Data::Layout::FREEACTIVITIESID || actId == Data::Layout::ALLACTIVITIESID) {
@@ -257,7 +257,7 @@ void Activities::setModelData(QWidget *editor, QAbstractItemModel *model, const 
     //! keep activities that are present in other computers
     QStringList assignedActivities = index.data(Qt::UserRole).toStringList();
 
-    for (auto *action : button->menu()->actions()) {
+    for (const auto actions = button->menu()->actions(); auto *action : actions) {
         QString activityid = action->data().toString();
 
         if (activityid == Data::Layout::CURRENTACTIVITYID) {
@@ -370,7 +370,7 @@ void Activities::updateButton(QWidget *editor, const Latte::Data::ActivitiesTabl
     QPushButton *button = static_cast<QPushButton *>(editor);
     QList<Latte::Data::Activity> assignedActivities;
 
-    for (auto *action : button->menu()->actions()) {
+    for (const auto actions = button->menu()->actions(); auto *action : actions) {
         if (action->isChecked() && action->data().toString() != Data::Layout::CURRENTACTIVITYID) {
             assignedActivities << allActivitiesTable[action->data().toString()];
         }

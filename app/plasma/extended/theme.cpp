@@ -255,7 +255,7 @@ void Theme::updateReversedSchemeValues()
     KSharedConfigPtr reversedPtr = KSharedConfig::openConfig(m_reversedSchemePath);
 
     if (originalPtr && reversedPtr) {
-        for (const auto &groupName : reversedPtr->groupList()) {
+        for (const auto groupNames = reversedPtr->groupList(); const auto &groupName : groupNames) {
             if (groupName != QStringLiteral("Colors:Button") && groupName != QStringLiteral("Colors:Selection")) {
                 KConfigGroup reversedGroup(reversedPtr, groupName);
 

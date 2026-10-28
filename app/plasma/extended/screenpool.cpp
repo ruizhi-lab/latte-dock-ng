@@ -68,7 +68,7 @@ void ScreenPool::load()
 
     bool updated{false};
 
-    for (const auto &screenId : m_screensGroup.keyList()) {
+    for (const auto keys = m_screensGroup.keyList(); const auto &screenId : keys) {
         QString screenName =  m_screensGroup.readEntry(screenId, QString());
         int scrId = screenId.toInt();
 

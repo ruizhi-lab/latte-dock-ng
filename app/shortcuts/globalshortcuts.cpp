@@ -492,7 +492,7 @@ void GlobalShortcuts::showSettings()
 
         //! find last view that showed its config view
         for (int i = 0; i < sortedViews.size(); ++i) {
-            for (auto currentLayout : m_corona->layoutsManager()->currentLayouts()) {
+            for (const auto layouts = m_corona->layoutsManager()->currentLayouts(); auto currentLayout : layouts) {
                 if (sortedViews[i] == currentLayout->lastConfigViewFor()) {
                     openSettings = i;
                     break;
