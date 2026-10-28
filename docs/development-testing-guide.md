@@ -177,9 +177,35 @@ from the active Plasma user service before a remote GUI test:
 systemctl --user show-environment
 ```
 
-Pass through the reported `DISPLAY`, `WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`,
-`XDG_RUNTIME_DIR`, `DBUS_SESSION_BUS_ADDRESS` and, when present, `XAUTHORITY`.
-For a development Debug install, also source the generated
+**Start the Dock through `systemd-run --user`, not from the SSH shell.** A
+transient user unit inherits the whole session environment of the user manager,
+which is what the Dock gets when Plasma autostarts it:
+
+```bash
+systemd-run --user --unit=latte-dock-ng-dev-$(date +%s) --collect ~/launch-latte-session.sh
+```
+
+where the launcher sources `~/.config/latte-dock-ng/dev-env.sh` (Debug only) and
+`exec`s `~/.local/bin/latte-dock-ng --replace` with the wanted flags. Importing
+only the display and bus variables into an SSH launch is not enough: the
+[R5 report](modernization-results/R5.md) traced the 20 % idle CPU that P0
+measured in this VM to such a launch. `dev-env.sh` prepends `kdedefaults:/etc/xdg`
+to `XDG_CONFIG_DIRS`; from a bare SSH environment the result lacks the session's
+`/usr/share/kde-settings/kde-profile/default/xdg`, and the Dock and the session
+daemons then rewrite the shared KSycoca database against each other at least 2.7
+times per second, every rewrite rebuilding the hosted app dashboard's models (the
+Dock used 18 % of a core, plasmashell 22 % and KWin 26 %). A launch that imports
+`XDG_CONFIG_DIRS` too, or goes through `systemd-run --user`, idles at 0.00 %.
+Check a suspicious idle reading before trusting it: the VM's load average stays
+near 1.0 and `stat -c %y ~/.cache/ksycoca6_*` changes from one second to the next.
+
+When a tool cannot use `systemd-run`, pass through the reported `DISPLAY`,
+`WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`, `XDG_RUNTIME_DIR`,
+`DBUS_SESSION_BUS_ADDRESS`, `XAUTHORITY` and the variables that select the
+KSycoca database and the language (`XDG_CONFIG_DIRS`, `XDG_DATA_DIRS`,
+`XDG_CURRENT_DESKTOP`, `XDG_MENU_PREFIX`, `KDE_FULL_SESSION`,
+`KDE_SESSION_VERSION`, `DESKTOP_SESSION`, `LANG`, `LANGUAGE`) *before* sourcing
+`dev-env.sh`. For a development Debug install, source the generated
 `~/.config/latte-dock-ng/dev-env.sh` in the launch script. Do not construct
 `QML_IMPORT_PATH`, `QML2_IMPORT_PATH` or `XDG_DATA_DIRS` by hand: the user
 installer selects the QML and plugin roots for its install prefix. Verify the
@@ -197,22 +223,22 @@ though the process started, which invalidated that run. KWin matches privileged
 Plasma interfaces against the first executable token in the registered desktop
 entry; the temporary prefix did not match it.
 
-For detached SSH launches, save the session variables in a small launcher,
-source `dev-env.sh` only for Debug, and use `setsid -f nohup` so the VM process
-survives the command session. Start with a fresh log and inspect it after the
-test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
+For detached launches that cannot use `systemd-run`, save the session variables
+in a small launcher, source `dev-env.sh` only for Debug, and use `setsid -f nohup`
+so the VM process survives the command session. Start with a fresh log and
+inspect it after the test. Check the exact executable with `/proc/<pid>/exe`; `pgrep -x
 latte-dock-ng` is safe for identifying the Dock. Never use `pkill -f` in a
 command that also contains `latte-dock-ng`.
 
 Import the Plasma session from the user systemd manager before starting either
 the Dock or GUI test tools over SSH. On the Fedora 44 VM, sourcing
 `~/.config/latte-dock-ng/dev-env.sh` alone does not restore Wayland variables.
-This launcher pattern imports only the active session values and then applies
-the Debug overrides:
+This launcher pattern imports the active session values, including the ones that
+select the KSycoca database (see above), and then applies the Debug overrides:
 
 ```bash
 while IFS= read -r line; do export "$line"; done \
-  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY)=')
+  < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY|XDG_CONFIG_DIRS|XDG_DATA_DIRS|XDG_CURRENT_DESKTOP|XDG_MENU_PREFIX|KDE_FULL_SESSION|KDE_SESSION_VERSION|DESKTOP_SESSION|LANG|LANGUAGE)=')
 source ~/.config/latte-dock-ng/dev-env.sh
 exec ~/.local/bin/latte-dock-ng --replace --debug --log-file /tmp/latte-ng.log
 ```

@@ -32,6 +32,12 @@ or a smaller binary is not proof of reduced resource consumption.
 6. Save profile/instrumentation output separately from uninstrumented samples.
    Logging every frame or adding counters can change timing and allocations.
    Test seams/counters must be bounded and inactive in normal use.
+7. Launch the process under test with the full session environment
+   (`systemd-run --user` in a remote VM; see the testing guide). R5 found that an
+   SSH launch with a shorter `XDG_CONFIG_DIRS` than the session made an idle dock
+   look like a 20 % CPU consumer through a KSycoca rewrite loop. Record the load
+   average and whether `~/.cache/ksycoca6_*` changes during every idle window,
+   and treat a window in which it does as invalid.
 
 ## Scenario matrix
 
