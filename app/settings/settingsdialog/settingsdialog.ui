@@ -730,6 +730,16 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="quitWithoutWaitingChkBox">
+               <property name="toolTip">
+                <string>Close the dock as soon as the logout is confirmed instead of waiting for other windows to close</string>
+               </property>
+               <property name="text">
+                <string>Quit immediately on logout without waiting for other windows</string>
+               </property>
+              </widget>
+             </item>
              <item row="17" column="1">
               <spacer name="verticalSpacer_14">
                <property name="orientation">

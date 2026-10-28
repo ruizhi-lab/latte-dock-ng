@@ -11,7 +11,6 @@
 #include <QStringList>
 #include <QTest>
 
-#include "../app/session/shutdownstate.h"
 
 namespace {
 
@@ -124,8 +123,6 @@ private Q_SLOTS:
     void cloneViewRemovalSyncUsesSyncingFromOriginalGuard();
     void waylandStrutGhostWindowBindsLayerShellScreen();
     void launchersRestoreContractMovedToQmlSmokeTest();
-    void sessionShutdownQuitDecisionMatrix_data();
-    void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void sessionShutdownMonitorHidesViewsAndRestoresOnCancel();
     void coronaTeardownSkipsFactoryFreedByQuitCleanup();
@@ -848,31 +845,6 @@ void SourceContractTest::launchersRestoreContractMovedToQmlSmokeTest()
     QVERIFY(!sourceContractSource.contains(oldSourceLock));
 }
 
-void SourceContractTest::sessionShutdownQuitDecisionMatrix_data()
-{
-    QTest::addColumn<bool>("sawBlockingWindows");
-    QTest::addColumn<bool>("shutdownServiceActive");
-    QTest::addColumn<bool>("hasBlockingWindows");
-    QTest::addColumn<bool>("shouldQuit");
-
-    QTest::newRow("initial-confirmation-cancellable") << false << false << false << false;
-    QTest::newRow("sleep-lock-or-idle-session") << false << false << true << false;
-    QTest::newRow("ordinary-window-still-blocking") << true << true << true << false;
-    QTest::newRow("ordinary-window-cancelled-close") << true << false << true << false;
-    QTest::newRow("ordinary-window-closed-after-commit") << true << true << false << true;
-    QTest::newRow("no-ordinary-windows-after-commit") << false << true << false << true;
-}
-
-void SourceContractTest::sessionShutdownQuitDecisionMatrix()
-{
-    QFETCH(bool, sawBlockingWindows);
-    QFETCH(bool, shutdownServiceActive);
-    QFETCH(bool, hasBlockingWindows);
-    QFETCH(bool, shouldQuit);
-
-    QCOMPARE(Latte::Session::shouldQuitForCommittedShutdown(sawBlockingWindows, shutdownServiceActive, hasBlockingWindows), shouldQuit);
-}
-
 void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
 {
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
@@ -897,7 +869,8 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::commitDataRequest")));
     QVERIFY(mainSource.contains(QStringLiteral("sm.setRestartHint(QSessionManager::RestartNever);")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::saveStateRequest")));
-    QVERIFY(mainSource.contains(QStringLiteral("corona.wm()->hasSessionBlockingWindows()")));
+    //! The logout decision never asks for other clients' windows; see the
+    //! negative assertions next to the monitor source checks below.
     QVERIFY(mainSource.contains(QStringLiteral("qunsetenv(\"LATTE_SESSION_ENDING\");")));
 
     QFile monitorHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.h"));
@@ -905,16 +878,29 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     const QString monitorHeader = QString::fromUtf8(monitorHeaderFile.readAll());
     QVERIFY(monitorHeader.contains(QStringLiteral("static constexpr int PollIntervalMs = 500;")));
     QVERIFY(monitorHeader.contains(QStringLiteral("inline constexpr int KsmServerQueryTimeoutMs = 1000;")));
-    QVERIFY(monitorHeader.contains(QStringLiteral("bool m_sawBlockingWindows{false};")));
+
+    //! The dock must end itself before KWin's session close reports the dock
+    //! windows as unclosed (10 s), otherwise the user sees the "applications
+    //! did not close" dialog again.
+    QVERIFY(monitorHeader.contains(QStringLiteral("static constexpr int QuitFallbackMs = 8000;")));
 
     QFile monitorSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.cpp"));
     QVERIFY(monitorSourceFile.open(QFile::ReadOnly));
     const QString monitorSource = QString::fromUtf8(monitorSourceFile.readAll());
-    QVERIFY(monitorSource.contains(QStringLiteral("#include \"shutdownstate.h\"")));
     QVERIFY(monitorSource.contains(QStringLiteral("return QStringLiteral(\"org.kde.Shutdown\");")));
     QVERIFY(monitorSource.contains(QStringLiteral("QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration")));
     QVERIFY(monitorSource.contains(QStringLiteral("connection.call(message, QDBus::Block, timeoutMs)")));
-    QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] session blocking windows closed; quitting.")));
+
+    //! The logout decision is event driven. Counting other clients' windows is
+    //! not a valid completion signal on Wayland: tray-only apps, minimized
+    //! windows and plasmashell's own desktop surfaces legitimately outlive the
+    //! logout, so the dock never asks for that list again.
+    QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] logout completed; quitting.")));
+    QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] fast exit enabled; quitting without waiting for other windows.")));
+    QVERIFY(monitorSource.contains(QStringLiteral("m_quitFallbackTimer.start();")));
+    QVERIFY(!monitorSource.contains(QStringLiteral("hasBlockingWindows")));
+    QVERIFY(!mainSource.contains(QStringLiteral("hasSessionBlockingWindows")));
+    QVERIFY(!mainSource.contains(QStringLiteral("shouldQuitForCommittedShutdown")));
     QVERIFY(!mainSource.contains(QStringLiteral("flagSetTimer.hasExpired(5000)")));
     QVERIFY(!mainSource.contains(QStringLiteral("triggering quit() from poller")));
     QVERIFY(!mainSource.contains(QStringLiteral("plasma-shutdown is active; quitting committed session logout")));
@@ -955,7 +941,6 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(hooksEnd > pollerStart);
     const QString hooks = mainSource.mid(pollerStart, hooksEnd - pollerStart);
     QVERIFY(hooks.contains(QStringLiteral("Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus())")));
-    QVERIFY(hooks.contains(QStringLiteral("return corona.wm()->hasSessionBlockingWindows();")));
     QVERIFY(hooks.contains(QStringLiteral("return app.property(\"latte_session_ending\").toBool();")));
     QVERIFY(hooks.contains(QStringLiteral(".markSessionEnding = markSessionEnding,")));
     QVERIFY(hooks.contains(QStringLiteral("app.quit();")));
@@ -965,12 +950,7 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(evaluateStart >= 0);
     QVERIFY(evaluateEnd > evaluateStart);
     const QString evaluateBody = monitorSource.mid(evaluateStart, evaluateEnd - evaluateStart);
-    QVERIFY(evaluateBody.contains(QStringLiteral("const bool hasBlockingWindows = m_hooks.hasBlockingWindows();")));
-    QVERIFY(evaluateBody.contains(QStringLiteral("m_sawBlockingWindows = true;")));
     QVERIFY(evaluateBody.contains(QStringLiteral("if (m_hooks.isSessionEnding())")));
-    QVERIFY(evaluateBody.contains(QStringLiteral("shouldQuitForCommittedShutdown(m_sawBlockingWindows, m_shutdownServiceRegistered, hasBlockingWindows)")));
-    QVERIFY(evaluateBody.indexOf(QStringLiteral("shouldQuitForCommittedShutdown(m_sawBlockingWindows, m_shutdownServiceRegistered, hasBlockingWindows)"))
-            < evaluateBody.indexOf(QStringLiteral("m_hooks.quit();")));
 
     QFile abstractWmHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.h"));
     QVERIFY(abstractWmHeaderFile.open(QFile::ReadOnly));

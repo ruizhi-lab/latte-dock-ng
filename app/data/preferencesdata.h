@@ -24,6 +24,9 @@ public:
     static const bool AUTOSTART = true;
     static const bool ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA = true;
     static const bool METAHOLDFORBADGES = true;
+    //! Default matches the dock's goal of never blocking a shutdown: quit as
+    //! soon as the logout is confirmed instead of waiting for other windows.
+    static const bool QUITWITHOUTWAITING = true;
     static const int PARABOLICSPREAD = 3;
     static const int SCREENSDELAY = 2500;
     static const float THICKNESSMARGININFLUENCE;
@@ -36,6 +39,7 @@ public:
     bool autostart{AUTOSTART};
     bool isAvailableGeometryBroadcastedToPlasma{ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA};
     bool metaHoldForBadges{METAHOLDFORBADGES};
+    bool quitWithoutWaiting{QUITWITHOUTWAITING};
     int parabolicSpread{PARABOLICSPREAD};
     int screensDelay{SCREENSDELAY};
     float thicknessMarginInfluence{THICKNESSMARGININFLUENCE};

@@ -95,6 +95,11 @@ void TabPreferences::initUi()
         Q_EMIT dataChanged();
     });
 
+    connect(m_ui->quitWithoutWaitingChkBox, &QCheckBox::toggled, this, [this]() {
+        m_preferences.quitWithoutWaiting = m_ui->quitWithoutWaitingChkBox->isChecked();
+        Q_EMIT dataChanged();
+    });
+
     connect(this, &TabPreferences::contextActionsChanged, this, &TabPreferences::dataChanged);
 }
 
@@ -108,6 +113,7 @@ void TabPreferences::initSettings()
     // Wayland-only build: Meta press-and-hold forwarding is not supported.
     o_preferences.metaHoldForBadges = false;
     o_preferences.parabolicSpread = m_corona->universalSettings()->parabolicSpread();
+    o_preferences.quitWithoutWaiting = m_corona->universalSettings()->quitWithoutWaitingOnLogout();
     o_preferences.thicknessMarginInfluence = m_corona->universalSettings()->thicknessMarginInfluence();
     o_preferences.screensDelay = m_corona->universalSettings()->screenTrackerInterval();
 
@@ -139,6 +145,7 @@ void TabPreferences::updateUi()
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
     m_ui->screenTrackerSpinBox->setValue(m_preferences.screensDelay);
+    m_ui->quitWithoutWaitingChkBox->setChecked(m_preferences.quitWithoutWaiting);
 
     if (m_preferences.parabolicSpread == Data::Preferences::PARABOLICSPREAD) {
         m_ui->smallParabolicBtn->setChecked(true);
@@ -199,6 +206,7 @@ void TabPreferences::save()
     m_corona->universalSettings()->setParabolicSpread(m_preferences.parabolicSpread);
     m_corona->universalSettings()->setThicknessMarginInfluence(m_preferences.thicknessMarginInfluence);
     m_corona->universalSettings()->setScreenTrackerInterval(m_preferences.screensDelay);
+    m_corona->universalSettings()->setQuitWithoutWaitingOnLogout(m_preferences.quitWithoutWaiting);
 
     o_preferences = m_preferences;
     Q_EMIT dataChanged();

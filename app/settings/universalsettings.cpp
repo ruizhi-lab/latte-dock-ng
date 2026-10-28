@@ -46,6 +46,7 @@ UniversalSettings::UniversalSettings(KSharedConfig::Ptr config, QObject *parent)
     connect(this, &UniversalSettings::layoutsMemoryUsageChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::metaPressAndHoldEnabledChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::parabolicSpreadChanged, this, &UniversalSettings::saveConfig);
+    connect(this, &UniversalSettings::quitWithoutWaitingOnLogoutChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::screenTrackerIntervalChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::showInfoWindowChanged, this, &UniversalSettings::saveConfig);
     connect(this, &UniversalSettings::singleModeLayoutNameChanged, this, &UniversalSettings::saveConfig);
@@ -133,6 +134,21 @@ void UniversalSettings::setShowInfoWindow(bool show)
 
     m_showInfoWindow = show;
     Q_EMIT showInfoWindowChanged();
+}
+
+bool UniversalSettings::quitWithoutWaitingOnLogout() const
+{
+    return m_quitWithoutWaitingOnLogout;
+}
+
+void UniversalSettings::setQuitWithoutWaitingOnLogout(bool enabled)
+{
+    if (m_quitWithoutWaitingOnLogout == enabled) {
+        return;
+    }
+
+    m_quitWithoutWaitingOnLogout = enabled;
+    Q_EMIT quitWithoutWaitingOnLogoutChanged();
 }
 
 int UniversalSettings::version() const
@@ -417,6 +433,7 @@ void UniversalSettings::loadConfig()
     m_isAvailableGeometryBroadcastedToPlasma = m_universalGroup.readEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), true);
     m_launchers = m_universalGroup.readEntry(QStringLiteral("launchers"), QStringList());
     m_metaPressAndHoldEnabled = m_universalGroup.readEntry(QStringLiteral("metaPressAndHoldEnabled"), true);
+    m_quitWithoutWaitingOnLogout = m_universalGroup.readEntry(QStringLiteral("quitWithoutWaitingOnLogout"), Data::Preferences::QUITWITHOUTWAITING);
     m_screenTrackerInterval = m_universalGroup.readEntry(QStringLiteral("screenTrackerInterval"), 2500);
     m_showInfoWindow = m_universalGroup.readEntry(QStringLiteral("showInfoWindow"), true);
     m_singleModeLayoutName = m_universalGroup.readEntry(QStringLiteral("singleModeLayoutName"), QString());
@@ -440,6 +457,7 @@ void UniversalSettings::saveConfig()
     m_universalGroup.writeEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), m_isAvailableGeometryBroadcastedToPlasma);
     m_universalGroup.writeEntry(QStringLiteral("launchers"), m_launchers);
     m_universalGroup.writeEntry(QStringLiteral("metaPressAndHoldEnabled"), m_metaPressAndHoldEnabled);
+    m_universalGroup.writeEntry(QStringLiteral("quitWithoutWaitingOnLogout"), m_quitWithoutWaitingOnLogout);
     m_universalGroup.writeEntry(QStringLiteral("screenTrackerInterval"), m_screenTrackerInterval);
     m_universalGroup.writeEntry(QStringLiteral("showInfoWindow"), m_showInfoWindow);
     m_universalGroup.writeEntry(QStringLiteral("singleModeLayoutName"), m_singleModeLayoutName);
