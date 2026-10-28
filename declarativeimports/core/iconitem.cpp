@@ -108,7 +108,7 @@ IconItem::IconItem(QQuickItem *parent)
         });
     }
     connect(this, &QQuickItem::enabledChanged,
-            this, &IconItem::enabledChanged);
+            this, &IconItem::onEnabledChanged);
     connect(this, &QQuickItem::windowChanged,
             this, &IconItem::schedulePixmapUpdate);
     connect(this, &IconItem::overlaysChanged,
@@ -474,7 +474,7 @@ void IconItem::schedulePixmapUpdate()
     polish();
 }
 
-void IconItem::enabledChanged()
+void IconItem::onEnabledChanged()
 {
     schedulePixmapUpdate();
 }

@@ -59,6 +59,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "mutable-container-key",
     "no-module-include",
     "overloaded-signal",
+    "overridden-signal",
     "post-event",
     "qcolor-from-literal",
     "qdatetime-utc",

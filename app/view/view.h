@@ -332,7 +332,11 @@ Q_SIGNALS:
     void positionerChanged();
     void screenEdgeMarginChanged();
     void screenEdgeMarginEnabledChanged();
-    void screenGeometryChanged();
+    //! Reviewed exception to overridden-signal: redeclares PlasmaQuick::View::screenGeometryChanged on purpose. The Positioner's
+    //! screenGeometryChanged is forwarded to this signal in View::init(), and the NOTIFY of the screenGeometry property names it.
+    //! Without this declaration &View::screenGeometryChanged would name the base signal, so the Positioner forward would emit
+    //! the base class's signal instead.
+    void screenGeometryChanged(); // clazy:exclude=overridden-signal
 
     void sinkChanged();
     void typeChanged();

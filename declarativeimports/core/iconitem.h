@@ -167,7 +167,8 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void schedulePixmapUpdate();
-    void enabledChanged();
+    //! Not named enabledChanged: that would override QQuickItem::enabledChanged (clazy overridden-signal).
+    void onEnabledChanged();
 
 private:
     void loadPixmap();
