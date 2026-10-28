@@ -65,7 +65,6 @@ public:
     void unloadLayouts();
 
     void hideAllViews();
-    void pauseLayout(QString layoutName);
     void syncActiveLayoutsToOriginalFiles();
     void syncLatteViewsToScreens();
     void syncMultipleLayoutsToActivities(QStringList preloadedLayouts = QStringList());

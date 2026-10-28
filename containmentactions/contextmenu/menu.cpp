@@ -13,6 +13,7 @@ using Latte::LayoutMenuItemWidget;
 
 // Qt
 #include <QAction>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFont>
 #include <QMenu>
@@ -481,7 +482,7 @@ void Menu::addView(QAction *action)
 {
     const QString templateId = action->data().toString();
 
-    QTimer::singleShot(kDbusCallDelayMs, [this, templateId]() {
+    QTimer::singleShot(kDbusCallDelayMs, this, [this, templateId]() {
         callLatte(QStringLiteral("addView"),
         {QVariant::fromValue(containment()->id()), QVariant::fromValue(templateId)});
     });
@@ -491,7 +492,7 @@ void Menu::moveToLayout(QAction *action)
 {
     const QString layoutName = action->data().toString();
 
-    QTimer::singleShot(kDbusCallDelayMs, [this, layoutName]() {
+    QTimer::singleShot(kDbusCallDelayMs, this, [this, layoutName]() {
         callLatte(QStringLiteral("moveViewToLayout"),
         {QVariant::fromValue(containment()->id()), QVariant::fromValue(layoutName)});
     });
@@ -501,13 +502,15 @@ void Menu::switchToLayout(QAction *action)
 {
     const QString layout = action->data().toString();
 
+    //! The D-Bus calls use the application as their context, not this Menu: they only
+    //! need callLatte(), so they must still be made when the Menu is gone by then.
     if (layout == QLatin1String(" _show_latte_settings_dialog_")) {
-        QTimer::singleShot(kDbusCallDelayMs, []() {
+        QTimer::singleShot(kDbusCallDelayMs, QCoreApplication::instance(), []() {
             callLatte(QStringLiteral("showSettingsWindow"),
             {QVariant::fromValue((int)LayoutPage)});
         });
     } else {
-        QTimer::singleShot(kDbusCallDelayMs, [layout]() {
+        QTimer::singleShot(kDbusCallDelayMs, QCoreApplication::instance(), [layout]() {
             callLatte(QStringLiteral("switchToLayout"),
             {QVariant::fromValue(layout)});
         });

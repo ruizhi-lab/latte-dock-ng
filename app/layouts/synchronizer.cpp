@@ -486,33 +486,6 @@ void Synchronizer::hideAllViews()
     }
 }
 
-void Synchronizer::pauseLayout(QString layoutName)
-{
-    if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
-        CentralLayout *layout = centralLayout(layoutName);
-
-        if (layout->isOnAllActivities()) {
-            return;
-        }
-
-        QStringList appliedactivities = layout->appliedActivities();
-
-        if (layout && !appliedactivities.isEmpty()) {
-            int i = 0;
-
-            for (const auto &activityid : appliedactivities) {
-                //! Stopping the activities must be done asynchronous because otherwise
-                //! the activity manager cant close multiple activities
-                QTimer::singleShot(i * 1000, [activityid]() {
-                    // stopActivity removed in KF6 PlasmaActivities; activities are always running
-                });
-
-                i = i + 1;
-            }
-        }
-    }
-}
-
 void Synchronizer::syncActiveLayoutsToOriginalFiles()
 {
     if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {

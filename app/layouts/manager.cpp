@@ -498,7 +498,7 @@ void Manager::showInfoWindow(QString info, int duration, QStringList activities)
         infoView->show();
         infoView->setOnActivities(activities);
 
-        QTimer::singleShot(duration, [infoView]() {
+        QTimer::singleShot(duration, infoView, [infoView]() {
             infoView->deleteLater();
         });
     }
