@@ -1,8 +1,8 @@
 # R2c-const-signal-or-slot: Const Getters Declared as Slots
 
-Status: Pending validation. The gate, both host builds and the tests below passed
-on the feature branch. The combined desktop smoke after fix batch 2 is merged and
-the CI run are pending; no automated test calls the ten methods.
+Status: Pending validation. Merged into `main` in `382e55cd2`; the checks on
+`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
+waits for a push. No automated test calls the ten methods.
 Date: 2026-10-28. Branch: `claude/r2c-batch-d-a6a9f7`. Start HEAD: `eba91a3e6`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the first slice of batch D (before `R2c-incorrect-emit` and
@@ -188,8 +188,15 @@ change touches no QML.
   `Q_INVOKABLE` was chosen as the equivalent change. The three methods with no
   caller (`qmlFreeEdges`, `isValidMode`, `LayoutManager::isModernDockStyle`) are
   candidates for a separate dead-code review.
-- **Not run:** the CI job, a build on Qt older than 6.11, the desktop smoke.
-- **Next exact action:** merge with the other batch-D slices and fix batch C, run the
-  combined checks and one smoke, then mark this slice Complete after the CI run.
+- **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 43-check gate and the
+  Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
+- **Desktop smoke result:** passed on the host ([R2c fix batch
+  2](R2c.md#fix-batch-2)). The log holds 40 `PLASMA SCREEN GEOMETRIES` lines
+  (`screenIsActive`) and no `No such method` line.
+- **Not run:** the CI job (`main` is not pushed), a build on Qt 6.6 or 6.7.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; not pushed.
+  branch; merged into `main` in `382e55cd2` with the user's approval; not
+  pushed.

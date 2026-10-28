@@ -1,7 +1,8 @@
 # R2c-container-anti-pattern: Ask the Container, Do Not Copy It Into a List First
 
-Status: Pending validation. The combined checks of fix batch 2, the CI run and
-the desktop smoke wait for the merge into `main`.
+Status: Pending validation. Merged into `main` in `181b7f871`; the checks on
+`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
+waits for a push.
 Date: 2026-10-28. Branch: `claude/r2c-batch-c-bca59f`. Start HEAD: `0ca056cc7`
 (the `R2c-detaching-temporary` commit on top of `cec126a31` and `eba91a3e6`).
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md);
@@ -210,22 +211,31 @@ reaches the changed loops.
 - **QML diagnostics added/removed:** none; no QML changed.
 - **Negative fixtures / mutation evidence:** the fixture above and the run with
   the 13 pre-fix files mounted over the fixed ones.
-- **Desktop feedback / log review / clean-quit evidence:** not run, as the brief
-  leaves the one combined smoke to the main session. Paths for it: startup with
-  one and with two docks and a window moved, maximized and closed next to a dock
-  (`windowstracker.cpp`: the hint updates run on every window change); a dock
-  with Dodge or Dynamic Background settings; a vertical and a horizontal dock
-  touching on one screen (`updateExtraViewHints`); the dock context menu, opened
-  in normal and in Edit mode (`updateVisibleActions`); a wallpaper change or a
-  dock on a screen with a wallpaper (`BackgroundCache`); Preferences > Layouts
-  > Apply with a renamed active layout; the Views dialog with a cut and pasted
-  view (`Views::save`, multiple-layouts mode); a layout import of the old linked
-  file format (`checkRepairMultipleLayoutsLinkedFile`); a template export of a
-  view with a sub-containment (`exportTemplate`); expanding and collapsing a
-  widget popup (`appletIsExpanded`).
+- **Desktop feedback / log review / clean-quit evidence:** the host smoke on
+  `main` passed with no warning from Latte's code and no core ([R2c fix batch
+  2](R2c.md#fix-batch-2)). It reached startup with two docks, the window tracker
+  through a day of window changes (AutoHide, AlwaysVisible and a DodgeActive
+  dock), the context menu, the app launcher popup and the Docks dialog. It did not
+  reach a vertical and a horizontal dock touching, a wallpaper change, renaming an
+  active layout, cut and paste of docks, a layout import or a template export. The
+  paths listed before the smoke: startup with one and with two docks and a window
+  moved, maximized and closed next to a dock (`windowstracker.cpp`: the hint
+  updates run on every window change); a dock with Dodge or Dynamic Background
+  settings; a vertical and a horizontal dock touching on one screen
+  (`updateExtraViewHints`); the dock context menu, opened in normal and in Edit
+  mode (`updateVisibleActions`); a wallpaper change or a dock on a screen with a
+  wallpaper (`BackgroundCache`); Preferences > Layouts > Apply with a renamed
+  active layout; the Views dialog with a cut and pasted view (`Views::save`,
+  multiple-layouts mode); a layout import of the old linked file format
+  (`checkRepairMultipleLayoutsLinkedFile`); a template export of a view with a
+  sub-containment (`exportTemplate`); expanding and collapsing a widget popup
+  (`appletIsExpanded`).
 - **Performance:** not measured. 34 of the 38 locations no longer allocate a
   list; the four snapshots still do, as before. The change cannot add work.
-- **CI, distribution and Nix checks:** not run (branch not pushed).
+- **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 43-check gate and the
+  Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
+- **CI, distribution and Nix checks:** not run (`main` is not pushed).
 - **Unresolved failures, review assumptions and unavailable checks:** none
   failed. The assumption that the converted loop bodies do not change the
   container they walk, directly or through a signal handler, rests on reading the
@@ -236,8 +246,8 @@ reaches the changed loops.
   `qDeleteAll(m_actions.values())` in the destructor of `Menu` has the same shape
   and is reported by neither `qdeleteall` nor this check in clazy 1.17, so it was
   left alone.
-- **Next exact action:** merge with the other slices of batch C and batch D, run
-  the combined checks and the desktop smoke, then mark this slice Complete after
-  the CI run.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as part of the batch brief; not pushed.
+  branch; merged into `main` in `181b7f871` with the user's approval; not
+  pushed.

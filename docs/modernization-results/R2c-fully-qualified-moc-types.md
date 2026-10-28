@@ -1,8 +1,8 @@
 # R2c-fully-qualified-moc-types: Signal and Slot Parameter Types Spelled in Full
 
-Status: Pending validation. The gate, both host builds and the tests below passed
-on the feature branch. The combined desktop smoke after fix batch 2 is merged and
-the CI run are pending; no automated test looks up one of the 21 signatures.
+Status: Pending validation. Merged into `main` in `382e55cd2`; the checks on
+`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
+waits for a push. No automated test looks up one of the 21 signatures.
 Date: 2026-10-28. Branch: `claude/r2c-batch-d-a6a9f7`. Start HEAD: `eba91a3e6`
 (the start of batch D; this slice follows `R2c-const-signal-or-slot` and
 `R2c-incorrect-emit`). Implementation commit: the commit that adds this report.
@@ -164,9 +164,17 @@ change touches no QML.
   Dock configuration: open the dock settings while moving the dock to another edge or screen
   (`PrimaryConfigView::updateAvailableScreenGeometry`, `View::availableScreenRectChangedFromSlot`).
   The debug log should hold no `QObject::connect` warning.
-- **Not run:** the CI job, a build on Qt older than 6.11 (this slice was built with Qt 6.11.1 in the
-  container and 6.11.2 on the host), the desktop smoke.
-- **Next exact action:** merge with the other batch-D slices and fix batch C, run the
-  combined checks and one smoke, then mark this slice Complete after the CI run.
+- **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 43-check gate and the
+  Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
+- **Desktop smoke result:** passed on the host ([R2c fix batch
+  2](R2c.md#fix-batch-2)): window tracking through a day of window changes, a
+  layout switch and back, and the Docks dialog, with no `QObject::connect` warning
+  in the log. Adding a layout, changing its activities, creating a dock from a
+  template and moving a dock to another edge were not part of it.
+- **Not run:** the CI job (`main` is not pushed), a build on Qt 6.6 or 6.7.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; not pushed.
+  branch; merged into `main` in `382e55cd2` with the user's approval; not
+  pushed.

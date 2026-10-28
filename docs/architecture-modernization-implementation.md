@@ -538,6 +538,21 @@ waits for the next batch because its files overlap both. Both batches are merged
 into `main` (`1dd485bc1`, `fc8b803d0`), and their combined checks and desktop
 smoke are recorded in [R2c](modernization-results/R2c.md#fix-batch-1).
 
+**Batch 2:** two sessions from `eba91a3e6`, with disjoint files. Batch C takes
+the container checks in 20 sources, in this order: `unused-non-trivial-variable`
+(14 locations, 10 files), `detaching-temporary` (43, 6) and
+`container-anti-pattern` (38, 13). Batch D takes the declaration and emit
+checks: `const-signal-or-slot` (10, 4), `incorrect-emit` (4, 3) and
+`fully-qualified-moc-types` (21, 9), in 13 headers and 3 sources. Seven of batch
+D's headers belong to batch C sources, so batch C changes no header and batch D
+no source outside its three. `range-loop-detach` (305, 47),
+`connect-3arg-lambda`, `qproperty-without-notify`, `overloaded-signal`,
+`overridden-signal` and `non-pod-global-static` wait for batch 3. Each shares
+files with batch C, directly or through the consumers its fix must update.
+Both batches are merged into `main` (`181b7f871`, `382e55cd2`), and their
+combined checks and host smoke are recorded in
+[R2c](modernization-results/R2c.md#fix-batch-2).
+
 ## R4: Settings window inputs without context properties
 
 **Scope:** `SubConfigView` and the three windows built on it:

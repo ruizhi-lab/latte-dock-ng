@@ -1,8 +1,8 @@
 # R2c: clazy Inventory and Zero-Finding Gate
 
 Status: Complete. CI run 40345972905 at `09b030e61` ran both clazy steps of the
-Clang Debug job and passed. [Fix batch 1](#fix-batch-1) is merged into `main`
-and waits for its CI run.
+Clang Debug job and passed. Fix batches [1](#fix-batch-1) and [2](#fix-batch-2)
+are merged into `main` and wait for a CI run of the Build jobs.
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -22,15 +22,16 @@ checks rejects.
 - **Gate.** `scripts/test-clazy.py` gates the zero-finding checks whose fixture
   fires under the project flags, in the Clang Debug CI job after the build: 30
   at the inventory, 31 since `R2c-auto-unexpected-qstringbuilder`, 37 since fix
-  batch 1. A gated check cannot be vacuous: the runner proves it on its own
-  fixture first.
+  batch 1 and 43 since fix batch 2. A gated check cannot be vacuous: the runner
+  proves it on its own fixture first.
 - **Not gated, zero findings.** `foreach` and `qstring-comparison-to-implicit-char`
   cannot fire under the project flags; no trigger was found for `qstring-left`.
 - **Next actions.** The 19 checks with findings become `R2c-<check>` slices.
   The first, [R2c-auto-unexpected-qstringbuilder](R2c-auto-unexpected-qstringbuilder.md),
   is done: its finding was a dangling `QStringBuilder` on Qt 6.6 and older.
-  [Fix batch 1](#fix-batch-1) fixed six more checks (81 findings); 488 findings
-  from 12 checks remain.
+  [Fix batch 1](#fix-batch-1) fixed six more checks (81 findings) and
+  [fix batch 2](#fix-batch-2) another six (130 findings); 327 findings from 6
+  checks remain.
 - The inventory commit changed no production code, build rule or dependency of
   the product; the slice commits that follow it change one file each.
 
@@ -365,8 +366,12 @@ paths; the table above is the evidence for them.
 
 ## Fix batch 1
 
-Status: Pending validation. Every check on `main` and the desktop smoke passed;
-the CI run waits for a push.
+Status: Pending validation. Every check on `main` and the desktop smoke passed.
+CI run 40508173790 at `eba91a3e6` passed 18 jobs, among them every distribution
+install and package check, the NixOS check and QML lint. The four Build jobs,
+which hold the clazy gate, failed before compiling: `wget` got an error
+response for the KDE Neon signing key (the key URL answered 502 at the time and
+200 later), and the package binding job was skipped. The next push runs them.
 
 Two sessions implemented the batch of the
 [implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
@@ -446,8 +451,81 @@ user ran the checks; the log column is what the debug logs show.
   take other branches; `layoutmanager.cpp:731`, the last fallback of the applet
   item lookup; a build on Qt 6.6 (the floor) or 6.7, since the oldest Qt built
   is 6.8.2.
-- **Not run:** the CI run (`main` is not pushed); the Debian 13 VM, which has no
-  build tools, so a build there needs packages installed as root.
+- **Not run:** the CI Build jobs (see the status above); the Debian 13 VM, which
+  has no build tools, so a build there needs packages installed as root.
+
+## Fix batch 2
+
+Status: Pending validation. Every check on `main` and the host desktop smoke
+passed; the CI run waits for a push.
+
+Two sessions implemented the batch of the
+[implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
+in parallel from `eba91a3e6`, on disjoint files. Batch C
+(`claude/r2c-batch-c-bca59f`, 20 sources) merged into `main` in `181b7f871` and
+batch D (`claude/r2c-batch-d-a6a9f7`, 13 headers and 3 sources) in `382e55cd2`.
+Neither branch changed a file outside its list. Both added names next to each
+other in `GATED_CHECKS`; the conflict was resolved by keeping the list sorted.
+The gate now holds 43 checks with 43 fixtures.
+
+| Slice | Locations / files | Batch | Commit |
+| --- | ---: | --- | --- |
+| [R2c-unused-non-trivial-variable](R2c-unused-non-trivial-variable.md) | 14 / 10 | C | `cec126a31` |
+| [R2c-detaching-temporary](R2c-detaching-temporary.md) | 43 / 6 | C | `0ca056cc7` |
+| [R2c-container-anti-pattern](R2c-container-anti-pattern.md) | 38 / 13 | C | `17248e996` |
+| [R2c-const-signal-or-slot](R2c-const-signal-or-slot.md) | 10 / 4 | D | `a315abf65` |
+| [R2c-incorrect-emit](R2c-incorrect-emit.md) | 4 / 3 | D | `ae9fe447b` |
+| [R2c-fully-qualified-moc-types](R2c-fully-qualified-moc-types.md) | 21 / 9 | D | `a50614ff2` |
+
+### Checks on `main` at `382e55cd2`
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8, CMake 4.3.4, Qt 6.11.2) | Exit 0 each; 0 compiler, linker or CMake warnings; 57/57 tests passed in each preset |
+| `python3 -I autotests/installscriptbehavior.py` | Pass |
+| `latte-r2c-clazy:noble` container (clazy 1.17, Qt 6.11.1): incremental Clang Debug build, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 8` | Exit 0; 0 compiler warnings; 43 fixtures rejected by their own checks; no finding in 153 production sources |
+| Same container, `--inventory` of the 6 checks that remain | 327 findings. `range-loop-detach` fell from 305 in 47 files to 274 in 45, because batch C rewrote 31 of its loops; the other five checks keep their inventory counts |
+| Debian 13 container, `verify-install.sh debian13` as in the CI job: CMake 3.31.6, GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5, plasma-workspace 6.3.6 | Exit 0 in 210 s: system and user build, install and uninstall; 0 compiler warnings |
+
+The Debian 13 VM still has no build tools, so the Qt 6.8 build ran in the
+container, which uses the same Debian 13 packages.
+
+### Desktop smoke
+
+The user-mode Debug build of `382e55cd2` ran on the host from the Plasma session
+environment (`systemd-run --user`, started at 08:40:06), with both docks of
+layout `我的布局` in AutoHide mode. The Fedora VM was left to the R5 measurement.
+The user ran the checks; the log column is what the debug log shows.
+
+| Check | Result | Log |
+| --- | --- | --- |
+| 1. Startup: both docks, widgets and launchers | Pass | Containment 1 on `DP-2` and 13 on `HDMI-A-1` loaded |
+| 2. Window tracking with "Dodge Maximized": maximize, restore, switch focus | Pass by the user's report | Window-tracker hint updates ran all day; no switch to DodgeMaximized appears. One dock changed to AlwaysVisible at 08:43:16 and back to AutoHide at 19:17:10, and the `Default` layout's dock ran DodgeActive from 19:21:55 to 19:23:22 |
+| 3. A maximized window stops at an always-visible dock | Pass | AlwaysVisible from 08:43:16 to 19:17:10 |
+| 4. Open and close the app launcher popup | Pass | No entry |
+| 5. Drag a widget and back; add and remove a widget | Pass by the user's report | No widget or order event outside the two layout switches |
+| 6. Context menu "Layouts" and "Add Dock" submenus | Pass | No entry |
+| 7. Switch to another layout and back | Pass | To `Default` at 19:21:54, back at 19:23:22 |
+| 8. Docks dialog and Screens dialog | Pass | Docks dialog opened at 19:30:50. The Screens dialog offers only screens that are disconnected and unused; both of the host's screens are connected and carry a dock, so none can be selected, as designed |
+| 9. Hold Meta | Pass | Holding Meta revealed the hidden dock, which hid again after release (`ModifierTracker`). No number badge can show: Meta+1–9 belong to Plasma's "Activate Task Manager Entry" shortcuts, and the log's badge list leaves slots 1–10 empty |
+| 10. Wallpaper change (optional) | Not reported | — |
+
+- **Logs:** 1328 lines (1282 debug, 6 info, 36 warnings), no `No such method`
+  or `QObject::connect` warning and none from Latte's code. 35 warnings are Qt
+  SVG messages at 19:17:36–37 ("Could not resolve property", for gradient ids
+  an icon file references but does not define, as breeze's `rocs.svg` does).
+  They are icon artwork, most likely drawn when the app launcher showed its icon
+  grid. The other is the PulseAudio message about the webcam microphone, which
+  other processes log at the same moments.
+- **Cores:** `coredumpctl` shows no core since the restart at 08:40:06. The
+  batch 1 build ran before it for 13 h 24 min with no core; its only two
+  warnings were that PulseAudio message.
+- **Not reached:** Justify alignment and its splitters, a vertical and a
+  horizontal dock touching, cut and paste of docks between layouts in the Docks
+  dialog, renaming an active layout, a layout import of the old linked format, a
+  template export, multiple-layouts mode, and a build on Qt 6.6 or 6.7.
+- **Not run:** the CI run (`main` is not pushed); the Fedora VM (left to R5); the
+  Debian 13 VM (no build tools).
 
 ## Next actions
 
@@ -455,23 +533,17 @@ Each slice fixes all findings of one check, confirms zero with
 `--inventory CHECK`, adds `autotests/clazy/CHECK.cpp` and the name in
 `GATED_CHECKS`. A reviewed exception may use `// clazy:exclude=CHECK` with a
 reason instead of a rewrite. Done: `R2c-auto-unexpected-qstringbuilder`, see
-[its report](R2c-auto-unexpected-qstringbuilder.md), and the six slices of
-[fix batch 1](#fix-batch-1). Suggested order for the rest, smallest and most
-mechanical first; the counts were checked again on `fc8b803d0` and equal those
-of the inventory:
+[its report](R2c-auto-unexpected-qstringbuilder.md), and the six slices each of
+[fix batch 1](#fix-batch-1) and [fix batch 2](#fix-batch-2). Suggested order for
+the rest, smallest and most mechanical first; the counts were checked again on
+`382e55cd2`, where only `range-loop-detach` differs from the inventory:
 
 | Slice | Locations / files | Notes |
 | --- | ---: | --- |
-| `R2c-unused-non-trivial-variable` | 14 / 10 | Delete after confirming construction has no side effect |
-| `R2c-range-loop-detach` | 305 / 47 | Mainly `std::as_const()` around the range. Largest: `app/layouts/storage.cpp` 64, `app/layout/genericlayout.cpp` 28, `app/layouts/synchronizer.cpp` 26. A loop that modifies its container needs a copy or an index loop, not `as_const`; read each loop. Split by directory |
-| `R2c-detaching-temporary` | 43 / 6 | 36 of the 43 are in `containment/plugin/layoutmanager.cpp`. 38 call `QList::operator[]` and 5 call `QList::first()` on a temporary; use `at()`, `constFirst()` or a named const reference |
-| `R2c-container-anti-pattern` | 38 / 13 | Temporary containers from `keys()`, `values()` and similar; iterate the source directly. `app/wm/tracker/windowstracker.cpp` 9 |
+| `R2c-range-loop-detach` | 274 / 45 | Mainly `std::as_const()` around the range. Largest: `app/layouts/storage.cpp` 63, `app/layout/genericlayout.cpp` 24, `app/layouts/synchronizer.cpp` 24. A loop that modifies its container needs a copy or an index loop, not `as_const`; read each loop. Split by directory |
 | `R2c-connect-3arg-lambda` | 8 / 5 | All are `QTimer::singleShot(ms, lambda)` without a context object (`lattecorona.cpp`, `layouts/manager.cpp`, `layouts/synchronizer.cpp`, `wm/waylandinterface.cpp`, `contextmenu/menu.cpp` 4). Needs the per-site lifetime note R2b used |
-| `R2c-incorrect-emit` | 4 / 3 | Three emits in constructors (`app/view/windowstracker/windowstracker.cpp` 2, `app/wm/tracker/trackedgeneralinfo.cpp`) that clazy expects to have no receiver yet, and one `windowRemoved` call without `Q_EMIT` in `app/wm/waylandinterface.cpp:838`. Review each |
 | `R2c-qproperty-without-notify` | 1 / 1 | `app/settings/universalsettings.h:61`, the `screens` list property has neither NOTIFY nor CONSTANT; needs a change signal design |
-| `R2c-const-signal-or-slot` | 10 / 4 | Const getters in slot sections (`GenericLayout::qmlFreeEdges`, `LayoutManager::isModernDockStyle` and others) that QML probably calls; the equivalent fix is `Q_INVOKABLE`. Check QML callers first |
 | `R2c-non-pod-global-static` | 31 / 6 | Namespace-scope `QString` constants with dynamic initialization (`Latte::Data::ContextMenu::*`, `Latte::Layout::MULTIPLELAYOUTSHIDDENNAME`, `previewprocess.cpp` types). Needs a constant-initialized replacement and a check for static-initialization-order users |
-| `R2c-fully-qualified-moc-types` | 21 / 9 | Signal and slot parameter types spelled inside namespaces. Changes the moc signature strings that string connects and QML may use; add a test per touched signal |
 | `R2c-overloaded-signal` | 11 / 5 | Signals that overload a base-class signal (`xChanged`, `yChanged`, `rowsInserted`, `visibilityChanged`); renaming changes API, so expect `// clazy:exclude=overloaded-signal` with a reason |
 | `R2c-overridden-signal` | 2 / 2 | `View::screenGeometryChanged` and `IconItem::enabledChanged`; same decision as above |
 

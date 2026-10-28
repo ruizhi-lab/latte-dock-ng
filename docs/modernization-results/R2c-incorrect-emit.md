@@ -1,8 +1,8 @@
 # R2c-incorrect-emit: Signals Emitted Before Anyone Can Listen
 
-Status: Pending validation. The gate, both host builds and the tests below passed
-on the feature branch. The combined desktop smoke after fix batch 2 is merged and
-the CI run are pending.
+Status: Pending validation. Merged into `main` in `382e55cd2`; the checks on
+`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
+waits for a push.
 Date: 2026-10-28. Branch: `claude/r2c-batch-d-a6a9f7`. Start HEAD: `eba91a3e6`
 (the start of batch D; this slice follows `R2c-const-signal-or-slot`). Implementation
 commit: the commit that adds this report. Part of [R2c](R2c.md), the second slice of
@@ -138,8 +138,18 @@ change touches no QML.
   scroll action that switches desktops or toggles the maximized state of the last active
   window (`layouts/EnvironmentActions.qml`). All three read `latteView.windowsTracker` after
   `windowsTrackerChanged()`. The debug log should hold no new warning.
-- **Not run:** the CI job, the desktop smoke.
-- **Next exact action:** merge with the other batch-D slices and fix batch C, run the
-  combined checks and one smoke, then mark this slice Complete after the CI run.
+- **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 43-check gate and the
+  Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
+- **Desktop smoke result:** passed on the host ([R2c fix batch
+  2](R2c.md#fix-batch-2)). The window trackers started without the removed emits.
+  Window-tracker hint updates ran all day, an AlwaysVisible dock kept maximized
+  windows at its edge, the `Default` layout's DodgeActive dock ran for a minute
+  and a half, and the log holds no new warning. The dodge-maximized walk-through
+  passed by the user's report; no switch to that mode appears in the log.
+- **Not run:** the CI job (`main` is not pushed).
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; not pushed.
+  branch; merged into `main` in `382e55cd2` with the user's approval; not
+  pushed.

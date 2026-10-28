@@ -2,7 +2,8 @@
 
 Status: Pending validation. Merged into `main` in `fc8b803d0`; the checks on
 `main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
-The CI run waits for a push.
+CI run 40508173790 stopped its Build jobs at the KDE Neon key download, so the
+clazy gate has not run there yet.
 Date: 2026-10-27. Branch: `claude/r2c-batch-b-c113e5`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the first slice of batch B (then `R2c-use-static-qregularexpression` and
@@ -118,8 +119,10 @@ change touches no QML.
   (Configure Latte → Preferences → Context Menu → Actions...) and confirmed
   that the separator rows show no icon, as before; the editor writes no log
   entry.
-- **Not run:** the CI job (`main` is not pushed), Qt 6.6.
-- **Next exact action:** after a push is approved, confirm the CI run and mark
+- **Not run:** the CI Build jobs, which hold the clazy gate (run 40508173790 at
+  `eba91a3e6` stopped them at the KDE Neon key download, before compiling), Qt
+  6.6.
+- **Next exact action:** confirm the Build jobs of the next CI run, then mark
   this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
   branch; merged into `main` in `fc8b803d0` with the user's approval; not

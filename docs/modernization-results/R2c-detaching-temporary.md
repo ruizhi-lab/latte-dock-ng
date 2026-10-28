@@ -1,7 +1,8 @@
 # R2c-detaching-temporary: Read Elements of a Returned List Without Copying It
 
-Status: Pending validation. The combined checks of fix batch 2, the CI run and
-the desktop smoke wait for the merge into `main`.
+Status: Pending validation. Merged into `main` in `181b7f871`; the checks on
+`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
+waits for a push.
 Date: 2026-10-28. Branch: `claude/r2c-batch-c-bca59f`. Start HEAD: `cec126a31`
 (the `R2c-unused-non-trivial-variable` commit on top of `eba91a3e6`).
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md);
@@ -162,27 +163,34 @@ the paths I expect only the desktop to exercise.
 - **QML diagnostics added/removed:** none; no QML changed.
 - **Negative fixtures / mutation evidence:** the fixture above and the run with
   the 6 pre-fix files mounted over the fixed ones (43 findings, exit 1).
-- **Desktop feedback / log review / clean-quit evidence:** not run, as the brief
-  leaves the one combined smoke to the main session. Paths for it: add, drag and
-  drop and remove widgets in the dock, including a widget dropped between two
-  others (`insertAt*`, `dndSpacerIndex`); a dock with Justify alignment, which
+- **Desktop feedback / log review / clean-quit evidence:** the host smoke on
+  `main` passed with no warning from Latte's code and no core ([R2c fix batch
+  2](R2c.md#fix-batch-2)). It reached startup on two screens, the context menu's
+  layout and template lists and a layout switch. Dragging, adding and removing
+  widgets passed by the user's report without a log entry. Justify alignment and
+  undoing a removal were not part of it. The paths listed before the smoke: add,
+  drag and drop and remove widgets in the dock, including a widget dropped between
+  two others (`insertAt*`, `dndSpacerIndex`); a dock with Justify alignment, which
   adds and moves the splitters (`addJustifySplittersInMainLayout`,
-  `joinLayoutsToMainLayout`, `reorderSplitterIn*Layout`); undoing a widget
-  removal (`hideAppletItem`, `showAppletItem`); a two-screen setup for
+  `joinLayoutsToMainLayout`, `reorderSplitterIn*Layout`); undoing a widget removal
+  (`hideAppletItem`, `showAppletItem`); a two-screen setup for
   `GenericLayout::viewAtLowerScreenPriority`; the dock context menu, which reads
   `contextMenuData` and `viewTemplatesData`; startup, which asks the Plasma
   service for its name and KWin for the virtual-desktop wrapping.
 - **Performance:** not measured. Each of the 43 reads no longer allocates and
   copies a list; the change cannot add work.
-- **CI, distribution and Nix checks:** not run (branch not pushed).
+- **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
+  Release with 0 warnings and 57/57 tests each, the 43-check gate and the
+  Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
+- **CI, distribution and Nix checks:** not run (`main` is not pushed).
 - **Unresolved failures, review assumptions and unavailable checks:** none
   failed. `Corona::unload()` has no caller I could find, so its changed line is
   not reachable today; whether the function is dead code is a question for the
   maintainers and is outside this slice. A unit test for the insertion helpers
   and the splitter functions of `LayoutManager` would cover the sites that only
   the desktop reaches; adding it was outside the files this slice may touch.
-- **Next exact action:** merge with the other slices of batch C and batch D, run
-  the combined checks and the desktop smoke, then mark this slice Complete after
-  the CI run.
+- **Next exact action:** after a push is approved, confirm the CI run and mark
+  this slice Complete.
 - **Commit approval status / push approval status:** committed on the feature
-  branch as part of the batch brief; not pushed.
+  branch; merged into `main` in `181b7f871` with the user's approval; not
+  pushed.
