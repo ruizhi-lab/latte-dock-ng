@@ -154,18 +154,22 @@ private Q_SLOTS:
     void rememberAppletRemovalIndex(const int &id);
     void restoreAppletOrderForApplet(const int &id);
     void forgetAppletRemovalIndex(const int &id);
-    bool isModernDockStyle() const;
-    bool isTrashWidget(QObject *applet) const;
     void applyTrashKeepOriginalColorsDefault(QObject *applet, const int &id);
     void applyTrashKeepOriginalColorsMigration();
-    bool usesLegacyJustifySplitters() const;
-    QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
     void writeConfigValue(const QString &key, const QVariant &value);
-    Plasma::Containment *containmentObject() const;
-    QObject *resolveAppletQuickItemObject(QObject *applet) const;
-    QList<QObject *> plasmoidApplets() const;
 
 private:
+    //! Const getters are not slots (clazy const-signal-or-slot), so they are Q_INVOKABLE:
+    //! the meta-object still lists them, as it listed them when they were private slots,
+    //! and QMetaObject::invokeMethod() still finds them by name.
+    Q_INVOKABLE bool isModernDockStyle() const;
+    Q_INVOKABLE bool isTrashWidget(QObject *applet) const;
+    Q_INVOKABLE bool usesLegacyJustifySplitters() const;
+    Q_INVOKABLE QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    Q_INVOKABLE Plasma::Containment *containmentObject() const;
+    Q_INVOKABLE QObject *resolveAppletQuickItemObject(QObject *applet) const;
+    Q_INVOKABLE QList<QObject *> plasmoidApplets() const;
+
     void restoreOptions();
     void restoreOption(const QString &option);
     void saveOption(const char *option);

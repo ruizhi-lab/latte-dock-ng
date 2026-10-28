@@ -352,7 +352,7 @@ protected:
 
 private Q_SLOTS:
     void applyActivitiesToWindows();
-    void availableScreenRectChangedFromSlot(View *origin);
+    void availableScreenRectChangedFromSlot(Latte::View *origin);
     void hideWindowsForSlidingOut();
     void preferredViewForShortcutsChangedSlot(Latte::View *view);
     void releaseGrab();

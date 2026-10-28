@@ -208,9 +208,11 @@ private Q_SLOTS:
 
     void updateStrutsAfterTimer();
 
-    bool isValidMode() const;
-
 private:
+    //! A const getter is not a slot (clazy const-signal-or-slot), so it is Q_INVOKABLE:
+    //! the meta-object still lists it, as it listed the private slot before.
+    Q_INVOKABLE bool isValidMode() const;
+
     void startTimerHide(const int &msec = 0);
 
     bool canSetStrut() const;

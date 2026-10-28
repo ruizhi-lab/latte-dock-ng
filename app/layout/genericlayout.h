@@ -128,6 +128,9 @@ public:
     //! All free edges in that screen
     virtual QList<Plasma::Types::Location> freeEdges(QScreen * scr) const;
     virtual QList<Plasma::Types::Location> freeEdges(int screen) const;
+    //! A const getter is not a slot (clazy const-signal-or-slot), so it is Q_INVOKABLE:
+    //! the meta-object still lists it and QMetaObject::invokeMethod() still reaches it by name.
+    virtual Q_INVOKABLE QList<int> qmlFreeEdges(int screen) const;  //change <Plasma::Types::Location> to <int> types
 
     //! Bind this latteView and its relevant containments(including subcontainments)
     //! to this layout. It is used for moving a Latte::View from layout to layout)
@@ -147,7 +150,6 @@ public:
 
 public Q_SLOTS:
     Q_INVOKABLE int viewsWithTasks() const;
-    virtual Q_INVOKABLE QList<int> qmlFreeEdges(int screen) const;  //change <Plasma::Types::Location> to <int> types
 
     void toggleHiddenState(QString viewName, QString screenName, Plasma::Types::Location edge);
 

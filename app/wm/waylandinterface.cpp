@@ -835,7 +835,7 @@ WindowInfoWrap WaylandInterface::requestInfo(WindowId wid)
     }
 
     if (plasmaBlockedWindow) {
-        windowRemoved(w->uuid());
+        Q_EMIT windowRemoved(w->uuid());
     }
 
     //! The tracker stores every window it requests info for, but

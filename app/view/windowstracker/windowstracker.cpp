@@ -37,8 +37,11 @@ WindowsTracker::WindowsTracker(Latte::View *parent)
     });
 
     m_wm->windowsTracker()->addView(m_latteView);
-    Q_EMIT allScreensChanged();
-    Q_EMIT currentScreenChanged();
+
+    //! No Q_EMIT allScreensChanged() or currentScreenChanged() here (clazy incorrect-emit): both
+    //! trackers are created above and never replaced, and View::windowsTracker() returns null until
+    //! this constructor returns and View emits windowsTrackerChanged(), so nothing can be connected
+    //! to these signals yet and the getters already report the state.
 }
 
 WindowsTracker::~WindowsTracker()

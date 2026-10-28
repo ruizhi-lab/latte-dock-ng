@@ -120,8 +120,8 @@ private Q_SLOTS:
 
     void onCurrentRowChanged();
     void onNameDuplicatedFrom(const QString &provenId,  const QString &trialId);
-    void onLayoutAddedExternally(const Data::Layout &layout);
-    void onLayoutActivitiesChangedExternally(const Data::Layout &layout);
+    void onLayoutAddedExternally(const Latte::Data::Layout &layout);
+    void onLayoutActivitiesChangedExternally(const Latte::Data::Layout &layout);
 
 private:
     void initView();
