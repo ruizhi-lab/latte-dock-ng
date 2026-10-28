@@ -122,6 +122,41 @@ The Mageia release package build and container validation target Cauldron,
 the development branch for Mageia 11. Mageia 10 stable is not a release
 validation target.
 
+## GitHub Actions versions
+
+JavaScript actions in `.github/workflows/` must target Node.js 24. On
+2026-10-28 every job of the `Build` run
+[`40683601580`](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/40683601580)
+carried the annotation "Node.js 20 is deprecated" for `actions/checkout@v4`,
+`actions/upload-artifact@v4` and `actions/download-artifact@v4`, and the
+`Automatic Release` run for `actions/github-script@v7`: the runner forced them
+onto Node 24. The workflows now use the oldest major of each action that runs on
+Node 24, so that as little as possible besides the runtime changes:
+
+| Action | Version | Newer majors not taken, and why |
+| --- | --- | --- |
+| `actions/checkout` | `v5` | `v6` persists credentials to a separate file; the `gentoo-overlay-publish` job of `release.yml` pushes with the token its checkout persisted, so that needs its own check. `v7` blocks checking out fork pull-request code for `pull_request_target` and `workflow_run`; `auto-release.yml` checks out a `workflow_run` head commit |
+| `actions/upload-artifact` | `v6` | First major that runs on Node 24 by default. `v7` adds direct (unzipped) uploads and is an ESM rewrite, neither needed |
+| `actions/download-artifact` | `v7` | First major that runs on Node 24 by default. `v5` changed the path of single downloads by artifact ID (the workflows download by name and pattern). `v8` fails on a digest mismatch by default and no longer unzips non-zip downloads |
+| `actions/github-script` | `v8` | `v9` removes `require('@actions/github')` and injects `getOctokit`; the scripts use only `github.rest`, `context`, `core` and `fs` |
+| `actions/upload-pages-artifact` | `v5` | Wraps `actions/upload-artifact@v7`, which runs on Node 24; `v4` wraps `v4.6.2` |
+| `actions/deploy-pages` | `v5` | Node 24 |
+| `softprops/action-gh-release` | `v3` | Node 24; `v2.6.2` is the last Node 20 line |
+
+The declared inputs and outputs of each action are identical between the old
+and the new version, except that `actions/upload-pages-artifact@v5` adds the
+optional `include-hidden-files`; every `with:` key in the workflows is therefore
+still valid. `build.yml` and `auto-release.yml` run on every push to `main` and
+confirm the new versions. `release.yml` (tag push or manual dispatch) and
+`publish-apt.yml` (manual dispatch) use the same versions plus the Pages and
+release actions and have not run with them yet: read the job annotations of the
+first release or publication run after this change.
+
+Before bumping an action again, read the release notes between the versions,
+compare its `action.yml` inputs and outputs with the `with:` keys in use, and
+check anything that depends on credential persistence, cross-run artifact
+downloads or `workflow_run` checkouts.
+
 ## Current validation notes
 
 As of 2026-10-03, the `Build` workflow run

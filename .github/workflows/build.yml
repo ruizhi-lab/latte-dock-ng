@@ -1,3 +1,4 @@
+# Action majors and why newer ones are not used: docs/release-workflow.md#github-actions-versions
 name: Build
 run-name: ${{ github.event_name == 'workflow_dispatch' && format('Release candidate v{0}', inputs.release_version) || format('Build {0}', github.sha) }}
 on:
@@ -23,7 +24,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Resolve version
         id: version
         env:
@@ -97,7 +98,7 @@ jobs:
             plasma-workspace-dev plasma-pa plasma-wayland-protocols breeze-icon-theme libqt6svg6 \
             libwayland-dev liblayershellqtinterface-dev
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Record toolchain versions
         run: |
@@ -178,7 +179,7 @@ jobs:
 
       - name: Retain QML baseline evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: qmllint-baseline-${{ matrix.preset }}
           path: |
@@ -189,7 +190,7 @@ jobs:
 
       - name: Upload build diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-failure-${{ matrix.preset }}
           path: |
@@ -215,7 +216,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends python3 qt6-declarative-dev qt6-declarative-dev-tools
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Syntax-error gate over every tracked QML file (scripts/qmllint.sh
       # disables all analyzer warnings; only errors fail the run).
@@ -257,7 +258,7 @@ jobs:
             verifier: verify-install.sh
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build ${{ matrix.distro }} verification image
         run: |
@@ -329,7 +330,7 @@ jobs:
             debian_release: 1ubuntu1
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build ${{ matrix.distro }} packaging image
         run: |
@@ -421,7 +422,7 @@ jobs:
             '
 
       - name: Retain validated release package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-package-${{ matrix.distro }}
           path: dist/${{ matrix.distro }}/*
@@ -435,7 +436,7 @@ jobs:
     name: NixOS release check
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
@@ -476,10 +477,10 @@ jobs:
     needs: [release-input, package-install-verify, nixos-release-check]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download validated Debian and Ubuntu packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: release-package-*
           merge-multiple: true
@@ -503,8 +504,8 @@ jobs:
     needs: [release-input, build, qml-lint, install-verify, package-install-verify, nixos-release-check, apt-repository-preflight]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v7
         with:
           pattern: release-package-*
           merge-multiple: true
@@ -517,7 +518,7 @@ jobs:
         run: |
           python3 scripts/release-version.py metadata --sha "$SOURCE_SHA" \
             --run-id "$BUILD_RUN_ID" --packages dist --file release-candidate.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: release-candidate-metadata
           path: release-candidate.json

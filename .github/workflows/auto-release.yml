@@ -1,3 +1,4 @@
+# Action majors and why newer ones are not used: docs/release-workflow.md#github-actions-versions
 name: Automatic Release
 
 on:
@@ -24,13 +25,13 @@ jobs:
       github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
 
       - name: Download the validated candidate identity
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: release-candidate-metadata
           run-id: ${{ github.event.workflow_run.id }}
@@ -38,7 +39,7 @@ jobs:
           path: release-metadata
 
       - name: Tag the validated release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           BUILD_RUN_ID: ${{ github.event.workflow_run.id }}
           SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
