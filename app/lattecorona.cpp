@@ -612,7 +612,10 @@ void Corona::unload()
     int guard = 0;
 
     while (!containments().isEmpty() && guard++ < 10000) {
-        delete containments().first();
+        // constFirst() does not copy the list that Plasma shares. The
+        // temporary keeps its buffer alive until the delete expression ends,
+        // while Plasma's own list detaches when the containment unregisters.
+        delete containments().constFirst();
     }
 }
 

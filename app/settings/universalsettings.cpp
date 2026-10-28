@@ -503,9 +503,9 @@ void UniversalSettings::loadScalesConfig()
 
 void UniversalSettings::saveScalesConfig()
 {
-    for (const auto &screenName : m_screenScales.keys()) {
+    for (const auto &[screenName, screenScales] : std::as_const(m_screenScales).asKeyValueRange()) {
         QStringList scales;
-        scales << QString::number(m_screenScales[screenName].first) << QString::number(m_screenScales[screenName].second);
+        scales << QString::number(screenScales.first) << QString::number(screenScales.second);
         m_screenScalesGroup.writeEntry(screenName, scales.join(QLatin1Char(';')));
     }
 

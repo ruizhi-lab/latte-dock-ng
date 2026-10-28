@@ -803,7 +803,7 @@ QStringList Importer::checkRepairMultipleLayoutsLinkedFile()
 
     QStringList updatedLayouts;
 
-    for (const auto &layoutName : linkedLayoutContainmentGroups.keys()) {
+    for (const auto &[layoutName, containmentIds] : std::as_const(linkedLayoutContainmentGroups).asKeyValueRange()) {
         if (layoutName != Layout::MULTIPLELAYOUTSHIDDENNAME && layoutExists(layoutName)) {
             updatedLayouts << layoutName;
             KSharedConfigPtr layoutFilePtr = KSharedConfig::openConfig(layoutUserFilePath(layoutName));
@@ -813,7 +813,7 @@ QStringList Importer::checkRepairMultipleLayoutsLinkedFile()
             origLayoutContainments.deleteGroup();
 
             //Update containments
-            for (const auto &cId : linkedLayoutContainmentGroups[layoutName]) {
+            for (const auto &cId : containmentIds) {
                 KConfigGroup newContainment = origLayoutContainments.group(cId);
                 linkedContainments.group(cId).copyTo(&newContainment);
                 linkedContainments.group(cId).deleteGroup();

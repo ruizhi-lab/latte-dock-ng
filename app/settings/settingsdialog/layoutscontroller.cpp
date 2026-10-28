@@ -914,13 +914,9 @@ void Layouts::reset()
 void Layouts::save()
 {
     //! Update Layouts
-    QStringList knownActivities = m_handler->corona()->layoutsManager()->synchronizer()->activities();
-
     QTemporaryDir layoutTempDir;
 
     qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir.path();
-
-    QString switchToLayout;
 
     QHash<QString, Latte::CentralLayout *> activeLayoutsToRename;
 
@@ -1011,9 +1007,8 @@ void Layouts::save()
     }
 
     if (m_handler->corona()->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
-        for (const auto &newLayoutName : activeLayoutsToRename.keys()) {
-            Latte::CentralLayout *layoutPtr = activeLayoutsToRename[newLayoutName];
-            qCDebug(latteSettings) << " Active Layout of Type: " << layoutPtr->type() << " Is Renamed From : " << activeLayoutsToRename[newLayoutName]->name() << " TO :: " << newLayoutName;
+        for (const auto &[newLayoutName, layoutPtr] : std::as_const(activeLayoutsToRename).asKeyValueRange()) {
+            qCDebug(latteSettings) << " Active Layout of Type: " << layoutPtr->type() << " Is Renamed From : " << layoutPtr->name() << " TO :: " << newLayoutName;
             layoutPtr->renameLayout(newLayoutName);
         }
     }
@@ -1045,7 +1040,7 @@ void Layouts::save()
     if (inMemoryOption == MemoryUsage::SingleLayout) {
         bool inrenamingsingleactivelayout = (activeLayoutsToRename.count() > 0);
         QString currentSingleLayoutName = m_handler->corona()->universalSettings()->singleModeLayoutName();
-        QString nextSingleLayoutName = inrenamingsingleactivelayout ? activeLayoutsToRename.keys()[0] : currentSingleLayoutName;
+        QString nextSingleLayoutName = inrenamingsingleactivelayout ? activeLayoutsToRename.constBegin().key() : currentSingleLayoutName;
 
         if (inrenamingsingleactivelayout && !currentLayouts.containsName(currentSingleLayoutName)) {
             m_handler->corona()->layoutsManager()->synchronizer()->setIsSingleLayoutInDeprecatedRenaming(true);

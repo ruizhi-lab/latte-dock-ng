@@ -100,8 +100,8 @@ void Windows::init()
     connect(m_wm, &AbstractWindowInterface::activeWindowChanged, this, [this](WindowId wid) {
         //! for some reason this is needed in order to update properly activeness values
         //! when the active window changes the previous active windows should be also updated
-        for (const auto view : m_views.keys()) {
-            WindowId lastWinId = m_views[view]->lastActiveWindow()->currentWinId();
+        for (const auto info : std::as_const(m_views)) {
+            WindowId lastWinId = info->lastActiveWindow()->currentWinId();
 
             if ((lastWinId) != wid && m_windows.contains(lastWinId)) {
                 m_windows[lastWinId] = m_wm->requestInfo(lastWinId);
@@ -784,7 +784,10 @@ bool Windows::isTouchingViewEdge(Latte::View *view, const WindowInfoWrap &winfo)
 
 void Windows::cleanupFaultyWindows()
 {
-    for (const auto &key : m_windows.keys()) {
+    //! The loop removes entries from m_windows, so it walks a snapshot of the keys.
+    const auto keys = m_windows.keys();
+
+    for (const auto &key : keys) {
         auto winfo = m_windows[key];
 
         //! garbage windows removing
@@ -796,13 +799,18 @@ void Windows::cleanupFaultyWindows()
 }
 
 
+//! updateScreenGeometries(), updateAllHints() and updateLayoutHintsFromViews() (like the activeWindowChanged
+//! handler in init()) walk m_views and m_layouts directly, not a copy of their keys, and they emit signals
+//! while they run. Nothing those signals reach may call addView(), removeView(), setEnabled() or the layout
+//! bookkeeping they trigger, or the iteration would be invalidated. updateExtraViewHints() and
+//! cleanupFaultyWindows() keep iterating a snapshot of the keys.
 void Windows::updateScreenGeometries()
 {
-    for (const auto view : m_views.keys()) {
-        if (m_views[view]->screenGeometry() != view->screenGeometry()) {
-            m_views[view]->setScreenGeometry(view->screenGeometry());
+    for (const auto &[view, info] : std::as_const(m_views).asKeyValueRange()) {
+        if (info->screenGeometry() != view->screenGeometry()) {
+            info->setScreenGeometry(view->screenGeometry());
 
-            if (m_views[view]->enabled()) {
+            if (info->enabled()) {
                 updateHints(view);
             }
         }
@@ -854,8 +862,8 @@ void Windows::updateAllHints()
     //! current activity. Disabled/inactive views are skipped entirely.
     bool hasActiveView{false};
 
-    for (const auto view : m_views.keys()) {
-        if (m_views[view]->enabled() && m_views[view]->isTrackingCurrentActivity()) {
+    for (const auto &[view, info] : std::as_const(m_views).asKeyValueRange()) {
+        if (info->enabled() && info->isTrackingCurrentActivity()) {
             updateHints(view);
             hasActiveView = true;
         }
@@ -874,8 +882,8 @@ void Windows::updateAllHints()
 
 void Windows::updateLayoutHintsFromViews()
 {
-    for (const auto layout : m_layouts.keys()) {
-        if (!m_layouts[layout]->enabled() || !m_layouts[layout]->isTrackingCurrentActivity()) {
+    for (const auto &[layout, layoutInfo] : std::as_const(m_layouts).asKeyValueRange()) {
+        if (!layoutInfo->enabled() || !layoutInfo->isTrackingCurrentActivity()) {
             initLayoutHints(layout);
             continue;
         }
@@ -884,21 +892,21 @@ void Windows::updateLayoutHintsFromViews()
         bool foundActiveMaximized{false};
         bool foundMaximized{false};
 
-        for (const auto view : m_views.keys()) {
-            if (view->layout() != layout || !m_views[view]->enabled()
-                || !m_views[view]->isTrackingCurrentActivity()) {
+        for (const auto &[view, viewInfo] : std::as_const(m_views).asKeyValueRange()) {
+            if (view->layout() != layout || !viewInfo->enabled()
+                || !viewInfo->isTrackingCurrentActivity()) {
                 continue;
             }
 
-            if (m_views[view]->existsWindowActive()) {
+            if (viewInfo->existsWindowActive()) {
                 foundActive = true;
             }
 
-            if (m_views[view]->existsWindowMaximized()) {
+            if (viewInfo->existsWindowMaximized()) {
                 foundMaximized = true;
             }
 
-            if (m_views[view]->activeWindowMaximized()) {
+            if (viewInfo->activeWindowMaximized()) {
                 foundActiveMaximized = true;
             }
         }
@@ -910,13 +918,13 @@ void Windows::updateLayoutHintsFromViews()
         // Propagate the active window from any view belonging to this layout
         // so that lastActiveWindow.isValid is true for all-screens queries.
         if (foundActive) {
-            for (const auto view : m_views.keys()) {
-                if (view->layout() == layout && m_views[view]->enabled()
-                    && m_views[view]->isTrackingCurrentActivity()
-                    && m_views[view]->lastActiveWindow()
-                    && m_views[view]->lastActiveWindow()->isValid()) {
-                    auto winId = m_views[view]->lastActiveWindow()->currentWinId();
-                    m_layouts[layout]->setActiveWindow(winId);
+            for (const auto &[view, viewInfo] : std::as_const(m_views).asKeyValueRange()) {
+                if (view->layout() == layout && viewInfo->enabled()
+                    && viewInfo->isTrackingCurrentActivity()
+                    && viewInfo->lastActiveWindow()
+                    && viewInfo->lastActiveWindow()->isValid()) {
+                    auto winId = viewInfo->lastActiveWindow()->currentWinId();
+                    layoutInfo->setActiveWindow(winId);
                     break;
                 }
             }
@@ -926,15 +934,20 @@ void Windows::updateLayoutHintsFromViews()
 
 void Windows::updateExtraViewHints()
 {
-    for (const auto horView : m_views.keys()) {
+    //! Both loops walk a snapshot of the keys and re-check m_views.contains(): setIsTouchingBusyVerticalView()
+    //! emits a signal while the views are visited, and the guards show that a view may disappear meanwhile.
+    const auto horViews = m_views.keys();
+
+    for (const auto horView : horViews) {
         if (!m_views.contains(horView) || !m_views[horView]->enabled() || !m_views[horView]->isTrackingCurrentActivity()) {
             continue;
         }
 
         if (horView->formFactor() == Plasma::Types::Horizontal) {
             bool touchingBusyVerticalView{false};
+            const auto verViews = m_views.keys();
 
-            for (const auto verView : m_views.keys()) {
+            for (const auto verView : verViews) {
                 if (!m_views.contains(verView) || !m_views[verView]->enabled() || !m_views[verView]->isTrackingCurrentActivity()) {
                     continue;
                 }

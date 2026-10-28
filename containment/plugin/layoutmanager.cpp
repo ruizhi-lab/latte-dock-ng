@@ -1466,7 +1466,7 @@ void LayoutManager::save()
         int childCount = 0;
 
         for (int i = 0; i < layout->childItems().count(); ++i) {
-            QQuickItem *item = layout->childItems()[i];
+            QQuickItem *item = layout->childItems().at(i);
             bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
             bool isParabolicEdgeSpacer = item->property("isParabolicEdgeSpacer").toBool();
 
@@ -1618,11 +1618,11 @@ void LayoutManager::insertAtLayoutTail(QQuickItem *layout, QQuickItem *item)
     }
 
     if (layout->childItems().count() > 0) {
-        if (layout == m_endLayout && isJustifySplitter(layout->childItems()[0])) {
+        if (layout == m_endLayout && isJustifySplitter(layout->childItems().at(0))) {
             //! this way we ignore the justify splitter in start layout
-            insertAfter(layout->childItems()[0], item);
+            insertAfter(layout->childItems().at(0), item);
         } else {
-            insertBefore(layout->childItems()[0], item);
+            insertBefore(layout->childItems().at(0), item);
         }
 
         return;
@@ -1640,11 +1640,11 @@ void LayoutManager::insertAtLayoutHead(QQuickItem *layout, QQuickItem *item)
     int count = layout->childItems().count();
 
     if (count > 0) {
-        if (layout == m_startLayout && isJustifySplitter(layout->childItems()[count - 1])) {
+        if (layout == m_startLayout && isJustifySplitter(layout->childItems().at(count - 1))) {
             //! this way we ignore the justify splitter in end layout
-            insertBefore(layout->childItems()[count - 1], item);
+            insertBefore(layout->childItems().at(count - 1), item);
         } else {
-            insertAfter(layout->childItems()[count - 1], item);
+            insertAfter(layout->childItems().at(count - 1), item);
         }
 
         return;
@@ -1664,7 +1664,7 @@ void LayoutManager::insertAtLayoutIndex(QQuickItem *layout, QQuickItem *item, co
     } else if (index >= layout->childItems().count()) {
         insertAtLayoutHead(layout, item);
     } else {
-        insertBefore(layout->childItems()[index], item);
+        insertBefore(layout->childItems().at(index), item);
     }
 }
 
@@ -1698,7 +1698,7 @@ bool LayoutManager::insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *it
                     break;
                 }
 
-                QQuickItem *candidate = layout->childItems()[i];
+                QQuickItem *candidate = layout->childItems().at(i);
                 int right = candidate->x() + candidate->width() + rowspacing;
 
                 if (x >= candidate->x() && x < right) {
@@ -1712,7 +1712,7 @@ bool LayoutManager::insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *it
                     break;
                 }
 
-                QQuickItem *candidate = layout->childItems()[i];
+                QQuickItem *candidate = layout->childItems().at(i);
                 int bottom = candidate->y() + candidate->height() + columnspacing;
 
                 if (y >= candidate->y() && y < bottom) {
@@ -1745,7 +1745,7 @@ bool LayoutManager::insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *it
 QQuickItem *LayoutManager::firstSplitter()
 {
     for (int i = 0; i < m_startLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_startLayout->childItems()[i];
+        QQuickItem *item = m_startLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1754,7 +1754,7 @@ QQuickItem *LayoutManager::firstSplitter()
     }
 
     for (int i = 0; i < m_mainLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_mainLayout->childItems()[i];
+        QQuickItem *item = m_mainLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1763,7 +1763,7 @@ QQuickItem *LayoutManager::firstSplitter()
     }
 
     for (int i = 0; i < m_endLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_endLayout->childItems()[i];
+        QQuickItem *item = m_endLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1777,7 +1777,7 @@ QQuickItem *LayoutManager::firstSplitter()
 QQuickItem *LayoutManager::lastSplitter()
 {
     for (int i = m_endLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_endLayout->childItems()[i];
+        QQuickItem *item = m_endLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1786,7 +1786,7 @@ QQuickItem *LayoutManager::lastSplitter()
     }
 
     for (int i = m_mainLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_mainLayout->childItems()[i];
+        QQuickItem *item = m_mainLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1795,7 +1795,7 @@ QQuickItem *LayoutManager::lastSplitter()
     }
 
     for (int i = m_endLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_endLayout->childItems()[i];
+        QQuickItem *item = m_endLayout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
 
         if (isInternalSplitter) {
@@ -1813,7 +1813,7 @@ QQuickItem *LayoutManager::appletItemInLayout(QQuickItem *layout, const int &id)
     }
 
     for (int i = 0; i < layout->childItems().count(); ++i) {
-        QQuickItem *item = layout->childItems()[i];
+        QQuickItem *item = layout->childItems().at(i);
         bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
         bool isParabolicEdgeSpacer = item->property("isParabolicEdgeSpacer").toBool();
 
@@ -1875,7 +1875,7 @@ int LayoutManager::dndSpacerIndex()
 
     if (useJustifySplitters) {
         for (int i = 0; i < m_startLayout->childItems().count(); ++i) {
-            QQuickItem *item = m_startLayout->childItems()[i];
+            QQuickItem *item = m_startLayout->childItems().at(i);
             bool isparabolicspacer = item->property("isParabolicEdgeSpacer").toBool();
 
             if (isparabolicspacer) {
@@ -1891,7 +1891,7 @@ int LayoutManager::dndSpacerIndex()
     }
 
     for (int i = 0; i < m_mainLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_mainLayout->childItems()[i];
+        QQuickItem *item = m_mainLayout->childItems().at(i);
         bool isparabolicspacer = item->property("isParabolicEdgeSpacer").toBool();
 
         if (isparabolicspacer) {
@@ -1907,7 +1907,7 @@ int LayoutManager::dndSpacerIndex()
 
     if (useJustifySplitters) {
         for (int i = 0; i < m_endLayout->childItems().count(); ++i) {
-            QQuickItem *item = m_endLayout->childItems()[i];
+            QQuickItem *item = m_endLayout->childItems().at(i);
             bool isparabolicspacer = item->property("isParabolicEdgeSpacer").toBool();
 
             if (isparabolicspacer) {
@@ -2457,7 +2457,7 @@ void LayoutManager::hideAppletItem(QObject *applet)
         QQuickItem *layout = (i == 0 ? m_startLayout : (i == 1 ? m_mainLayout : m_endLayout));
 
         for (int j = layout->childItems().count() - 1; j >= 0; --j) {
-            QQuickItem *item = layout->childItems()[j];
+            QQuickItem *item = layout->childItems().at(j);
 
             if (item->property("isInternalViewSplitter").toBool()) {
                 continue;
@@ -2500,7 +2500,7 @@ void LayoutManager::showAppletItem(QObject *applet)
         QQuickItem *layout = (i == 0 ? m_startLayout : (i == 1 ? m_mainLayout : m_endLayout));
 
         for (int j = layout->childItems().count() - 1; j >= 0; --j) {
-            QQuickItem *item = layout->childItems()[j];
+            QQuickItem *item = layout->childItems().at(j);
 
             if (item->property("isInternalViewSplitter").toBool()) {
                 continue;
@@ -2563,7 +2563,7 @@ void LayoutManager::destroyAppletContainer(QObject *applet)
                 int size = layout->childItems().count();
 
                 for (int j = size - 1; j >= 0; --j) {
-                    QQuickItem *item = layout->childItems()[j];
+                    QQuickItem *item = layout->childItems().at(j);
                     bool issplitter = item->property("isInternalViewSplitter").toBool();
 
                     if (issplitter) {
@@ -2611,7 +2611,7 @@ void LayoutManager::reorderSplitterInStartLayout()
         QQuickItem *splitter{nullptr};
 
         for (int i = 0; i < size; ++i) {
-            QQuickItem *item = m_startLayout->childItems()[i];
+            QQuickItem *item = m_startLayout->childItems().at(i);
             bool issplitter = item->property("isInternalViewSplitter").toBool();
 
             if (issplitter && i < size - 1) {
@@ -2621,7 +2621,7 @@ void LayoutManager::reorderSplitterInStartLayout()
         }
 
         if (splitter) {
-            insertAfter(m_startLayout->childItems()[size - 1], splitter);
+            insertAfter(m_startLayout->childItems().at(size - 1), splitter);
         }
     }
 }
@@ -2640,7 +2640,7 @@ void LayoutManager::reorderSplitterInEndLayout()
         QQuickItem *splitter{nullptr};
 
         for (int i = 0; i < size; ++i) {
-            QQuickItem *item = m_endLayout->childItems()[i];
+            QQuickItem *item = m_endLayout->childItems().at(i);
             bool issplitter = item->property("isInternalViewSplitter").toBool();
 
             if (issplitter && i != 0) {
@@ -2650,7 +2650,7 @@ void LayoutManager::reorderSplitterInEndLayout()
         }
 
         if (splitter) {
-            insertBefore(m_endLayout->childItems()[0], splitter);
+            insertBefore(m_endLayout->childItems().at(0), splitter);
         }
     }
 }
@@ -2727,7 +2727,7 @@ void LayoutManager::addJustifySplittersInMainLayout()
     if (size > 0 && splitterIndex >= 0) {
         bool atend = (splitterIndex >= size);
         int validindex = (atend ? size - 1 : splitterIndex) + 1; //we need to take into account first parabolic spacer
-        QQuickItem *currentitem = m_mainLayout->childItems()[validindex];
+        QQuickItem *currentitem = m_mainLayout->childItems().at(validindex);
 
         if (atend) {
             splitterItem->stackAfter(currentitem);
@@ -2736,7 +2736,7 @@ void LayoutManager::addJustifySplittersInMainLayout()
         }
     } else if (size > 0) {
         //! add in first position
-        QQuickItem *currentitem = m_mainLayout->childItems()[0];
+        QQuickItem *currentitem = m_mainLayout->childItems().at(0);
         splitterItem->stackBefore(currentitem);
     }
 
@@ -2757,7 +2757,7 @@ void LayoutManager::addJustifySplittersInMainLayout()
     if (size2 > 0 && splitterIndex2 >= 0) {
         bool atend = (splitterIndex2 >= size2);
         int validindex2 = (atend ? size2 - 1 : splitterIndex2) + 1; //we need to take into account first parabolic spacer
-        QQuickItem *currentitem2 = m_mainLayout->childItems()[validindex2];
+        QQuickItem *currentitem2 = m_mainLayout->childItems().at(validindex2);
 
         if (atend) {
             splitterItem2->stackAfter(currentitem2);
@@ -2766,7 +2766,7 @@ void LayoutManager::addJustifySplittersInMainLayout()
         }
     } else if (size2 > 1) {
         //! add in last position
-        QQuickItem *currentitem2 = m_mainLayout->childItems()[size2 - 1 + 1]; //we need to take into account first parabolic spacer
+        QQuickItem *currentitem2 = m_mainLayout->childItems().at(size2 - 1 + 1); // we need to take into account first parabolic spacer
         splitterItem2->stackAfter(currentitem2);
     }
 }
@@ -2786,7 +2786,7 @@ void LayoutManager::destroyJustifySplitters()
             int size = layout->childItems().count();
 
             for (int j = size - 1; j >= 0; --j) {
-                QQuickItem *item = layout->childItems()[j];
+                QQuickItem *item = layout->childItems().at(j);
                 bool issplitter = item->property("isInternalViewSplitter").toBool();
 
                 if (issplitter) {
@@ -2818,8 +2818,8 @@ void LayoutManager::joinLayoutsToMainLayout()
         int size = m_startLayout->childItems().count();
 
         for (int i = size - 1; i >= 0; --i) {
-            QQuickItem *lastStartLayoutItem = m_startLayout->childItems()[i];
-            QQuickItem *firstMainLayoutItem = m_mainLayout->childItems().count() > 0 ? m_mainLayout->childItems()[0] : nullptr;
+            QQuickItem *lastStartLayoutItem = m_startLayout->childItems().at(i);
+            QQuickItem *firstMainLayoutItem = m_mainLayout->childItems().count() > 0 ? m_mainLayout->childItems().at(0) : nullptr;
 
             lastStartLayoutItem->setParentItem(m_mainLayout);
 
@@ -2833,8 +2833,8 @@ void LayoutManager::joinLayoutsToMainLayout()
         int size = m_endLayout->childItems().count();
 
         for (int i = 0; i < size; ++i) {
-            QQuickItem *firstEndLayoutItem = m_endLayout->childItems()[0];
-            QQuickItem *lastMainLayoutItem = m_mainLayout->childItems().count() > 0 ? m_mainLayout->childItems()[m_mainLayout->childItems().count() - 1] : nullptr;
+            QQuickItem *firstEndLayoutItem = m_endLayout->childItems().at(0);
+            QQuickItem *lastMainLayoutItem = m_mainLayout->childItems().count() > 0 ? m_mainLayout->childItems().at(m_mainLayout->childItems().count() - 1) : nullptr;
 
             firstEndLayoutItem->setParentItem(m_mainLayout);
 
@@ -2913,7 +2913,6 @@ QList<int> LayoutManager::toIntList(const QString &serialized)
 
 QString LayoutManager::toStr(const QList<int> &list)
 {
-    QString str;
     QStringList strlist;
 
     for (const auto &num : list) {

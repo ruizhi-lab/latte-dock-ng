@@ -85,7 +85,7 @@ void ScreenGeometries::init()
         QDBusMessage reply = w->reply();
         bool serviceavailable = (reply.type() == QDBusMessage::ReplyMessage
                                  && !reply.arguments().isEmpty()
-                                 && reply.arguments().first().toBool());
+                                 && reply.arguments().constFirst().toBool());
 
         qCDebug(lattePlasma) << "PLASMA STRUTS MANAGER :: interface availability :: " << serviceavailable;
 

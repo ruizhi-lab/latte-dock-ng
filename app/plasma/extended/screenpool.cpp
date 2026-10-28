@@ -60,7 +60,6 @@ ScreenPool::~ScreenPool()
 void ScreenPool::load()
 {
     QMap<int, QString> connectorForId = m_connectorForId;
-    QHash<QString, int> idForConnector = m_idForConnector;
 
     m_connectorForId.clear();
     m_idForConnector.clear();
@@ -90,8 +89,8 @@ void ScreenPool::load()
     if (updated) {
         qCDebug(lattePlasma) << "---------------- Plasma Screen Ids ------------------";
 
-        for (const auto &id : m_connectorForId.keys()) {
-            qCDebug(lattePlasma) << id << "  __  " << m_connectorForId[id];
+        for (const auto &[id, connector] : std::as_const(m_connectorForId).asKeyValueRange()) {
+            qCDebug(lattePlasma) << id << "  __  " << connector;
         }
 
         qCDebug(lattePlasma) << "----------------  ---------------  ------------------";

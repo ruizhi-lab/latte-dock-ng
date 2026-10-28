@@ -354,7 +354,7 @@ void GenericLayout::setLastConfigViewFor(Latte::View *view)
 
 void GenericLayout::onLastConfigViewChangedFrom(Latte::View *view)
 {
-    if (!m_latteViews.values().contains(view)) {
+    if (std::find(m_latteViews.cbegin(), m_latteViews.cend(), view) == m_latteViews.cend()) {
         setLastConfigViewFor(nullptr);
     }
 }
@@ -534,11 +534,11 @@ bool GenericLayout::viewAtLowerScreenPriority(Latte::View *test, Latte::View *ba
         int testPriority = -1;
 
         for (int i = 0; i < qGuiApp->screens().count(); ++i) {
-            if (base->screen() == qGuiApp->screens()[i]) {
+            if (base->screen() == qGuiApp->screens().at(i)) {
                 basePriority = i;
             }
 
-            if (test->screen() == qGuiApp->screens()[i]) {
+            if (test->screen() == qGuiApp->screens().at(i)) {
                 testPriority = i;
             }
         }
@@ -1158,7 +1158,7 @@ bool GenericLayout::hasLatteView(Plasma::Containment *containment)
         return false;
     }
 
-    return m_latteViews.keys().contains(containment);
+    return m_latteViews.contains(containment);
 }
 
 QList<Plasma::Types::Location> GenericLayout::availableEdgesForView(QScreen *scr, Latte::View *forView) const
@@ -1232,9 +1232,9 @@ bool GenericLayout::primaryDockOccupyEdge(Plasma::Types::Location location) cons
 
 bool GenericLayout::mapContainsId(const Layout::ViewsMap *map, uint viewId) const
 {
-    for (const auto &scr : map->keys()) {
-        for (const auto &edge : (*map)[scr].keys()) {
-            if ((*map)[scr][edge].contains(viewId)) {
+    for (const auto &edges : *map) {
+        for (const auto &ids : edges) {
+            if (ids.contains(viewId)) {
                 return true;
             }
         }
@@ -1245,9 +1245,9 @@ bool GenericLayout::mapContainsId(const Layout::ViewsMap *map, uint viewId) cons
 
 QString GenericLayout::mapScreenName(const ViewsMap *map, uint viewId) const
 {
-    for (const auto &scr : map->keys()) {
-        for (const auto &edge : (*map)[scr].keys()) {
-            if ((*map)[scr][edge].contains(viewId)) {
+    for (const auto &[scr, edges] : map->asKeyValueRange()) {
+        for (const auto &ids : edges) {
+            if (ids.contains(viewId)) {
                 return scr;
             }
         }

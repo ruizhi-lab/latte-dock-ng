@@ -969,7 +969,8 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
     }
 
     if (subInfo.count() > 0) {
-        for (const auto subId : subInfo.keys()) {
+        for (auto subIdIt = subInfo.keyBegin(); subIdIt != subInfo.keyEnd(); ++subIdIt) {
+            const uint subId = *subIdIt;
             Plasma::Containment *subcontainment{nullptr};
 
             for (const auto containment : layout->corona()->containments()) {
@@ -1052,8 +1053,6 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
 
         //! split ids to normal registered and conflicted
         for (const auto containment : *layout->containments()) {
-            QString cid = QString::number(containment->id());
-
             for (const auto applet : containment->applets()) {
                 QString aid = QString::number(applet->id());
 
@@ -1152,8 +1151,6 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
 
         //! discover conflicted ids between containments and applets
         for (const auto containment : *layout->containments()) {
-            QString cid = QString::number(containment->id());
-
             for (const auto applet : containment->applets()) {
                 QString aid = QString::number(applet->id());
 

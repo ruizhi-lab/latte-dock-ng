@@ -285,7 +285,7 @@ void AbstractWindowInterface::initKWinInterface()
             qCDebug(latteWm) << " KWIN SERVICE :: is available...";
 
             if (!reply.arguments().isEmpty()) {
-                QVariant arg = reply.arguments().first();
+                QVariant arg = reply.arguments().constFirst();
                 m_isVirtualDesktopNavigationWrappingAround =
                     arg.value<QDBusVariant>().variant().toBool();
             }

@@ -262,13 +262,13 @@ QList<QAction *> Menu::contextualActions()
         {QVariant::fromValue(containment()->id())});
 
         if (reply.type() == QDBusMessage::ReplyMessage && !reply.arguments().isEmpty()) {
-            m_data = reply.arguments().first().toStringList();
+            m_data = reply.arguments().constFirst().toStringList();
         }
 
         QDBusMessage tReply = callLatte(QStringLiteral("viewTemplatesData"));
 
         if (tReply.type() == QDBusMessage::ReplyMessage && !tReply.arguments().isEmpty()) {
-            m_viewTemplates = tReply.arguments().first().toStringList();
+            m_viewTemplates = tReply.arguments().constFirst().toStringList();
         }
     }
 
@@ -317,16 +317,16 @@ void Menu::updateVisibleActions()
     bool configuring = containment()->isUserConfiguring();
 
     // normal actions that the user can specify their visibility
-    for (const auto &actionName : m_actions.keys()) {
+    for (const auto &[actionName, action] : std::as_const(m_actions).asKeyValueRange()) {
         if (Latte::Data::ContextMenu::ACTIONSSPECIAL.contains(actionName)) {
             continue;
         } else if (Latte::Data::ContextMenu::ACTIONSALWAYSHIDDEN.contains(actionName)) {
-            m_actions[actionName]->setVisible(false);
+            action->setVisible(false);
             continue;
         }
 
         bool isvisible = m_actionsAlwaysShown.contains(actionName) || configuring;
-        m_actions[actionName]->setVisible(isvisible);
+        action->setVisible(isvisible);
     }
 
     // normal actions with more criteria
@@ -345,8 +345,8 @@ void Menu::updateVisibleActions()
     }
 
     // because sometimes they are disabled unexpectedly, we should reenable them
-    for (const auto &actionName : m_actions.keys()) {
-        m_actions[actionName]->setEnabled(true);
+    for (QAction *action : std::as_const(m_actions)) {
+        action->setEnabled(true);
     }
 }
 
@@ -376,8 +376,6 @@ void Menu::populateLayouts()
 
     for (int i = 0; i < layoutsmenulist.count(); ++i) {
         bool isActive = activeNames.contains(layoutsmenulist[i].layoutName);
-
-        QString layoutText = layoutsmenulist[i].layoutName;
 
         bool isCurrent = ((memoryUsage == SingleLayout && isActive)
                           || (memoryUsage == MultipleLayouts && currentNames.contains(layoutsmenulist[i].layoutName)));
@@ -416,8 +414,6 @@ void Menu::populateMoveToLayouts()
     LayoutsMemoryUsage memoryUsage = static_cast<LayoutsMemoryUsage>(m_data.value(MEMORYINDEX).toInt());
 
     if (memoryUsage == LayoutsMemoryUsage::MultipleLayouts) {
-        QStringList activeNames = m_data.value(ACTIVELAYOUTSINDEX).split(QStringLiteral(";;"));
-        QStringList currentNames = m_data.value(CURRENTLAYOUTSINDEX).split(QStringLiteral(";;"));
         QString viewLayoutName = m_data.value(VIEWLAYOUTINDEX);
 
         QList<LayoutInfo> layoutsmenulist;

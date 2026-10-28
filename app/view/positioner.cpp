@@ -524,7 +524,6 @@ void Positioner::immediateSyncGeometry()
         }
 
         if (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical) {
-            QString layoutName = m_view->layout() ? m_view->layout()->name() : QString();
             auto latteCorona = qobject_cast<Latte::Corona *>(m_view->corona());
             int fixedScreen = m_view->onPrimary() ? latteCorona->screenPool()->primaryScreenId() : m_view->containment()->screen();
 
