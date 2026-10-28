@@ -181,7 +181,7 @@ void Layouts::appendLayout(const Latte::Data::Layout &layout)
     m_layoutsTable.insert(newRow, layout);
     endInsertRows();
 
-    Q_EMIT rowsInserted();
+    Q_EMIT layoutsInserted();
 }
 
 void Layouts::appendOriginalLayout(const Latte::Data::Layout &layout)
@@ -856,7 +856,7 @@ void Layouts::setOriginalData(Latte::Data::LayoutsTable &data)
     m_layoutsTable = data;
     endInsertRows();
 
-    Q_EMIT rowsInserted();
+    Q_EMIT layoutsInserted();
 
     updateActiveStates();
     updateConsideredActiveStates();

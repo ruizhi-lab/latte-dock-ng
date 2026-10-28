@@ -136,7 +136,8 @@ Q_SIGNALS:
     void activitiesStatesChanged();
     void inMultipleModeChanged();
     void nameDuplicated(const QString &provenId, const QString &trialId);
-    void rowsInserted();
+    //! Not named rowsInserted: that would overload QAbstractItemModel::rowsInserted (clazy overloaded-signal).
+    void layoutsInserted();
 
 private Q_SLOTS:
     void updateActiveStates();

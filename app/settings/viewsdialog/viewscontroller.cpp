@@ -54,8 +54,8 @@ Views::Views(Settings::Handler::ViewsHandler *parent)
     m_proxyModel->setSourceModel(m_model);
 
     connect(m_model, &QAbstractItemModel::dataChanged, this, &Views::dataChanged);
-    connect(m_model, &Model::Views::rowsInserted, this, &Views::dataChanged);
-    connect(m_model, &Model::Views::rowsRemoved, this, &Views::dataChanged);
+    connect(m_model, &Model::Views::viewsInserted, this, &Views::dataChanged);
+    connect(m_model, &Model::Views::viewsRemoved, this, &Views::dataChanged);
 
     connect(m_handler, &Handler::ViewsHandler::currentLayoutChanged, this, &Views::onCurrentLayoutChanged);
 

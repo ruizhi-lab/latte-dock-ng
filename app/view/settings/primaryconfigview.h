@@ -103,8 +103,10 @@ Q_SIGNALS:
     void isReadyChanged();
     void raiseDocksTemporaryChanged();
     void showSignal();
-    void xChanged();
-    void yChanged();
+    //! Reviewed exceptions to overloaded-signal, marked on each line: NOTIFY signals of the QML-visible x and y properties.
+    //! They shadow QWindow::xChanged and yChanged, which the constructor forwards to these signals.
+    void xChanged(); // clazy:exclude=overloaded-signal
+    void yChanged(); // clazy:exclude=overloaded-signal
 
 protected:
     void showEvent(QShowEvent *ev) override;

@@ -109,8 +109,9 @@ public:
     Latte::Data::ViewsTable newViews() const;
 
 Q_SIGNALS:
-    void rowsInserted();
-    void rowsRemoved();
+    //! Not named rowsInserted or rowsRemoved: those would overload QAbstractItemModel's signals (clazy overloaded-signal).
+    void viewsInserted();
+    void viewsRemoved();
 
 private Q_SLOTS:
     void clear();

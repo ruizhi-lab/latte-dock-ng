@@ -158,7 +158,9 @@ Q_SIGNALS:
     void overlaysChanged();
     void paintedSizeChanged();
     void providesColorsChanged();
-    void smoothChanged();
+    //! Reviewed exception to overloaded-signal, marked on this line: NOTIFY of the QML-visible smooth property, which shadows
+    //! QQuickItem::smoothChanged(bool). setSmooth() does not emit it, so bindings on smooth are not re-evaluated on change.
+    void smoothChanged(); // clazy:exclude=overloaded-signal
     void sourceChanged();
     void usesPlasmaThemeChanged();
     void validChanged();

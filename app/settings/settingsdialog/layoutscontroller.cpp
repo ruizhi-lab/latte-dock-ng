@@ -65,7 +65,7 @@ Layouts::Layouts(Settings::Handler::TabLayouts *parent)
     connect(m_handler->corona()->layoutsManager()->synchronizer(), &Latte::Layouts::Synchronizer::layoutActivitiesChanged, this, &Layouts::onLayoutActivitiesChangedExternally);
 
     connect(m_model, &QAbstractItemModel::dataChanged, this, &Layouts::dataChanged);
-    connect(m_model, &Model::Layouts::rowsInserted, this, &Layouts::dataChanged);
+    connect(m_model, &Model::Layouts::layoutsInserted, this, &Layouts::dataChanged);
     connect(m_model, &Model::Layouts::rowsRemoved, this, &Layouts::dataChanged);
 
     connect(m_model, &Model::Layouts::nameDuplicated, this, &Layouts::onNameDuplicatedFrom);

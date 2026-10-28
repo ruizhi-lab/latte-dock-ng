@@ -304,9 +304,13 @@ Q_SIGNALS:
     void forcedShown(); //[workaround] forced shown to avoid a KWin issue that hides windows when closing activities
     void geometryChanged();
     void groupIdChanged();
-    void widthChanged();
+    //! Reviewed exceptions to overloaded-signal, marked on each line: they shadow QWindow signals of the same name on purpose.
+    //! They are the NOTIFY signals of the QML-visible width, height, visibility, x and y properties. QML change handlers bind
+    //! to them by name (VisibilityManager.qml, AutoSize.qml and main.qml on latteView), and positioner.cpp connects
+    //! visibilityChanged by pointer, so a rename would change those bindings.
+    void widthChanged(); // clazy:exclude=overloaded-signal
     void headThicknessGapChanged();
-    void heightChanged();
+    void heightChanged(); // clazy:exclude=overloaded-signal
     void inEditModeChanged();
     void indicatorChanged();
     void inSettingsAdvancedModeChanged();
@@ -332,10 +336,10 @@ Q_SIGNALS:
 
     void sinkChanged();
     void typeChanged();
-    void visibilityChanged();
+    void visibilityChanged(); // clazy:exclude=overloaded-signal
     void windowsTrackerChanged();
-    void xChanged();
-    void yChanged();
+    void xChanged(); // clazy:exclude=overloaded-signal
+    void yChanged(); // clazy:exclude=overloaded-signal
 
     void absoluteGeometryChanged(const QRect &geometry);
 
