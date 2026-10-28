@@ -1,0 +1,51 @@
+
+## glxinfo -B (XWayland, session env)
+name of display: :0
+display: :0  screen: 0
+direct rendering: Yes
+Extended renderer info (GLX_MESA_query_renderer):
+    Vendor: Mesa (0xffffffff)
+    Device: llvmpipe (LLVM 22.1.8, 256 bits) (0xffffffff)
+    Version: 26.2.5
+    Accelerated: no
+    Video memory: 7922MB
+    Unified memory: yes
+    Preferred profile: core (0x1)
+    Max core profile version: 4.6
+    Max compat profile version: 4.6
+    Max GLES1 profile version: 1.1
+    Max GLES[23] profile version: 3.2
+Memory info (GL_ATI_meminfo):
+    VBO free memory - total: 0 MB, largest block: 0 MB
+    VBO free aux. memory - total: 4427 MB, largest block: 4427 MB
+    Texture free memory - total: 0 MB, largest block: 0 MB
+    Texture free aux. memory - total: 4427 MB, largest block: 4427 MB
+    Renderbuffer free memory - total: 0 MB, largest block: 0 MB
+    Renderbuffer free aux. memory - total: 4427 MB, largest block: 4427 MB
+Memory info (GL_NVX_gpu_memory_info):
+    Dedicated video memory: 0 MB
+    Total available memory: 7922 MB
+    Currently available dedicated video memory: 0 MB
+OpenGL vendor string: Mesa
+OpenGL renderer string: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL core profile version string: 4.6 (Core Profile) Mesa 26.2.5
+OpenGL core profile shading language version string: 4.60
+
+## wayland-info (compositor globals, selected)
+interface: 'wp_fractional_scale_manager_v1',             version:  1, name:  9
+interface: 'zwp_idle_inhibit_manager_v1',                version:  1, name: 20
+interface: 'wp_tearing_control_manager_v1',              version:  1, name: 42
+interface: 'wp_presentation',                            version:  2, name: 47
+interface: 'wp_fifo_manager_v1',                         version:  1, name: 53
+interface: 'zwp_linux_dmabuf_v1',                        version:  5, name: 60
+interface: 'wl_output',                                  version:  4, name: 66
+
+## kscreen-doctor -o (mode line only)
+Output: 1 Virtual-1 0bdbf51f-5388-4d7f-9672-e44848d2e9e2
+	Modes:  1:1280x800@74.99!  2:5120x2160@50.00  3:4096x2160@50.00  4:3840x2160@60.00  5:3840x2160@59.94  6:3840x2160@50.00  7:1920x1440@60.00  8:2560x1080@50.00  9:1856x1392@59.99  10:1792x1344@60.00
+	Geometry: 0,0 1920x1080
+	Scale: 1
+	Vrr: incapable
+
+## KWin compositing
+({'active': <true>, 'compositingNotPossibleReason': <''>, 'compositingPossible': <true>, 'compositingType': <'gl2'>, 'openGLIsBroken': <false>, 'platformRequiresCompositing': <true>, 'supportedOpenGLPlatformInterfaces': <['egl']>},)

@@ -1,0 +1,53 @@
+{
+ "seconds": 30.0,
+ "messages": 8,
+ "per_second": 0.27,
+ "top_members": [
+  [
+   [
+    "method_call",
+    "org.freedesktop.impl.portal.Background",
+    "GetAppState"
+   ],
+   2
+  ],
+  [
+   [
+    "method_return",
+    null,
+    null
+   ],
+   2
+  ],
+  [
+   [
+    "method_call",
+    "org.freedesktop.impl.portal.PermissionStore",
+    "Lookup"
+   ],
+   2
+  ],
+  [
+   [
+    "error",
+    null,
+    null
+   ],
+   2
+  ]
+ ],
+ "top_senders": [
+  [
+   ":1.61",
+   4
+  ],
+  [
+   ":1.74",
+   2
+  ],
+  [
+   ":1.65",
+   2
+  ]
+ ]
+}

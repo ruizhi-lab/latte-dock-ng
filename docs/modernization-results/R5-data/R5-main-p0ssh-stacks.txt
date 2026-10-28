@@ -1,0 +1,1800 @@
+=== sample 1 1793154277.971710643
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 2 1793154280.163255064
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 3 1793154282.369317533
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 4 1793154284.633955093
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 5 1793154286.900496815
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485df21 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 6 1793154289.126745102
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 7 1793154291.399502866
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 8 1793154293.609098084
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 9 1793154295.806617985
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 10 1793154298.014659260
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 11 1793154300.240987047
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 12 1793154302.446514035
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 13 1793154304.648729362
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 14 1793154306.853930517
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 15 1793154309.127510467
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 16 1793154311.342591685
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 17 1793154313.546331723
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 18 1793154315.866764131
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 19 1793154318.084452216
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 20 1793154320.286955089
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 21 1793154322.539457928
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 22 1793154324.760445673
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 23 1793154327.003294726
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 24 1793154329.213218502
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 25 1793154331.440057866
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 26 1793154333.756929680
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 27 1793154335.964068757
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 28 1793154338.212564119
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 29 1793154340.471423568
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 30 1793154342.789127734
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 31 1793154345.078638831
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 32 1793154347.323576709
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 33 1793154349.533512531
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 34 1793154351.775796704
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 35 1793154353.999545750
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 36 1793154356.205945525
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 37 1793154358.474551249
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 38 1793154360.737489205
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 39 1793154362.939934744
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 40 1793154365.145530649
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 41 1793154367.355395054
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 42 1793154369.574578152
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 43 1793154371.803952253
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 44 1793154374.082036359
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 45 1793154376.387537143
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 46 1793154378.750740460
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 47 1793154381.031591350
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 48 1793154383.240076595
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 49 1793154385.486275297
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 50 1793154387.690236444
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 51 1793154389.890436354
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 52 1793154392.178165148
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 53 1793154394.435406696
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 54 1793154396.706002494
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 55 1793154398.959701566
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 56 1793154401.203381370
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 57 1793154403.450226052
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 58 1793154405.677726870
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 59 1793154407.979901058
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 60 1793154410.232566323
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 61 1793154412.467854805
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 62 1793154414.749878690
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 63 1793154416.981377593
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 64 1793154419.210774948
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 65 1793154421.489956867
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 66 1793154423.727913659
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 67 1793154425.957537864
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 68 1793154428.173991910
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 69 1793154430.466827749
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 70 1793154432.717891331
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 71 1793154435.014635040
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 72 1793154437.352213138
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 73 1793154439.668636845
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 74 1793154441.969343527
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 75 1793154444.207982737
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 76 1793154446.491024303
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 77 1793154448.728172433
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 78 1793154450.964887348
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 79 1793154453.210364014
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 80 1793154455.449138970
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 81 1793154457.704953141
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 82 1793154459.937296973
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 83 1793154462.185322927
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 84 1793154464.493867718
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 85 1793154466.773014197
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 86 1793154469.085901026
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 87 1793154471.319973217
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 88 1793154473.530995437
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 89 1793154475.765083520
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 90 1793154477.993623945
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 91 1793154480.253537687
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 92 1793154482.453464499
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 93 1793154484.685821617
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 94 1793154486.910994399
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 95 1793154489.194400953
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 96 1793154491.453788803
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 97 1793154493.702557346
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 98 1793154495.984001355
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 99 1793154498.214469524
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 100 1793154500.464891227
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 101 1793154502.728402715
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 102 1793154504.990144383
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 103 1793154507.278941437
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 104 1793154509.562554200
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 105 1793154511.837747135
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 106 1793154514.093727155
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 107 1793154516.343003461
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 108 1793154518.543721528
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 109 1793154520.760717491
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 110 1793154522.994838130
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 111 1793154525.238805935
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 112 1793154527.471938500
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 113 1793154529.727268044
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 114 1793154532.022729891
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 115 1793154534.255512986
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 116 1793154536.547461554
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 117 1793154538.775618382
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 118 1793154541.001546044
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 119 1793154543.270225398
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 120 1793154545.527747737
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 121 1793154547.844135111
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 122 1793154550.063597255
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 123 1793154552.307773522
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 124 1793154554.563760575
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 125 1793154556.839027408
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 126 1793154559.078134226
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 127 1793154561.383952011
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 128 1793154563.640666120
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 129 1793154565.870821657
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 130 1793154568.097773492
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 131 1793154570.365476989
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 132 1793154572.601364971
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 133 1793154574.816405803
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 134 1793154577.094081832
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 135 1793154579.324833096
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 136 1793154581.581068961
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 137 1793154583.856397469
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 138 1793154586.092560535
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 139 1793154588.321383942
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 140 1793154590.639666660
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 141 1793154592.924924661
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 142 1793154595.139432959
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 143 1793154597.414196339
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 144 1793154599.678996374
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 145 1793154601.917488525
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 146 1793154604.125545067
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 147 1793154606.342383778
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 148 1793154608.538571374
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 149 1793154610.755066160
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485df21 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()
+=== sample 150 1793154613.004491615
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#0  0x00007facc3e82352 in __syscall_cancel_arch () from /lib64/libc.so.6
+#1  0x00007facc3e7654c in __internal_syscall_cancel () from /lib64/libc.so.6
+#2  0x00007facc3e76594 in __syscall_cancel () from /lib64/libc.so.6
+#3  0x00007facc3ef0466 in ppoll () from /lib64/libc.so.6
+#4  0x00007facc1846165 in g_main_context_iterate_unlocked.isra () from /lib64/libglib-2.0.so.0
+#5  0x00007facc1846223 in g_main_context_iteration () from /lib64/libglib-2.0.so.0
+#6  0x00007facc485defd in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#7  0x00007facc451a78b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () from /lib64/libQt6Core.so.6
+#8  0x00007facc4515ad2 in QCoreApplication::exec() () from /lib64/libQt6Core.so.6
+#9  0x0000000000411d74 in main ()

@@ -1,0 +1,4 @@
+{"event": "r5_start", "scenario": "main-env-xdg-config-dirs-ssh-value", "start": 1}
+{"by_parent_and_environment": [], "first_runs": [], "kbuildsycoca6_processes": 0, "per_second": 0.0, "seconds": 60.0, "sycoca_file_versions_seen": {"ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=": 154, "ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=.QjiNiz": 0, "ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=.lock.rmlock": 5, "ksycoca6_zh_D7WnpXgRGuWj2FoUFXYZJBUrb+k=": 1}}
+{"event": "r5_start", "scenario": "main-env-xdg-config-dirs-ssh-value", "start": 2}
+{"by_parent_and_environment": [], "first_runs": [], "kbuildsycoca6_processes": 0, "per_second": 0.0, "seconds": 60.0, "sycoca_file_versions_seen": {"ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=": 164, "ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=.HbFZub": 0, "ksycoca6_en_D7WnpXgRGuWj2FoUFXYZJBUrb+k=.lock.rmlock": 4, "ksycoca6_zh_D7WnpXgRGuWj2FoUFXYZJBUrb+k=": 1}}
