@@ -1,8 +1,10 @@
 # R2c-const-signal-or-slot: Const Getters Declared as Slots
 
-Status: Pending validation. Merged into `main` in `382e55cd2`; the checks on
-`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
-waits for a push. No automated test calls the ten methods.
+Status: Complete. Merged into `main` in `382e55cd2`; the checks on `main` and
+the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). CI run
+40683601580 at `14d705a5d` passed all 23 jobs, including the 43-check clazy gate
+([CI validation](R2c.md#ci-validation)). No automated test calls the ten
+methods.
 Date: 2026-10-28. Branch: `claude/r2c-batch-d-a6a9f7`. Start HEAD: `eba91a3e6`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the first slice of batch D (before `R2c-incorrect-emit` and
@@ -194,9 +196,11 @@ change touches no QML.
 - **Desktop smoke result:** passed on the host ([R2c fix batch
   2](R2c.md#fix-batch-2)). The log holds 40 `PLASMA SCREEN GEOMETRIES` lines
   (`screenIsActive`) and no `No such method` line.
-- **Not run:** the CI job (`main` is not pushed), a build on Qt 6.6 or 6.7.
-- **Next exact action:** after a push is approved, confirm the CI run and mark
-  this slice Complete.
+- **CI:** run 40683601580 at `14d705a5d` passed all 23 jobs, among them
+  `Build (Clang Debug)` with the 43-check clazy gate and `Install verify
+  (debian13)` on Qt 6.8.2; see [CI validation](R2c.md#ci-validation).
+- **Not run:** a build on Qt 6.6 or 6.7.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; merged into `main` in `382e55cd2` with the user's approval; not
-  pushed.
+  branch; merged into `main` in `382e55cd2` with the user's approval; pushed
+  with `14d705a5d`.

@@ -1,9 +1,10 @@
 # R2c-connect-not-normalized: Unnormalized Type Names in `Q_ARG`
 
-Status: Pending validation. Merged into `main` in `fc8b803d0`; the checks on
-`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
-CI run 40508173790 stopped its Build jobs at the KDE Neon key download, so the
-clazy gate has not run there yet. No automated test reaches the ten calls.
+Status: Complete. Merged into `main` in `fc8b803d0`; the checks on `main` and
+the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)). CI
+run 40683601580 at `14d705a5d` passed all 23 jobs, including the 43-check clazy
+gate ([CI validation](R2c.md#ci-validation)). No automated test reaches the ten
+calls.
 Date: 2026-10-27. Branch: `claude/r2c-batch-b-c113e5`. Start HEAD: `09b030e61`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 the third slice of batch B (after `R2c-empty-qstringliteral` and
@@ -176,11 +177,13 @@ change touches no QML.
 - **Combined validation:** on `main` at `fc8b803d0`, GCC and Clang Debug and
   Release with 0 warnings and 57/57 tests each, the 37-check gate and the
   Debian 13 build on Qt 6.8.2 passed.
-- **Not run:** the CI Build jobs, which hold the clazy gate (run 40508173790 at
-  `eba91a3e6` stopped them at the KDE Neon key download, before compiling), Qt
-  6.6.
-- **Next exact action:** confirm the Build jobs of the next CI run, then mark
-  this slice Complete.
+- **CI:** run 40683601580 at `14d705a5d` passed all 23 jobs, among them
+  `Build (Clang Debug)` with the 43-check clazy gate and `Install verify
+  (debian13)` on Qt 6.8.2; see [CI validation](R2c.md#ci-validation). The
+  earlier run 40508173790 at `eba91a3e6` stopped its Build jobs at the KDE Neon
+  key download before compiling, so it says nothing about this slice.
+- **Not run:** a build on Qt 6.6.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; merged into `main` in `fc8b803d0` with the user's approval; not
-  pushed.
+  branch; merged into `main` in `fc8b803d0` with the user's approval; pushed
+  with `eba91a3e6`.

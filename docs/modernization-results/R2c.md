@@ -2,7 +2,8 @@
 
 Status: Complete. CI run 40345972905 at `09b030e61` ran both clazy steps of the
 Clang Debug job and passed. Fix batches [1](#fix-batch-1) and [2](#fix-batch-2)
-are merged into `main` and wait for a CI run of the Build jobs.
+are merged into `main` and passed CI run 40683601580 at `14d705a5d`, which ran
+the 43-check gate ([CI validation](#ci-validation)).
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -355,6 +356,34 @@ paths; the table above is the evidence for them.
 - CI run 40345972905 at `09b030e61` (2026-10-26): `Install clazy` and
   `Run gated clazy checks` in `Build (Clang Debug)` passed, in 6 s and
   4 min 31 s, and so did every other job.
+- CI run [40683601580](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/40683601580)
+  at `14d705a5d` (2026-10-28, push to `main`, first attempt, 19 minutes): all 23
+  jobs passed. It is the first run that contains fix batches 1 and 2 and the
+  43-check gate (43 names and 43 fixtures in `scripts/test-clazy.py` and
+  `autotests/clazy/` at that commit). In `Build (Clang Debug)`, `Install clazy`
+  took 4 s, `Run gated clazy checks` 2 min 49 s, `Test` 21 s and `Deep QML lint`
+  8 s, and every step that ran passed (the sanitizer steps and the failure
+  upload are skipped in that job). The gate printed clazy 1.17 on LLVM 19.1.1,
+  "43 negative fixtures: each is rejected by its own gated check" and "153
+  production sources: no findings from 43 gated clazy checks"; `ctest` passed 56
+  of 56 (the host registers one more test, `appstreamtest`, which ECM adds when
+  `appstreamcli` is installed). `Build (GCC Debug)`, `Build (GCC Release)`,
+  `Build (Clang Release)`, `QML lint (qmllint)`, `NixOS release check`, the
+  seven `Install verify` jobs and the seven `Package install verify` jobs (Arch,
+  Debian 13, Debian testing, Fedora, Mageia, openSUSE, Ubuntu) passed too.
+  `Install verify (debian13)` builds against the Debian 13 floor: CMake 3.31.6
+  and Qt 6.8.2.
+- The only annotations of that run are 23 warnings "Node.js 20 is deprecated"
+  for `actions/checkout`, `upload-artifact` and `download-artifact`; commit
+  `6b0ea7648` moves the actions to Node 24 (see
+  [GitHub Actions versions](../release-workflow.md#github-actions-versions)).
+  Its Build run 40699083721 passed all 23 jobs without any annotation. The
+  `Automatic Release` run 40686088082 for `14d705a5d` found that `v1.2.59`
+  already points at another commit and released nothing; run 40701918106 for
+  `6b0ea7648` reached the same decision.
+- The earlier run 40508173790 at `eba91a3e6` does not count for the gate: its
+  four Build jobs stopped at the KDE Neon key download before compiling (see
+  [Fix batch 1](#fix-batch-1)).
 - The container matches the job's image, but package versions float: Neon's
   clazy and Qt move independently of this repository, so a later run can meet a
   check that changed meaning.
@@ -366,12 +395,13 @@ paths; the table above is the evidence for them.
 
 ## Fix batch 1
 
-Status: Pending validation. Every check on `main` and the desktop smoke passed.
-CI run 40508173790 at `eba91a3e6` passed 18 jobs, among them every distribution
-install and package check, the NixOS check and QML lint. The four Build jobs,
-which hold the clazy gate, failed before compiling: `wget` got an error
-response for the KDE Neon signing key (the key URL answered 502 at the time and
-200 later), and the package binding job was skipped. The next push runs them.
+Status: Complete. Every check on `main` and the desktop smoke passed. CI run
+40508173790 at `eba91a3e6` passed 18 jobs, among them every distribution install
+and package check, the NixOS check and QML lint, but its four Build jobs, which
+hold the clazy gate, failed before compiling: `wget` got an error response for
+the KDE Neon signing key (the key URL answered 502 at the time and 200 later),
+and the package binding job was skipped. CI run 40683601580 at `14d705a5d`, the
+next push, passed all 23 jobs ([CI validation](#ci-validation)).
 
 Two sessions implemented the batch of the
 [implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
@@ -451,13 +481,14 @@ user ran the checks; the log column is what the debug logs show.
   take other branches; `layoutmanager.cpp:731`, the last fallback of the applet
   item lookup; a build on Qt 6.6 (the floor) or 6.7, since the oldest Qt built
   is 6.8.2.
-- **Not run:** the CI Build jobs (see the status above); the Debian 13 VM, which
-  has no build tools, so a build there needs packages installed as root.
+- **Not run:** the Debian 13 VM, which has no build tools, so a build there needs
+  packages installed as root.
 
 ## Fix batch 2
 
-Status: Pending validation. Every check on `main` and the host desktop smoke
-passed; the CI run waits for a push.
+Status: Complete. Every check on `main` and the host desktop smoke passed, and
+CI run 40683601580 at `14d705a5d` passed all 23 jobs
+([CI validation](#ci-validation)).
 
 Two sessions implemented the batch of the
 [implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
@@ -524,8 +555,7 @@ The user ran the checks; the log column is what the debug log shows.
   horizontal dock touching, cut and paste of docks between layouts in the Docks
   dialog, renaming an active layout, a layout import of the old linked format, a
   template export, multiple-layouts mode, and a build on Qt 6.6 or 6.7.
-- **Not run:** the CI run (`main` is not pushed); the Fedora VM (left to R5); the
-  Debian 13 VM (no build tools).
+- **Not run:** the Fedora VM (left to R5); the Debian 13 VM (no build tools).
 
 ## Next actions
 

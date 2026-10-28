@@ -1,9 +1,9 @@
 # R2c-range-loop-reference: Range Loops Bind Their Element by `const &`
 
-Status: Pending validation. Merged into `main` in `1dd485bc1`; the checks on
-`main` and the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)).
-CI run 40508173790 stopped its Build jobs at the KDE Neon key download, so the
-clazy gate has not run there yet.
+Status: Complete. Merged into `main` in `1dd485bc1`; the checks on `main` and
+the combined desktop smoke passed ([R2c fix batch 1](R2c.md#fix-batch-1)). CI
+run 40683601580 at `14d705a5d` passed all 23 jobs, including the 43-check clazy
+gate ([CI validation](R2c.md#ci-validation)).
 Date: 2026-10-27. Branch: `claude/r2c-batch-a-a5a9fa`. Start HEAD: `4a08e472e`
 (the `R2c-qfileinfo-exists` commit on top of `09b030e61`). Implementation
 commit: the commit that adds this report. Part of [R2c](R2c.md); the second
@@ -97,11 +97,13 @@ and this change touches no QML.
   layout switch and back, the dock context menu and the dock masks. Both docks
   run in single-layout mode, so the loops of `synchronizer.cpp` that serve
   multiple-layouts mode and activity removal were not exercised.
-- **Not run:** the CI Build jobs, which hold the clazy gate (run 40508173790 at
-  `eba91a3e6` stopped them at the KDE Neon key download, before compiling); a
-  multiple-layouts session.
-- **Next exact action:** confirm the Build jobs of the next CI run, then mark
-  this slice Complete.
+- **CI:** run 40683601580 at `14d705a5d` passed all 23 jobs, among them
+  `Build (Clang Debug)` with the 43-check clazy gate and `Install verify
+  (debian13)` on Qt 6.8.2; see [CI validation](R2c.md#ci-validation). The
+  earlier run 40508173790 at `eba91a3e6` stopped its Build jobs at the KDE Neon
+  key download before compiling, so it says nothing about this slice.
+- **Not run:** a multiple-layouts session.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; merged into `main` in `1dd485bc1` with the user's approval; not
-  pushed.
+  branch; merged into `main` in `1dd485bc1` with the user's approval; pushed
+  with `eba91a3e6`.

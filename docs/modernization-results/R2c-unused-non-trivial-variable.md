@@ -1,8 +1,9 @@
 # R2c-unused-non-trivial-variable: Remove Locals That Nothing Reads
 
-Status: Pending validation. Merged into `main` in `181b7f871`; the checks on
-`main` and the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). The CI run
-waits for a push.
+Status: Complete. Merged into `main` in `181b7f871`; the checks on `main` and
+the host desktop smoke passed ([R2c fix batch 2](R2c.md#fix-batch-2)). CI run
+40683601580 at `14d705a5d` passed all 23 jobs, including the 43-check clazy gate
+([CI validation](R2c.md#ci-validation)).
 Date: 2026-10-28. Branch: `claude/r2c-batch-c-bca59f`. Start HEAD: `eba91a3e6`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md);
 the first slice of batch C (fix batch 2).
@@ -117,7 +118,7 @@ and this change touches no QML.
 
 - **Batch / slice and selected scope:** R2c fix batch 2, batch C, slice 1 of 3:
   `unused-non-trivial-variable`, 14 locations in 10 files.
-- **Status:** Pending validation.
+- **Status:** Complete; CI run 40683601580 passed.
 - **Source baseline / start HEAD / implementation HEAD:** `eba91a3e6` /
   `eba91a3e6` / the commit that adds this report.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-c-bca59f` in its
@@ -166,13 +167,15 @@ and this change touches no QML.
 - **Combined validation:** on `main` at `382e55cd2`, GCC and Clang Debug and
   Release with 0 warnings and 57/57 tests each, the 43-check gate and the
   Debian 13 container build on Qt 6.8.2 passed; see [R2c fix batch 2](R2c.md#fix-batch-2).
-- **CI, distribution and Nix checks:** not run (`main` is not pushed).
+- **CI, distribution and Nix checks:** run 40683601580 at `14d705a5d` passed all
+  23 jobs, among them `Build (Clang Debug)` with the 43-check clazy gate and
+  `Install verify (debian13)` on Qt 6.8.2; see
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** none
   failed. The only assumption is that the activity accessor has no side effect,
   shown by its documentation and disassembly on Plasma 6.7.5; the container's
   library (Plasma 6.8) was not disassembled.
-- **Next exact action:** after a push is approved, confirm the CI run and mark
-  this slice Complete.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature
-  branch; merged into `main` in `181b7f871` with the user's approval; not
-  pushed.
+  branch; merged into `main` in `181b7f871` with the user's approval; pushed
+  with `14d705a5d`.
