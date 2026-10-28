@@ -301,7 +301,7 @@ int main(int argc, char **argv)
         if (layouts.count() > 0) {
             qInfo() << i18n("Available layouts that can be used to start Latte:");
 
-            for (const auto &layout : layouts) {
+            for (const auto &layout : std::as_const(layouts)) {
                 qInfo() << "     " << layout;
             }
         } else {
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
         if (templates.count() > 0) {
             qInfo() << i18n("Available layout templates found in your system:");
 
-            for (const auto &templatename : templates) {
+            for (const auto &templatename : std::as_const(templates)) {
                 qInfo() << "     " << templatename;
             }
         } else {
@@ -337,7 +337,7 @@ int main(int argc, char **argv)
         if (templates.count() > 0) {
             qInfo() << i18n("Available dock templates found in your system:");
 
-            for (const auto &templatename : templates) {
+            for (const auto &templatename : std::as_const(templates)) {
                 qInfo() << "     " << templatename;
             }
         } else {
@@ -765,7 +765,7 @@ void addLatteQmlImportPaths(QQmlEngine *engine)
 
     const QStringList currentPaths = engine->importPathList();
 
-    for (const QString &path : s_userLocalQmlPaths) {
+    for (const QString &path : std::as_const(s_userLocalQmlPaths)) {
         if (!currentPaths.contains(path)) {
             engine->addImportPath(path);
         }
@@ -810,7 +810,7 @@ inline void collectUserLocalPaths(int argc, char **argv)
     addQmlCandidate(userLocalPath + QStringLiteral("/lib64/qt6/qml"));
     addQmlCandidate(userLocalPath + QStringLiteral("/lib/x86_64-linux-gnu/qt6/qml"));
 
-    for (const QString &candidate : qmlCandidates) {
+    for (const QString &candidate : std::as_const(qmlCandidates)) {
         if (QFileInfo::exists(candidate)) {
             s_userLocalQmlPaths << candidate;
         }
@@ -842,7 +842,7 @@ inline void collectUserLocalPaths(int argc, char **argv)
 // processes.
 inline void applyUserLocalPluginPaths()
 {
-    for (const QString &path : s_userLocalPluginPaths) {
+    for (const QString &path : std::as_const(s_userLocalPluginPaths)) {
         QCoreApplication::addLibraryPath(path);
     }
 }

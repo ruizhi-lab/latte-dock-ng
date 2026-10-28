@@ -53,7 +53,7 @@ void Schemes::initSchemes()
 
     QStringList registeredSchemes;
 
-    for (auto path : standardPaths) {
+    for (auto path : std::as_const(standardPaths)) {
         QDir directory(path);
         QStringList tempSchemes = directory.entryList(QStringList() << QStringLiteral("*.colors") << QStringLiteral("*.COLORS"), QDir::Files);
 

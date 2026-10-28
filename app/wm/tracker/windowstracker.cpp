@@ -242,7 +242,7 @@ void Windows::updateRelevantLayouts()
         }
     }
 
-    for (const auto &layout : orphanedLayouts) {
+    for (const auto &layout : std::as_const(orphanedLayouts)) {
         m_layouts.remove(layout);
     }
 
@@ -1003,7 +1003,7 @@ void Windows::updateHints(Latte::View *view)
     //qCDebug(latteWm) << " -- TRACKING REPORT (SCREEN)--";
 
     //! First Pass
-    for (const auto &winfo : m_windows) {
+    for (const auto &winfo : std::as_const(m_windows)) {
         if (m_wm->isShowingDesktop()) {
             break;
         }
@@ -1067,7 +1067,7 @@ void Windows::updateHints(Latte::View *view)
         WindowInfoWrap activeInfo = m_windows[activeWinId];
         WindowId mainWindowId = activeInfo.isChildWindow() ? activeInfo.parentId() : activeWinId;
 
-        for (const auto &winfo : m_windows) {
+        for (const auto &winfo : std::as_const(m_windows)) {
             if (!m_wm->inCurrentDesktopActivity(winfo)
                 || m_wm->hasBlockedTracking(winfo.wid())
                 || winfo.isMinimized()) {
@@ -1149,7 +1149,7 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout)
     WindowId activeWinId;
     WindowId maxWinId;
 
-    for (const auto &winfo : m_windows) {
+    for (const auto &winfo : std::as_const(m_windows)) {
         if (m_wm->isShowingDesktop()) {
             break;
         }

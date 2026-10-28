@@ -99,7 +99,7 @@ QString standardPath(QString subPath, bool localfirst)
     QString separator = subPath.startsWith(QLatin1Char('/')) ? QString() : QLatin1String("/");
 
     if (localfirst) {
-        for (const auto &pt : paths) {
+        for (const auto &pt : std::as_const(paths)) {
             QString ptF = pt + separator + subPath;
 
             if (QFileInfo::exists(ptF)) {
