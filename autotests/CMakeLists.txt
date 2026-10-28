@@ -1114,6 +1114,10 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME releaseversiontest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_release_version.py)
     set_property(TEST releaseversiontest PROPERTY TIMEOUT 30)
+    # Runs the real Mageia CI retry script around fake builds; needs bash, not Docker or a network.
+    add_test(NAME mageiaretrytest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_retry_mageia_mirror_build.py)
+    set_property(TEST mageiaretrytest PROPERTY TIMEOUT 30)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()

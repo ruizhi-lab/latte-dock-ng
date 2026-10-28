@@ -188,6 +188,21 @@ installed its files, then `%install` failed because the spec assumed Fedora's
 instead of assuming a distribution-specific build directory. Both chroots
 need a successful COPR rebuild to validate these fixes.
 
+On 2026-10-28, `Build` run
+[`40703989933`](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/40703989933)
+failed `Package install verify (mageia)` while building the packaging image, on
+a documentation-only commit. The first attempt could not download
+`lib64imobiledevice-glue1.0_0-1.3.3-1.mga11` from any mirror, which
+`scripts/retry-mageia-mirror-build.sh` retried. The second found the
+`mirrors.kernel.org` Cauldron metadata unusable ("Usable URL not found"), which
+the script treated as an unrelated failure. Both are Cauldron mirror sync
+failures, not application or packaging failures: the mirror served the same
+files normally again the same night, and the rerun of the failed job (attempt 2
+of the run) passed all 23 jobs. The script now retries both (up to three
+attempts) and `mageiaretrytest` pins that policy, including the sequence of this
+run. If Cauldron stays out of sync for longer than the three attempts last,
+rerun the job later instead of changing the project.
+
 ## User-visible version verification
 
 Before publication, require the candidate record, package metadata, installed
