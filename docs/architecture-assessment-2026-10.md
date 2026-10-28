@@ -64,7 +64,7 @@ Strengths to preserve: the isolated preview process with watchdog and fallback,
 | Session shutdown poller | A 500 ms timer ran for the whole session and made two blocking D-Bus calls per tick (`isShuttingDown`, `isServiceRegistered`) | Fixed in [R1a](modernization-results/R1a.md) |
 | Original-icon fallback poll | A 100 ms timer per applet with "keep original icon colors" resolved the icon through C++ on every tick | Fixed in R1a |
 | Unbounded quit-time query | `Corona::onAboutToQuit()` called ksmserver with the 25 s default timeout | Fixed in R1a |
-| VM idle CPU | P0 measured about 20 % of one core and about 390 context switches per second at idle in the Fedora VM; hardware shows 0.27 % | Unexplained; R5 |
+| VM idle CPU | P0 measured about 20 % of one core and about 390 context switches per second at idle in the Fedora VM; hardware shows 0.27 % | Explained in [R5](modernization-results/R5.md): a launch artifact (an SSH launch with a shorter `XDG_CONFIG_DIRS` than the session starts a KSycoca rewrite loop); the dock idles at 0.000 % when launched with the session environment |
 | Memory | 567 MiB RSS, 265 MiB anonymous after 58 minutes on hardware; P0 saw PSS rise during samples | Needs a long-run growth check |
 | Heavy task delegates | Each task instantiates roughly 100+ QML objects and 300+ bindings; unqualified lookups keep most bindings out of compiled code | Strategic; R6 |
 | Parabolic zoom | Scales propagate between neighbours in JavaScript (`sltUpdateItemScale` relay) | Strategic; R6 |

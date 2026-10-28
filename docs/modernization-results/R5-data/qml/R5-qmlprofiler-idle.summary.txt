@@ -1,0 +1,10 @@
+trace span 30.0 s
+type                     ranges   total ms  seconds with any
+PixmapCache                   9        0.0                 1
+MemoryAllocation              6        0.0                 1
+
+busiest events by total time (ms), count, type, name, file:line, details
+      0.0      2 MemoryAllocation MemoryAllocation:0                       :
+      0.0      2 MemoryAllocation MemoryAllocation:2                       :
+      0.0      2 MemoryAllocation MemoryAllocation:1                       :
+      0.0      9 PixmapCache    user-trash.svg:2                         user-trash.svg:0

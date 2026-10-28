@@ -161,6 +161,12 @@ When testing changes to latte-dock-ng, follow this exact workflow:
 - **Runtime retest & clean-quit/coredump verification**: see
   `docs/development-testing-guide.md` (Runtime Retest Workflow) — canonical
   steps for crash fixes are kept there, not duplicated here.
+- **Remote VM launches**: start the dock with `systemd-run --user` so it gets the
+  whole Plasma session environment. A launch from a bare SSH shell that sources
+  `dev-env.sh` has a shorter `XDG_CONFIG_DIRS` than the session and starts a KSycoca
+  rebuild loop (the dock, plasmashell and KWin burn 18 %, 22 % and 26 % of a core
+  at idle; this was P0's 20 %); see `docs/development-testing-guide.md` and
+  `docs/modernization-results/R5.md`.
 - **GitHub proxy**: if git push/ls-remote hangs, retry through the local HTTP
   proxy configured in the shell environment (machine-local; exact address is
   not committed to the repo).

@@ -1,0 +1,1 @@
+{"trace_seconds": 30.0, "types": {"MemoryAllocation": {"ranges": 6, "seconds_with_any": 1, "total_ms": 0.0}, "PixmapCache": {"ranges": 9, "seconds_with_any": 1, "total_ms": 0.0}}}

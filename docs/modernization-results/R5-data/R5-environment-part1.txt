@@ -1,0 +1,100 @@
+# R5 environment capture, 2026-10-28T02:10:16+08:00
+
+## uname
+Linux fedora 7.2.11-200.fc44.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Oct 15 15:58:58 UTC 2026 x86_64 GNU/Linux
+
+## os-release
+VERSION_ID=44
+PRETTY_NAME="Fedora Linux 44 (KDE Plasma Desktop Edition)"
+
+## packages
+qt6-qtbase-6.11.2-3.fc44.x86_64
+qt6-qtdeclarative-6.11.2-2.fc44.x86_64
+qt6-qtwayland-6.11.2-1.fc44.x86_64
+kf6-kcoreaddons-6.31.0-1.fc44.x86_64
+kf6-kservice-6.31.0-1.fc44.x86_64
+plasma-workspace-6.7.5-1.fc44.x86_64
+plasma-desktop-6.7.5-1.fc44.x86_64
+kwin-6.7.5-1.fc44.x86_64
+mesa-dri-drivers-26.2.5-1.fc44.x86_64
+mesa-libEGL-26.2.5-1.fc44.x86_64
+llvm-libs-22.1.8-4.fc44.x86_64
+libwayland-client-1.26.0-1.fc44.x86_64
+
+## toolchain
+gcc (GCC) 16.2.1 20260819 (Red Hat 16.2.1-2)
+cmake version 4.3.0
+
+## cpu/mem
+CPU(s):                                  4
+Model name:                              Intel(R) Core(TM) i9-9900K CPU @ 3.60GHz
+Thread(s) per core:                      1
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm arch_perfmon rep_good nopl
+Hypervisor vendor:                       KVM
+Virtualization type:                     full
+               total        used        free      shared  buff/cache   available
+Mem:            7922        3467        1581         122        3173        4455
+
+## clocksource
+kvm-clock
+
+## eglinfo -B (GBM and Wayland platforms; session env missing, so X11 is skipped)
+GBM platform:
+EGL API version: 1.5
+EGL vendor string: Mesa Project
+EGL version string: 1.5
+EGL client APIs: OpenGL OpenGL_ES
+OpenGL core profile vendor: Mesa
+OpenGL core profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL core profile version: 4.6 (Core Profile) Mesa 26.2.5
+OpenGL core profile shading language version: 4.60
+OpenGL compatibility profile vendor: Mesa
+OpenGL compatibility profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL compatibility profile version: 4.6 (Compatibility Profile) Mesa 26.2.5
+OpenGL compatibility profile shading language version: 4.60
+OpenGL ES profile vendor: Mesa
+OpenGL ES profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL ES profile version: OpenGL ES 3.2 Mesa 26.2.5
+OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.20
+
+Wayland platform:
+EGL API version: 1.5
+EGL vendor string: Mesa Project
+EGL version string: 1.5
+EGL client APIs: OpenGL OpenGL_ES
+OpenGL core profile vendor: Mesa
+OpenGL core profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL core profile version: 4.6 (Core Profile) Mesa 26.2.5
+OpenGL core profile shading language version: 4.60
+OpenGL compatibility profile vendor: Mesa
+OpenGL compatibility profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL compatibility profile version: 4.6 (Compatibility Profile) Mesa 26.2.5
+OpenGL compatibility profile shading language version: 4.60
+OpenGL ES profile vendor: Mesa
+OpenGL ES profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL ES profile version: OpenGL ES 3.2 Mesa 26.2.5
+OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.20
+
+X11 platform:
+eglinfo: eglInitialize failed
+
+Surfaceless platform:
+EGL API version: 1.5
+EGL vendor string: Mesa Project
+EGL version string: 1.5
+EGL client APIs: OpenGL OpenGL_ES
+OpenGL core profile vendor: Mesa
+OpenGL core profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL core profile version: 4.6 (Core Profile) Mesa 26.2.5
+OpenGL core profile shading language version: 4.60
+OpenGL compatibility profile vendor: Mesa
+OpenGL compatibility profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL compatibility profile version: 4.6 (Compatibility Profile) Mesa 26.2.5
+OpenGL compatibility profile shading language version: 4.60
+OpenGL ES profile vendor: Mesa
+OpenGL ES profile renderer: llvmpipe (LLVM 22.1.8, 256 bits)
+OpenGL ES profile version: OpenGL ES 3.2 Mesa 26.2.5
+OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.20
+
+Device platform:
+Device #0:

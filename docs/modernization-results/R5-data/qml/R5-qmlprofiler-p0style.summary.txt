@@ -1,0 +1,38 @@
+trace span 30.01 s
+type                     ranges   total ms  seconds with any
+MemoryAllocation         221180        0.0                31
+Javascript               108962      224.7                31
+Binding                  104318     1117.7                31
+Creating                  40592     2025.0                31
+HandlingSignal             1935       24.5                31
+Compiling                   688        9.0                31
+Event                       299        0.0                31
+SceneGraph                  258        0.0                30
+PixmapCache                   8        0.0                 1
+
+busiest events by total time (ms), count, type, name, file:line, details
+    322.6    645 Creating       ItemGridView.qml:233                     ItemGridView.qml:233 ItemGridDelegate
+    318.4    645 Creating       ItemGridDelegate.qml:15                  ItemGridDelegate.qml:15 ItemAbstractDelegate
+    239.3     43 Binding        main.qml:41                              main.qml:41
+    235.9     43 Binding        main.qml:78                              main.qml:78
+    235.7     43 Binding        DashboardRepresentation.qml:519          DashboardRepresentation.qml:519
+    133.6   1376 Creating       ItemDelegate.qml:19                      ItemDelegate.qml:19 QtQuick.Templates/ItemDelegate
+    133.0   1290 Creating       ToolTip.qml:20                           ToolTip.qml:20 QtQuick.Templates/ToolTip
+    128.1    645 Creating       ItemGridDelegate.qml:131                 ItemGridDelegate.qml:131 ToolTip
+    108.3   1376 Creating       DefaultListItemBackground.qml:13         DefaultListItemBackground.qml:13 org.kde.ksvg/FrameSvgItem
+     93.2   1290 Creating       ItemGridDelegate.qml:60                  ItemGridDelegate.qml:60 org.kde.kirigami.primitives/Icon
+     86.7    688 Creating       ItemAbstractDelegate.qml:14              ItemAbstractDelegate.qml:14 ItemDelegate
+     81.4   2580 Creating       Label.qml:16                             Label.qml:16 QtQuick.Templates/Label
+     71.8   1290 Creating       ToolTip.qml:93                           ToolTip.qml:93 QtQuick/Item
+     66.0   1290 Creating       ToolTip.qml:97                           ToolTip.qml:97 org.kde.ksvg/FrameSvgItem
+     65.0   1290 Creating       ToolTip.qml:111                          ToolTip.qml:111 org.kde.ksvg/FrameSvgItem
+     64.6   1290 Creating       ItemGridDelegate.qml:56                  ItemGridDelegate.qml:56 QtQuick.Layouts/ColumnLayout
+     45.4   1376 Creating       DefaultListItemBackground.qml:23         DefaultListItemBackground.qml:23 org.kde.ksvg/FrameSvgItem
+     44.1    688 Creating       ItemDelegate.qml:54                      ItemDelegate.qml:54 DefaultListItemBackground
+     31.1   2064 Binding        ItemDelegate.qml:34                      ItemDelegate.qml:34
+     29.2   1290 Creating       ToolTip.qml:65                           ToolTip.qml:65 QtQuick/Item
+     24.7    645 Creating       ToolTip.qml:69                           ToolTip.qml:69 Label
+     22.5   2064 Binding        ItemDelegate.qml:33                      ItemDelegate.qml:33
+     21.8   3870 Binding        ToolTip.qml:33                           ToolTip.qml:33
+     17.5    688 Creating       ItemAbstractDelegate.qml:44              ItemAbstractDelegate.qml:44 org.kde.kirigami.controls/Action
+     17.2   3440 Binding        ItemDelegate.qml:22                      ItemDelegate.qml:22

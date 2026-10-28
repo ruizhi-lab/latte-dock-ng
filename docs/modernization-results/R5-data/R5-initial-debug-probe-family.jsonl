@@ -1,0 +1,3 @@
+{"event": "warmup_start", "processes": [{"exe": "/home/fedora/.local/bin/latte-dock-ng", "pid": 5135}], "seconds": 0, "time": "2026-10-27T21:22:11+08:00"}
+{"event": "warmup_complete", "time": "2026-10-27T21:22:11+08:00"}
+{"context_switches_per_second": 1.999, "context_switches_total": 120, "cpu_percent_one_core": 0.0167, "elapsed_seconds": 60.022, "event": "window", "index": 1, "invalid_reasons": [], "load_average_end": [0.080078125, 0.0166015625, 0.00537109375], "load_average_start": [0.0, 0.0, 0.0], "memory_mean_kib": {"Private": 449832, "Pss": 506300, "Rss": 671944}, "memory_samples": 14, "processes": [{"exe": "/home/fedora/.local/bin/latte-dock-ng", "pid": 5135, "start_ticks": 76433}], "start": "2026-10-27T21:22:11+08:00", "valid": true}

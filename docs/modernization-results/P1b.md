@@ -4,6 +4,14 @@ Status: Deferred for long-term observation. Implementation and title-work
 target are verified; the user reports functional acceptance passed. Exact
 response latency and a measurable performance benefit remain unverified.
 
+Erratum (R5, 2026-10-28): the Release A/B pairs below were started by the same SSH
+test harness as P0's, and this report does not record their launch environment.
+[R5](R5.md) showed that an SSH launch with a shorter `XDG_CONFIG_DIRS` than the
+Plasma session puts the dock, plasmashell and KWin into a KSycoca rewrite loop that
+costs the dock about 18 % of a core. If these pairs ran inside such a loop, their
+CPU and PSS noise (including the retained +144,763 KiB outlier) is not a property
+of the dock. The conclusion "no CPU or memory saving claim" stands unchanged.
+
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation base: P1a commit `ec8a504db`.
 
