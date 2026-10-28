@@ -70,6 +70,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "qhash-namespace",
     "qlatin1string-non-ascii",
     "qmap-with-pointer-key",
+    "qproperty-without-notify",
     "qstring-arg",
     "qstring-insensitive-allocation",
     "qt-macros",
