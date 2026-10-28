@@ -11,7 +11,12 @@
 namespace Latte {
 namespace Data {
 
-const QString TEMPIDPREFIX = QStringLiteral("temp:");
+//! Function-local static, not a namespace-scope QString: see app/data/contextmenudata.h.
+static const QString &TEMPIDPREFIX()
+{
+    static const QString value = QStringLiteral("temp:");
+    return value;
+}
 
 ViewsTable::ViewsTable()
     : GenericTable<View>()
@@ -82,9 +87,9 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
     int maxTempId = 0;
 
     for (int i = 0; i < rowCount(); ++i) {
-        if ((*this)[i].id.startsWith(TEMPIDPREFIX)) {
+        if ((*this)[i].id.startsWith(TEMPIDPREFIX())) {
             QString tid = (*this)[i].id;
-            tid.remove(0, TEMPIDPREFIX.size());
+            tid.remove(0, TEMPIDPREFIX().size());
 
             if (tid.toInt() > maxTempId) {
                 maxTempId = tid.toInt();
@@ -93,7 +98,7 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
     }
 
     Data::View newview = view;
-    newview.id =  TEMPIDPREFIX + QString::number(maxTempId + 1);
+    newview.id =  TEMPIDPREFIX() + QString::number(maxTempId + 1);
     m_list << newview;
 }
 

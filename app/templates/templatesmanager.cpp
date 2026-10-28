@@ -141,7 +141,7 @@ Data::LayoutsTable Manager::layoutTemplates()
     for (int i = 0; i < m_layoutTemplates.rowCount(); ++i) {
         if (m_layoutTemplates[i].name != i18n(DEFAULTLAYOUTTEMPLATENAME)
             && m_layoutTemplates[i].name != i18n(EMPTYLAYOUTTEMPLATENAME)
-            && m_layoutTemplates[i].name != Layout::MULTIPLELAYOUTSHIDDENNAME) {
+            && m_layoutTemplates[i].name != Layout::MULTIPLELAYOUTSHIDDENNAME()) {
             templates << m_layoutTemplates[i];
         }
     }

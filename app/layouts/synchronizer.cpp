@@ -534,7 +534,7 @@ void Synchronizer::initLayouts()
     QStringList files = layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
 
     for (const auto &layout : files) {
-        if (layout.contains(Layout::MULTIPLELAYOUTSHIDDENNAME)) {
+        if (layout.contains(Layout::MULTIPLELAYOUTSHIDDENNAME())) {
             //! IMPORTANT: DON'T ADD MultipleLayouts hidden file in layouts list
             continue;
         }
@@ -694,7 +694,7 @@ bool Synchronizer::initMultipleMode(QString layoutName)
         QStringList layoutsinmultiplestorage = Layouts::Storage::self()->storedLayoutsInMultipleFile();
         qCDebug(latteLayout) << "Preloaded Multiple Layouts in Storage :: " << layoutsinmultiplestorage;
 
-        m_manager->loadLatteLayout(layoutPath(QString(Layout::MULTIPLELAYOUTSHIDDENNAME)));
+        m_manager->loadLatteLayout(layoutPath(QString(Layout::MULTIPLELAYOUTSHIDDENNAME())));
 
         m_multipleModeInitialized = true;
 

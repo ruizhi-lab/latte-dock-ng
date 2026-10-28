@@ -18,18 +18,29 @@
 
 namespace Latte::WindowSystem {
 namespace {
-const QString service = QStringLiteral("org.kde.KWin");
-const QString path = QStringLiteral("/Latte/PanelTracker");
+//! Function-local statics, not namespace-scope QStrings: see app/data/contextmenudata.h.
+const QString &service()
+{
+    static const QString value = QStringLiteral("org.kde.KWin");
+    return value;
+}
+
+const QString &path()
+{
+    static const QString value = QStringLiteral("/Latte/PanelTracker");
+    return value;
+}
+
 QDBusMessage
 scriptingCall(const QString &method)
-{ return QDBusMessage::createMethodCall(service, QStringLiteral("/Scripting"), QStringLiteral("org.kde.kwin.Scripting"), method); }
+{ return QDBusMessage::createMethodCall(service(), QStringLiteral("/Scripting"), QStringLiteral("org.kde.kwin.Scripting"), method); }
 }
 
 PlasmaPanelTracker::PlasmaPanelTracker(QObject *parent)
   : QObject(parent)
   , m_pluginName(QStringLiteral("latte-panel-tracker-") + QUuid::createUuid().toString(QUuid::WithoutBraces))
 {
-    if (!QDBusConnection::sessionBus().registerObject(path, this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportAllSlots)) {
+    if (!QDBusConnection::sessionBus().registerObject(path(), this, QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportAllSlots)) {
         qCWarning(latteWm) << "Cannot register Plasma panel geometry bridge";
         return;
     }
@@ -47,7 +58,7 @@ PlasmaPanelTracker::PlasmaPanelTracker(QObject *parent)
     connect(qGuiApp, &QGuiApplication::screenRemoved, this, &PlasmaPanelTracker::refreshGeometries);
     m_timeout.setInterval(5000);
     connect(&m_timeout, &QTimer::timeout, this, [] { qCWarning(latteWm) << "KWin panel tracker did not report geometry; panel overlap is not protected"; });
-    auto watcher = new QDBusServiceWatcher(service, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this);
+    auto watcher = new QDBusServiceWatcher(service(), QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this);
     connect(watcher, &QDBusServiceWatcher::serviceOwnerChanged, this, [this](const QString &, const QString &, const QString &) {
         clear();
         start();
@@ -62,7 +73,7 @@ PlasmaPanelTracker::~PlasmaPanelTracker()
     auto message = scriptingCall(QStringLiteral("unloadScript"));
     message << m_pluginName;
     QDBusConnection::sessionBus().asyncCall(message, 2000);
-    QDBusConnection::sessionBus().unregisterObject(path);
+    QDBusConnection::sessionBus().unregisterObject(path());
 }
 
 void
@@ -84,7 +95,7 @@ PlasmaPanelTracker::start()
     const int generation = ++m_generation;
     auto ownerCall =
       QDBusMessage::createMethodCall(QStringLiteral("org.freedesktop.DBus"), QStringLiteral("/org/freedesktop/DBus"), QStringLiteral("org.freedesktop.DBus"), QStringLiteral("GetNameOwner"));
-    ownerCall << service;
+    ownerCall << service();
     auto ownerWatcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(ownerCall, 2000), this);
     connect(ownerWatcher, &QDBusPendingCallWatcher::finished, this, [this, generation](QDBusPendingCallWatcher *watcher) {
         QDBusPendingReply<QString> reply = *watcher;
@@ -118,7 +129,7 @@ PlasmaPanelTracker::start()
                 return;
             }
             // Start only our script; Scripting.start() would start unrelated scripts too.
-            auto run = QDBusMessage::createMethodCall(service, QStringLiteral("/Scripting/Script%1").arg(loaded.value()), QStringLiteral("org.kde.kwin.Script"), QStringLiteral("run"));
+            auto run = QDBusMessage::createMethodCall(service(), QStringLiteral("/Scripting/Script%1").arg(loaded.value()), QStringLiteral("org.kde.kwin.Script"), QStringLiteral("run"));
             auto runWatcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(run, 2000), this);
             connect(runWatcher, &QDBusPendingCallWatcher::finished, this, [this, generation](QDBusPendingCallWatcher *pendingRun) {
                 QDBusPendingReply<> running = *pendingRun;

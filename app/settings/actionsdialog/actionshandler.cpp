@@ -56,64 +56,64 @@ void ActionsHandler::initItems()
 {
     o_alwaysActions = m_dialog->preferencesHandler()->contextMenuAlwaysActions();
 
-    QString itemid = Latte::Data::ContextMenu::LAYOUTSACTION;
-    int itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    QString itemid = Latte::Data::ContextMenu::LAYOUTSACTION();
+    int itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("user-identity")),
         i18n("Layouts"),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::PREFERENCESACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::PREFERENCESACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("configure")),
         i18nc("global settings window", "Configure Latte..."),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::QUITLATTEACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::QUITLATTEACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("application-exit")),
         i18nc("quit application", "Quit Latte"),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::SEPARATOR1ACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::SEPARATOR1ACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon(),
         i18n(" --- separator --- "),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::ADDWIDGETSACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::ADDWIDGETSACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("list-add")),
         i18n("Add Widgets..."),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::ADDVIEWACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::ADDVIEWACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("list-add")),
         i18n("Add Dock"),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::MOVEVIEWACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::MOVEVIEWACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("transform-move-horizontal")),
         i18n("Move Dock To Layout"),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("document-export")),
         i18n("Export Dock as Template..."),
         itemindex,
         itemid);
 
-    itemid = Latte::Data::ContextMenu::REMOVEVIEWACTION;
-    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
+    itemid = Latte::Data::ContextMenu::REMOVEVIEWACTION();
+    itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER().indexOf(itemid);
     m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("delete")),
         i18n("Remove Dock"),
         itemindex,
@@ -124,8 +124,8 @@ void ActionsHandler::initItems()
 
 void ActionsHandler::loadItems(const QStringList &alwaysActions)
 {
-    for (int i = 0; i < Latte::Data::ContextMenu::ACTIONSEDITORDER.count(); ++i) {
-        QString actionname = Latte::Data::ContextMenu::ACTIONSEDITORDER[i];
+    for (int i = 0; i < Latte::Data::ContextMenu::ACTIONSEDITORDER().count(); ++i) {
+        QString actionname = Latte::Data::ContextMenu::ACTIONSEDITORDER()[i];
         bool inalways = alwaysActions.contains(actionname);
 
         int rowinalways = m_ui->actionsSelector->selectedListWidget()->row(m_items[actionname]);
@@ -162,7 +162,7 @@ bool ActionsHandler::hasChangedData() const
 
 bool ActionsHandler::inDefaultValues() const
 {
-    return currentAlwaysData() == Data::ContextMenu::ACTIONSALWAYSVISIBLE;
+    return currentAlwaysData() == Data::ContextMenu::ACTIONSALWAYSVISIBLE();
 }
 
 Data::GenericTable<Data::Generic> ActionsHandler::table(const QStringList &ids)
@@ -195,7 +195,7 @@ void ActionsHandler::reset()
 
 void ActionsHandler::resetDefaults()
 {
-    loadItems(Data::ContextMenu::ACTIONSALWAYSVISIBLE);
+    loadItems(Data::ContextMenu::ACTIONSALWAYSVISIBLE());
 }
 
 void ActionsHandler::updateButtonEnablement()

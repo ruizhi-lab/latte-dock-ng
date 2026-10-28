@@ -59,6 +59,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "lowercase-qml-type-name",
     "mutable-container-key",
     "no-module-include",
+    "non-pod-global-static",
     "post-event",
     "qcolor-from-literal",
     "qdatetime-utc",

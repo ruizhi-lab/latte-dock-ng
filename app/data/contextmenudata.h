@@ -13,49 +13,137 @@ namespace Latte {
 namespace Data {
 namespace ContextMenu {
 
-static const QString ADDVIEWACTION = QStringLiteral("_add_view");
-static const QString ADDWIDGETSACTION = QStringLiteral("_add_latte_widgets");
-static const QString DUPLICATEVIEWACTION = QStringLiteral("_duplicate_view"); /*used inside add view submenu*/
-static const QString EDITVIEWACTION = QStringLiteral("_edit_view");
-static const QString EXPORTVIEWTEMPLATEACTION = QStringLiteral("_export_view");
-static const QString LAYOUTSACTION = QStringLiteral("_layouts");
-static const QString MOVEVIEWACTION = QStringLiteral("_move_view");
-static const QString PRINTACTION = QStringLiteral("_print");
-static const QString PREFERENCESACTION = QStringLiteral("_preferences");
-static const QString REMOVEVIEWACTION = QStringLiteral("_remove_view");
-static const QString QUITLATTEACTION = QStringLiteral("_quit_latte");
-static const QString SECTIONACTION = QStringLiteral("_latte_section");
-static const QString SEPARATOR1ACTION = QStringLiteral("_separator1");
+//! The action ids are accessors, not namespace-scope objects. A namespace-scope QString
+//! or QStringList is built during static initialization, so a global initializer in
+//! another translation unit could read it while it is still empty. Each accessor builds
+//! its value on first use; clazy reports the namespace-scope form as non-pod-global-static.
+inline const QString &ADDVIEWACTION()
+{
+    static const QString value = QStringLiteral("_add_view");
+    return value;
+}
 
-static QStringList ACTIONSEDITORDER = {LAYOUTSACTION,
-                                       PREFERENCESACTION,
-                                       QUITLATTEACTION,
-                                       SEPARATOR1ACTION,
-                                       ADDWIDGETSACTION,
-                                       ADDVIEWACTION,
-                                       MOVEVIEWACTION,
-                                       EXPORTVIEWTEMPLATEACTION,
-                                       REMOVEVIEWACTION
-                                      };
+inline const QString &ADDWIDGETSACTION()
+{
+    static const QString value = QStringLiteral("_add_latte_widgets");
+    return value;
+}
 
-static QStringList ACTIONSALWAYSVISIBLE = {LAYOUTSACTION,
-                                           PREFERENCESACTION,
-                                           QUITLATTEACTION,
-                                           SEPARATOR1ACTION,
-                                           ADDWIDGETSACTION,
-                                           ADDVIEWACTION
-                                          };
+inline const QString &DUPLICATEVIEWACTION()
+{
+    static const QString value = QStringLiteral("_duplicate_view"); /*used inside add view submenu*/
+    return value;
+}
 
-static QStringList ACTIONSALWAYSHIDDEN = {PRINTACTION};
+inline const QString &EDITVIEWACTION()
+{
+    static const QString value = QStringLiteral("_edit_view");
+    return value;
+}
 
-static QStringList ACTIONSVISIBLEONLYINEDIT = {MOVEVIEWACTION,
-                                               EXPORTVIEWTEMPLATEACTION,
-                                               REMOVEVIEWACTION
-                                              };
+inline const QString &EXPORTVIEWTEMPLATEACTION()
+{
+    static const QString value = QStringLiteral("_export_view");
+    return value;
+}
 
-static QStringList ACTIONSSPECIAL = {SECTIONACTION,
-                                     EDITVIEWACTION
-                                    };
+inline const QString &LAYOUTSACTION()
+{
+    static const QString value = QStringLiteral("_layouts");
+    return value;
+}
+
+inline const QString &MOVEVIEWACTION()
+{
+    static const QString value = QStringLiteral("_move_view");
+    return value;
+}
+
+inline const QString &PRINTACTION()
+{
+    static const QString value = QStringLiteral("_print");
+    return value;
+}
+
+inline const QString &PREFERENCESACTION()
+{
+    static const QString value = QStringLiteral("_preferences");
+    return value;
+}
+
+inline const QString &REMOVEVIEWACTION()
+{
+    static const QString value = QStringLiteral("_remove_view");
+    return value;
+}
+
+inline const QString &QUITLATTEACTION()
+{
+    static const QString value = QStringLiteral("_quit_latte");
+    return value;
+}
+
+inline const QString &SECTIONACTION()
+{
+    static const QString value = QStringLiteral("_latte_section");
+    return value;
+}
+
+inline const QString &SEPARATOR1ACTION()
+{
+    static const QString value = QStringLiteral("_separator1");
+    return value;
+}
+
+inline const QStringList &ACTIONSEDITORDER()
+{
+    static const QStringList value = {LAYOUTSACTION(),
+                                      PREFERENCESACTION(),
+                                      QUITLATTEACTION(),
+                                      SEPARATOR1ACTION(),
+                                      ADDWIDGETSACTION(),
+                                      ADDVIEWACTION(),
+                                      MOVEVIEWACTION(),
+                                      EXPORTVIEWTEMPLATEACTION(),
+                                      REMOVEVIEWACTION()
+                                     };
+    return value;
+}
+
+inline const QStringList &ACTIONSALWAYSVISIBLE()
+{
+    static const QStringList value = {LAYOUTSACTION(),
+                                      PREFERENCESACTION(),
+                                      QUITLATTEACTION(),
+                                      SEPARATOR1ACTION(),
+                                      ADDWIDGETSACTION(),
+                                      ADDVIEWACTION()
+                                     };
+    return value;
+}
+
+inline const QStringList &ACTIONSALWAYSHIDDEN()
+{
+    static const QStringList value = {PRINTACTION()};
+    return value;
+}
+
+inline const QStringList &ACTIONSVISIBLEONLYINEDIT()
+{
+    static const QStringList value = {MOVEVIEWACTION(),
+                                      EXPORTVIEWTEMPLATEACTION(),
+                                      REMOVEVIEWACTION()
+                                     };
+    return value;
+}
+
+inline const QStringList &ACTIONSSPECIAL()
+{
+    static const QStringList value = {SECTIONACTION(),
+                                      EDITVIEWACTION()
+                                     };
+    return value;
+}
 
 }
 }

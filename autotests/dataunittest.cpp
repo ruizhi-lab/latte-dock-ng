@@ -537,7 +537,7 @@ void DataUnitTest::preferencesDefaultsRoundTrip()
 
     preferences.setToDefaults();
     QVERIFY(preferences.inDefaultValues());
-    QCOMPARE(preferences.contextMenuAlwaysActions, Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
+    QCOMPARE(preferences.contextMenuAlwaysActions, Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE());
 }
 
 void DataUnitTest::preferencesAutostartDefaultsToEnabled()

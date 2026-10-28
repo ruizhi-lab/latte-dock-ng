@@ -42,7 +42,13 @@ Q_ENUM_NS(Type);
 namespace Latte {
 namespace Layout {
 
-const QString MULTIPLELAYOUTSHIDDENNAME = QStringLiteral(".multiple-layouts_hidden");
+//! Function-local static: a namespace-scope QString is built during static initialization.
+//! Same rule and clazy check as Latte::Data::ContextMenu in app/data/contextmenudata.h.
+inline const QString &MULTIPLELAYOUTSHIDDENNAME()
+{
+    static const QString value = QStringLiteral(".multiple-layouts_hidden");
+    return value;
+}
 
 class AbstractLayout : public QObject
 {
