@@ -23,7 +23,8 @@ public:
     static const bool LAYOUTSINFORMATIONWINDOW = true;
     static const bool AUTOSTART = true;
     static const bool ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA = true;
-    static const bool METAHOLDFORBADGES = true;
+    //! opt-in: a Meta hold also lets Plasma open its own launcher when Meta is released
+    static const bool METAHOLDFORBADGES = false;
     static const int PARABOLICSPREAD = 3;
     static const int SCREENSDELAY = 2500;
     static const float THICKNESSMARGININFLUENCE;

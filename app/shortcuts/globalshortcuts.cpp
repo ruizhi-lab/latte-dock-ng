@@ -170,6 +170,9 @@ void GlobalShortcuts::init()
     m_singleMetaAction = new QAction(this);
     m_singleMetaAction->setShortcut(QKeySequence(Qt::META));
 
+    // The Preferences option "Press and Hold Meta to show shortcuts badges" is the authoritative state;
+    // blocking the Super keys in the tracker is how it takes effect. UniversalSettings::load() emits
+    // the signal once at startup, after this object exists, which applies the stored value.
     connect(m_corona->universalSettings(), &UniversalSettings::metaPressAndHoldEnabledChanged, this, [this]() {
         if (!m_corona->universalSettings()->metaPressAndHoldEnabled()) {
             m_modifierTracker->blockModifierTracking(Qt::Key_Super_L);
@@ -182,6 +185,7 @@ void GlobalShortcuts::init()
 
     //display shortcut badges while holding Meta
     connect(m_modifierTracker, &ShortcutsPart::ModifierTracker::metaModifierPressed, this, [this]() {
+        qCDebug(latteApp) << "Meta held: showing the views and their shortcut badges";
         m_metaShowedViews = true;
         showViews();
     });

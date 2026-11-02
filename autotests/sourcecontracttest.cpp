@@ -326,6 +326,10 @@ private Q_SLOTS:
     void viewTracksPointerWindowsAndResetsCascadingSubmenus();
     void pointerWindowTrackerRemovesDestroyedWindows();
     void visibilityManagerBlockerWrappersDelegateTransitions();
+
+    // Meta hold on Wayland
+    void metaHoldPreferenceIsAnOptInThatTheDialogDoesNotForce();
+    void shortcutBadgeShadowEffectsAnchorToTheirLoader();
 };
 
 void SourceContractTest::visibilityManagerBlockerWrappersDelegateTransitions()
@@ -5680,6 +5684,57 @@ SourceContractTest::dataRecordsKeepRuleOfZero()
         QVERIFY2(!match.hasMatch(),
                  qPrintable(QStringLiteral("%1 declares a hand-written copy/move member: %2")
                                 .arg(path, match.captured(0).simplified())));
+    }
+}
+
+void SourceContractTest::metaHoldPreferenceIsAnOptInThatTheDialogDoesNotForce()
+{
+    //! Holding Meta shows the docks only when the user opts in on the Preferences page. The page
+    //! once wrote setMetaPressAndHoldEnabled(false) on every apply while it had no control for the
+    //! option, which left the feature unreachable. The old config key held values that record no
+    //! choice (true from every save, false from every apply), so it is no longer read.
+    QFile handlerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/tabpreferenceshandler.cpp"));
+    QVERIFY(handlerFile.open(QFile::ReadOnly));
+    const QString handler = QString::fromUtf8(handlerFile.readAll());
+    QVERIFY(handler.contains(QStringLiteral("setMetaPressAndHoldEnabled(m_preferences.metaHoldForBadges);")));
+    QVERIFY(!handler.contains(QStringLiteral("setMetaPressAndHoldEnabled(false)")));
+    QVERIFY(handler.contains(QStringLiteral("o_preferences.metaHoldForBadges = m_corona->universalSettings()->metaPressAndHoldEnabled();")));
+    QVERIFY(handler.contains(QStringLiteral("m_ui->metaPressHoldChkBox->setChecked(m_preferences.metaHoldForBadges);")));
+    QVERIFY(handler.contains(QStringLiteral("m_preferences.metaHoldForBadges = m_ui->metaPressHoldChkBox->isChecked();")));
+
+    QFile formFile(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/settingsdialog.ui"));
+    QVERIFY(formFile.open(QFile::ReadOnly));
+    QVERIFY(QString::fromUtf8(formFile.readAll()).contains(QStringLiteral("name=\"metaPressHoldChkBox\"")));
+
+    QFile settingsFile(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
+    QVERIFY(settingsFile.open(QFile::ReadOnly));
+    const QString settings = QString::fromUtf8(settingsFile.readAll());
+    QVERIFY(settings.contains(QStringLiteral("readEntry(QStringLiteral(\"metaPressHoldShowsBadges\"), false)")));
+    QVERIFY(settings.contains(QStringLiteral("writeEntry(QStringLiteral(\"metaPressHoldShowsBadges\"), m_metaPressAndHoldEnabled);")));
+    QVERIFY(!settings.contains(QStringLiteral("readEntry(QStringLiteral(\"metaPressAndHoldEnabled\")")));
+}
+
+void SourceContractTest::shortcutBadgeShadowEffectsAnchorToTheirLoader()
+{
+    //! The shadow MultiEffect is the child of a Loader that already fills the badge text. Anchoring
+    //! the effect to the badge text, a sibling of the Loader, makes Qt log "Cannot anchor to an item
+    //! that isn't a parent or sibling" every time badges are shown (Meta hold, Meta+`).
+    const QStringList paths{
+        QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/items/basicitem/ShortcutBadge.qml"),
+        QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ShortcutBadge.qml")};
+
+    for (const QString &path : paths) {
+        QFile file(path);
+        QVERIFY2(file.open(QFile::ReadOnly), qPrintable(path));
+        const QString qml = QString::fromUtf8(file.readAll());
+
+        const int effect = qml.indexOf(QStringLiteral("sourceComponent: MultiEffect{"));
+        QVERIFY2(effect >= 0, qPrintable(path));
+        const int effectEnd = qml.indexOf(QLatin1Char('}'), effect);
+        QVERIFY2(effectEnd > effect, qPrintable(path));
+        const QString body = qml.mid(effect, effectEnd - effect);
+        QVERIFY2(body.contains(QStringLiteral("anchors.fill: parent")), qPrintable(path));
+        QVERIFY2(!body.contains(QRegularExpression(QStringLiteral("anchors\\.fill: (taskNumber|appletNumber)"))), qPrintable(path));
     }
 }
 

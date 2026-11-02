@@ -70,7 +70,10 @@ Loader{
                     && appletItem.environment.isGraphicsSystemAccelerated
 
             sourceComponent: MultiEffect{
-                anchors.fill: appletNumber
+                // The effect is a child of the Loader, which already fills appletNumber. appletNumber is a
+                // sibling of the Loader, not of the effect, so anchoring to it fails with "Cannot anchor
+                // to an item that isn't a parent or sibling" whenever the badges are shown.
+                anchors.fill: parent
                 shadowEnabled: true
                 shadowColor: appletItem.myView.itemShadow.shadowColor
                 source: appletNumber

@@ -76,6 +76,7 @@ private Q_SLOTS:
     void layoutsTableSubtractsAndMarksFreeActivities();
     void preferencesDefaultsRoundTrip();
     void preferencesAutostartDefaultsToEnabled();
+    void preferencesMetaHoldIsAnOptIn();
     void preferencesEqualityComparesAllFields();
     void pluginIdClassifiesLatteBuiltInsAndSeparators();
     void screenInitializesFromSerializedGeometry();
@@ -554,6 +555,25 @@ void DataUnitTest::preferencesAutostartDefaultsToEnabled()
     QVERIFY(!preferences.inDefaultValues());
     preferences.setToDefaults();
     QVERIFY(preferences.autostart);
+}
+
+void DataUnitTest::preferencesMetaHoldIsAnOptIn()
+{
+    // "Press and Hold Meta to show shortcuts badges" starts disabled: with Plasma's default Meta
+    // shortcut a hold also opens Plasma's launcher when Meta is released, so it is the user's choice.
+    QVERIFY(!Preferences::METAHOLDFORBADGES);
+
+    Preferences preferences;
+    QVERIFY(!preferences.metaHoldForBadges);
+    QVERIFY(preferences.inDefaultValues());
+
+    preferences.metaHoldForBadges = true;
+    QVERIFY(!preferences.inDefaultValues());
+    QVERIFY(preferences != Preferences());
+
+    preferences.setToDefaults();
+    QVERIFY(!preferences.metaHoldForBadges);
+    QVERIFY(preferences == Preferences());
 }
 
 void DataUnitTest::preferencesEqualityComparesAllFields()

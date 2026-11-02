@@ -416,7 +416,11 @@ void UniversalSettings::loadConfig()
     m_inAdvancedModeForEditSettings = m_universalGroup.readEntry(QStringLiteral("inAdvancedModeForEditSettings"), false);
     m_isAvailableGeometryBroadcastedToPlasma = m_universalGroup.readEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), true);
     m_launchers = m_universalGroup.readEntry(QStringLiteral("launchers"), QStringList());
-    m_metaPressAndHoldEnabled = m_universalGroup.readEntry(QStringLiteral("metaPressAndHoldEnabled"), true);
+    // The old key "metaPressAndHoldEnabled" is deliberately not read. While Meta tracking could not work
+    // on Wayland every config save wrote it as true and every apply of the Preferences page as false, so
+    // neither value records a choice. Reading it would switch the feature on for most existing
+    // configurations, and with Plasma's default Meta shortcut a hold then also opens Plasma's launcher.
+    m_metaPressAndHoldEnabled = m_universalGroup.readEntry(QStringLiteral("metaPressHoldShowsBadges"), false);
     m_screenTrackerInterval = m_universalGroup.readEntry(QStringLiteral("screenTrackerInterval"), 2500);
     m_showInfoWindow = m_universalGroup.readEntry(QStringLiteral("showInfoWindow"), true);
     m_singleModeLayoutName = m_universalGroup.readEntry(QStringLiteral("singleModeLayoutName"), QString());
@@ -439,7 +443,8 @@ void UniversalSettings::saveConfig()
     m_universalGroup.writeEntry(QStringLiteral("inAdvancedModeForEditSettings"), m_inAdvancedModeForEditSettings);
     m_universalGroup.writeEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), m_isAvailableGeometryBroadcastedToPlasma);
     m_universalGroup.writeEntry(QStringLiteral("launchers"), m_launchers);
-    m_universalGroup.writeEntry(QStringLiteral("metaPressAndHoldEnabled"), m_metaPressAndHoldEnabled);
+    m_universalGroup.writeEntry(QStringLiteral("metaPressHoldShowsBadges"), m_metaPressAndHoldEnabled);
+    m_universalGroup.deleteEntry(QStringLiteral("metaPressAndHoldEnabled")); // replaced key, see loadConfig()
     m_universalGroup.writeEntry(QStringLiteral("screenTrackerInterval"), m_screenTrackerInterval);
     m_universalGroup.writeEntry(QStringLiteral("showInfoWindow"), m_showInfoWindow);
     m_universalGroup.writeEntry(QStringLiteral("singleModeLayoutName"), m_singleModeLayoutName);

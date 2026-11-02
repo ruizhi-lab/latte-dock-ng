@@ -35,32 +35,34 @@ void ModifierTracker::init()
 
     connect(&m_metaPressedTimer, &QTimer::timeout, this, &ModifierTracker::metaModifierPressed);
 
-    connect(&m_modifierKeyInfo, &KModifierKeyInfo::keyPressed, this, [this](Qt::Key key, bool state) {
-        Qt::Key nKey = normalizeKey(key);
-
-        //! ignore modifiers that we do not take into account
-        if (!modifierIsTracked(nKey)) {
-            return;
-        }
-
-        m_pressed[nKey] = state;
-
-        if (nKey == Qt::Key_Super_L) {
-            bool singleKey{singleModifierPressed(Qt::Key_Super_L)};
-
-            if (state && singleKey) {
-                m_metaPressedTimer.start();
-            } else if (!state || !singleKey) {
-                cancelMetaPressed();
-            }
-        } else {
-            cancelMetaPressed();
-        }
-
-        Q_EMIT modifiersChanged();
-    });
+    connect(&m_modifierKeyInfo, &KModifierKeyInfo::keyPressed, this, &ModifierTracker::handleKeyPressed);
 }
 
+void ModifierTracker::handleKeyPressed(Qt::Key key, bool state)
+{
+    Qt::Key nKey = normalizeKey(key);
+
+    //! ignore modifiers that we do not take into account
+    if (!modifierIsTracked(nKey)) {
+        return;
+    }
+
+    m_pressed[nKey] = state;
+
+    if (nKey == Qt::Key_Super_L) {
+        bool singleKey{singleModifierPressed(Qt::Key_Super_L)};
+
+        if (state && singleKey) {
+            m_metaPressedTimer.start();
+        } else if (!state || !singleKey) {
+            cancelMetaPressed();
+        }
+    } else {
+        cancelMetaPressed();
+    }
+
+    Q_EMIT modifiersChanged();
+}
 
 bool ModifierTracker::modifierIsTracked(Qt::Key key)
 {
@@ -128,7 +130,11 @@ bool ModifierTracker::singleModifierPressed(Qt::Key key)
 
 Qt::Key ModifierTracker::normalizeKey(Qt::Key key)
 {
-    return ((key == Qt::Key_Super_L || key == Qt::Key_Super_R) ? Qt::Key_Super_L : key);
+    // KModifierKeyInfo reports the Meta key as Key_Super_L or Key_Super_R on X11 but as Key_Meta on
+    // Wayland (its org_kde_kwin_keystate provider), and this is a Wayland-only build. Without the
+    // Key_Meta case the press is dropped by modifierIsTracked() before the hold timer starts, so
+    // holding Meta never shows the docks, whatever the Preferences option says.
+    return ((key == Qt::Key_Super_L || key == Qt::Key_Super_R || key == Qt::Key_Meta) ? Qt::Key_Super_L : key);
 }
 
 void ModifierTracker::cancelMetaPressed()

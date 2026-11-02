@@ -171,7 +171,8 @@ private:
     bool m_colorsScriptIsPresent{false};
     bool m_inAdvancedModeForEditSettings{false};
     bool m_isAvailableGeometryBroadcastedToPlasma{true};
-    bool m_metaPressAndHoldEnabled{true};
+    //! opt-in: a Meta hold also lets Plasma open its own launcher when Meta is released
+    bool m_metaPressAndHoldEnabled{false};
     bool m_showInfoWindow{true};
 
     //when there isnt a version it is an old universal file

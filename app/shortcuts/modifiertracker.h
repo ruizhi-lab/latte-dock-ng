@@ -40,6 +40,10 @@ public:
     void blockModifierTracking(Qt::Key key);
     void unblockModifierTracking(Qt::Key key);
 
+    //! the single entry for KModifierKeyInfo::keyPressed(); public so that tests can drive the
+    //! tracker with key events without a compositor
+    void handleKeyPressed(Qt::Key key, bool state);
+
 Q_SIGNALS:
     void metaModifierPressed();
     void modifiersChanged();
@@ -50,7 +54,7 @@ private:
     //! <key> modifier is tracked for changes
     bool modifierIsTracked(Qt::Key key);
 
-    //! adjust key in more general values, e.g. Super_L and Super_R both return Super_L
+    //! adjust key in more general values, e.g. Super_L, Super_R and Meta all return Super_L
     Qt::Key normalizeKey(Qt::Key key);
 
 private:

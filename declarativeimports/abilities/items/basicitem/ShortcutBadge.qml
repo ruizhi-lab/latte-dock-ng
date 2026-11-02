@@ -54,7 +54,10 @@ Loader{
                     && abilityItem.abilities.environment.isGraphicsSystemAccelerated
 
             sourceComponent: MultiEffect{
-                anchors.fill: taskNumber
+                // The effect is a child of the Loader, which already fills taskNumber. taskNumber is a
+                // sibling of the Loader, not of the effect, so anchoring to it fails with "Cannot anchor
+                // to an item that isn't a parent or sibling" whenever the badges are shown.
+                anchors.fill: parent
                 shadowEnabled: true
                 shadowColor: abilityItem.abilities.myView.itemShadow.shadowColor
                 source: taskNumber

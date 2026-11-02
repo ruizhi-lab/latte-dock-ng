@@ -95,6 +95,11 @@ void TabPreferences::initUi()
         Q_EMIT dataChanged();
     });
 
+    connect(m_ui->metaPressHoldChkBox, &QCheckBox::toggled, this, [this]() {
+        m_preferences.metaHoldForBadges = m_ui->metaPressHoldChkBox->isChecked();
+        Q_EMIT dataChanged();
+    });
+
     connect(this, &TabPreferences::contextActionsChanged, this, &TabPreferences::dataChanged);
 }
 
@@ -105,8 +110,7 @@ void TabPreferences::initSettings()
     o_preferences.contextMenuAlwaysActions = m_corona->universalSettings()->contextMenuActionsAlwaysShown();
     o_preferences.isAvailableGeometryBroadcastedToPlasma = m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma();
     o_preferences.layoutsInformationWindow = m_corona->universalSettings()->showInfoWindow();
-    // Wayland-only build: Meta press-and-hold forwarding is not supported.
-    o_preferences.metaHoldForBadges = false;
+    o_preferences.metaHoldForBadges = m_corona->universalSettings()->metaPressAndHoldEnabled();
     o_preferences.parabolicSpread = m_corona->universalSettings()->parabolicSpread();
     o_preferences.thicknessMarginInfluence = m_corona->universalSettings()->thicknessMarginInfluence();
     o_preferences.screensDelay = m_corona->universalSettings()->screenTrackerInterval();
@@ -137,6 +141,7 @@ void TabPreferences::updateUi()
     m_ui->autostartChkBox->setChecked(m_preferences.autostart);
     m_ui->badges3DStyleChkBox->setChecked(m_preferences.badgeStyle3D);
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
+    m_ui->metaPressHoldChkBox->setChecked(m_preferences.metaHoldForBadges);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
     m_ui->screenTrackerSpinBox->setValue(m_preferences.screensDelay);
 
@@ -193,8 +198,10 @@ void TabPreferences::save()
     m_corona->universalSettings()->setBadges3DStyle(m_preferences.badgeStyle3D);
     m_corona->universalSettings()->setContextMenuActionsAlwaysShown(m_preferences.contextMenuAlwaysActions);
     m_corona->universalSettings()->setIsAvailableGeometryBroadcastedToPlasma(m_preferences.isAvailableGeometryBroadcastedToPlasma);
-    // Wayland-only build: keep this disabled.
-    m_corona->universalSettings()->setMetaPressAndHoldEnabled(false);
+    // This is the user's opt-in; GlobalShortcuts starts or stops the Meta tracking when it changes.
+    // Forcing a value here made every apply of this page switch the feature off with no control
+    // left to switch it on again.
+    m_corona->universalSettings()->setMetaPressAndHoldEnabled(m_preferences.metaHoldForBadges);
     m_corona->universalSettings()->setShowInfoWindow(m_preferences.layoutsInformationWindow);
     m_corona->universalSettings()->setParabolicSpread(m_preferences.parabolicSpread);
     m_corona->universalSettings()->setThicknessMarginInfluence(m_preferences.thicknessMarginInfluence);

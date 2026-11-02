@@ -730,6 +730,16 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="metaPressHoldChkBox">
+               <property name="toolTip">
+                <string>Press and hold ⌘ to show shortcuts badges for applets and tasks</string>
+               </property>
+               <property name="text">
+                <string>Press and Hold ⌘ to show shortcuts badges</string>
+               </property>
+              </widget>
+             </item>
              <item row="17" column="1">
               <spacer name="verticalSpacer_14">
                <property name="orientation">

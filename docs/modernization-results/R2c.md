@@ -764,7 +764,8 @@ validation found and deliberately left alone:
    selection and fail-closed paths with a fake `clazy-standalone`, and a
    `knscompatunittest` case with `linktarget`, `optional plugin` and `classname`
    lines in the templates `qmldir`.
-10. **Meta press-and-hold cannot start on Wayland.** `ModifierTracker` listens to
+10. **Meta press-and-hold could not start on Wayland (fixed on the branch
+    `claude/meta-hold-wayland`, see the last paragraph).** `ModifierTracker` listens to
     `KModifierKeyInfo::keyPressed`. On Wayland that class reports the Meta key as
     `Qt::Key_Meta` (kguiaddons 6.29.0, `KModifierKeyInfoProviderWayland`, over the
     `org_kde_kwin_keystate` protocol), but `modifierIsTracked()` accepts only
@@ -802,6 +803,20 @@ validation found and deliberately left alone:
     behind a badge is probably misplaced or missing; anchoring the effect to its parent (the
     `Loader` already follows the badge text) is the obvious change, to be judged on screen.
     Any fix of the hold has to handle this too.
+
+    Fixed on the branch `claude/meta-hold-wayland`: `normalizeKey()` maps `Qt::Key_Meta` to
+    `Key_Super_L`; the Preferences page has its option "Press and Hold ⌘ to show shortcuts
+    badges" again (the original string, so all 40 translations apply), off by default because
+    of the launcher and no longer forced off by `TabPreferences::save()`; the setting is
+    stored under the new key `metaPressHoldShowsBadges`, since the old `metaPressAndHoldEnabled`
+    holds `true` from every save and `false` from every apply and records no choice; and both
+    badge shadow effects anchor to their `Loader`. `ModifierTracker::handleKeyPressed()` is
+    public so that `shortcutunittest` drives it: the two tests that need the mapping fail
+    without it. A desktop check on 2026-11-03 passed: with the option off a hold did nothing;
+    after enabling and applying it, holds showed the hidden dock and logged `Meta held`;
+    applying another option left it enabled; the badge shadows looked right and the 90
+    `MultiEffect` warnings were gone. Plasma's launcher still opens on release unless its
+    Meta shortcut is changed in System Settings; the help guides say so.
 11. **Mageia Cauldron mirror failures.** `Install verify (mageia)` failed on Cauldron mirror
     404s three times since 2026-10-28; run 41452548625 attempt 1 is the third. Each time
     the rerun of the failed job passed. `scripts/retry-mageia-mirror-build.sh` already
