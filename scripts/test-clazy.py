@@ -76,6 +76,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "qstring-arg",
     "qstring-insensitive-allocation",
     "qt-macros",
+    "range-loop-detach",
     "range-loop-reference",
     "readlock-detaching",
     "returning-data-from-temporary",
