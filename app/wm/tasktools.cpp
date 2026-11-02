@@ -89,7 +89,7 @@ KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
         return KService::Ptr();
     }
 
-    for (const KService::Ptr &candidate : candidates) {
+    for (const KService::Ptr &candidate : std::as_const(candidates)) {
         if (candidate->desktopEntryName().compare(desktopEntryName, Qt::CaseInsensitive) == 0) {
             return candidate;
         }
@@ -147,7 +147,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
             });
 
             if (!candidates.isEmpty()) {
-                for (const KService::Ptr &candidate : candidates) {
+                for (const KService::Ptr &candidate : std::as_const(candidates)) {
                     if (candidate->desktopEntryName().compare(desktopEntryName, Qt::CaseInsensitive) == 0) {
                         service = candidate;
                         break;

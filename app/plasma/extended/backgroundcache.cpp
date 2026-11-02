@@ -133,7 +133,7 @@ void BackgroundCache::reload()
     //!activityId and screen names for which their background was updated
     QHash<QString, QList<QString>> updates;
 
-    for (const auto &containmentId : plasmaConfigContainments.groupList()) {
+    for (const auto groupNames = plasmaConfigContainments.groupList(); const auto &containmentId : groupNames) {
         const auto containment = plasmaConfigContainments.group(containmentId);
         const auto wallpaperPlugin = containment.readEntry(QStringLiteral("wallpaperplugin"), QString());
         const auto lastScreen  = containment.readEntry(QStringLiteral("lastScreen"), 0);

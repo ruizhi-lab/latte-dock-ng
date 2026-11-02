@@ -74,7 +74,7 @@ Factory::Factory(QObject *parent)
     }
 
     //! track paths for changes
-    for (const auto &dir : m_mainPaths) {
+    for (const auto &dir : std::as_const(m_mainPaths)) {
         KDirWatch::self()->addDir(dir);
     }
 

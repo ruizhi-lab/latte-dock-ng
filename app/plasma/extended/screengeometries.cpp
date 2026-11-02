@@ -123,7 +123,7 @@ void ScreenGeometries::onPlasmaInterfaceAvailable()
 }
 
 bool ScreenGeometries::screenIsActive(const QString &screenName) const {
-    for (QScreen *screen : qGuiApp->screens())
+    for (const auto screens = qGuiApp->screens(); QScreen *screen : screens)
     {
         if (screen->name() == screenName) {
             return true;
@@ -197,7 +197,7 @@ void ScreenGeometries::clearGeometries()
         return;
     }
 
-    for (QScreen *screen : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); QScreen *screen : screens) {
         QString scrName = screen->name();
         int scrId = m_corona->screenPool()->id(screen->name());
 
@@ -224,7 +224,7 @@ void ScreenGeometries::updateGeometries()
     QStringList clearedScreenNames;
 
     //! check for available geometries changes
-    for (QScreen *screen : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); QScreen *screen : screens) {
         QString scrName = screen->name();
         int scrId = m_corona->screenPool()->id(screen->name());
 

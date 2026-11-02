@@ -350,7 +350,7 @@ void GlobalShortcuts::activateEntry(int index, Qt::Key modifier)
 
     Latte::View *highest{nullptr};
 
-    for (const auto view : sortedViews) {
+    for (const auto view : std::as_const(sortedViews)) {
         if (view->isPreferredForShortcuts()) {
             highest = view;
             break;
@@ -360,7 +360,7 @@ void GlobalShortcuts::activateEntry(int index, Qt::Key modifier)
     if (highest) {
         activateEntryForView(highest, index, modifier);
     } else {
-        for (const auto view : sortedViews) {
+        for (const auto view : std::as_const(sortedViews)) {
             if (activateEntryForView(view, index, modifier)) {
                 return;
             }
@@ -374,7 +374,7 @@ void GlobalShortcuts::updateViewItemBadge(QString identifier, QString value)
     QList<Latte::View *> views = m_corona->layoutsManager()->synchronizer()->currentViews();
 
     // update badges in all Latte Tasks plasmoids
-    for (const auto &view : views) {
+    for (const auto &view : std::as_const(views)) {
         view->extendedInterface()->updateBadgeForLatteTask(identifier, value);
     }
 }
@@ -395,14 +395,14 @@ void GlobalShortcuts::showViews()
 
     bool hasPreferredForShortcutsView{false};
 
-    for (const auto view : sortedViews) {
+    for (const auto view : std::as_const(sortedViews)) {
         if (view->isPreferredForShortcuts()) {
             hasPreferredForShortcutsView = true;
             break;
         }
     }
 
-    for (const auto view : sortedViews) {
+    for (const auto view : std::as_const(sortedViews)) {
         if (!viewWithTasks
             && (!hasPreferredForShortcutsView || view->isPreferredForShortcuts())) {
             viewWithTasks = view;
@@ -449,7 +449,7 @@ void GlobalShortcuts::showViews()
         viewFound = true;
 
         if (!m_hideViewsTimer.isActive()) {
-            for (const auto view : viewsWithShortcuts) {
+            for (const auto view : std::as_const(viewsWithShortcuts)) {
                 if (view != viewWithTasks && view != viewWithMeta) {
                     if (view->extendedInterface()->showShortcutBadges(false, false)) {
                         m_hideViews.append(view);
@@ -472,7 +472,7 @@ void GlobalShortcuts::showViews()
 
 bool GlobalShortcuts::viewsToHideAreValid()
 {
-    for (const auto view : m_hideViews) {
+    for (const auto view : std::as_const(m_hideViews)) {
         if (!m_corona->layoutsManager()->synchronizer()->latteViewExists(view)) {
             return false;
         }
@@ -492,7 +492,7 @@ void GlobalShortcuts::showSettings()
 
         //! find last view that showed its config view
         for (int i = 0; i < sortedViews.size(); ++i) {
-            for (auto currentLayout : m_corona->layoutsManager()->currentLayouts()) {
+            for (const auto layouts = m_corona->layoutsManager()->currentLayouts(); auto currentLayout : layouts) {
                 if (sortedViews[i] == currentLayout->lastConfigViewFor()) {
                     openSettings = i;
                     break;
@@ -529,7 +529,7 @@ void GlobalShortcuts::hideViewsTimerSlot()
         m_lastInvokedAction = nullptr;
 
         if (viewsToHideAreValid()) {
-            for (const auto latteView : m_hideViews) {
+            for (const auto latteView : std::as_const(m_hideViews)) {
                 latteView->visibility()->removeBlockHidingEvent(SHORTCUTBLOCKHIDINGTYPE);
                 latteView->extendedInterface()->hideShortcutBadges();
 

@@ -236,7 +236,7 @@ static QStringList splitPathList(const QString &paths)
 {
     QStringList result;
 
-    for (const QString &path : paths.split(QDir::listSeparator(), Qt::SkipEmptyParts)) {
+    for (const auto parts = paths.split(QDir::listSeparator(), Qt::SkipEmptyParts); const QString &path : parts) {
         const QString cleaned = QDir::cleanPath(path);
         if (!cleaned.isEmpty() && QDir::isAbsolutePath(cleaned) && !result.contains(cleaned)) {
             result << cleaned;
@@ -301,7 +301,7 @@ static bool systemQmlBaseIsComplete(const QString &qmlBase)
 
 static QString resolvedSystemQmlBase()
 {
-    for (const QString &candidate : systemQmlBaseCandidates()) {
+    for (const auto candidates = systemQmlBaseCandidates(); const QString &candidate : candidates) {
         if (systemQmlBaseIsComplete(candidate)) {
             return candidate;
         }
@@ -475,7 +475,7 @@ static QString templatesQmldirForSystem(const QString &systemQmldirPath)
 static void symlinkPrivDir(const QDir &srcDir, const QString &dstPath, const QStringList &skipPaths)
 {
     QDir().mkpath(dstPath);
-    for (const auto &entry : srcDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot)) {
+    for (const auto entries = srcDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot); const auto &entry : entries) {
         const QString src = srcDir.absoluteFilePath(entry);
         const QString dst = dstPath + QLatin1Char('/') + entry;
         const QString relPath = QDir(dstPath).relativeFilePath(dst);
@@ -587,13 +587,13 @@ void ensureKnsCompat()
 
     // Symlink all other QML files and typeinfo from system
     QDir sysDir(sysTemplates);
-    for (const auto &entry : sysDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)) {
+    for (const auto entries = sysDir.entryList({ QStringLiteral("*.qml"), QStringLiteral("*.qmltypes") }, QDir::Files); const auto &entry : entries) {
         symlinkChecked(sysDir.absoluteFilePath(entry), templatesDir + QLatin1Char('/') + entry);
     }
     // Symlink private files (except DrawerHandle which is our patched version)
     QDir sysPriv(sysTemplates + QStringLiteral("/private"));
     const auto privFilter = QStringList{QStringLiteral("*.qml")};
-    for (const auto &entry : sysPriv.entryList(privFilter, QDir::Files)) {
+    for (const auto entries = sysPriv.entryList(privFilter, QDir::Files); const auto &entry : entries) {
         if (entry == QStringLiteral("DrawerHandle.qml")) {
             continue; // our patched version, not a symlink
         }
@@ -606,7 +606,7 @@ void ensureKnsCompat()
     writeIfChanged(newstuffDir + QStringLiteral("/qmldir"), QLatin1String(kNewstuffQmldir));
 
     QDir nsDir(sysNewstuff);
-    for (const auto &entry : nsDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)) {
+    for (const auto entries = nsDir.entryList({ QStringLiteral("*.qml"), QStringLiteral("*.qmltypes") }, QDir::Files); const auto &entry : entries) {
         symlinkChecked(nsDir.absoluteFilePath(entry), newstuffDir + QLatin1Char('/') + entry);
     }
     // Symlink plugin and private files
@@ -617,7 +617,7 @@ void ensureKnsCompat()
 
     // Private subdirectories
     QDir nsPriv(sysNewstuff + QStringLiteral("/private"));
-    for (const auto &entry : nsPriv.entryList(QDir::Filters(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot))) {
+    for (const auto privEntries = nsPriv.entryList(QDir::Filters(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot)); const auto &entry : privEntries) {
         const QString target = nsPriv.absoluteFilePath(entry);
         const QString link = newstuffDir + QStringLiteral("/private/") + entry;
         if (QFileInfo(target).isDir()) {
@@ -657,7 +657,7 @@ void ensureKnsCompat()
 
     // Symlink all system files (but don't overwrite our patched files)
     QDir scDir(sysControls);
-    for (const auto &entry : scDir.entryList({QStringLiteral("*.qml"), QStringLiteral("*.qmltypes")}, QDir::Files)) {
+    for (const auto entries = scDir.entryList({ QStringLiteral("*.qml"), QStringLiteral("*.qmltypes") }, QDir::Files); const auto &entry : entries) {
         symlinkChecked(scDir.absoluteFilePath(entry), controlsDir + QLatin1Char('/') + entry);
     }
     // Plugin and version files

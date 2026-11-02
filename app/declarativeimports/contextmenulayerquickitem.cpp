@@ -254,7 +254,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         updateAppletContainsMethod();
     }
 
-    for (const Plasma::Applet *appletTemp : m_latteView->containment()->applets()) {
+    for (const auto applets = m_latteView->containment()->applets(); const Plasma::Applet *appletTemp : applets) {
         PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(const_cast<Plasma::Applet *>(appletTemp));
 
         if (!ai) {
@@ -283,7 +283,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     if (!applet) {
         QPointF sp = event->scenePosition();
         std::function<QQuickItem*(QQuickItem*)> findApplet = [&](QQuickItem * p) -> QQuickItem* {
-            for (auto *c : p->childItems()) {
+            for (const auto childItems = p->childItems(); auto *c : childItems) {
                 auto *ai = qobject_cast<PlasmaQuick::AppletQuickItem *>(c);
 
                 if (ai && ai->applet() && ai->applet() != m_latteView->containment()
@@ -392,7 +392,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
 
     KAcceleratorManager::manage(desktopMenu);
 
-    for (auto action : desktopMenu->actions()) {
+    for (const auto actions = desktopMenu->actions(); auto action : actions) {
         if (action->menu()) {
             connect(action->menu(), &QMenu::aboutToShow, desktopMenu, [action, desktopMenu] {
                 if (action->menu()->windowHandle()) {
@@ -415,7 +415,7 @@ void ContextMenuLayerQuickItem::updateAppletContainsMethod()
         return;
     }
 
-    for (QQuickItem *item : m_latteView->contentItem()->childItems()) {
+    for (const auto childItems = m_latteView->contentItem()->childItems(); QQuickItem *item : childItems) {
         if (auto *metaObject = item->metaObject()) {
             // not using QMetaObject::invokeMethod to avoid warnings when calling
             // this on applets that don't have it or other child items since this
@@ -442,7 +442,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
 
     desktopMenu->addSection(applet->pluginMetaData().name());
 
-    for (QAction *action : applet->contextualActions()) {
+    for (const auto contextualActions = applet->contextualActions(); QAction *action : contextualActions) {
         if (action) {
             desktopMenu->addAction(action);
         }
@@ -516,7 +516,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         desktopMenu->addSeparator();
 
         if (enabled) {
-            for (QAction *action : containmentAction->menu()->actions()) {
+            for (const auto actions = containmentAction->menu()->actions(); QAction *action : actions) {
                 if (action && action->isVisible()) {
                     desktopMenu->addAction(action);
                 }
@@ -645,7 +645,7 @@ Plasma::Containment *ContextMenuLayerQuickItem::containmentById(uint id)
         return nullptr;
     }
 
-    for (const auto containment : m_latteView->corona()->containments()) {
+    for (const auto containments = m_latteView->corona()->containments(); const auto containment : containments) {
         if (id == containment->id()) {
             return containment;
         }
