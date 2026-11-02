@@ -130,7 +130,7 @@ bool Storage::isSubContainment(const Plasma::Corona *corona, const Plasma::Apple
         return false;
     }
 
-    for (const auto containment : corona->containments()) {
+    for (const auto containments = corona->containments(); const auto containment : containments) {
         Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent());
 
         if (parentApplet && parentApplet == applet) {
@@ -211,7 +211,7 @@ Plasma::Containment *Storage::subContainmentOf(const Plasma::Corona *corona, con
     }
 
     if (isSubContainment(corona, applet)) {
-        for (const auto containment : corona->containments()) {
+        for (const auto containments = corona->containments(); const auto containment : containments) {
             Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent());
 
             if (parentApplet && parentApplet == applet) {
@@ -326,7 +326,7 @@ QStringList Storage::containmentsIds(const QString &filepath)
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(filepath);
     KConfigGroup containments = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
-    for (const auto &cId : containments.groupList()) {
+    for (const auto containmentIds = containments.groupList(); const auto &cId : containmentIds) {
         ids << cId;
     }
 
@@ -340,7 +340,7 @@ QStringList Storage::appletsIds(const QString &filepath)
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(filepath);
     KConfigGroup containments = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
-    for (const auto &cId : containments.groupList()) {
+    for (const auto containmentIds = containments.groupList(); const auto &cId : containmentIds) {
         ids << AppletIds::collect(containments.group(cId).group(QStringLiteral("Applets")));
     }
 
@@ -399,13 +399,13 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     KConfigGroup investigate_conts = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
     //! Record the containment and applet ids
-    for (const auto &cId : investigate_conts.groupList()) {
+    for (const auto containmentIds = investigate_conts.groupList(); const auto &cId : containmentIds) {
         toInvestigateContainmentIds << cId;
         auto appletsEntries = investigate_conts.group(cId).group(QStringLiteral("Applets"));
         toInvestigateAppletIds << appletsEntries.groupList();
 
         //! investigate for subcontainments
-        for (const auto &appletId : appletsEntries.groupList()) {
+        for (const auto appletIds = appletsEntries.groupList(); const auto &appletId : appletIds) {
             int subId = subContainmentId(appletsEntries.group(appletId));
 
             //! It is a subcontainment !!!
@@ -420,7 +420,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     }
 
     //! Reassign containment and applet ids to unique ones
-    for (const auto &contId : toInvestigateContainmentIds) {
+    for (const auto &contId : std::as_const(toInvestigateContainmentIds)) {
         QString newId;
 
         if (contId.toInt() >= 12 && !allIds.contains(contId) && !assignedIds.contains(contId)) {
@@ -433,7 +433,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
         assigned[contId] = newId;
     }
 
-    for (const auto &appId : toInvestigateAppletIds) {
+    for (const auto &appId : std::as_const(toInvestigateAppletIds)) {
         QString newId;
 
         if (appId.toInt() >= 40 && !allIds.contains(appId) && !assignedIds.contains(appId)) {
@@ -449,7 +449,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     qCDebug(latteLayout) << "ALL CORONA IDS ::: " << allIds;
     qCDebug(latteLayout) << "FULL ASSIGNMENTS ::: " << assigned;
 
-    for (const auto &cId : toInvestigateContainmentIds) {
+    for (const auto &cId : std::as_const(toInvestigateContainmentIds)) {
         QString value = assigned[cId];
 
         if (assigned.contains(value)) {
@@ -463,7 +463,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
         }
     }
 
-    for (const auto &aId : toInvestigateAppletIds) {
+    for (const auto &aId : std::as_const(toInvestigateAppletIds)) {
         QString value = assigned[aId];
 
         if (assigned.contains(value)) {
@@ -480,9 +480,9 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     qCDebug(latteLayout) << "FIXED FULL ASSIGNMENTS ::: " << assigned;
 
     //! update applet ids in their containment order and in MultipleLayouts update also the layoutId
-    for (const auto &cId : investigate_conts.groupList()) {
+    for (const auto containmentIds = investigate_conts.groupList(); const auto &cId : containmentIds) {
         //! Update options that contain applet ids
-        for (const auto &settingStr : AppletIds::appletIdListEntries()) {
+        for (const auto idListEntries = AppletIds::appletIdListEntries(); const auto &settingStr : idListEntries) {
             QString order1 = investigate_conts.group(cId).group(QStringLiteral("General")).readEntry(settingStr, QString());
 
             if (!order1.isEmpty()) {
@@ -508,7 +508,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     }
 
     //! must update also the sub id in its applet
-    for (const auto &subId : toInvestigateSubContIds) {
+    for (const auto &subId : std::as_const(toInvestigateSubContIds)) {
         KConfigGroup subParentContainment = investigate_conts.group(subParentContainmentIds[subId]);
         KConfigGroup subAppletConfig = subParentContainment.group(QStringLiteral("Applets")).group(subAppletIds[subId]);
 
@@ -532,7 +532,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     KSharedConfigPtr file2Ptr = KSharedConfig::openConfig(tempFile);
     KConfigGroup fixedNewContainmets = KConfigGroup(file2Ptr, QStringLiteral("Containments"));
 
-    for (const auto &contId : investigate_conts.groupList()) {
+    for (const auto containmentIds = investigate_conts.groupList(); const auto &contId : containmentIds) {
         QString pluginId = investigate_conts.group(contId).readEntry(QStringLiteral("plugin"), "");
 
         if (pluginId != QStringLiteral("org.kde.desktopcontainment")) { //!don't add ghost containments
@@ -541,7 +541,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
 
             newContainmentGroup.group(QStringLiteral("Applets")).deleteGroup();
 
-            for (const auto &appId : investigate_conts.group(contId).group(QStringLiteral("Applets")).groupList()) {
+            for (const auto appletIds = investigate_conts.group(contId).group(QStringLiteral("Applets")).groupList(); const auto &appId : appletIds) {
                 KConfigGroup appletGroup = investigate_conts.group(contId).group(QStringLiteral("Applets")).group(appId);
                 KConfigGroup newAppletGroup = fixedNewContainmets.group(assigned[contId]).group(QStringLiteral("Applets")).group(assigned[appId]);
                 appletGroup.copyTo(&newAppletGroup);
@@ -566,7 +566,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
 
     QList<KConfigGroup> newContainmentGroups;
 
-    for (const auto &contId : fixedNewContainmets.groupList()) {
+    for (const auto containmentIds = fixedNewContainmets.groupList(); const auto &contId : containmentIds) {
         newContainmentGroups << fixedNewContainmets.group(contId);
     }
 
@@ -629,7 +629,7 @@ void Storage::moveToLayoutFile(const QString &layoutName)
     KSharedConfigPtr multiFilePtr = KSharedConfig::openConfig(linkedFilePath);
     KConfigGroup multiContainments = KConfigGroup(multiFilePtr, QStringLiteral("Containments"));
 
-    for (const auto &cId : multiContainments.groupList()) {
+    for (const auto containmentIds = multiContainments.groupList(); const auto &cId : containmentIds) {
         QString cname = multiContainments.group(cId).readEntry(QStringLiteral("layoutId"), QString());
 
         if (!cname.isEmpty() && cname == layoutName) {
@@ -700,7 +700,7 @@ QList<Plasma::Containment *> Storage::importContainmentsToCorona(Latte::Corona *
     //! in use now that the new containments exist (they have no applets yet).
     QSet<uint> usedIds;
 
-    for (const auto &id : corona->containmentsIds() + corona->appletsIds()) {
+    for (const auto coronaIds = corona->containmentsIds() + corona->appletsIds(); const auto &id : coronaIds) {
         usedIds.insert(id.toUInt());
     }
 
@@ -713,7 +713,7 @@ QList<Plasma::Containment *> Storage::importContainmentsToCorona(Latte::Corona *
 
         KConfigGroup applets = coronaGroup.group(QStringLiteral("Applets"));
 
-        for (const auto &appletId : applets.groupList()) {
+        for (const auto appletIds = applets.groupList(); const auto &appletId : appletIds) {
             KConfigGroup appletGroup = applets.group(appletId);
             const QString subId = QString::number(subContainmentId(appletGroup));
             const int entityIndex = subIdentityIndex(appletGroup);
@@ -759,7 +759,7 @@ QList<Plasma::Containment *> Storage::importLayoutFile(const Layout::GenericLayo
 
     QList<Plasma::Containment *> importedViews;
 
-    for (const auto containment : newContainments) {
+    for (const auto containment : std::as_const(newContainments)) {
         if (isLatteContainment(containment)) {
             importedViews << containment;
         }
@@ -780,7 +780,7 @@ void Storage::importContainments(const QString &originFile, const QString &desti
     KConfigGroup originContainments = KConfigGroup(originPtr, QStringLiteral("Containments"));
     KConfigGroup destinationContainments = KConfigGroup(destinationPtr, QStringLiteral("Containments"));
 
-    for (const auto &originContId : originContainments.groupList()) {
+    for (const auto containmentIds = originContainments.groupList(); const auto &originContId : containmentIds) {
         KConfigGroup destinationContainment(&destinationContainments, originContId);
         originContainments.group(originContId).copyTo(&destinationContainment);
     }
@@ -820,7 +820,7 @@ Data::View Storage::newView(const Layout::GenericLayout *destinationLayout, cons
         KSharedConfigPtr lFile = KSharedConfig::openConfig(temp2File);
         KConfigGroup containments = KConfigGroup(lFile, QStringLiteral("Containments"));
 
-        for (const auto &cId : containments.groupList()) {
+        for (const auto containmentIds = containments.groupList(); const auto &cId : containmentIds) {
             if (Layouts::Storage::self()->isLatteContainment(containments.group(cId))) {
                 //! first view we will find, we update its value
                 updateView(containments.group(cId), nextViewData);
@@ -888,7 +888,7 @@ bool Storage::exportTemplate(const QString &originFile, const QString &destinati
     QStringList rejectedSubContainments;
 
     //! clear applets that are not approved
-    for (const auto &cId : containments.groupList()) {
+    for (const auto containmentIds = containments.groupList(); const auto &cId : containmentIds) {
         //! clear properties
         containments.group(cId).writeEntry(QStringLiteral("layoutId"), QString());
 
@@ -899,13 +899,13 @@ bool Storage::exportTemplate(const QString &originFile, const QString &destinati
         //! clear applets
         auto applets = containments.group(cId).group(QStringLiteral("Applets"));
 
-        for (const auto &aId : applets.groupList()) {
+        for (const auto appletIds = applets.groupList(); const auto &aId : appletIds) {
             QString pluginId = applets.group(aId).readEntry(QStringLiteral("plugin"), "");
 
             if (!approvedApplets.containsId(pluginId)) {
                 if (!isSubContainment(applets.group(aId))) {
                     //!remove all configuration for that applet
-                    for (const auto &configId : applets.group(aId).groupList()) {
+                    for (const auto configIds = applets.group(aId).groupList(); const auto &configId : configIds) {
                         applets.group(aId).group(configId).deleteGroup();
                     }
                 } else {
@@ -917,7 +917,7 @@ bool Storage::exportTemplate(const QString &originFile, const QString &destinati
     }
 
     //! clear rejected SubContainments
-    for (const auto &cId : containments.groupList()) {
+    for (const auto containmentIds = containments.groupList(); const auto &cId : containmentIds) {
         if (rejectedSubContainments.contains(cId)) {
             containments.group(cId).group(QStringLiteral("General")).deleteGroup();
         }
@@ -958,7 +958,7 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
     QHash<uint, QString> subInfo;
     auto applets = containment->config().group(QStringLiteral("Applets"));
 
-    for (const auto &applet : applets.groupList()) {
+    for (const auto appletIds = applets.groupList(); const auto &applet : appletIds) {
         int tSubId = subContainmentId(applets.group(applet));
 
         //! It is a subcontainment !!!
@@ -973,7 +973,7 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
             const uint subId = *subIdIt;
             Plasma::Containment *subcontainment{nullptr};
 
-            for (const auto containment : layout->corona()->containments()) {
+            for (const auto containments = layout->corona()->containments(); const auto containment : containments) {
                 if (containment->id() == subId) {
                     subcontainment = containment;
                     break;
@@ -992,7 +992,7 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
     QStringList rejectedSubContainments;
 
     //! clear applets that are not approved
-    for (const auto &cId : copied_conts.groupList()) {
+    for (const auto containmentIds = copied_conts.groupList(); const auto &cId : containmentIds) {
         //! clear properties
         copied_conts.group(cId).writeEntry(QStringLiteral("layoutId"), QString());
 
@@ -1003,13 +1003,13 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
         //! clear applets
         auto applets = copied_conts.group(cId).group(QStringLiteral("Applets"));
 
-        for (const auto &aId : applets.groupList()) {
+        for (const auto appletIds = applets.groupList(); const auto &aId : appletIds) {
             QString pluginId = applets.group(aId).readEntry(QStringLiteral("plugin"), "");
 
             if (!approvedApplets.containsId(pluginId)) {
                 if (!isSubContainment(applets.group(aId))) {
                     //!remove all configuration for that applet
-                    for (const auto &configId : applets.group(aId).groupList()) {
+                    for (const auto configIds = applets.group(aId).groupList(); const auto &configId : configIds) {
                         applets.group(aId).group(configId).deleteGroup();
                     }
                 } else {
@@ -1021,7 +1021,7 @@ bool Storage::exportTemplate(const Layout::GenericLayout *layout, Plasma::Contai
     }
 
     //! clear rejected SubContainments
-    for (const auto &cId : copied_conts.groupList()) {
+    for (const auto containmentIds = copied_conts.groupList(); const auto &cId : containmentIds) {
         if (rejectedSubContainments.contains(cId)) {
             copied_conts.group(cId).group(QStringLiteral("General")).deleteGroup();
         }
@@ -1053,7 +1053,7 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
 
         //! split ids to normal registered and conflicted
         for (const auto containment : *layout->containments()) {
-            for (const auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); const auto applet : applets) {
                 QString aid = QString::number(applet->id());
 
                 if (!registeredapplets.contains(aid)) {
@@ -1068,7 +1068,7 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
         for (const auto containment : *layout->containments()) {
             QString cid = QString::number(containment->id());
 
-            for (const auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); const auto applet : applets) {
                 QString aid = QString::number(applet->id());
 
                 if (!conflictedapplets.contains(aid)) {
@@ -1093,8 +1093,8 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
         QStringList conflictedapplets;
 
         //! split ids to normal registered and conflicted
-        for (const auto &cid : containmentsEntries.groupList()) {
-            for (const auto &aid : containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
+            for (const auto appletIds = containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList(); const auto &aid : appletIds) {
                 if (!registeredapplets.contains(aid)) {
                     registeredapplets << aid;
                 } else if (!conflictedapplets.contains(aid)) {
@@ -1104,8 +1104,8 @@ bool Storage::hasDifferentAppletsWithSameId(const Layout::GenericLayout *layout,
         }
 
         //! create error data
-        for (const auto &cid : containmentsEntries.groupList()) {
-            for (const auto &aid : containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
+            for (const auto appletIds = containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList(); const auto &aid : appletIds) {
                 if (!conflictedapplets.contains(aid)) {
                     continue;
                 }
@@ -1151,7 +1151,7 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
 
         //! discover conflicted ids between containments and applets
         for (const auto containment : *layout->containments()) {
-            for (const auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); const auto applet : applets) {
                 QString aid = QString::number(applet->id());
 
                 if (!registeredcontainments.contains(aid)) {
@@ -1175,7 +1175,7 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
                 warning.information << warninginfo;
             }
 
-            for (const auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); const auto applet : applets) {
                 QString aid = QString::number(applet->id());
 
                 if (!conflicted.contains(aid)) {
@@ -1200,7 +1200,7 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
         QStringList conflicted;
 
         //! discover normal containment ids
-        for (const auto &cid : containmentsEntries.groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
             if (registeredcontainments.contains(cid)) {
                 continue;
             }
@@ -1209,8 +1209,8 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
         }
 
         //! discover conflicted ids between containments and applets
-        for (const auto &cid : containmentsEntries.groupList()) {
-            for (const auto &aid : containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
+            for (const auto appletIds = containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList(); const auto &aid : appletIds) {
                 if (!registeredcontainments.contains(aid)) {
                     continue;
                 } else if (!conflicted.contains(aid)) {
@@ -1220,7 +1220,7 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
         }
 
         //! create warning data
-        for (const auto &cid : containmentsEntries.groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
             if (conflicted.contains(cid)) {
                 Data::WarningInformation warninginfo;
                 warninginfo.id = QString::number(warning.information.rowCount());
@@ -1230,7 +1230,7 @@ bool Storage::hasAppletsAndContainmentsWithSameId(const Layout::GenericLayout *l
                 warning.information << warninginfo;
             }
 
-            for (const auto &aid : containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList()) {
+            for (const auto appletIds = containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList(); const auto &aid : appletIds) {
                 if (!conflicted.contains(aid)) {
                     continue;
                 }
@@ -1267,7 +1267,7 @@ bool Storage::hasOrphanedParentAppletOfSubContainment(const Layout::GenericLayou
         for (const auto containment : *layout->containments()) {
             QString cid = QString::number(containment->id());
 
-            for (const auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); const auto applet : applets) {
                 QString aid = QString::number(applet->id());
 
                 int subid = subContainmentId(applet->config());
@@ -1292,8 +1292,8 @@ bool Storage::hasOrphanedParentAppletOfSubContainment(const Layout::GenericLayou
         KConfigGroup containmentsEntries = KConfigGroup(lfile, QStringLiteral("Containments"));
 
         //! create error data
-        for (const auto &cid : containmentsEntries.groupList()) {
-            for (const auto &aid : containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
+            for (const auto appletIds = containmentsEntries.group(cid).group(QStringLiteral("Applets")).groupList(); const auto &aid : appletIds) {
                 int subid = subContainmentId(containmentsEntries.group(cid).group(QStringLiteral("Applets")).group(aid));
 
                 if (subid == IDNULL || hasContainment(layout, subid)) {
@@ -1357,7 +1357,7 @@ bool Storage::hasOrphanedSubContainments(const Layout::GenericLayout *layout, Da
         KConfigGroup containmentsEntries = KConfigGroup(lfile, QStringLiteral("Containments"));
 
         //! create warning data
-        for (const auto &cid : containmentsEntries.groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
             if (views.hasContainmentId(cid)) {
                 continue;
             }
@@ -1474,7 +1474,7 @@ Data::AppletsTable Storage::plugins(const Layout::GenericLayout *layout, const i
                 continue;
             }
 
-            for (auto applet : containment->applets()) {
+            for (const auto applets = containment->applets(); auto applet : applets) {
                 if (isSubContainment(layout->corona(), applet)) {
                     validcontainmentids << subContainmentId(applet->config());
                 }
@@ -1489,7 +1489,7 @@ Data::AppletsTable Storage::plugins(const Layout::GenericLayout *layout, const i
             continue;
         }
 
-        for (auto applet : containment->applets()) {
+        for (const auto applets = containment->applets(); auto applet : applets) {
             QString pluginId = applet->pluginMetaData().pluginId();
 
             if (!knownapplets.containsId(pluginId) && !unknownapplets.containsId(pluginId)) {
@@ -1528,7 +1528,7 @@ Data::AppletsTable Storage::plugins(const QString &layoutfile, const int contain
         validcontainmentids << containmentid;
 
         //! searching for specific containment and subcontainments and ignore all other containments
-        for (const auto &cId : containmentGroups.groupList()) {
+        for (const auto containmentIds = containmentGroups.groupList(); const auto &cId : containmentIds) {
             if (cId.toInt() != containmentid) {
                 //! ignore irrelevant containments
                 continue;
@@ -1536,7 +1536,7 @@ Data::AppletsTable Storage::plugins(const QString &layoutfile, const int contain
 
             auto appletGroups = containmentGroups.group(cId).group(QStringLiteral("Applets"));
 
-            for (const auto &appletId : appletGroups.groupList()) {
+            for (const auto appletIds = appletGroups.groupList(); const auto &appletId : appletIds) {
                 KConfigGroup appletCfg = appletGroups.group(appletId);
 
                 if (isSubContainment(appletCfg)) {
@@ -1547,7 +1547,7 @@ Data::AppletsTable Storage::plugins(const QString &layoutfile, const int contain
     }
 
     //! cycle through valid contaiments in order to retrieve their metadata
-    for (const auto &cId : containmentGroups.groupList()) {
+    for (const auto containmentIds = containmentGroups.groupList(); const auto &cId : containmentIds) {
         if (validcontainmentids.count() > 0 && !validcontainmentids.contains(cId.toInt())) {
             //! searching only for valid containments
             continue;
@@ -1555,7 +1555,7 @@ Data::AppletsTable Storage::plugins(const QString &layoutfile, const int contain
 
         auto appletGroups = containmentGroups.group(cId).group(QStringLiteral("Applets"));
 
-        for (const auto &appletId : appletGroups.groupList()) {
+        for (const auto appletIds = appletGroups.groupList(); const auto &appletId : appletIds) {
             KConfigGroup appletCfg = appletGroups.group(appletId);
             QString pluginId = appletCfg.readEntry(QStringLiteral("plugin"), "");
 
@@ -1584,7 +1584,7 @@ void Storage::syncContainmentConfig(Plasma::Containment *containment)
         return;
     }
 
-    for (auto applet : containment->applets()) {
+    for (const auto applets = containment->applets(); auto applet : applets) {
         KConfigGroup appletGeneralConfig = applet->config().group(QStringLiteral("General"));
 
         if (appletGeneralConfig.exists()) {
@@ -1622,7 +1622,7 @@ bool Storage::hasContainment(const Layout::GenericLayout *layout, const int &id)
         KConfigGroup containmentsEntries = KConfigGroup(lfile, QStringLiteral("Containments"));
 
         //! create warning data
-        for (const auto &cid : containmentsEntries.groupList()) {
+        for (const auto containmentIds = containmentsEntries.groupList(); const auto &cid : containmentIds) {
             if (cid.toInt() == id) {
                 return true;
             }
@@ -1658,7 +1658,7 @@ void Storage::removeAllClonedViews(const QString &filepath)
 
     QList<Data::View> clones;
 
-    for (const auto &contId : containmentGroups.groupList()) {
+    for (const auto containmentIds = containmentGroups.groupList(); const auto &contId : containmentIds) {
         if (isClonedView(containmentGroups.group(contId))) {
             clones << view(containmentGroups.group(contId));
         }
@@ -1672,7 +1672,7 @@ void Storage::removeAllClonedViews(const QString &filepath)
         qCDebug(latteLayout) << "org.kde.layout :: Removing clones from file: " << filepath;
     }
 
-    for (const auto &clonedata : clones) {
+    for (const auto &clonedata : std::as_const(clones)) {
         qCDebug(latteLayout) << "org.kde.layout :: Removing clone:" << clonedata.id << " and its subcontainments:" << clonedata.subcontainments;
         removeView(filepath, clonedata);
     }
@@ -1714,7 +1714,7 @@ Data::GenericTable<Data::Generic> Storage::subcontainments(const KConfigGroup &c
 
     auto applets = containmentGroup.group(QStringLiteral("Applets"));
 
-    for (const auto &applet : applets.groupList()) {
+    for (const auto appletIds = applets.groupList(); const auto &applet : appletIds) {
         if (isSubContainment(applets.group(applet))) {
             Data::Generic subdata;
             subdata.id = QString::number(subContainmentId(applets.group(applet)));
@@ -1871,7 +1871,7 @@ QStringList Storage::storedLayoutsInMultipleFile()
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(linkedFilePath);
     KConfigGroup linkedContainments = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
-    for (const auto &cId : linkedContainments.groupList()) {
+    for (const auto containmentIds = linkedContainments.groupList(); const auto &cId : containmentIds) {
         QString layoutName = linkedContainments.group(cId).readEntry(QStringLiteral("layoutId"), QString());
 
         if (!layoutName.isEmpty() && !layouts.contains(layoutName)) {
@@ -1925,7 +1925,7 @@ QString Storage::storedView(const Layout::GenericLayout *layout, const int &cont
 
         QList<Plasma::Containment *> subconts = layout->subContainmentsOf(containment->id());
 
-        for (const auto subcont : subconts) {
+        for (const auto subcont : std::as_const(subconts)) {
             syncContainmentConfig(subcont);
             KConfigGroup destinationsubcontainment(&destinationContainments, QString::number(subcont->id()));
             subcont->config().copyTo(&destinationsubcontainment);
@@ -2026,7 +2026,7 @@ Data::ViewsTable Storage::views(const QString &file)
     KSharedConfigPtr lFile = KSharedConfig::openConfig(file);
     KConfigGroup containmentGroups = KConfigGroup(lFile, QStringLiteral("Containments"));
 
-    for (const auto &cId : containmentGroups.groupList()) {
+    for (const auto containmentIds = containmentGroups.groupList(); const auto &cId : containmentIds) {
         if (Layouts::Storage::self()->isLatteContainment(containmentGroups.group(cId))) {
             vtable << view(containmentGroups.group(cId));
         }
