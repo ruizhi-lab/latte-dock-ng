@@ -51,7 +51,7 @@ PlasmaPanelTracker::PlasmaPanelTracker(QObject *parent)
         connect(screen, &QScreen::geometryChanged, this, &PlasmaPanelTracker::refreshGeometries);
         refreshGeometries();
     };
-    for (QScreen *screen : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); QScreen *screen : screens) {
         watchScreen(screen);
     }
     connect(qGuiApp, &QGuiApplication::screenAdded, this, watchScreen);
@@ -167,11 +167,11 @@ void
 PlasmaPanelTracker::refreshGeometries()
 {
     QList<QRect> next;
-    for (const auto value : m_panels) {
+    for (const auto value : std::as_const(m_panels)) {
         const auto panel = value.toObject();
         const QRect rect(
           panel.value(QStringLiteral("x")).toInt(), panel.value(QStringLiteral("y")).toInt(), panel.value(QStringLiteral("width")).toInt(), panel.value(QStringLiteral("height")).toInt());
-        for (const QScreen *screen : qGuiApp->screens()) {
+        for (const auto screens = qGuiApp->screens(); const QScreen *screen : screens) {
             // Output names, not Qt screen order or the desktop's lastScreen id,
             // identify the owner on staggered/negative-coordinate multi-monitor setups.
             if (screen->name() == panel.value(QStringLiteral("output")).toString() && rect.isValid() && screen->geometry().contains(rect.center())) {

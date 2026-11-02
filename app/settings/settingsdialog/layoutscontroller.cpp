@@ -89,7 +89,7 @@ Layouts::~Layouts()
 {
     saveConfig();
 
-    for (const auto &tempDir : m_tempDirectories) {
+    for (const auto &tempDir : std::as_const(m_tempDirectories)) {
         QDir tDir(tempDir);
 
         if (tDir.exists() && tempDir.startsWith(QStringLiteral("/tmp/"))) {
@@ -859,7 +859,7 @@ bool Layouts::importLayoutsFromV1ConfigFile(QString file)
 
         const auto archiveRootDir = archive.directory();
 
-        for (const auto &name : archiveRootDir->entries()) {
+        for (const auto entryNames = archiveRootDir->entries(); const auto &name : entryNames) {
             auto fileEntry = archiveRootDir->file(name);
             fileEntry->copyTo(tempDir.absolutePath());
         }

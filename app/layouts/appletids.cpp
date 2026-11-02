@@ -78,7 +78,7 @@ void updateIdLists(KConfigGroup host, const QHash<QString, QString> &renamed)
 
     KConfigGroup general = host.group(GENERALGROUP());
 
-    for (const auto &entry : appletIdListEntries()) {
+    for (const auto idListEntries = appletIdListEntries(); const auto &entry : idListEntries) {
         const QString value = general.readEntry(entry, QString());
 
         if (value.isEmpty()) {
@@ -108,7 +108,7 @@ QHash<QString, QString> resolveApplets(KConfigGroup host, QSet<uint> &usedIds, I
     KConfigGroup applets = host.group(APPLETSGROUP());
     QHash<QString, QString> renamed;
 
-    for (const auto &appletId : applets.groupList()) {
+    for (const auto appletIds = applets.groupList(); const auto &appletId : appletIds) {
         uint id{0};
 
         if (!toId(appletId, id)) {
@@ -133,7 +133,7 @@ void resolveNestedApplets(KConfigGroup host, QSet<uint> &usedIds, IdAllocator &a
 {
     KConfigGroup applets = host.group(APPLETSGROUP());
 
-    for (const auto &appletId : applets.groupList()) {
+    for (const auto appletIds = applets.groupList(); const auto &appletId : appletIds) {
         KConfigGroup applet = applets.group(appletId);
 
         if (!applet.hasGroup(APPLETSGROUP())) {
@@ -156,7 +156,7 @@ QStringList collect(const KConfigGroup &appletsGroup)
 {
     QStringList ids;
 
-    for (const auto &appletId : appletsGroup.groupList()) {
+    for (const auto appletIds = appletsGroup.groupList(); const auto &appletId : appletIds) {
         ids << appletId;
         ids << collect(appletsGroup.group(appletId).group(APPLETSGROUP()));
     }
@@ -171,7 +171,7 @@ void makeUnique(const QList<KConfigGroup> &containments, QSet<uint> usedIds, uin
     QSet<uint> reserved = usedIds;
 
     for (const auto &containment : containments) {
-        for (const auto &appletId : collect(containment.group(APPLETSGROUP()))) {
+        for (const auto appletIds = collect(containment.group(APPLETSGROUP())); const auto &appletId : appletIds) {
             uint id{0};
 
             if (toId(appletId, id)) {

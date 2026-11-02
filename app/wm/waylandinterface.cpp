@@ -70,7 +70,7 @@ QList<QRect> plasmaPanelGeometriesFromConfig()
 
     QList<PanelInfo> panels;
 
-    for (const QString &containmentId : containmentsGroup.groupList()) {
+    for (const auto containmentIds = containmentsGroup.groupList(); const QString &containmentId : containmentIds) {
         const KConfigGroup containment = containmentsGroup.group(containmentId);
 
         if (containment.readEntry(QStringLiteral("plugin")) != QLatin1String("org.kde.panel")) continue;
