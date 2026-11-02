@@ -904,7 +904,7 @@ void Layouts::initActivities()
 
     QStringList activities = m_corona->layoutsManager()->synchronizer()->activities();;
 
-    for (const auto &id : activities) {
+    for (const auto &id : std::as_const(activities)) {
         KActivities::Info info(id);
 
         onActivityAdded(id);

@@ -341,7 +341,7 @@ void Manager::cleanupOnStartup(QString path)
 
     QStringList deprecatedActionGroup;
 
-    for (const auto &actId : actionGroups.groupList()) {
+    for (const auto actionGroupNames = actionGroups.groupList(); const auto &actId : actionGroupNames) {
         QString pluginId = actionGroups.group(actId).readEntry(QStringLiteral("RightButton;NoModifier"), "");
 
         if (pluginId == QStringLiteral("org.kde.contextmenu")) {
@@ -349,7 +349,7 @@ void Manager::cleanupOnStartup(QString path)
         }
     }
 
-    for (const auto &pId : deprecatedActionGroup) {
+    for (const auto &pId : std::as_const(deprecatedActionGroup)) {
         qCDebug(latteLayout) << "!!!!!!!!!!!!!!!!  !!!!!!!!!!!! !!!!!!! REMOVING :::: " << pId;
         actionGroups.group(pId).deleteGroup();
     }
@@ -358,7 +358,7 @@ void Manager::cleanupOnStartup(QString path)
 
     QStringList removeContaimentsList;
 
-    for (const auto &cId : containmentGroups.groupList()) {
+    for (const auto containmentGroupNames = containmentGroups.groupList(); const auto &cId : containmentGroupNames) {
         KConfigGroup containment = containmentGroups.group(cId);
         QString pluginId = containment.readEntry(QStringLiteral("plugin"), "");
 
@@ -426,7 +426,7 @@ void Manager::cleanupOnStartup(QString path)
         }
     }
 
-    for (const auto &cId : removeContaimentsList) {
+    for (const auto &cId : std::as_const(removeContaimentsList)) {
         containmentGroups.group(cId).deleteGroup();
     }
 
@@ -492,7 +492,7 @@ void Manager::hideLatteSettingsDialog()
 
 void Manager::showInfoWindow(QString info, int duration, QStringList activities)
 {
-    for (const auto screen : qGuiApp->screens()) {
+    for (const auto screens = qGuiApp->screens(); const auto screen : screens) {
         InfoView *infoView = new InfoView(m_corona, info, screen);
 
         infoView->show();

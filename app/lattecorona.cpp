@@ -94,7 +94,7 @@ namespace {
 //! the tray applet instead of in a separate corona containment.
 void appendLoadedAppletIds(const Plasma::Containment *containment, QStringList &ids)
 {
-    for (const auto applet : containment->applets()) {
+    for (const auto applets = containment->applets(); const auto applet : applets) {
         ids << QString::number(applet->id());
 
         if (const auto nested = qobject_cast<const Plasma::Containment *>(applet)) {
@@ -578,7 +578,7 @@ void Corona::load()
 
         //! load screens signals such screenGeometryChanged in order to support
         //! plasmoid.screenGeometry properly
-        for (QScreen *screen : qGuiApp->screens()) {
+        for (const auto screens = qGuiApp->screens(); QScreen *screen : screens) {
             onScreenAdded(screen);
         }
 
@@ -675,7 +675,7 @@ void Corona::cleanConfig()
     auto containmentsEntries = config()->group(QStringLiteral("Containments"));
     bool changed = false;
 
-    for (const auto &cId : containmentsEntries.groupList()) {
+    for (const auto containmentIds = containmentsEntries.groupList(); const auto &cId : containmentIds) {
         if (!containmentExists(cId.toUInt())) {
             //cleanup obsolete containments
             containmentsEntries.group(cId).deleteGroup();
@@ -685,7 +685,7 @@ void Corona::cleanConfig()
             //cleanup obsolete applets of running containments
             auto appletsEntries = containmentsEntries.group(cId).group(QStringLiteral("Applets"));
 
-            for (const auto &appletId : appletsEntries.groupList()) {
+            for (const auto appletIds = appletsEntries.groupList(); const auto &appletId : appletIds) {
                 if (!appletExists(cId.toUInt(), appletId.toUInt())) {
                     appletsEntries.group(appletId).deleteGroup();
                     changed = true;
@@ -703,7 +703,7 @@ void Corona::cleanConfig()
 
 bool Corona::containmentExists(uint id) const
 {
-    for (const auto containment : containments()) {
+    for (const auto containmentList = containments(); const auto containment : containmentList) {
         if (id == containment->id()) {
             return true;
         }
@@ -716,7 +716,7 @@ bool Corona::appletExists(uint containmentId, uint appletId) const
 {
     Plasma::Containment *containment = nullptr;
 
-    for (const auto cont : containments()) {
+    for (const auto containmentList = containments(); const auto cont : containmentList) {
         if (containmentId == cont->id()) {
             containment = cont;
             break;
@@ -727,7 +727,7 @@ bool Corona::appletExists(uint containmentId, uint appletId) const
         return false;
     }
 
-    for (const auto applet : containment->applets()) {
+    for (const auto applets = containment->applets(); const auto applet : applets) {
         if (applet->id() == appletId) {
             return true;
         }
@@ -916,7 +916,7 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
 
     bool allEdges = ignoreEdges.isEmpty();
 
-    for (const auto *view : views) {
+    for (const auto *view : std::as_const(views)) {
         bool inDesktopOffScreenStartup = desktopUse && view && view->positioner() && view->positioner()->isOffScreen();
 
         if (view && view->containment() && view->screen() == screen && !inDesktopOffScreenStartup
@@ -1088,7 +1088,7 @@ QRect Corona::availableScreenRectWithCriteria(int id,
 
     bool allEdges = ignoreEdges.isEmpty();
 
-    for (const auto *view : views) {
+    for (const auto *view : std::as_const(views)) {
         bool inDesktopOffScreenStartup = desktopUse && view && view->positioner() && view->positioner()->isOffScreen();
 
         if (view && view->containment() && view->screen() == screen && !inDesktopOffScreenStartup
@@ -1388,7 +1388,7 @@ QStringList Corona::containmentsIds()
 {
     QStringList ids;
 
-    for (const auto containment : containments()) {
+    for (const auto containmentList = containments(); const auto containment : containmentList) {
         ids << QString::number(containment->id());
     }
 
@@ -1399,7 +1399,7 @@ QStringList Corona::appletsIds()
 {
     QStringList ids;
 
-    for (const auto containment : containments()) {
+    for (const auto containmentList = containments(); const auto containment : containmentList) {
         //! The config also lists applets that are not loaded, while a freshly
         //! added applet is only written there on the next config sync; an id
         //! is taken if either source has it.
@@ -1541,7 +1541,7 @@ QStringList Corona::contextMenuData(const uint &containmentId)
 
     QStringList layoutsmenu;
 
-    for (const auto &layoutName : m_layoutsManager->synchronizer()->menuLayouts()) {
+    for (const auto layoutNames = m_layoutsManager->synchronizer()->menuLayouts(); const auto &layoutName : layoutNames) {
         if (m_layoutsManager->synchronizer()->centralLayout(layoutName)
             || m_layoutsManager->memoryUsage() == Latte::MemoryUsage::SingleLayout) {
             QStringList layoutdata;
@@ -1667,7 +1667,7 @@ void Corona::setBroadcastedBackgroundsEnabled(QString activity, QString screenNa
 void Corona::toggleHiddenState(QString layoutName, QString viewName, QString screenName, int screenEdge)
 {
     if (layoutName.isEmpty()) {
-        for (auto layout : m_layoutsManager->currentLayouts()) {
+        for (const auto layouts = m_layoutsManager->currentLayouts(); auto layout : layouts) {
             layout->toggleHiddenState(viewName, screenName, (Plasma::Types::Location)screenEdge);
         }
     } else {

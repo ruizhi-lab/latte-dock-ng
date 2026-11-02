@@ -76,7 +76,7 @@ KActivities::Controller *Synchronizer::activitiesController() const
 bool Synchronizer::latteViewExists(Latte::View *view) const
 {
     for (const auto layout : m_centralLayouts) {
-        for (const auto &v : layout->latteViews()) {
+        for (const auto views = layout->latteViews(); const auto &v : views) {
             if (v == view) {
                 return true;
             }
@@ -152,7 +152,7 @@ QStringList Synchronizer::freeRunningActivities()
 {
     QStringList fActivities;
 
-    for (const auto &activity : runningActivities()) {
+    for (const auto activityIds = runningActivities(); const auto &activity : activityIds) {
         if (!m_assignedLayouts.contains(activity)) {
             fActivities.append(activity);
         }
@@ -341,7 +341,7 @@ QList<Latte::View *> Synchronizer::currentViews() const
 {
     QList<Latte::View *> views;
 
-    for (auto layout : currentLayouts()) {
+    for (const auto currents = currentLayouts(); auto layout : currents) {
         views << layout->latteViews();
     }
 
@@ -352,7 +352,7 @@ QList<Latte::View *> Synchronizer::currentOriginalViews() const
 {
     QList<Latte::View *> views;
 
-    for (auto layout : currentLayouts()) {
+    for (const auto currents = currentLayouts(); auto layout : currents) {
         views << layout->onlyOriginalViews();
     }
 
@@ -363,7 +363,7 @@ QList<Latte::View *> Synchronizer::currentViewsWithPlasmaShortcuts() const
 {
     QList<Latte::View *> views;
 
-    for (auto layout : currentLayouts()) {
+    for (const auto currents = currentLayouts(); auto layout : currents) {
         views << layout->viewsWithPlasmaShortcuts();
     }
 
@@ -384,7 +384,7 @@ QList<Latte::View *> Synchronizer::viewsBasedOnActivityId(const QString &id) con
 {
     QList<Latte::View *> views;
 
-    for (auto layout : centralLayoutsForActivity(id)) {
+    for (const auto layoutsForActivity = centralLayoutsForActivity(id); auto layout : layoutsForActivity) {
         if (m_centralLayouts.contains(layout)) {
             views << layout->latteViews();
         }
@@ -402,7 +402,7 @@ Layout::GenericLayout *Synchronizer::layout(QString layoutname) const
 
 int Synchronizer::screenForContainment(Plasma::Containment *containment)
 {
-    for (auto layout : m_centralLayouts) {
+    for (auto layout : std::as_const(m_centralLayouts)) {
         if (layout->contains(containment)) {
             return layout->screenForContainment(containment);
         }
@@ -413,7 +413,7 @@ int Synchronizer::screenForContainment(Plasma::Containment *containment)
 
 Latte::View *Synchronizer::viewForContainment(uint id)
 {
-    for (auto layout : m_centralLayouts) {
+    for (auto layout : std::as_const(m_centralLayouts)) {
         Latte::View *view = layout->viewForContainment(id);
 
         if (view) {
@@ -426,7 +426,7 @@ Latte::View *Synchronizer::viewForContainment(uint id)
 
 Latte::View *Synchronizer::viewForContainment(Plasma::Containment *containment)
 {
-    for (auto layout : m_centralLayouts) {
+    for (auto layout : std::as_const(m_centralLayouts)) {
         Latte::View *view = layout->viewForContainment(containment);
 
         if (view) {
@@ -469,7 +469,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
 
     reloadAssignedLayouts();
 
-    for (const auto &freelayoutname : freelayoutnames) {
+    for (const auto &freelayoutname : std::as_const(freelayoutnames)) {
         //! inform free activities layouts that their activities probably changed
         CentralLayout *central = centralLayout(freelayoutname);
 
@@ -481,7 +481,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
 
 void Synchronizer::hideAllViews()
 {
-    for (const auto layout : m_centralLayouts) {
+    for (const auto layout : std::as_const(m_centralLayouts)) {
         Q_EMIT currentLayoutIsSwitching(layout->name());
     }
 }
@@ -489,7 +489,7 @@ void Synchronizer::hideAllViews()
 void Synchronizer::syncActiveLayoutsToOriginalFiles()
 {
     if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
-        for (const auto layout : m_centralLayouts) {
+        for (const auto layout : std::as_const(m_centralLayouts)) {
             layout->syncToLayoutFile();
         }
     }
@@ -497,7 +497,7 @@ void Synchronizer::syncActiveLayoutsToOriginalFiles()
 
 void Synchronizer::syncLatteViewsToScreens()
 {
-    for (const auto layout : m_centralLayouts) {
+    for (const auto layout : std::as_const(m_centralLayouts)) {
         layout->syncLatteViewsToScreens();
     }
 }
@@ -533,7 +533,7 @@ void Synchronizer::initLayouts()
     filter.append(QStringLiteral("*.layout.latte"));
     QStringList files = layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
 
-    for (const auto &layout : files) {
+    for (const auto &layout : std::as_const(files)) {
         if (layout.contains(Layout::MULTIPLELAYOUTSHIDDENNAME())) {
             //! IMPORTANT: DON'T ADD MultipleLayouts hidden file in layouts list
             continue;
@@ -567,7 +567,7 @@ void Synchronizer::reloadAssignedLayouts()
     m_assignedLayouts.clear();
 
     for (int i = 0; i < m_layouts.rowCount(); ++i) {
-        for (const auto &activity : m_layouts[i].activities) {
+        for (const auto &activity : std::as_const(m_layouts[i].activities)) {
             if (m_assignedLayouts.contains(activity)) {
                 m_assignedLayouts[activity] << m_layouts[i].name;
             } else {
@@ -600,13 +600,13 @@ void Synchronizer::unloadPreloadedLayouts()
     QStringList currentnames;
     QStringList preloadednames = Layouts::Storage::self()->storedLayoutsInMultipleFile();
 
-    for (auto l : m_centralLayouts) {
+    for (auto l : std::as_const(m_centralLayouts)) {
         if (l) {
             currentnames << l->name();
         }
     }
 
-    for (const auto &lname : preloadednames) {
+    for (const auto &lname : std::as_const(preloadednames)) {
         if (!currentnames.contains(lname)) {
             Layouts::Storage::self()->moveToLayoutFile(lname);
         }
@@ -681,7 +681,7 @@ bool Synchronizer::initMultipleMode(QString layoutName)
         return false;
     }
 
-    for (const auto layout : m_centralLayouts) {
+    for (const auto layout : std::as_const(m_centralLayouts)) {
         Q_EMIT currentLayoutIsSwitching(layout->name());
     }
 
@@ -812,7 +812,7 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
 
         reloadAssignedLayouts();
 
-        for (const auto &freelayoutname : freelayoutnames) {
+        for (const auto &freelayoutname : std::as_const(freelayoutnames)) {
             //! inform free activities layouts that their activities probably changed
             CentralLayout *central = centralLayout(freelayoutname);
 
@@ -904,20 +904,20 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
     }
 
     //! discover layouts assigned to explicit activities based on running activities
-    for (const auto &activity : runningActivities()) {
+    for (const auto activityIds = runningActivities(); const auto &activity : activityIds) {
         if (m_assignedLayouts.contains(activity)) {
             layoutNamesToLoad << m_assignedLayouts[activity];
         }
     }
 
     //! discover layouts that must be unloaded because of running activities changes
-    for (const auto layout : m_centralLayouts) {
+    for (const auto layout : std::as_const(m_centralLayouts)) {
         if (!layoutNamesToLoad.contains(layout->name())) {
             layoutNamesToUnload << layout->name();
         }
     }
 
-    for (const auto &lname : preloadedLayouts) {
+    for (const auto &lname : std::as_const(preloadedLayouts)) {
         if (!layoutNamesToLoad.contains(lname)) {
             layoutNamesToUnload << lname;
         }
@@ -937,7 +937,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
     QStringList newlyActivatedLayouts;
 
     //! Add needed Layouts based on Activities settings
-    for (const auto &layoutname : layoutNamesToLoad) {
+    for (const auto &layoutname : std::as_const(layoutNamesToLoad)) {
         if (!centralLayout(layoutname)) {
             CentralLayout *newLayout = new CentralLayout(this, QString(layoutPath(layoutname)), layoutname);
 
@@ -981,7 +981,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
 
     //! hide layouts that will be removed in the end
     if (!layoutNamesToUnload.isEmpty()) {
-        for (const auto &layoutname : layoutNamesToUnload) {
+        for (const auto &layoutname : std::as_const(layoutNamesToUnload)) {
             Q_EMIT currentLayoutIsSwitching(layoutname);
         }
 

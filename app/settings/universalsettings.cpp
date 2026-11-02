@@ -78,7 +78,7 @@ void UniversalSettings::load()
 
     QStringList colorsScriptPaths = Layouts::Importer::standardPathsFor(KWINCOLORSSCRIPT);
 
-    for (const auto &path : colorsScriptPaths) {
+    for (const auto &path : std::as_const(colorsScriptPaths)) {
         KDirWatch::self()->addDir(path);
     }
 
@@ -491,7 +491,7 @@ QScreen *UniversalSettings::atScreens(QQmlListProperty<QScreen> *property, qsize
 
 void UniversalSettings::loadScalesConfig()
 {
-    for (const auto &screenName : m_screenScalesGroup.keyList()) {
+    for (const auto screenNames = m_screenScalesGroup.keyList(); const auto &screenName : screenNames) {
         QString scalesStr = m_screenScalesGroup.readEntry(screenName, QString());
         QStringList scales = scalesStr.split(QLatin1Char(';'));
 

@@ -400,7 +400,7 @@ void Views::onCurrentLayoutChanged()
     m_model->setOriginalData(currentlayoutdata.views);
 
     //! track viewscountchanged signal for current active layout scenario
-    for (const auto &var : m_currentLayoutConnections) {
+    for (const auto &var : std::as_const(m_currentLayoutConnections)) {
         QObject::disconnect(var);
     }
 
