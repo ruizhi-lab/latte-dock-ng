@@ -118,8 +118,8 @@ void Manager::init()
     }
 
     //! Check if the multiple-layouts hidden file is present, add it if it isnt
-    if (!QFile(Layouts::Importer::layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME)).exists()) {
-        m_corona->templatesManager()->newLayout(QString(), Layout::MULTIPLELAYOUTSHIDDENNAME);
+    if (!QFile(Layouts::Importer::layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME())).exists()) {
+        m_corona->templatesManager()->newLayout(QString(), Layout::MULTIPLELAYOUTSHIDDENNAME());
     }
 
     qCDebug(latteLayout) << "Latte is loading  its layouts...";
@@ -498,7 +498,7 @@ void Manager::showInfoWindow(QString info, int duration, QStringList activities)
         infoView->show();
         infoView->setOnActivities(activities);
 
-        QTimer::singleShot(duration, [infoView]() {
+        QTimer::singleShot(duration, infoView, [infoView]() {
             infoView->deleteLater();
         });
     }

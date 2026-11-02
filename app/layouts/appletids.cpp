@@ -18,8 +18,18 @@ namespace AppletIds {
 
 namespace {
 
-const QString APPLETSGROUP = QStringLiteral("Applets");
-const QString GENERALGROUP = QStringLiteral("General");
+//! Function-local statics, not namespace-scope QStrings: see app/data/contextmenudata.h.
+const QString &APPLETSGROUP()
+{
+    static const QString value = QStringLiteral("Applets");
+    return value;
+}
+
+const QString &GENERALGROUP()
+{
+    static const QString value = QStringLiteral("General");
+    return value;
+}
 
 class IdAllocator
 {
@@ -66,7 +76,7 @@ void updateIdLists(KConfigGroup host, const QHash<QString, QString> &renamed)
         return;
     }
 
-    KConfigGroup general = host.group(GENERALGROUP);
+    KConfigGroup general = host.group(GENERALGROUP());
 
     for (const auto &entry : appletIdListEntries()) {
         const QString value = general.readEntry(entry, QString());
@@ -95,7 +105,7 @@ void updateIdLists(KConfigGroup host, const QHash<QString, QString> &renamed)
 //! the final ids. Returns the renamed ones, old id to new id.
 QHash<QString, QString> resolveApplets(KConfigGroup host, QSet<uint> &usedIds, IdAllocator &allocator)
 {
-    KConfigGroup applets = host.group(APPLETSGROUP);
+    KConfigGroup applets = host.group(APPLETSGROUP());
     QHash<QString, QString> renamed;
 
     for (const auto &appletId : applets.groupList()) {
@@ -121,12 +131,12 @@ QHash<QString, QString> resolveApplets(KConfigGroup host, QSet<uint> &usedIds, I
 
 void resolveNestedApplets(KConfigGroup host, QSet<uint> &usedIds, IdAllocator &allocator)
 {
-    KConfigGroup applets = host.group(APPLETSGROUP);
+    KConfigGroup applets = host.group(APPLETSGROUP());
 
     for (const auto &appletId : applets.groupList()) {
         KConfigGroup applet = applets.group(appletId);
 
-        if (!applet.hasGroup(APPLETSGROUP)) {
+        if (!applet.hasGroup(APPLETSGROUP())) {
             continue;
         }
 
@@ -148,7 +158,7 @@ QStringList collect(const KConfigGroup &appletsGroup)
 
     for (const auto &appletId : appletsGroup.groupList()) {
         ids << appletId;
-        ids << collect(appletsGroup.group(appletId).group(APPLETSGROUP));
+        ids << collect(appletsGroup.group(appletId).group(APPLETSGROUP()));
     }
 
     return ids;
@@ -161,7 +171,7 @@ void makeUnique(const QList<KConfigGroup> &containments, QSet<uint> usedIds, uin
     QSet<uint> reserved = usedIds;
 
     for (const auto &containment : containments) {
-        for (const auto &appletId : collect(containment.group(APPLETSGROUP))) {
+        for (const auto &appletId : collect(containment.group(APPLETSGROUP()))) {
             uint id{0};
 
             if (toId(appletId, id)) {

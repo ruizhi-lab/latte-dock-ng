@@ -412,7 +412,7 @@ void UniversalSettings::loadConfig()
 {
     m_version = m_universalGroup.readEntry(QStringLiteral("version"), 1);
     m_badges3DStyle = m_universalGroup.readEntry(QStringLiteral("badges3DStyle"), false);
-    m_contextMenuActionsAlwaysShown = m_universalGroup.readEntry(QStringLiteral("contextMenuActionsAlwaysShown"), Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
+    m_contextMenuActionsAlwaysShown = m_universalGroup.readEntry(QStringLiteral("contextMenuActionsAlwaysShown"), Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE());
     m_inAdvancedModeForEditSettings = m_universalGroup.readEntry(QStringLiteral("inAdvancedModeForEditSettings"), false);
     m_isAvailableGeometryBroadcastedToPlasma = m_universalGroup.readEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), true);
     m_launchers = m_universalGroup.readEntry(QStringLiteral("launchers"), QStringList());

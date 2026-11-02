@@ -43,6 +43,7 @@ FIXTURE_FLAGS_SOURCE = ROOT / "app/lattecorona.cpp"
 GATED_CHECKS: tuple[str, ...] = (
     "auto-unexpected-qstringbuilder",
     "child-event-qobject-cast",
+    "connect-3arg-lambda",
     "connect-by-name",
     "connect-non-signal",
     "connect-not-normalized",
@@ -58,6 +59,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "lowercase-qml-type-name",
     "mutable-container-key",
     "no-module-include",
+    "non-pod-global-static",
     "overloaded-signal",
     "overridden-signal",
     "post-event",

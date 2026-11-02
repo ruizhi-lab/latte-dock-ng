@@ -751,7 +751,7 @@ QString Importer::uniqueLayoutName(QString name)
 
 Latte::MultipleLayouts::Status Importer::multipleLayoutsStatus()
 {
-    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
+    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME());
 
     if (!QFileInfo::exists(linkedFilePath)) {
         return Latte::MultipleLayouts::Uninitialized;
@@ -764,7 +764,7 @@ Latte::MultipleLayouts::Status Importer::multipleLayoutsStatus()
 
 void Importer::setMultipleLayoutsStatus(const Latte::MultipleLayouts::Status &status)
 {
-    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
+    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME());
 
     if (!QFileInfo::exists(linkedFilePath)) {
         return;
@@ -784,7 +784,7 @@ void Importer::setMultipleLayoutsStatus(const Latte::MultipleLayouts::Status &st
 
 QStringList Importer::checkRepairMultipleLayoutsLinkedFile()
 {
-    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME);
+    QString linkedFilePath = layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME());
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(linkedFilePath);
     KConfigGroup linkedContainments = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
@@ -804,7 +804,7 @@ QStringList Importer::checkRepairMultipleLayoutsLinkedFile()
     QStringList updatedLayouts;
 
     for (const auto &[layoutName, containmentIds] : std::as_const(linkedLayoutContainmentGroups).asKeyValueRange()) {
-        if (layoutName != Layout::MULTIPLELAYOUTSHIDDENNAME && layoutExists(layoutName)) {
+        if (layoutName != Layout::MULTIPLELAYOUTSHIDDENNAME() && layoutExists(layoutName)) {
             updatedLayouts << layoutName;
             KSharedConfigPtr layoutFilePtr = KSharedConfig::openConfig(layoutUserFilePath(layoutName));
             KConfigGroup origLayoutContainments = KConfigGroup(layoutFilePtr, QStringLiteral("Containments"));

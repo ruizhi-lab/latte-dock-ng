@@ -23,13 +23,48 @@ constexpr int WatchdogMs = 2500;
 // consecutive failures mean the helper cannot run here and the session gate
 // closes to prevent a restart loop.
 constexpr int MaxConsecutiveFailures = 3;
-const QString TypeShow = QStringLiteral("show");
-const QString TypeMove = QStringLiteral("move");
-const QString TypeHide = QStringLiteral("hide");
-const QString TypeHeartbeat = QStringLiteral("heartbeat");
-const QString TypeActivate = QStringLiteral("activate");
-const QString TypeClose = QStringLiteral("close");
-const QString TypeClosed = QStringLiteral("closed");
+//! Function-local statics, not namespace-scope QStrings: see app/data/contextmenudata.h.
+const QString &TypeShow()
+{
+    static const QString value = QStringLiteral("show");
+    return value;
+}
+
+const QString &TypeMove()
+{
+    static const QString value = QStringLiteral("move");
+    return value;
+}
+
+const QString &TypeHide()
+{
+    static const QString value = QStringLiteral("hide");
+    return value;
+}
+
+const QString &TypeHeartbeat()
+{
+    static const QString value = QStringLiteral("heartbeat");
+    return value;
+}
+
+const QString &TypeActivate()
+{
+    static const QString value = QStringLiteral("activate");
+    return value;
+}
+
+const QString &TypeClose()
+{
+    static const QString value = QStringLiteral("close");
+    return value;
+}
+
+const QString &TypeClosed()
+{
+    static const QString value = QStringLiteral("closed");
+    return value;
+}
 // Validate a window descriptor before it crosses the process boundary. Only
 // identity metadata is allowed; image data must never travel through the pipe.
 bool isValidWindow(const QVariant &window)
@@ -94,7 +129,7 @@ void PreviewProcess::show(const QVariantList &windows, const QRect &anchor, int 
         return;
     }
     m_pending = true;
-    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeShow},
+    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeShow()},
         {QStringLiteral("serial"), m_serial},
         {QStringLiteral("windows"), QJsonArray::fromVariantList(windows)},
         {QStringLiteral("x"), anchor.x()}, {QStringLiteral("y"), anchor.y()},
@@ -155,7 +190,7 @@ void PreviewProcess::move(const QRect &anchor, int edge)
             return;
         }
     }
-    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeMove},
+    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeMove()},
         {QStringLiteral("serial"), m_serial},
         {QStringLiteral("x"), anchor.x()}, {QStringLiteral("y"), anchor.y()},
         {QStringLiteral("width"), anchor.width()}, {QStringLiteral("height"), anchor.height()},
@@ -170,7 +205,7 @@ void PreviewProcess::hide()
     m_watchdog.stop();
     m_windows.clear();
     ++m_serial;
-    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeHide},
+    m_request = QJsonDocument(QJsonObject{{QStringLiteral("type"), TypeHide()},
         {QStringLiteral("serial"), m_serial}}).toJson(QJsonDocument::Compact) + '\n';
     m_visible = false;
     m_hovered = false;
@@ -198,13 +233,13 @@ void PreviewProcess::read()
             continue;
         }
         const QString type = reply.value(QStringLiteral("type")).toString();
-        if (type == TypeClosed) {
+        if (type == TypeClosed()) {
             // Clean shutdown announced before exit; do not count it as a crash.
             m_closing = true;
             m_watchdog.stop();
             continue;
         }
-        if (type == TypeHeartbeat) {
+        if (type == TypeHeartbeat()) {
             m_pending = false;
             // A live reply breaks any run of failures, so only genuinely
             // consecutive crashes can close the session gate.
@@ -219,14 +254,14 @@ void PreviewProcess::read()
             }
             continue;
         }
-        if (type == TypeActivate || type == TypeClose) {
+        if (type == TypeActivate() || type == TypeClose()) {
             // The UUID is re-validated against the windows the dock most
             // recently sent, so a stale or forged click cannot activate an
             // arbitrary window.
             const QString uuid = reply.value(QStringLiteral("uuid")).toString();
             for (const auto &window : std::as_const(m_windows)) {
                 if (!uuid.isEmpty() && window.toMap().value(QStringLiteral("uuid")).toString() == uuid) {
-                    if (type == TypeActivate) {
+                    if (type == TypeActivate()) {
                         Q_EMIT activateRequested(uuid);
                         hide();
                     } else {

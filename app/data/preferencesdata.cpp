@@ -44,7 +44,7 @@ bool Preferences::inDefaultValues() const
     return (badgeStyle3D == BADGE3DSTYLE)
            && (layoutsInformationWindow == LAYOUTSINFORMATIONWINDOW)
            && (autostart == AUTOSTART)
-           && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE)
+           && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE())
            && (isAvailableGeometryBroadcastedToPlasma == ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA)
            && (metaHoldForBadges == METAHOLDFORBADGES)
            && (parabolicSpread == PARABOLICSPREAD)
@@ -57,7 +57,7 @@ void Preferences::setToDefaults()
     badgeStyle3D = BADGE3DSTYLE;
     layoutsInformationWindow = LAYOUTSINFORMATIONWINDOW;
     autostart = AUTOSTART;
-    contextMenuAlwaysActions = Data::ContextMenu::ACTIONSALWAYSVISIBLE;
+    contextMenuAlwaysActions = Data::ContextMenu::ACTIONSALWAYSVISIBLE();
     isAvailableGeometryBroadcastedToPlasma = ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA;
     metaHoldForBadges = METAHOLDFORBADGES;
     parabolicSpread = PARABOLICSPREAD;

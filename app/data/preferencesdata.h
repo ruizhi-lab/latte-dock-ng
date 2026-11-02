@@ -39,7 +39,7 @@ public:
     int parabolicSpread{PARABOLICSPREAD};
     int screensDelay{SCREENSDELAY};
     float thicknessMarginInfluence{THICKNESSMARGININFLUENCE};
-    QStringList contextMenuAlwaysActions{Data::ContextMenu::ACTIONSALWAYSVISIBLE};
+    QStringList contextMenuAlwaysActions{Data::ContextMenu::ACTIONSALWAYSVISIBLE()};
 
     bool inDefaultValues() const;
     void setToDefaults();

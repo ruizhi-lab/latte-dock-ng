@@ -486,33 +486,6 @@ void Synchronizer::hideAllViews()
     }
 }
 
-void Synchronizer::pauseLayout(QString layoutName)
-{
-    if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
-        CentralLayout *layout = centralLayout(layoutName);
-
-        if (layout->isOnAllActivities()) {
-            return;
-        }
-
-        QStringList appliedactivities = layout->appliedActivities();
-
-        if (layout && !appliedactivities.isEmpty()) {
-            int i = 0;
-
-            for (const auto &activityid : appliedactivities) {
-                //! Stopping the activities must be done asynchronous because otherwise
-                //! the activity manager cant close multiple activities
-                QTimer::singleShot(i * 1000, [activityid]() {
-                    // stopActivity removed in KF6 PlasmaActivities; activities are always running
-                });
-
-                i = i + 1;
-            }
-        }
-    }
-}
-
 void Synchronizer::syncActiveLayoutsToOriginalFiles()
 {
     if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
@@ -561,7 +534,7 @@ void Synchronizer::initLayouts()
     QStringList files = layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
 
     for (const auto &layout : files) {
-        if (layout.contains(Layout::MULTIPLELAYOUTSHIDDENNAME)) {
+        if (layout.contains(Layout::MULTIPLELAYOUTSHIDDENNAME())) {
             //! IMPORTANT: DON'T ADD MultipleLayouts hidden file in layouts list
             continue;
         }
@@ -721,7 +694,7 @@ bool Synchronizer::initMultipleMode(QString layoutName)
         QStringList layoutsinmultiplestorage = Layouts::Storage::self()->storedLayoutsInMultipleFile();
         qCDebug(latteLayout) << "Preloaded Multiple Layouts in Storage :: " << layoutsinmultiplestorage;
 
-        m_manager->loadLatteLayout(layoutPath(QString(Layout::MULTIPLELAYOUTSHIDDENNAME)));
+        m_manager->loadLatteLayout(layoutPath(QString(Layout::MULTIPLELAYOUTSHIDDENNAME())));
 
         m_multipleModeInitialized = true;
 

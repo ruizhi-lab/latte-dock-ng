@@ -1205,7 +1205,9 @@ void Corona::quitApplication()
     });
 
     //! give the time for the views to hide themselves
-    QTimer::singleShot(800, []() {
+    //! The application is the context: the quit is process-wide and must not be
+    //! cancelled when the Corona is destroyed before the timer fires.
+    QTimer::singleShot(800, qGuiApp, []() {
         qGuiApp->quit();
     });
 }
