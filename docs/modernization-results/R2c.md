@@ -689,7 +689,8 @@ again in a second session of the same build, started at 22:10:56 after a reinsta
   `ModifierTracker` drops `Qt::Key_Meta`. `modifierIsTracked()` and `normalizeKey()` are
   identical in `v1.2.62`, `382e55cd2` and `6b51b43a6`. Batch 3 changed no line of that
   path, and the failure is not an effect of it. [Follow-ups](#follow-ups), item 10, has
-  the details and the effect on the batch 2 record.
+  the details, the end-to-end check with a throwaway build that accepts `Key_Meta`, and
+  the effect on the batch 2 record.
 - **Logs:** the first session's log has 1427 lines (1385 debug, 6 info, 32 warnings and
   4 startup lines without a prefix), no critical or fatal line, no `No such method` and
   no `QObject::connect` warning. None of the 32 warnings comes from Latte's code: 24 are
@@ -785,6 +786,22 @@ validation found and deliberately left alone:
     loops that batch 3 changed in `GlobalShortcuts` can still be exercised on Wayland through
     the global shortcuts Meta+` ("Show Latte Dock", `showViews()`) and Meta+A
     (`showSettings()`), which the batch 3 smoke did not press.
+
+    Checked end to end on 2026-11-02 with a throwaway build that was not committed:
+    `normalizeKey()` also maps `Qt::Key_Meta` to `Key_Super_L`, and two `qDebug()` lines log
+    each modifier event and the moment the hold fires. With `metaPressAndHoldEnabled=true`,
+    nine holds each logged `Meta held, calling showViews()` 680 to 736 ms after the press,
+    the four presses shorter than 700 ms (570, 228, 166 and 6 ms) logged no hold, and the
+    user saw the hidden dock appear. So Plasma's launcher shortcut does not block the hold;
+    it only acts when Meta is released. The reveal also logged 90 warnings from the badge
+    QML, "QML MultiEffect: Cannot anchor to an item that isn't a parent or sibling": 72 at
+    `declarativeimports/abilities/items/basicitem/ShortcutBadge.qml:56` and 18 at
+    `containment/package/contents/ui/applet/ShortcutBadge.qml:72`. The shadow `MultiEffect`
+    sits inside a `Loader` and is anchored to `taskNumber` or `appletNumber`, a sibling of the
+    `Loader` and not of the effect. That code never ran on Wayland before, so the shadow
+    behind a badge is probably misplaced or missing; anchoring the effect to its parent (the
+    `Loader` already follows the badge text) is the obvious change, to be judged on screen.
+    Any fix of the hold has to handle this too.
 11. **Mageia Cauldron mirror failures.** `Install verify (mageia)` failed on Cauldron mirror
     404s three times since 2026-10-28; run 41452548625 attempt 1 is the third. Each time
     the rerun of the failed job passed. `scripts/retry-mageia-mirror-build.sh` already
