@@ -342,7 +342,7 @@ bool ClonedView::refreshAppletIdsHash()
         }
     }
 
-    for (const int oid : originalids) {
+    for (const int oid : std::as_const(originalids)) {
         if (oid < 0 || !m_currentAppletIds.contains(oid) || nextAppletIds.contains(oid)) {
             continue;
         }
@@ -360,7 +360,7 @@ bool ClonedView::refreshAppletIdsHash()
         }
     }
 
-    for (const int oid : originalids) {
+    for (const int oid : std::as_const(originalids)) {
         if (oid < 0 || nextAppletIds.contains(oid)) {
             continue;
         }
@@ -372,7 +372,7 @@ bool ClonedView::refreshAppletIdsHash()
             continue;
         }
 
-        for (const int cid : clonedids) {
+        for (const int cid : std::as_const(clonedids)) {
             if (cid < 0 || usedClonedIds.contains(cid)) {
                 continue;
             }

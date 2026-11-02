@@ -66,11 +66,11 @@ void GenericLayout::unloadContainments()
                          << " ,latteViews in memory ::: " << m_latteViews.size()
                          << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
 
-    for (const auto view : m_latteViews) {
+    for (const auto view : std::as_const(m_latteViews)) {
         view->disconnectSensitiveSignals();
     }
 
-    for (const auto view : m_waitingLatteViews) {
+    for (const auto view : std::as_const(m_waitingLatteViews)) {
         view->disconnectSensitiveSignals();
     }
 
@@ -79,7 +79,7 @@ void GenericLayout::unloadContainments()
     QList<Plasma::Containment *> subcontainments;
 
     //!identify subcontainments and unload them first
-    for (const auto containment : m_containments) {
+    for (const auto containment : std::as_const(m_containments)) {
         if (qobject_cast<Plasma::Applet *>(containment->parent())) {
             subcontainments.append(containment);
         }
@@ -117,11 +117,11 @@ void GenericLayout::unloadLatteViews()
     disconnect(this, &GenericLayout::activitiesChanged, this, &GenericLayout::updateLastUsedActivity);
     disconnect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, &GenericLayout::updateLastUsedActivity);
 
-    for (const auto view : m_latteViews) {
+    for (const auto view : std::as_const(m_latteViews)) {
         view->disconnectSensitiveSignals();
     }
 
-    for (const auto view : m_waitingLatteViews) {
+    for (const auto view : std::as_const(m_waitingLatteViews)) {
         view->disconnectSensitiveSignals();
     }
 
@@ -459,7 +459,7 @@ QList<Latte::View *> GenericLayout::onlyOriginalViews()
 {
     QList<Latte::View *> viewslist;
 
-    for (const auto v : m_latteViews) {
+    for (const auto v : std::as_const(m_latteViews)) {
         if (v->isOriginal()) {
             viewslist << v;
         }
@@ -669,11 +669,11 @@ QList<Latte::View *> GenericLayout::viewsWithPlasmaShortcuts()
 
     QList<uint> appletsWithShortcuts = m_corona->globalShortcuts()->shortcutsTracker()->appletsWithPlasmaShortcuts();
 
-    for (const auto &appletId : appletsWithShortcuts) {
-        for (const auto view : m_latteViews) {
+    for (const auto &appletId : std::as_const(appletsWithShortcuts)) {
+        for (const auto view : std::as_const(m_latteViews)) {
             bool found{false};
 
-            for (const auto applet : view->containment()->applets()) {
+            for (const auto applets = view->containment()->applets(); const auto applet : applets) {
                 if (appletId == applet->id()) {
                     if (!views.contains(view)) {
                         views.append(view);
@@ -748,7 +748,7 @@ void GenericLayout::appletCreated(Plasma::Applet *applet)
     if (Layouts::Storage::isValid(subId)) {
         uint sId = static_cast<uint>(subId);
 
-        for (const auto containment : m_corona->containments()) {
+        for (const auto coronaContainments = m_corona->containments(); const auto containment : coronaContainments) {
             if (containment->id() == sId) {
                 containment->config().writeEntry(QStringLiteral("layoutId"), m_layoutName);
             }
@@ -834,7 +834,7 @@ void GenericLayout::renameLayout(QString newName)
 
     setName(newName);
 
-    for (const auto containment : m_containments) {
+    for (const auto containment : std::as_const(m_containments)) {
         qCDebug(latteLayout) << "Cont ID :: " << containment->id();
         containment->config().writeEntry(QStringLiteral("layoutId"), m_layoutName);
     }
@@ -947,7 +947,7 @@ void GenericLayout::toggleHiddenState(QString viewName, QString screenName, Plas
 
     int viewsOnEdge{0};
 
-    for (const auto view : latteViews()) {
+    for (const auto views = latteViews(); const auto view : views) {
         if ((viewName.isEmpty() || (!viewName.isEmpty() && viewName == view->name()))
             && view->positioner()->currentScreenName() == validScreenName
             && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
@@ -956,7 +956,7 @@ void GenericLayout::toggleHiddenState(QString viewName, QString screenName, Plas
     }
 
     if (viewsOnEdge >= 1) {
-        for (const auto view : latteViews()) {
+        for (const auto views = latteViews(); const auto view : views) {
             if ((viewName.isEmpty() || (!viewName.isEmpty() && viewName == view->name()))
                 && view->positioner()->currentScreenName() == validScreenName
                 && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
@@ -1001,7 +1001,7 @@ bool GenericLayout::initContainments()
     qCDebug(latteLayout) << "Layout ::::: " << name() << " added containments ::: " << m_containments.size();
 
     for (int pass = 1; pass <= 2; ++pass) {
-        for (const auto containment : m_corona->containments()) {
+        for (const auto coronaContainments = m_corona->containments(); const auto containment : coronaContainments) {
             //! in first pass we load subcontainments
             //! in second pass we load main dock and panel containments
             //! this way subcontainments will be always available to find when the layout is activating
@@ -1056,7 +1056,7 @@ void GenericLayout::assignToLayout(Latte::View *latteView, QList<Plasma::Contain
 
     m_containments << containments;
 
-    for (const auto containment : containments) {
+    for (const auto containment : std::as_const(containments)) {
         containment->config().writeEntry(QStringLiteral("layoutId"), name());
 
         if (!latteView || (latteView && latteView->containment() != containment)) {
@@ -1090,7 +1090,7 @@ QList<Plasma::Containment *> GenericLayout::unassignFromLayout(Plasma::Containme
 
     containments << latteContainment;
 
-    for (const auto containment : m_containments) {
+    for (const auto containment : std::as_const(m_containments)) {
         Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent());
 
         //! add subcontainments from that latteView
@@ -1104,7 +1104,7 @@ QList<Plasma::Containment *> GenericLayout::unassignFromLayout(Plasma::Containme
         }
     }
 
-    for (const auto containment : containments) {
+    for (const auto containment : std::as_const(containments)) {
         m_containments.removeAll(containment);
     }
 
@@ -1267,7 +1267,7 @@ Layout::ViewsMap GenericLayout::validViewsMap()
 
     QString prmScreenName = m_corona->screenPool()->primaryScreen()->name();
 
-    for (const auto containment : m_containments) {
+    for (const auto containment : std::as_const(m_containments)) {
         if (Layouts::Storage::self()->isLatteContainment(containment)
             && !Layouts::Storage::self()->isClonedView(containment)) {
             Data::View view = hasLatteView(containment) ? m_latteViews[containment]->data() : Latte::Layouts::Storage::self()->view(this, containment);
@@ -1316,7 +1316,7 @@ void GenericLayout::syncLatteViewsToScreens()
         }
     }
 
-    for (const auto &pendingid : clearpendings) {
+    for (const auto &pendingid : std::as_const(clearpendings)) {
         m_pendingContainmentUpdates.remove(pendingid);
     }
 
@@ -1334,7 +1334,12 @@ void GenericLayout::syncLatteViewsToScreens()
     qCDebug(latteLayout) << "LATTEVIEWS MAP :: " << viewsMap;
 
     //! add views
-    for (const auto containment : m_containments) {
+    //! clazy:exclude=range-loop-detach: the loop iterates the live m_containments list, as before. addView() below
+    //! can append to it: addView() -> View::setLayout() emits layoutChanged -> OriginalView::syncClonesToScreens()
+    //! -> createClone() -> GenericLayout::newView() -> Storage::newView() -> Storage::importLayoutFile()
+    //! -> ImportedContainments::restore() emits Corona::containmentAdded -> GenericLayout::addContainment()
+    //! -> m_containments.append(). A snapshot would change which containments the loop visits: a later decision.
+    for (const auto containment : m_containments) { // clazy:exclude=range-loop-detach
         if (!hasLatteView(containment) && mapContainsId(&viewsMap, containment->id())) {
             qCDebug(latteLayout) << "syncLatteViewsToScreens: view must be added... for containment:" << containment->id() << " at screen:" << mapScreenName(&viewsMap, containment->id());
             addView(containment);
@@ -1344,7 +1349,7 @@ void GenericLayout::syncLatteViewsToScreens()
     //! remove views
     QList<Plasma::Containment *> viewsToDelete;
 
-    for (auto view : m_latteViews) {
+    for (auto view : std::as_const(m_latteViews)) {
         auto containment = view->containment();
 
         if (containment && view->isOriginal() && !mapContainsId(&viewsMap, containment->id())) {
@@ -1361,7 +1366,11 @@ void GenericLayout::syncLatteViewsToScreens()
     }
 
     //! reconsider views
-    for (const auto view : m_latteViews) {
+    //! clazy:exclude=range-loop-detach: the loop iterates the live m_latteViews hash, as before. reconsiderScreen() of an
+    //! original view runs OriginalView::syncClonesToScreens(), which calls removeClone() for a clone on a screen that is no
+    //! longer used; removeClone() calls removeViewWithoutDestroyingContainment(), which does m_latteViews.take(). A snapshot
+    //! or a restart would change what the loop visits: a behavior decision for a later change.
+    for (const auto view : m_latteViews) { // clazy:exclude=range-loop-detach
         if (view->containment() && view->isOriginal() && mapContainsId(&viewsMap, view->containment()->id())) {
             //! if the dock will not be deleted its a very good point to reconsider
             //! if the screen in which is running is the correct one
@@ -1385,7 +1394,7 @@ QList<Plasma::Containment *> GenericLayout::subContainmentsOf(uint id) const
 
     auto applets = containment->config().group(QStringLiteral("Applets"));
 
-    for (const auto &applet : applets.groupList()) {
+    for (const auto groups = applets.groupList(); const auto &applet : groups) {
         int tSubId = Layouts::Storage::self()->subContainmentId(applets.group(applet));
 
         if (Layouts::Storage::isValid(tSubId)) {
@@ -1407,7 +1416,7 @@ QList<int> GenericLayout::subContainmentsOf(Plasma::Containment *containment) co
     if (Layouts::Storage::self()->isLatteContainment(containment)) {
         auto applets = containment->config().group(QStringLiteral("Applets"));
 
-        for (const auto &applet : applets.groupList()) {
+        for (const auto groups = applets.groupList(); const auto &applet : groups) {
             int tSubId = Layouts::Storage::self()->subContainmentId(applets.group(applet));
 
             if (Layouts::Storage::isValid(tSubId)) {

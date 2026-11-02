@@ -45,7 +45,7 @@ inline QQuickItem *findQuickItemByObjectName(QObject *root, const QString &objec
             return item;
         }
 
-        for (QQuickItem *childItem : item->childItems()) {
+        for (const auto childItems = item->childItems(); QQuickItem *childItem : childItems) {
             pending.append(childItem);
         }
     }

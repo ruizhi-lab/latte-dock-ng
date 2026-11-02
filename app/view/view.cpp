@@ -295,7 +295,7 @@ View::~View()
     //! dies while the View is being destroyed, Qt activates the slot against the
     //! half-destroyed View and aborts on its internal qobject_cast assertion.
     //! disconnectSensitiveSignals() does not cover these per-window connections.
-    for (QWindow *window : m_pointerWindows) {
+    for (QWindow *window : std::as_const(m_pointerWindows)) {
         disconnect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed);
     }
 
@@ -887,7 +887,7 @@ void View::removeTransientWindow(const bool &visible)
 
 void View::updateTransientWindowsTracking()
 {
-    for (QWindow *window : qApp->topLevelWindows()) {
+    for (const auto windows = qApp->topLevelWindows(); QWindow *window : windows) {
         if (window->transientParent() == this && window->isVisible()) {
             addTransientWindow(window);
             break;
@@ -2051,7 +2051,7 @@ QVariantList View::containmentActions() const
         plugin->restore(pluginConfig);
     }
 
-    for (QAction *ac : plugin->contextualActions()) {
+    for (const auto contextualActions = plugin->contextualActions(); QAction *ac : contextualActions) {
         actions << QVariant::fromValue<QAction *>(ac);
     }
 

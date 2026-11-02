@@ -145,13 +145,14 @@ bool iconExistsInCurrentTheme(const QString &iconName)
                                                QStringLiteral("icons"),
                                                QStandardPaths::LocateDirectory);
 
-    for (const QString &dataPath : QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)) {
+    for (const auto dataPaths = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+         const QString &dataPath : dataPaths) {
         searchPaths << QDir(dataPath).filePath(QStringLiteral("icons"));
     }
 
     searchPaths.removeDuplicates();
 
-    for (const QString &searchPath : searchPaths) {
+    for (const QString &searchPath : std::as_const(searchPaths)) {
         const QDir themeDir(QDir(searchPath).filePath(currentTheme));
 
         if (!themeDir.exists()) {
@@ -193,7 +194,7 @@ QString originalColorIconName(const QString &iconName)
         candidate = candidate.left(separator);
     }
 
-    for (const QString &themedCandidate : candidates) {
+    for (const QString &themedCandidate : std::as_const(candidates)) {
         if (iconExistsInCurrentTheme(themedCandidate)) {
             return themedCandidate;
         }
@@ -579,7 +580,7 @@ bool ContainmentInterface::activatePlasmaTask(const int index)
     const auto &applets = m_view->containment()->applets();
 
     for (auto *applet : applets) {
-        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
+        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto entries = v.toArray(); const auto &e : entries) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
         if (provides.contains(QLatin1String(Latte::PluginId::kMultiTasking))) {
             if (QQuickItem *appletInterface = PlasmaQuick::AppletQuickItem::itemForApplet(applet)) {
@@ -626,7 +627,7 @@ bool ContainmentInterface::newInstanceForPlasmaTask(const int index)
     const auto &applets = m_view->containment()->applets();
 
     for (auto *applet : applets) {
-        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto &e : v.toArray()) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
+        const auto &provides = [&applet]() -> QStringList { const auto v = applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides")); if (v.isArray()) { QStringList r; for (const auto entries = v.toArray(); const auto &e : entries) r << e.toString(); return r; } return v.toString().split(QLatin1Char(','), Qt::SkipEmptyParts); }();
 
         if (provides.contains(QLatin1String(Latte::PluginId::kMultiTasking))) {
             if (QQuickItem *appletInterface = PlasmaQuick::AppletQuickItem::itemForApplet(applet)) {
@@ -770,7 +771,7 @@ void ContainmentInterface::deactivateApplets()
         return;
     }
 
-    for (const auto applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); const auto applet : applets) {
         PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(const_cast<Plasma::Applet *>(applet));
 
         if (ai) {
@@ -785,7 +786,7 @@ bool ContainmentInterface::appletIsExpandable(const int id) const
         return false;
     }
 
-    for (const auto applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); const auto applet : applets) {
         if (applet && applet->id() == static_cast<uint>(id)) {
             if (Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)) {
                 return true;
@@ -819,7 +820,7 @@ bool ContainmentInterface::appletIsActivationTogglesExpanded(const int id) const
         return false;
     }
 
-    for (const auto applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); const auto applet : applets) {
         if (applet && applet->id() == static_cast<uint>(id)) {
             if (Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)) {
                 return true;
@@ -877,7 +878,7 @@ QObject *ContainmentInterface::configurationForAppletVisualIndex(const int visua
     // PlasmoidItem is fully set up.
     int plasmoidIndex = 0;
 
-    for (const int id : m_appletOrder) {
+    for (const int id : std::as_const(m_appletOrder)) {
         if (!m_appletData.contains(id)) {
             continue;
         }
@@ -1897,7 +1898,7 @@ void ContainmentInterface::updateAppletsOrder()
 
     //! update applets last recorded index, this is needed for example when an applet is removed
     //! to know in which index was located before the removal
-    for (const auto &id : m_appletOrder) {
+    for (const auto &id : std::as_const(m_appletOrder)) {
         if (m_appletData.contains(id)) {
             m_appletData[id].lastValidIndex = m_appletOrder.indexOf(id);
         }
@@ -1961,7 +1962,7 @@ void ContainmentInterface::updateAppletsOriginalIconColors()
         return;
     }
 
-    for (auto *applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); auto *applet : applets) {
         applyOriginalIconColors(applet);
     }
 }
@@ -2022,7 +2023,7 @@ void ContainmentInterface::toggleAppletExpanded(const int id)
         return;
     }
 
-    for (const auto applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); const auto applet : applets) {
         if (applet->id() == static_cast<uint>(id) && !Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)/*block for sub-containments*/) {
             PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
 
@@ -2157,7 +2158,7 @@ void ContainmentInterface::updateAppletsTracking()
         return;
     }
 
-    for (const auto applet : m_view->containment()->applets()) {
+    for (const auto applets = m_view->containment()->applets(); const auto applet : applets) {
         onAppletAdded(applet);
     }
 
@@ -2380,7 +2381,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
             });
         }
 
-        for (const auto internalApplet : subContainment->applets()) {
+        for (const auto subApplets = subContainment->applets(); const auto internalApplet : subApplets) {
             PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(internalApplet);
 
             if (ai && !m_appletsExpandedConnections.contains(ai)) {

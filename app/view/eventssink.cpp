@@ -284,7 +284,7 @@ bool EventsSink::originSinksContain(const QPointF &point) const
 {
     QRegion originsRegion;
 
-    for (const auto currentOrigin : m_originParentItem->childItems()) {
+    for (const auto childItems = m_originParentItem->childItems(); const auto currentOrigin : childItems) {
         QRectF currentOriginGeometry = currentOrigin->mapRectToScene(QRectF(0, 0, currentOrigin->width(), currentOrigin->height()));
         originsRegion = originsRegion.united(currentOriginGeometry.toRect());
     }
