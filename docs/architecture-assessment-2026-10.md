@@ -127,9 +127,9 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
 - `.clang-tidy` enables two checks. clazy was not used in CI; since
   [R2c](modernization-results/R2c.md) the Clang Debug job gates the clazy
   checks that have zero findings and a fixture that fires. The inventory found
-  570 findings from 19 checks; after the first slice and fix batches 1 and 2,
-  43 checks are gated and 327 findings from 6 checks wait as `R2c-<check>`
-  slices.
+  570 findings from 19 checks; after the first slice and fix batches 1 to 3,
+  49 checks are gated and every finding is fixed or, for 12 declarations,
+  excepted with a reason (batch 3 still waits for CI and the desktop smoke).
 - Application sources are collected through `PARENT_SCOPE` lists in about 30
   subdirectories; `configure_file()` copies `.cpp` files between targets; some
   directories use `add_definitions()`.

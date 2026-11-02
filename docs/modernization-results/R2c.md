@@ -3,7 +3,9 @@
 Status: Complete. CI run 40345972905 at `09b030e61` ran both clazy steps of the
 Clang Debug job and passed. Fix batches [1](#fix-batch-1) and [2](#fix-batch-2)
 are merged into `main` and passed CI run 40683601580 at `14d705a5d`, which ran
-the 43-check gate ([CI validation](#ci-validation)).
+the 43-check gate ([CI validation](#ci-validation)). [Fix batch 3](#fix-batch-3)
+fixes the last six checks; it passed the combined checks on the branch
+`claude/r2c-batch3-integration` and waits for CI and the desktop smoke.
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -23,16 +25,19 @@ checks rejects.
 - **Gate.** `scripts/test-clazy.py` gates the zero-finding checks whose fixture
   fires under the project flags, in the Clang Debug CI job after the build: 30
   at the inventory, 31 since `R2c-auto-unexpected-qstringbuilder`, 37 since fix
-  batch 1 and 43 since fix batch 2. A gated check cannot be vacuous: the runner
-  proves it on its own fixture first.
+  batch 1, 43 since fix batch 2 and 49 since fix batch 3. A gated check cannot
+  be vacuous: the runner proves it on its own fixture first.
 - **Not gated, zero findings.** `foreach` and `qstring-comparison-to-implicit-char`
   cannot fire under the project flags; no trigger was found for `qstring-left`.
-- **Next actions.** The 19 checks with findings become `R2c-<check>` slices.
+- **Fix slices.** The 19 checks with findings became `R2c-<check>` slices.
   The first, [R2c-auto-unexpected-qstringbuilder](R2c-auto-unexpected-qstringbuilder.md),
-  is done: its finding was a dangling `QStringBuilder` on Qt 6.6 and older.
-  [Fix batch 1](#fix-batch-1) fixed six more checks (81 findings) and
-  [fix batch 2](#fix-batch-2) another six (130 findings); 327 findings from 6
-  checks remain.
+  fixed a dangling `QStringBuilder` on Qt 6.6 and older. [Fix batch 1](#fix-batch-1)
+  fixed six more checks (81 findings), [fix batch 2](#fix-batch-2) another six
+  (130 findings) and [fix batch 3](#fix-batch-3) the last six (327 findings). The
+  570 findings are therefore: 1 + 81 + 130 + 327, plus 31 loops that batch 2 fixed
+  as a side effect. 558 are fixed in the code and 12 declarations are reviewed
+  exceptions with a reason beside them (`// clazy:exclude=`). The
+  [follow-ups](#follow-ups) are not findings.
 - The inventory commit changed no production code, build rule or dependency of
   the product; the slice commits that follow it change one file each.
 
@@ -557,29 +562,140 @@ The user ran the checks; the log column is what the debug log shows.
   template export, multiple-layouts mode, and a build on Qt 6.6 or 6.7.
 - **Not run:** the Fedora VM (left to R5); the Debian 13 VM (no build tools).
 
+## Fix batch 3
+
+Status: Pending validation. Every check on the branch `claude/r2c-batch3-integration`
+passed; the CI run and the desktop smoke wait.
+
+Six sessions, all Claude Haiku 5.5 at medium effort, implemented the batch in two
+waves. The main session fixed the file sets and the design decisions in the briefs
+and reviewed every branch before merging it. Wave 1 started from `95e342f72` on
+disjoint files: batch E (signals and the property), batch F (non-POD statics and
+context-less timers) and batches G and H (the loop check in two file groups). Wave 2
+started from the integration branch after E and F were merged, on the files those two
+had to touch: batch I (`app/layouts/storage.cpp`) and batch J (12 files). Nothing in
+the batch is in `main` yet; the merge commits on the integration branch are E
+`4e403af80`, F `3a180839b`, H `e62767af2`, G `c0f64b9ee`, I `98b00c657`, J
+`b7fc199db`, and the gate commit is `8a30d3fa9`.
+
+| Slice | Locations / files | Batch | Commits |
+| --- | ---: | --- | --- |
+| [R2c-overloaded-signal](R2c-overloaded-signal.md) | 11 / 5 | E | `b30ae731a` |
+| [R2c-overridden-signal](R2c-overridden-signal.md) | 2 / 2 | E | `67180cbda` |
+| [R2c-qproperty-without-notify](R2c-qproperty-without-notify.md) | 1 / 1 | E | `b3ac2960c` |
+| [R2c-connect-3arg-lambda](R2c-connect-3arg-lambda.md) | 8 / 5 | F | `085fbd190` |
+| [R2c-non-pod-global-static](R2c-non-pod-global-static.md) | 31 / 6 | F | `50ba3074b` |
+| [R2c-range-loop-detach](R2c-range-loop-detach.md) | 274 / 45 | G, H, I, J | `a18a905bc`, `d8b07b428`, `6f42e5ed2`, `8a998f1b8`, `4116888bb` |
+
+What each slice did:
+
+- **Signals (E).** Three internal model signals were renamed so they no longer share
+  a name with a `QAbstractItemModel` signal: `Layouts::rowsInserted()` is
+  `layoutsInserted()`, `Views::rowsInserted()` and `rowsRemoved()` are
+  `viewsInserted()` and `viewsRemoved()`. The `IconItem::enabledChanged()` slot is
+  `onEnabledChanged()`. Ten declarations stay and carry `// clazy:exclude=` with a
+  reason: the NOTIFY signals of the QML-visible `width`, `height`, `visibility`, `x`
+  and `y` of `View`, `x` and `y` of `PrimaryConfigView`, `smooth` of `IconItem`,
+  `View::screenGeometryChanged` and the `UniversalSettings::screens` list. QML
+  change handlers resolve those signals by name, so a rename would break them
+  silently.
+- **Timers and constants (F).** Seven `QTimer::singleShot` callbacks got a context
+  object that owns their lifetime (`qGuiApp` for the process-wide quit, the info view,
+  the Wayland surface, the context menu itself, and `QCoreApplication::instance()`
+  for the two D-Bus calls that must outlive the menu). The eighth finding sat in
+  `Synchronizer::pauseLayout()`, which nothing called and whose timers ran an empty
+  lambda; it is deleted. The 31 namespace-scope `QString` and `QStringList`
+  constants became function-local-static accessors, so none is built during static
+  initialization.
+- **Loops (G, H, I, J).** See [the umbrella report](R2c-range-loop-detach.md): 107
+  loops iterate a `std::as_const` view, 164 loops over a by-value result hold it in
+  a const local through a range-for init-statement, one loop uses `removeIf`, and two
+  keep their live iteration under documented exceptions.
+
+### Checks on the integration branch at `8a30d3fa9`
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P -j8`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8, CMake 4.3.4, Qt 6.11.2) | Exit 0 each; 0 compiler, linker or CMake diagnostics; 58/58 tests passed in each preset (CI registers one fewer, without `appstreamtest`) |
+| `python3 -I autotests/installscriptbehavior.py` | Pass |
+| `latte-r2c-clazy:noble` container (clazy 1.17, Qt 6.11.1): fresh Clang Debug build, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 12` | Exit 0 in 251 s including the build; 49 fixtures rejected by their own checks; no finding in 153 production sources |
+| Same gate with the pre-fix `app/screenpool.cpp` and `app/shortcuts/globalshortcuts.cpp` mounted over the fixed files | Exit 1: 14 `range-loop-detach` findings, 5 and 9. A first attempt with the pre-fix `storage.cpp` failed to compile against batch F's accessors and proved nothing |
+| Debian 13 container, `verify-install.sh debian13` as in the CI job: CMake 3.31.6, GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5, plasma-workspace 6.3.6 | Exit 0 in 179 s: system and user build, install and uninstall; 0 compiler warnings |
+
+Before the merge the sessions ran the same container gate and the host GCC and Clang
+Debug builds on their own branches; their reports hold the commands.
+
+### Desktop smoke
+
+Not run yet. The actions that reach the changed code:
+
+- **Settings window.** Add and duplicate a layout, then Apply (`layoutsInserted()`);
+  open the Docks dialog of a layout, cut and paste or remove a dock, then Apply
+  (`viewsInserted()` and `viewsRemoved()`); the Actions editor under Preferences,
+  its default button, and the dock context menu in normal and in edit mode (the
+  action-id accessors). Open the Screens dialog from the File menu.
+- **Layouts.** Switch to another layout and back; export a layout and import it
+  again; add and remove a dock (`storage.cpp`, the layout synchronizer and importer).
+- **Startup and quit.** Start with two docks on two screens (the layout sync, the
+  Wayland stacking timer for a dock at the bottom, the KNS compatibility setup); quit
+  Latte from its context menu last (the 300 ms hide and the 800 ms quit timers).
+- **Shortcuts, previews, KNS.** Hold Meta; open a window preview; open one of the
+  "get new" dialogs of the settings window.
+- **Not reachable on a two-screen desktop:** the `removeIf` case in
+  `OriginalView::syncClonesToScreens()` (two secondary screens whose clones are
+  created together) and the info window (`Manager::showInfoWindow()`), which shows
+  when layouts are activated in multiple-layouts mode.
+- The debug log should hold no `QMetaObject::invokeMethod: No such method` line and
+  no `QObject::connect` warning.
+
+### Not run
+
+CI, the desktop smoke, and a build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2).
+
+## Follow-ups
+
+None of these is a finding. They are decisions or defects the fix slices found and
+deliberately left alone:
+
+1. **Mutation during iteration in `GenericLayout::syncLatteViewsToScreens()`.** The
+   loop over `m_latteViews` can reach `m_latteViews.take()` and the loop over
+   `m_containments` can reach `m_containments.append()` from its body (paths in
+   [the umbrella report](R2c-range-loop-detach.md#exceptions)). Both iterate the live
+   container, as before. A fix needs a decision (snapshot, restart or index loop) and
+   a test.
+2. **`OriginalView::syncClonesToScreens()`.** The `removeIf` is a behavior change; if
+   the smoke or a user report shows a difference, see
+   [the group G report](R2c-range-loop-detach-g.md#behavior-change-originalviewcpp225).
+3. **`app/main.cpp` is invisible to `non-pod-global-static`.** clazy 1.17 skips a
+   namespace-scope `static` without an initializer in a file named exactly
+   `main.cpp`, so `s_userLocalQmlPaths` and `s_userLocalPluginPaths` (lines 752-753)
+   are not reported. The gate's fixture has another name and cannot show it. Close it
+   by converting the two statics or with a differently named fixture.
+4. **`UniversalSettings::screens` has no NOTIFY.** A `screensCountChanged` signal
+   exists; deciding whether the list property should notify on screen hotplug changes
+   when QML bindings re-evaluate.
+5. **`IconItem::setSmooth()` does not emit `smoothChanged()`**, so bindings on
+   `smooth` are not re-evaluated when it changes (found by batch E).
+6. **Three getters nothing calls**, found by batch D: `GenericLayout::qmlFreeEdges`,
+   `VisibilityManager::isValidMode` and `LayoutManager::isModernDockStyle` (the QML
+   property of the same name is a different thing). A dead-code review under rule 5
+   of `AGENTS.md` can remove them.
+7. **Variables with lost intent**, recorded by batch C in
+   [R2c-unused-non-trivial-variable](R2c-unused-non-trivial-variable.md#lost-intent)
+   (for example `switchToLayout` and `knownActivities` in `Layouts::save()`).
+8. **Loops clazy does not report** and that were left alone are listed in the
+   [umbrella report](R2c-range-loop-detach.md#left-alone-not-findings).
+9. **Hardening of the runner:** an offline unit test of the runner's parsing,
+   selection and fail-closed paths with a fake `clazy-standalone`, and a
+   `knscompatunittest` case with `linktarget`, `optional plugin` and `classname`
+   lines in the templates `qmldir`.
+
 ## Next actions
 
-Each slice fixes all findings of one check, confirms zero with
-`--inventory CHECK`, adds `autotests/clazy/CHECK.cpp` and the name in
-`GATED_CHECKS`. A reviewed exception may use `// clazy:exclude=CHECK` with a
-reason instead of a rewrite. Done: `R2c-auto-unexpected-qstringbuilder`, see
-[its report](R2c-auto-unexpected-qstringbuilder.md), and the six slices each of
-[fix batch 1](#fix-batch-1) and [fix batch 2](#fix-batch-2). Suggested order for
-the rest, smallest and most mechanical first; the counts were checked again on
-`382e55cd2`, where only `range-loop-detach` differs from the inventory:
-
-| Slice | Locations / files | Notes |
-| --- | ---: | --- |
-| `R2c-range-loop-detach` | 274 / 45 | Mainly `std::as_const()` around the range. Largest: `app/layouts/storage.cpp` 63, `app/layout/genericlayout.cpp` 24, `app/layouts/synchronizer.cpp` 24. A loop that modifies its container needs a copy or an index loop, not `as_const`; read each loop. Split by directory |
-| `R2c-connect-3arg-lambda` | 8 / 5 | All are `QTimer::singleShot(ms, lambda)` without a context object (`lattecorona.cpp`, `layouts/manager.cpp`, `layouts/synchronizer.cpp`, `wm/waylandinterface.cpp`, `contextmenu/menu.cpp` 4). Needs the per-site lifetime note R2b used |
-| `R2c-qproperty-without-notify` | 1 / 1 | `app/settings/universalsettings.h:61`, the `screens` list property has neither NOTIFY nor CONSTANT; needs a change signal design |
-| `R2c-non-pod-global-static` | 31 / 6 | Namespace-scope `QString` constants with dynamic initialization (`Latte::Data::ContextMenu::*`, `Latte::Layout::MULTIPLELAYOUTSHIDDENNAME`, `previewprocess.cpp` types). Needs a constant-initialized replacement and a check for static-initialization-order users |
-| `R2c-overloaded-signal` | 11 / 5 | Signals that overload a base-class signal (`xChanged`, `yChanged`, `rowsInserted`, `visibilityChanged`); renaming changes API, so expect `// clazy:exclude=overloaded-signal` with a reason |
-| `R2c-overridden-signal` | 2 / 2 | `View::screenGeometryChanged` and `IconItem::enabledChanged`; same decision as above |
-
-Optional hardening after the slices: an offline unit test of the runner's
-parsing, selection and fail-closed paths with a fake `clazy-standalone`, so
-those paths have an automated check on hosts without clazy.
+The R2c fix slices are complete: each of the 19 checks of the inventory is fixed or
+excepted with a reason, and the gate holds 49 checks. What is left is the validation
+of [fix batch 3](#fix-batch-3) (CI and the desktop smoke) and the
+[follow-ups](#follow-ups).
 
 ## Reproducing the environment
 
