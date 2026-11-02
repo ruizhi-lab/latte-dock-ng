@@ -1,7 +1,7 @@
 # R2c-qproperty-without-notify: A Property Without NOTIFY or CONSTANT
 
-Status: Pending validation. Not run here: CI and the desktop smoke (the main session
-runs the smoke after merging the batch).
+Status: Complete. CI run 41452548625 passed all 23 jobs and the host desktop smoke passed
+([R2c fix batch 3](R2c.md#fix-batch-3)).
 Date: 2026-10-29. Branch: `claude/r2c-batch-e-fc8dc7`. Start HEAD: `67180cbda` (the
 `R2c-overridden-signal` commit; the batch starts at `95e342f72`).
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md), the
@@ -81,11 +81,13 @@ clazy 1.17.1.
 
 - **Batch / slice and selected scope:** R2c fix batch 3, batch E, slice 3
   `R2c-qproperty-without-notify` (1 finding in 1 file).
-- **Status:** Pending validation (see the evidence table).
+- **Status:** Complete; CI run 41452548625 passed and the host desktop smoke passed
+  ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `95e342f72` (`main`) /
   `67180cbda` / the commit that adds this report.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-e-fc8dc7`; the worktree was
-  clean before the edits. Nothing was pushed and `main` was not touched.
+  clean before the edits. Nothing was pushed and `main` was not touched while the slice was
+  written.
 - **Dependencies and evidence links:** [R2c](R2c.md) (`Gate design`, `Next actions`),
   [R2c-overridden-signal](R2c-overridden-signal.md) (the previous slice on this branch).
 - **Files and externally observable behavior changed:** `app/settings/universalsettings.h`
@@ -111,17 +113,24 @@ clazy 1.17.1.
   is rejected by its check, and the mutation above restores the property without its exclusion.
 - **Formatting:** `formatter.sh` was not run; the `clang-format` hunk is described in the
   evidence table.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not run. The main
-  session runs the desktop smoke after the merge; the smoke should open Behavior settings with
-  a second screen attached or detached to see the screen list refresh, which this slice does not
-  change.
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). The Screens dialog opened from the File menu (check 7). No screen
+  was attached or detached, so the refresh of the screen list was not exercised; this slice
+  does not change it.
 - **Performance paired samples / variability / work counts / tradeoffs:** not applicable.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** unavailable here.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** the NOTIFY follow-up is
   open; it needs a decision on the signal and its timing (see Fix). The IDE reports clang errors
   for the edited files because it has no project include flags; the container build is the
   evidence and it has no errors.
-- **Next exact action:** the main session merges this slice with the others and runs the combined
-  gate and the desktop smoke. Whether `screens` gets a NOTIFY is a separate decision.
+- **Next exact action:** none in this slice. Whether `screens` gets a NOTIFY is a separate
+  decision (item 4 of the [R2c follow-ups](R2c.md#follow-ups)).
 - **Commit approval status / push approval status:** committed on the feature branch
-  `claude/r2c-batch-e-fc8dc7`; not pushed.
+  `claude/r2c-batch-e-fc8dc7`; merged into the integration branch in `4e403af80` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

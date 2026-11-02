@@ -1,11 +1,11 @@
 # R2c-range-loop-detach-j: Range Loops Iterate a Const View or a Const Local
 
-Status: Pending validation. Part of [R2c](R2c.md) fix batch 3, group J: the
+Status: Complete (CI run 41452548625 and the host desktop smoke passed). Part of
+[R2c](R2c.md) fix batch 3, group J: the
 `range-loop-detach` slice, 12 files and 72 of its findings. One commit on
 `claude/r2c-batch-j-a88568`. Date: 2026-11-02. Start HEAD: `e62767af2` (the
-integration branch, with batches E, F and H merged). Not pushed. The gate does
-not yet include `range-loop-detach`; the main session adds it after all groups
-are merged.
+integration branch, with batches E, F and H merged). The gate did not yet include
+`range-loop-detach` when the group was written; it joined in `8a30d3fa9`.
 
 ## Defect
 
@@ -200,9 +200,9 @@ Whether the cases of those two targets reach the changed loops was not checked.
   `range-loop-detach`, 12 files, 72 findings in the inventory of `e62767af2`.
   All 72 are fixed: 34 wrapped in `std::as_const()` and 38 hoisted into a const
   range-init local. The tree still has 137 findings, all in other groups' files.
-- **Status:** Pending validation. The container build, the inventory, the full
-  gate and the host GCC and Clang Debug builds and CTest pass; the desktop smoke
-  and CI have not run.
+- **Status:** Complete. The container build, the inventory, the full gate and the host GCC
+  and Clang Debug builds and CTest pass; CI run 41452548625 and the host desktop smoke
+  passed ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `e62767af2` /
   `e62767af2` / the single commit that adds this report and the 12 files.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-j-a88568` in its
@@ -251,32 +251,32 @@ Whether the cases of those two targets reach the changed loops was not checked.
 - **Negative fixtures or controlled mutation evidence:** none for this check here.
   `autotests/clazy/range-loop-detach.cpp` and the `GATED_CHECKS` entry are for
   the main session, after the tree-wide inventory is zero.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not
-  run. The main session's desktop smoke should cover the paths that now run through
-  the changed loops: layout startup and switching (`synchronizer.cpp`:
-  `initLayouts()`, `syncMultipleLayoutsToActivities()`, `unloadPreloadedLayouts()`);
-  Corona load and quit (`lattecorona.cpp`: `load()`, `cleanConfig()`, the
-  `hideAllViews()` call at quit); a dock that dodges others, which runs the
-  available-screen loops (`lattecorona.cpp:919` and `:1091`); the dock context
-  menu (`contextMenuData()`), and a hidden or shown dock with the Meta key
-  (`toggleHiddenState()`); a layout import, an export and the linked-file repair
-  (`importer.cpp`); applet id resolution on import (`appletids.cpp`); the
-  Layouts and Views settings dialogs and the universal settings scale load; the
-  KWin panel geometry paths (`waylandinterface.cpp`, `plasmapaneltracker.cpp`); the
-  icon overlays (`iconitem.cpp`); and `cleanupOnStartup()` and `showInfoWindow()`
-  in `manager.cpp`.
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). It reached layout startup and two layout switches
+  (`synchronizer.cpp`), Corona load and the quit from the menu (`lattecorona.cpp`: `load()`,
+  `hideAllViews()` at quit), the dock context menu (`contextMenuData()`) and the Layouts and
+  Docks dialogs. It did not reach a hidden or shown dock through the Meta key
+  (`toggleHiddenState()`; a Meta hold never starts on Wayland, item 10 of the
+  [R2c follow-ups](R2c.md#follow-ups)), a dock that dodges others (the available-screen
+  loops), a layout import or the linked-file repair, applet id resolution on import, or the
+  information window (`showInfoWindow()`).
 - **Performance:** not measured. The wrap and the hoist add no work; each removes a
   possible detach at `begin()`. A detach happens only when the container is shared.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** CI not run;
-  the Clang Debug job runs the gate after the merge. Debian 13 and Nix not run.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** no failure in
   the checks run. Review assumptions: the four call-graph traces in Needs a
-  decision, and the six loops clazy does not report, left unchanged. Not run: the
-  desktop smoke, CI, Release presets, Qt 6.6 or 6.8 builds.
-- **Next exact action:** the main session merges the groups. When the tree-wide
-  inventory is zero, it adds `range-loop-detach` to `GATED_CHECKS` with
-  `autotests/clazy/range-loop-detach.cpp` (137 findings remain in other groups'
-  files), runs the full gate and the desktop smoke listed above, and decides on the
-  note for the `m_centralLayouts` snapshot constraint.
+  decision, and the six loops clazy does not report, left unchanged. Not run on the group
+  branch: the desktop smoke, CI, the Release presets and Qt 6.6 or 6.8 builds; all but the
+  Qt builds ran after the merge ([R2c fix batch 3](R2c.md#fix-batch-3)).
+- **Next exact action:** none. `range-loop-detach` joined `GATED_CHECKS` with
+  `autotests/clazy/range-loop-detach.cpp` in `8a30d3fa9`, once the tree-wide inventory was
+  zero and the full gate ran.
 - **Commit approval status / push approval status:** one commit on
-  `claude/r2c-batch-j-a88568`; not pushed; `main` untouched.
+  `claude/r2c-batch-j-a88568`; merged into the integration branch in `b7fc199db` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

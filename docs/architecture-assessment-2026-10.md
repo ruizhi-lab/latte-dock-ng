@@ -129,7 +129,7 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
   checks that have zero findings and a fixture that fires. The inventory found
   570 findings from 19 checks; after the first slice and fix batches 1 to 3,
   49 checks are gated and every finding is fixed or, for 12 declarations,
-  excepted with a reason (batch 3 still waits for CI and the desktop smoke).
+  excepted with a reason (batch 3 passed CI and the desktop smoke).
 - Application sources are collected through `PARENT_SCOPE` lists in about 30
   subdirectories; `configure_file()` copies `.cpp` files between targets; some
   directories use `add_definitions()`.

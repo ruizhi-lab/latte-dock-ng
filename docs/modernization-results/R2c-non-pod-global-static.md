@@ -1,7 +1,8 @@
 # R2c-non-pod-global-static: Namespace-Scope QStrings Become Accessors
 
-Status: Pending validation. The evidence section below lists what was run; CI
-and the desktop smoke were not run here.
+Status: Complete. The evidence section below lists what was run on the branch; CI run
+41452548625 passed all 23 jobs and the host desktop smoke passed ([R2c fix batch
+3](R2c.md#fix-batch-3)).
 Date: 2026-10-29. Branch: `claude/r2c-batch-f-e6a6ee`. Start HEAD: `085fbd190`
 (the `R2c-connect-3arg-lambda` commit on `95e342f72`).
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
@@ -183,10 +184,20 @@ the two statics by the owner of `app/main.cpp`.
   and a layout save, reload and copied containment (the applet ID groups of
   `AppletIds`). Look for `No such method` or `QDBusError` lines in the log, and for
   any `Warning:` line the log did not have before.
-- **Not run:** CI, the desktop smoke, a Qt 6.6 or 6.8 build, the Release presets.
-- **Next exact action:** the main session decides how the `app/main.cpp` gap is
-  closed (see Known gap), then merges this branch (`085fbd190` and this commit),
-  runs the combined checks and the desktop smoke, and updates `R2c.md` and the
-  ledger.
+- **Smoke result:** the host smoke on `6b51b43a6` ([R2c fix batch 3](R2c.md#fix-batch-3))
+  reached the dock context menu in normal and in edit mode (check 2), the Actions editor
+  with its default button (check 3), the layout menu and the layout switch (check 6), the
+  Layouts page, the Docks dialog and the Screens dialog, the layout and template exports
+  (check 11) and the layout load at startup. The log has no `No such method` or
+  `QDBusError` line and no new warning from Latte's code. It did not reach window previews
+  on task hover (the user's configuration keeps previews off), a new dock from a template or
+  a layout with the hidden multiple-layouts file.
+- **CI:** run 41452548625 passed all 23 jobs ([CI validation](R2c.md#ci-validation)).
+- **Not run on the slice branch:** a Qt 6.6 or 6.8 build and the Release presets; the combined
+  checks on `main` ran the Release presets.
+- **Next exact action:** none in this slice. The `app/main.cpp` gap (see Known gap) is item 3
+  of the [R2c follow-ups](R2c.md#follow-ups).
 - **Commit approval status / push approval status:** committed on
-  `claude/r2c-batch-f-e6a6ee` (a non-`main` branch); not pushed.
+  `claude/r2c-batch-f-e6a6ee` (a non-`main` branch); merged into the integration branch in
+  `3a180839b` by the main session. `main` was fast-forwarded to `6b51b43a6` and pushed on
+  2026-11-02 with the user's approval.

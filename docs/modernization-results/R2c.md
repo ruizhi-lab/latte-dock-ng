@@ -4,8 +4,10 @@ Status: Complete. CI run 40345972905 at `09b030e61` ran both clazy steps of the
 Clang Debug job and passed. Fix batches [1](#fix-batch-1) and [2](#fix-batch-2)
 are merged into `main` and passed CI run 40683601580 at `14d705a5d`, which ran
 the 43-check gate ([CI validation](#ci-validation)). [Fix batch 3](#fix-batch-3)
-fixes the last six checks; it passed the combined checks on the branch
-`claude/r2c-batch3-integration` and waits for CI and the desktop smoke.
+fixes the last six checks; it is in `main` (`6b51b43a6`) and passed CI run
+41452548625 (23 jobs, after one rerun of a Mageia mirror failure) and the host
+desktop smoke, except for the Meta hold check, which fails on `v1.2.62` as well
+([follow-ups](#follow-ups), item 10).
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -386,6 +388,26 @@ paths; the table above is the evidence for them.
   `Automatic Release` run 40686088082 for `14d705a5d` found that `v1.2.59`
   already points at another commit and released nothing; run 40701918106 for
   `6b0ea7648` reached the same decision.
+- CI run [41452548625](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/41452548625)
+  at `6b51b43a6` (2026-11-02, push to `main`; fix batch 3 and the 49-check gate): all
+  23 jobs passed, after a rerun of one. In attempt 1, 22 jobs passed and `Install
+  verify (mageia)` failed: the Mageia Cauldron mirror (`mirrors.kernel.org`) answered
+  404 for packages its metadata listed, and all three builds of
+  `scripts/retry-mageia-mirror-build.sh` ended on a different missing package. The
+  rerun of the failed job (attempt 2, 953 s) passed; `Bind validated packages to
+  version and source` ran in attempt 2. The `Package install verify (mageia)` job
+  needed one retry and passed in attempt 1. Attempt 1 carries one failure annotation
+  and three retry warnings ("Mageia Cauldron package mirrors are temporarily out of
+  sync"); attempt 2 has no annotation. `Build (Clang Debug)` (828 s, `Run gated clazy
+  checks` 199 s) printed clazy 1.17 on LLVM 19.1.1, "49 negative fixtures: each is
+  rejected by its own gated check" and "153 production sources: no findings from 49
+  gated clazy checks"; `ctest` passed 57 of 57. `Build (GCC Debug)`, `Build (GCC
+  Release)`, `Build (Clang Release)`, `QML lint (qmllint)`, `NixOS release check` and
+  the seven `Install verify` and seven `Package install verify` jobs passed too. It is
+  the third Cauldron mirror failure since 2026-10-28 (see [Follow-ups](#follow-ups),
+  item 11). The `Automatic Release` runs 41455008114 (skipped, for the failed attempt) and
+  41457574418 (success) released nothing: `v1.2.59` already points at another commit,
+  and the latest release is still `v1.2.62`.
 - The earlier run 40508173790 at `eba91a3e6` does not count for the gate: its
   four Build jobs stopped at the KDE Neon key download before compiling (see
   [Fix batch 1](#fix-batch-1)).
@@ -491,9 +513,9 @@ user ran the checks; the log column is what the debug logs show.
 
 ## Fix batch 2
 
-Status: Complete. Every check on `main` and the host desktop smoke passed, and
-CI run 40683601580 at `14d705a5d` passed all 23 jobs
-([CI validation](#ci-validation)).
+Status: Complete. Every check on `main` passed, the host desktop smoke passed except
+for check 9, whose Meta reveal could not be reproduced later (see the table), and CI
+run 40683601580 at `14d705a5d` passed all 23 jobs ([CI validation](#ci-validation)).
 
 Two sessions implemented the batch of the
 [implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
@@ -543,7 +565,7 @@ The user ran the checks; the log column is what the debug log shows.
 | 6. Context menu "Layouts" and "Add Dock" submenus | Pass | No entry |
 | 7. Switch to another layout and back | Pass | To `Default` at 19:21:54, back at 19:23:22 |
 | 8. Docks dialog and Screens dialog | Pass | Docks dialog opened at 19:30:50. The Screens dialog offers only screens that are disconnected and unused; both of the host's screens are connected and carry a dock, so none can be selected, as designed |
-| 9. Hold Meta | Pass | Holding Meta revealed the hidden dock, which hid again after release (`ModifierTracker`). No number badge can show: Meta+1–9 belong to Plasma's "Activate Task Manager Entry" shortcuts, and the log's badge list leaves slots 1–10 empty |
+| 9. Hold Meta | Reported, not reproducible | The user reported that holding Meta showed the hidden dock and that it hid again after release. `ModifierTracker` cannot have caused it: on Wayland it drops `Qt::Key_Meta`, so its timer never starts. The same hold on 2026-11-02 showed nothing in the batch 3 build or in `v1.2.62` ([Fix batch 3](#fix-batch-3), [Follow-ups](#follow-ups) item 10), and what the user saw in this smoke is unexplained. No number badge can show: Meta+1–9 belong to Plasma's "Activate Task Manager Entry" shortcuts, and the log's badge list leaves slots 1–10 empty |
 | 10. Wallpaper change (optional) | Not reported | — |
 
 - **Logs:** 1328 lines (1282 debug, 6 info, 36 warnings), no `No such method`
@@ -564,8 +586,11 @@ The user ran the checks; the log column is what the debug log shows.
 
 ## Fix batch 3
 
-Status: Pending validation. Every check on the branch `claude/r2c-batch3-integration`
-passed; the CI run and the desktop smoke wait.
+Status: Complete. Every check on the branch `claude/r2c-batch3-integration` passed,
+CI run 41452548625 at `6b51b43a6` passed all 23 jobs after one rerun of a mirror
+failure ([CI validation](#ci-validation)), and the host desktop smoke passed except
+check 8, hold Meta, which fails identically on `v1.2.62` and is not an effect of the
+batch ([Follow-ups](#follow-ups), item 10).
 
 Six sessions, all Claude Haiku 5.5 at medium effort, implemented the batch in two
 waves. The main session fixed the file sets and the design decisions in the briefs
@@ -573,10 +598,12 @@ and reviewed every branch before merging it. Wave 1 started from `95e342f72` on
 disjoint files: batch E (signals and the property), batch F (non-POD statics and
 context-less timers) and batches G and H (the loop check in two file groups). Wave 2
 started from the integration branch after E and F were merged, on the files those two
-had to touch: batch I (`app/layouts/storage.cpp`) and batch J (12 files). Nothing in
-the batch is in `main` yet; the merge commits on the integration branch are E
-`4e403af80`, F `3a180839b`, H `e62767af2`, G `c0f64b9ee`, I `98b00c657`, J
-`b7fc199db`, and the gate commit is `8a30d3fa9`.
+had to touch: batch I (`app/layouts/storage.cpp`) and batch J (12 files). The merge
+commits on the integration branch are E `4e403af80`, F `3a180839b`, H `e62767af2`, G
+`c0f64b9ee`, I `98b00c657`, J `b7fc199db`, and the gate commit is `8a30d3fa9`. `main`
+was fast-forwarded to the records commit `6b51b43a6` (18 commits, `8bfacd80a..6b51b43a6`)
+and pushed on 2026-11-02; that commit differs from `8a30d3fa9` only in five files
+under `docs/`, so the checks below apply to the code that ran in the smoke.
 
 | Slice | Locations / files | Batch | Commits |
 | --- | ---: | --- | --- |
@@ -627,35 +654,80 @@ Debug builds on their own branches; their reports hold the commands.
 
 ### Desktop smoke
 
-Not run yet. The actions that reach the changed code:
+The user-mode Debug build of `6b51b43a6` ran on the Gentoo host (Plasma 6.7.5,
+Wayland, two screens) from the Plasma session environment (`systemd-run --user`,
+started 21:27:33) with layout `我的布局`: one dock at the bottom edge of `DP-2`
+(containment 1) and one of `HDMI-A-1` (containment 13). The user ran the checks; the
+log column is what the debug log shows. Checks 8 and 10 stayed open in that session
+(the user could not find the "Get new" entry, and Meta hold did nothing) and were run
+again in a second session of the same build, started at 22:10:56 after a reinstall.
 
-- **Settings window.** Add and duplicate a layout, then Apply (`layoutsInserted()`);
-  open the Docks dialog of a layout, cut and paste or remove a dock, then Apply
-  (`viewsInserted()` and `viewsRemoved()`); the Actions editor under Preferences,
-  its default button, and the dock context menu in normal and in edit mode (the
-  action-id accessors). Open the Screens dialog from the File menu.
-- **Layouts.** Switch to another layout and back; export a layout and import it
-  again; add and remove a dock (`storage.cpp`, the layout synchronizer and importer).
-- **Startup and quit.** Start with two docks on two screens (the layout sync, the
-  Wayland stacking timer for a dock at the bottom, the KNS compatibility setup); quit
-  Latte from its context menu last (the 300 ms hide and the 800 ms quit timers).
-- **Shortcuts, previews, KNS.** Hold Meta; open a window preview; open one of the
-  "get new" dialogs of the settings window.
-- **Not reachable on a two-screen desktop:** the `removeIf` case in
-  `OriginalView::syncClonesToScreens()` (two secondary screens whose clones are
-  created together) and the info window (`Manager::showInfoWindow()`), which shows
-  when layouts are activated in multiple-layouts mode.
-- The debug log should hold no `QMetaObject::invokeMethod: No such method` line and
-  no `QObject::connect` warning.
+| Check | Result | Log |
+| --- | --- | --- |
+| 1. Startup: both docks, widgets and launchers | Pass | Containment 1 on `DP-2` and 13 on `HDMI-A-1` loaded at 21:27:33 and 21:27:35. `KnsCompat: setting up KNS dialog compatibility overrides (v 9)` and `done` follow at startup: the install had removed the generated overrides, so the changed loops of `ensureKnsCompat()` ran against the real system QML tree |
+| 2. Dock context menu, normal and in Edit Dock mode | Pass | Edit mode opened the dock settings window (`canvasconfigview` and `primaryconfigview` at 21:39:08) and the widget explorer (21:39:24) |
+| 3. Actions editor: separator rows, its default button, Cancel | Pass | No entry |
+| 4. New layout: Apply becomes enabled, then Cancel | Pass | No entry |
+| 5. Docks dialog: both docks listed, remove or cut one, Apply becomes enabled, Cancel | Pass | No entry |
+| 6. Layout switch to another layout and back | Pass | `Default` at 21:40:10.969 and back to `我的布局` at 21:40:19.136. The two docks were deleted at 21:40:11 and the dock of `Default` (containment 1 on `DP-2`) created; that one was deleted at 21:40:19 and the two docks recreated |
+| 7. Screens dialog (File menu or Ctrl+Alt+S) | Pass | No entry |
+| 8. Hold Meta | No reveal, and the same on `v1.2.62` | See below |
+| 9. Tasks: start an app from a launcher, merge, pin and unpin | Pass | No entry |
+| 10. A "Get new" dialog | Pass in the second session | A KNS store dialog opened and closed at about 22:20 (the entry point was not recorded). 33 warnings, none from Latte; see below |
+| 11. Export a layout (optional) | Pass | The template export dialog was cancelled at 21:40:06; backup exports at 21:45:51 and 21:46:08; a template export at 21:46:10 |
+| 12. Quit Latte from the menu, last | Pass | `Corona::onAboutToQuit` at 21:46:32.841 and `Latte Corona - deleted...` at 21:46:33.003; all five docks created during the run were destroyed; no Fatal or ASSERT |
+
+- **Check 8, hold Meta.** Nothing happened in the first session. `lattedockrc` held
+  `metaPressAndHoldEnabled=false`, which disables the feature by itself
+  (`TabPreferences::save()` writes `false` on every apply of the Preferences page, and
+  at startup that value makes `ModifierTracker` ignore the Super keys). Setting it to
+  `true` and restarting the dock changed nothing: holding Meta for about 1.5 s still did
+  not show the hidden dock, and Plasma's own launcher opened on release (KWin's default
+  Meta-only shortcut). The system dock `v1.2.62` with the same file showed nothing
+  either, for a 3.8 s hold. A probe built on `KModifierKeyInfo` printed `Key_Meta`
+  pressed at 22:32:23.625 and released at 22:32:27.407, so KWin delivers the key and
+  `ModifierTracker` drops `Qt::Key_Meta`. `modifierIsTracked()` and `normalizeKey()` are
+  identical in `v1.2.62`, `382e55cd2` and `6b51b43a6`. Batch 3 changed no line of that
+  path, and the failure is not an effect of it. [Follow-ups](#follow-ups), item 10, has
+  the details and the effect on the batch 2 record.
+- **Logs:** the first session's log has 1427 lines (1385 debug, 6 info, 32 warnings and
+  4 startup lines without a prefix), no critical or fatal line, no `No such method` and
+  no `QObject::connect` warning. None of the 32 warnings comes from Latte's code: 24 are
+  "No node found for item that was just removed" from Qt's file dialog during the
+  exports (21:45–21:46), 6 are QML errors of the World Clock widget the user added
+  (`org.kde.plasma.worldclock`, 21:39:28), one is the missing
+  `plasma5support/dataengine/plasma_engine_geolocation` plugin and one is
+  `QObject::disconnect: Unexpected nullptr parameter`, printed among Marble's map
+  messages. The second session's log has 33 warnings, all from the store dialog at
+  22:20:14–26: 20 "操作被取消" (network requests cancelled when the dialog closed), five
+  `ActionToolBar.qml: Object or context destroyed during incubation` with five
+  `Could not create delegate for ToolBarLayout`, one `TypeError: Cannot read property
+  'width' of null` each in the Qt-embedded copies of Kirigami's `OverlayDrawer.qml:225`
+  and `DrawerHandle.qml:118`, and one `QIODevice::read (QSslSocket): device not open`.
+  They come from Kirigami and KNS QML (the embedded copy of Kirigami's templates is the
+  conflict the KNS compatibility layer works around), not from the loops batch 3
+  changed; no earlier log on this machine has a store dialog to compare with.
+- **Cores:** `coredumpctl` shows no `latte-dock-ng` core after 21:00 on 2026-11-02.
+  Both user-mode sessions quit with the teardown marker (`Latte Corona - deleted...`),
+  and the stops of the system dock that followed left no core either.
+- **Paths seen running:** the KNS compatibility setup at startup, `switchToLayout()`
+  twice with the docks recreated (`Synchronizer` and the layout sync), the layout export
+  paths and the shutdown timers.
+- **Not reached:** the `removeIf` case in `OriginalView::syncClonesToScreens()` (it
+  needs two secondary screens whose clones are created together); the info window
+  (`Manager::showInfoWindow()`), which shows when layouts are activated in
+  multiple-layouts mode; applying a new layout or a Docks dialog edit (checks 4 and 5
+  ended in Cancel); importing a layout.
 
 ### Not run
 
-CI, the desktop smoke, and a build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2).
+A build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2); the Fedora VM, which is left to
+R5; the Debian 13 VM, which has no build tools.
 
 ## Follow-ups
 
-None of these is a finding. They are decisions or defects the fix slices found and
-deliberately left alone:
+None of these is a finding. They are decisions or defects the fix slices and their
+validation found and deliberately left alone:
 
 1. **Mutation during iteration in `GenericLayout::syncLatteViewsToScreens()`.** The
    loop over `m_latteViews` can reach `m_latteViews.take()` and the loop over
@@ -663,8 +735,10 @@ deliberately left alone:
    [the umbrella report](R2c-range-loop-detach.md#exceptions)). Both iterate the live
    container, as before. A fix needs a decision (snapshot, restart or index loop) and
    a test.
-2. **`OriginalView::syncClonesToScreens()`.** The `removeIf` is a behavior change; if
-   the smoke or a user report shows a difference, see
+2. **`OriginalView::syncClonesToScreens()`.** The `removeIf` is a behavior change. The
+   host smoke could not reach it (it needs a dock in "All secondary screens" mode and
+   two secondary screens), so it is read from the code and not observed; if a user
+   report shows a difference, see
    [the group G report](R2c-range-loop-detach-g.md#behavior-change-originalviewcpp225).
 3. **`app/main.cpp` is invisible to `non-pod-global-static`.** clazy 1.17 skips a
    namespace-scope `static` without an initializer in a file named exactly
@@ -689,13 +763,46 @@ deliberately left alone:
    selection and fail-closed paths with a fake `clazy-standalone`, and a
    `knscompatunittest` case with `linktarget`, `optional plugin` and `classname`
    lines in the templates `qmldir`.
+10. **Meta press-and-hold cannot start on Wayland.** `ModifierTracker` listens to
+    `KModifierKeyInfo::keyPressed`. On Wayland that class reports the Meta key as
+    `Qt::Key_Meta` (kguiaddons 6.29.0, `KModifierKeyInfoProviderWayland`, over the
+    `org_kde_kwin_keystate` protocol), but `modifierIsTracked()` accepts only
+    `Key_Super_L`, `Key_Super_R`, `Key_Control`, `Key_Alt` and `Key_Shift`, and
+    `normalizeKey()` maps only the two Super keys. The press is dropped before the 700 ms
+    timer starts, so holding Meta never calls `showViews()`. On 2026-11-02 a probe built on
+    `KModifierKeyInfo` printed `Key_Meta` pressed and released for a 3.8 s hold, and
+    neither the batch 3 build nor the system dock `v1.2.62` showed the hidden dock, with
+    `metaPressAndHoldEnabled=true`. The logic is the same in `v1.2.62`, `382e55cd2` and
+    `6b51b43a6`. Three more facts: `TabPreferences::save()` writes
+    `setMetaPressAndHoldEnabled(false)` ("Wayland-only build: keep this disabled") on every
+    apply of the Preferences page, which has no control for it, while the runtime default
+    is `true`; Plasma's own launcher opens when Meta is released (KWin's default Meta-only
+    shortcut), so a working hold would end with two actions; and the batch 2 smoke reported
+    a reveal that this code cannot have caused (the row is corrected above). Options, none
+    done: accept `Qt::Key_Meta` in both functions and decide what to do about the launcher;
+    remove the dead hold feature after tracing its consumers (rule 5 of `AGENTS.md`); or
+    keep it and write the limit next to `ModifierTracker` and `TabPreferences::save()`. The
+    loops that batch 3 changed in `GlobalShortcuts` can still be exercised on Wayland through
+    the global shortcuts Meta+` ("Show Latte Dock", `showViews()`) and Meta+A
+    (`showSettings()`), which the batch 3 smoke did not press.
+11. **Mageia Cauldron mirror failures.** `Install verify (mageia)` failed on Cauldron mirror
+    404s three times since 2026-10-28; run 41452548625 attempt 1 is the third. Each time
+    the rerun of the failed job passed. `scripts/retry-mageia-mirror-build.sh` already
+    repeats the Docker build three times, but every repeat starts a new `dnf install` that
+    downloads all packages again and meets a different missing one. A hardening that is
+    not done: a retry loop around `dnf install -y --refresh` inside the `RUN` of
+    `docker/Dockerfile.mageia`, which should keep the packages already downloaded between
+    tries (dnf keeps them in its cache until the transaction succeeds; not verified here,
+    because the experiment in a `mageia:cauldron` container was interrupted).
+    `autotests/packagingcontracttest.cpp` requires that Dockerfile to keep the text
+    `dnf install -y --refresh` and to avoid `dnf upgrade`.
 
 ## Next actions
 
 The R2c fix slices are complete: each of the 19 checks of the inventory is fixed or
-excepted with a reason, and the gate holds 49 checks. What is left is the validation
-of [fix batch 3](#fix-batch-3) (CI and the desktop smoke) and the
-[follow-ups](#follow-ups).
+excepted with a reason, the gate holds 49 checks, and [fix batch 3](#fix-batch-3) passed
+CI and the desktop smoke. What is left is the [follow-ups](#follow-ups): decisions and
+defects the slices found on the way, not findings.
 
 ## Reproducing the environment
 

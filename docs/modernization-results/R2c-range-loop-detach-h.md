@@ -1,12 +1,13 @@
 # R2c-range-loop-detach-h: Range Loops Iterate a Const View or a Const Local
 
-Status: Pending validation. Part of [R2c](R2c.md) fix batch 3, group H: the
+Status: Complete (CI run 41452548625 and the host desktop smoke passed). Part of
+[R2c](R2c.md) fix batch 3, group H: the
 second group of the `range-loop-detach` slice, 20 files and 65 of its 274
 findings. Two commits on `claude/r2c-batch-h-065380`: `d8b07b428` wraps 23 loops
 in `std::as_const()`; the second commit (the one that rewrites the other 42 loops
 and updates this report) follows the main session's decision. Date: 2026-10-29.
-Start HEAD: `95e342f72` (`main`). Not pushed. The gate does not yet include
-`range-loop-detach`; the main session adds it after all groups are merged.
+Start HEAD: `95e342f72` (`main`). The gate did not yet include `range-loop-detach` when
+the group was written; it joined in `8a30d3fa9`.
 
 ## Defect
 
@@ -213,8 +214,9 @@ the reach of the changed loops was not checked.
   these files: 23 wrapped in `std::as_const()` (first commit) and 42 rewritten with
   a const local (second commit, the main session's decision). The tree still has
   209 findings in other groups' files.
-- **Status:** Pending validation. The container build and gate pass, and the host
-  results are in the Evidence table; the desktop smoke and CI have not run.
+- **Status:** Complete. The container build and gate pass, and the host results are in the
+  Evidence table; CI run 41452548625 and the host desktop smoke passed
+  ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `95e342f72` / `95e342f72` /
   `d8b07b428` (wraps) and the second commit (rewrites).
 - **Branch / existing user edits preserved:** `claude/r2c-batch-h-065380` in its
@@ -262,29 +264,36 @@ the reach of the changed loops was not checked.
 - **Negative fixtures or controlled mutation evidence:** none for this check yet:
   `autotests/clazy/range-loop-detach.cpp` is added by the main session with the
   gate entry.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not
-  run. The main session's desktop smoke after merging should cover the loops that
-  now run through a local: startup (`knscompat.cpp`, `screenpool.cpp`,
-  `main.cpp`, `shortcutstracker.cpp`); a Meta key hold (`globalshortcuts.cpp`,
-  `showViews`, `hideViewsTimerSlot`); a window moved or maximized
-  (`windowstracker.cpp`, `updateHints`); the dock context menu, with its applet and
-  child-item loops (`contextmenulayerquickitem.cpp`); the app launcher; the task
-  manager launchers, adding and removing (`syncedlaunchers.cpp`); the activities
-  menus (`activitiesdelegate.cpp`); a layout download (`tablayoutshandler.cpp`); and
-  a theme or background change (`theme.cpp`, `backgroundcache.cpp`).
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). Of the paths listed before the smoke it reached startup
+  (`knscompat.cpp`, `screenpool.cpp`, `main.cpp`, `shortcutstracker.cpp`; the KNS
+  compatibility setup ran), the window tracker's hint updates (`windowstracker.cpp`: 199
+  `updateAllHints` calls in the log) and the dock context menu
+  (`contextmenulayerquickitem.cpp`). The launcher merge, pin and unpin of check 9 passed;
+  the log has no entry for `syncedlaunchers.cpp`. It did not reach a Meta key hold, which
+  never starts on Wayland and so never reaches `showViews()` or `hideViewsTimerSlot()` (item
+  10 of the [R2c follow-ups](R2c.md#follow-ups)), a layout download (`tablayoutshandler.cpp`:
+  the store dialog opened, nothing was downloaded), the activities menus or a theme or
+  background change.
 - **Performance:** not measured. The rewrite and the wrap add no work; each removes
   the possible detach at `begin()`. A detach happens only when the container is
   shared.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** CI not run;
-  the Clang Debug job runs the gate after the merge. Debian 13 and Nix not run.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** no failure in
   the checks run. The wrapped bodies are checked by reading, and the rewritten loops
   rest on the snapshot argument and the name checks, not on a test. Host builds
   were incremental on the existing build trees; the warning count of the unchanged
-  files comes from the first commit's full builds. Desktop smoke and CI not run.
-- **Next exact action:** the main session merges the groups. `range-loop-detach`
-  joins `GATED_CHECKS` with `autotests/clazy/range-loop-detach.cpp` once the
-  tree-wide inventory is zero (209 findings remain in the other groups' files).
+  files comes from the first commit's full builds. CI and the desktop smoke ran after the
+  merge ([R2c fix batch 3](R2c.md#fix-batch-3)).
+- **Next exact action:** none. `range-loop-detach` joined `GATED_CHECKS` with
+  `autotests/clazy/range-loop-detach.cpp` in `8a30d3fa9`, once the tree-wide inventory was
+  zero.
 - **Commit approval status / push approval status:** two commits on
-  `claude/r2c-batch-h-065380` (`d8b07b428` and the second commit); not pushed;
-  `main` untouched.
+  `claude/r2c-batch-h-065380` (`d8b07b428` and `6f42e5ed2`); merged into the integration
+  branch in `e62767af2` by the main session. `main` was fast-forwarded to `6b51b43a6` and
+  pushed on 2026-11-02 with the user's approval.

@@ -1,6 +1,7 @@
 # R2c-range-loop-detach (group G): Range Loops Iterate a Const View
 
-Status: Pending validation. Date: 2026-11-02. Branch: `claude/r2c-batch-g-83e14a`.
+Status: Complete (CI run 41452548625 and the host desktop smoke passed). Date: 2026-11-02.
+Branch: `claude/r2c-batch-g-83e14a`.
 Start HEAD: `95e342f72`. Implementation commit: the commit that adds this report. It amends
 `d21913d34` (70 loops) and, before that, `26de6e1a2` (41 wraps).
 Part of [R2c](R2c.md), fix batch 3: group G of the `range-loop-detach` slice. Batch G
@@ -332,7 +333,8 @@ tests include `appstreamtest`, which ECM adds when `appstreamcli` is installed.
 - **Batch / slice and selected scope:** R2c fix batch 3, group G of `range-loop-detach`: twelve
   files and 74 findings. 74 resolved in the twelve files (42 wraps, 29 rewrites, 1 replacement,
   2 exclusions), and one extra file, `autotests/sourcecontracttest.cpp` (test text only).
-- **Status:** Pending validation.
+- **Status:** Complete; CI run 41452548625 and the host desktop smoke passed
+  ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / actual start HEAD / implementation HEAD or uncommitted diff:**
   `95e342f72` / `95e342f72` / the commit that amends `d21913d34`, with this report.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-g-83e14a` in its own worktree.
@@ -368,16 +370,29 @@ tests include `appstreamtest`, which ECM adds when `appstreamcli` is installed.
 - **Negative fixtures or controlled mutation evidence:** the 43 gate fixtures are unchanged and each
   is rejected. The `view.cpp:298` wrap was tested in the first host run (the test failed), then
   updated.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not run (note 4).
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). It reached startup with two docks (`positioner.cpp`, `view.cpp`,
+  `containmentinterface.cpp`, `layoutmanager.cpp`), two layout switches that destroyed and
+  recreated the docks (`~View`, `syncLatteViewsToScreens()`) and the dock settings window in
+  edit mode (`subconfigview.cpp`). It did not reach the `removeIf` change in
+  `originalview.cpp:225`, which needs a dock in "All secondary screens" mode on a desktop
+  with two secondary screens, so that change is still read from the code and not observed.
 - **Performance paired samples / variability / work counts / tradeoffs:** not measured. Each changed
   loop no longer detaches a shared container at its start.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** unavailable here.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** the 200 findings in the other
   groups; the `removeIf` consequence is read from the code, not observed; the exclusion paths were
   traced in code, not reproduced; the QML handlers behind `originalview.cpp:171`, `:186` and `:206`
   were not read.
-- **Next exact action, file/symbol or command; do not start another batch implicitly:** the main
-  session reviews the three non-transform changes, runs the desktop smoke (note 4), and keeps
-  `range-loop-detach` off the gate until the other groups are merged.
+- **Next exact action, file/symbol or command; do not start another batch implicitly:** none.
+  The main session reviewed the three non-transform changes and merged the group, and
+  `range-loop-detach` joined the gate in `8a30d3fa9`.
 - **Commit approval status / push approval status:** amended into one commit on
-  `claude/r2c-batch-g-83e14a`; not pushed.
+  `claude/r2c-batch-g-83e14a`; merged into the integration branch in `c0f64b9ee` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

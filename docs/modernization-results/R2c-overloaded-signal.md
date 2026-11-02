@@ -1,7 +1,7 @@
 # R2c-overloaded-signal: Signals That Overload a Base-Class Signal
 
-Status: Pending validation. Not run here: CI and the desktop smoke (the main session
-runs the smoke after merging the batch).
+Status: Complete. CI run 41452548625 passed all 23 jobs and the host desktop smoke passed
+([R2c fix batch 3](R2c.md#fix-batch-3)).
 Date: 2026-10-29. Branch: `claude/r2c-batch-e-fc8dc7`. Start HEAD: `95e342f72`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md), the
 first slice of fix batch 3 (batch E), before `R2c-overridden-signal` and
@@ -103,11 +103,13 @@ sources, 134 duplicate compile commands and 87 generated sources are not analyze
 
 - **Batch / slice and selected scope:** R2c fix batch 3, batch E, slice 1
   `R2c-overloaded-signal` (11 findings in 5 files).
-- **Status:** Pending validation (see the evidence table).
+- **Status:** Complete; CI run 41452548625 passed and the host desktop smoke passed
+  ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `95e342f72` (`main`, the
   same as the branch start) / `95e342f72` / the commit that adds this report.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-e-fc8dc7`; the
-  worktree was clean at the start. Nothing was pushed and `main` was not touched.
+  worktree was clean at the start. Nothing was pushed and `main` was not touched while the
+  slice was written.
 - **Dependencies and evidence links:** [R2c](R2c.md), in particular its "Gate design"
   and "Next actions" sections; [R2c-const-signal-or-slot](R2c-const-signal-or-slot.md)
   for the report shape.
@@ -141,15 +143,24 @@ sources, 134 duplicate compile commands and 87 generated sources are not analyze
   warning count in the container build is unchanged (6832).
 - **Negative fixtures or controlled mutation evidence:** `autotests/clazy/overloaded-signal.cpp`
   is rejected by its check (the gate's fixture step) and the mutation above.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not run.
-  The main session runs the desktop smoke after the merge.
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). It reached the New layout button with Apply becoming enabled
+  (`layoutsInserted()`, check 4) and the Docks dialog with a dock removed or cut and Apply
+  becoming enabled (`viewsRemoved()` and `viewsInserted()`, check 5). Both checks ended in
+  Cancel, so no new layout or dock edit was applied. The log has no entry for these dialogs.
 - **Performance paired samples / variability / work counts / tradeoffs:** not applicable.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** unavailable here.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** the IDE shows
   clang diagnostics for the edited headers and sources because it has no project
   include flags; the container build is the evidence, and it has no errors. The
   observations above are open questions, not fixes.
-- **Next exact action:** the main session merges this slice with the others and runs
-  the combined gate and the desktop smoke.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature branch
-  `claude/r2c-batch-e-fc8dc7`; not pushed.
+  `claude/r2c-batch-e-fc8dc7`; merged into the integration branch in `4e403af80` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

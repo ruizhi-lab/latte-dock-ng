@@ -1,6 +1,7 @@
 # R2c-range-loop-detach-i: Range Loops over Layout Containers Do Not Detach
 
-Status: Pending validation. Part of [R2c](R2c.md) fix batch 3, group I: the
+Status: Complete (CI run 41452548625 and the host desktop smoke passed). Part of
+[R2c](R2c.md) fix batch 3, group I: the
 `range-loop-detach` slice for one file, `app/layouts/storage.cpp`, which had 63 of
 the 209 findings the tree had at the start of this branch. One commit on
 `claude/r2c-batch-i-eb861d`, on top of `e62767af2` (the merge of batch H). Not
@@ -195,8 +196,8 @@ scripts are in `$HOME/r2c-build-batch-i/evidence/`, outside the repository.
   before the corona starts (`app/main.cpp:130`). The 58 passing CTest tests show
   that the code compiles and the existing tests pass; they do not exercise these
   loops. The claims about the bodies rest on reading them and their callees.
-- **Desktop smoke and CI: not run.** The main session runs one smoke after
-  merging. Where to look, by path and line: startup and layout load
+- **Desktop smoke and CI: not run on the group branch;** both ran after the merge (see the
+  Handoff). Where to look, by path and line: startup and layout load
   (`containmentsIds()` 329, `appletsIds()` 343, `newUniqueIdsFile()` 402 to 569,
   the errors and warnings checks 1041 to 1374, `plugins()` 1455 to 1577, `views()`
   2029, `removeAllClonedViews()` 1661); layout switch and import (`importLayoutFile()`
@@ -214,8 +215,8 @@ scripts are in `$HOME/r2c-build-batch-i/evidence/`, outside the repository.
 - **Batch / slice and selected scope:** R2c fix batch 3, group I:
   `range-loop-detach`, `app/layouts/storage.cpp` only, 63 findings. 8 wrapped in
   `std::as_const()`, 55 hoisted into a const local, 0 left.
-- **Status:** Pending validation. The container inventory and gate and both host
-  builds with CTest pass. The desktop smoke and CI have not run.
+- **Status:** Complete. The container inventory and gate and both host builds with CTest
+  pass; CI run 41452548625 and the host desktop smoke passed ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `e62767af2`
   (`claude/r2c-batch-i-eb861d`, the merge of batch H) / `e62767af2` / the one commit
   that adds the change and this report.
@@ -258,23 +259,27 @@ scripts are in `$HOME/r2c-build-batch-i/evidence/`, outside the repository.
 - **Negative fixtures or controlled mutation evidence:** none for this check yet.
   `autotests/clazy/range-loop-detach.cpp` is added by the main session with the gate
   entry.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not
-  run. See the smoke paths above.
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). It reached startup and the layout load with two docks, two layout
+  switches, the Docks dialog and the layout exports of check 11. It did not reach a layout
+  import (`importLayoutFile()`), a new dock from a template or the removal of cloned views
+  (`removeAllClonedViews()`).
 - **Performance paired samples / variability / work counts / tradeoffs:** not
   measured. No copy is added: the local is initialized from the call result.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** CI unavailable
-  here; the Clang Debug job runs the gate after the merge. Debian 13 and Nix not run.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** no failure.
   Assumptions: the body reading for the wrapped loops; the snapshot argument for the
   hoisted loops. Lines 703 and 716 are checked only by the container build. No test
-  reaches the file. Unavailable: CI, desktop smoke, Release presets.
-- **Next exact action:** the main session merges the groups, then adds
-  `range-loop-detach` to `GATED_CHECKS` with `autotests/clazy/range-loop-detach.cpp`
-  once the tree inventory is zero. Until then 146 findings remain in 24 files of
-  other groups; the largest are `app/layout/genericlayout.cpp` (24),
-  `app/layouts/synchronizer.cpp` (24), `app/layouts/importer.cpp` (14),
-  `app/view/containmentinterface.cpp` (14), `app/lattecorona.cpp` (13) and
-  `containment/plugin/layoutmanager.cpp` (11). Then one desktop smoke along the paths
-  above.
+  reaches the file. Not run on the group branch: CI, the desktop smoke and the Release
+  presets; all three ran after the merge ([R2c fix batch 3](R2c.md#fix-batch-3)).
+- **Next exact action:** none. `range-loop-detach` joined `GATED_CHECKS` with
+  `autotests/clazy/range-loop-detach.cpp` in `8a30d3fa9`, once the tree inventory was zero.
 - **Commit approval status / push approval status:** one commit on
-  `claude/r2c-batch-i-eb861d`; not pushed; `main` untouched.
+  `claude/r2c-batch-i-eb861d`; merged into the integration branch in `98b00c657` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

@@ -1,7 +1,7 @@
 # R2c-overridden-signal: Declarations That Override a Base-Class Signal
 
-Status: Pending validation. Not run here: CI and the desktop smoke (the main session
-runs the smoke after merging the batch).
+Status: Complete. CI run 41452548625 passed all 23 jobs and the host desktop smoke passed
+([R2c fix batch 3](R2c.md#fix-batch-3)).
 Date: 2026-10-29. Branch: `claude/r2c-batch-e-fc8dc7`. Start HEAD: `b30ae731a` (the
 `R2c-overloaded-signal` commit; the batch starts at `95e342f72`).
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md), the
@@ -106,11 +106,13 @@ clazy 1.17.1.
 
 - **Batch / slice and selected scope:** R2c fix batch 3, batch E, slice 2
   `R2c-overridden-signal` (2 findings in 2 files).
-- **Status:** Pending validation (see the evidence table).
+- **Status:** Complete; CI run 41452548625 passed and the host desktop smoke passed
+  ([R2c](R2c.md#fix-batch-3)).
 - **Source baseline / start HEAD / implementation HEAD:** `95e342f72` (`main`) / `b30ae731a`
   / the commit that adds this report.
 - **Branch / existing user edits preserved:** `claude/r2c-batch-e-fc8dc7`; the worktree
-  was clean before the edits. Nothing was pushed and `main` was not touched.
+  was clean before the edits. Nothing was pushed and `main` was not touched while the slice
+  was written.
 - **Dependencies and evidence links:** [R2c](R2c.md) (`Gate design`, `Next actions`),
   [R2c-overloaded-signal](R2c-overloaded-signal.md) (the previous slice on this branch).
 - **Files and externally observable behavior changed:** `declarativeimports/core/iconitem.h`,
@@ -138,15 +140,24 @@ clazy 1.17.1.
   is rejected by its check, and the mutation above removes the two exceptions.
 - **Formatting:** `formatter.sh` was not run; the `clang-format` hunks are described in the
   evidence table.
-- **Desktop user feedback / log review / clean-quit and coredump evidence:** not run. The
-  main session runs the desktop smoke after the merge.
+- **Desktop user feedback / log review / clean-quit and coredump evidence:** the host smoke on
+  `6b51b43a6` passed with no warning from Latte's code and no core ([R2c fix batch
+  3](R2c.md#fix-batch-3)). The `View` exception depends on QML handlers that resolve the
+  signals by name. Both docks were placed and sized as before at startup (check 1) and after
+  the layout switch (check 6), and the dock settings window opened in edit mode (21:39:08);
+  none of those bindings broke.
 - **Performance paired samples / variability / work counts / tradeoffs:** not applicable.
-- **CI, distribution and Nix checks (passed / failed / unavailable):** unavailable here.
+- **CI, distribution and Nix checks (passed / failed / unavailable):** run 41452548625 at
+  `6b51b43a6` passed all 23 jobs after one rerun of `Install verify (mageia)`, which had failed
+  on the Mageia Cauldron mirror. `Build (Clang Debug)` ran the 49-check gate and 57 tests, and
+  the Debian 13 (Qt 6.8.2) install job and the Nix check passed. See
+  [CI validation](R2c.md#ci-validation).
 - **Unresolved failures, review assumptions and unavailable checks:** the IDE reports
   clang errors for the edited files because it has no project include flags; the container
   build is the evidence and it has no errors. The `View` exception rests on the facts above,
   not on a runtime check of the QML bindings.
-- **Next exact action:** the main session merges this slice with the others and runs the
-  combined gate and the desktop smoke.
+- **Next exact action:** none.
 - **Commit approval status / push approval status:** committed on the feature branch
-  `claude/r2c-batch-e-fc8dc7`; not pushed.
+  `claude/r2c-batch-e-fc8dc7`; merged into the integration branch in `4e403af80` by the main
+  session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
+  approval.

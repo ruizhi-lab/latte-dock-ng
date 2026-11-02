@@ -1,7 +1,8 @@
 # R2c-connect-3arg-lambda: Timers Without a Context Object
 
-Status: Pending validation. The evidence section below lists what was run; the
-desktop smoke and CI were not run here.
+Status: Complete. The evidence section below lists what was run on the branch; CI run
+41452548625 passed all 23 jobs and the host desktop smoke passed ([R2c fix batch
+3](R2c.md#fix-batch-3)).
 Date: 2026-10-29. Branch: `claude/r2c-batch-f-e6a6ee`. Start HEAD: `95e342f72`.
 Implementation commit: the commit that adds this report. Part of [R2c](R2c.md),
 fix batch 3 (batch F, the first of its two slices; the second is
@@ -135,8 +136,16 @@ the Handoff.
   always cover" mode, click a task and check that it still minimizes (the
   `atBottom` tooltip role). Look for `No such method` or `QDBusError` lines in the
   log.
-- **Not run:** CI, the desktop smoke, a Qt 6.6 or 6.8 build, the Release
-  presets. No test calls the changed paths (see Evidence).
+- **Smoke result:** the host smoke on `6b51b43a6` ([R2c fix batch 3](R2c.md#fix-batch-3))
+  reached the quit from the menu (the process exited with the teardown marker, no core
+  and no Fatal or ASSERT line), the layout switch (`switchToLayout`) and the settings window
+  from the dock context menu. The log has no `No such method` or `QDBusError` line. It did
+  not reach `addView` or `moveToLayout` from the context menu, the information window
+  (`showInfoWindow`, multiple-layouts mode) or the tooltip role change of a dock in "windows
+  can cover" mode.
+- **CI:** run 41452548625 passed all 23 jobs ([CI validation](R2c.md#ci-validation)).
+- **Not run on the slice branch:** a Qt 6.6 or 6.8 build and the Release presets; the combined
+  checks on `main` ran the Release presets. No test calls the changed paths (see Evidence).
 - **Formatting:** `formatter.sh` was not run; the clang-format joins were not
   applied (see Formatting).
 - **Decision for later:** the `this`-context calls in `menu.cpp` drop the D-Bus
@@ -149,4 +158,6 @@ the Handoff.
 - **Next exact action:** none in this slice; the second slice,
   `R2c-non-pod-global-static`, follows in this batch.
 - **Commit approval status / push approval status:** the slice is committed on
-  `claude/r2c-batch-f-e6a6ee` (a non-`main` branch) and not pushed.
+  `claude/r2c-batch-f-e6a6ee` (a non-`main` branch); the main session merged the branch into
+  the integration branch in `3a180839b`. `main` was fast-forwarded to `6b51b43a6` and pushed
+  on 2026-11-02 with the user's approval.

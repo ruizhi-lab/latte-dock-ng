@@ -1,9 +1,9 @@
 # R2c-range-loop-detach: Range Loops Do Not Detach Qt Containers
 
-Status: Pending validation. Merged into the integration branch
-`claude/r2c-batch3-integration` (not yet in `main`); the checks on that branch
-passed ([R2c fix batch 3](R2c.md#fix-batch-3)). The CI run and the desktop smoke
-wait. Date: 2026-11-02. The check joined the gate in `8a30d3fa9`.
+Status: Complete. Merged into `main` (fast-forward to `6b51b43a6`, pushed on 2026-11-02);
+the checks passed, CI run 41452548625 passed all 23 jobs and the host desktop smoke
+passed ([R2c fix batch 3](R2c.md#fix-batch-3)). Date: 2026-11-02. The check joined the
+gate in `8a30d3fa9`.
 
 This is the umbrella report of the largest slice of R2c: all 274 findings of
 `range-loop-detach` that were left after fix batch 2, in 45 files, fixed by four
@@ -116,9 +116,16 @@ local list while it changes a member list, which is safe.
   (the search text of `viewDestructorDropsPointerWindowTrackingConnections`). No
   observable change except the `removeIf` case above.
 - **Tests:** no test added or changed apart from the source-contract text.
-- **Not run:** CI and the desktop smoke.
-- **Next exact action:** the CI Build jobs and the smoke of fix batch 3, then mark
-  this slice Complete.
+- **CI and desktop smoke:** CI run 41452548625 passed all 23 jobs; `Build (Clang Debug)` ran
+  the gate with `range-loop-detach` and found nothing in 153 production sources. The host
+  smoke on `6b51b43a6` passed with no warning from Latte's code and no core. It reached
+  `GenericLayout::syncLatteViewsToScreens()` at startup and in two layout switches (eight
+  calls in the log), but not the paths that change the iterated containers (clones, a screen
+  added or removed), and not the `removeIf` case of `OriginalView::syncClonesToScreens()`,
+  which needs two secondary screens. See [R2c fix batch 3](R2c.md#fix-batch-3).
+- **Next exact action:** none. The decisions that remain are items 1 and 2 of the
+  [R2c follow-ups](R2c.md#follow-ups).
 - **Commit approval status / push approval status:** the group commits were made on
-  session branches and merged into the integration branch by the main session;
-  nothing is pushed.
+  session branches and merged into the integration branch by the main session (G
+  `c0f64b9ee`, H `e62767af2`, I `98b00c657`, J `b7fc199db`). `main` was fast-forwarded to
+  `6b51b43a6` and pushed on 2026-11-02 with the user's approval.

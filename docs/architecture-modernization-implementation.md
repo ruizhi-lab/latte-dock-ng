@@ -557,8 +557,8 @@ combined checks and host smoke are recorded in
 and property checks, batch F the non-POD statics and context-less timers, batches G and H
 the loop check in two file groups. Wave 2 (from the integration branch, after E and F were
 merged): batch I (`app/layouts/storage.cpp`) and batch J (12 files). The loop check joined
-the gate once its last group was merged. The combined checks and the open validation are
-recorded in [R2c](modernization-results/R2c.md#fix-batch-3).
+the gate once its last group was merged. The combined checks, the CI run and the desktop
+smoke are recorded in [R2c](modernization-results/R2c.md#fix-batch-3).
 
 ## R4: Settings window inputs without context properties
 
