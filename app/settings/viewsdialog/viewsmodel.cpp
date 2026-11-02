@@ -342,7 +342,7 @@ void Views::appendTemporaryView(const Latte::Data::View &view)
     m_viewsTable.appendTemporaryView(view);
     endInsertRows();
 
-    Q_EMIT rowsInserted();
+    Q_EMIT viewsInserted();
 }
 
 void Views::removeView(const QString &id)
@@ -351,7 +351,7 @@ void Views::removeView(const QString &id)
 
     if (index >= 0) {
         removeRows(index, 1);
-        Q_EMIT rowsRemoved();
+        Q_EMIT viewsRemoved();
     }
 }
 
@@ -576,7 +576,7 @@ void Views::setOriginalData(Latte::Data::ViewsTable &data)
     m_viewsTable = data;
     endInsertRows();
 
-    Q_EMIT rowsInserted();
+    Q_EMIT viewsInserted();
 }
 
 QVariant Views::headerData(int section, Qt::Orientation orientation, int role) const
