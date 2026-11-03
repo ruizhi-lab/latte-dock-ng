@@ -232,23 +232,6 @@ int GenericLayout::viewsCount() const
     return views;
 }
 
-QList<int> GenericLayout::qmlFreeEdges(int screen) const
-{
-    if (!m_corona) {
-        const QList<int> emptyEdges;
-        return emptyEdges;
-    }
-
-    const auto edges = freeEdges(screen);
-    QList<int> edgesInt;
-
-    for (const Plasma::Types::Location &edge : edges) {
-        edgesInt.append(static_cast<int>(edge));
-    }
-
-    return edgesInt;
-}
-
 QList<Plasma::Types::Location> GenericLayout::freeEdges(QScreen *scr) const
 {
     using Plasma::Types;

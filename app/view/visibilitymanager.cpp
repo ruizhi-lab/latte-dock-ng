@@ -822,11 +822,6 @@ void VisibilityManager::raiseViewTemporarily()
     });
 }
 
-bool VisibilityManager::isValidMode() const
-{
-    return (m_mode != Types::None && m_mode != Types::NormalWindow);
-}
-
 void VisibilityManager::applyActivitiesToHiddenWindows(const QStringList &activities)
 {
     if (m_edgeGhostWindow) {
