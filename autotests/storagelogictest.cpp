@@ -19,6 +19,7 @@
 #include <QTest>
 
 #include <unistd.h>
+#include <sys/stat.h>
 
 // Replicates core logic from app/layouts/storage.cpp; the LayoutFileLock and
 // LayoutFileMove tests at the end of this file link the production helpers instead
@@ -288,11 +289,18 @@ void StorageLogicTest::idConflictsAreDetectable()
 
 namespace {
 
-//! The owner write bit is what lock() and unlock() change. isWritable() is not used
-//! here: access(2) reports read-only files as writable for root.
+//! The owner write bit is what lock() and unlock() change. Neither isWritable()
+//! nor QFileInfo::permissions() can be used here: access(2) reports read-only
+//! files as writable for root, and Qt 6.11 reports effective permissions in the
+//! permission flags too, so a read-only file looks owner-writable when the tests
+//! run as root (CI runs in a root container). Read the mode bits directly.
 bool ownerCanWrite(const QString &file)
 {
-    return QFileInfo(file).permissions().testFlag(QFileDevice::WriteUser);
+    struct stat info {};
+    if (::stat(QFile::encodeName(file).constData(), &info) != 0) {
+        return false;
+    }
+    return (info.st_mode & S_IWUSR) != 0;
 }
 
 }
