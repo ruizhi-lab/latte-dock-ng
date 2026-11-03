@@ -91,6 +91,83 @@ QStringList qmlRootObjectProperties(const QString &source)
     return names;
 }
 
+// Source text with comments, and the contents of string and character literals,
+// replaced by spaces. Unlike withoutComments(), a brace inside a literal does not
+// count, and newlines are kept so that line numbers still match the source.
+QString withoutCommentsAndLiterals(const QString &source)
+{
+    static const QRegularExpression commentOrLiteral(
+        QStringLiteral("//[^\\n]*|/\\*.*?\\*/|\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'"),
+        QRegularExpression::DotMatchesEverythingOption);
+
+    QString code;
+    qsizetype copied = 0;
+    QRegularExpressionMatchIterator matches = commentOrLiteral.globalMatch(source);
+
+    while (matches.hasNext()) {
+        const QRegularExpressionMatch match = matches.next();
+        code += source.mid(copied, match.capturedStart() - copied);
+
+        for (const QChar c : match.capturedView()) {
+            code += c == QLatin1Char('\n') ? c : QLatin1Char(' ');
+        }
+
+        copied = match.capturedEnd();
+    }
+
+    return code + source.mid(copied);
+}
+
+// Lines of a C++ source that declare a static object of a Qt string, list, hash
+// or map type at namespace scope, as written in the source. A static inside a
+// function, a class or an initializer block is not namespace scope; neither is
+// a static function, a pointer or a declaration in a comment.
+QStringList namespaceScopeQtContainerStatics(const QString &source)
+{
+    static const QRegularExpression declaration(QStringLiteral(
+        "^\\s*static\\s+(?:inline\\s+)?(?:const\\s+)?"
+        "(?:QString|QByteArray|QStringList|QList|QVector|QHash|QMap|QMultiHash|QMultiMap)\\b"
+        "(?:<[^;(]*>)?\\s+\\w+\\s*(?:[;={,]|$)"));
+    // A brace opens a transparent block when the statement before it is a namespace
+    // or an extern "C" block. Any other block (function, class, initializer) is not.
+    static const QRegularExpression transparentBlock(QStringLiteral(
+        "^\\s*(?:inline\\s+)?namespace\\b[^{};]*$|^\\s*extern\\s+\"[^\"]*\"\\s*$"));
+
+    const QStringList lines = source.split(QLatin1Char('\n'));
+    const QStringList codeLines = withoutCommentsAndLiterals(source).split(QLatin1Char('\n'));
+
+    QStringList found;
+    QList<bool> openBlocks; // one entry per open brace: true when the block is transparent
+    QString previousCode;   // the nearest earlier code line, for a brace on a line of its own
+
+    for (qsizetype n = 0; n < codeLines.size(); ++n) {
+        const QString &code = codeLines.at(n);
+
+        if (code.trimmed().startsWith(QLatin1Char('#'))) {
+            continue;
+        }
+
+        if (!openBlocks.contains(false) && declaration.match(code).hasMatch()) {
+            found << lines.at(n).trimmed();
+        }
+
+        for (qsizetype i = 0; i < code.size(); ++i) {
+            if (code.at(i) == QLatin1Char('{')) {
+                const QString head = code.left(i).trimmed().isEmpty() ? previousCode : code.left(i);
+                openBlocks << transparentBlock.match(head).hasMatch();
+            } else if (code.at(i) == QLatin1Char('}') && !openBlocks.isEmpty()) {
+                openBlocks.removeLast();
+            }
+        }
+
+        if (!code.trimmed().isEmpty()) {
+            previousCode = code;
+        }
+    }
+
+    return found;
+}
+
 }
 
 class SourceContractTest : public QObject
@@ -161,6 +238,7 @@ private Q_SLOTS:
     void cmakeFindsQtCoreToolsBeforeKdeInstallDirs();
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
     void knsCompatImportsAreAvailableForSystemInstall();
+    void mainCppKeepsQtContainerStaticsFunctionLocal();
     void plasma68ContainmentScreenAndImportContracts();
     void importedAppletIdsStayUniqueIncludingNestedApplets();
     void qmlParameterlessHandlersDoNotReadUndeclaredIndex();
@@ -1259,6 +1337,34 @@ void SourceContractTest::knsCompatImportsAreAvailableForSystemInstall()
     QVERIFY(compatHeader.open(QFile::ReadOnly));
     const QString compatHeaderSource = QString::fromUtf8(compatHeader.readAll());
     QVERIFY(compatHeaderSource.contains(QStringLiteral("QString knsCompatUserQmlRoot();")));
+}
+
+void SourceContractTest::mainCppKeepsQtContainerStaticsFunctionLocal()
+{
+    QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainSourceFile.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
+
+    // clazy 1.17 does not report a static without an initializer in a file named
+    // main.cpp, so non-pod-global-static cannot keep a Qt container from being
+    // built during static initialization in this file. This contract does.
+    const QStringList statics = namespaceScopeQtContainerStatics(mainSource);
+    QVERIFY2(statics.isEmpty(), qPrintable(QStringLiteral("namespace-scope static Qt container in app/main.cpp:\n") + statics.join(QLatin1Char('\n'))));
+
+    // The detector must report a namespace-scope declaration and must ignore the
+    // function-local, function, class, pointer and comment forms.
+    QCOMPARE(namespaceScopeQtContainerStatics(QStringLiteral("static QStringList s_paths;\n")),
+             QStringList{QStringLiteral("static QStringList s_paths;")});
+    QCOMPARE(namespaceScopeQtContainerStatics(QStringLiteral("namespace Latte\n{\nstatic const QString kName = QStringLiteral(\"{\");\n}\n")),
+             QStringList{QStringLiteral("static const QString kName = QStringLiteral(\"{\");")});
+    QCOMPARE(namespaceScopeQtContainerStatics(QStringLiteral(
+                 "static QStringList &paths();\n"
+                 "void build()\n{\n    static QStringList paths;\n}\n"
+                 "class Holder\n{\n    static QHash<QString, int> counts;\n};\n"
+                 "// static QStringList commented;\n"
+                 "/* static QString block; */\n"
+                 "static QStringList *pointer = nullptr;\n")),
+             QStringList());
 }
 
 void SourceContractTest::layerShellSetScreenGuardPreventsBuildRegression()
