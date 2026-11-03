@@ -749,12 +749,27 @@ inline bool shouldUseUserLocalQmlImports(int argc, char **argv)
 }
 
 // Collected at startup, applied to each engine via addLatteQmlImportPaths().
-static QStringList s_userLocalQmlPaths;
-static QStringList s_userLocalPluginPaths;
+// The lists are function-local statics, not namespace-scope objects. A
+// namespace-scope QStringList is constructed during static initialization, whose
+// order across translation units is unspecified, so a static initializer elsewhere
+// could use it before it exists. clazy's non-pod-global-static also does not
+// report a static without an initializer in a file named main.cpp. The accessor
+// constructs each list on its first call, so a reader always gets a constructed list.
+static QStringList &userLocalQmlPathList()
+{
+    static QStringList paths;
+    return paths;
+}
+
+static QStringList &userLocalPluginPathList()
+{
+    static QStringList paths;
+    return paths;
+}
 
 const QStringList &userLocalQmlImportPaths()
 {
-    return s_userLocalQmlPaths;
+    return userLocalQmlPathList();
 }
 
 void addLatteQmlImportPaths(QQmlEngine *engine)
@@ -765,7 +780,7 @@ void addLatteQmlImportPaths(QQmlEngine *engine)
 
     const QStringList currentPaths = engine->importPathList();
 
-    for (const QString &path : std::as_const(s_userLocalQmlPaths)) {
+    for (const QString &path : std::as_const(userLocalQmlPathList())) {
         if (!currentPaths.contains(path)) {
             engine->addImportPath(path);
         }
@@ -812,7 +827,7 @@ inline void collectUserLocalPaths(int argc, char **argv)
 
     for (const QString &candidate : std::as_const(qmlCandidates)) {
         if (QFileInfo::exists(candidate)) {
-            s_userLocalQmlPaths << candidate;
+            userLocalQmlPathList() << candidate;
         }
     }
 
@@ -831,7 +846,7 @@ inline void collectUserLocalPaths(int argc, char **argv)
 
     for (const QString &candidate : pluginCandidates) {
         if (QFileInfo::exists(candidate)) {
-            s_userLocalPluginPaths << candidate;
+            userLocalPluginPathList() << candidate;
         }
     }
 }
@@ -842,7 +857,7 @@ inline void collectUserLocalPaths(int argc, char **argv)
 // processes.
 inline void applyUserLocalPluginPaths()
 {
-    for (const QString &path : std::as_const(s_userLocalPluginPaths)) {
+    for (const QString &path : std::as_const(userLocalPluginPathList())) {
         QCoreApplication::addLibraryPath(path);
     }
 }
