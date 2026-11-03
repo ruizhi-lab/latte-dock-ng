@@ -91,13 +91,17 @@ bool GenericTable<T>::operator!=(const GenericTable<T> &rhs) const
 template <class T>
 T &GenericTable<T>::operator[](const QString &id)
 {
-    int pos{-1};
+    const int pos = indexOf(id);
 
-    for (int i = 0; i < m_list.count(); ++i) {
-        if (m_list[i].id == id) {
-            pos = i;
-            break;
-        }
+    if (pos < 0) {
+        //! An unknown id has no row to reference, and indexing row -1 asserts in Qt debug builds
+        //! (an out-of-range read otherwise). A layout file can name an activity this machine does
+        //! not have, so the lookup must not fail. The default record is reset on every unknown
+        //! lookup: writes through it are discarded, and containsId() is the only way to tell it
+        //! from a stored row.
+        static T missing;
+        missing = T();
+        return missing;
     }
 
     return m_list[pos];
@@ -106,13 +110,11 @@ T &GenericTable<T>::operator[](const QString &id)
 template <class T>
 T GenericTable<T>::operator[](const QString &id) const
 {
-    int pos{-1};
+    const int pos = indexOf(id);
 
-    for (int i = 0; i < m_list.count(); ++i) {
-        if (m_list[i].id == id) {
-            pos = i;
-            break;
-        }
+    //! Same contract as the non-const overload: an unknown id yields a default record.
+    if (pos < 0) {
+        return T();
     }
 
     return m_list[pos];

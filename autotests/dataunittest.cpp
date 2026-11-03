@@ -29,6 +29,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 
+using Latte::Data::ActivitiesTable;
 using Latte::Data::Activity;
 using Latte::Data::Applet;
 using Latte::Data::Error;
@@ -50,6 +51,8 @@ class DataUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void activitiesTableLookupOfMissingIdReturnsEmptyActivity();
+    void activitiesTableLookupOfExistingIdReturnsRow();
     void activityCopiesAndAssignsAllFields();
     void activityStatePredicatesReflectState();
     void appTypesMatchKnownWaylandApplicationIds();
@@ -92,6 +95,63 @@ private Q_SLOTS:
     void viewsTableFindsSubcontainmentsAndTemporaryViews();
     void viewsTableSubtractsAndFiltersOriginalViews();
 };
+
+void DataUnitTest::activitiesTableLookupOfMissingIdReturnsEmptyActivity()
+{
+    // A layout file can name an activity this machine does not have. The lookup must
+    // return an empty record instead of indexing row -1, and it must not add a row.
+    Activity known;
+    known.id = QStringLiteral("known-id");
+    known.name = QStringLiteral("Known");
+
+    ActivitiesTable table;
+    table << known;
+
+    const QString missingId = QStringLiteral("missing-id");
+
+    const Activity missing = table[missingId];
+    QVERIFY(missing.id.isEmpty());
+    QVERIFY(missing.name.isEmpty());
+    QCOMPARE(missing.state, Activity::Unknown);
+
+    const ActivitiesTable &constTable = table;
+    const Activity constMissing = constTable[missingId];
+    QVERIFY(constMissing.id.isEmpty());
+    QVERIFY(constMissing.name.isEmpty());
+
+    QCOMPARE(table.rowCount(), 1);
+    QVERIFY(!table.containsId(missingId));
+
+    // Each unknown lookup starts from a reset record, so an earlier write does not leak.
+    table[missingId].name = QStringLiteral("Leaked");
+    QVERIFY(table[missingId].name.isEmpty());
+}
+
+void DataUnitTest::activitiesTableLookupOfExistingIdReturnsRow()
+{
+    Activity known;
+    known.id = QStringLiteral("known-id");
+    known.name = QStringLiteral("Known");
+    known.icon = QStringLiteral("known-icon");
+    known.state = Activity::Running;
+
+    ActivitiesTable table;
+    table << known;
+
+    const Activity found = table[QStringLiteral("known-id")];
+    QCOMPARE(found.id, known.id);
+    QCOMPARE(found.name, known.name);
+    QCOMPARE(found.icon, known.icon);
+    QCOMPARE(found.state, known.state);
+
+    // The non-const lookup of a stored id must reference the stored row itself.
+    table[QStringLiteral("known-id")].name = QStringLiteral("Renamed");
+    QCOMPARE(table[0u].name, QStringLiteral("Renamed"));
+
+    const ActivitiesTable &constTable = table;
+    QCOMPARE(constTable[QStringLiteral("known-id")].name, QStringLiteral("Renamed"));
+    QVERIFY(constTable[QStringLiteral("known-id")].isRunning());
+}
 
 void DataUnitTest::activityCopiesAndAssignsAllFields()
 {
