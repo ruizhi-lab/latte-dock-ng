@@ -23,6 +23,7 @@
 #include "../../layout/centrallayout.h"
 #include "../../layouts/importer.h"
 #include "../../layouts/layoutfilelock.h"
+#include "../../layouts/layoutfilemove.h"
 #include "../../layouts/manager.h"
 #include "../../layouts/synchronizer.h"
 #include "../../templates/templatesmanager.h"
@@ -915,7 +916,25 @@ void Layouts::reset()
 void Layouts::save()
 {
     //! Update Layouts
-    QTemporaryDir layoutTempDir;
+    //! The renamed files are moved through this directory, which lives next to the layouts: a rename
+    //! inside one filesystem is atomic, while a move from the layouts directory into /tmp is a copy into
+    //! /tmp, which fails when /tmp is full (R2c follow-up 12).
+    //! The name starts with a dot and the layout scanners list only "*.layout.latte" files, so the
+    //! directory is never taken for a layout. QTemporaryDir removes it on every return from save(),
+    //! except when a file could not be moved back (see below).
+    QTemporaryDir layoutTempDir(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral("/.apply-XXXXXX"));
+
+    if (!layoutTempDir.isValid()) {
+        //! the default location is only the fallback: moves into it cross filesystems
+        layoutTempDir = QTemporaryDir();
+    }
+
+    if (!layoutTempDir.isValid()) {
+        //! nothing has been changed yet, so Apply stops here and the page keeps its changes
+        m_handler->showInlineMessage(i18nc("settings: layouts apply failed", "Layouts could not be applied, no temporary directory can be created. Nothing was changed..."),
+                                     KMessageWidget::Error);
+        return;
+    }
 
     qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir.path();
 
@@ -930,7 +949,15 @@ void Layouts::save()
         QFile(removedLayouts[i].id).remove();
     }
 
-    QList<Data::UniqueIdInfo> alteredIdsInfo;
+    //! A layout whose file Apply renames, with what the result of that move must update
+    struct RenamedLayout {
+        Data::UniqueIdInfo idInfo;
+        Latte::CentralLayout *central{nullptr};
+        bool isActive{false};
+        bool isNew{false};
+    };
+
+    QList<RenamedLayout> renamedFiles;
 
     QList<Latte::Data::Layout> alteredLayouts = m_model->alteredLayouts();
 
@@ -966,40 +993,81 @@ void Layouts::save()
 
         //! If the layout name changed OR the layout path is a temporary one
         if ((iLayoutCurrentData.name != iLayoutOriginalData.name) || iLayoutCurrentData.isTemporary()) {
-            //! If the layout is Active in MultipleLayouts
-            if (central->isActive()) {
+            //! If the layout is Active in MultipleLayouts; the rename of the active layout object
+            //! waits for the move result, a layout whose file did not move keeps its name
+            const bool isActive = central->isActive();
+
+            if (isActive) {
                 qCDebug(latteSettings) << " Active Layout Should Be Renamed From : " << central->name() << " TO :: " << iLayoutCurrentData.name;
-                activeLayoutsToRename[iLayoutCurrentData.name] = central;
             }
 
-            QString tempFile = layoutTempDir.path() + QLatin1String("/") + central->name() + QStringLiteral(".layout.latte");
-            qCDebug(latteSettings) << "new temp file ::: " << tempFile;
+            RenamedLayout renamed;
+            renamed.idInfo.oldId = iLayoutCurrentData.id;
+            renamed.idInfo.oldName = iLayoutOriginalData.name;
+            renamed.idInfo.newId = Latte::Layouts::Importer::layoutUserFilePath(iLayoutCurrentData.name);
+            renamed.idInfo.newName = iLayoutCurrentData.name;
+            renamed.central = central;
+            renamed.isActive = isActive;
+            renamed.isNew = iLayoutCurrentData.isTemporary();
 
-            QFile(iLayoutCurrentData.id).rename(tempFile);
-
-            Data::UniqueIdInfo idInfo;
-
-            idInfo.oldId = iLayoutCurrentData.id;
-            idInfo.newId = tempFile;
-            idInfo.newName = iLayoutCurrentData.name;
-
-            alteredIdsInfo << idInfo;
+            renamedFiles << renamed;
         }
     }
 
-    //! this is necessary in case two layouts have to swap names
-    //! so we copy first the layouts in a temp directory and afterwards all
-    //! together we move them in the official layout directory
-    //! newFileForOldId maps the id each renamed layout had before Apply to its final file
+    //! this is necessary in case two layouts have to swap names, so the files are moved in two stages
+    //! through the temporary directory (see LayoutFileMove::moveFiles), and a failed move leaves its
+    //! file where it is
+    QList<Latte::Layouts::LayoutFileMove::Request> fileMoves;
+
+    for (const RenamedLayout &renamed : std::as_const(renamedFiles)) {
+        fileMoves << Latte::Layouts::LayoutFileMove::Request{renamed.idInfo.oldId, renamed.idInfo.newId};
+    }
+
+    const Latte::Layouts::LayoutFileMove::Result moveResult = Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path());
+
+    //! newFileForOldId maps the id each renamed layout had before Apply to its final file. Only the
+    //! layouts whose file moved are in it: a layout whose move failed keeps its id and its name, and
+    //! its file stays on the path the id names
     QHash<QString, QString> newFileForOldId;
 
-    for (int i = 0; i < alteredIdsInfo.count(); ++i) {
-        Data::UniqueIdInfo idInfo = alteredIdsInfo[i];
+    for (int i = 0; i < renamedFiles.count(); ++i) {
+        const RenamedLayout &renamed = renamedFiles[i];
 
-        QString newFile = Latte::Layouts::Importer::layoutUserFilePath(idInfo.newName);
-        QFile(idInfo.newId).rename(newFile);
+        if (moveResult.moved[i]) {
+            newFileForOldId[renamed.idInfo.oldId] = renamed.idInfo.newId;
 
-        newFileForOldId[idInfo.oldId] = newFile;
+            if (renamed.isActive) {
+                activeLayoutsToRename[renamed.idInfo.newName] = renamed.central;
+            }
+        } else if (renamed.isNew) {
+            //! applyData() below makes the row an original one, so the next Apply does not move it again:
+            //! the message names the file that stays where it is
+            m_handler->showInlineMessage(i18nc("settings: new layout not saved", "Layout <b>%1</b> could not be saved to the layouts folder, its file is still at <b>%2</b>...",
+                                               renamed.idInfo.newName, renamed.idInfo.oldId),
+                                         KMessageWidget::Error);
+        } else {
+            //! the row gets back the name of its file, so the table and the files agree. setData() would
+            //! refuse that name while another failed row of a name swap still holds it; setLayoutProperties()
+            //! writes the row as it is, and all names are unique again once every failed row is restored
+            Latte::Data::Layout restoredLayout = m_model->currentData(renamed.idInfo.oldId);
+            restoredLayout.name = renamed.idInfo.oldName;
+            m_model->setLayoutProperties(restoredLayout);
+
+            m_handler->showInlineMessage(i18nc("settings: layout rename failed", "Layout <b>%1</b> could not be renamed to <b>%2</b>, its name and file are unchanged, rename it again to retry...",
+                                               renamed.idInfo.oldName, renamed.idInfo.newName),
+                                         KMessageWidget::Error);
+        }
+    }
+
+    //! a file that could not be moved back stays where it is; the temporary directory is kept then, so a
+    //! file still inside it is not removed with it
+    for (const QString &path : std::as_const(moveResult.unrecovered)) {
+        m_handler->showInlineMessage(i18nc("settings: layout file kept", "A layout file could not be moved back, it is kept at <b>%1</b>...", path),
+                                     KMessageWidget::Error);
+    }
+
+    if (!moveResult.unrecovered.isEmpty()) {
+        layoutTempDir.setAutoRemove(false);
     }
 
     //! updating the #SETTINGSID in the model for the layouts that were renamed; the rows are

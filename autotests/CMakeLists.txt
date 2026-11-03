@@ -952,6 +952,7 @@ latte_add_test(blockhidingeventstest)
 set(storagelogictest_SRCS
     storagelogictest.cpp
     ../app/layouts/layoutfilelock.cpp
+    ../app/layouts/layoutfilemove.cpp
 )
 add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
 target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data ${CMAKE_CURRENT_SOURCE_DIR}/../app/layouts)

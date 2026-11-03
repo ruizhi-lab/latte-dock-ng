@@ -9,7 +9,9 @@ fixes the last six checks; it is in `main` (`6b51b43a6`) and passed CI run
 desktop smoke, except for the Meta hold check, which fails on `v1.2.62` as well
 ([follow-ups](#follow-ups), item 10, which records its fix in `61963df10`). The
 [follow-up fixes](#follow-up-fixes) (items 3, 5, 6, 7 and 9) passed the local checks and a
-host desktop check at `131c87dc8`; one control run of that check is open.
+host desktop check at `131c87dc8`; one control run of that check is open. Item 12 (the
+Apply file moves) is fixed in `6a8d104b4` and passed the local checks; its desktop check is
+still to be run ([follow-up 12](#follow-up-12-apply-file-moves)).
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -854,8 +856,9 @@ validation found and deliberately left alone:
     because the experiment in a `mageia:cauldron` container was interrupted).
     `autotests/packagingcontracttest.cpp` requires that Dockerfile to keep the text
     `dnf install -y --refresh` and to avoid `dnf upgrade`.
-12. **`Layouts::save()` does not check its file moves (open).** Apply moves each renamed
-    layout file into a `QTemporaryDir` and from there to `~/.config/latte`, ignores the
+12. **`Layouts::save()` did not check its file moves (fixed in `6a8d104b4`; the desktop
+    check is open).** Apply moves each renamed layout file into a `QTemporaryDir` and from
+    there to `~/.config/latte`, ignores the
     result of both `QFile::rename()` calls and never asks `QTemporaryDir::isValid()`. The
     temporary directory is in `/tmp`, a tmpfs on the development host, and the layouts are
     on btrfs, so each move is a copy followed by a delete, and the copy fails when `/tmp`
@@ -871,19 +874,18 @@ validation found and deliberately left alone:
     was untouched and no names were swapped. The failing call was not captured. The same
     renames done as a chain in one Apply, with free space in `/tmp`, gave the right files.
     The three separate Applies were not repeated with free space, so the full `/tmp` is the
-    likely cause, not a proven one. A fix would check every `rename()` and the temporary
-    directory, create that directory next to the layouts (one filesystem, so the move is a
-    rename and not a copy), keep the model ids of a layout whose move failed, and tell the
-    user. A test needs the failure injected, for example by starting the dock with `TMPDIR`
-    pointing at a directory that cannot be written.
+    likely cause, not a proven one. The fix is described in
+    [follow-up 12](#follow-up-12-apply-file-moves).
 
 ## Follow-up fixes
 
 Status: Complete, with one open control run of the desktop check
 ([Desktop check](#desktop-check)). Follow-ups 3, 5, 6 and 9, and F1 to F4 of follow-up 7,
 are fixed on the branch `claude/r2c-lost-intent-integration` (code at `131c87dc8`), which
-passed the checks below. Follow-up 10 was fixed earlier (`61963df10`) and is not part of
-this section.
+passed the checks below. Follow-up 12 is fixed on `claude/stoic-mirzakhani-83f0c1` (code at
+`6a8d104b4`) and passed its own checks ([Follow-up 12](#follow-up-12-apply-file-moves)); its
+desktop check has not been run. Follow-up 10 was fixed earlier (`61963df10`) and is not part
+of this section.
 
 Six sessions, all Claude Haiku 5.5 at medium effort, implemented the fixes, each on its
 own branch from `61963df10`. The main session wrote the briefs and the file sets, read
@@ -899,6 +901,7 @@ on top of it on `claude/r2c-lost-intent-integration` (checked at `131c87dc8`).
 | 9. Runner hardening | `clazyrunnertest` (22 cases), one `knscompatunittest` case | `43bf2317a` | `f9073543e` |
 | 7, F1. Unknown activity id | `GenericTable` lookup and `Activities::paint()` | `f03b319a3` | `2fdc4d259` |
 | 7, F2 to F4. Apply after a rename | Row ids, lock and synchronizer table | `00aaf6ad5` | `131c87dc8` |
+| 12. Apply file moves | Temporary directory next to the layouts, checked moves with rollback, failed layouts keep their id and name | `6a8d104b4` | not merged |
 
 What the two newest fixes changed (the other four are described in the follow-up items):
 
@@ -1008,6 +1011,82 @@ layouts were recorded before the run and are unchanged after it.
   desktop build before the fix, so the desktop check shows the right behavior of the fixed
   build, not the defect.
 
+### Follow-up 12: Apply file moves
+
+Code at `6a8d104b4` on `claude/stoic-mirzakhani-83f0c1` (branched from `1cce2c0e8`). Not
+merged; the checks below ran on that commit's tree.
+
+- **Temporary directory.** `Layouts::save()` creates its `QTemporaryDir` as
+  `<layouts directory>/.apply-XXXXXX`, so each move is a rename on one filesystem. The name
+  is hidden, and the layout scanners list `QDir::Files` only, so the directory is never a
+  layout. The default location is the fallback. Both creations are checked with `isValid()`;
+  when neither works, Apply stops before it changes anything and says so. The directory is
+  removed on every return from `save()`, except when a file could not be moved back: then it
+  is kept, and the message names the file.
+- **Checked moves.** `LayoutFileMove::moveFiles()` (`app/layouts/layoutfilemove.{h,cpp}`)
+  parks each renamed file in the temporary directory and places it on its final path. A
+  placement that fails undoes the placements of that round, returns the failed file to its
+  old path and places the others again. Every rename refuses an existing target.
+- **Layouts that did not move.** Their ids are left out of `newFileForOldId`, so the rows keep
+  their ids. The row gets its old name back, the active layout object is not renamed, and the
+  page shows the reason with `showInlineMessage()`. A new layout whose file stayed in `/tmp`
+  keeps that path in its message. Read from the code, not tested: `applyData()` makes that row
+  an original row, so the next Apply does not move it again; the file has to be moved by hand,
+  or the layout created again.
+
+Checks:
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P -j8`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8, CMake 4.3.4, Qt 6.11.2; `TMPDIR` inside the ignored `build/tmp` of the worktree) | Exit 0 each; no compiler warning or error in the four build logs (the debug builds also print qmllint warnings for QML files this change does not touch); 59/59 tests passed in each preset |
+| `latte-r2c-clazy:noble` (clazy 1.17, Ubuntu LLVM 19.1.1): fresh Clang Debug build in a new build tree, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 8` | Exit 0: 155 production sources (the new `layoutfilemove.cpp` included), no finding from the 49 gated checks, 49 negative fixtures each rejected by its own check. The run came before the last edit of one comment line in `layoutscontroller.cpp`; the gcc-debug rebuild and its 59 tests were repeated after that edit |
+| `storagelogictest` (31 cases, 7 of them new) and `sourcecontracttest` (230 cases, 5 of them new) in `gcc-debug` | Pass |
+
+A first run of the presets with `TMPDIR` under the home directory failed `layoutunittest`
+(`abstractLayoutPersistsCustomSchemeFile`): the layout code writes paths below the home
+directory as `~/...`. That came from the scratch directory, not from this change, and the
+runs in the table use a `TMPDIR` outside the home directory.
+
+Mutation checks (`gcc-debug`, one mutation at a time, each file restored byte for byte):
+
+| Mutation | Result |
+| --- | --- |
+| P1. The undo of a failed round is skipped | Killed by `layoutMoveUndoesRoundAndRetriesOthers`, `layoutMoveRestoresEveryFailedFile` and `layoutMoveChainBlockedByExistingTargetKeepsEveryFile` |
+| P2. No first stage: each file is renamed straight to its final path | Killed by `layoutMoveChainRenamesEveryFile` and `layoutMoveSwapExchangesFiles`, and by five more tests through `unrecovered` |
+| P3. The existence check before `QFile::rename()` is removed | Survived the runtime tests: Qt 6.11.2 already refused the stray targets. Killed only by the source contract C10 |
+| P4. A failed file is not returned to its old path | Killed by `layoutMoveIntoUnwritableDirectoryKeepsSourceFile`, `layoutMoveUndoesRoundAndRetriesOthers`, `layoutMoveRestoresEveryFailedFile` and `layoutMoveChainBlockedByExistingTargetKeepsEveryFile` |
+| P5. A failed first-stage rename is treated as parked | Killed by `layoutMoveOfMissingSourceFailsAlone` (through `unrecovered`) |
+| P6. The round does not stop at its first failure | Survived: every test gives the same outcome, the round only retries more often. The stop is kept to bound the number of renames |
+| C1. Temporary directory at the default location | Killed by `layoutsSaveMovesFilesThroughCheckedTemporaryDir` |
+| C2. Default-location fallback removed | Killed by `layoutsSaveMovesFilesThroughCheckedTemporaryDir` |
+| C3. Second `isValid()` check removed | Killed by `layoutsSaveMovesFilesThroughCheckedTemporaryDir` |
+| C4. Bare `.rename(` added to `save()` | Killed by `layoutsSaveMovesFilesThroughCheckedTemporaryDir` |
+| C5. Id rewrite placed before the moves | Killed by `layoutsSaveMovesBeforeRewritingIds` |
+| C6. Failed moves mapped and renamed | Killed by `layoutsSaveRenamesOnlyMovedLayouts` |
+| C7. Temporary directory always removed | Killed by `layoutsSaveMovesFilesThroughCheckedTemporaryDir` |
+| C8. Failed row keeps the new name | Killed by `layoutsSaveRenamesOnlyMovedLayouts` |
+| C9. Layout scanner lists directories | Killed by `layoutScannersListOnlyFiles` |
+| C10. No-overwrite guard removed | Killed by `layoutFileMoveRenamesOnlyThroughNoOverwriteCheck` |
+
+The three existing contracts of Apply (`layoutsSaveRewritesRenamedIdsFromOneSnapshot`,
+`layoutsSaveLocksRenamedLayoutsAtTheirNewFile` and `layoutsSaveHandsSynchronizerTableAfterRename`)
+pass unchanged. The rollback behavior of `save()` itself has no runtime test: it needs a
+Corona. The source contracts only check its text, so the desktop check below is the evidence
+for it.
+
+Not run: the desktop check, which is the main session's job with the user. Steps for it,
+on the `6a8d104b4` build, with throwaway layouts only:
+
+1. Run the user-mode Debug install from `6a8d104b4` and start the dock as the workflow in
+   `AGENTS.md` describes.
+2. Failed move: with the layouts page open, create a file `Stray.layout.latte` in
+   `~/.config/latte` (the open table does not list it), rename a throwaway layout to `Stray`
+   and apply. Expected: an error message that the rename failed; the row keeps the old name;
+   the old file and `Stray.layout.latte` are unchanged; no `.apply-*` directory is left.
+3. Chain in one Apply: rename two throwaway layouts into a swap or a chain and apply once.
+   Expected: each file has the content of its new name, as in the earlier desktop check.
+4. Read the log for `Temporary Directory :::` lines and for warnings or fatal lines.
+
 ### Not run in the follow-up fixes
 
 A build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2); the Fedora VM, which is left to
@@ -1023,8 +1102,8 @@ CI and the desktop smoke. What is left is the [follow-ups](#follow-ups): decisio
 defects the slices found on the way, not findings. Items 3, 5, 6, 9 and 10 and F1 to F4 of
 item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Items 1, 2 and 4 each need a
 decision and a test, F5 of item 7 needs the decision about the Move To Layout menu, item
-11 is a CI hardening, and item 12 is a defect that needs a fix and a failure-injection
-test.
+11 is a CI hardening, and item 12 is fixed in `6a8d104b4`, with its desktop check still to
+be run ([follow-up 12](#follow-up-12-apply-file-moves)).
 
 ## Reproducing the environment
 
