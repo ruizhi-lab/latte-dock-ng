@@ -124,6 +124,7 @@ private Q_SLOTS:
     void cloneViewRemovalSyncUsesSyncingFromOriginalGuard();
     void waylandStrutGhostWindowBindsLayerShellScreen();
     void launchersRestoreContractMovedToQmlSmokeTest();
+    void activitiesDelegatePaintSkipsUnknownActivityIds();
     void sessionShutdownQuitDecisionMatrix_data();
     void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
@@ -5736,6 +5737,23 @@ void SourceContractTest::shortcutBadgeShadowEffectsAnchorToTheirLoader()
         QVERIFY2(body.contains(QStringLiteral("anchors.fill: parent")), qPrintable(path));
         QVERIFY2(!body.contains(QRegularExpression(QStringLiteral("anchors\\.fill: (taskNumber|appletNumber)"))), qPrintable(path));
     }
+}
+
+void SourceContractTest::activitiesDelegatePaintSkipsUnknownActivityIds()
+{
+    QFile source(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/delegates/activitiesdelegate.cpp"));
+    QVERIFY(source.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(source.readAll()));
+
+    // paint() must test containsId() before the lookup: the table returns a default record
+    // for an unknown id, which would otherwise add an empty name to the joined text.
+    const int paintStart = src.indexOf(QStringLiteral("void Activities::paint("));
+    QVERIFY(paintStart >= 0);
+
+    const int guard = src.indexOf(QStringLiteral("if (!allActivitiesTable.containsId(assignedIds[i]))"), paintStart);
+    const int lookup = src.indexOf(QStringLiteral("assignedActivities << allActivitiesTable[assignedIds[i]];"), paintStart);
+    QVERIFY(guard > paintStart);
+    QVERIFY(lookup > guard);
 }
 
 QTEST_MAIN(SourceContractTest)

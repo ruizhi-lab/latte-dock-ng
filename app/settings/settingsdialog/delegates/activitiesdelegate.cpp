@@ -313,6 +313,13 @@ void Activities::paint(QPainter *painter, const QStyleOptionViewItem &option, co
     Latte::Data::ActivitiesTable allActivitiesTable = index.data(Model::Layouts::ALLACTIVITIESDATAROLE).value<Latte::Data::ActivitiesTable>();
 
     for (int i = 0; i < assignedIds.count(); ++i) {
+        //! Skip ids of activities this machine does not have (deleted while Latte was not running,
+        //! or copied from another computer). They stay in the layout (setModelData() keeps them),
+        //! but the table returns a default record for them, which would add an empty name here.
+        if (!allActivitiesTable.containsId(assignedIds[i])) {
+            continue;
+        }
+
         assignedActivities << allActivitiesTable[assignedIds[i]];
     }
 
