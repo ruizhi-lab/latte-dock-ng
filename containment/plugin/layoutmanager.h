@@ -162,7 +162,6 @@ private:
     //! Const getters are not slots (clazy const-signal-or-slot), so they are Q_INVOKABLE:
     //! the meta-object still lists them, as it listed them when they were private slots,
     //! and QMetaObject::invokeMethod() still finds them by name.
-    Q_INVOKABLE bool isModernDockStyle() const;
     Q_INVOKABLE bool isTrashWidget(QObject *applet) const;
     Q_INVOKABLE bool usesLegacyJustifySplitters() const;
     Q_INVOKABLE QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;

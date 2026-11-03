@@ -148,46 +148,6 @@ int alignmentFromVariant(const QVariant &value, bool *ok = nullptr)
     return 0;
 }
 
-bool dockStyleIsModernFromVariant(const QVariant &value, bool *ok = nullptr)
-{
-    bool parsed = false;
-    const int numeric = value.toInt(&parsed);
-
-    if (parsed) {
-        if (ok) {
-            *ok = true;
-        }
-
-        return numeric == 1;
-    }
-
-    const QString text = value.toString().trimmed();
-
-    if (text.compare(QStringLiteral("Modern"), Qt::CaseInsensitive) == 0
-        || text == QLatin1String("1")) {
-        if (ok) {
-            *ok = true;
-        }
-
-        return true;
-    }
-
-    if (text.compare(QStringLiteral("Classic"), Qt::CaseInsensitive) == 0
-        || text == QLatin1String("0")) {
-        if (ok) {
-            *ok = true;
-        }
-
-        return false;
-    }
-
-    if (ok) {
-        *ok = false;
-    }
-
-    return false;
-}
-
 }
 
 LayoutManager::LayoutManager(QObject *parent)
@@ -498,50 +458,6 @@ void LayoutManager::restoreAppletOrderForApplet(const int &id)
 void LayoutManager::forgetAppletRemovalIndex(const int &id)
 {
     m_appletRemovalIndexes.remove(id);
-}
-
-bool LayoutManager::isModernDockStyle() const
-{
-    if (m_rootItem) {
-        const QVariant liveModern = m_rootItem->property("isModernDockStyle");
-
-        if (liveModern.isValid() && !liveModern.isNull()) {
-            return liveModern.toBool();
-        }
-
-        const QVariant liveDockStyle = m_rootItem->property("currentDockStyleIndex");
-        bool ok = false;
-        const bool modern = dockStyleIsModernFromVariant(liveDockStyle, &ok);
-
-        if (ok) {
-            return modern;
-        }
-    }
-
-    if (m_configuration) {
-        const QVariant value = (*m_configuration)[QStringLiteral("dockStyle")];
-        bool ok = false;
-        const bool modern = dockStyleIsModernFromVariant(value, &ok);
-
-        if (ok) {
-            return modern;
-        }
-    }
-
-    if (auto containment = containmentObject()) {
-        KConfigGroup generalConfig = containment->config().group(QStringLiteral("General"));
-
-        if (generalConfig.hasKey(QStringLiteral("dockStyle"))) {
-            bool ok = false;
-            const bool modern = dockStyleIsModernFromVariant(generalConfig.readEntry(QStringLiteral("dockStyle"), QVariant()), &ok);
-
-            if (ok) {
-                return modern;
-            }
-        }
-    }
-
-    return false;
 }
 
 bool LayoutManager::usesLegacyJustifySplitters() const
