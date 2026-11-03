@@ -1118,6 +1118,10 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME mageiaretrytest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_retry_mageia_mirror_build.py)
     set_property(TEST mageiaretrytest PROPERTY TIMEOUT 30)
+    # Runs the real clazy gate against a fake clazy-standalone in a temporary checkout; needs no clazy or build.
+    add_test(NAME clazyrunnertest
+        COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_clazy_runner.py)
+    set_property(TEST clazyrunnertest PROPERTY TIMEOUT 60)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()

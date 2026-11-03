@@ -30,6 +30,7 @@ private Q_SLOTS:
     void replacesSymlinkedPatchedFilesWithoutTouchingTarget();
     void missingSystemQmlRootDoesNotCreatePartialOverrides();
     void systemTemplatesQmldirMirrorsNewTypes();
+    void systemTemplatesQmldirDropsPluginDirectives();
 
 private:
     void isolateHomeAndData(QTemporaryDir &home, QTemporaryDir &data);
@@ -403,6 +404,49 @@ void KnsCompatUnitTest::systemTemplatesQmldirMirrorsNewTypes()
     QVERIFY(compatText.contains("Badge 2.0 Badge.qml"));
     QVERIFY(compatText.contains("AbstractCard 2.0 AbstractCard.qml"));
     QVERIFY(!compatText.contains("prefer "));
+}
+
+void
+KnsCompatUnitTest::systemTemplatesQmldirDropsPluginDirectives()
+{
+    QTemporaryDir home;
+    QTemporaryDir data;
+    QTemporaryDir systemQml;
+    isolateHomeAndData(home, data);
+    QVERIFY(systemQml.isValid());
+    createSystemQmlRoot(systemQml.path());
+    qputenv("LATTE_KNS_COMPAT_SYSTEM_QML_ROOTS", QFile::encodeName(systemQml.path()));
+
+    //! The system templates qmldir names a C++ plugin (linktarget, optional plugin
+    //! and classname) that the override directory does not have, so those lines
+    //! must not reach the override. prefer is dropped too (see
+    //! systemTemplatesQmldirMirrorsNewTypes). The module, typeinfo and type lines
+    //! stay, or the types would stop resolving. The directive lines match the
+    //! Kirigami 6 templates qmldir.
+    const QString sysTemplatesQmldir = systemQml.path() + QStringLiteral("/org/kde/kirigami/templates/qmldir");
+    QVERIFY(QDir().mkpath(QFileInfo(sysTemplatesQmldir).absolutePath()));
+    QFile qmldir(sysTemplatesQmldir);
+    QVERIFY(qmldir.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    qmldir.write(QByteArrayLiteral("module org.kde.kirigami.templates\n"
+                                   "linktarget KF6KirigamiTemplates\n"
+                                   "optional plugin KirigamiTemplatesplugin\n"
+                                   "classname org_kde_kirigami_templatesPlugin\n"
+                                   "typeinfo KirigamiTemplates.qmltypes\n"
+                                   "prefer :/qt/qml/org/kde/kirigami/templates/\n"
+                                   "Badge 2.0 Badge.qml\n"
+                                   "Heading 2.0 Heading.qml\n"));
+    qmldir.close();
+
+    ensureKnsCompat();
+
+    const QString compatQmldir = qmlRoot() + QStringLiteral("/org/kde/kirigami/templates/qmldir");
+    QFile compat(compatQmldir);
+    QVERIFY(compat.open(QIODevice::ReadOnly));
+    QCOMPARE(compat.readAll(),
+             QByteArrayLiteral("module org.kde.kirigami.templates\n"
+                               "typeinfo KirigamiTemplates.qmltypes\n"
+                               "Badge 2.0 Badge.qml\n"
+                               "Heading 2.0 Heading.qml\n"));
 }
 
 QTEST_GUILESS_MAIN(KnsCompatUnitTest)
