@@ -361,6 +361,7 @@ void IconItem::setSmooth(const bool smooth)
 
     m_smooth = smooth;
     update();
+    Q_EMIT smoothChanged();
 }
 
 bool IconItem::smooth() const

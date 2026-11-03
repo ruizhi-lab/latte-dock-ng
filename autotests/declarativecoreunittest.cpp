@@ -17,6 +17,9 @@
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
+#include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
 #include <QQuickWindow>
 #include <QTemporaryDir>
 #include <QTest>
@@ -31,6 +34,8 @@ class DeclarativeCoreUnitTest : public QObject
 
 private Q_SLOTS:
     void iconItemEmitsOnlyForChangedState();
+    void iconItemEmitsSmoothChangedOnlyForChangedValue();
+    void iconItemSmoothBindingFollowsChange();
     void iconItemRepaintsChangedRasterSource();
     void iconItemRepaintsChangedIconSource();
     void iconItemReloadsForEnabledAndActiveState();
@@ -114,6 +119,58 @@ void DeclarativeCoreUnitTest::iconItemEmitsOnlyForChangedState()
     item.setUsesPlasmaTheme(true);
     item.setUsesPlasmaTheme(true);
     QCOMPARE(plasmaThemeSpy.count(), 1);
+}
+
+void
+DeclarativeCoreUnitTest::iconItemEmitsSmoothChangedOnlyForChangedValue()
+{
+    Latte::IconItem item;
+    QVERIFY(item.smooth());
+
+    QSignalSpy smoothSpy(&item, &Latte::IconItem::smoothChanged);
+
+    item.setSmooth(false);
+    QCOMPARE(smoothSpy.count(), 1);
+    QVERIFY(!item.smooth());
+
+    item.setSmooth(false);
+    QCOMPARE(smoothSpy.count(), 1);
+
+    item.setSmooth(true);
+    QCOMPARE(smoothSpy.count(), 2);
+    QVERIFY(item.smooth());
+}
+
+void
+DeclarativeCoreUnitTest::iconItemSmoothBindingFollowsChange()
+{
+    // This binary does not load the core QML plugin, so expose IconItem under a
+    // test-only URI. The binding has the shape of TaskIcon.qml's
+    // `smooth: taskIconItem.smooth`: QML re-evaluates it only when smoothChanged() fires.
+    qmlRegisterType<Latte::IconItem>("LatteCoreUnitTest", 1, 0, "IconItem");
+
+    Latte::IconItem source;
+    QQmlEngine engine;
+    engine.rootContext()->setContextProperty(QStringLiteral("sourceIcon"), &source);
+
+    QQmlComponent component(&engine);
+    component.setData(QByteArrayLiteral("import LatteCoreUnitTest 1.0\n"
+                                        "IconItem {\n"
+                                        "    smooth: sourceIcon.smooth\n"
+                                        "}\n"),
+                      QUrl());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+
+    std::unique_ptr<QObject> object(component.create());
+    auto *follower = qobject_cast<Latte::IconItem *>(object.get());
+    QVERIFY(follower);
+    QVERIFY(follower->smooth());
+
+    source.setSmooth(false);
+    QVERIFY(!follower->smooth());
+
+    source.setSmooth(true);
+    QVERIFY(follower->smooth());
 }
 
 void DeclarativeCoreUnitTest::iconItemRepaintsChangedRasterSource()
