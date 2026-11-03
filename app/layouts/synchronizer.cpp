@@ -454,6 +454,11 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
     QStringList explicits = m_assignedLayouts[activityid];
 
     for (const auto &explicitlayoutname : explicits) {
+        //! an unknown name gives an empty id from idForName(), and the row lookup below would read outside the table
+        if (!m_layouts.containsName(explicitlayoutname)) {
+            continue;
+        }
+
         QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
         m_layouts[explicitlayoutid].activities.removeAll(activityid);
@@ -737,7 +742,11 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
         CentralLayout storagedlayout(this, layoutid);
         layoutdata = storagedlayout.data();
 
-        m_layouts[layoutid] = layoutdata;
+        //! an empty result means the stored file is missing; writing it would blank the row, and the
+        //! later idForName() lookups would then read an empty id outside the table
+        if (!layoutdata.isEmpty()) {
+            m_layouts[layoutid] = layoutdata;
+        }
     }
 
     if (layoutdata.isEmpty()) {
@@ -796,6 +805,11 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
             QStringList explicits = m_assignedLayouts[currentactivityid];
 
             for (const auto &explicitlayoutname : explicits) {
+                //! same guard as in onActivityRemoved(): an unknown name must not reach operator[] with an empty id
+                if (!m_layouts.containsName(explicitlayoutname)) {
+                    continue;
+                }
+
                 QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
                 m_layouts[explicitlayoutid].activities.removeAll(currentactivityid);

@@ -390,6 +390,12 @@ private Q_SLOTS:
     // Guard-fix follow-up contracts
     void templatesmanagerUniqueNameLoopsHaveIterationCaps();
     void synchronizerUnloadLayoutsHasIterationCap();
+
+    // Layouts Apply: renamed ids, lock target and the synchronizer table handed over
+    void layoutsSaveRewritesRenamedIdsFromOneSnapshot();
+    void layoutsSaveLocksRenamedLayoutsAtTheirNewFile();
+    void layoutsSaveHandsSynchronizerTableAfterRename();
+    void synchronizerGuardsStoredLayoutLookups();
     void uniqueNameExhaustionFallsBackToRandomSuffix();
     void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
     void appdataComponentIdKeepsHyphenInLastSegment();
@@ -4923,6 +4929,71 @@ void SourceContractTest::synchronizerUnloadLayoutsHasIterationCap()
     // iteration cap so re-entrant additions cannot hang shutdown.
     QVERIFY(src.contains(QStringLiteral("guard++ < 10000")));
     QVERIFY(src.contains(QStringLiteral("unloadLayouts: iteration cap reached")));
+}
+
+void SourceContractTest::layoutsSaveRewritesRenamedIdsFromOneSnapshot()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // The model rows are rewritten from one snapshot (LayoutsTable::withRenamedIds). A loop that
+    // matches the live model rows would also match rows that an earlier rename of the same Apply
+    // already rewrote, so a name chain or a swap gives two layouts the same id.
+    QVERIFY(src.contains(QStringLiteral("m_model->currentLayoutsData().withRenamedIds(newFileForOldId)")));
+    QVERIFY(!src.contains(QStringLiteral("jLayout.id == idInfo.oldId")));
+}
+
+void SourceContractTest::layoutsSaveLocksRenamedLayoutsAtTheirNewFile()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // The final lock goes to the file each layout has after the rename. A layout object found by
+    // its original name, or built from the pre-rename id, has no file after the rename, and lock()
+    // on it does nothing: the renamed layout would stay writable.
+    QVERIFY(src.contains(QStringLiteral("Latte::Layouts::LayoutFileLock::lock(newFileForOldId.value(layoutCurrentData.id, layoutCurrentData.id))")));
+    QVERIFY(!src.contains(QStringLiteral("centralLayout(layoutOriginalData.name)")));
+    QVERIFY(!src.contains(QStringLiteral("layoutPtr->lock()")));
+}
+
+void SourceContractTest::layoutsSaveHandsSynchronizerTableAfterRename()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // The synchronizer table must hold the ids the files have after the rename, otherwise a switch
+    // to a renamed inactive layout loads the pre-rename path.
+    const int rewrite = src.indexOf(QStringLiteral("withRenamedIds(newFileForOldId)"));
+    const int lock = src.indexOf(QStringLiteral("LayoutFileLock::lock(newFileForOldId.value("));
+    const int handover = src.indexOf(QStringLiteral("setLayoutsTable(m_model->currentLayoutsData())"));
+
+    QVERIFY(rewrite >= 0);
+    QVERIFY(lock > rewrite);
+    QVERIFY(handover > lock);
+    QVERIFY(!src.contains(QStringLiteral("setLayoutsTable(currentLayouts)")));
+}
+
+void SourceContractTest::synchronizerGuardsStoredLayoutLookups()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/synchronizer.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // idForName() returns an empty id for a name that is not in the table, and operator[] with that
+    // id reads outside the table. Both loops over the explicit layouts of an activity must skip
+    // such a name (onActivityRemoved and the no-activities branch of the multiple-layouts switch).
+    QCOMPARE(src.count(QStringLiteral("if (!m_layouts.containsName(explicitlayoutname)) {")), 2);
+
+    // A stored layout whose file is missing gives empty data; storing it would blank the row.
+    const int guard = src.indexOf(QStringLiteral("if (!layoutdata.isEmpty()) {"));
+    const int store = src.indexOf(QStringLiteral("m_layouts[layoutid] = layoutdata;"));
+
+    QVERIFY(guard >= 0);
+    QVERIFY(store > guard);
+    QVERIFY(!src.mid(guard, store - guard).contains(QLatin1Char(';')));
 }
 
 void SourceContractTest::uniqueNameExhaustionFallsBackToRandomSuffix()

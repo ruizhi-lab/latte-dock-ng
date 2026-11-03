@@ -4,15 +4,20 @@
 */
 
 #include "pluginids.h"
+#include "layoutfilelock.h"
 
 #include <KConfigGroup>
 #include <KSharedConfig>
 
+#include <QFile>
+#include <QFileDevice>
+#include <QFileInfo>
 #include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QTest>
 
-// Replicates core logic from app/layouts/storage.cpp
+// Replicates core logic from app/layouts/storage.cpp; the LayoutFileLock tests
+// at the end of this file link the production helper instead
 
 namespace StorageLogic {
 
@@ -103,6 +108,9 @@ private Q_SLOTS:
 
     void layoutFileWithContainmentsAndApplets();
     void idConflictsAreDetectable();
+
+    void renamedLockedLayoutIsLockedAtItsNewPath();
+    void lockOfMissingLayoutFileChangesNothing();
 
 private:
     QTemporaryDir m_tmp;
@@ -264,6 +272,58 @@ void StorageLogicTest::idConflictsAreDetectable()
     for (const auto &id : cids) { if (aids.contains(id)) { conflict = true; break; } }
 
     QVERIFY(!conflict);
+}
+
+namespace {
+
+//! The owner write bit is what lock() and unlock() change. isWritable() is not used
+//! here: access(2) reports read-only files as writable for root.
+bool ownerCanWrite(const QString &file)
+{
+    return QFileInfo(file).permissions().testFlag(QFileDevice::WriteUser);
+}
+
+}
+
+void StorageLogicTest::renamedLockedLayoutIsLockedAtItsNewPath()
+{
+    //! Apply unlocks a locked layout before it renames the file, then locks the
+    //! file again at the path it has after the rename. Locking the old path does
+    //! not restore the lock: after the rename that path has no file.
+    const QString oldFile = m_tmp.path() + QStringLiteral("/Work.layout.latte");
+    const QString newFile = m_tmp.path() + QStringLiteral("/Office.layout.latte");
+
+    QFile file(oldFile);
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    file.write("[LayoutSettings]\n");
+    file.close();
+
+    Latte::Layouts::LayoutFileLock::lock(oldFile);
+    QVERIFY(!ownerCanWrite(oldFile));
+
+    Latte::Layouts::LayoutFileLock::unlock(oldFile);
+    QVERIFY(ownerCanWrite(oldFile));
+    QVERIFY(QFile::rename(oldFile, newFile));
+
+    Latte::Layouts::LayoutFileLock::lock(oldFile);
+    QVERIFY(!QFileInfo::exists(oldFile));
+    QVERIFY(ownerCanWrite(newFile));
+
+    Latte::Layouts::LayoutFileLock::lock(newFile);
+    QVERIFY(!ownerCanWrite(newFile));
+
+    Latte::Layouts::LayoutFileLock::unlock(newFile);
+    QVERIFY(ownerCanWrite(newFile));
+}
+
+void StorageLogicTest::lockOfMissingLayoutFileChangesNothing()
+{
+    const QString missingFile = m_tmp.path() + QStringLiteral("/Missing.layout.latte");
+
+    Latte::Layouts::LayoutFileLock::lock(missingFile);
+    Latte::Layouts::LayoutFileLock::unlock(missingFile);
+
+    QVERIFY(!QFileInfo::exists(missingFile));
 }
 
 QTEST_MAIN(StorageLogicTest)

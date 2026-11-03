@@ -949,9 +949,12 @@ add_executable(blockhidingeventstest EXCLUDE_FROM_ALL blockhidingeventstest.cpp)
 target_link_libraries(blockhidingeventstest Qt6::Core Qt6::Test)
 latte_add_test(blockhidingeventstest)
 
-set(storagelogictest_SRCS storagelogictest.cpp)
+set(storagelogictest_SRCS
+    storagelogictest.cpp
+    ../app/layouts/layoutfilelock.cpp
+)
 add_executable(storagelogictest EXCLUDE_FROM_ALL ${storagelogictest_SRCS})
-target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data)
+target_include_directories(storagelogictest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app ${CMAKE_CURRENT_SOURCE_DIR}/../app/data ${CMAKE_CURRENT_SOURCE_DIR}/../app/layouts)
 target_link_libraries(storagelogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(storagelogictest)
 

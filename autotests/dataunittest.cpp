@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
@@ -77,6 +78,8 @@ private Q_SLOTS:
     void layoutColorSetDataPopulatesAllFields();
     void layoutIconDetectsEmptyAndComparesFields();
     void layoutsTableSubtractsAndMarksFreeActivities();
+    void layoutsTableRenamesNameChainKeepingIdsUnique();
+    void layoutsTableRenamesSwappedNamesKeepingIdsUnique();
     void preferencesDefaultsRoundTrip();
     void preferencesAutostartDefaultsToEnabled();
     void preferencesMetaHoldIsAnOptIn();
@@ -585,6 +588,87 @@ void DataUnitTest::layoutsTableSubtractsAndMarksFreeActivities()
 
     all.setLayoutForFreeActivities(second.id);
     QVERIFY(all[second.id].isForFreeActivities());
+}
+
+void DataUnitTest::layoutsTableRenamesNameChainKeepingIdsUnique()
+{
+    //! Apply renames Work->Office and Office->Home at once: the Work file becomes
+    //! the Office file, and the Office file becomes the Home file. The row whose
+    //! old id is Office must not be rewritten again after the first rename.
+    const QString workFile = QStringLiteral("/layouts/Work.layout.latte");
+    const QString officeFile = QStringLiteral("/layouts/Office.layout.latte");
+    const QString homeFile = QStringLiteral("/layouts/Home.layout.latte");
+    const QString otherFile = QStringLiteral("/layouts/Other.layout.latte");
+
+    Layout renamedFromWork;
+    renamedFromWork.id = workFile;
+    renamedFromWork.name = QStringLiteral("Office");
+
+    Layout renamedFromOffice;
+    renamedFromOffice.id = officeFile;
+    renamedFromOffice.name = QStringLiteral("Home");
+
+    Layout untouched;
+    untouched.id = otherFile;
+    untouched.name = QStringLiteral("Other");
+
+    LayoutsTable table;
+    table << renamedFromWork;
+    table << renamedFromOffice;
+    table << untouched;
+
+    QHash<QString, QString> newFileForOldId;
+    newFileForOldId[workFile] = officeFile;
+    newFileForOldId[officeFile] = homeFile;
+
+    const LayoutsTable renamed = table.withRenamedIds(newFileForOldId);
+    QCOMPARE(renamed.rowCount(), 3);
+    QCOMPARE(renamed[0u].id, officeFile);
+    QCOMPARE(renamed[1u].id, homeFile);
+    QCOMPARE(renamed[2u].id, otherFile);
+    QVERIFY(renamed[0u].id != renamed[1u].id);
+
+    //! names are not touched by the id rewrite, and the input table is unchanged
+    QCOMPARE(renamed[0u].name, QStringLiteral("Office"));
+    QCOMPARE(renamed[1u].name, QStringLiteral("Home"));
+    QCOMPARE(table[0u].id, workFile);
+    QCOMPARE(table[1u].id, officeFile);
+}
+
+void DataUnitTest::layoutsTableRenamesSwappedNamesKeepingIdsUnique()
+{
+    //! Apply swaps the names of Work and Office: each file takes the other name.
+    //! Both old ids are also new ids, so a row-by-row rewrite would give both rows
+    //! the same id.
+    const QString workFile = QStringLiteral("/layouts/Work.layout.latte");
+    const QString officeFile = QStringLiteral("/layouts/Office.layout.latte");
+
+    Layout firstRow;
+    firstRow.id = workFile;
+    firstRow.name = QStringLiteral("Office");
+
+    Layout secondRow;
+    secondRow.id = officeFile;
+    secondRow.name = QStringLiteral("Work");
+
+    LayoutsTable table;
+    table << firstRow;
+    table << secondRow;
+
+    QHash<QString, QString> newFileForOldId;
+    newFileForOldId[workFile] = officeFile;
+    newFileForOldId[officeFile] = workFile;
+
+    const LayoutsTable swapped = table.withRenamedIds(newFileForOldId);
+    QCOMPARE(swapped.rowCount(), 2);
+    QCOMPARE(swapped[0u].id, officeFile);
+    QCOMPARE(swapped[1u].id, workFile);
+    QCOMPARE(swapped[0u].name, QStringLiteral("Office"));
+    QCOMPARE(swapped[1u].name, QStringLiteral("Work"));
+
+    //! each file is found by its id with the name it now carries
+    QCOMPARE(swapped[officeFile].name, QStringLiteral("Office"));
+    QCOMPARE(swapped[workFile].name, QStringLiteral("Work"));
 }
 
 void DataUnitTest::preferencesDefaultsRoundTrip()
