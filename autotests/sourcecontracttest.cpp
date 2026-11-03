@@ -396,6 +396,11 @@ private Q_SLOTS:
     void layoutsSaveLocksRenamedLayoutsAtTheirNewFile();
     void layoutsSaveHandsSynchronizerTableAfterRename();
     void synchronizerGuardsStoredLayoutLookups();
+    void layoutsSaveMovesFilesThroughCheckedTemporaryDir();
+    void layoutsSaveMovesBeforeRewritingIds();
+    void layoutsSaveRenamesOnlyMovedLayouts();
+    void layoutFileMoveRenamesOnlyThroughNoOverwriteCheck();
+    void layoutScannersListOnlyFiles();
     void uniqueNameExhaustionFallsBackToRandomSuffix();
     void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
     void appdataComponentIdKeepsHyphenInLastSegment();
@@ -4994,6 +4999,99 @@ void SourceContractTest::synchronizerGuardsStoredLayoutLookups()
     QVERIFY(guard >= 0);
     QVERIFY(store > guard);
     QVERIFY(!src.mid(guard, store - guard).contains(QLatin1Char(';')));
+}
+
+void SourceContractTest::layoutsSaveMovesFilesThroughCheckedTemporaryDir()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // The temporary directory is created next to the layouts, so every move is a rename on one filesystem and
+    // cannot fail for lack of space in /tmp. Its name is hidden from the scanners. /tmp is only the fallback,
+    // and both creations are checked with isValid(): an unchecked directory let the old Apply move files nowhere.
+    QVERIFY(src.contains(QStringLiteral("QTemporaryDir layoutTempDir(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral(\"/.apply-XXXXXX\"));")));
+    QVERIFY(!src.contains(QStringLiteral("QTemporaryDir layoutTempDir;")));
+    QVERIFY(src.contains(QStringLiteral("layoutTempDir = QTemporaryDir();")));
+    QCOMPARE(src.count(QStringLiteral("if (!layoutTempDir.isValid()) {")), 2);
+
+    // Each rename of a layout file goes through LayoutFileMove::moveFiles, which reports every failure. A bare
+    // rename would drop the result the way the old Apply did.
+    QVERIFY(!src.contains(QStringLiteral(".rename(")));
+    QVERIFY(src.contains(QStringLiteral("Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path())")));
+
+    // The directory is kept only when a file could not be moved back; QTemporaryDir removes it on every other return.
+    // uniqueTempDirectory() has its own setAutoRemove(false) for another purpose, so the check is made where it is used.
+    const int keep = src.indexOf(QStringLiteral("if (!moveResult.unrecovered.isEmpty()) {"));
+
+    QVERIFY(keep >= 0);
+    QVERIFY(src.mid(keep, 120).contains(QStringLiteral("layoutTempDir.setAutoRemove(false);")));
+}
+
+void SourceContractTest::layoutsSaveMovesBeforeRewritingIds()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // newFileForOldId and the model ids describe the files after the moves, so the moves come first; the active
+    // layout is renamed only after the moves as well, because a rename of the object moves its file path.
+    const int move = src.indexOf(QStringLiteral("LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path())"));
+    const int rewrite = src.indexOf(QStringLiteral("withRenamedIds(newFileForOldId)"));
+    const int activeRename = src.indexOf(QStringLiteral("layoutPtr->renameLayout(newLayoutName);"));
+
+    QVERIFY(move >= 0);
+    QVERIFY(rewrite > move);
+    QVERIFY(activeRename > move);
+}
+
+void SourceContractTest::layoutsSaveRenamesOnlyMovedLayouts()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // A layout whose move failed keeps its id, its name and its active object. The id map and the active layout
+    // rename are fed only from the branch in which the move succeeded, and the failed branch gives the row back
+    // the name of its file.
+    const int moved = src.indexOf(QStringLiteral("if (moveResult.moved[i]) {"));
+
+    QVERIFY(moved >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("newFileForOldId[renamed.idInfo.oldId] = renamed.idInfo.newId;")) > moved);
+    QVERIFY(src.indexOf(QStringLiteral("activeLayoutsToRename[renamed.idInfo.newName] = renamed.central;")) > moved);
+    QVERIFY(src.contains(QStringLiteral("restoredLayout.name = renamed.idInfo.oldName;")));
+    QVERIFY(src.contains(QStringLiteral("m_model->setLayoutProperties(restoredLayout);")));
+    QVERIFY(src.indexOf(QStringLiteral("m_model->setLayoutProperties(restoredLayout);")) > moved);
+}
+
+void SourceContractTest::layoutFileMoveRenamesOnlyThroughNoOverwriteCheck()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/layoutfilemove.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // Every rename goes through renameWithoutOverwrite(), which refuses an existing target. A bare QFile::rename()
+    // in moveFiles() could overwrite the file of a layout that Apply does not move.
+    QCOMPARE(src.count(QStringLiteral("QFile::rename(")), 1);
+    QVERIFY(src.contains(QStringLiteral("return !QFileInfo::exists(target) && QFile::rename(source, target);")));
+}
+
+void SourceContractTest::layoutScannersListOnlyFiles()
+{
+    // The temporary directory of Apply lives in the layouts directory. The scanners of that directory must keep
+    // listing files only, so a directory is never taken for a layout.
+    const QStringList scanners = {
+        QStringLiteral("/app/layouts/synchronizer.cpp"),
+        QStringLiteral("/app/layouts/importer.cpp"),
+    };
+
+    for (const QString &path : scanners) {
+        QFile f(QStringLiteral(LATTE_SOURCE_DIR) + path);
+        QVERIFY2(f.open(QFile::ReadOnly), qPrintable(path));
+        const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+        QVERIFY2(src.contains(QStringLiteral("layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks)")), qPrintable(path));
+    }
 }
 
 void SourceContractTest::uniqueNameExhaustionFallsBackToRandomSuffix()
