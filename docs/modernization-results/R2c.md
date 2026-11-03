@@ -7,7 +7,9 @@ the 43-check gate ([CI validation](#ci-validation)). [Fix batch 3](#fix-batch-3)
 fixes the last six checks; it is in `main` (`6b51b43a6`) and passed CI run
 41452548625 (23 jobs, after one rerun of a Mageia mirror failure) and the host
 desktop smoke, except for the Meta hold check, which fails on `v1.2.62` as well
-([follow-ups](#follow-ups), item 10).
+([follow-ups](#follow-ups), item 10, which records its fix in `61963df10`). The
+[follow-up fixes](#follow-up-fixes) (items 3, 5, 6, 7 and 9) passed the local checks and a
+host desktop check at `131c87dc8`; one control run of that check is open.
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -741,29 +743,53 @@ validation found and deliberately left alone:
    two secondary screens), so it is read from the code and not observed; if a user
    report shows a difference, see
    [the group G report](R2c-range-loop-detach-g.md#behavior-change-originalviewcpp225).
-3. **`app/main.cpp` is invisible to `non-pod-global-static`.** clazy 1.17 skips a
-   namespace-scope `static` without an initializer in a file named exactly
-   `main.cpp`, so `s_userLocalQmlPaths` and `s_userLocalPluginPaths` (lines 752-753)
-   are not reported. The gate's fixture has another name and cannot show it. Close it
-   by converting the two statics or with a differently named fixture.
+3. **`app/main.cpp` is invisible to `non-pod-global-static` (fixed, `6ee4ff685`).**
+   clazy 1.17 skips a namespace-scope `static` without an initializer in a file named
+   exactly `main.cpp`, so `s_userLocalQmlPaths` and `s_userLocalPluginPaths` were not
+   reported. The two lists are now function-local statics behind accessors, and the
+   source contract `mainCppKeepsQtContainerStaticsFunctionLocal` rejects a new
+   namespace-scope Qt string, list, hash or map static in that file; the contract fails
+   on the old `main.cpp`.
 4. **`UniversalSettings::screens` has no NOTIFY.** A `screensCountChanged` signal
    exists; deciding whether the list property should notify on screen hotplug changes
    when QML bindings re-evaluate.
-5. **`IconItem::setSmooth()` does not emit `smoothChanged()`**, so bindings on
-   `smooth` are not re-evaluated when it changes (found by batch E).
-6. **Three getters nothing calls**, found by batch D: `GenericLayout::qmlFreeEdges`,
-   `VisibilityManager::isValidMode` and `LayoutManager::isModernDockStyle` (the QML
-   property of the same name is a different thing). A dead-code review under rule 5
-   of `AGENTS.md` can remove them.
+5. **`IconItem::setSmooth()` did not emit `smoothChanged()` (fixed, `c1879072f`)**, so
+   bindings on `smooth`, such as `smooth: taskIconItem.smooth` in `TaskIcon.qml`, were
+   not re-evaluated when it changed (found by batch E). The setter now emits after a real
+   change; a `QSignalSpy` test and a QML binding test in `declarativecoreunittest` fail
+   without the emit.
+6. **Three getters nothing calls (removed, `2a905e805`)**, found by batch D:
+   `GenericLayout::qmlFreeEdges`, `VisibilityManager::isValidMode` and
+   `LayoutManager::isModernDockStyle`, with the helper only the last one used. A consumer
+   trace (C++ callers and overrides, QML and JS, string-based calls, D-Bus XML, source
+   contracts, documented third-party APIs) found none; `git grep` on the result finds no
+   reference outside the historical records. `Indicator::isModernDockStyle` and the QML
+   property of the same name are different things and stay.
 7. **Variables with lost intent**, recorded by batch C in
-   [R2c-unused-non-trivial-variable](R2c-unused-non-trivial-variable.md#lost-intent)
-   (for example `switchToLayout` and `knownActivities` in `Layouts::save()`).
+   [R2c-unused-non-trivial-variable](R2c-unused-non-trivial-variable.md#lost-intent).
+   Reviewed on 2026-11-03 by reading the code and the upstream history; the review ran
+   nothing and reproduced nothing ([R2c-lost-intent-review](R2c-lost-intent-review.md)).
+   Six of the eight places are harmless leftovers. The other places lead to four defects
+   next to them and one decision. F1 to F4 are fixed ([Follow-up fixes](#follow-up-fixes)):
+   F1, an out-of-range read of the activity table for an unknown activity id (`f03b319a3`:
+   both `GenericTable::operator[](const QString &)` overloads return a default record for
+   an unknown id, and the Activities column skips ids that have no row); and F2 to F4
+   (`00aaf6ad5`): layout ids corrupted by a rename chain or swap in one Apply, a renamed
+   locked layout that lost its lock, and synchronizer ids that stayed at their pre-rename
+   paths. F5 is open: the Move To Layout menu no longer marks running layouts, and the
+   review could not tell whether the removal in 2021 was intended. The choice is to
+   restore the marking or to accept the menu as it is.
 8. **Loops clazy does not report** and that were left alone are listed in the
    [umbrella report](R2c-range-loop-detach.md#left-alone-not-findings).
-9. **Hardening of the runner:** an offline unit test of the runner's parsing,
-   selection and fail-closed paths with a fake `clazy-standalone`, and a
-   `knscompatunittest` case with `linktarget`, `optional plugin` and `classname`
-   lines in the templates `qmldir`.
+9. **Hardening of the runner (done, `43bf2317a`):** `clazyrunnertest` runs the real
+   `scripts/test-clazy.py` in a temporary checkout against a fake `clazy-standalone`
+   (22 cases: finding, unreadable diagnostic, compiler error, non-zero exit, hung unit,
+   a clazy that ignores the check selection, an enabled-checks list that differs from
+   `GATED_CHECKS`, an unrejected negative fixture, a missing clazy, a database that is not
+   from a Clang build), and `knscompatunittest` has a case in which the system templates
+   `qmldir` carries `linktarget`, `optional plugin`, `classname` and `prefer` lines that
+   `ensureKnsCompat()` must drop while it keeps the module, typeinfo and type lines. Each
+   new test fails under a mutation of the code it guards.
 10. **Meta press-and-hold could not start on Wayland (fixed on the branch
     `claude/meta-hold-wayland`, see the last paragraph).** `ModifierTracker` listens to
     `KModifierKeyInfo::keyPressed`. On Wayland that class reports the Meta key as
@@ -828,13 +854,177 @@ validation found and deliberately left alone:
     because the experiment in a `mageia:cauldron` container was interrupted).
     `autotests/packagingcontracttest.cpp` requires that Dockerfile to keep the text
     `dnf install -y --refresh` and to avoid `dnf upgrade`.
+12. **`Layouts::save()` does not check its file moves (open).** Apply moves each renamed
+    layout file into a `QTemporaryDir` and from there to `~/.config/latte`, ignores the
+    result of both `QFile::rename()` calls and never asks `QTemporaryDir::isValid()`. The
+    temporary directory is in `/tmp`, a tmpfs on the development host, and the layouts are
+    on btrfs, so each move is a copy followed by a delete, and the copy fails when `/tmp`
+    is full. The model ids are rewritten to the new paths whether or not the move
+    happened, so the model and the files can disagree, and a later Apply then writes a
+    layout's properties into the file the model names. This is read from the code and fits
+    one observation; it is not reproduced. During the desktop check of the follow-up fixes
+    on 2026-11-03 an unrelated download had filled the 2 GB `/tmp`: the dock log, which
+    is written there, stops inside the first Apply at 19:50:24, and `df` showed 0 bytes
+    free at 19:53. The user renamed `LattePlayA` to `LattePlayA1`, `LattePlayB` to
+    `LattePlayA` and `LattePlayA1` to `LattePlayB`, with one Apply for each, and afterwards
+    the file `LattePlayB` had gained the unknown activity id of `LattePlayA`; `LattePlayA`
+    was untouched and no names were swapped. The failing call was not captured. The same
+    renames done as a chain in one Apply, with free space in `/tmp`, gave the right files.
+    The three separate Applies were not repeated with free space, so the full `/tmp` is the
+    likely cause, not a proven one. A fix would check every `rename()` and the temporary
+    directory, create that directory next to the layouts (one filesystem, so the move is a
+    rename and not a copy), keep the model ids of a layout whose move failed, and tell the
+    user. A test needs the failure injected, for example by starting the dock with `TMPDIR`
+    pointing at a directory that cannot be written.
+
+## Follow-up fixes
+
+Status: Complete, with one open control run of the desktop check
+([Desktop check](#desktop-check)). Follow-ups 3, 5, 6 and 9, and F1 to F4 of follow-up 7,
+are fixed on the branch `claude/r2c-lost-intent-integration` (code at `131c87dc8`), which
+passed the checks below. Follow-up 10 was fixed earlier (`61963df10`) and is not part of
+this section.
+
+Six sessions, all Claude Haiku 5.5 at medium effort, implemented the fixes, each on its
+own branch from `61963df10`. The main session wrote the briefs and the file sets, read
+every branch and merged them with `--no-ff` in two rounds: follow-ups 3, 5, 6 and 9 on the
+branch `claude/r2c-followups-integration` (checked at `f9073543e`), then F1 and F2 to F4
+on top of it on `claude/r2c-lost-intent-integration` (checked at `131c87dc8`).
+
+| Follow-up | Change | Commit | Merge |
+| --- | --- | --- | --- |
+| 3. `app/main.cpp` statics | Function-local statics behind accessors; a source contract | `6ee4ff685` | `0971a4ba9` |
+| 5. `IconItem::setSmooth()` | Emits `smoothChanged()`; two tests | `c1879072f` | `62ce69bf8` |
+| 6. Three getters nothing calls | Removed after a consumer trace | `2a905e805` | `e0b6e6fe8` |
+| 9. Runner hardening | `clazyrunnertest` (22 cases), one `knscompatunittest` case | `43bf2317a` | `f9073543e` |
+| 7, F1. Unknown activity id | `GenericTable` lookup and `Activities::paint()` | `f03b319a3` | `2fdc4d259` |
+| 7, F2 to F4. Apply after a rename | Row ids, lock and synchronizer table | `00aaf6ad5` | `131c87dc8` |
+
+What the two newest fixes changed (the other four are described in the follow-up items):
+
+- **F1 (`f03b319a3`).** `GenericTable::operator[](const QString &)` found the row with its
+  own loop and then indexed the list with -1 when the id was missing. Qt debug builds
+  assert on that index and release builds read out of range. A layout file can name an
+  activity this machine does not have (deleted while Latte was not running, or copied from
+  another computer), and `Activities::paint()` looked up every assigned id without a
+  check. Both overloads now use `indexOf()` and return a default record for an unknown id.
+  The non-const overload must return a reference, so it returns one shared record that is
+  reset on each unknown lookup: a write through it is discarded, a reference kept across a
+  second unknown lookup sees the reset record, and `containsId()` is how a caller tells a
+  missing id from a row. `paint()` skips ids that have no row. The result for an id that
+  exists is unchanged. Tests: two `dataunittest` cases and one `sourcecontracttest`
+  contract.
+- **F2 to F4 (`00aaf6ad5`).** `Layouts::save()` maps the id each renamed layout had to its
+  final file once (`newFileForOldId`), and the new `LayoutsTable::withRenamedIds()`
+  rewrites every row from that one snapshot, so a chain or a swap cannot match a row twice
+  (F2). The lock of a renamed layout goes to the file the layout has after the rename,
+  through the new path-based helper `Latte::Layouts::LayoutFileLock`
+  (`app/layouts/layoutfilelock.{h,cpp}`), which `Storage::lock()` and `unlock()` use as
+  well (F3). The synchronizer receives `m_model->currentLayoutsData()` taken after the
+  rename, `switchToLayoutInMultipleModeBasedOnActivities()` no longer writes an empty
+  stored layout back into its table, and the two lookups of explicit layouts through
+  `idForName()` (in `onActivityRemoved()` and in the loop over the layouts assigned to the
+  current activity in `switchToLayoutInMultipleModeBasedOnActivities()`) skip names that
+  are not in the table (F4). Tests: two `dataunittest` cases (a name chain and a swap), two
+  `storagelogictest` cases (a lock at the new path; locking a missing file changes
+  nothing) and four `sourcecontracttest` contracts (the Apply order and the synchronizer
+  guards). Only the last two contracts cover F4, and a source contract does not run the
+  code.
+
+### Checks on the integration branch at `131c87dc8`
+
+The first round was checked the same way at `f9073543e`; the table gives both results.
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P -j8`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8, CMake 4.3.4, Qt 6.11.2) | Exit 0 each at both commits; 0 compiler, linker or CMake diagnostics; 59/59 tests passed in each preset (CI registers one fewer, without `appstreamtest`) |
+| `python3 -I autotests/installscriptbehavior.py` | Pass at both commits |
+| `latte-r2c-clazy:noble` container (clazy 1.17, Qt 6.11.1): fresh Clang Debug build, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 4` | Exit 0 at both (852 s and 709 s including the build); 49 fixtures rejected by their own checks; no finding in 153 production sources at `f9073543e` and in 154 at `131c87dc8` (the new `layoutfilelock.cpp`) |
+| Debian 13 container, `verify-install.sh debian13` as in the CI job: GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5 | Exit 0 at both (543 s and 531 s): system and user build, install and uninstall; 0 compiler warnings |
+
+### Mutation checks
+
+The main session ran one mutation per guarded behavior of the two newest fixes on
+`131c87dc8` (gcc-debug build, 2026-11-03). Each mutation breaks one production file,
+rebuilds the test target when the test compiles that file (the source contracts read the
+sources when they run), runs the test and restores the file. Unmutated, `dataunittest` (47
+cases), `storagelogictest` (24) and `sourcecontracttest` (225) pass, and they pass again
+after the files are restored. The tests of follow-ups 3, 5 and 9 were mutated by their own
+sessions; the results are in the items above.
+
+| Mutation | Failing test |
+| --- | --- |
+| The non-const `GenericTable::operator[]` without the unknown-id branch | `DataUnitTest::activitiesTableLookupOfMissingIdReturnsEmptyActivity` (the Qt assertion stops the run) |
+| The const `operator[]` without the unknown-id branch | The same test, the same assertion |
+| `Activities::paint()` as before `f03b319a3` | `SourceContractTest::activitiesDelegatePaintSkipsUnknownActivityIds` |
+| `LayoutsTable::withRenamedIds()` rewriting the live table one rename after the other | `layoutsTableRenamesSwappedNamesKeepingIdsUnique` in both key orders tried; `layoutsTableRenamesNameChainKeepingIdsUnique` in the descending order only |
+| `LayoutFileLock::lock()` never locking | `StorageLogicTest::renamedLockedLayoutIsLockedAtItsNewPath` |
+| `layoutscontroller.cpp` as before `00aaf6ad5` | `layoutsSaveRewritesRenamedIdsFromOneSnapshot`, `layoutsSaveLocksRenamedLayoutsAtTheirNewFile` and `layoutsSaveHandsSynchronizerTableAfterRename` |
+| `synchronizer.cpp` as before `00aaf6ad5` | `synchronizerGuardsStoredLayoutLookups` |
+
+### Desktop check
+
+The user-mode Debug build of `131c87dc8` (`install.sh --user`, so Qt assertions are on) ran
+on the Gentoo host (Plasma 6.7.5, Wayland, two screens) from the Plasma session
+environment, with the layout `我的布局` and two throwaway layouts that the main session
+created in `~/.config/latte/` and removed afterwards: `LattePlayA`, a copy of `Empty` with
+the color green and an activity id this machine does not have
+(`00000000-0000-4000-8000-00000000dead`), and `LattePlayB`, a copy of `Default` with the
+color blue. The Layouts page does not show colors, so the main session read the layout
+files on disk after the steps; the user ran the steps. The checksums of the three real
+layouts were recorded before the run and are unchanged after it.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| 1. Startup: both docks, widgets, launchers, task icons | Pass | User report; the start log has no warning, no `No such method` and no core |
+| 2. Task icons: hover zoom with smooth edges (follow-up 5) | Pass | User report. The fix is a change notification, so this shows no regression, not the fix itself |
+| 3. Meta+A (cycle through the dock settings windows) | Not reachable | The user reports that Meta+A is Plasma's desktop-switching shortcut on this setup, so the check could not be done; the conflict was not examined further |
+| 4. Preferences > Layouts opens with a layout that names an unknown activity (F1) | Pass in both runs | The page painted `LattePlayA` and the details dialog opened twice (19:49:20 and 19:49:26 in the first run); no assertion and no fatal line |
+| 5. One Apply exchanges the names of `LattePlayA` and `LattePlayB` through a temporary name (F2) | Pass in the second run | One Apply at 20:05:19 moved both files through the temporary directory. Afterwards `LattePlayA.layout.latte` held the content of the former `LattePlayB` (blue, no activity, 1424 bytes) and `LattePlayB.layout.latte` that of the former `LattePlayA` (green, the unknown activity id, 289 bytes) |
+| 6. A second Apply in the same session: the row now named `LattePlayB` is set read-only and renamed to `LattePlayC` (F3, and a check that the ids after step 5 are right) | Pass in the second run | Apply at 20:11:24: `LattePlayC.layout.latte` exists with mode 0444, green, with the unknown activity id; `LattePlayB.layout.latte` is gone; `LattePlayA.layout.latte` is unchanged (modified at 20:05:19) |
+
+- **First run, full `/tmp`.** From 19:37 the user did checks 1, 2 and 4 (check 3 was not
+  reachable) and then, because the Layouts page refuses two rows with the same name, a
+  variant of step 5 with three single renames (`LattePlayA` to `LattePlayA1`, `LattePlayB`
+  to `LattePlayA`, `LattePlayA1` to `LattePlayB`), one Apply each. `/tmp` was full by then:
+  the dock log, written to `/tmp`, stops at 19:50:24 inside the first Apply. On disk
+  `LattePlayA` was unchanged (modified at 19:37:11) and `LattePlayB` had been rewritten at
+  19:50:49 and carried the unknown activity id of `LattePlayA`; nothing was exchanged. The
+  three real layouts were unchanged, and `coredumpctl` shows no core.
+  [Follow-up 12](#follow-ups) holds the explanation that fits this and what is not proven.
+- **Second run, free `/tmp` (89 MB).** The test layouts were created again and steps 5 and
+  6 were done once each, with the three renames of step 5 made in the table and a single
+  Apply after them. The log has 485 lines, no warning and no `No such method`; the dock
+  quit with the teardown marker `Latte Corona - deleted...`, no Fatal or ASSERT, and no
+  core followed.
+- **What the two runs show and what they do not.** The runs differ in more than the free
+  space: the first applied three single renames one after the other, the second applied
+  the chain in one Apply. With free space, the chain, the lock plus rename that followed
+  it, and the unknown activity id all behave correctly. The three separate Applies were
+  not repeated with free space, so the full `/tmp` is the likely cause of the first run's
+  result, not a proven one. That control run is open.
+- **Not reached.** F4 (it needs the multiple-layouts mode and a D-Bus `switchToLayout`
+  call to a renamed inactive layout) and Meta+A. None of F1 to F4 was reproduced on a
+  desktop build before the fix, so the desktop check shows the right behavior of the fixed
+  build, not the defect.
+
+### Not run in the follow-up fixes
+
+A build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2); the Fedora VM, which is left to
+R5; the Debian 13 VM, which has no build tools (the Debian 13 container build ran); the
+multiple-layouts mode; a desktop run of the pre-fix build; the control run described
+above.
 
 ## Next actions
 
 The R2c fix slices are complete: each of the 19 checks of the inventory is fixed or
 excepted with a reason, the gate holds 49 checks, and [fix batch 3](#fix-batch-3) passed
 CI and the desktop smoke. What is left is the [follow-ups](#follow-ups): decisions and
-defects the slices found on the way, not findings.
+defects the slices found on the way, not findings. Items 3, 5, 6, 9 and 10 and F1 to F4 of
+item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Items 1, 2 and 4 each need a
+decision and a test, F5 of item 7 needs the decision about the Move To Layout menu, item
+11 is a CI hardening, and item 12 is a defect that needs a fix and a failure-injection
+test.
 
 ## Reproducing the environment
 
