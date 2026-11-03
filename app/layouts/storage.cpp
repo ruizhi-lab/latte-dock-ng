@@ -12,6 +12,7 @@
 #include "appletids.h"
 #include "importedcontainments.h"
 #include "importer.h"
+#include "layoutfilelock.h"
 #include "manager.h"
 #include "../lattecorona.h"
 #include "../screenpool.h"
@@ -225,20 +226,12 @@ Plasma::Containment *Storage::subContainmentOf(const Plasma::Corona *corona, con
 
 void Storage::lock(const Layout::GenericLayout *layout)
 {
-    QFileInfo layoutFileInfo(layout->file());
-
-    if (layoutFileInfo.exists() && layoutFileInfo.isWritable()) {
-        QFile(layout->file()).setPermissions(QFileDevice::ReadUser | QFileDevice::ReadGroup | QFileDevice::ReadOther);
-    }
+    LayoutFileLock::lock(layout->file());
 }
 
 void Storage::unlock(const Layout::GenericLayout *layout)
 {
-    QFileInfo layoutFileInfo(layout->file());
-
-    if (layoutFileInfo.exists() && !layoutFileInfo.isWritable()) {
-        QFile(layout->file()).setPermissions(QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ReadGroup | QFileDevice::ReadOther);
-    }
+    LayoutFileLock::unlock(layout->file());
 }
 
 

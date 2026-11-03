@@ -22,6 +22,7 @@
 #include "../../data/uniqueidinfo.h"
 #include "../../layout/centrallayout.h"
 #include "../../layouts/importer.h"
+#include "../../layouts/layoutfilelock.h"
 #include "../../layouts/manager.h"
 #include "../../layouts/synchronizer.h"
 #include "../../templates/templatesmanager.h"
@@ -989,20 +990,26 @@ void Layouts::save()
     //! this is necessary in case two layouts have to swap names
     //! so we copy first the layouts in a temp directory and afterwards all
     //! together we move them in the official layout directory
+    //! newFileForOldId maps the id each renamed layout had before Apply to its final file
+    QHash<QString, QString> newFileForOldId;
+
     for (int i = 0; i < alteredIdsInfo.count(); ++i) {
         Data::UniqueIdInfo idInfo = alteredIdsInfo[i];
 
         QString newFile = Latte::Layouts::Importer::layoutUserFilePath(idInfo.newName);
         QFile(idInfo.newId).rename(newFile);
 
+        newFileForOldId[idInfo.oldId] = newFile;
+    }
 
-        //! updating the #SETTINGSID in the model for the layout that was renamed
-        for (int j = 0; j < m_model->rowCount(); ++j) {
-            Latte::Data::Layout jLayout = m_model->at(j);
+    //! updating the #SETTINGSID in the model for the layouts that were renamed; the rows are
+    //! rewritten from one snapshot, so a name chain or swap cannot match a row twice
+    //! (see LayoutsTable::withRenamedIds)
+    const Latte::Data::LayoutsTable renamedLayouts = m_model->currentLayoutsData().withRenamedIds(newFileForOldId);
 
-            if (jLayout.id == idInfo.oldId) {
-                m_model->setData(m_model->index(j, Model::Layouts::IDCOLUMN), newFile, Qt::UserRole);
-            }
+    for (int j = 0; j < renamedLayouts.rowCount(); ++j) {
+        if (renamedLayouts[j].id != m_model->at(j).id) {
+            m_model->setData(m_model->index(j, Model::Layouts::IDCOLUMN), renamedLayouts[j].id, Qt::UserRole);
         }
     }
 
@@ -1013,25 +1020,19 @@ void Layouts::save()
         }
     }
 
-    //! lock layouts in the end when the user has chosen it
+    //! lock layouts in the end when the user has chosen it; the lock goes to the file the layout
+    //! has after the rename, because a layout object may still point to the pre-rename path
     for (int i = 0; i < alteredLayouts.count(); ++i) {
         Latte::Data::Layout layoutCurrentData = alteredLayouts[i];
-        Latte::Data::Layout layoutOriginalData = m_model->originalData(layoutCurrentData.id);
-        layoutOriginalData = layoutOriginalData.isEmpty() ? layoutCurrentData : layoutOriginalData;
 
-        Latte::CentralLayout *layoutPtr = m_handler->corona()->layoutsManager()->synchronizer()->centralLayout(layoutOriginalData.name);
-
-        if (!layoutPtr) {
-            layoutPtr = new Latte::CentralLayout(this, layoutCurrentData.id);
-        }
-
-        if (layoutCurrentData.isLocked && layoutPtr && layoutPtr->isWritable()) {
-            layoutPtr->lock();
+        if (layoutCurrentData.isLocked) {
+            Latte::Layouts::LayoutFileLock::lock(newFileForOldId.value(layoutCurrentData.id, layoutCurrentData.id));
         }
     }
 
-    //! send new layouts data in layoutsmanager
-    m_handler->corona()->layoutsManager()->synchronizer()->setLayoutsTable(currentLayouts);
+    //! send new layouts data in layoutsmanager; the table is taken after the rename above,
+    //! a copy taken before it would keep the pre-rename ids in the synchronizer
+    m_handler->corona()->layoutsManager()->synchronizer()->setLayoutsTable(m_model->currentLayoutsData());
 
     //! make sure that there is a layout for free activities
     //! send to layout manager in which layout to switch

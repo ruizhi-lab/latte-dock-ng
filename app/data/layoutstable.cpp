@@ -33,6 +33,23 @@ LayoutsTable LayoutsTable::subtracted(const LayoutsTable &rhs) const
     return subtract;
 }
 
+LayoutsTable LayoutsTable::withRenamedIds(const QHash<QString, QString> &newIdForOldId) const
+{
+    LayoutsTable renamed(*this);
+
+    //! The lookup key is the id in this table (before the call), and the result goes to
+    //! renamed: a row written earlier in the loop is never matched again by a later row.
+    for (int i = 0; i < m_list.count(); ++i) {
+        const auto found = newIdForOldId.constFind(m_list[i].id);
+
+        if (found != newIdForOldId.constEnd()) {
+            renamed.m_list[i].id = found.value();
+        }
+    }
+
+    return renamed;
+}
+
 void LayoutsTable::setLayoutForFreeActivities(const QString &id)
 {
     int row = indexOf(id);
