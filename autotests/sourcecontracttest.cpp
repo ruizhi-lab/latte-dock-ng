@@ -5010,22 +5010,22 @@ void SourceContractTest::layoutsSaveMovesFilesThroughCheckedTemporaryDir()
     // The temporary directory is created next to the layouts, so every move is a rename on one filesystem and
     // cannot fail for lack of space in /tmp. Its name is hidden from the scanners. /tmp is only the fallback,
     // and both creations are checked with isValid(): an unchecked directory let the old Apply move files nowhere.
-    QVERIFY(src.contains(QStringLiteral("QTemporaryDir layoutTempDir(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral(\"/.apply-XXXXXX\"));")));
-    QVERIFY(!src.contains(QStringLiteral("QTemporaryDir layoutTempDir;")));
-    QVERIFY(src.contains(QStringLiteral("layoutTempDir = QTemporaryDir();")));
-    QCOMPARE(src.count(QStringLiteral("if (!layoutTempDir.isValid()) {")), 2);
+    QVERIFY(src.contains(QStringLiteral("auto layoutTempDir = std::make_unique<QTemporaryDir>(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral(\"/.apply-XXXXXX\"));")));
+    QVERIFY(!src.contains(QStringLiteral("auto layoutTempDir = std::make_unique<QTemporaryDir>();")));
+    QVERIFY(src.contains(QStringLiteral("layoutTempDir = std::make_unique<QTemporaryDir>();")));
+    QCOMPARE(src.count(QStringLiteral("if (!layoutTempDir->isValid()) {")), 2);
 
     // Each rename of a layout file goes through LayoutFileMove::moveFiles, which reports every failure. A bare
     // rename would drop the result the way the old Apply did.
     QVERIFY(!src.contains(QStringLiteral(".rename(")));
-    QVERIFY(src.contains(QStringLiteral("Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path())")));
+    QVERIFY(src.contains(QStringLiteral("Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir->path())")));
 
     // The directory is kept only when a file could not be moved back; QTemporaryDir removes it on every other return.
     // uniqueTempDirectory() has its own setAutoRemove(false) for another purpose, so the check is made where it is used.
     const int keep = src.indexOf(QStringLiteral("if (!moveResult.unrecovered.isEmpty()) {"));
 
     QVERIFY(keep >= 0);
-    QVERIFY(src.mid(keep, 120).contains(QStringLiteral("layoutTempDir.setAutoRemove(false);")));
+    QVERIFY(src.mid(keep, 120).contains(QStringLiteral("layoutTempDir->setAutoRemove(false);")));
 }
 
 void SourceContractTest::layoutsSaveMovesBeforeRewritingIds()
@@ -5036,7 +5036,7 @@ void SourceContractTest::layoutsSaveMovesBeforeRewritingIds()
 
     // newFileForOldId and the model ids describe the files after the moves, so the moves come first; the active
     // layout is renamed only after the moves as well, because a rename of the object moves its file path.
-    const int move = src.indexOf(QStringLiteral("LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path())"));
+    const int move = src.indexOf(QStringLiteral("LayoutFileMove::moveFiles(fileMoves, layoutTempDir->path())"));
     const int rewrite = src.indexOf(QStringLiteral("withRenamedIds(newFileForOldId)"));
     const int activeRename = src.indexOf(QStringLiteral("layoutPtr->renameLayout(newLayoutName);"));
 

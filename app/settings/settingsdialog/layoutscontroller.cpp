@@ -45,6 +45,9 @@
 #include <KArchive/KArchiveDirectory>
 #include <KMessageWidget>
 
+// std
+#include <memory>
+
 namespace Latte {
 namespace Settings {
 namespace Controller {
@@ -922,21 +925,23 @@ void Layouts::save()
     //! The name starts with a dot and the layout scanners list only "*.layout.latte" files, so the
     //! directory is never taken for a layout. QTemporaryDir removes it on every return from save(),
     //! except when a file could not be moved back (see below).
-    QTemporaryDir layoutTempDir(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral("/.apply-XXXXXX"));
+    //! It is held by a pointer because the fallback replaces the directory object: QTemporaryDir cannot be
+    //! copied, and its move assignment was not checked against the declared Qt minimum (6.6; it exists in 6.8.2).
+    auto layoutTempDir = std::make_unique<QTemporaryDir>(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral("/.apply-XXXXXX"));
 
-    if (!layoutTempDir.isValid()) {
+    if (!layoutTempDir->isValid()) {
         //! the default location is only the fallback: moves into it cross filesystems
-        layoutTempDir = QTemporaryDir();
+        layoutTempDir = std::make_unique<QTemporaryDir>();
     }
 
-    if (!layoutTempDir.isValid()) {
+    if (!layoutTempDir->isValid()) {
         //! nothing has been changed yet, so Apply stops here and the page keeps its changes
         m_handler->showInlineMessage(i18nc("settings: layouts apply failed", "Layouts could not be applied, no temporary directory can be created. Nothing was changed..."),
                                      KMessageWidget::Error);
         return;
     }
 
-    qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir.path();
+    qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir->path();
 
     QHash<QString, Latte::CentralLayout *> activeLayoutsToRename;
 
@@ -1023,7 +1028,7 @@ void Layouts::save()
         fileMoves << Latte::Layouts::LayoutFileMove::Request{renamed.idInfo.oldId, renamed.idInfo.newId};
     }
 
-    const Latte::Layouts::LayoutFileMove::Result moveResult = Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir.path());
+    const Latte::Layouts::LayoutFileMove::Result moveResult = Latte::Layouts::LayoutFileMove::moveFiles(fileMoves, layoutTempDir->path());
 
     //! newFileForOldId maps the id each renamed layout had before Apply to its final file. Only the
     //! layouts whose file moved are in it: a layout whose move failed keeps its id and its name, and
@@ -1067,7 +1072,7 @@ void Layouts::save()
     }
 
     if (!moveResult.unrecovered.isEmpty()) {
-        layoutTempDir.setAutoRemove(false);
+        layoutTempDir->setAutoRemove(false);
     }
 
     //! updating the #SETTINGSID in the model for the layouts that were renamed; the rows are
