@@ -60,6 +60,12 @@ Requires:       kf6-kirigami, kf6-kcmutils, kf6-knewstuff
 Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3 and newer. It
 provides an animated dock for tasks and widgets.
 
+# The RPM records libPlasma/libPlasmaQuick sonames automatically. Keep that
+# requirement: the build is tied to the Plasma ABI of its buildroot, so a
+# Plasma soname bump (7 -> 8 in Plasma 6.8) needs a COPR rebuild for every
+# chroot, not a filtered requirement. A filtered requirement would let dnf
+# install a dock that cannot load its libraries. See
+# docs/third-party-rpm-repositories.md, "Plasma soname rebuilds".
 %prep
 {{{ latte_git_setup_macro }}}
 

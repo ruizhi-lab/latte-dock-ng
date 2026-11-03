@@ -409,7 +409,10 @@ risky fix, retest the live dock with the user-mode Debug build and verify a
 clean quit:
 
 1. Install the modified code for the current user (Debug keeps symbols for
-   later core analysis):
+   later core analysis). A user-local install is not tracked by the package
+   manager, so repeat it after a Plasma update that changes the `libplasma`
+   soname; `ldd ~/.local/bin/latte-dock-ng | grep "not found"` reports a build
+   that was linked against the previous soname.
 
    ```bash
    ./install.sh --user Debug

@@ -54,6 +54,40 @@ COPR rebuild to verify the fix. Until then, use the GitHub Release RPM if you
 need a version aligned with a release. openSUSE users should use Tumbleweed
 only, not Leap.
 
+## Plasma soname rebuilds
+
+A released RPM records the `libPlasma`/`libPlasmaQuick` soname it linked
+against as an automatic shared-library dependency. Upstream bumps that soname in
+Plasma cycles that break ABI (6 to 7 in Plasma 6.6, 7 to 8 in Plasma 6.8), so a
+published package keeps requiring the old soname and blocks the distribution's
+own Plasma upgrade. Fedora 44 with Plasma 6.8.2 reports:
+
+```
+Problem: conflicting requests
+  - package latte-dock-ng-... requires libPlasma.so.7()(64bit), but none of the
+    providers can be installed
+```
+
+Do not filter the generated soname requirement out of the spec: hiding it lets
+dnf install a package that cannot load its libraries, and it removes the signal
+that tells maintainers to rebuild. The requirement is correct; the published
+build is stale.
+
+Tag creation is the only event that triggers the COPR webhook, so a Plasma
+soname bump needs an explicit rebuild even when the project has no new release:
+
+1. Open the package in COPR, rebuild the current source for every enabled
+   chroot, and wait for all builds to succeed.
+2. Confirm the new RPM requires the current soname, for example
+   `rpm -qpR <latte-dock-ng>.rpm | grep -E 'libPlasma(Quick)?\.so'`.
+3. Tell users to remove Latte, finish the Plasma upgrade and reboot, then
+   reinstall. The recovery steps are in
+   [`INSTALLATION.md`](../INSTALLATION.md#upgrading-plasma-across-a-libplasma-soname-bump).
+
+The same rebuild is required for the GitHub Release RPMs, which are built per
+tag: a release published before the bump keeps its old dependency and cannot be
+installed on the newer Plasma. The next release tag rebuilds them.
+
 ## Release version maintenance
 
 Update the canonical application version in `CMakeLists.txt` and

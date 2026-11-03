@@ -13,6 +13,7 @@ class PackagingContractTest : public QObject
 
 private Q_SLOTS:
     void distroInstallPackagingContractsStayInSync();
+    void libplasmaSonameBumpContracts();
 };
 
 void PackagingContractTest::distroInstallPackagingContractsStayInSync()
@@ -291,6 +292,56 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QVERIFY(packagingCMakeSource.contains(QStringLiteral("lib64* package names")));
     QVERIFY(packagingCMakeSource.contains(QStringLiteral("kf6-* packages")));
     QVERIFY(packagingCMakeSource.contains(QStringLiteral("qml6-module-org-kde-kcmutils")));
+}
+
+void PackagingContractTest::libplasmaSonameBumpContracts()
+{
+    // Packaging records the libplasma/libPlasmaQuick soname that the build
+    // linked: Fedora gains an automatic `libPlasma.so.N` requirement, Debian
+    // records the soname package, and Arch needs a rebuilt package because its
+    // libplasma provides no versioned `libplasma.so=X-64` symbols. Pinning a
+    // soname by hand would either block every Plasma upgrade or hide a dock
+    // that cannot load its libraries, so the packaging files may only describe
+    // the rule in comments. Rebuilds of released packages are the fix.
+    const QStringList packagingFiles{
+        QStringLiteral("latte-dock-ng.spec"),
+        QStringLiteral("rpkg.macros"),
+        QStringLiteral("docker/package-arch.sh"),
+        QStringLiteral("docker/verify-install.sh"),
+        QStringLiteral("cmake/LattePackaging.cmake"),
+    };
+    for (const QString &file : packagingFiles) {
+        QFile packagingFile(QStringLiteral(LATTE_SOURCE_DIR "/") + file);
+        QVERIFY2(packagingFile.open(QFile::ReadOnly), qPrintable(file));
+        const QStringList lines = QString::fromUtf8(packagingFile.readAll()).split(QLatin1Char('\n'));
+        for (const QString &line : lines) {
+            const QString trimmed = line.trimmed();
+            if (trimmed.startsWith(QLatin1Char('#'))) {
+                continue;
+            }
+            const QString location = file + QStringLiteral(": ") + trimmed;
+            QVERIFY2(!trimmed.contains(QStringLiteral("libPlasma.so")), qPrintable(location));
+            QVERIFY2(!trimmed.contains(QStringLiteral("libPlasmaQuick.so")), qPrintable(location));
+        }
+    }
+
+    // The user recovery steps and the maintainer rebuild rule are the only
+    // compatibility documentation for a Plasma ABI bump (Plasma 6.8 moved the
+    // soname to 8, see issue #67); keep the anchors so an edit cannot drop the
+    // instructions silently.
+    QFile installation(QStringLiteral(LATTE_SOURCE_DIR "/INSTALLATION.md"));
+    QVERIFY(installation.open(QFile::ReadOnly));
+    const QString installationSource = QString::fromUtf8(installation.readAll());
+    QVERIFY(installationSource.contains(QStringLiteral("## Upgrading Plasma across a libplasma soname bump")));
+    QVERIFY(installationSource.contains(QStringLiteral("sudo pacman -R latte-dock-ng")));
+    QVERIFY(installationSource.contains(QStringLiteral("sudo zypper remove latte-dock-ng")));
+    QVERIFY(installationSource.contains(QStringLiteral("ldd ~/.local/bin/latte-dock-ng")));
+
+    QFile rpmRepository(QStringLiteral(LATTE_SOURCE_DIR "/docs/third-party-rpm-repositories.md"));
+    QVERIFY(rpmRepository.open(QFile::ReadOnly));
+    const QString rpmRepositorySource = QString::fromUtf8(rpmRepository.readAll());
+    QVERIFY(rpmRepositorySource.contains(QStringLiteral("## Plasma soname rebuilds")));
+    QVERIFY(rpmRepositorySource.contains(QStringLiteral("rpm -qpR")));
 }
 
 QTEST_MAIN(PackagingContractTest)

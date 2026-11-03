@@ -111,8 +111,12 @@ Download packages for your distribution from
 - **Fedora / openSUSE Tumbleweed / Mageia Cauldron:** use the RPM named for your distribution.
 - **Arch Linux:** `pkg.tar.zst`.
 
-Debian 13 uses libplasma6; Debian testing and Ubuntu use libplasma7. Select
-packages for your target distribution rather than mixing these ABI versions.
+Debian 13 ships `libPlasma.so.6`, Debian testing and Ubuntu ship `.so.7`, and
+Plasma 6.8 (Fedora 44, openSUSE Tumbleweed, Arch) ships `.so.8`. Select packages
+for your target distribution rather than mixing these ABI versions, and see
+[Upgrading Plasma across a libplasma soname
+bump](INSTALLATION.md#upgrading-plasma-across-a-libplasma-soname-bump) when a
+Plasma upgrade reports a missing `libPlasma.so.N` dependency.
 All release packages target amd64/x86_64. NixOS uses the flake instead of a
 standalone release package. openSUSE Leap with Plasma 5 is unsupported.
 

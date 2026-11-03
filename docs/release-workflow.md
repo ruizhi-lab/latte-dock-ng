@@ -203,6 +203,24 @@ attempts) and `mageiaretrytest` pins that policy, including the sequence of this
 run. If Cauldron stays out of sync for longer than the three attempts last,
 rerun the job later instead of changing the project.
 
+On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
+`libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
+bump stay linked to soname 7, so Fedora 44, openSUSE Tumbleweed and Arch users
+cannot upgrade or start the dock (issue #67) until rebuilt packages are
+published: COPR must be rebuilt for Fedora/openSUSE/Mageia, and the Arch/APT
+packages come from the next release tag. The source tree builds without
+warnings on GCC and Clang against Plasma 6.8.2 with Qt 6.11.2 (Fedora 44
+container) and Qt 6.12.0 (Arch container), and a user-mode Debug build on the
+Fedora 44 VM starts, creates its dock and logs no application errors; only
+MESA/Zink warnings about unavailable GPU device access appear for the
+transient systemd unit, and the dock renders normally in the session.
+Debian
+testing (libplasma 6.7.4) and Ubuntu 26.04 (6.6.6) are still on soname 7, so
+their packages keep working until their Plasma 6.8 transition. The recovery
+steps for users and the rebuild rule for maintainers are in
+[`third-party-rpm-repositories.md`](third-party-rpm-repositories.md#plasma-soname-rebuilds)
+and [`INSTALLATION.md`](../INSTALLATION.md#upgrading-plasma-across-a-libplasma-soname-bump).
+
 ## User-visible version verification
 
 Before publication, require the candidate record, package metadata, installed

@@ -6,6 +6,11 @@ set -euo pipefail
 VERSION="${1:?Usage: $0 <version>}"
 OUTDIR="${2:-/out}"
 
+# Arch's libplasma package does not provide versioned `libplasma.so=X-64`
+# symbols, so the dependency stays package-level. A Plasma soname bump (7 -> 8
+# in Plasma 6.8) therefore needs a rebuilt package: an old build installs and
+# then fails at startup with "libPlasma.so.7: cannot open shared object file".
+# Do not pin the Plasma package version here; 6.8.3 keeps the ABI.
 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION="${VERSION}"
 cmake --build . --parallel "$(nproc)"
 

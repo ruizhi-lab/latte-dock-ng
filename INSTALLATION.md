@@ -8,8 +8,75 @@ package manager. The development packages below are needed only when building
 from source. KCMUtils, Kirigami and NewStuff QML modules are runtime
 requirements. Plasma Wayland Protocols supplies build-time XML definitions;
 it is not a separate runtime requirement. Match packages to your distribution
-and Plasma ABI: Debian 13 uses libplasma6; Debian testing and Ubuntu 26.04 use
-libplasma7.
+and Plasma ABI: Debian 13 ships `libPlasma.so.6`, Debian testing and Ubuntu
+26.04 ship `.so.7`, and Plasma 6.8 (Fedora 44, openSUSE Tumbleweed, Arch)
+ships `.so.8`. Distributions that split the runtime package name it after that
+soname (`libplasma6`, `libplasma7`, openSUSE's `libPlasma8`). Upstream
+`libplasma` bumps the soname when a Plasma cycle breaks ABI (6 to 7 in Plasma
+6.6, 7 to 8 in Plasma 6.8), so every consumer, including Latte, must be rebuilt
+for the soname of the installed Plasma. A build for one soname does not load
+against another; see [Upgrading Plasma across a libplasma soname
+bump](#upgrading-plasma-across-a-libplasma-soname-bump).
+
+## Upgrading Plasma across a libplasma soname bump
+
+A Latte package built for the previous `libplasma` soname cannot start against
+the new libraries. Fedora, Mageia and openSUSE refuse the Plasma upgrade while
+the old soname requirement is installed. Arch accepts the system upgrade because
+its `libplasma` package has no soname provides, and the dock then fails at
+startup with `libPlasma.so.7: cannot open shared object file`. On Fedora 44 with
+Plasma 6.8.2 the transaction fails with:
+
+```
+Problem: conflicting requests
+  - package latte-dock-ng-... requires libPlasma.so.7()(64bit), but none of the
+    providers can be installed
+```
+
+Do not force that transaction and do not install packages from two Plasma
+versions. Mixing Plasma 6.7 and 6.8 libraries produces a session that boots to a
+black screen, because `plasmashell` and the session helpers abort on
+mismatched symbols. Remove Latte, finish the Plasma upgrade, reboot, then
+install the rebuilt package once it is published:
+
+```bash
+# Fedora 44 and Mageia Cauldron (COPR)
+sudo dnf remove latte-dock-ng
+sudo dnf --refresh upgrade
+sudo reboot
+sudo dnf --refresh install latte-dock-ng
+
+# openSUSE Tumbleweed (COPR)
+sudo zypper remove latte-dock-ng
+sudo zypper dup
+sudo reboot
+sudo zypper install latte-dock-ng
+
+# Arch Linux (package from GitHub Releases)
+sudo pacman -R latte-dock-ng
+sudo pacman -Syu
+sudo reboot
+# Reinstall after a package rebuilt for the installed Plasma is published.
+```
+
+Fedora's package transaction also tries to satisfy the old requirement with an
+older `libplasma` that was built against a Qt private API the installed Qt no
+longer provides, so accepting a partial result leaves the system in that broken
+mix. Debian and Ubuntu rename the runtime packages (`libplasma7` to
+`libplasma8`) and perform the transition themselves; if `apt` reports an
+unsatisfiable `libplasmaquick7` or `libplasma7` dependency, remove Latte with
+`sudo apt remove latte-dock-ng`, run `sudo apt full-upgrade`, reboot, and
+reinstall after the APT repository has a package built for the new soname.
+A user-local source install is not updated by any package manager: after a
+Plasma soname bump, rerun `./install.sh --user <build type>` and check that no
+stale library remains with `ldd ~/.local/bin/latte-dock-ng | grep "not found"`.
+A distribution package install also leaves a preserved
+`~/.config/autostart/org.kde.latte-dock.desktop` behind; if its `Exec=` still
+points at the removed `/usr/bin/latte-dock-ng`, the user-local build will not
+autostart. Delete that file or update its `Exec=` to
+`~/.local/bin/latte-dock-ng`.
+NixOS is unaffected because the flake links the Plasma libraries from its own
+pinned nixpkgs; a system update and `nixos-rebuild` move both sides together.
 
 ## Kubuntu / KDE Neon (26.04+)
 
@@ -105,6 +172,13 @@ sudo pacman -S \
   gcc make gettext git pkgconf
 ```
 
+`pacman` does not rebuild installed packages when Plasma changes the
+`libplasma` soname, so after a Plasma ABI bump an older Latte package stops
+starting with `libPlasma.so.7: cannot open shared object file`. Reinstall (or
+rebuild with `docker/package-arch.sh`) once a package built for the new Plasma
+is published. See [Upgrading Plasma across a libplasma soname
+bump](#upgrading-plasma-across-a-libplasma-soname-bump).
+
 ## Gentoo
 
 Install from the personal overlay:
@@ -128,7 +202,10 @@ sudo dnf update --refresh
 ```
 
 Restart Latte after upgrading to run the new binary. `--refresh` avoids using
-cached repository metadata that predates a new COPR release.
+cached repository metadata that predates a new COPR release. If the transaction
+reports `libPlasma.so.N` or `libPlasmaQuick.so.N` as unsatisfiable, follow
+[Upgrading Plasma across a libplasma soname
+bump](#upgrading-plasma-across-a-libplasma-soname-bump) instead of forcing it.
 
 To build from source instead, install these dependencies:
 
@@ -155,6 +232,10 @@ openSUSE-specific repository instructions shown on the
 [COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
 
 Use COPR on Tumbleweed x86_64 only; openSUSE Leap with Plasma 5 is unsupported.
+Tumbleweed 20261030 moved to Plasma 6.8.2 and `libPlasma.so.8`; if `zypper dup`
+reports an unsatisfiable `libPlasma.so.7`, follow [Upgrading Plasma across a
+libplasma soname
+bump](#upgrading-plasma-across-a-libplasma-soname-bump).
 To build from source instead, install these dependencies:
 
 ```bash
@@ -178,8 +259,11 @@ sudo zypper install \
 Install from the `ruizhi-lab/latte-dock-ng` COPR repository using the
 Mageia-specific repository instructions shown on the
 [COPR project page](https://copr.fedorainfracloud.org/coprs/ruizhi-lab/latte-dock-ng/).
-The Mageia build target is Cauldron. Confirm its latest build succeeded before
-installing. Alternatively, download the Mageia RPM from
+The Mageia build target is Cauldron, and COPR packages must be rebuilt after a
+Plasma change of the `libplasma` soname, as described in [Upgrading Plasma
+across a libplasma soname
+bump](#upgrading-plasma-across-a-libplasma-soname-bump). Confirm its latest
+build succeeded before installing. Alternatively, download the Mageia RPM from
 [GitHub Releases](https://github.com/ruizhi-lab/latte-dock-ng/releases). Do not
 use the Fedora or openSUSE RPM. For a source build, install:
 
