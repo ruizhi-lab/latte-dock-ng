@@ -8,10 +8,9 @@ fixes the last six checks; it is in `main` (`6b51b43a6`) and passed CI run
 41452548625 (23 jobs, after one rerun of a Mageia mirror failure) and the host
 desktop smoke, except for the Meta hold check, which fails on `v1.2.62` as well
 ([follow-ups](#follow-ups), item 10, which records its fix in `61963df10`). The
-[follow-up fixes](#follow-up-fixes) (items 3, 5, 6, 7 and 9) passed the local checks and a
-host desktop check at `131c87dc8`; one control run of that check is open. Item 12 (the
-Apply file moves) is fixed in `6a8d104b4` and passed the local checks; its desktop check is
-still to be run ([follow-up 12](#follow-up-12-apply-file-moves)).
+[follow-up fixes](#follow-up-fixes) (items 3, 5, 6, 7, 9 and 12) passed the local checks
+and a host desktop check each: at `131c87dc8` for items 3, 5, 6, 7 and 9, and at `e839808c4`
+for item 12 ([follow-up 12](#follow-up-12-apply-file-moves)).
 Date: 2026-10-26. Branch: `claude/r2c-clazy-inventory-3a703c`. Start HEAD:
 `fc925bfe9`. Implementation commit: `1feb770dc`.
 
@@ -856,42 +855,45 @@ validation found and deliberately left alone:
     because the experiment in a `mageia:cauldron` container was interrupted).
     `autotests/packagingcontracttest.cpp` requires that Dockerfile to keep the text
     `dnf install -y --refresh` and to avoid `dnf upgrade`.
-12. **`Layouts::save()` did not check its file moves (fixed in `6a8d104b4`; the desktop
-    check is open).** Apply moves each renamed layout file into a `QTemporaryDir` and from
-    there to `~/.config/latte`, ignores the
-    result of both `QFile::rename()` calls and never asks `QTemporaryDir::isValid()`. The
-    temporary directory is in `/tmp`, a tmpfs on the development host, and the layouts are
-    on btrfs, so each move is a copy followed by a delete, and the copy fails when `/tmp`
-    is full. The model ids are rewritten to the new paths whether or not the move
-    happened, so the model and the files can disagree, and a later Apply then writes a
-    layout's properties into the file the model names. This is read from the code and fits
-    one observation; it is not reproduced. During the desktop check of the follow-up fixes
-    on 2026-11-03 an unrelated download had filled the 2 GB `/tmp`: the dock log, which
-    is written there, stops inside the first Apply at 19:50:24, and `df` showed 0 bytes
-    free at 19:53. The user renamed `LattePlayA` to `LattePlayA1`, `LattePlayB` to
-    `LattePlayA` and `LattePlayA1` to `LattePlayB`, with one Apply for each, and afterwards
-    the file `LattePlayB` had gained the unknown activity id of `LattePlayA`; `LattePlayA`
-    was untouched and no names were swapped. The failing call was not captured. The same
-    renames done as a chain in one Apply, with free space in `/tmp`, gave the right files.
-    The three separate Applies were not repeated with free space, so the full `/tmp` is the
-    likely cause, not a proven one. The fix is described in
-    [follow-up 12](#follow-up-12-apply-file-moves).
+12. **`Layouts::save()` did not check its file moves (fixed in `6a8d104b4` and
+    `e839808c4`).** Apply moved each renamed layout file into a `QTemporaryDir` and from
+    there to `~/.config/latte`, ignored the result of both `QFile::rename()` calls and
+    never asked `QTemporaryDir::isValid()`. The temporary directory was in `/tmp`, a tmpfs
+    on the development host, and the layouts are on btrfs, so each move was a copy followed
+    by a delete, and the copy fails when `/tmp` is full. The model ids were rewritten to the
+    new paths whether or not the move had happened, so the model and the files could
+    disagree, and a later Apply would then write a layout's properties into the file the
+    model names. That was read from the code and fits one observation; it was not
+    reproduced. During the desktop check of the follow-up fixes on 2026-11-03 an unrelated
+    download had filled the 2 GB `/tmp`: the dock log, which is written there, stops inside
+    the first Apply at 19:50:24, and `df` showed 0 bytes free at 19:53. The user renamed
+    `LattePlayA` to `LattePlayA1`, `LattePlayB` to `LattePlayA` and `LattePlayA1` to
+    `LattePlayB`, with one Apply for each, and afterwards the file `LattePlayB` had gained
+    the unknown activity id of `LattePlayA`; `LattePlayA` was untouched and no names were
+    swapped. The failing call was not captured. The same renames done as a chain in one
+    Apply, with free space in `/tmp`, gave the right files. The three separate Applies were
+    not repeated with free space on the pre-fix build, so the full `/tmp` is the likely
+    cause, not a proven one. The fix moves the files through a directory next to the
+    layouts, checks every move and keeps the layouts that could not move as they were; the
+    same three separate Applies then gave the right files on the fixed build
+    ([follow-up 12](#follow-up-12-apply-file-moves)).
 
 ## Follow-up fixes
 
-Status: Complete, with one open control run of the desktop check
-([Desktop check](#desktop-check)). Follow-ups 3, 5, 6 and 9, and F1 to F4 of follow-up 7,
-are fixed on the branch `claude/r2c-lost-intent-integration` (code at `131c87dc8`), which
-passed the checks below. Follow-up 12 is fixed on `claude/stoic-mirzakhani-83f0c1` (code at
-`6a8d104b4`) and passed its own checks ([Follow-up 12](#follow-up-12-apply-file-moves)); its
-desktop check has not been run. Follow-up 10 was fixed earlier (`61963df10`) and is not part
-of this section.
+Status: Complete. Follow-ups 3, 5, 6 and 9, and F1 to F4 of follow-up 7, are fixed on the
+branch `claude/r2c-lost-intent-integration` (code at `131c87dc8`), and follow-up 12 on top
+of it (`6a8d104b4` and `e839808c4`, merged in `3f0761964`). Each passed the checks below
+and a host desktop check ([Desktop check](#desktop-check),
+[Follow-up 12](#follow-up-12-apply-file-moves)). Follow-up 10 was fixed earlier
+(`61963df10`) and is not part of this section.
 
-Six sessions, all Claude Haiku 5.5 at medium effort, implemented the fixes, each on its
-own branch from `61963df10`. The main session wrote the briefs and the file sets, read
-every branch and merged them with `--no-ff` in two rounds: follow-ups 3, 5, 6 and 9 on the
+Seven sessions, all Claude Haiku 5.5, implemented the fixes, each on its own branch: six
+at medium effort from `61963df10`, and the one for follow-up 12 from `1cce2c0e8`, which the
+app reports at low effort. The main session wrote the briefs and the file sets, read every
+branch and merged them with `--no-ff` in three rounds: follow-ups 3, 5, 6 and 9 on the
 branch `claude/r2c-followups-integration` (checked at `f9073543e`), then F1 and F2 to F4
-on top of it on `claude/r2c-lost-intent-integration` (checked at `131c87dc8`).
+on top of it on `claude/r2c-lost-intent-integration` (checked at `131c87dc8`), then
+follow-up 12 on the same branch (checked at `e839808c4`).
 
 | Follow-up | Change | Commit | Merge |
 | --- | --- | --- | --- |
@@ -901,9 +903,9 @@ on top of it on `claude/r2c-lost-intent-integration` (checked at `131c87dc8`).
 | 9. Runner hardening | `clazyrunnertest` (22 cases), one `knscompatunittest` case | `43bf2317a` | `f9073543e` |
 | 7, F1. Unknown activity id | `GenericTable` lookup and `Activities::paint()` | `f03b319a3` | `2fdc4d259` |
 | 7, F2 to F4. Apply after a rename | Row ids, lock and synchronizer table | `00aaf6ad5` | `131c87dc8` |
-| 12. Apply file moves | Temporary directory next to the layouts, checked moves with rollback, failed layouts keep their id and name | `6a8d104b4` | not merged |
+| 12. Apply file moves | Temporary directory next to the layouts, checked moves with rollback, failed layouts keep their id and name; the directory held by a `std::unique_ptr` | `6a8d104b4`, `e839808c4` | `3f0761964` |
 
-What the two newest fixes changed (the other four are described in the follow-up items):
+What F1 and F2 to F4 changed (the other fixes are described in the follow-up items, and follow-up 12 below):
 
 - **F1 (`f03b319a3`).** `GenericTable::operator[](const QString &)` found the row with its
   own loop and then indexed the list with -1 when the id was missing. Qt debug builds
@@ -947,8 +949,8 @@ The first round was checked the same way at `f9073543e`; the table gives both re
 
 ### Mutation checks
 
-The main session ran one mutation per guarded behavior of the two newest fixes on
-`131c87dc8` (gcc-debug build, 2026-11-03). Each mutation breaks one production file,
+The main session ran one mutation per guarded behavior of F1 to F4 on `131c87dc8`
+(gcc-debug build, 2026-11-03). Each mutation breaks one production file,
 rebuilds the test target when the test compiles that file (the source contracts read the
 sources when they run), runs the test and restores the file. Unmutated, `dataunittest` (47
 cases), `storagelogictest` (24) and `sourcecontracttest` (225) pass, and they pass again
@@ -1004,8 +1006,10 @@ layouts were recorded before the run and are unchanged after it.
   space: the first applied three single renames one after the other, the second applied
   the chain in one Apply. With free space, the chain, the lock plus rename that followed
   it, and the unknown activity id all behave correctly. The three separate Applies were
-  not repeated with free space, so the full `/tmp` is the likely cause of the first run's
-  result, not a proven one. That control run is open.
+  not repeated with free space on that build, so the full `/tmp` is the likely cause of the
+  first run's result, not a proven one. They were run later on the build with the fix for
+  follow-up 12, which no longer moves files through `/tmp`
+  ([Follow-up 12](#follow-up-12-apply-file-moves)).
 - **Not reached.** F4 (it needs the multiple-layouts mode and a D-Bus `switchToLayout`
   call to a renamed inactive layout) and Meta+A. None of F1 to F4 was reproduced on a
   desktop build before the fix, so the desktop check shows the right behavior of the fixed
@@ -1013,8 +1017,15 @@ layouts were recorded before the run and are unchanged after it.
 
 ### Follow-up 12: Apply file moves
 
-Code at `6a8d104b4` on `claude/stoic-mirzakhani-83f0c1` (branched from `1cce2c0e8`). Not
-merged; the checks below ran on that commit's tree.
+Code at `6a8d104b4` (the session's branch `claude/stoic-mirzakhani-83f0c1`, branched from
+`1cce2c0e8`), merged on the integration branch in `3f0761964`. The main session changed one
+thing in review, in `e839808c4`: `Layouts::save()` replaced its `QTemporaryDir` by
+assignment when the first creation failed. That needs the move assignment of
+`QTemporaryDir`, which exists in Qt 6.8.2 (the Debian 13 floor) and later (checked in the
+headers of the Debian 13, Qt 6.10 and Qt 6.11 container images) but was not checked for the
+declared minimum of Qt 6.6. The directory is now held by a `std::unique_ptr` and replaced
+through `std::make_unique`, and the contracts that pin its code follow the new spelling.
+The session's checks ran on `6a8d104b4`; the main session's ran on `e839808c4`.
 
 - **Temporary directory.** `Layouts::save()` creates its `QTemporaryDir` as
   `<layouts directory>/.apply-XXXXXX`, so each move is a rename on one filesystem. The name
@@ -1034,7 +1045,7 @@ merged; the checks below ran on that commit's tree.
   an original row, so the next Apply does not move it again; the file has to be moved by hand,
   or the layout created again.
 
-Checks:
+Checks of the session on `6a8d104b4`:
 
 | Command or environment | Result |
 | --- | --- |
@@ -1047,7 +1058,16 @@ A first run of the presets with `TMPDIR` under the home directory failed `layout
 directory as `~/...`. That came from the scratch directory, not from this change, and the
 runs in the table use a `TMPDIR` outside the home directory.
 
-Mutation checks (`gcc-debug`, one mutation at a time, each file restored byte for byte):
+Checks of the main session on `e839808c4`, the merged tree:
+
+| Command or environment | Result |
+| --- | --- |
+| Host `cmake --preset P`, `cmake --build --preset P -j8`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (the toolchain above; `TMPDIR` in the ignored `build/tmp` of the worktree) | Exit 0 each; 0 compiler, linker or CMake diagnostics; the changed sources were rebuilt in each preset; 59/59 tests passed in each |
+| `python3 -I autotests/installscriptbehavior.py` | Pass |
+| `latte-r2c-clazy:noble` container: fresh Clang Debug build in a new build tree, then `test-clazy.py --build-dir build/modernization/clang-debug --jobs 4` | Exit 0 in 688 s including the build: 49 fixtures rejected by their own checks, 155 production sources, no finding |
+| Debian 13 container, `verify-install.sh debian13` (GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5) | Exit 0 in 412 s: build, install and uninstall of the system and the user variant; 0 compiler warnings |
+
+Mutation checks of the session (`gcc-debug`, one mutation at a time, each file restored byte for byte):
 
 | Mutation | Result |
 | --- | --- |
@@ -1074,36 +1094,59 @@ pass unchanged. The rollback behavior of `save()` itself has no runtime test: it
 Corona. The source contracts only check its text, so the desktop check below is the evidence
 for it.
 
-Not run: the desktop check, which is the main session's job with the user. Steps for it,
-on the `6a8d104b4` build, with throwaway layouts only:
+The main session ran five mutations again on `e839808c4`, because the pointer change
+re-spelled the contracts that guard them: the first creation at the default location, the
+fallback removed, the second `isValid()` check removed, the temporary directory always
+removed, and the directory path no longer handed to `moveFiles()`. Each one failed
+`layoutsSaveMovesFilesThroughCheckedTemporaryDir` (the last also
+`layoutsSaveMovesBeforeRewritingIds`); unmutated and after the restore, `sourcecontracttest`
+passed its 230 cases.
 
-1. Run the user-mode Debug install from `6a8d104b4` and start the dock as the workflow in
-   `AGENTS.md` describes.
-2. Failed move: with the layouts page open, create a file `Stray.layout.latte` in
-   `~/.config/latte` (the open table does not list it), rename a throwaway layout to `Stray`
-   and apply. Expected: an error message that the rename failed; the row keeps the old name;
-   the old file and `Stray.layout.latte` are unchanged; no `.apply-*` directory is left.
-3. Chain in one Apply: rename two throwaway layouts into a swap or a chain and apply once.
-   Expected: each file has the content of its new name, as in the earlier desktop check.
-4. Read the log for `Temporary Directory :::` lines and for warnings or fatal lines.
+Desktop check on 2026-11-03: the user-mode Debug build of `e839808c4` on the Gentoo host
+(Plasma 6.7.5, Wayland, two screens), started from the Plasma session environment, with the
+layout `我的布局`, two throwaway layouts that the main session created in
+`~/.config/latte/` and removed afterwards (`LattePlayA`, green, with an activity id this
+machine does not have, and `LattePlayB`, blue) and two empty blocker files. A watcher script
+logged every change of the layout files four times a second, so the state between two
+Applies can be read afterwards. The user ran the steps.
+
+| Step | Result | Evidence |
+| --- | --- | --- |
+| Rename `LattePlayA` to `Stray`, whose empty file existed when the dock started | Refused by the page before Apply: "Layout Stray is already used, please provide a different name..." | No Apply line in the log and no file changed. The page lists the files the dock found at startup, so this exercised the existing duplicate-name check, not the new code |
+| Failed move: rename `LattePlayA` to `Blocked1`, whose empty file was created after the dock started (the page does not list it), and Apply | Pass | The page showed "Layout LattePlayA could not be renamed to Blocked1, its name and file are unchanged, rename it again to retry..." (user report; English because the strings are not translated yet). The Apply at 22:02:34 used `~/.config/latte/.apply-AhHktK`, which was gone afterwards. `LattePlayA`, `LattePlayB`, `Stray` and `Blocked1` kept their checksums and modification times |
+| Swap: rename `LattePlayA` to `LattePlayA1`, `LattePlayB` to `LattePlayA` and `LattePlayA1` to `LattePlayB` in the table, then Apply once | Pass | Apply at 22:05:14: `LattePlayA.layout.latte` held the former content of `LattePlayB` (blue, 1424 bytes) and `LattePlayB.layout.latte` that of the former `LattePlayA` (green, the unknown activity id, 289 bytes), each with the checksum of the original |
+| The same three renames as three separate Applies, the sequence of the observation in follow-up 12 | Pass | Applies at 22:05:30, 22:05:39 and 22:05:51. After each, the watcher shows the right file under the right name: `LattePlayA1` blue with `LattePlayB` green; then `LattePlayA` green with `LattePlayA1` blue; then `LattePlayA` green with `LattePlayB` blue. The final files are byte-identical to the originals |
+
+- **Log.** Five Applies, each with its own `.apply-XXXXXX` directory next to the layouts. The
+  log has 474 lines, no warning, no `No such method`, no Fatal or ASSERT; the dock quit with
+  the teardown marker `Latte Corona - deleted...` and no core followed. The three real
+  layouts have the same checksums as before the run, and no `.apply-*` directory was left.
+- **What it shows.** The move-failure path of `save()` works end to end on the desktop: the
+  row keeps its name and its file, the user gets the reason, and nothing is left behind.
+  The swap and the three separate renames give the right files when `/tmp` has free space,
+  and the fixed Apply does not use `/tmp` for them. The three separate Applies were not run
+  on the pre-fix build with free space, so the full `/tmp` as the cause of the observation
+  in follow-up 12 stays likely and not proven.
+- **Not reached.** A new layout (file still in `/tmp`) whose move fails, the message for a
+  file that could not be moved back, the multiple-layouts mode, and F4.
 
 ### Not run in the follow-up fixes
 
 A build on Qt 6.6 or 6.7 (the oldest Qt built is 6.8.2); the Fedora VM, which is left to
 R5; the Debian 13 VM, which has no build tools (the Debian 13 container build ran); the
-multiple-layouts mode; a desktop run of the pre-fix build; the control run described
-above.
+multiple-layouts mode; a desktop run of the pre-fix build; the three separate Applies on the
+pre-fix build with free space in `/tmp`; a new layout whose move fails; the message for a
+file that could not be moved back.
 
 ## Next actions
 
 The R2c fix slices are complete: each of the 19 checks of the inventory is fixed or
 excepted with a reason, the gate holds 49 checks, and [fix batch 3](#fix-batch-3) passed
 CI and the desktop smoke. What is left is the [follow-ups](#follow-ups): decisions and
-defects the slices found on the way, not findings. Items 3, 5, 6, 9 and 10 and F1 to F4 of
-item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Items 1, 2 and 4 each need a
-decision and a test, F5 of item 7 needs the decision about the Move To Layout menu, item
-11 is a CI hardening, and item 12 is fixed in `6a8d104b4`, with its desktop check still to
-be run ([follow-up 12](#follow-up-12-apply-file-moves)).
+defects the slices found on the way, not findings. Items 3, 5, 6, 9, 10 and 12 and F1 to F4
+of item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Items 1, 2 and 4 each need a
+decision and a test, F5 of item 7 needs the decision about the Move To Layout menu, and
+item 11 is a CI hardening.
 
 ## Reproducing the environment
 
