@@ -76,10 +76,23 @@ jobs:
     steps:
       - name: Install KDE Neon repository
         run: |
+          # archive.neon.kde.org answered some runs with an error for the key download (wget exit code 8 on
+          # 2026-11-03, and "wget -q" hid the HTTP status), while other attempts of the same commit passed.
+          # Retry with a pause, print the status of a failure, and let apt retry its own downloads.
           apt-get update
           apt-get install -y --no-install-recommends ca-certificates wget gnupg
-          wget -qO /etc/apt/trusted.gpg.d/neon.asc https://archive.neon.kde.org/public.key
+          for attempt in 1 2 3 4 5; do
+            if wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc https://archive.neon.kde.org/public.key; then
+              break
+            fi
+            if [ "$attempt" = 5 ]; then
+              echo "::error::The KDE Neon public key could not be downloaded after $attempt attempts"
+              exit 1
+            fi
+            sleep $((attempt * 10))
+          done
           echo "deb https://archive.neon.kde.org/user noble main" > /etc/apt/sources.list.d/neon.list
+          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
           apt-get update
 
       - name: Install build dependencies
