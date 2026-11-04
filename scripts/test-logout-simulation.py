@@ -663,9 +663,9 @@ def seed_kdeglobals(home: Path) -> None:
     """Give the simulation HOME the kdeglobals that every Plasma session has.
 
     With the default Plasma theme, which ships no colors file, the dock takes its
-    color scheme from kdeglobals. Without the file it creates no scheme, and
-    PlasmaExtended::Theme then crashes on quit (SIGSEGV in ~Theme, seen with Plasma
-    6.8.2 on Fedora 45); that is a dock bug, not part of the logout under test. An
+    color scheme from kdeglobals. --no-kdeglobals leaves the file out to cover a new
+    account: the dock then falls back to BreezeLight, while 1.2.62 and builds before
+    that fallback found no scheme and crashed on quit in PlasmaExtended::Theme. An
     existing file is left alone.
     """
     kdeglobals = home / ".config/kdeglobals"
@@ -713,6 +713,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--home", type=Path, help="simulation HOME (default: <work dir>/home)")
     parser.add_argument("--latte", type=Path, help="dock binary (default: <home>/.local/bin/latte-dock-ng)")
     parser.add_argument("--install", action="store_true", help="first install this checkout into the simulation HOME with install.sh --user Debug")
+    parser.add_argument("--no-kdeglobals", action="store_true", help="leave the simulation HOME without kdeglobals, as for a new account (use an empty --home)")
     parser.add_argument("--jobs", type=int, default=8, help="build jobs for --install (default: 8)")
     parser.add_argument("--work-dir", type=Path, default=default_work_dir(), help="build tree, logs and default HOME (default: %(default)s)")
     parser.add_argument("--out", type=Path, help="log directory (default: <work dir>/runs/<time>)")
@@ -746,7 +747,8 @@ def orchestrate(args: argparse.Namespace) -> int:
         install_user_mode(home, work, args.jobs)
         require_dock()
 
-    seed_kdeglobals(home)
+    if not args.no_kdeglobals:
+        seed_kdeglobals(home)
     out_root = (args.out or work / "runs" / time.strftime("%Y%m%d-%H%M%S")).expanduser().resolve()
     # --version still creates the QApplication: keep it off the desktop's display and HOME.
     version_env = simulation_env(home)

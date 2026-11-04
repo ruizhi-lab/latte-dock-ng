@@ -72,8 +72,11 @@ Theme::~Theme()
 {
     saveConfig();
 
-    m_defaultScheme->deleteLater();
-    m_reversedScheme->deleteLater();
+    //! m_defaultScheme and m_reversedScheme are children of this object and are
+    //! deleted with it. They stay null while no color scheme file was found:
+    //! setOriginalSchemeFile() creates them only for a non-empty file, and with
+    //! the default Plasma theme (no colors file) the file comes from kdeglobals.
+    //! Calling deleteLater() on them here crashed the dock on every quit then.
 }
 
 bool Theme::hasShadow() const

@@ -203,6 +203,7 @@ private Q_SLOTS:
     void sessionShutdownHandlingMatchesStableWaylandPath();
     void sessionShutdownMonitorHidesViewsAndRestoresOnCancel();
     void coronaTeardownSkipsFactoryFreedByQuitCleanup();
+    void plasmaThemeDestructorToleratesMissingSchemes();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
     void itemsAlignmentConfigDefaultsToCenter();
@@ -1182,6 +1183,30 @@ void SourceContractTest::coronaTeardownSkipsFactoryFreedByQuitCleanup()
     const int deferredDelete = teardown.indexOf(QStringLiteral("service->deleteLater();"));
     QVERIFY(nullGuard >= 0);
     QVERIFY(deferredDelete > nullGuard);
+}
+
+void SourceContractTest::plasmaThemeDestructorToleratesMissingSchemes()
+{
+    //! Without a color scheme file (default Plasma theme, which has no colors
+    //! file, and no usable kdeglobals) PlasmaExtended::Theme never creates its
+    //! default and reversed schemes. ~Theme() called deleteLater() on the null
+    //! pointers and the dock crashed on every quit (seen on Fedora 45). The
+    //! schemes are children of the Theme, so its destructor must not touch them.
+    //! schemecolorsunittest covers the BreezeLight fallback that now finds a
+    //! scheme when kdeglobals is missing.
+    QFile themeSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/plasma/extended/theme.cpp"));
+    QVERIFY(themeSourceFile.open(QFile::ReadOnly));
+    const QString themeSource = QString::fromUtf8(themeSourceFile.readAll());
+
+    const int destructorStart = themeSource.indexOf(QStringLiteral("Theme::~Theme()"));
+    const int destructorEnd = themeSource.indexOf(QStringLiteral("\n}\n"), destructorStart);
+    QVERIFY(destructorStart >= 0 && destructorEnd > destructorStart);
+    const QString destructor = themeSource.mid(destructorStart, destructorEnd - destructorStart);
+    QVERIFY(!destructor.contains(QStringLiteral("m_defaultScheme->")));
+    QVERIFY(!destructor.contains(QStringLiteral("m_reversedScheme->")));
+
+    QVERIFY(themeSource.contains(QStringLiteral("m_defaultScheme = new WindowSystem::SchemeColors(this, m_defaultSchemePath, true);")));
+    QVERIFY(themeSource.contains(QStringLiteral("m_reversedScheme = new WindowSystem::SchemeColors(this, m_reversedSchemePath, true);")));
 }
 
 void SourceContractTest::needsAttentionStatusBlocksHidingWithoutWindowReconfiguration()

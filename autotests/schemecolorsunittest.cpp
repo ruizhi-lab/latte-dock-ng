@@ -107,13 +107,32 @@ class SchemeColorsUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void schemeNameReadsConfigNameOrFallsBackToFileName();
     void possibleSchemeFileFindsExactAndSimplifiedNames();
     void possibleSchemeFileResolvesAutoAccentKdeglobals();
+    void possibleSchemeFileReadsTheKdeglobalsColorScheme();
+    void possibleSchemeFileFallsBackToBreezeLightWithoutKdeglobals();
     void schemeColorsLoadsWindowManagerColors();
     void schemeColorsCanLoadPlasmaThemeColors();
     void schemesModelListsSystemColorsFirstAndUniqueSchemeFiles();
+
+private:
+    QTemporaryDir m_configHome;
+    QTemporaryDir m_configDirs;
 };
+
+void SchemeColorsUnitTest::initTestCase()
+{
+    //! KConfig merges every kdeglobals in the config locations into a kdeglobals
+    //! file it opens, so the developer's own [WM] colors would turn the test's
+    //! kdeglobals into an auto-accent one. Point both locations at empty
+    //! directories before the first KConfig is created.
+    QVERIFY(m_configHome.isValid());
+    QVERIFY(m_configDirs.isValid());
+    qputenv("XDG_CONFIG_HOME", QFile::encodeName(m_configHome.path()));
+    qputenv("XDG_CONFIG_DIRS", QFile::encodeName(m_configDirs.path()));
+}
 
 void SchemeColorsUnitTest::schemeNameReadsConfigNameOrFallsBackToFileName()
 {
@@ -162,6 +181,44 @@ void SchemeColorsUnitTest::possibleSchemeFileResolvesAutoAccentKdeglobals()
 
     QCOMPARE(Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals")),
              configRoot.path() + QStringLiteral("/kdeglobals"));
+}
+
+void SchemeColorsUnitTest::possibleSchemeFileReadsTheKdeglobalsColorScheme()
+{
+    QTemporaryDir configRoot;
+    QTemporaryDir dataRoot;
+    QVERIFY(configRoot.isValid());
+    QVERIFY(dataRoot.isValid());
+    s_configPath = configRoot.path();
+    s_dataRoots = {dataRoot.path()};
+
+    QFile kdeglobals(configRoot.path() + QStringLiteral("/kdeglobals"));
+    QVERIFY(kdeglobals.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    kdeglobals.write("[General]\nColorScheme=Custom\n");
+    kdeglobals.close();
+
+    const QString custom = writeScheme(dataRoot.path() + QStringLiteral("/color-schemes/Custom.colors"), QStringLiteral("Custom"));
+    QCOMPARE(Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals")), custom);
+}
+
+void SchemeColorsUnitTest::possibleSchemeFileFallsBackToBreezeLightWithoutKdeglobals()
+{
+    //! A new account or another desktop has no kdeglobals yet, and Plasma then uses
+    //! its default scheme. With the default Plasma theme, which ships no colors file,
+    //! an empty result left the dock without color schemes, and the
+    //! PlasmaExtended::Theme destructor crashed on quit.
+    QTemporaryDir configRoot;
+    QTemporaryDir dataRoot;
+    QVERIFY(configRoot.isValid());
+    QVERIFY(dataRoot.isValid());
+    s_configPath = configRoot.path();
+    s_dataRoots = {dataRoot.path()};
+
+    //! Nothing to find at all: the caller has to cope with no scheme.
+    QCOMPARE(Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals")), QString());
+
+    const QString breezeLight = writeScheme(dataRoot.path() + QStringLiteral("/color-schemes/BreezeLight.colors"), QStringLiteral("Breeze Light"));
+    QCOMPARE(Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals")), breezeLight);
 }
 
 void SchemeColorsUnitTest::schemeColorsLoadsWindowManagerColors()

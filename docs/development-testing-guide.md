@@ -497,8 +497,10 @@ stopped. Requirements: `kwin_wayland`, `dbus-run-session`, the Python `dbus` and
 covers the script's parsers and guards.
 
 The simulation HOME gets a minimal `kdeglobals` when it has none, as every
-Plasma session has one: with the default Plasma theme, which ships no `colors`
-file, the dock otherwise creates no color scheme and crashes on quit in
+Plasma session has one. `--no-kdeglobals` with an empty `--home` covers a new
+account instead: with the default Plasma theme, which ships no `colors` file,
+the dock then falls back to the BreezeLight color scheme, while 1.2.62 and
+builds before that fallback created no scheme and crashed on quit in
 `PlasmaExtended::Theme`. The processes log to files with
 `QT_FORCE_STDERR_LOGGING=1`, because Qt built with journald support (Fedora)
 logs to the journal when stderr is not a terminal, and KWin gets `js.debug=true`

@@ -162,6 +162,13 @@ QString SchemeColors::possibleSchemeFile(QString scheme)
 
         bool supportsAutoAccentColor{false}; // introduced on plasma 5.25
 
+        //! Plasma's default color scheme, which applies both when kdeglobals names no
+        //! scheme and when it does not exist yet (a new account, another desktop).
+        //! Without kdeglobals the lookup used to search "kdeglobals.colors" and found
+        //! nothing, so the default Plasma theme, which ships no colors file, left the
+        //! dock without any color scheme.
+        tempScheme = QStringLiteral("BreezeLight");
+
         if (QFileInfo::exists(settingsFile)) {
             KSharedConfigPtr filePtr = KSharedConfig::openConfig(settingsFile);
             KConfigGroup wmGroup = KConfigGroup(filePtr, QStringLiteral("WM"));
@@ -170,7 +177,7 @@ QString SchemeColors::possibleSchemeFile(QString scheme)
             if (wmGroup.hasKey(QStringLiteral("activeBackground"))) {
                 supportsAutoAccentColor = true;
             } else {
-                tempScheme = generalGroup.readEntry(QStringLiteral("ColorScheme"), "BreezeLight");
+                tempScheme = generalGroup.readEntry(QStringLiteral("ColorScheme"), tempScheme);
             }
         }
 
