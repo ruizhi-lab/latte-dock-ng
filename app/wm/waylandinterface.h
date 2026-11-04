@@ -62,7 +62,6 @@ public:
     WindowId activeWindow() override;
     WindowInfoWrap requestInfo(WindowId wid) override;
     WindowInfoWrap requestInfoActive() override;
-    bool hasSessionBlockingWindows() const override;
     QList<QRect> plasmaPanelGeometries() override;
     QList<QRect> livePlasmaPanelGeometries() override;
 

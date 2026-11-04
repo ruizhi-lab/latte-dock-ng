@@ -19,6 +19,7 @@
 #include "../settings/universalsettings.h"
 #include "../templates/templatesmanager.h"
 #include "../view/view.h"
+#include "../view/visibilitymanager.h"
 
 // Qt
 #include <QDir>
@@ -488,6 +489,19 @@ void Synchronizer::hideAllViews()
 {
     for (const auto layout : std::as_const(m_centralLayouts)) {
         Q_EMIT currentLayoutIsSwitching(layout->name());
+    }
+}
+
+void Synchronizer::setHelperWindowsSuspended(bool suspended)
+{
+    for (const auto layout : std::as_const(m_centralLayouts)) {
+        const auto views = layout->latteViews();
+
+        for (Latte::View *view : views) {
+            if (auto *visibility = view->visibility()) {
+                visibility->setHelperWindowsSuspended(suspended);
+            }
+        }
     }
 }
 

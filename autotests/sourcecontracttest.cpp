@@ -11,7 +11,6 @@
 #include <QStringList>
 #include <QTest>
 
-
 namespace {
 
 // Source text without // and /* */ comments, so a comment that mentions a call
@@ -973,10 +972,11 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(monitorHeader.contains(QStringLiteral("static constexpr int PollIntervalMs = 500;")));
     QVERIFY(monitorHeader.contains(QStringLiteral("inline constexpr int KsmServerQueryTimeoutMs = 1000;")));
 
-    //! The dock must end itself before KWin's session close reports the dock
-    //! windows as unclosed (10 s), otherwise the user sees the "applications
-    //! did not close" dialog again.
-    QVERIFY(monitorHeader.contains(QStringLiteral("static constexpr int QuitFallbackMs = 8000;")));
+    //! The dock stays until plasma-shutdown reports the logout complete or
+    //! cancelled. A timer or an option that quits earlier takes the dock away
+    //! from a logout that KWin's "Cancel Logout" can still undo.
+    QVERIFY(!monitorHeader.contains(QStringLiteral("QuitFallbackMs")));
+    QVERIFY(!monitorHeader.contains(QStringLiteral("quitWithoutWaiting")));
 
     QFile monitorSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.cpp"));
     QVERIFY(monitorSourceFile.open(QFile::ReadOnly));
@@ -990,8 +990,8 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     //! windows and plasmashell's own desktop surfaces legitimately outlive the
     //! logout, so the dock never asks for that list again.
     QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] logout completed; quitting.")));
-    QVERIFY(monitorSource.contains(QStringLiteral("[shutdown] fast exit enabled; quitting without waiting for other windows.")));
-    QVERIFY(monitorSource.contains(QStringLiteral("m_quitFallbackTimer.start();")));
+    QVERIFY(!monitorSource.contains(QStringLiteral("m_quitFallbackTimer")));
+    QVERIFY(!monitorSource.contains(QStringLiteral("quitWithoutWaiting")));
     QVERIFY(!monitorSource.contains(QStringLiteral("hasBlockingWindows")));
     QVERIFY(!mainSource.contains(QStringLiteral("hasSessionBlockingWindows")));
     QVERIFY(!mainSource.contains(QStringLiteral("shouldQuitForCommittedShutdown")));
@@ -1007,6 +1007,10 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(postExecDeferredDeleteFlush > sharedEngineDetach);
     QVERIFY(sharedEngineReset > postExecDeferredDeleteFlush);
     QVERIFY(mainReturn > sharedEngineReset);
+    //! Every quit, including a session end, runs the Qt platform teardown. An
+    //! early _Exit() on session end hid a client-side fault in the Wayland
+    //! display teardown instead of fixing it.
+    QVERIFY(!mainSource.contains(QStringLiteral("_Exit(")));
 
     const int disableSessionManager = mainSource.indexOf(QStringLiteral("QCoreApplication::setAttribute(Qt::AA_DisableSessionManager);"));
     const int appCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
@@ -1034,30 +1038,22 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     const int hooksEnd = mainSource.indexOf(QStringLiteral("KDBusService service(KDBusService::Unique);"), pollerStart);
     QVERIFY(hooksEnd > pollerStart);
     const QString hooks = mainSource.mid(pollerStart, hooksEnd - pollerStart);
-    QVERIFY(hooks.contains(QStringLiteral("Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus())")));
+    QVERIFY(hooks.contains(QStringLiteral("Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus())")));
     QVERIFY(hooks.contains(QStringLiteral("return app.property(\"latte_session_ending\").toBool();")));
     QVERIFY(hooks.contains(QStringLiteral(".markSessionEnding = markSessionEnding,")));
     QVERIFY(hooks.contains(QStringLiteral("app.quit();")));
 
+    //! A ksmserver that does not answer decides nothing: reading it as "not
+    //! shutting down" restored the hidden dock in the middle of a logout.
     const int evaluateStart = monitorSource.indexOf(QStringLiteral("void ShutdownMonitor::evaluate()"));
     const int evaluateEnd = monitorSource.indexOf(QStringLiteral("void ShutdownMonitor::updatePolling()"), evaluateStart);
     QVERIFY(evaluateStart >= 0);
     QVERIFY(evaluateEnd > evaluateStart);
     const QString evaluateBody = monitorSource.mid(evaluateStart, evaluateEnd - evaluateStart);
-    QVERIFY(evaluateBody.contains(QStringLiteral("if (m_hooks.isSessionEnding())")));
-
-    QFile abstractWmHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.h"));
-    QVERIFY(abstractWmHeaderFile.open(QFile::ReadOnly));
-    const QString abstractWmHeader = QString::fromUtf8(abstractWmHeaderFile.readAll());
-    QVERIFY(abstractWmHeader.contains(QStringLiteral("virtual bool hasSessionBlockingWindows() const;")));
-
-    QFile waylandWmSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
-    QVERIFY(waylandWmSourceFile.open(QFile::ReadOnly));
-    const QString waylandWmSource = QString::fromUtf8(waylandWmSourceFile.readAll());
-    QVERIFY(waylandWmSource.contains(QStringLiteral("bool WaylandInterface::hasSessionBlockingWindows() const")));
-    QVERIFY(waylandWmSource.contains(QStringLiteral("App::matchesSelfAppId(w->appId())")));
-    QVERIFY(waylandWmSource.contains(QStringLiteral("w->appId() == QLatin1String(\"org.kde.plasmashell\")")));
-    QVERIFY(waylandWmSource.contains(QStringLiteral("w->skipTaskbar() && w->skipSwitcher()")));
+    const int unansweredCheck = evaluateBody.indexOf(QStringLiteral("if (!shuttingDown.has_value())"));
+    const int sessionEndingCheck = evaluateBody.indexOf(QStringLiteral("if (m_hooks.isSessionEnding())"));
+    QVERIFY(unansweredCheck >= 0);
+    QVERIFY(sessionEndingCheck > unansweredCheck);
 
     QFile coronaSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
     QVERIFY(coronaSourceFile.open(QFile::ReadOnly));
@@ -1105,14 +1101,49 @@ void SourceContractTest::sessionShutdownMonitorHidesViewsAndRestoresOnCancel()
 
     //! The hooks implement both steps on the real views.
     const int hideHook = mainSource.indexOf(QStringLiteral(".hideViews = [&corona]()"));
-    QVERIFY(hideHook >= 0);
-    QVERIFY(mainSource.indexOf(QStringLiteral("synchronizer()->hideAllViews();"), hideHook) > hideHook);
+    const int hideAll = mainSource.indexOf(QStringLiteral("synchronizer()->hideAllViews();"), hideHook);
+    const int suspendHelpers = mainSource.indexOf(QStringLiteral("synchronizer()->setHelperWindowsSuspended(true);"), hideAll);
     const int restoreHook = mainSource.indexOf(QStringLiteral(".restoreViews = [&corona]()"));
+    QVERIFY(hideHook >= 0);
+    QVERIFY(hideAll > hideHook);
+    QVERIFY(suspendHelpers > hideAll);
+    QVERIFY(restoreHook > suspendHelpers);
     const int currentViews = mainSource.indexOf(QStringLiteral("synchronizer()->currentViews()"), restoreHook);
     const int setVisible = mainSource.indexOf(QStringLiteral("view->setVisible(true)"), currentViews);
-    QVERIFY(restoreHook >= 0);
+    const int resumeHelpers = mainSource.indexOf(QStringLiteral("synchronizer()->setHelperWindowsSuspended(false);"), setVisible);
     QVERIFY(currentViews > restoreHook);
     QVERIFY(setVisible > currentViews);
+    QVERIFY(resumeHelpers > setVisible);
+
+    //! KWin's closeWaylandWindows() never sends close to a panel-role window,
+    //! so the ghost and floating gap windows of a hidden dock must go too, and
+    //! nothing may create them again before the logout is resolved.
+    QFile synchronizerSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/synchronizer.cpp"));
+    QVERIFY(synchronizerSourceFile.open(QFile::ReadOnly));
+    const QString synchronizerSource = QString::fromUtf8(synchronizerSourceFile.readAll());
+    const int suspendAll = synchronizerSource.indexOf(QStringLiteral("void Synchronizer::setHelperWindowsSuspended(bool suspended)"));
+    QVERIFY(suspendAll >= 0);
+    QVERIFY(synchronizerSource.indexOf(QStringLiteral("std::as_const(m_centralLayouts)"), suspendAll) > suspendAll);
+    QVERIFY(synchronizerSource.indexOf(QStringLiteral("visibility->setHelperWindowsSuspended(suspended);"), suspendAll) > suspendAll);
+
+    QFile visibilitySourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/visibilitymanager.cpp"));
+    QVERIFY(visibilitySourceFile.open(QFile::ReadOnly));
+    const QString visibilitySource = QString::fromUtf8(visibilitySourceFile.readAll());
+    const int suspendStart = visibilitySource.indexOf(QStringLiteral("void VisibilityManager::setHelperWindowsSuspended(bool suspended)"));
+    const int deleteGhost = visibilitySource.indexOf(QStringLiteral("deleteEdgeGhostWindow();"), suspendStart);
+    const int deleteGap = visibilitySource.indexOf(QStringLiteral("deleteFloatingGapWindow();"), suspendStart);
+    QVERIFY(suspendStart >= 0);
+    QVERIFY(deleteGhost > suspendStart);
+    QVERIFY(deleteGap > suspendStart);
+
+    for (const auto &creator : {QStringLiteral("void VisibilityManager::createEdgeGhostWindow()"),
+                                QStringLiteral("void VisibilityManager::createFloatingGapWindow()")}) {
+        const int creatorStart = visibilitySource.indexOf(creator);
+        const int guard = visibilitySource.indexOf(QStringLiteral("if (m_helperWindowsSuspended) {"), creatorStart);
+        const int creation = visibilitySource.indexOf(QStringLiteral(" = new "), creatorStart);
+        QVERIFY2(creatorStart >= 0, qPrintable(creator));
+        QVERIFY2(guard > creatorStart && guard < creation, qPrintable(creator));
+    }
 }
 
 void SourceContractTest::coronaTeardownSkipsFactoryFreedByQuitCleanup()

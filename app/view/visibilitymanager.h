@@ -114,6 +114,16 @@ public:
 
     bool supportsKWinEdges() const;
 
+    //! Session logout: the screen-edge ghost and floating gap windows are
+    //! panel-role xdg_toplevels that stay mapped while the dock is hidden.
+    //! KWin's closeWaylandWindows() waits for every xdg_toplevel to close but
+    //! never sends close to a panel-role window, so a mapped helper window held
+    //! the logout until KWin's "applications did not close" notification.
+    //! While suspended they are deleted and none is created; resuming creates
+    //! what the current mode and settings ask for. Session::ShutdownMonitor
+    //! suspends them when a logout is confirmed and resumes them on a cancel.
+    void setHelperWindowsSuspended(bool suspended);
+
     //! Struts
     int strutsThickness() const;
     void setStrutsThickness(int thickness);
@@ -261,6 +271,9 @@ private:
 
     //! Floating Gap
     FloatingGapWindow *m_floatingGapWindow{nullptr};
+
+    //! See setHelperWindowsSuspended().
+    bool m_helperWindowsSuspended{false};
 
     Latte::Corona *m_corona{nullptr};
     Latte::View *m_latteView{nullptr};

@@ -12,6 +12,7 @@
 #include <QThread>
 
 #include <atomic>
+#include <optional>
 
 using Latte::Session::ShutdownMonitor;
 
@@ -19,9 +20,10 @@ namespace {
 
 //! Fake session state reported by the hooks, plus counters for side effects.
 struct FakeSession {
-    bool shuttingDown{false};
+    //! ksmserver's answer; no value models a query that ksmserver did not
+    //! answer (busy past the timeout, or already gone).
+    std::optional<bool> shuttingDown{false};
     bool sessionEnding{false};
-    bool quitWithoutWaiting{true};
     int probes{0};
     int hides{0};
     int restores{0};
@@ -36,9 +38,6 @@ struct FakeSession {
             },
             .isSessionEnding = [this]() {
                 return sessionEnding;
-            },
-            .quitWithoutWaiting = [this]() {
-                return quitWithoutWaiting;
             },
             .markSessionEnding = [this]() {
                 sessionEnding = true;
@@ -106,10 +105,10 @@ private Q_SLOTS:
     void idleSessionDoesNotPoll();
     void shutdownServiceStartsAndStopsPolling();
     void confirmedLogoutHidesViewsOnce();
-    void fastExitQuitsOnConfirmedLogout();
+    void confirmedLogoutWaitsWhilePlasmaShutdownRuns();
     void cancelledLogoutRestoresViewsWhenServiceLeaves();
     void completedLogoutQuitsWhenServiceLeaves();
-    void fallbackQuitsWhenCompletionNeverArrives();
+    void unansweredQueryKeepsTheLogoutState();
     void signalSetEndingFlagDoesNotStartPolling();
     void busOwnershipDrivesPolling();
     void existingOwnerIsDetectedAtStartup();
@@ -149,9 +148,6 @@ void ShutdownMonitorTest::shutdownServiceStartsAndStopsPolling()
 void ShutdownMonitorTest::confirmedLogoutHidesViewsOnce()
 {
     FakeSession session;
-    // Keep the dock alive after the confirmation so the hide side effect can be
-    // observed more than once; the fast-exit path is covered separately.
-    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
@@ -161,37 +157,36 @@ void ShutdownMonitorTest::confirmedLogoutHidesViewsOnce()
     QCOMPARE(session.hides, 1);
     QCOMPARE(session.quits, 0);
 
-    // No window list is consulted, so the decision never depends on other
-    // clients: the fallback timer or the completion report ends the dock.
     monitor.evaluate();
     QCOMPARE(session.hides, 1);
     QCOMPARE(session.quits, 0);
 }
 
-void ShutdownMonitorTest::fastExitQuitsOnConfirmedLogout()
+void ShutdownMonitorTest::confirmedLogoutWaitsWhilePlasmaShutdownRuns()
 {
     FakeSession session;
-    session.quitWithoutWaiting = true;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
     session.shuttingDown = true;
     monitor.evaluate();
-
-    // Preferences > Behavior: leave in the same sample, without waiting for
-    // any other client's window and without the fallback timer.
-    QVERIFY(session.sessionEnding);
     QCOMPARE(session.hides, 1);
-    QCOMPARE(session.quits, 1);
+
+    // While plasma-shutdown runs, KWin may still be waiting for an application
+    // and offer "Cancel Logout". The dock keeps sampling but never quits, no
+    // matter how long that takes, so a cancel finds it alive.
+    const int probesAfterConfirmation = session.probes;
+    QTest::qWait(ShutdownMonitor::PollIntervalMs * 3 + 200);
+    QVERIFY(session.probes >= probesAfterConfirmation + 2);
+    QVERIFY(monitor.isPolling());
+    QCOMPARE(session.quits, 0);
     QCOMPARE(session.restores, 0);
+    QCOMPARE(session.hides, 1);
 }
 
 void ShutdownMonitorTest::cancelledLogoutRestoresViewsWhenServiceLeaves()
 {
     FakeSession session;
-    // What is tested here is the cancel branch, so the dock stays alive long
-    // enough to observe it instead of using the fast-exit path.
-    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
@@ -212,7 +207,6 @@ void ShutdownMonitorTest::cancelledLogoutRestoresViewsWhenServiceLeaves()
 void ShutdownMonitorTest::completedLogoutQuitsWhenServiceLeaves()
 {
     FakeSession session;
-    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
@@ -223,25 +217,43 @@ void ShutdownMonitorTest::completedLogoutQuitsWhenServiceLeaves()
     // plasma-shutdown leaving while ksmserver still reports a logout is the
     // completion report: the dock leaves without inspecting any window list.
     monitor.setShutdownServiceRegistered(false);
-    QTRY_COMPARE_WITH_TIMEOUT(session.quits, 1, ShutdownMonitor::PollIntervalMs * 4);
+    QCOMPARE(session.quits, 1);
     QCOMPARE(session.restores, 0);
 }
 
-void ShutdownMonitorTest::fallbackQuitsWhenCompletionNeverArrives()
+void ShutdownMonitorTest::unansweredQueryKeepsTheLogoutState()
 {
     FakeSession session;
-    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
+    // No answer before a confirmation does not start a logout.
+    session.shuttingDown = std::nullopt;
+    monitor.evaluate();
+    QVERIFY(!session.sessionEnding);
+    QCOMPARE(session.hides, 0);
+
     session.shuttingDown = true;
     monitor.evaluate();
+    QCOMPARE(session.hides, 1);
+
+    // A busy ksmserver is not a cancel: the hidden dock must not come back in
+    // the middle of the logout.
+    session.shuttingDown = std::nullopt;
+    monitor.evaluate();
+    QVERIFY(session.sessionEnding);
+    QCOMPARE(session.restores, 0);
     QCOMPARE(session.quits, 0);
 
-    // Neither a cancel nor a completion arrives: the hard bound must end the
-    // dock before KWin reports its windows as unclosed (10 s).
-    QVERIFY(ShutdownMonitor::QuitFallbackMs < 10000);
-    QTRY_COMPARE_WITH_TIMEOUT(session.quits, 1, ShutdownMonitor::QuitFallbackMs + 3000);
+    // Nor is it a completion when plasma-shutdown leaves; sampling goes on
+    // until ksmserver answers.
+    monitor.setShutdownServiceRegistered(false);
+    QCOMPARE(session.restores, 0);
+    QCOMPARE(session.quits, 0);
+    QVERIFY(monitor.isPolling());
+
+    session.shuttingDown = true;
+    QTRY_COMPARE_WITH_TIMEOUT(session.quits, 1, ShutdownMonitor::PollIntervalMs * 4);
     QCOMPARE(session.restores, 0);
 }
 
@@ -309,6 +321,10 @@ void ShutdownMonitorTest::ksmServerQueryReportsState()
 {
     QVERIFY(onPrivateBus());
 
+    // Without an owner of org.kde.ksmserver there is no answer at all.
+    QVERIFY(!Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus()).has_value());
+    QVERIFY(!Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus()));
+
     QThread serviceThread;
     auto *ksmserver = new FakeKsmServer;
     ksmserver->moveToThread(&serviceThread);
@@ -321,8 +337,10 @@ void ShutdownMonitorTest::ksmServerQueryReportsState()
     QVERIFY(owner.registerService(QStringLiteral("org.kde.ksmserver")));
 
     ksmserver->shuttingDown = true;
+    QCOMPARE(Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus()), std::optional<bool>(true));
     QVERIFY(Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus()));
     ksmserver->shuttingDown = false;
+    QCOMPARE(Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus()), std::optional<bool>(false));
     QVERIFY(!Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus()));
 
     owner.unregisterObject(QStringLiteral("/KSMServer"));
@@ -348,15 +366,18 @@ void ShutdownMonitorTest::ksmServerQueryIsBounded()
     QVERIFY(owner.registerService(QStringLiteral("org.kde.ksmserver")));
 
     // An unresponsive ksmserver must not stall the caller for the 25 s
-    // default D-Bus timeout; the query reports "not shutting down" instead.
+    // default D-Bus timeout; the query reports no answer instead.
     ksmserver->withholdReply = true;
     QElapsedTimer elapsed;
     elapsed.start();
-    QVERIFY(!Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus(), 200));
+    QVERIFY(!Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus(), 200).has_value());
     // The lower bound proves the call reached the silent service and waited
     // for its timeout instead of failing fast for an unrelated bus error.
     const qint64 waitedMs = elapsed.elapsed();
     QVERIFY2(waitedMs >= 100 && waitedMs < 5000, qPrintable(QStringLiteral("query took %1 ms").arg(waitedMs)));
+
+    // The boolean form, used by Corona::onAboutToQuit(), reads it as false.
+    QVERIFY(!Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus(), 200));
 
     owner.unregisterObject(QStringLiteral("/KSMServer"));
     QVERIFY(owner.unregisterService(QStringLiteral("org.kde.ksmserver")));

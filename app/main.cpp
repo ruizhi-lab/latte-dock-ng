@@ -15,7 +15,6 @@
 #include "layouts/importer.h"
 #include "layouts/manager.h"
 #include "session/shutdownmonitor.h"
-#include "settings/universalsettings.h"
 #include "templates/templatesmanager.h"
 #include "view/view.h"
 #include "wm/abstractwindowinterface.h"
@@ -23,7 +22,6 @@
 // C
 #include <csignal>
 #include <cstdio>
-#include <cstdlib>
 
 // POSIX
 #include <fcntl.h>
@@ -658,14 +656,10 @@ int main(int argc, char **argv)
         //! it is destroyed first and its hooks never outlive the views.
         Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), {
             .isSessionShuttingDown = []() {
-                return Latte::Session::isKsmServerShuttingDown(QDBusConnection::sessionBus());
+                return Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus());
             },
             .isSessionEnding = [&app]() {
                 return app.property("latte_session_ending").toBool();
-            },
-            .quitWithoutWaiting = [&corona]() {
-                auto *settings = corona.universalSettings();
-                return settings && settings->quitWithoutWaitingOnLogout();
             },
             .markSessionEnding = markSessionEnding,
             .clearSessionEnding = [&app]() {
@@ -675,6 +669,7 @@ int main(int argc, char **argv)
             .hideViews = [&corona]() {
                 if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
                     manager->synchronizer()->hideAllViews();
+                    manager->synchronizer()->setHelperWindowsSuspended(true);
                 }
             },
             .restoreViews = [&corona]() {
@@ -686,6 +681,8 @@ int main(int argc, char **argv)
                             view->setVisible(true);
                         }
                     }
+
+                    manager->synchronizer()->setHelperWindowsSuspended(false);
                 }
             },
             .quit = [&app]() {
@@ -719,19 +716,6 @@ int main(int argc, char **argv)
     // still alive.  Leaving it to static destruction can crash when QQC2
     // popups owned by the engine tear down after QApplication has gone away.
     sharedEngine.reset();
-
-    //! Session-end fast exit. During a KDE logout/shutdown the compositor is
-    //! already closing this session's surfaces, so QWaylandDisplay's destructor
-    //! can fault while it disconnects from that half-torn-down connection
-    //! (wl_display_disconnect -> wl_event_queue_release -> wl_list_remove,
-    //! SIGSEGV in libwayland-client). Everything the dock has to persist is
-    //! already written: the Corona, its settings and the shared engine are torn
-    //! down above, so only the Qt platform plugin is left. Skip that teardown
-    //! instead of crashing out of it; a normal quit keeps the regular path.
-    if (app.property("latte_session_ending").toBool()) {
-        qInfo() << "[shutdown] session end; skipping Qt platform teardown.";
-        ::_Exit(result);
-    }
 
     return result;
 }

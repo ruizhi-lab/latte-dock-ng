@@ -685,6 +685,25 @@ bool VisibilityManager::supportsKWinEdges() const
     return (m_edgeGhostWindow != nullptr);
 }
 
+void VisibilityManager::setHelperWindowsSuspended(bool suspended)
+{
+    if (m_helperWindowsSuspended == suspended) {
+        return;
+    }
+
+    m_helperWindowsSuspended = suspended;
+
+    if (suspended) {
+        deleteEdgeGhostWindow();
+        deleteFloatingGapWindow();
+        return;
+    }
+
+    updateKWinEdgesSupport();
+    onIsFloatingGapWindowEnabledChanged();
+    updateGhostWindowState();
+}
+
 void VisibilityManager::updateGhostWindowState()
 {
     if (supportsKWinEdges()) {
@@ -942,7 +961,10 @@ void VisibilityManager::checkMouseInFloatingArea()
             createFloatingGapWindow();
         }
 
-        m_floatingGapWindow->callAsyncContainsMouse();
+        //! No window is created while the helper windows are suspended.
+        if (m_floatingGapWindow) {
+            m_floatingGapWindow->callAsyncContainsMouse();
+        }
     }
 }
 
@@ -1025,6 +1047,11 @@ void VisibilityManager::onIsFloatingGapWindowEnabledChanged()
 
 void VisibilityManager::createEdgeGhostWindow()
 {
+    //! A mode or settings change during a logout must not map it again.
+    if (m_helperWindowsSuspended) {
+        return;
+    }
+
     if (!m_edgeGhostWindow) {
         m_edgeGhostWindow = new ScreenEdgeGhostWindow(m_latteView);
 
@@ -1079,6 +1106,11 @@ void VisibilityManager::deleteEdgeGhostWindow()
 
 void VisibilityManager::createFloatingGapWindow()
 {
+    //! See createEdgeGhostWindow().
+    if (m_helperWindowsSuspended) {
+        return;
+    }
+
     if (!m_floatingGapWindow) {
         m_floatingGapWindow = new FloatingGapWindow(m_latteView);
 

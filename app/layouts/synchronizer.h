@@ -65,6 +65,9 @@ public:
     void unloadLayouts();
 
     void hideAllViews();
+    //! Suspends or recreates the helper windows of every view that
+    //! hideAllViews() hides; see VisibilityManager::setHelperWindowsSuspended().
+    void setHelperWindowsSuspended(bool suspended);
     void syncActiveLayoutsToOriginalFiles();
     void syncLatteViewsToScreens();
     void syncMultipleLayoutsToActivities(QStringList preloadedLayouts = QStringList());

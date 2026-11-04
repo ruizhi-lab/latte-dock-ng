@@ -14,7 +14,7 @@
 
 namespace Latte::Session {
 
-bool isKsmServerShuttingDown(const QDBusConnection &connection, int timeoutMs)
+std::optional<bool> ksmServerShutdownState(const QDBusConnection &connection, int timeoutMs)
 {
     const QDBusMessage message = QDBusMessage::createMethodCall(QStringLiteral("org.kde.ksmserver"),
                                                                 QStringLiteral("/KSMServer"),
@@ -22,7 +22,16 @@ bool isKsmServerShuttingDown(const QDBusConnection &connection, int timeoutMs)
                                                                 QStringLiteral("isShuttingDown"));
     const QDBusMessage reply = connection.call(message, QDBus::Block, timeoutMs);
 
-    return reply.type() == QDBusMessage::ReplyMessage && !reply.arguments().isEmpty() && reply.arguments().constFirst().toBool();
+    if (reply.type() != QDBusMessage::ReplyMessage || reply.arguments().isEmpty()) {
+        return std::nullopt;
+    }
+
+    return reply.arguments().constFirst().toBool();
+}
+
+bool isKsmServerShuttingDown(const QDBusConnection &connection, int timeoutMs)
+{
+    return ksmServerShutdownState(connection, timeoutMs).value_or(false);
 }
 
 QString ShutdownMonitor::shutdownServiceName()
@@ -37,16 +46,6 @@ ShutdownMonitor::ShutdownMonitor(const QDBusConnection &connection, Hooks hooks,
 {
     m_pollTimer.setInterval(PollIntervalMs);
     connect(&m_pollTimer, &QTimer::timeout, this, &ShutdownMonitor::evaluate);
-
-    //! Hard bound for the dock's own exit. Nothing the session reports can be
-    //! trusted to arrive before KWin gives up on the dock's toplevels, so the
-    //! fallback quits regardless of missed signals.
-    m_quitFallbackTimer.setSingleShot(true);
-    m_quitFallbackTimer.setInterval(QuitFallbackMs);
-    connect(&m_quitFallbackTimer, &QTimer::timeout, this, [this]() {
-        qInfo() << "[shutdown] no logout completion reported within" << QuitFallbackMs << "ms; quitting anyway.";
-        m_hooks.quit();
-    });
 
     connect(&m_serviceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this]() {
         setShutdownServiceRegistered(true);
@@ -103,13 +102,22 @@ void ShutdownMonitor::setShutdownServiceRegistered(bool registered)
 
 void ShutdownMonitor::evaluate()
 {
-    const bool shuttingDown = m_hooks.isSessionShuttingDown();
+    const std::optional<bool> shuttingDown = m_hooks.isSessionShuttingDown();
+
+    //! ksmserver did not answer: it is busy (the query is bounded by
+    //! KsmServerQueryTimeoutMs) or already gone at the end of the session.
+    //! That is neither a cancel nor a completion. Reading it as "not shutting
+    //! down" restored the hidden dock in the middle of a logout, so keep the
+    //! current state and decide on the next sample.
+    if (!shuttingDown.has_value()) {
+        qInfo() << "[shutdown] ksmserver did not answer isShuttingDown(); keeping the current state.";
+        return;
+    }
 
     if (m_hooks.isSessionEnding()) {
-        if (!shuttingDown) {
+        if (!*shuttingDown) {
             // User cancelled the logout confirmation.
             qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
-            m_quitFallbackTimer.stop();
             m_hooks.clearSessionEnding();
 
             //! Restore the views that were hidden when the logout was announced.
@@ -118,11 +126,10 @@ void ShutdownMonitor::evaluate()
             return;
         }
 
-        //! plasma-shutdown left while ksmserver still reports a logout: the
-        //! logout completed. Nothing else is needed to decide this — the dock
-        //! never inspects other clients' windows, because on Wayland that list
-        //! is full of windows a logout must not wait for (tray-only apps,
-        //! minimized windows, plasmashell's own desktop surfaces).
+        //! plasma-shutdown left while ksmserver still reports the logout: the
+        //! logout completed. While plasma-shutdown runs, the logout can still
+        //! be cancelled from KWin's notification, so the dock never quits
+        //! earlier and never decides from other clients' windows.
         if (!m_shutdownServiceRegistered) {
             qInfo() << "[shutdown] logout completed; quitting.";
             m_hooks.quit();
@@ -131,35 +138,24 @@ void ShutdownMonitor::evaluate()
         return;
     }
 
-    if (shuttingDown) {
+    if (*shuttingDown) {
         // Phase 1: logout confirmed. ksmserver's isShuttingDown only turns
         // true after the user confirms (performLogout), not while the
-        // confirmation dialog shows.
+        // confirmation dialog shows. Set the flag but do NOT quit: the logout
+        // can still be cancelled through KWin's "Cancel Logout" notification
+        // while it closes the windows.
         qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
         m_hooks.markSessionEnding();
 
         //! KWin's session shutdown waits for every xdg_toplevel window to
         //! close (org.kde.KWin.Session.closeWaylandWindows): it closes the
         //! windows, waits 10s, shows a "Cancel Logout / Log Out Anyway"
-        //! notification, then waits indefinitely. Latte dock views are
-        //! xdg_toplevel windows, so unmap them as soon as the logout is
-        //! announced; otherwise the whole shutdown blocks on the dock. The
-        //! cancel branch above re-shows them.
+        //! notification, then waits indefinitely. It never sends close to a
+        //! panel-role (dock) window, and the dock views and their helper
+        //! windows are panel-role xdg_toplevels, so hide all of them as soon
+        //! as the logout is announced; otherwise the whole shutdown blocks on
+        //! the dock. The cancel branch above shows them again.
         m_hooks.hideViews();
-
-        //! Preferences > Behavior: leave at once instead of holding the
-        //! session open for a possible cancel. The fallback timer is armed in
-        //! both cases so a missing completion report can never keep the dock
-        //! alive past KWin's own window-close timeout.
-        if (m_hooks.quitWithoutWaiting()) {
-            qInfo() << "[shutdown] fast exit enabled; quitting without waiting for other windows.";
-            m_hooks.quit();
-            return;
-        }
-
-        if (!m_quitFallbackTimer.isActive()) {
-            m_quitFallbackTimer.start();
-        }
     }
 }
 

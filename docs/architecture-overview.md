@@ -80,9 +80,13 @@ and coredump A/B procedure in the testing guide for crash fixes.
 
 Session logout handling lives in `Session::ShutdownMonitor`, created in
 `main()` after the `Corona` so that it is destroyed first. It samples ksmserver
-only while plasma-shutdown owns `org.kde.Shutdown`. `~Corona()` deletes its
-services in dependency order through `Session::deleteNow()`, which tolerates a
-service already freed by `QCoreApplication::exec()` during a normal quit.
+only while plasma-shutdown owns `org.kde.Shutdown`. A confirmed logout hides
+the views and suspends their helper windows, because KWin waits for every
+`xdg_toplevel` and never closes a panel-role window; a cancel restores both,
+and the dock quits only when plasma-shutdown leaves while ksmserver still
+reports the logout. `~Corona()` deletes its services in dependency order
+through `Session::deleteNow()`, which tolerates a service already freed by
+`QCoreApplication::exec()` during a normal quit.
 
 The settings windows in [app/view/settings](../app/view/settings) hand the dock
 (`latteView`), its `plasmoid`, the window (`viewConfig`) and three application

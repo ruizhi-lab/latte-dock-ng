@@ -48,7 +48,6 @@ class UniversalSettings : public QObject
     Q_PROPERTY(bool inAdvancedModeForEditSettings READ inAdvancedModeForEditSettings WRITE setInAdvancedModeForEditSettings NOTIFY inAdvancedModeForEditSettingsChanged)
     Q_PROPERTY(bool colorsScriptIsPresent READ colorsScriptIsPresent NOTIFY colorsScriptIsPresentChanged)
     Q_PROPERTY(bool showInfoWindow READ showInfoWindow WRITE setShowInfoWindow NOTIFY showInfoWindowChanged)
-    Q_PROPERTY(bool quitWithoutWaitingOnLogout READ quitWithoutWaitingOnLogout WRITE setQuitWithoutWaitingOnLogout NOTIFY quitWithoutWaitingOnLogoutChanged)
 
     Q_PROPERTY(int parabolicSpread READ parabolicSpread WRITE setParabolicSpread NOTIFY parabolicSpreadChanged)
     Q_PROPERTY(float thicknessMarginInfluence READ thicknessMarginInfluence WRITE setThicknessMarginInfluence NOTIFY thicknessMarginInfluenceChanged)
@@ -77,11 +76,6 @@ public:
     void setBadges3DStyle(bool enable);
 
     bool colorsScriptIsPresent() const;
-
-    //! When enabled the dock leaves as soon as ksmserver confirms the logout
-    //! instead of waiting for other clients' windows; see ShutdownMonitor.
-    bool quitWithoutWaitingOnLogout() const;
-    void setQuitWithoutWaitingOnLogout(bool enabled);
 
     bool inAdvancedModeForEditSettings() const;
     void setInAdvancedModeForEditSettings(const bool &inAdvanced);
@@ -139,7 +133,6 @@ Q_SIGNALS:
     void downloadWindowSizeChanged();
     void inAdvancedModeForEditSettingsChanged();
     void layoutsColumnWidthsChanged();
-    void quitWithoutWaitingOnLogoutChanged();
     void layoutsWindowSizeChanged();
     void launchersChanged();
     void layoutsMemoryUsageChanged();
@@ -180,7 +173,6 @@ private:
     bool m_isAvailableGeometryBroadcastedToPlasma{true};
     //! opt-in: a Meta hold also lets Plasma open its own launcher when Meta is released
     bool m_metaPressAndHoldEnabled{false};
-    bool m_quitWithoutWaitingOnLogout{Data::Preferences::QUITWITHOUTWAITING};
     bool m_showInfoWindow{true};
 
     //when there isnt a version it is an old universal file

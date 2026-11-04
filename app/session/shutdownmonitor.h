@@ -15,6 +15,7 @@
 
 // C++
 #include <functional>
+#include <optional>
 
 namespace Latte::Session {
 
@@ -23,20 +24,33 @@ namespace Latte::Session {
 //! teardown to miss the logout window, so every state query is bounded.
 inline constexpr int KsmServerQueryTimeoutMs = 1000;
 
+//! Returns ksmserver's isShuttingDown(), or no value when ksmserver did not
+//! answer (no owner, error or timeout).
+std::optional<bool> ksmServerShutdownState(const QDBusConnection &connection, int timeoutMs = KsmServerQueryTimeoutMs);
+
 //! Returns ksmserver's isShuttingDown(); false on error or timeout.
 bool isKsmServerShuttingDown(const QDBusConnection &connection, int timeoutMs = KsmServerQueryTimeoutMs);
 
 //! Follows a confirmed KDE logout without polling for the whole session.
 //!
 //! Trigger: plasma-shutdown is D-Bus activated as org.kde.Shutdown only after
-//! a logout, reboot or shutdown is confirmed, and it exits once ksmserver
-//! reports the logout cancelled or complete.
-//! Authority: ksmserver's isShuttingDown() and KWin's window list decide every
-//! step. Neither publishes a change signal, so both are sampled every
+//! a logout, reboot or shutdown is confirmed, and it exits once the logout is
+//! cancelled or complete.
+//! Authority: ksmserver's isShuttingDown() and the ownership of
+//! org.kde.Shutdown. A confirmed logout hides the dock; isShuttingDown()
+//! turning false again is a cancel and restores it; plasma-shutdown leaving
+//! while isShuttingDown() is still true is the completion and quits. Other
+//! clients' windows are never consulted: on Wayland that list keeps windows a
+//! logout does not wait for (tray-only and minimized clients, plasmashell's
+//! desktop surfaces), so it cannot tell when the logout ends.
+//! Lifetime: the dock stays until the logout completes or is cancelled, so
+//! KWin's "Cancel Logout" brings back a working dock. It does not hold the
+//! logout up because the hidden dock keeps no window that KWin waits for.
+//! Sampling: isShuttingDown() has no change signal, so it is sampled every
 //! PollIntervalMs while org.kde.Shutdown is owned, and afterwards only until a
-//! logout already being sampled is resolved (a cancel restores the views, a
-//! commit quits). The session-ending flag alone never starts sampling: a flag
-//! set by SIGTERM must not be read back as a cancelled logout.
+//! logout already being sampled is resolved. The session-ending flag alone
+//! never starts sampling: a flag set by SIGTERM must not be read back as a
+//! cancelled logout.
 //! Failure prevented: sampling for the whole session issued two blocking
 //! D-Bus calls every 500 ms and kept waking the idle dock.
 class ShutdownMonitor : public QObject
@@ -47,23 +61,19 @@ public:
     //! Probes and side effects are injected so the state machine can be
     //! exercised without ksmserver, KWin or a Corona.
     struct Hooks {
-        std::function<bool()> isSessionShuttingDown;
+        //! ksmserver's isShuttingDown(); no value when ksmserver did not answer.
+        std::function<std::optional<bool>()> isSessionShuttingDown;
         std::function<bool()> isSessionEnding;
-        //! True when the dock must leave as soon as the logout is confirmed.
-        std::function<bool()> quitWithoutWaiting;
         std::function<void()> markSessionEnding;
         std::function<void()> clearSessionEnding;
+        //! Hides the views and suspends their helper windows.
         std::function<void()> hideViews;
+        //! Shows the views again and recreates their helper windows.
         std::function<void()> restoreViews;
         std::function<void()> quit;
     };
 
     static constexpr int PollIntervalMs = 500;
-
-    //! Upper bound for the dock's own exit once a logout is confirmed. KWin's
-    //! session close gives windows 10 s before it reports them as unclosed, so
-    //! the dock must be gone before that; 8 s leaves room for a slow D-Bus.
-    static constexpr int QuitFallbackMs = 8000;
     static QString shutdownServiceName();
 
     ShutdownMonitor(const QDBusConnection &connection, Hooks hooks, QObject *parent = nullptr);
@@ -83,7 +93,6 @@ private:
     Hooks m_hooks;
     QDBusServiceWatcher m_serviceWatcher;
     QTimer m_pollTimer;
-    QTimer m_quitFallbackTimer;
     bool m_shutdownServiceRegistered{false};
 };
 
