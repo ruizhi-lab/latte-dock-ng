@@ -76,24 +76,35 @@ jobs:
     steps:
       - name: Install KDE Neon repository
         run: |
-          # archive.neon.kde.org answered some runs with an error for the key download (wget exit code 8 on
-          # 2026-11-03, and "wget -q" hid the HTTP status), while other attempts of the same commit passed.
-          # Retry with a pause, print the status of a failure, and let apt retry its own downloads.
+          # archive.neon.kde.org is served through a CDN. On 2026-11-03 and 2026-11-04 it answered the GitHub
+          # runners with "502 Bad Gateway" for the key and for the Packages index ("wget -q" used to hide
+          # the status). Try it first, then origin.archive.neon.kde.org, which serves the same repository
+          # and the same key. apt-get update must fetch every index (--error-on=any): a half-failed update
+          # leaves the Neon packages unknown and the next step fails with "Unable to locate package".
           apt-get update
           apt-get install -y --no-install-recommends ca-certificates wget gnupg
-          for attempt in 1 2 3 4 5; do
-            if wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc https://archive.neon.kde.org/public.key; then
-              break
-            fi
-            if [ "$attempt" = 5 ]; then
-              echo "::error::The KDE Neon public key could not be downloaded after $attempt attempts"
-              exit 1
-            fi
-            sleep $((attempt * 10))
-          done
-          echo "deb https://archive.neon.kde.org/user noble main" > /etc/apt/sources.list.d/neon.list
           echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
-          apt-get update
+          neon_try() {
+            wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc "https://$1/public.key" || return 1
+            echo "deb https://$1/user noble main" > /etc/apt/sources.list.d/neon.list
+            apt-get update --error-on=any
+          }
+          neon_host=
+          for host in archive.neon.kde.org origin.archive.neon.kde.org; do
+            for attempt in 1 2 3; do
+              if neon_try "$host"; then
+                neon_host="$host"
+                break 2
+              fi
+              echo "KDE Neon through $host failed (attempt $attempt of 3)"
+              [ "$attempt" = 3 ] || sleep $((attempt * 10))
+            done
+          done
+          if [ -z "$neon_host" ]; then
+            echo "::error::The KDE Neon repository could not be reached through archive.neon.kde.org or origin.archive.neon.kde.org"
+            exit 1
+          fi
+          echo "KDE Neon repository: $neon_host"
 
       - name: Install build dependencies
         run: |
