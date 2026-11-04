@@ -5,9 +5,6 @@
 
 #include "shutdownmonitor.h"
 
-// local
-#include "shutdownstate.h"
-
 // Qt
 #include <QDBusConnectionInterface>
 #include <QDBusMessage>
@@ -40,6 +37,16 @@ ShutdownMonitor::ShutdownMonitor(const QDBusConnection &connection, Hooks hooks,
 {
     m_pollTimer.setInterval(PollIntervalMs);
     connect(&m_pollTimer, &QTimer::timeout, this, &ShutdownMonitor::evaluate);
+
+    //! Hard bound for the dock's own exit. Nothing the session reports can be
+    //! trusted to arrive before KWin gives up on the dock's toplevels, so the
+    //! fallback quits regardless of missed signals.
+    m_quitFallbackTimer.setSingleShot(true);
+    m_quitFallbackTimer.setInterval(QuitFallbackMs);
+    connect(&m_quitFallbackTimer, &QTimer::timeout, this, [this]() {
+        qInfo() << "[shutdown] no logout completion reported within" << QuitFallbackMs << "ms; quitting anyway.";
+        m_hooks.quit();
+    });
 
     connect(&m_serviceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this]() {
         setShutdownServiceRegistered(true);
@@ -97,18 +104,13 @@ void ShutdownMonitor::setShutdownServiceRegistered(bool registered)
 void ShutdownMonitor::evaluate()
 {
     const bool shuttingDown = m_hooks.isSessionShuttingDown();
-    const bool hasBlockingWindows = m_hooks.hasBlockingWindows();
-
-    if (shuttingDown && hasBlockingWindows) {
-        m_sawBlockingWindows = true;
-    }
 
     if (m_hooks.isSessionEnding()) {
         if (!shuttingDown) {
             // User cancelled the logout confirmation.
             qInfo() << "[shutdown] logout cancelled; clearing session-ending flag.";
+            m_quitFallbackTimer.stop();
             m_hooks.clearSessionEnding();
-            m_sawBlockingWindows = false;
 
             //! Restore the views that were hidden when the logout was announced.
             m_hooks.restoreViews();
@@ -116,8 +118,13 @@ void ShutdownMonitor::evaluate()
             return;
         }
 
-        if (shouldQuitForCommittedShutdown(m_sawBlockingWindows, m_shutdownServiceRegistered, hasBlockingWindows)) {
-            qInfo() << "[shutdown] session blocking windows closed; quitting.";
+        //! plasma-shutdown left while ksmserver still reports a logout: the
+        //! logout completed. Nothing else is needed to decide this — the dock
+        //! never inspects other clients' windows, because on Wayland that list
+        //! is full of windows a logout must not wait for (tray-only apps,
+        //! minimized windows, plasmashell's own desktop surfaces).
+        if (!m_shutdownServiceRegistered) {
+            qInfo() << "[shutdown] logout completed; quitting.";
             m_hooks.quit();
         }
 
@@ -127,9 +134,7 @@ void ShutdownMonitor::evaluate()
     if (shuttingDown) {
         // Phase 1: logout confirmed. ksmserver's isShuttingDown only turns
         // true after the user confirms (performLogout), not while the
-        // confirmation dialog shows. Set the flag but do NOT quit: the logout
-        // can still be cancelled through KWin's "Cancel Logout" notification
-        // while it closes the windows.
+        // confirmation dialog shows.
         qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
         m_hooks.markSessionEnding();
 
@@ -141,6 +146,20 @@ void ShutdownMonitor::evaluate()
         //! announced; otherwise the whole shutdown blocks on the dock. The
         //! cancel branch above re-shows them.
         m_hooks.hideViews();
+
+        //! Preferences > Behavior: leave at once instead of holding the
+        //! session open for a possible cancel. The fallback timer is armed in
+        //! both cases so a missing completion report can never keep the dock
+        //! alive past KWin's own window-close timeout.
+        if (m_hooks.quitWithoutWaiting()) {
+            qInfo() << "[shutdown] fast exit enabled; quitting without waiting for other windows.";
+            m_hooks.quit();
+            return;
+        }
+
+        if (!m_quitFallbackTimer.isActive()) {
+            m_quitFallbackTimer.start();
+        }
     }
 }
 

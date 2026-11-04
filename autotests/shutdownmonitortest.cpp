@@ -20,8 +20,8 @@ namespace {
 //! Fake session state reported by the hooks, plus counters for side effects.
 struct FakeSession {
     bool shuttingDown{false};
-    bool blockingWindows{false};
     bool sessionEnding{false};
+    bool quitWithoutWaiting{true};
     int probes{0};
     int hides{0};
     int restores{0};
@@ -34,11 +34,11 @@ struct FakeSession {
                 ++probes;
                 return shuttingDown;
             },
-            .hasBlockingWindows = [this]() {
-                return blockingWindows;
-            },
             .isSessionEnding = [this]() {
                 return sessionEnding;
+            },
+            .quitWithoutWaiting = [this]() {
+                return quitWithoutWaiting;
             },
             .markSessionEnding = [this]() {
                 sessionEnding = true;
@@ -106,8 +106,10 @@ private Q_SLOTS:
     void idleSessionDoesNotPoll();
     void shutdownServiceStartsAndStopsPolling();
     void confirmedLogoutHidesViewsOnce();
+    void fastExitQuitsOnConfirmedLogout();
     void cancelledLogoutRestoresViewsWhenServiceLeaves();
-    void committedLogoutQuitsAfterBlockingWindowsClose();
+    void completedLogoutQuitsWhenServiceLeaves();
+    void fallbackQuitsWhenCompletionNeverArrives();
     void signalSetEndingFlagDoesNotStartPolling();
     void busOwnershipDrivesPolling();
     void existingOwnerIsDetectedAtStartup();
@@ -147,29 +149,53 @@ void ShutdownMonitorTest::shutdownServiceStartsAndStopsPolling()
 void ShutdownMonitorTest::confirmedLogoutHidesViewsOnce()
 {
     FakeSession session;
+    // Keep the dock alive after the confirmation so the hide side effect can be
+    // observed more than once; the fast-exit path is covered separately.
+    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
     session.shuttingDown = true;
-    session.blockingWindows = true;
     monitor.evaluate();
     QVERIFY(session.sessionEnding);
     QCOMPARE(session.hides, 1);
+    QCOMPARE(session.quits, 0);
 
-    // Still cancellable while ordinary windows are open: never quit here.
+    // No window list is consulted, so the decision never depends on other
+    // clients: the fallback timer or the completion report ends the dock.
     monitor.evaluate();
     QCOMPARE(session.hides, 1);
     QCOMPARE(session.quits, 0);
 }
 
-void ShutdownMonitorTest::cancelledLogoutRestoresViewsWhenServiceLeaves()
+void ShutdownMonitorTest::fastExitQuitsOnConfirmedLogout()
 {
     FakeSession session;
+    session.quitWithoutWaiting = true;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
     session.shuttingDown = true;
-    session.blockingWindows = true;
+    monitor.evaluate();
+
+    // Preferences > Behavior: leave in the same sample, without waiting for
+    // any other client's window and without the fallback timer.
+    QVERIFY(session.sessionEnding);
+    QCOMPARE(session.hides, 1);
+    QCOMPARE(session.quits, 1);
+    QCOMPARE(session.restores, 0);
+}
+
+void ShutdownMonitorTest::cancelledLogoutRestoresViewsWhenServiceLeaves()
+{
+    FakeSession session;
+    // What is tested here is the cancel branch, so the dock stays alive long
+    // enough to observe it instead of using the fast-exit path.
+    session.quitWithoutWaiting = false;
+    ShutdownMonitor monitor(disconnectedBus(), session.hooks());
+    monitor.setShutdownServiceRegistered(true);
+
+    session.shuttingDown = true;
     monitor.evaluate();
     QCOMPARE(session.hides, 1);
 
@@ -183,24 +209,39 @@ void ShutdownMonitorTest::cancelledLogoutRestoresViewsWhenServiceLeaves()
     QVERIFY(!monitor.isPolling());
 }
 
-void ShutdownMonitorTest::committedLogoutQuitsAfterBlockingWindowsClose()
+void ShutdownMonitorTest::completedLogoutQuitsWhenServiceLeaves()
 {
     FakeSession session;
+    session.quitWithoutWaiting = false;
     ShutdownMonitor monitor(disconnectedBus(), session.hooks());
     monitor.setShutdownServiceRegistered(true);
 
     session.shuttingDown = true;
-    session.blockingWindows = true;
     monitor.evaluate();
-
-    // plasma-shutdown may leave before the last window closes. The logout is
-    // unresolved, so sampling continues without the service.
-    monitor.setShutdownServiceRegistered(false);
     QCOMPARE(session.quits, 0);
-    QVERIFY(monitor.isPolling());
 
-    session.blockingWindows = false;
+    // plasma-shutdown leaving while ksmserver still reports a logout is the
+    // completion report: the dock leaves without inspecting any window list.
+    monitor.setShutdownServiceRegistered(false);
     QTRY_COMPARE_WITH_TIMEOUT(session.quits, 1, ShutdownMonitor::PollIntervalMs * 4);
+    QCOMPARE(session.restores, 0);
+}
+
+void ShutdownMonitorTest::fallbackQuitsWhenCompletionNeverArrives()
+{
+    FakeSession session;
+    session.quitWithoutWaiting = false;
+    ShutdownMonitor monitor(disconnectedBus(), session.hooks());
+    monitor.setShutdownServiceRegistered(true);
+
+    session.shuttingDown = true;
+    monitor.evaluate();
+    QCOMPARE(session.quits, 0);
+
+    // Neither a cancel nor a completion arrives: the hard bound must end the
+    // dock before KWin reports its windows as unclosed (10 s).
+    QVERIFY(ShutdownMonitor::QuitFallbackMs < 10000);
+    QTRY_COMPARE_WITH_TIMEOUT(session.quits, 1, ShutdownMonitor::QuitFallbackMs + 3000);
     QCOMPARE(session.restores, 0);
 }
 

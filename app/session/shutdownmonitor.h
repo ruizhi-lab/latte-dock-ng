@@ -48,8 +48,9 @@ public:
     //! exercised without ksmserver, KWin or a Corona.
     struct Hooks {
         std::function<bool()> isSessionShuttingDown;
-        std::function<bool()> hasBlockingWindows;
         std::function<bool()> isSessionEnding;
+        //! True when the dock must leave as soon as the logout is confirmed.
+        std::function<bool()> quitWithoutWaiting;
         std::function<void()> markSessionEnding;
         std::function<void()> clearSessionEnding;
         std::function<void()> hideViews;
@@ -58,6 +59,11 @@ public:
     };
 
     static constexpr int PollIntervalMs = 500;
+
+    //! Upper bound for the dock's own exit once a logout is confirmed. KWin's
+    //! session close gives windows 10 s before it reports them as unclosed, so
+    //! the dock must be gone before that; 8 s leaves room for a slow D-Bus.
+    static constexpr int QuitFallbackMs = 8000;
     static QString shutdownServiceName();
 
     ShutdownMonitor(const QDBusConnection &connection, Hooks hooks, QObject *parent = nullptr);
@@ -77,8 +83,8 @@ private:
     Hooks m_hooks;
     QDBusServiceWatcher m_serviceWatcher;
     QTimer m_pollTimer;
+    QTimer m_quitFallbackTimer;
     bool m_shutdownServiceRegistered{false};
-    bool m_sawBlockingWindows{false};
 };
 
 }
