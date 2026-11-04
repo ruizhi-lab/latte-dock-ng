@@ -417,7 +417,7 @@ China; GitHub Actions explicitly uses each distribution's official mirrors.
 ```bash
 cd docker
 docker compose run --rm arch       # Arch Linux
-docker compose run --rm fedora     # Fedora 44
+docker compose run --rm fedora     # Fedora 45
 docker compose run --rm opensuse   # openSUSE Tumbleweed
 docker compose run --rm mageia     # Mageia Cauldron (Mageia 11 development)
 docker compose run --rm ubuntu     # Ubuntu 26.04

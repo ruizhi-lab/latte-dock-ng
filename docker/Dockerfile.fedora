@@ -1,18 +1,29 @@
 ARG BASE_IMAGE=fedora
-FROM ${BASE_IMAGE}:44
+# The current Fedora stable release. The image tag and the local mirror paths
+# below both follow it, so a release bump changes only this line.
+ARG FEDORA_VERSION=45
+FROM ${BASE_IMAGE}:${FEDORA_VERSION}
 
+ARG FEDORA_VERSION
 ARG USE_MIRRORS=false
 
+# Up to Fedora 44 the repository files are in /etc/yum.repos.d. Fedora 45 ships
+# them in dnf5's vendor directory /usr/share/dnf5/repos.d and leaves
+# /etc/yum.repos.d empty; a file of the same name in /etc/yum.repos.d replaces
+# the vendor file, so the local mirror setup edits a copy there.
 RUN if [ "$USE_MIRRORS" = "true" ]; then \
+      for repo in fedora fedora-updates; do \
+        [ -f "/etc/yum.repos.d/$repo.repo" ] || cp "/usr/share/dnf5/repos.d/$repo.repo" /etc/yum.repos.d/ ; \
+      done && \
       sed -i \
         -e '/^metalink=/s|^|#|' \
-        -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/releases/44/Everything/$basearch/os/' \
+        -e "/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/releases/${FEDORA_VERSION}/Everything/\$basearch/os/" \
         /etc/yum.repos.d/fedora.repo && \
       sed -i \
         -e '/^metalink=/s|^|#|' \
-        -e '/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/updates/44/Everything/$basearch/' \
+        -e "/^#metalink=/a baseurl=https://mirrors.ustc.edu.cn/fedora/updates/${FEDORA_VERSION}/Everything/\$basearch/" \
         /etc/yum.repos.d/fedora-updates.repo && \
-      rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo ; \
+      rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo /usr/share/dnf5/repos.d/fedora-cisco-openh264.repo ; \
     fi
 
 RUN dnf install -y --setopt=install_weak_deps=False \

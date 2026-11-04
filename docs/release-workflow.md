@@ -7,8 +7,9 @@ and Ubuntu APT setup is in [`debian-apt-repository.md`](debian-apt-repository.md
 
 Debian stable and the current Fedora stable are priority support targets
 because of their large user bases. CI pins their concrete releases (currently
-Debian 13 and Fedora 44); update the container and package metadata when either
-distribution publishes its next stable release. Mageia CI follows Cauldron
+Debian 13 and Fedora 45; the Fedora release is `FEDORA_VERSION` in
+`docker/Dockerfile.fedora`); update the container and package metadata when
+either distribution publishes its next stable release. Mageia CI follows Cauldron
 because issue [#61](https://github.com/ruizhi-lab/latte-dock-ng/issues/61)
 reports a taskbar failure on Mageia 11, so Mageia 10 is not the validation
 target.
