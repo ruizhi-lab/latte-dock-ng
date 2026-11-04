@@ -1,3 +1,92 @@
+## [v1.3.0] - 2026-11-05
+
+This release fixes the logout and quit paths, the Layouts editor's Apply and
+the edit-mode menus, and adds a large lifetime and code-quality pass that is
+not meant to change behavior.
+
+### Added
+- Preferences → Behavior: the option "Press and Hold ⌘ to show shortcuts
+  badges" works on Wayland. Holding the Meta key for about a second shows the
+  hidden docks and the shortcut badges of their tasks and widgets. It is off by
+  default because Plasma's own launcher also opens when Meta is released with
+  its default shortcut. The choice is stored under a new key; the old key
+  recorded no choice and is dropped.
+
+### Fixed
+- Logout, shutdown and reboot no longer hold KWin's window-close step ("The
+  following applications did not close: Latte Dock NG"). KWin waits for every
+  toplevel but never asks a panel-role window to close, and the screen-edge and
+  floating-gap helper windows of a hidden dock stayed mapped. A confirmed logout
+  now removes them together with the views. The dock stays until the logout
+  completes, so "Cancel Logout" leaves a working dock; a cancel restores the
+  views and their helper windows. The end of the logout is taken from ksmserver
+  and plasma-shutdown instead of from other applications' windows. Based on
+  PR #66 by VerrPower.
+- Fix a crash on quit when no color scheme can be found, as for a new account
+  without `kdeglobals` and the default Plasma theme. The dock now falls back to
+  the BreezeLight scheme.
+- Quitting from the dock menu, the settings window or D-Bus could leave an
+  invisible `latte-dock-ng` process behind.
+- Layouts editor, Apply: renaming several layouts at once (chains and swaps) no
+  longer gives two rows the same file, and a renamed locked layout stays locked.
+  Every file move is checked and the temporary directory now lives next to the
+  layouts instead of in `/tmp`, so a full `/tmp` cannot leave the editor and the
+  files disagreeing. A layout that cannot be saved, renamed or moved back keeps
+  its name and file, and the message says where the file is.
+- Layout locks follow the owner write permission of the layout file, so locking
+  and unlocking also work with Qt 6.11 and when the dock runs as root.
+- Edit mode: right-clicking a task or a dock opens the dock menu again (Move
+  Dock To Layout, Export Dock as Template, Remove Dock and Show Alternatives).
+- Show Alternatives… works on Plasma 6.5 to 6.7, where the shared dialog could
+  not load. Removing a dock while its dialog is open no longer touches a
+  destroyed view.
+- Indicators: the options of the selected indicator are shown after switching
+  styles and back, the built-in indicators stay registered when a user-local
+  override is removed, and indicators downloaded with "Get New Indicators"
+  survive install, upgrade and uninstall.
+- Icon smoothing changes now reach the QML bindings that depend on them.
+- Callbacks whose owner is destroyed first no longer run on freed memory: every
+  connection and timer callback names the object that bounds its lifetime.
+  A temporary string builder in the Plasma config path code dangled on Qt 6.4.
+
+### Changed
+- The dock no longer polls ksmserver and KWin for the whole session, and
+  original-color icons refresh on the applet's icon signal instead of a timer.
+  On an idle desktop the main thread woke 16 times and the D-Bus thread 8 times
+  per second before; now about 0.15 and 0.
+- Builds against Plasma 6.8 and Qt 6.11 without warnings on GCC and Clang, and
+  still on the Debian 13 floor (Qt 6.8, KDE Frameworks 6.13, Plasma 6.3).
+  Plasma 6.8 raised the `libPlasma` soname from 7 to 8 (issue #67): packages
+  linked against the old soname block the Plasma upgrade, so Plasma 6.8 systems
+  need packages built from this release.
+- Code quality: 49 clazy checks are enforced in CI and their findings are fixed
+  (container copies, range-loop detaches, signal and slot signatures, includes).
+  No behavior change is intended.
+
+### Build
+- Fedora verification and packaging use Fedora 45; the Fedora image also works
+  with the dnf5 repository layout of Fedora 45.
+- CI installs the KDE Neon packages through a retry that refreshes the package
+  indexes, falls back to the Neon origin host, and retries the Mageia Cauldron
+  mirror failures.
+
+### Tests
+- Add `scripts/test-logout-simulation.py`, which runs a logout in a nested
+  headless KWin with a fake ksmserver and plasma-shutdown: it checks that
+  a confirmed logout hides every dock window, that KWin's close step does not
+  wait for the dock, that a cancel restores the windows and that a completed
+  logout and SIGTERM quit cleanly.
+- Add shutdown monitor, color scheme, layout lock, Apply file move, indicator
+  registry, source-contract and CI retry tests.
+
+### Notes
+- Help review: the only user-visible setting added since v1.2.62 is the Meta
+  hold option, which the English, Simplified Chinese and Traditional Chinese
+  guides describe. No other setting label, default or dialog changed. UI
+  languages without a translated guide continue to show the English guide.
+- The logout change was verified with the simulation on KWin 6.3.6, 6.7.5 and
+  6.8.2 and with the unit and contract tests, not with a real desktop logout.
+
 ## [v1.2.62] - 2026-10-21
 
 ### Added
