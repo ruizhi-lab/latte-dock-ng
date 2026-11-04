@@ -26,6 +26,7 @@ WORKFLOW = Path(__file__).resolve().parents[1] / ".github/workflows/build.yml"
 
 FAKE_APT_GET = r"""#!/bin/sh
 # Logs every call as "apt-get [arg] [arg]..." and fails the first FAKE_INSTALL_FAILURES installs.
+# Shell builtins only: the helper runs with a PATH that holds nothing but the fakes (see run_helper).
 printf 'apt-get' >> "$FAKE_LOG"
 printf ' [%s]' "$@" >> "$FAKE_LOG"
 printf '\n' >> "$FAKE_LOG"
@@ -35,7 +36,8 @@ update)
     exit 0
     ;;
 install)
-    count=$(cat "$FAKE_STATE" 2>/dev/null || echo 0)
+    count=0
+    [ -f "$FAKE_STATE" ] && read -r count < "$FAKE_STATE"
     count=$((count + 1))
     echo "$count" > "$FAKE_STATE"
     [ "$count" -le "${FAKE_INSTALL_FAILURES:-0}" ] && exit 100
@@ -69,15 +71,17 @@ def helper_script():
 
 
 def shells():
-    found = [("sh", "/bin/sh")]
+    sh = "/bin/sh" if os.path.exists("/bin/sh") else shutil.which("sh")
+    found = [("sh", sh)] if sh else []
     dash = shutil.which("dash")
-    if dash:
+    if dash and os.path.realpath(dash) != os.path.realpath(sh or ""):
         found.append(("dash", dash))
     return found
 
 
 class AptInstallRetryTest(unittest.TestCase):
     def setUp(self):
+        self.assertTrue(shells(), "no POSIX shell found to run the helper")
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         root = Path(self.temp.name)
@@ -100,7 +104,10 @@ class AptInstallRetryTest(unittest.TestCase):
         self.log.write_text("", encoding="utf-8")
         self.state.unlink(missing_ok=True)
         env = {
-            "PATH": f"{self.bin_dir}:/usr/bin:/bin",
+            # Nothing but the fakes: a build sandbox such as Nix has no coreutils in /usr/bin or /bin, and the
+            # helper must work with shell builtins and these two commands alone. An external command used by
+            # the helper (or by a fake) fails here on every system instead of passing where one is installed.
+            "PATH": str(self.bin_dir),
             "FAKE_LOG": str(self.log),
             "FAKE_STATE": str(self.state),
             "FAKE_INSTALL_FAILURES": str(install_failures),
