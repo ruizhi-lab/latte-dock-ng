@@ -26,6 +26,7 @@ The current suite covers:
   sizing, systray guards, volume/appmenu popups, separator/spacer behavior,
   drag-and-drop, and scroll/wheel actions
 - install, uninstall, Docker, and packaging contracts
+- parsers and safety guards of the logout simulation (`logoutsimulationtest`)
 
 Test executables are intentionally marked `EXCLUDE_FROM_ALL` so normal application builds are not slowed by test-only targets.
 
@@ -432,6 +433,9 @@ clean quit:
 
 3. Exercise the changed behavior, then drive the exact scenario the fix
    targets (dock restart, applet popups and submenus, KDE logout or reboot).
+   For a change to the logout handling, run the
+   [logout simulation](#logout-simulation) first; it does not replace the
+   real logout.
 
 4. Verify a clean teardown instead of trusting the exit status:
    - `coredumpctl list` must not gain a `latte-dock-ng` entry. Record the
@@ -448,6 +452,65 @@ clean quit:
 For crash fixes, run an A/B check against the previous binary: reproduce the
 crash with the old build and confirm a fresh core, rebuild with the fix,
 repeat the scenario, and confirm no new core is produced.
+
+## Logout Simulation
+
+`Session::ShutdownMonitor` decides from ksmserver, plasma-shutdown and KWin,
+which no autotest can provide, and the desktop can only exercise it by logging
+out. `scripts/test-logout-simulation.py` runs the dock through a logout in a
+nested, headless KWin (`kwin_wayland --virtual`) with a fake ksmserver and
+plasma-shutdown, and checks what KWin sees:
+
+- `confirm-cancel-complete`: a confirmed logout hides every dock window and
+  KWin's `closeWaylandWindows()` returns at once; a cancel restores the
+  windows; plasma-shutdown leaving after a second confirmation quits the dock
+  with status 0 and the teardown markers.
+- `blocker`: a window that refuses to close keeps KWin waiting; KWin's report
+  of the windows that did not close names only that window, the dock keeps
+  running, and a cancel restores it.
+- `sigterm`: SIGTERM quits the dock with status 0 and the teardown markers.
+
+```bash
+# First run: a user-mode Debug install of this checkout into the simulation HOME.
+python3 scripts/test-logout-simulation.py --install
+# A/B against another build, for example the packaged one, with an empty HOME.
+python3 scripts/test-logout-simulation.py --latte /usr/bin/latte-dock-ng --home "$HOME/latte-sim-packaged"
+```
+
+The default work directory is `~/.cache/latte-logout-simulation`; it holds the
+simulation HOME, the `--install` build tree and the logs of each run under
+`runs/<time>/<scenario>/` (`kwin.log`, `latte.log`, `result.json`). The exit
+status is 0 when every check passed, 1 when one failed and 2 when a scenario
+could not be set up.
+
+Each scenario runs on its own private bus from `dbus-run-session` whose
+configuration has no service directories. With D-Bus activation the bus
+started kactivitymanagerd, xdg-desktop-portal-kde and ksecretd with the
+environment it was given, and those processes outlived the bus. The bus and
+every process on it get the simulation HOME and XDG tree, a private `TMPDIR`
+(the dock's instance lock) and a private `XDG_RUNTIME_DIR`, so nothing reaches
+the desktop's Wayland display or the user's data. The dock is never started
+with `--replace`, the fake services refuse to start on the desktop bus, and
+processes that outlive a scenario are found by an environment marker and
+stopped. Requirements: `kwin_wayland`, `dbus-run-session`, the Python `dbus` and
+`gi` modules, and the Qt 6 `qml` runtime for `blocker`. `logoutsimulationtest`
+covers the script's parsers and guards.
+
+The simulation HOME gets a minimal `kdeglobals` when it has none, as every
+Plasma session has one: with the default Plasma theme, which ships no `colors`
+file, the dock otherwise creates no color scheme and crashes on quit in
+`PlasmaExtended::Theme`. The processes log to files with
+`QT_FORCE_STDERR_LOGGING=1`, because Qt built with journald support (Fedora)
+logs to the journal when stderr is not a terminal, and KWin gets `js.debug=true`
+because Fedora's `qtlogging.ini` turns off the debug category that `print()`
+in a KWin script uses.
+
+The simulation has no plasmashell and no real ksmserver or plasma-shutdown,
+and KWin's behavior is that of the installed KWin (checked with 6.7.5 and
+6.8.2). A dock built before the
+helper-window suspension (1.2.62 and earlier) fails `blocker`: its
+`#subwindow#` ghost window stays mapped after the confirmation and KWin lists
+the dock as not closed.
 
 ## Adding Tests
 

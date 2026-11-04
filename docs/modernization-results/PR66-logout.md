@@ -85,13 +85,40 @@ platform teardown without the `wl_list_remove` fault that the pull request's
 `::_Exit()` skipped. The fault was reported on Fedora 44 with Qt 6.11.2; it did
 not reproduce on this host.
 
+### Simulation script and an isolation fault
+
+The simulation is now `scripts/test-logout-simulation.py`
+([Logout Simulation](../development-testing-guide.md#logout-simulation)).
+
+The hand-run simulations above started `dbus-run-session` with the desktop
+environment and gave the scratch `HOME` only to KWin, the fake services and the
+dock. D-Bus activation on those private buses therefore started
+kactivitymanagerd, xdg-desktop-portal-kde and ksecretd with the real `HOME` and
+the desktop's `wayland-0`, and the processes outlived their buses. On
+2026-11-04, 33 of them were found by the private bus address in their
+environment and stopped; the session's own instances were not touched. The
+activity database passed a read-only `PRAGMA integrity_check`, and
+`kactivitymanagerdrc`, `kdewallet.kwl` and the flatpak permission store were not
+modified. kactivitymanagerd refreshed its own `resources/test-backup` copy, as
+it does at every start. The script gives every scenario a bus without service
+directories, passes the isolated environment to the bus itself and stops each
+process that still carries the scenario's environment marker.
+
+| Run of the script | Dock | Result |
+| --- | --- | --- |
+| All scenarios, host KWin 6.7.5 | User-mode install of `6d42a9d71` | 3/3 passed: confirm hides 2 → 0 windows, close step `true` after 0.00 s, cancel restores 2 of 2, completion and SIGTERM exit 0 with the teardown markers; `blocker` reports only the blocker. No process left on a private bus |
+| `blocker` and `confirm-cancel-complete`, host KWin 6.7.5 | `/usr/bin/latte-dock-ng` 1.2.62 | Both FAILED as expected. `blocker`: `#subwindow#1` stays mapped and KWin also lists 「Latte 停靠栏」. `confirm-cancel-complete`: without another application the old dock quits at the confirmation, so the cancel has nothing to restore |
+| All scenarios, Fedora 45 VM: KWin 6.8.2, Plasma 6.8.2, Qt 6.11.2, GCC 16.2.1 | User-mode install built natively by `--install` (`install.sh --user Debug`, 0 compiler warnings) | 3/3 passed with the seeded `kdeglobals`: same results as on the host, close step `true` after 0.00 s, completion and SIGTERM exit 0 with the teardown markers. No new core |
+| Same VM, simulation HOME without `kdeglobals` | Same | The logout checks passed, but every quit crashed (four cores): SIGSEGV in `QObject::deleteLater()` called from `PlasmaExtended::Theme::~Theme()` in `~Corona()`. With the default Plasma theme, which has no `colors` file, and no `kdeglobals`, `SchemeColors::possibleSchemeFile()` finds no scheme, `Theme::setOriginalSchemeFile()` returns early, and the destructor calls `deleteLater()` on the null scheme pointers. A real Plasma session has a `kdeglobals`; the dock bug is a follow-up |
+
 ## Not run
 
 - A real KDE logout on the desktop: the user's [desktop check](#desktop-check).
   The simulation has no plasmashell, no ksmserver session saving and no real
   plasma-shutdown.
 - Floating docks (`FloatingGapWindow`), the multiple-layouts mode, reboot and
-  shutdown confirmations, and Plasma versions other than 6.7.5.
+  shutdown confirmations, and Plasma versions other than 6.7.5 and 6.8.2 (the
+  Fedora 45 VM ran the simulation only, not a real logout).
 - CI for the pushed `main`.
 
 ## Desktop check

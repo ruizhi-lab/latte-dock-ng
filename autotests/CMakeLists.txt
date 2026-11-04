@@ -1126,6 +1126,10 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME clazyrunnertest
         COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_clazy_runner.py)
     set_property(TEST clazyrunnertest PROPERTY TIMEOUT 60)
+    # Parsers and safety guards of scripts/test-logout-simulation.py; needs no KWin, bus or dock build.
+    add_test(NAME logoutsimulationtest
+        COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_logout_simulation.py)
+    set_property(TEST logoutsimulationtest PROPERTY TIMEOUT 60)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()
