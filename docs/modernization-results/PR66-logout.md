@@ -1,0 +1,119 @@
+# PR #66: Event-Driven Logout End and the Dock's Helper Windows
+
+Status: Merged with follow-up fixes; the desktop logout check by the user is
+open (see [Desktop check](#desktop-check)).
+Date: 2026-11-04. Branch: `claude/pr66-logout`, merged into `main` with a
+fast-forward. Start HEAD: `1e8a1d03b`. Commits: `f36e66ffe` merges
+[PR #66](https://github.com/ruizhi-lab/latte-dock-ng/pull/66) (`0dc44bdf5`,
+VerrPower), `6d42a9d71` applies the
+[review](https://github.com/ruizhi-lab/latte-dock-ng/pull/66#pullrequestreview-5683067808).
+
+## Scope and behavior
+
+- **Merge.** The pull request replaces KWin's window list with session events
+  in the quit decision: plasma-shutdown leaving `org.kde.Shutdown` while
+  ksmserver still reports the logout is the completion. Main had added the Meta
+  hold preference next to the pull request's new option; the merge keeps both
+  and moves the option's checkbox to the end of the Preferences grid because
+  main uses row 4 for the Meta hold checkbox.
+- **Root cause of the stall.** KWin's `closeWaylandWindows()` waits for every
+  `xdg_toplevel` but never sends close to a panel-role (dock) window. A
+  confirmed logout hid the dock views, but the screen-edge ghost window of
+  AutoHide, Dodge and WindowsCanCover docks and the floating gap window stayed
+  mapped, so KWin waited for them until its "The following applications did not
+  close" notification. The pull request worked around this by quitting the dock
+  at the confirmation.
+- **Follow-up fix** (`6d42a9d71`):
+  - The confirmed-logout hook also suspends the helper windows
+    (`VisibilityManager::setHelperWindowsSuspended()` through
+    `Layouts::Synchronizer`): they are deleted and none is created until the
+    logout is resolved. A cancel shows the views and recreates the helper
+    windows.
+  - The "Quit immediately on logout" option and the 8 s quit fallback are
+    removed. Both quit while KWin can still offer "Cancel Logout". The dock now
+    stays until plasma-shutdown leaves: a cancel restores it, a completion
+    quits it.
+  - `Session::ksmServerShutdownState()` reports a ksmserver query without an
+    answer as no value, and `ShutdownMonitor::evaluate()` keeps its state for
+    it instead of reading a cancel.
+  - The session-end `::_Exit()` is removed. It also ran for every SIGTERM,
+    SIGHUP and SIGINT quit (`--replace` sends SIGTERM).
+  - `AbstractWindowInterface::hasSessionBlockingWindows()` and its contract
+    checks are removed; nothing calls it since the window list left the
+    decision.
+  - The help pages lose the option's row; the architecture overview describes
+    the logout handling.
+
+## Evidence
+
+| Check | Result |
+| --- | --- |
+| Merge commit `f36e66ffe` alone, GCC Debug preset | 0 compiler warnings; `sourcecontracttest`, `shutdownmonitortest`, `handbookdocumenttest` passed |
+| GCC Debug, `ctest --preset gcc-debug` at `6d42a9d71` | 0 compiler warnings; 59/59 passed |
+| Clang Debug, `ctest --preset clang-debug` | 0 compiler warnings; 59/59 passed |
+| GCC Release, `ctest --preset gcc-release` | 0 compiler warnings; 59/59 passed |
+| Clang Release, `ctest --preset clang-release` | 0 compiler warnings; 59/59 passed |
+| `shutdownmonitortest` | 12 cases: idle, service start and stop, confirm, a confirmed logout that waits while plasma-shutdown runs, cancel, completion, unanswered queries (no logout started, no cancel, no completion, completion once answered), signal-only flag, ownership watcher, pre-existing owner, ksmserver states including no owner, bounded unanswered query; 4.7 s instead of 10.5 s |
+| clazy gate in `latte-r2c-clazy:noble` (clazy 1.17, LLVM 19.1.1) | Container Clang Debug build: 0 compiler warnings. 49 negative fixtures rejected; 155 production sources, no findings from 49 gated checks |
+| Debian 13 container, `verify-install.sh debian13`: CMake 3.31.6, GCC 14.2.0, Qt 6.8.2, KF 6.13.0, libplasma 6.3.5, plasma-workspace 6.3.6 | Exit 0 in 375 s: system and user build, install and uninstall; 0 compiler warnings |
+| Nested KWin logout simulation, below | The dock no longer holds KWin's close step; cancel and completion work |
+| `coredumpctl` after the simulation | No new `latte-dock-ng` entry |
+
+### Nested KWin logout simulation
+
+KWin 6.7.5 (`kwin_wayland --virtual`) ran on a private bus from
+`dbus-run-session`, with its own Wayland socket. A Python service owned
+`org.kde.ksmserver` (`isShuttingDown()` on request) and took and released
+`org.kde.Shutdown` as plasma-shutdown does. The dock ran with a scratch `HOME`,
+XDG tree and `TMPDIR` (its instance lock lives in `QDir::tempPath()`), never with
+`--replace`, from a user-mode Debug install into that scratch `HOME`. Its default
+layout has one DodgeActive dock with KWin edges, so it maps two panel-role
+windows: `#view#1` and the ghost window `#subwindow#1`. A KWin script listed the
+windows; `org.kde.KWin.Session.closeWaylandWindows` was called the way
+plasma-shutdown calls it. The blocker is a QML window that refuses close
+requests, like an editor with unsaved text.
+
+| Scenario | Binary | Result |
+| --- | --- | --- |
+| Confirm, close step, cancel, confirm, completion | `6d42a9d71` | Confirm: dock windows 2 → 0, the dock keeps running. `closeWaylandWindows` returned `true` after 0.01 s. Cancel: both windows back. Completion: "logout completed; quitting.", exit status 0 after 0.2 s, teardown markers `Latte Corona - deleted...` and `QuickWindowSystem destructed`. Repeated twice more with the same result |
+| Blocker, confirm, close step, cancel | `6d42a9d71` | Confirm: dock windows 2 → 0. KWin after 10 s: `Not closed windows QList("• LatteSim blocker")`. The dock kept running; cancel brought both windows back |
+| Blocker, confirm, close step, cancel | `/usr/bin/latte-dock-ng` 1.2.62 (before PR #66) | Confirm: dock windows 2 → 1, `#subwindow#1` stays mapped. KWin after 10 s: `Not closed windows QList("• LatteSim blocker", "• Latte 停靠栏")`. Cancel brought the view back |
+| SIGTERM quit, three runs | `6d42a9d71` | `KSignalHandler received signal 15`, exit status 0 after 0.2 s, both teardown markers, no core |
+
+The six session-ending quits (three completions, three SIGTERMs) ran the full Qt
+platform teardown without the `wl_list_remove` fault that the pull request's
+`::_Exit()` skipped. The fault was reported on Fedora 44 with Qt 6.11.2; it did
+not reproduce on this host.
+
+## Not run
+
+- A real KDE logout on the desktop: the user's [desktop check](#desktop-check).
+  The simulation has no plasmashell, no ksmserver session saving and no real
+  plasma-shutdown.
+- Floating docks (`FloatingGapWindow`), the multiple-layouts mode, reboot and
+  shutdown confirmations, and Plasma versions other than 6.7.5.
+- CI for the pushed `main`.
+
+## Desktop check
+
+The dock on the desktop is the packaged 1.2.62. The layout `我的布局` has two
+AutoHide docks with KWin edges, so both map a ghost window: no setting needs to
+change. Install the new build for the current user (`bash install.sh --user
+Debug`), stop the packaged dock (`pkill -x latte-dock-ng`) and start the
+user-mode binary as in the Development Debug & Retest Workflow of `AGENTS.md`.
+
+1. Open KWrite and type a few characters without saving. Log out from the
+   application launcher (开始菜单 → 注销) and confirm 「注销」. KWrite asks to
+   save; after about 10 s KWin shows 「以下应用程序没有关闭：…仍将在 2 分钟内注销。」.
+   Expected: the list names KWrite only, not 「Latte 停靠栏」. Click
+   「取消注销」: the session stays, both docks come back and appear when the
+   pointer touches their screen edge.
+2. Repeat step 1 and click 「仍要注销」: the session ends. After the next login
+   there is no crash notification, and `coredumpctl list latte-dock-ng` has no
+   new entry.
+3. Close KWrite and log out with no unsaved document (a minimized tray
+   application may stay open): the session ends without the 10 s wait and
+   without the notification.
+
+The debug log `/tmp/latte-ng.log` of steps 1 and 2 shows `isShuttingDown() =
+true`, then `logout cancelled` or `logout completed; quitting.`.
