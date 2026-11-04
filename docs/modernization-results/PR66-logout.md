@@ -109,7 +109,27 @@ process that still carries the scenario's environment marker.
 | All scenarios, host KWin 6.7.5 | User-mode install of `6d42a9d71` | 3/3 passed: confirm hides 2 → 0 windows, close step `true` after 0.00 s, cancel restores 2 of 2, completion and SIGTERM exit 0 with the teardown markers; `blocker` reports only the blocker. No process left on a private bus |
 | `blocker` and `confirm-cancel-complete`, host KWin 6.7.5 | `/usr/bin/latte-dock-ng` 1.2.62 | Both FAILED as expected. `blocker`: `#subwindow#1` stays mapped and KWin also lists 「Latte 停靠栏」. `confirm-cancel-complete`: without another application the old dock quits at the confirmation, so the cancel has nothing to restore |
 | All scenarios, Fedora 45 VM: KWin 6.8.2, Plasma 6.8.2, Qt 6.11.2, GCC 16.2.1 | User-mode install built natively by `--install` (`install.sh --user Debug`, 0 compiler warnings) | 3/3 passed with the seeded `kdeglobals`: same results as on the host, close step `true` after 0.00 s, completion and SIGTERM exit 0 with the teardown markers. No new core |
-| Same VM, simulation HOME without `kdeglobals` | Same | The logout checks passed, but every quit crashed (four cores): SIGSEGV in `QObject::deleteLater()` called from `PlasmaExtended::Theme::~Theme()` in `~Corona()`. With the default Plasma theme, which has no `colors` file, and no `kdeglobals`, `SchemeColors::possibleSchemeFile()` finds no scheme, `Theme::setOriginalSchemeFile()` returns early, and the destructor calls `deleteLater()` on the null scheme pointers. A real Plasma session has a `kdeglobals`; the dock bug is a follow-up |
+| Same VM, simulation HOME without `kdeglobals` | Same | The logout checks passed, but every quit crashed (four cores): SIGSEGV in `QObject::deleteLater()` called from `PlasmaExtended::Theme::~Theme()` in `~Corona()`. With the default Plasma theme, which has no `colors` file, and no `kdeglobals`, `SchemeColors::possibleSchemeFile()` finds no scheme, `Theme::setOriginalSchemeFile()` returns early, and the destructor calls `deleteLater()` on the null scheme pointers. A real Plasma session has a `kdeglobals`. Fixed by `874f05540`, see [the follow-up](#follow-up-crash-on-quit-without-a-color-scheme) |
+
+### Follow-up: crash on quit without a color scheme
+
+`874f05540` fixes the crash that the Fedora 45 run without `kdeglobals` found.
+`~Theme()` no longer calls `deleteLater()` on the default and reversed schemes:
+they are children of the Theme and are deleted with it, and they stay null
+while no scheme file was found. `SchemeColors::possibleSchemeFile()` falls back
+to `BreezeLight`, Plasma's default scheme, when `kdeglobals` does not exist, as
+it already did when `kdeglobals` names no scheme. The simulation gained
+`--no-kdeglobals` to run a logout for such a new account.
+
+| Check | Result |
+| --- | --- |
+| `schemecolorsunittest` | 10/10: the `kdeglobals` `ColorScheme` entry, no scheme file at all (empty result), and the `BreezeLight` fallback without `kdeglobals`. The test now points `XDG_CONFIG_HOME` and `XDG_CONFIG_DIRS` at empty directories: KConfig merged the developer's own `kdeglobals` into the test's file, so its `[WM]` colors turned the case into an auto-accent one |
+| `sourcecontracttest` | `plasmaThemeDestructorToleratesMissingSchemes` passes; the destructor on `deedbd382` fails it |
+| Fedora 45 VM (KWin 6.8.2), native `install.sh --user Debug` of `874f05540`, `--no-kdeglobals` | 0 compiler warnings. The dock resolved `/usr/share/color-schemes/BreezeLight.colors`; 3/3 scenarios passed, completion and SIGTERM exit 0 with the teardown markers, `latte-dock-ng` core count 6 before and 6 after. Before the fix the same HOME gave a SIGSEGV on every quit |
+| GCC and Clang, Debug and Release presets at `874f05540` | 0 compiler warnings; 60/60 `ctest` each |
+| clazy gate in `latte-r2c-clazy:noble` (clazy 1.17, LLVM 19.1.1) | Container build 0 warnings; 49 negative fixtures rejected; no findings in 155 production sources |
+| Debian 13 container, `verify-install.sh debian13` | Exit 0 in 276 s: system and user build, install and uninstall; 0 compiler warnings |
+| Debian 13 VM (KWin 6.3.6, Plasma 6.3.6): user-mode Debug install of `874f05540` built in the `latte-verify-debian13` container under the VM's HOME path (0 compiler warnings) and copied over; the VM has no build tools | Without `kdeglobals` the dock resolved `/usr/share/color-schemes/BreezeLight.colors`; `confirm-cancel-complete` and `sigterm` passed (11 checks, 0 failed), and again with the seeded `kdeglobals`. No `latte-dock-ng` core. `blocker` was left out: the VM has no Qt 6 `qml` runtime |
 
 ## Not run
 
