@@ -105,10 +105,35 @@ jobs:
             exit 1
           fi
           echo "KDE Neon repository: $neon_host"
+          # The repository can also fail after it was added: on 2026-11-04 the Neon origin refused the
+          # connections for about 290 packages while apt-get install ran, and all four jobs ended with
+          # "Unable to fetch some archives". apt keeps the files it fetched, so another attempt only
+          # asks for the missing ones; the indexes are refreshed first because Neon removes the pool
+          # files of a package version when it publishes the next one. The following steps install
+          # through this helper (tested by autotests/test_neon_apt_retry.py).
+          cat > /usr/local/bin/apt-install-retry <<'EOF'
+          #!/bin/sh
+          attempt=1
+          while :; do
+            if apt-get install -y --no-install-recommends "$@"; then
+              exit 0
+            fi
+            if [ "$attempt" -ge 5 ]; then
+              echo "::error::apt-get install failed after $attempt attempts"
+              exit 1
+            fi
+            delay=$((attempt * 30))
+            echo "apt-get install failed (attempt $attempt of 5); refreshing the indexes and retrying in $delay s"
+            sleep "$delay"
+            apt-get update || true
+            attempt=$((attempt + 1))
+          done
+          EOF
+          chmod +x /usr/local/bin/apt-install-retry
 
       - name: Install build dependencies
         run: |
-          apt-get install -y --no-install-recommends \
+          apt-install-retry \
             build-essential clang clang-tidy cmake extra-cmake-modules pkgconf dbus-daemon git python3 \
             qt6-base-dev qt6-declarative-dev qt6-declarative-private-dev qt6-wayland-dev qt6-tools-dev \
             libkf6archive-dev libkf6config-dev libkf6coreaddons-dev \
@@ -159,7 +184,7 @@ jobs:
       # scripts/test-clazy.py, each proven by a fixture in autotests/clazy/.
       - name: Install clazy
         if: matrix.preset == 'clang-debug'
-        run: apt-get install -y --no-install-recommends clazy
+        run: apt-install-retry clazy
 
       - name: Run gated clazy checks
         if: matrix.preset == 'clang-debug'

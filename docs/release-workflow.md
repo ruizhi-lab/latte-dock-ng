@@ -204,6 +204,23 @@ attempts) and `mageiaretrytest` pins that policy, including the sequence of this
 run. If Cauldron stays out of sync for longer than the three attempts last,
 rerun the job later instead of changing the project.
 
+On 2026-11-04, `Build` run
+[`41867804572`](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/41867804572)
+failed all four `Build` jobs in `Install build dependencies`, and
+`Package install verify (mageia)` after its three Cauldron attempts. The cause
+was outside the commit: `archive.neon.kde.org` answered with 502 and timeouts,
+the fallback to `origin.archive.neon.kde.org` fetched the package index, and
+then the origin refused the connections for about 290 of the 300 Neon packages
+("Unable to fetch some archives" after 3 minutes), while every Ubuntu package
+downloaded. No job reached the compiler. The Neon-dependent steps now install
+through `apt-install-retry`, which the `Install KDE Neon repository` step
+writes: up to five attempts, a pause of 30 seconds times the attempt number, and
+an index refresh in between, because apt keeps the files it fetched and Neon
+removes the pool files of a package version when it publishes the next one.
+`neonaptretrytest` runs that helper from the workflow against a fake `apt-get`
+under `/bin/sh` and `dash`. If Neon stays unreachable for longer than the
+attempts last, rerun the failed jobs later instead of changing the project.
+
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
 bump stay linked to soname 7, so Fedora 44, openSUSE Tumbleweed and Arch users
