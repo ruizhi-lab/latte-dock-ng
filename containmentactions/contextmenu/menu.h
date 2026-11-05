@@ -32,11 +32,18 @@ struct ViewData
     int clonesCount{0};
 };
 
+// Decides which Move To Layout items are drawn bold. The names come from CURRENTLAYOUTSINDEX,
+// which Corona::contextMenuData() fills from Synchronizer::currentLayoutsNames(); the Layouts
+// menu checks the same list. An empty name is never marked: an empty list splits into one
+// empty entry, and an incomplete DBus reply can yield an empty layout name.
+bool isCurrentLayoutName(const QStringList &currentNames, const QString &layoutName);
+
 } // namespace ContainmentActions
 } // namespace Latte
 
 using Latte::ContainmentActions::LayoutInfo;
 using Latte::ContainmentActions::ViewData;
+using Latte::ContainmentActions::isCurrentLayoutName;
 
 class Menu : public Plasma::ContainmentActions
 {

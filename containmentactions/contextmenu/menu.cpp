@@ -48,6 +48,17 @@ QDBusMessage callLatte(const QString &method, const QVariantList &args = {})
 }
 } // anonymous namespace
 
+namespace Latte {
+namespace ContainmentActions {
+
+bool isCurrentLayoutName(const QStringList &currentNames, const QString &layoutName)
+{
+    return !layoutName.isEmpty() && currentNames.contains(layoutName);
+}
+
+} // namespace ContainmentActions
+} // namespace Latte
+
 const int MEMORYINDEX = 0;
 const int ACTIVELAYOUTSINDEX = 1;
 const int CURRENTLAYOUTSINDEX = 2;
@@ -416,6 +427,7 @@ void Menu::populateMoveToLayouts()
 
     if (memoryUsage == LayoutsMemoryUsage::MultipleLayouts) {
         QString viewLayoutName = m_data.value(VIEWLAYOUTINDEX);
+        QStringList currentNames = m_data.value(CURRENTLAYOUTSINDEX).split(QStringLiteral(";;"));
 
         QList<LayoutInfo> layoutsmenulist;
 
@@ -443,6 +455,7 @@ void Menu::populateMoveToLayouts()
 
             LayoutMenuItemWidget *menuitem = new LayoutMenuItemWidget(action, m_moveToLayoutMenu);
             menuitem->setIcon(layoutsmenulist[i].isBackgroundFileIcon, layoutsmenulist[i].iconName);
+            menuitem->setCurrent(isCurrentLayoutName(currentNames, layoutsmenulist[i].layoutName));
             action->setDefaultWidget(menuitem);
             m_moveToLayoutMenu->addAction(action);
         }

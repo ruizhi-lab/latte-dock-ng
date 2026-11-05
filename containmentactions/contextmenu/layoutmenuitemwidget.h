@@ -29,10 +29,15 @@ public:
 
     void setIcon(const bool &isBackgroundFile, const QString &iconName);
 
+    //! Current layouts are drawn in bold; see the note in layoutmenuitemwidget.cpp.
+    void setCurrent(const bool &current);
+    bool isCurrent() const;
+
 private:
     QAction *m_action{nullptr};
     bool m_isBackgroundFile;
     QString m_iconName;
+    bool m_isCurrent{false};
 };
 
 } // namespace Latte

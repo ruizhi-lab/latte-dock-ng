@@ -366,6 +366,7 @@ private Q_SLOTS:
     void thinTooltipHandlesMissingTextAndRepositionsAfterShowing();
     void tooltipDialogRoutesRepositioningThroughPlasmaGeometry();
     void contextMenuHandlesIncompleteDbusData();
+    void contextMenuMarksCurrentLayoutsInMoveMenu();
     void dockViewFollowsSystemColorSchemeAtRuntime();
     void dragDropHandlersUseBindingSyntaxForQt6();
     void environmentActionsDoesNotAcceptMiddleButton();
@@ -4723,6 +4724,26 @@ void SourceContractTest::contextMenuHandlesIncompleteDbusData()
     QVERIFY(src.contains(QStringLiteral("m_data.value(ACTIONSALWAYSSHOWN)")));
     QVERIFY(src.contains(QStringLiteral("m_data.value(VIEWTYPEINDEX)")));
     QVERIFY(src.contains(QStringLiteral("vdata.value(2)")));
+}
+
+void SourceContractTest::contextMenuMarksCurrentLayoutsInMoveMenu()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/containmentactions/contextmenu/menu.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    const int start = src.indexOf(QStringLiteral("void Menu::populateMoveToLayouts()"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("void Menu::updateViewData()"), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    // The bold marking reads the same CURRENTLAYOUTSINDEX list as the Layouts menu and goes
+    // through isCurrentLayoutName(), which containmentactionmenuunittest covers. Bold was dropped
+    // when the Move To Layout items became widgets (69ec3d937); setCurrent() restores it, so
+    // removing that call silently drops the marking again.
+    QVERIFY(body.contains(QStringLiteral("m_data.value(CURRENTLAYOUTSINDEX).split(QStringLiteral(\";;\"))")));
+    QVERIFY(body.contains(QStringLiteral("menuitem->setCurrent(isCurrentLayoutName(currentNames, layoutsmenulist[i].layoutName));")));
 }
 
 void SourceContractTest::dockViewFollowsSystemColorSchemeAtRuntime()

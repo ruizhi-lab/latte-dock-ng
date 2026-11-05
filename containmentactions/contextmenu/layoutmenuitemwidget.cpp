@@ -21,6 +21,15 @@ namespace Latte {
 namespace {
 const int ICONMARGIN = 1;
 const int MARGIN = 2;
+
+// Current layouts (CURRENTLAYOUTSINDEX, the list the Layouts menu checks) are drawn in bold.
+// Latte::drawFormattedText() renders the name through a QTextDocument that never receives the
+// item font, so the weight has to be markup. sizeHint() measures the same markup; otherwise the
+// wider bold name is clipped on the right.
+QString displayedText(const QString &text, const bool &isCurrent)
+{
+    return isCurrent ? QStringLiteral("<b>%1</b>").arg(text) : text;
+}
 }
 
 LayoutMenuItemWidget::LayoutMenuItemWidget(QAction* action, QWidget *parent)
@@ -46,6 +55,22 @@ void LayoutMenuItemWidget::setIcon(const bool &isBackgroundFile, const QString &
     m_iconName = iconName;
 }
 
+void LayoutMenuItemWidget::setCurrent(const bool &current)
+{
+    if (m_isCurrent == current) {
+        return;
+    }
+
+    m_isCurrent = current;
+    updateGeometry();
+    update();
+}
+
+bool LayoutMenuItemWidget::isCurrent() const
+{
+    return m_isCurrent;
+}
+
 QSize LayoutMenuItemWidget::sizeHint() const
 {
     QStyleOptionMenuItem opt;
@@ -58,7 +83,7 @@ QSize LayoutMenuItemWidget::sizeHint() const
     // paint code's measurement so the layout names aren't clipped on the
     // right.
     QTextDocument doc;
-    doc.setHtml(QStringLiteral("<body>%1</body>").arg(m_action->text()));
+    doc.setHtml(QStringLiteral("<body>%1</body>").arg(displayedText(m_action->text(), m_isCurrent)));
     const int textWidth = static_cast<int>(doc.size().width()) + MARGIN;
 
     const int rowHeight = fontMetrics().height() + 9;
@@ -82,7 +107,7 @@ void LayoutMenuItemWidget::paintEvent(QPaintEvent *)
     painter.save();
     QStyleOptionMenuItem opt;
     opt.initFrom(this);
-    opt.text = m_action->text();
+    opt.text = displayedText(m_action->text(), m_isCurrent);
     opt.menuItemType = QStyleOptionMenuItem::Normal;
     opt.menuHasCheckableItems = false;
 
