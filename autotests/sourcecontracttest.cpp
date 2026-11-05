@@ -347,6 +347,7 @@ private Q_SLOTS:
     void mainCppImportLayoutExitsOnImportFailure();
     void mainCppDeferredDeleteDrainHardLimit5Passes();
     void mainCppDetectPlatformPreservesExplicitPlatformArg();
+    void mainCppMainFunctionStaysWithinLineLimit();
     // main.qml startup sequence contacts
     void mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped();
     void mainQmlStartupDelayerTriggeredByHasRestoredAppletsSignal();
@@ -4173,6 +4174,25 @@ void SourceContractTest::mainCppDetectPlatformPreservesExplicitPlatformArg()
     QVERIFY(src.contains(QStringLiteral("detectPlatform")));
     QVERIFY(src.contains(QStringLiteral("-platform")));
     QVERIFY(src.contains(QStringLiteral("qt.qpa.platform")) || src.contains(QStringLiteral("QT_QPA_PLATFORM")));
+}
+
+void SourceContractTest::mainCppMainFunctionStaysWithinLineLimit()
+{
+    //! main() is the start-up sequence and each step is a named helper defined after it.
+    //! A block pasted back into main() grows the function past this limit.
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    const int mainStart = src.indexOf(QStringLiteral("\nint main(int argc, char **argv)\n{\n"));
+    QVERIFY(mainStart >= 0);
+    const int mainEnd = src.indexOf(QStringLiteral("\n}\n"), mainStart);
+    QVERIFY(mainEnd > mainStart);
+
+    constexpr qsizetype mainLineLimit = 200;
+    const qsizetype mainLines = src.mid(mainStart, mainEnd - mainStart).count(QLatin1Char('\n'));
+    QVERIFY2(mainLines <= mainLineLimit,
+             qPrintable(QStringLiteral("main() has %1 lines; the limit is %2").arg(mainLines).arg(mainLineLimit)));
 }
 
 // ------------------------------------------------------------------------
