@@ -224,6 +224,7 @@ private Q_SLOTS:
     void cmakeAutotestRegistrationMaintainsAggregateTarget();
     void cmakePackagingConfigLivesInModule();
     void autostartUsesXdgStateOnly();
+    void screensPropertyNotifiesOnScreenChanges();
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
     void autostartInterfacesUseXdgState();
@@ -2120,6 +2121,36 @@ void SourceContractTest::autostartUsesXdgStateOnly()
     const QString universalSource = QString::fromUtf8(universalSettings.readAll());
     QVERIFY(!universalSource.contains(QStringLiteral("ensureAutostart")));
     QVERIFY(universalSource.contains(QStringLiteral("return Layouts::Importer::isAutostartEnabled();")));
+}
+
+void SourceContractTest::screensPropertyNotifiesOnScreenChanges()
+{
+    //! screens is a QQmlListProperty built from qGuiApp->screens() on each read. A QML binding on it
+    //! re-evaluates only through its NOTIFY, so the property must name a signal, and that signal must be
+    //! connected to screen add, screen remove and primary-screen changes (a primary change reorders the list).
+    QFile universalHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.h"));
+    QVERIFY(universalHeader.open(QFile::ReadOnly));
+    const QString headerSource = QString::fromUtf8(universalHeader.readAll());
+    QVERIFY(headerSource.contains(QStringLiteral("Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens NOTIFY screensChanged)")));
+    QVERIFY(headerSource.contains(QStringLiteral("void screensChanged();")));
+    //! The reviewed exception and its old explanation (hotplug announced by screensCountChanged) must be gone.
+    QVERIFY(!headerSource.contains(QStringLiteral("clazy:exclude=qproperty-without-notify")));
+    QVERIFY(!headerSource.contains(QStringLiteral("announced by screensCountChanged")));
+
+    QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
+    QVERIFY(universalSettings.open(QFile::ReadOnly));
+    const QString universalSource = QString::fromUtf8(universalSettings.readAll());
+    const int constructorStart = universalSource.indexOf(QStringLiteral("UniversalSettings::UniversalSettings("));
+    const int destructorStart = universalSource.indexOf(QStringLiteral("UniversalSettings::~UniversalSettings()"));
+    QVERIFY(constructorStart >= 0);
+    QVERIFY(destructorStart > constructorStart);
+    const QString constructor = universalSource.mid(constructorStart, destructorStart - constructorStart);
+    QVERIFY(constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensChanged);")));
+    QVERIFY(constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensChanged);")));
+    QVERIFY(constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &UniversalSettings::screensChanged);")));
+    //! screensCountChanged keeps its own two connections for BehaviorConfig.qml.
+    QVERIFY(constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensCountChanged);")));
+    QVERIFY(constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensCountChanged);")));
 }
 
 void SourceContractTest::desktopFileHasAutostartPhaseKey()
