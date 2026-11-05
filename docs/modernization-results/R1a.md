@@ -6,6 +6,18 @@ Date: 2026-10-25. Branch: `main`. Start HEAD:
 `db966ccd6` (`perf: stop idle polling in shutdown and icon paths`), pushed to
 `origin/main` with explicit user approval.
 
+**Superseded in part.** The window list is no longer part of the logout
+decision; [PR66-logout.md](PR66-logout.md) records that change
+([PR #66](https://github.com/ruizhi-lab/latte-dock-ng/pull/66)).
+`Session::ShutdownMonitor` samples ksmserver only, not KWin.
+`app/session/shutdownstate.h` was removed, `AbstractWindowInterface::hasSessionBlockingWindows()`
+was removed, and `shouldQuitForCommittedShutdown()` no longer exists. The dock
+stays until plasma-shutdown leaves `org.kde.Shutdown` while ksmserver still
+reports the logout (completion, quit), or ksmserver reports no logout (cancel,
+restore). The confirmed-logout hook (`hideViews` in `app/main.cpp`) also
+suspends the helper windows through `Layouts::Synchronizer::setHelperWindowsSuspended()`.
+The original text below is otherwise unchanged; only the pointers are new.
+
 ## Scope and behavior
 
 - `Session::ShutdownMonitor` ([shutdownmonitor.cpp](../../app/session/shutdownmonitor.cpp))
@@ -15,6 +27,7 @@ Date: 2026-10-25. Branch: `main`. Start HEAD:
   sampled logout is unresolved. The hide, restore-on-cancel and quit decisions
   and `shouldQuitForCommittedShutdown()` are unchanged. A session-ending flag
   set by a signal never starts sampling.
+  Superseded in part, see the top of this record.
 - ksmserver queries, including the one in `Corona::onAboutToQuit()`, use
   `Session::isKsmServerShuttingDown()` with a 1 s timeout.
 - The startup Wayland retry loop is removed: `KWindowSystem` caches the QPA
@@ -42,7 +55,7 @@ Date: 2026-10-25. Branch: `main`. Start HEAD:
 | Idle wakeups (30 s, hardware) | Main thread 16.0 → 0.16/s; D-Bus thread 8.0 → 0/s; CPU 0.27 % → below resolution |
 | Self-pipe flags at runtime | `02004000` / `02004001` (`O_CLOEXEC`, `O_NONBLOCK`) |
 | SIGINT and SIGTERM quit | Clean teardown markers, no core |
-| Committed logout (user) | `org.kde.Shutdown` registered → `isShuttingDown()` 0.47 s later → views hidden → quit when ordinary windows closed; session ended in the same second |
+| Committed logout (user) | `org.kde.Shutdown` registered → `isShuttingDown()` 0.47 s later → views hidden → quit when ordinary windows closed; session ended in the same second. Superseded in part, see the top of this record |
 | Logout cancelled after confirmation (user) | Registered → hidden at the first sample → `unregistered` → `logout cancelled` → views restored |
 | Trash applet with original colors (user) | Icon follows the trash state |
 
