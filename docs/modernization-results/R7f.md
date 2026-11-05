@@ -147,6 +147,11 @@ and a private bus, as the testing guide describes. Its work directory was
 `$XDG_CACHE_HOME/latte-logout-simulation` (here `/run/user/1000/cache/latte-logout-simulation`),
 and the `--install` build ran there, not in the worktree.
 
+Cadence: the brief asked for a simulation run every two or three extractions.
+Runs were made after the second and the fourth extraction and at the final
+commit. The intermediate commits from the fifth to the ninth extraction were
+built and passed the full CTest suite, but were not run through the simulation.
+
 Mutation checks. Each mutation was applied to `app/main.cpp`, the
 `sourcecontracttest` entry was run, and the file was restored from a backup. The
 worktree was clean afterwards.
