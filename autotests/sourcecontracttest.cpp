@@ -1321,10 +1321,17 @@ void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()
     QVERIFY(mainSource.contains(QStringLiteral("requested Qt Quick OpenGL rendering")));
     QVERIFY(mainSource.contains(QStringLiteral("respecting explicit Qt Quick graphics override")));
 
-    const int gpuPreferenceCall = mainSource.indexOf(QStringLiteral("configureQtQuickGraphicsPreference();"));
+    //! The preference is applied by configureProcessEnvironment(), which main()
+    //! calls before QApplication exists. Anchor on that call site: the forward
+    //! declaration of configureQtQuickGraphicsPreference() also contains the name.
+    const int gpuPreferenceCall = mainSource.indexOf(QStringLiteral("configureProcessEnvironment(argc, argv);"));
     const int applicationCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
     QVERIFY(gpuPreferenceCall >= 0);
     QVERIFY(applicationCreation > gpuPreferenceCall);
+    const int processEnvironmentBody = mainSource.indexOf(QStringLiteral("inline bool configureProcessEnvironment(int argc, char **argv)\n{"));
+    QVERIFY(processEnvironmentBody >= 0);
+    const int gpuPreferenceInBody = mainSource.indexOf(QStringLiteral("configureQtQuickGraphicsPreference();"), processEnvironmentBody);
+    QVERIFY(gpuPreferenceInBody > processEnvironmentBody);
 
     QFile environmentQml(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/client/Environment.qml"));
     QVERIFY(environmentQml.open(QFile::ReadOnly));

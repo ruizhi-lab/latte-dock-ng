@@ -84,6 +84,7 @@ inline void applyUserLocalPluginPaths();
 inline void ensureKdeSessionEnvironment();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
+inline bool configureProcessEnvironment(int argc, char **argv);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
 
@@ -92,25 +93,8 @@ QString filterDebugLogFile;
 
 int main(int argc, char **argv)
 {
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-
-    // Keep fractional scale behavior deterministic under Wayland.
-    // Qt6 enables High DPI by default, so we only sanitize legacy env overrides.
-    if (!qEnvironmentVariableIsSet("PLASMA_USE_QT_SCALING")) {
-        qunsetenv("QT_DEVICE_PIXEL_RATIO");
-    }
-
-    QQuickWindow::setDefaultAlphaBuffer(true);
-    configureQtQuickGraphicsPreference();
-    collectUserLocalPaths(argc, argv);
-
-    qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
-    const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
-    detectPlatform(argc, argv);
-    // Set desktop file id before app initialization so Wayland app_id is correct
-    // from the earliest possible point for privileged interface checks.
-    QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
-    ensureKdeSessionEnvironment();
+    // Qt reads these settings when QApplication is constructed, so they come first.
+    const bool qpaVariable = configureProcessEnvironment(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_DisableSessionManager);
     QApplication app(argc, argv);
     applyUserLocalPluginPaths();
@@ -694,6 +678,34 @@ int main(int argc, char **argv)
     sharedEngine.reset();
 
     return result;
+}
+
+//! Process-wide Qt settings and environment fix-ups that must exist before QApplication is constructed.
+inline bool configureProcessEnvironment(int argc, char **argv)
+{
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+
+    // Keep fractional scale behavior deterministic under Wayland.
+    // Qt6 enables High DPI by default, so we only sanitize legacy env overrides.
+    if (!qEnvironmentVariableIsSet("PLASMA_USE_QT_SCALING")) {
+        qunsetenv("QT_DEVICE_PIXEL_RATIO");
+    }
+
+    QQuickWindow::setDefaultAlphaBuffer(true);
+    configureQtQuickGraphicsPreference();
+    collectUserLocalPaths(argc, argv);
+
+    // Qt's Wayland client library reads this variable, so it must be set before
+    // QApplication is constructed. main() unsets it right after QApplication.
+    qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
+    const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
+    detectPlatform(argc, argv);
+    // Set desktop file id before app initialization so Wayland app_id is correct
+    // from the earliest possible point for privileged interface checks.
+    QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
+    ensureKdeSessionEnvironment();
+    // main() removes the QT_QPA_PLATFORM that detectPlatform() forced, unless the user set it.
+    return qpaVariable;
 }
 
 //! Prints "<component> <version>" for --version and -v; needs no Wayland session.
