@@ -2157,8 +2157,13 @@ void SourceContractTest::enableAutostartExitsImmediately()
     const int exitCall = content.indexOf(QStringLiteral("qGuiApp->exit();"), enableIdx);
     QVERIFY(exitCall > enableIdx);
 
-    const int returnZero = content.indexOf(QStringLiteral("return 0;"), exitCall);
+    //! The branch now lives in runOneShotCommand(), which returns true, so main()
+    //! returns 0 without starting the dock. The return must sit inside this branch.
+    QVERIFY(content.contains(QStringLiteral("if (runOneShotCommand(parser)) {\n        return 0;")));
+    const int branchEnd = content.indexOf(QStringLiteral("\n    }\n"), exitCall);
+    const int returnZero = content.indexOf(QStringLiteral("return true;"), exitCall);
     QVERIFY(returnZero > exitCall);
+    QVERIFY(returnZero < branchEnd);
 }
 
 void SourceContractTest::autostartInterfacesUseXdgState()

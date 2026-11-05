@@ -87,6 +87,7 @@ inline void configureQtQuickGraphicsPreference();
 inline bool configureProcessEnvironment(int argc, char **argv);
 inline void addCommandLineOptions(QCommandLineParser &parser);
 inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
+inline bool runOneShotCommand(const QCommandLineParser &parser);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
 
@@ -155,71 +156,7 @@ int main(int argc, char **argv)
 
     parser.process(app);
 
-    if (parser.isSet(QStringLiteral("enable-autostart"))) {
-        Latte::Layouts::Importer::enableAutostart();
-
-        qGuiApp->exit();
-        return 0;
-    }
-
-    if (parser.isSet(QStringLiteral("disable-autostart"))) {
-        Latte::Layouts::Importer::disableAutostart();
-
-        qGuiApp->exit();
-        return 0;
-    }
-
-    //! print available-layouts
-    if (parser.isSet(QStringLiteral("available-layouts"))) {
-        QStringList layouts = Latte::Layouts::Importer::availableLayouts();
-
-        if (layouts.count() > 0) {
-            qInfo() << i18n("Available layouts that can be used to start Latte:");
-
-            for (const auto &layout : std::as_const(layouts)) {
-                qInfo() << "     " << layout;
-            }
-        } else {
-            qInfo() << i18n("There are no available layouts, during startup Default will be used.");
-        }
-
-        qGuiApp->exit();
-        return 0;
-    }
-
-    //! print available-layout-templates
-    if (parser.isSet(QStringLiteral("available-layout-templates"))) {
-        QStringList templates = Latte::Layouts::Importer::availableLayoutTemplates();
-
-        if (templates.count() > 0) {
-            qInfo() << i18n("Available layout templates found in your system:");
-
-            for (const auto &templatename : std::as_const(templates)) {
-                qInfo() << "     " << templatename;
-            }
-        } else {
-            qInfo() << i18n("There are no available layout templates in your system.");
-        }
-
-        qGuiApp->exit();
-        return 0;
-    }
-
-    //! print available-dock-templates
-    if (parser.isSet(QStringLiteral("available-dock-templates"))) {
-        QStringList templates = Latte::Layouts::Importer::availableViewTemplates();
-
-        if (templates.count() > 0) {
-            qInfo() << i18n("Available dock templates found in your system:");
-
-            for (const auto &templatename : std::as_const(templates)) {
-                qInfo() << "     " << templatename;
-            }
-        } else {
-            qInfo() << i18n("There are no available dock templates in your system.");
-        }
-
-        qGuiApp->exit();
+    if (runOneShotCommand(parser)) {
         return 0;
     }
 
@@ -757,6 +694,80 @@ inline void addHiddenDeveloperOptions(QCommandLineParser &parser)
     filterDebugLogCmd.setValueName(i18nc("command line: log-filepath", "filter_log_filepath"));
     parser.addOption(filterDebugLogCmd);
     //! END: Hidden options
+}
+
+//! Autostart toggles and --available-* listings; returns true when one ran, before any dock or lock exists.
+inline bool runOneShotCommand(const QCommandLineParser &parser)
+{
+    if (parser.isSet(QStringLiteral("enable-autostart"))) {
+        Latte::Layouts::Importer::enableAutostart();
+
+        qGuiApp->exit();
+        return true;
+    }
+
+    if (parser.isSet(QStringLiteral("disable-autostart"))) {
+        Latte::Layouts::Importer::disableAutostart();
+
+        qGuiApp->exit();
+        return true;
+    }
+
+    //! print available-layouts
+    if (parser.isSet(QStringLiteral("available-layouts"))) {
+        QStringList layouts = Latte::Layouts::Importer::availableLayouts();
+
+        if (layouts.count() > 0) {
+            qInfo() << i18n("Available layouts that can be used to start Latte:");
+
+            for (const auto &layout : std::as_const(layouts)) {
+                qInfo() << "     " << layout;
+            }
+        } else {
+            qInfo() << i18n("There are no available layouts, during startup Default will be used.");
+        }
+
+        qGuiApp->exit();
+        return true;
+    }
+
+    //! print available-layout-templates
+    if (parser.isSet(QStringLiteral("available-layout-templates"))) {
+        QStringList templates = Latte::Layouts::Importer::availableLayoutTemplates();
+
+        if (templates.count() > 0) {
+            qInfo() << i18n("Available layout templates found in your system:");
+
+            for (const auto &templatename : std::as_const(templates)) {
+                qInfo() << "     " << templatename;
+            }
+        } else {
+            qInfo() << i18n("There are no available layout templates in your system.");
+        }
+
+        qGuiApp->exit();
+        return true;
+    }
+
+    //! print available-dock-templates
+    if (parser.isSet(QStringLiteral("available-dock-templates"))) {
+        QStringList templates = Latte::Layouts::Importer::availableViewTemplates();
+
+        if (templates.count() > 0) {
+            qInfo() << i18n("Available dock templates found in your system:");
+
+            for (const auto &templatename : std::as_const(templates)) {
+                qInfo() << "     " << templatename;
+            }
+        } else {
+            qInfo() << i18n("There are no available dock templates in your system.");
+        }
+
+        qGuiApp->exit();
+        return true;
+    }
+
+    return false;
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)
