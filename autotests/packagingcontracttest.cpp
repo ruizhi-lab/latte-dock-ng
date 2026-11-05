@@ -89,6 +89,22 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     const QString mageiaDockerfileSource = QString::fromUtf8(mageiaDockerfile.readAll());
     QVERIFY(mageiaDockerfileSource.contains(QStringLiteral("dnf install -y --refresh")));
     QVERIFY(!mageiaDockerfileSource.contains(QStringLiteral("dnf upgrade")));
+    // A Cauldron mirror that lacks one package fails the install. The retry is
+    // inside the RUN so that such a transient miss does not end the image build.
+    // Every attempt keeps --refresh, and only the last failure ends the RUN.
+    const int mageiaRetryLoop = mageiaDockerfileSource.indexOf(QStringLiteral("for attempt in 1 2 3; do"));
+    QVERIFY2(mageiaRetryLoop >= 0, "docker/Dockerfile.mageia must retry the dnf install inside its RUN");
+    const int mageiaRetriedInstall = mageiaDockerfileSource.indexOf(QStringLiteral("dnf install -y --refresh"), mageiaRetryLoop);
+    QVERIFY(mageiaRetriedInstall > mageiaRetryLoop);
+    const int mageiaAttemptSucceeded = mageiaDockerfileSource.indexOf(QStringLiteral("rpm-build && break;"), mageiaRetriedInstall);
+    QVERIFY(mageiaAttemptSucceeded > mageiaRetriedInstall);
+    const int mageiaLastAttemptFails = mageiaDockerfileSource.indexOf(QStringLiteral("if [ \"$attempt\" -eq 3 ]; then exit 1; fi;"), mageiaAttemptSucceeded);
+    QVERIFY(mageiaLastAttemptFails > mageiaAttemptSucceeded);
+    const int mageiaPause = mageiaDockerfileSource.indexOf(QStringLiteral("sleep \"$((attempt * 30))\""), mageiaLastAttemptFails);
+    QVERIFY(mageiaPause > mageiaLastAttemptFails);
+    const int mageiaLoopEnd = mageiaDockerfileSource.indexOf(QStringLiteral("done && \\"), mageiaPause);
+    QVERIFY(mageiaLoopEnd > mageiaPause);
+    QVERIFY(mageiaDockerfileSource.indexOf(QStringLiteral("dnf clean all"), mageiaLoopEnd) > mageiaLoopEnd);
 
     QFile dockerVerify(QStringLiteral(LATTE_SOURCE_DIR "/docker/verify-install.sh"));
     QVERIFY(dockerVerify.open(QFile::ReadOnly));

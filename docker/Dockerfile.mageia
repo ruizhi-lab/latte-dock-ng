@@ -20,7 +20,13 @@ RUN sed -i 's|^mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/*.repo && \
 #   Fedora qt6-qtdeclarative-devel    -> Mageia lib64qt6qml-devel lib64qt6quick-devel
 #   Fedora kf6-plasma-devel           -> Mageia lib64plasma-devel
 # Discard any metadata shipped in the base image before resolving rolling dependencies.
+# A mirror that lacks one package ("All mirrors were tried") otherwise ends this
+# RUN, and scripts/retry-mageia-mirror-build.sh then starts the docker build
+# again. The install is retried here instead, with a growing pause and no cache
+# clean between attempts. Each attempt keeps --refresh so it re-reads the
+# metadata. The RUN fails when the last attempt fails.
 RUN dnf clean all && \
+    for attempt in 1 2 3; do \
     dnf install -y --refresh --setopt=install_weak_deps=False \
       cmake extra-cmake-modules \
       qtbase6-common-devel lib64qt6base6-devel \
@@ -36,5 +42,9 @@ RUN dnf clean all && \
       lib64kf6crash-devel lib64kf6windowsystem-devel lib64kf6package-devel lib64kf6svg-devel \
       plasma-wayland-protocols-devel lib64wayland-devel lib64glvnd-devel \
       lib64layer-shell-qt-devel \
-      gcc-c++ make gettext git pkgconf-pkg-config rpm-build && \
+      gcc-c++ make gettext git pkgconf-pkg-config rpm-build && break; \
+    if [ "$attempt" -eq 3 ]; then exit 1; fi; \
+    echo "dnf install attempt $attempt failed; retrying in $((attempt * 30)) s" >&2; \
+    sleep "$((attempt * 30))"; \
+    done && \
     dnf clean all
