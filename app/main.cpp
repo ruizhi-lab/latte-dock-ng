@@ -90,6 +90,7 @@ inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
 inline bool runOneShotCommand(const QCommandLineParser &parser);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
+inline void prepareApplication(QApplication &app);
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -131,22 +132,7 @@ int main(int argc, char **argv)
         qunsetenv("QT_QPA_PLATFORM");
     }
 
-    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
-
-    // Automatically clear stale QML disk cache when the installed version changes.
-    // This prevents "works in user-mode, broken after ebuild install" regressions
-    // where the QML engine loads old compiled files from ~/.cache/lattedock/qmlcache.
-    autoClearQmlCacheOnVersionChange();
-
-    //! Set up user-local QML module overrides so the KNS download dialog
-    //! (opened by "Download New Plasma Widgets") renders correctly.  This
-    //! works around the Qt 6.10.3 incompatibility in Kirigami's
-    //! DrawerHandle.qml without modifying system files.
-    ensureKnsCompat();
-
-    app.setWindowIcon(QIcon::fromTheme(Latte::App::ICONNAME));
-    //protect from closing app when changing to "alternative session" and back
-    app.setQuitOnLastWindowClosed(false);
+    prepareApplication(app);
 
     configureAboutData();
 
@@ -596,6 +582,27 @@ inline int runPrivateAppHostSmoke()
     delete root;
     qInfo() << "private.app loaded in latte-dock-ng host process";
     return 0;
+}
+
+//! Translation domain, QML disk cache policy, KNS compat, window icon and quit policy for the QApplication.
+inline void prepareApplication(QApplication &app)
+{
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+
+    // Automatically clear stale QML disk cache when the installed version changes.
+    // This prevents "works in user-mode, broken after ebuild install" regressions
+    // where the QML engine loads old compiled files from ~/.cache/lattedock/qmlcache.
+    autoClearQmlCacheOnVersionChange();
+
+    //! Set up user-local QML module overrides so the KNS download dialog
+    //! (opened by "Download New Plasma Widgets") renders correctly.  This
+    //! works around the Qt 6.10.3 incompatibility in Kirigami's
+    //! DrawerHandle.qml without modifying system files.
+    ensureKnsCompat();
+
+    app.setWindowIcon(QIcon::fromTheme(Latte::App::ICONNAME));
+    //protect from closing app when changing to "alternative session" and back
+    app.setQuitOnLastWindowClosed(false);
 }
 
 //! Help, version and the user-facing command-line options.

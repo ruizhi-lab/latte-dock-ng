@@ -1373,13 +1373,19 @@ void SourceContractTest::knsCompatImportsAreAvailableForSystemInstall()
     // class and exposes the same engine as PlasmaQuick::globalEngine().
     const int appCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
     QVERIFY(appCreation >= 0);
-    const int ensureCompatCall = mainSource.indexOf(QStringLiteral("ensureKnsCompat();"), appCreation);
+    //! ensureKnsCompat() runs inside prepareApplication(), which main() calls after
+    //! QApplication exists and before the shared engine is created.
+    const int prepareCall = mainSource.indexOf(QStringLiteral("prepareApplication(app);"), appCreation);
+    const int prepareBody = mainSource.indexOf(QStringLiteral("inline void prepareApplication(QApplication &app)\n{"));
+    const int ensureCompatCall = mainSource.indexOf(QStringLiteral("ensureKnsCompat();"), prepareBody);
     const int sharedEngineCreation = mainSource.indexOf(QStringLiteral("std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);"), appCreation);
     const int globalEngineCreation = mainSource.indexOf(QStringLiteral("std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();"), appCreation);
     const int addImportPathsCall = mainSource.indexOf(QStringLiteral("addLatteQmlImportPaths(sharedQmlEngine);"), appCreation);
-    QVERIFY(ensureCompatCall > appCreation);
-    QVERIFY(sharedEngineCreation > ensureCompatCall);
-    QVERIFY(globalEngineCreation > ensureCompatCall);
+    QVERIFY(prepareCall > appCreation);
+    QVERIFY(prepareBody >= 0);
+    QVERIFY(ensureCompatCall > prepareBody);
+    QVERIFY(sharedEngineCreation > prepareCall);
+    QVERIFY(globalEngineCreation > prepareCall);
     QVERIFY(addImportPathsCall > sharedEngineCreation);
     QVERIFY(addImportPathsCall > globalEngineCreation);
 
