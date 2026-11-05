@@ -290,6 +290,7 @@ private Q_SLOTS:
     void windowHintPerformanceTraceMarksScheduledAndExecutedWork();
     void dynamicWindowDotsAreOptInAndAggregateOverflow();
     void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
+    void genericLayoutSyncLatteViewsToScreensIteratesSnapshots();
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
     void containmentInterfaceHasSeparatorPluginConstantsAndHelper();
     void appletsModelHasNoPersonalDataAppletList();
@@ -3277,6 +3278,54 @@ void SourceContractTest::genericLayoutReassertsDefaultContextMenuOnContainmentWi
     // context menu action so it is never accidentally lost.
     QVERIFY(src.contains(QStringLiteral("org.kde.latte.contextmenu")));
     QVERIFY(src.contains(QStringLiteral("RightButton;NoModifier")));
+}
+
+void SourceContractTest::genericLayoutSyncLatteViewsToScreensIteratesSnapshots()
+{
+    //! syncLatteViewsToScreens() calls addView() and reconsiderScreen(). Both can append to
+    //! m_containments or take entries out of m_latteViews, and a range-for over either live
+    //! container is then undefined behavior, so the two mutating loops walk copies and
+    //! re-check each entry before use. This is a text lock: the dock behavior needs a Corona
+    //! and a screen, and the desktop retest in docs/modernization-results/R7b.md covers that.
+    QFile layoutCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(layoutCpp.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(layoutCpp.readAll());
+
+    const int start = source.indexOf(QStringLiteral("void GenericLayout::syncLatteViewsToScreens()"));
+    QVERIFY(start >= 0);
+    const int end = source.indexOf(QStringLiteral("QList<Plasma::Containment *> GenericLayout::subContainmentsOf(uint id) const"), start);
+    QVERIFY(end > start);
+
+    const QString body = source.mid(start, end - start);
+    const QString code = withoutCommentsAndLiterals(body);
+
+    // The exclusions went away with the live loops they explained.
+    QVERIFY(!body.contains(QStringLiteral("clazy:exclude")));
+    QVERIFY(!code.contains(QStringLiteral("for (const auto containment : m_containments)")));
+    QVERIFY(!code.contains(QStringLiteral("for (const auto containment : std::as_const(m_containments))")));
+    QVERIFY(!code.contains(QStringLiteral("for (const auto view : m_latteViews)")));
+
+    // Containments: walk a copy, and skip an entry that left the live list before the body uses it.
+    const int containmentsCopy = code.indexOf(QStringLiteral("const auto containmentsSnapshot = m_containments;"));
+    const int containmentsLoop = code.indexOf(QStringLiteral("for (const auto containment : containmentsSnapshot)"));
+    const int containmentsCheck = code.indexOf(QStringLiteral("if (!m_containments.contains(containment))"));
+    const int addViewCall = code.indexOf(QStringLiteral("addView(containment);"));
+    QVERIFY(containmentsCopy >= 0);
+    QVERIFY(containmentsLoop > containmentsCopy);
+    QVERIFY(containmentsCheck > containmentsLoop);
+    QVERIFY(addViewCall > containmentsCheck);
+
+    // Views: walk QPointer copies, and skip a view that is gone or no longer registered for its containment.
+    const int viewsCopy = code.indexOf(QStringLiteral("for (const auto view : std::as_const(m_latteViews))"));
+    const int guardedCopy = code.indexOf(QStringLiteral("QList<QPointer<Latte::View>> reconsiderSnapshot;"));
+    const int viewsLoop = code.indexOf(QStringLiteral("for (const auto &guardedView : std::as_const(reconsiderSnapshot))"));
+    const int viewsCheck = code.indexOf(QStringLiteral("m_latteViews.value(view->containment()) != view"));
+    const int reconsiderCall = code.indexOf(QStringLiteral("view->reconsiderScreen();"));
+    QVERIFY(guardedCopy > addViewCall);
+    QVERIFY(viewsCopy > guardedCopy);
+    QVERIFY(viewsLoop > viewsCopy);
+    QVERIFY(viewsCheck > viewsLoop);
+    QVERIFY(reconsiderCall > viewsCheck);
 }
 
 void SourceContractTest::layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets()
