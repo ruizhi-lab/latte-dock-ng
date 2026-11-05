@@ -76,6 +76,14 @@
 #define CIRED    "\x1b[1;31m"
 #define CRED     "\x1b[0;31m"
 
+//! Layout choices from the command line, read once when the Corona is constructed.
+struct StartupLayoutOptions {
+    bool defaultLayout{false};
+    int memoryUsage{-1};
+    QString layoutName;
+    QString addViewTemplateName;
+};
+
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
@@ -92,6 +100,12 @@ inline bool runOneShotCommand(const QCommandLineParser &parser);
 inline void watchShutdownSignals();
 inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding);
 inline void connectSessionManagement(QApplication &app);
+inline bool chooseStartupLayout(const QCommandLineParser &parser, StartupLayoutOptions &startup);
+inline QString singleInstanceLockPath();
+inline int stopReplacedInstance(const QCommandLineParser &parser, const QLockFile &lockFile);
+inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile);
+inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayoutOptions &startup);
+inline void installDebugMessageHandler(const QCommandLineParser &parser);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
 inline void prepareApplication(QApplication &app);
@@ -213,187 +227,25 @@ int main(int argc, char **argv)
     connectSessionManagement(app);
 
     //! choose layout for startup
-    bool defaultLayoutOnStartup = false;
-    int memoryUsage = -1;
-    QString layoutNameOnStartup;
-    QString addViewTemplateNameOnStartup;
-
-    //! --default-layout option
-    if (parser.isSet(QStringLiteral("default-layout"))) {
-        defaultLayoutOnStartup = true;
-    } else if (parser.isSet(QStringLiteral("layout"))) {
-        layoutNameOnStartup = parser.value(QStringLiteral("layout"));
-
-        if (!Latte::Layouts::Importer::layoutExists(layoutNameOnStartup)) {
-            qInfo() << i18nc("layout missing", "This layout doesn't exist in the system.");
-            qGuiApp->exit();
-            return 0;
-        }
-    }
-
-    //! --replace option
-    QString username = QString::fromLocal8Bit(qgetenv("USER"));
-
-    if (username.isEmpty())
-        username = QString::fromLocal8Bit(qgetenv("USERNAME"));
-
-    QLockFile lockFile {QDir::tempPath() + QLatin1Char('/') + QString::fromLatin1(Latte::App::BINARYNAME) + QLatin1Char('.') + username + QLatin1String(".lock")};
-
-    int timeout {100};
-
-    if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
-        qint64 pid{ -1};
-
-        if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
-            kill(static_cast<pid_t>(pid), SIGTERM);
-            // Wait up to 5 seconds for the old instance to release the lock.
-            // Avoids blocking forever if the old process cannot process SIGTERM
-            // (e.g. signalfd delivery failure).
-            timeout = 5000;
-        }
-    }
-
-    if (!lockFile.tryLock(timeout)) {
-        bool addview{parser.isSet(QStringLiteral("add-dock"))};
-        bool importlayout{parser.isSet(QStringLiteral("import-layout"))};
-        bool enableautostart{parser.isSet(QStringLiteral("enable-autostart"))};
-        bool disableautostart{parser.isSet(QStringLiteral("disable-autostart"))};
-
-        bool validaction{false};
-
-        if (addview) {
-            validaction = true;
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("addView"));
-            msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
-            QDBusConnection::sessionBus().call(msg);
-            return 0;
-        } else if (importlayout) {
-            validaction = true;
-            QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("importLayoutFile"));
-            msg.setArguments({parser.value(QStringLiteral("import-layout")), suggestedname});
-            QDBusConnection::sessionBus().call(msg);
-            return 0;
-        } else if (enableautostart || disableautostart) {
-            validaction = true;
-        } else {
-            // LayoutPage = 0
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("showSettingsWindow"));
-            msg.setArguments({0});
-            QDBusConnection::sessionBus().call(msg);
-        }
-
-        if (!validaction) {
-            if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
-                qint64 pid{ -1};
-
-                if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
-                    qInfo() << i18n("Old instance (PID %1) did not exit in time. Try killing it manually.", pid);
-                } else {
-                    qInfo() << i18n("Failed to acquire lock. Another instance may be starting.");
-                }
-            } else {
-                qInfo() << i18n("An instance is already running!, use --replace to restart Latte");
-            }
-        }
-
+    StartupLayoutOptions startupLayout;
+    if (!chooseStartupLayout(parser, startupLayout)) {
         return 0;
     }
 
-    //! clear-cache option
-    if (parser.isSet(QStringLiteral("clear-cache"))) {
-        QDir cacheDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QStringLiteral("/lattedock/qmlcache"));
+    //! --replace option
+    QLockFile lockFile {singleInstanceLockPath()};
+    const int timeout = stopReplacedInstance(parser, lockFile);
 
-        if (cacheDir.exists()) {
-            cacheDir.removeRecursively();
-            qCDebug(latteApp) << "Cache directory found and cleared...";
-        }
+    if (!lockFile.tryLock(timeout)) {
+        forwardToRunningInstance(parser, lockFile);
+        return 0;
     }
 
-    //! import-full option
-    if (parser.isSet(QStringLiteral("import-full"))) {
-        bool imported = Latte::Layouts::Importer::importHelper(parser.value(QStringLiteral("import-full")));
-
-        if (!imported) {
-            qInfo() << i18n("The configuration cannot be imported");
-            qGuiApp->exit();
-            return 0;
-        }
+    if (!applyPostLockOptions(parser, startupLayout)) {
+        return 0;
     }
 
-    //! import-layout option
-    if (parser.isSet(QStringLiteral("import-layout"))) {
-        QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
-        QString importedLayout = Latte::Layouts::Importer::importLayoutHelper(parser.value(QStringLiteral("import-layout")), suggestedname);
-
-        if (importedLayout.isEmpty()) {
-            qInfo() << i18n("The layout cannot be imported");
-            qGuiApp->exit();
-            return 0;
-        } else {
-            layoutNameOnStartup = importedLayout;
-        }
-    }
-
-    //! memory usage option
-    if (parser.isSet(QStringLiteral("multiple"))) {
-        memoryUsage = static_cast<int>(Latte::MemoryUsage::MultipleLayouts);
-    } else if (parser.isSet(QStringLiteral("single"))) {
-        memoryUsage = static_cast<int>(Latte::MemoryUsage::SingleLayout);
-    }
-
-    //! add-dock usage option
-    if (parser.isSet(QStringLiteral("add-dock"))) {
-        QString viewTemplateName = parser.value(QStringLiteral("add-dock"));
-        QStringList viewTemplates = Latte::Layouts::Importer::availableViewTemplates();
-
-        if (viewTemplates.contains(viewTemplateName)) {
-            if (layoutNameOnStartup.isEmpty()) {
-                //! Clean layout template is applied and proper name is used
-                QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(QLatin1String(Latte::Templates::EMPTYLAYOUTTEMPLATENAME));
-                QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : viewTemplateName;
-                QString importedLayout = Latte::Layouts::Importer::importLayoutHelper(emptytemplatepath, suggestedname);
-
-                if (importedLayout.isEmpty()) {
-                    qInfo() << i18n("The layout cannot be imported");
-                    qGuiApp->exit();
-                    return 0;
-                } else {
-                    layoutNameOnStartup = importedLayout;
-                }
-            }
-
-            addViewTemplateNameOnStartup = viewTemplateName;
-        }
-    }
-
-    //! text filter for debug messages
-    if (parser.isSet(QStringLiteral("debug-text"))) {
-        filterDebugMessageText = parser.value(QStringLiteral("debug-text"));
-    }
-
-    //! log file for debug output
-    if (parser.isSet(QStringLiteral("log-file")) && !parser.value(QStringLiteral("log-file")).isEmpty()) {
-        filterDebugLogFile = parser.value(QStringLiteral("log-file"));
-    }
-
-    //! debug/mask options
-    if (parser.isSet(QStringLiteral("debug")) || parser.isSet(QStringLiteral("mask")) || parser.isSet(QStringLiteral("debug-text"))) {
-        qInstallMessageHandler(filterDebugMessageOutput);
-    } else {
-        const auto noMessageOutput = [](QtMsgType, const QMessageLogContext &, const QString &) {};
-
-        qInstallMessageHandler(noMessageOutput);
-    }
+    installDebugMessageHandler(parser);
 
     //! Prime the Plasma global shared QML engine singleton after one-instance
     //! checks. Duplicate invocations only forward DBus actions and exit; they
@@ -415,7 +267,10 @@ int main(int argc, char **argv)
 
     int result;
     {
-        Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
+        Latte::Corona corona(startupLayout.defaultLayout,
+                             startupLayout.layoutName,
+                             startupLayout.addViewTemplateName,
+                             startupLayout.memoryUsage);
 
         //! Session shutdown observer.  On Wayland, ksmserver may expose the
         //! logout confirmation phase only through isShuttingDown().  Use that
@@ -796,6 +651,208 @@ inline void connectSessionManagement(QApplication &app)
 
     QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, disableSessionManagement, Qt::DirectConnection);
     QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, disableSessionManagement, Qt::DirectConnection);
+}
+
+//! Reads --default-layout and --layout before the instance lock; returns false when the named layout is missing.
+inline bool chooseStartupLayout(const QCommandLineParser &parser, StartupLayoutOptions &startup)
+{
+    //! --default-layout option
+    if (parser.isSet(QStringLiteral("default-layout"))) {
+        startup.defaultLayout = true;
+    } else if (parser.isSet(QStringLiteral("layout"))) {
+        startup.layoutName = parser.value(QStringLiteral("layout"));
+
+        if (!Latte::Layouts::Importer::layoutExists(startup.layoutName)) {
+            qInfo() << i18nc("layout missing", "This layout doesn't exist in the system.");
+            qGuiApp->exit();
+            return false;
+        }
+    }
+
+    return true;
+}
+
+//! Per-user lock file that makes latte-dock-ng a single instance.
+inline QString singleInstanceLockPath()
+{
+    QString username = QString::fromLocal8Bit(qgetenv("USER"));
+
+    if (username.isEmpty())
+        username = QString::fromLocal8Bit(qgetenv("USERNAME"));
+
+    return QDir::tempPath() + QLatin1Char('/') + QString::fromLatin1(Latte::App::BINARYNAME) + QLatin1Char('.') + username + QLatin1String(".lock");
+}
+
+//! Asks a running instance to quit for --replace and --import-full; returns the lock timeout in milliseconds.
+inline int stopReplacedInstance(const QCommandLineParser &parser, const QLockFile &lockFile)
+{
+    int timeout {100};
+
+    if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
+        qint64 pid{ -1};
+
+        if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
+            kill(static_cast<pid_t>(pid), SIGTERM);
+            // Wait up to 5 seconds for the old instance to release the lock.
+            // Avoids blocking forever if the old process cannot process SIGTERM
+            // (e.g. signalfd delivery failure).
+            timeout = 5000;
+        }
+    }
+
+    return timeout;
+}
+
+//! Forwards this start to the running instance over D-Bus, or reports why it cannot take over.
+inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile)
+{
+    bool addview{parser.isSet(QStringLiteral("add-dock"))};
+    bool importlayout{parser.isSet(QStringLiteral("import-layout"))};
+    bool enableautostart{parser.isSet(QStringLiteral("enable-autostart"))};
+    bool disableautostart{parser.isSet(QStringLiteral("disable-autostart"))};
+
+    bool validaction{false};
+
+    if (addview) {
+        validaction = true;
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("addView"));
+        msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
+        QDBusConnection::sessionBus().call(msg);
+        return;
+    } else if (importlayout) {
+        validaction = true;
+        QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("importLayoutFile"));
+        msg.setArguments({parser.value(QStringLiteral("import-layout")), suggestedname});
+        QDBusConnection::sessionBus().call(msg);
+        return;
+    } else if (enableautostart || disableautostart) {
+        validaction = true;
+    } else {
+        // LayoutPage = 0
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("showSettingsWindow"));
+        msg.setArguments({0});
+        QDBusConnection::sessionBus().call(msg);
+    }
+
+    if (!validaction) {
+        if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
+            qint64 pid{ -1};
+
+            if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
+                qInfo() << i18n("Old instance (PID %1) did not exit in time. Try killing it manually.", pid);
+            } else {
+                qInfo() << i18n("Failed to acquire lock. Another instance may be starting.");
+            }
+        } else {
+            qInfo() << i18n("An instance is already running!, use --replace to restart Latte");
+        }
+    }
+}
+
+//! Options that change the configuration or the QML cache; they run only while this instance holds the lock. Returns false when an import failed.
+inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayoutOptions &startup)
+{
+    //! clear-cache option
+    if (parser.isSet(QStringLiteral("clear-cache"))) {
+        QDir cacheDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QStringLiteral("/lattedock/qmlcache"));
+
+        if (cacheDir.exists()) {
+            cacheDir.removeRecursively();
+            qCDebug(latteApp) << "Cache directory found and cleared...";
+        }
+    }
+
+    //! import-full option
+    if (parser.isSet(QStringLiteral("import-full"))) {
+        bool imported = Latte::Layouts::Importer::importHelper(parser.value(QStringLiteral("import-full")));
+
+        if (!imported) {
+            qInfo() << i18n("The configuration cannot be imported");
+            qGuiApp->exit();
+            return false;
+        }
+    }
+
+    //! import-layout option
+    if (parser.isSet(QStringLiteral("import-layout"))) {
+        QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
+        QString importedLayout = Latte::Layouts::Importer::importLayoutHelper(parser.value(QStringLiteral("import-layout")), suggestedname);
+
+        if (importedLayout.isEmpty()) {
+            qInfo() << i18n("The layout cannot be imported");
+            qGuiApp->exit();
+            return false;
+        } else {
+            startup.layoutName = importedLayout;
+        }
+    }
+
+    //! memory usage option
+    if (parser.isSet(QStringLiteral("multiple"))) {
+        startup.memoryUsage = static_cast<int>(Latte::MemoryUsage::MultipleLayouts);
+    } else if (parser.isSet(QStringLiteral("single"))) {
+        startup.memoryUsage = static_cast<int>(Latte::MemoryUsage::SingleLayout);
+    }
+
+    //! add-dock usage option
+    if (parser.isSet(QStringLiteral("add-dock"))) {
+        QString viewTemplateName = parser.value(QStringLiteral("add-dock"));
+        QStringList viewTemplates = Latte::Layouts::Importer::availableViewTemplates();
+
+        if (viewTemplates.contains(viewTemplateName)) {
+            if (startup.layoutName.isEmpty()) {
+                //! Clean layout template is applied and proper name is used
+                QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(QLatin1String(Latte::Templates::EMPTYLAYOUTTEMPLATENAME));
+                QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : viewTemplateName;
+                QString importedLayout = Latte::Layouts::Importer::importLayoutHelper(emptytemplatepath, suggestedname);
+
+                if (importedLayout.isEmpty()) {
+                    qInfo() << i18n("The layout cannot be imported");
+                    qGuiApp->exit();
+                    return false;
+                } else {
+                    startup.layoutName = importedLayout;
+                }
+            }
+
+            startup.addViewTemplateName = viewTemplateName;
+        }
+    }
+
+    return true;
+}
+
+//! Routes Qt messages through the --debug, --mask, --debug-text and --log-file filters.
+inline void installDebugMessageHandler(const QCommandLineParser &parser)
+{
+    //! text filter for debug messages
+    if (parser.isSet(QStringLiteral("debug-text"))) {
+        filterDebugMessageText = parser.value(QStringLiteral("debug-text"));
+    }
+
+    //! log file for debug output
+    if (parser.isSet(QStringLiteral("log-file")) && !parser.value(QStringLiteral("log-file")).isEmpty()) {
+        filterDebugLogFile = parser.value(QStringLiteral("log-file"));
+    }
+
+    //! debug/mask options
+    if (parser.isSet(QStringLiteral("debug")) || parser.isSet(QStringLiteral("mask")) || parser.isSet(QStringLiteral("debug-text"))) {
+        qInstallMessageHandler(filterDebugMessageOutput);
+    } else {
+        const auto noMessageOutput = [](QtMsgType, const QMessageLogContext &, const QString &) {};
+
+        qInstallMessageHandler(noMessageOutput);
+    }
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)

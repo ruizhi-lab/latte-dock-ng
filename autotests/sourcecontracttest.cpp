@@ -696,17 +696,30 @@ void SourceContractTest::duplicateInstanceExitsWithoutQGuiAppExit()
     QVERIFY(mainSource.open(QFile::ReadOnly));
     const QString source = QString::fromUtf8(mainSource.readAll());
 
+    //! The duplicate-instance branch is the tryLock() failure in main(), which only
+    //! forwards the request and returns. The message lives in the forwarding helper,
+    //! so that body gets the same checks as the branch.
     const int lockFail = source.indexOf(QStringLiteral("if (!lockFile.tryLock(timeout)) {"));
-    const int clearCache = source.indexOf(QStringLiteral("//! clear-cache option"), lockFail);
+    const int lockBlockEnd = source.indexOf(QStringLiteral("\n\n"), lockFail);
     QVERIFY(lockFail >= 0);
-    QVERIFY(clearCache > lockFail);
+    QVERIFY(lockBlockEnd > lockFail);
 
-    const QString duplicateInstanceBlock = source.mid(lockFail, clearCache - lockFail);
+    const QString duplicateInstanceBlock = source.mid(lockFail, lockBlockEnd - lockFail);
+    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("forwardToRunningInstance(parser, lockFile);")));
+    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("return 0;")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("qGuiApp->exit();")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("SharedQmlEngine")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("globalEngine()")));
-    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("i18n(\"An instance is already running!, use --replace to restart Latte\")")));
-    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("return 0;")));
+
+    const int forwardBody = source.indexOf(QStringLiteral("inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile)\n{"));
+    QVERIFY(forwardBody >= 0);
+    const int forwardEnd = source.indexOf(QStringLiteral("\n}\n"), forwardBody);
+    QVERIFY(forwardEnd > forwardBody);
+    const QString forwardBlock = source.mid(forwardBody, forwardEnd - forwardBody);
+    QVERIFY(!forwardBlock.contains(QStringLiteral("qGuiApp->exit();")));
+    QVERIFY(!forwardBlock.contains(QStringLiteral("SharedQmlEngine")));
+    QVERIFY(!forwardBlock.contains(QStringLiteral("globalEngine()")));
+    QVERIFY(forwardBlock.contains(QStringLiteral("i18n(\"An instance is already running!, use --replace to restart Latte\")")));
 }
 
 void SourceContractTest::allScreensCloneAppletSyncContracts()
