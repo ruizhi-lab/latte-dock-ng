@@ -810,9 +810,7 @@ ContainmentItem {
             // Defer with a Timer and retry; if it still fails after a few
             // attempts give up silently to avoid log noise.
             var retryCount = 0;
-            var retryTimer = Qt.createQmlObject(
-                'import QtQuick 2.0; Timer { interval: 50; repeat: true }',
-                appletContainer);
+            var retryTimer = appletRetryTimerComponent.createObject(appletContainer);
             retryTimer.triggered.connect(function() {
                 retryCount++;
                 if (initAppletContainer(appletContainer, applet)) {
@@ -1195,6 +1193,17 @@ ContainmentItem {
 
     Upgrader {
         id: upgrader
+    }
+
+    // Template for the applet-creation retry timer used by createAppletItem(). Each
+    // instance is parented to its appletContainer; its triggered callback destroys it
+    // on success or after the retry limit.
+    Component {
+        id: appletRetryTimerComponent
+        Timer {
+            interval: 50
+            repeat: true
+        }
     }
 
     ///////////////END components
