@@ -85,6 +85,8 @@ inline void ensureKdeSessionEnvironment();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
 inline bool configureProcessEnvironment(int argc, char **argv);
+inline void addCommandLineOptions(QCommandLineParser &parser);
+inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
 
@@ -148,95 +150,8 @@ int main(int argc, char **argv)
     configureAboutData();
 
     QCommandLineParser parser;
-    parser.addHelpOption();
-    parser.addVersionOption();
-    parser.addOptions({
-        {{QStringLiteral("r"), QStringLiteral("replace")}, i18nc("command line", "Replace the current Latte instance.")}
-        , {{QStringLiteral("d"), QStringLiteral("debug")}, i18nc("command line", "Show the debugging messages on stdout.")}
-        , {{QStringLiteral("cc"), QStringLiteral("clear-cache")}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
-        , {QStringLiteral("enable-autostart"), i18nc("command line", "Enable autostart for this application")}
-        , {QStringLiteral("disable-autostart"), i18nc("command line", "Disable autostart for this application")}
-        , {QStringLiteral("default-layout"), i18nc("command line", "Import and load default layout on startup.")}
-        , {QStringLiteral("available-layouts"), i18nc("command line", "Print available layouts")}
-        , {QStringLiteral("available-dock-templates"), i18nc("command line", "Print available dock templates")}
-        , {QStringLiteral("available-layout-templates"), i18nc("command line", "Print available layout templates")}
-        , {QStringLiteral("layout"), i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
-        , {QStringLiteral("import-layout"), i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
-        , {QStringLiteral("suggested-layout-name"), i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
-        , {QStringLiteral("import-full"), i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
-        , {QStringLiteral("add-dock"), i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
-        , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
-        , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
-    });
-
-    //! START: Hidden options for Developer and Debugging usage
-    QCommandLineOption graphicsOption(QStringList() << QStringLiteral("graphics"));
-    graphicsOption.setDescription(QStringLiteral("Draw boxes around of the applets."));
-    graphicsOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(graphicsOption);
-
-    QCommandLineOption withWindowOption(QStringList() << QStringLiteral("with-window"));
-    withWindowOption.setDescription(QStringLiteral("Open a window with much debug information"));
-    withWindowOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(withWindowOption);
-
-    QCommandLineOption maskOption(QStringList() << QStringLiteral("mask"));
-    maskOption.setDescription(QStringLiteral("Show messages of debugging for the mask (Only useful to devs)."));
-    maskOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(maskOption);
-
-    QCommandLineOption timersOption(QStringList() << QStringLiteral("timers"));
-    timersOption.setDescription(QStringLiteral("Show messages for debugging the timers (Only useful to devs)."));
-    timersOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(timersOption);
-
-    QCommandLineOption spacersOption(QStringList() << QStringLiteral("spacers"));
-    spacersOption.setDescription(QStringLiteral("Show visual indicators for debugging spacers (Only useful to devs)."));
-    spacersOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(spacersOption);
-
-    QCommandLineOption overloadedIconsOption(QStringList() << QStringLiteral("overloaded-icons"));
-    overloadedIconsOption.setDescription(QStringLiteral("Show visual indicators for debugging overloaded applets icons (Only useful to devs)."));
-    overloadedIconsOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(overloadedIconsOption);
-
-    QCommandLineOption edgesOption(QStringList() << QStringLiteral("kwinedges"));
-    edgesOption.setDescription(QStringLiteral("Show visual window indicators for hidden screen edge windows."));
-    edgesOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(edgesOption);
-
-    QCommandLineOption localGeometryOption(QStringList() << QStringLiteral("localgeometry"));
-    localGeometryOption.setDescription(QStringLiteral("Show visual window indicators for calculated local geometry."));
-    localGeometryOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(localGeometryOption);
-
-    QCommandLineOption layouterOption(QStringList() << QStringLiteral("layouter"));
-    layouterOption.setDescription(QStringLiteral("Show visual debug tags for items sizes."));
-    layouterOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(layouterOption);
-
-    QCommandLineOption filterDebugTextOption(QStringList() << QStringLiteral("debug-text"));
-    filterDebugTextOption.setDescription(QStringLiteral("Show only debug messages that contain specific text."));
-    filterDebugTextOption.setFlags(QCommandLineOption::HiddenFromHelp);
-    filterDebugTextOption.setValueName(i18nc("command line: debug-text", "filter_debug_text"));
-    parser.addOption(filterDebugTextOption);
-
-    QCommandLineOption filterDebugInputMask(QStringList() << QStringLiteral("input"));
-    filterDebugInputMask.setDescription(QStringLiteral("Show visual window indicators for calculated input mask."));
-    filterDebugInputMask.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(filterDebugInputMask);
-
-    QCommandLineOption filterDebugEventSinkMask(QStringList() << QStringLiteral("events-sink"));
-    filterDebugEventSinkMask.setDescription(QStringLiteral("Show visual indicators for areas of EventsSink."));
-    filterDebugEventSinkMask.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOption(filterDebugEventSinkMask);
-
-    QCommandLineOption filterDebugLogCmd(QStringList() << QStringLiteral("log-file"));
-    filterDebugLogCmd.setDescription(QStringLiteral("Forward debug output in a log text file."));
-    filterDebugLogCmd.setFlags(QCommandLineOption::HiddenFromHelp);
-    filterDebugLogCmd.setValueName(i18nc("command line: log-filepath", "filter_log_filepath"));
-    parser.addOption(filterDebugLogCmd);
-    //! END: Hidden options
+    addCommandLineOptions(parser);
+    addHiddenDeveloperOptions(parser);
 
     parser.process(app);
 
@@ -744,6 +659,104 @@ inline int runPrivateAppHostSmoke()
     delete root;
     qInfo() << "private.app loaded in latte-dock-ng host process";
     return 0;
+}
+
+//! Help, version and the user-facing command-line options.
+inline void addCommandLineOptions(QCommandLineParser &parser)
+{
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addOptions({
+        {{QStringLiteral("r"), QStringLiteral("replace")}, i18nc("command line", "Replace the current Latte instance.")}
+        , {{QStringLiteral("d"), QStringLiteral("debug")}, i18nc("command line", "Show the debugging messages on stdout.")}
+        , {{QStringLiteral("cc"), QStringLiteral("clear-cache")}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
+        , {QStringLiteral("enable-autostart"), i18nc("command line", "Enable autostart for this application")}
+        , {QStringLiteral("disable-autostart"), i18nc("command line", "Disable autostart for this application")}
+        , {QStringLiteral("default-layout"), i18nc("command line", "Import and load default layout on startup.")}
+        , {QStringLiteral("available-layouts"), i18nc("command line", "Print available layouts")}
+        , {QStringLiteral("available-dock-templates"), i18nc("command line", "Print available dock templates")}
+        , {QStringLiteral("available-layout-templates"), i18nc("command line", "Print available layout templates")}
+        , {QStringLiteral("layout"), i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
+        , {QStringLiteral("import-layout"), i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
+        , {QStringLiteral("suggested-layout-name"), i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
+        , {QStringLiteral("import-full"), i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
+        , {QStringLiteral("add-dock"), i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
+        , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
+        , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
+    });
+}
+
+//! Hidden options for developer and debugging usage; parsed, but not listed in --help.
+inline void addHiddenDeveloperOptions(QCommandLineParser &parser)
+{
+    //! START: Hidden options for Developer and Debugging usage
+    QCommandLineOption graphicsOption(QStringList() << QStringLiteral("graphics"));
+    graphicsOption.setDescription(QStringLiteral("Draw boxes around of the applets."));
+    graphicsOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(graphicsOption);
+
+    QCommandLineOption withWindowOption(QStringList() << QStringLiteral("with-window"));
+    withWindowOption.setDescription(QStringLiteral("Open a window with much debug information"));
+    withWindowOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(withWindowOption);
+
+    QCommandLineOption maskOption(QStringList() << QStringLiteral("mask"));
+    maskOption.setDescription(QStringLiteral("Show messages of debugging for the mask (Only useful to devs)."));
+    maskOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(maskOption);
+
+    QCommandLineOption timersOption(QStringList() << QStringLiteral("timers"));
+    timersOption.setDescription(QStringLiteral("Show messages for debugging the timers (Only useful to devs)."));
+    timersOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(timersOption);
+
+    QCommandLineOption spacersOption(QStringList() << QStringLiteral("spacers"));
+    spacersOption.setDescription(QStringLiteral("Show visual indicators for debugging spacers (Only useful to devs)."));
+    spacersOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(spacersOption);
+
+    QCommandLineOption overloadedIconsOption(QStringList() << QStringLiteral("overloaded-icons"));
+    overloadedIconsOption.setDescription(QStringLiteral("Show visual indicators for debugging overloaded applets icons (Only useful to devs)."));
+    overloadedIconsOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(overloadedIconsOption);
+
+    QCommandLineOption edgesOption(QStringList() << QStringLiteral("kwinedges"));
+    edgesOption.setDescription(QStringLiteral("Show visual window indicators for hidden screen edge windows."));
+    edgesOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(edgesOption);
+
+    QCommandLineOption localGeometryOption(QStringList() << QStringLiteral("localgeometry"));
+    localGeometryOption.setDescription(QStringLiteral("Show visual window indicators for calculated local geometry."));
+    localGeometryOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(localGeometryOption);
+
+    QCommandLineOption layouterOption(QStringList() << QStringLiteral("layouter"));
+    layouterOption.setDescription(QStringLiteral("Show visual debug tags for items sizes."));
+    layouterOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(layouterOption);
+
+    QCommandLineOption filterDebugTextOption(QStringList() << QStringLiteral("debug-text"));
+    filterDebugTextOption.setDescription(QStringLiteral("Show only debug messages that contain specific text."));
+    filterDebugTextOption.setFlags(QCommandLineOption::HiddenFromHelp);
+    filterDebugTextOption.setValueName(i18nc("command line: debug-text", "filter_debug_text"));
+    parser.addOption(filterDebugTextOption);
+
+    QCommandLineOption filterDebugInputMask(QStringList() << QStringLiteral("input"));
+    filterDebugInputMask.setDescription(QStringLiteral("Show visual window indicators for calculated input mask."));
+    filterDebugInputMask.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(filterDebugInputMask);
+
+    QCommandLineOption filterDebugEventSinkMask(QStringList() << QStringLiteral("events-sink"));
+    filterDebugEventSinkMask.setDescription(QStringLiteral("Show visual indicators for areas of EventsSink."));
+    filterDebugEventSinkMask.setFlags(QCommandLineOption::HiddenFromHelp);
+    parser.addOption(filterDebugEventSinkMask);
+
+    QCommandLineOption filterDebugLogCmd(QStringList() << QStringLiteral("log-file"));
+    filterDebugLogCmd.setDescription(QStringLiteral("Forward debug output in a log text file."));
+    filterDebugLogCmd.setFlags(QCommandLineOption::HiddenFromHelp);
+    filterDebugLogCmd.setValueName(i18nc("command line: log-filepath", "filter_log_filepath"));
+    parser.addOption(filterDebugLogCmd);
+    //! END: Hidden options
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)

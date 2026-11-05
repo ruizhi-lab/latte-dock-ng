@@ -2149,7 +2149,9 @@ void SourceContractTest::enableAutostartExitsImmediately()
     QVERIFY(mainCpp.open(QFile::ReadOnly));
     const QString content = QString::fromUtf8(mainCpp.readAll());
 
-    const int enableIdx = content.indexOf(QStringLiteral("\"enable-autostart\""));
+    //! Anchor on the branch in main(): the option name also appears in the option
+    //! table and in the lock section that forwards the request.
+    const int enableIdx = content.indexOf(QStringLiteral("if (parser.isSet(QStringLiteral(\"enable-autostart\"))) {"));
     QVERIFY(enableIdx >= 0);
 
     const int exitCall = content.indexOf(QStringLiteral("qGuiApp->exit();"), enableIdx);
