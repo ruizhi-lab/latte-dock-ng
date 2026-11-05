@@ -342,6 +342,7 @@ private Q_SLOTS:
     void launchersRemoveInternalSeparatorRefusesEmptyUrl();
     void taskItemIsSeparatorNeverTurnsUrlLessWindowsIntoDividers();
     void contextMenuSeparatorRemovalRoutesThroughGuardedLauncherPath();
+    void contextMenuFactoriesUseDeclaredComponentsNotStringCompilation();
     // main.cpp CLI and startup boundary paths
     void mainCppAvailableLayoutsPrintsDifferentMessageWhenEmpty();
     void mainCppLayoutOptionExitsForMissingLayout();
@@ -353,6 +354,7 @@ private Q_SLOTS:
     void mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped();
     void mainQmlStartupDelayerTriggeredByHasRestoredAppletsSignal();
     void mainQmlCreateAppletItemRetryCeilingAt80();
+    void mainQmlRetryTimerUsesDeclaredComponentNotStringCompilation();
     void mainQmlPanelCfgSyncTransparencySevenInputClasses();
     void mainQmlOnInStartupChangedMustCheckLatteViewExists();
     // itemForApplet migration — safe contexts vs regression-prone exclusions
@@ -4141,6 +4143,39 @@ void SourceContractTest::contextMenuSeparatorRemovalRoutesThroughGuardedLauncher
     QVERIFY(tailBlock.contains(QStringLiteral("tryRemoveBoundarySeparator(false)")));
 }
 
+void SourceContractTest::contextMenuFactoriesUseDeclaredComponentsNotStringCompilation()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+                           "/plasmoid/package/contents/ui/ContextMenu.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // Menu rows and the elide metrics come from declared Component templates, so
+    // qmllint resolves their types and no QML is compiled from a string at run time.
+    QVERIFY(!src.contains(QStringLiteral("Qt.createQmlObject")));
+    QVERIFY(src.contains(QStringLiteral("return menuItemComponent.createObject(parent);")));
+    QVERIFY(src.contains(QStringLiteral("return separatorComponent.createObject(parent);")));
+    QVERIFY(src.contains(QStringLiteral("var textMetrics = textMetricsComponent.createObject(menu);")));
+
+    // The templates must stay properties: the default property of PlasmaExtras.Menu
+    // accepts only MenuItem, so a child Component would stop this file from loading.
+    QVERIFY(src.contains(QStringLiteral("readonly property Component menuItemComponent: Component {")));
+    QVERIFY(src.contains(QStringLiteral("readonly property Component separatorComponent: Component {")));
+    QVERIFY(src.contains(QStringLiteral("readonly property Component textMetricsComponent: Component {")));
+    QVERIFY(!src.contains(QStringLiteral("id: menuItemComponent")));
+    QVERIFY(!src.contains(QStringLiteral("id: separatorComponent")));
+    QVERIFY(!src.contains(QStringLiteral("id: textMetricsComponent")));
+
+    // The separator template is a menu item with the separator flag set.
+    const int separatorStart = src.indexOf(QStringLiteral("readonly property Component separatorComponent"));
+    QVERIFY(separatorStart > 0);
+    const int separatorEnd = src.indexOf(QStringLiteral("readonly property Component textMetricsComponent"), separatorStart);
+    QVERIFY(separatorEnd > separatorStart);
+    const QString separatorBlock = src.mid(separatorStart, separatorEnd - separatorStart);
+    QVERIFY(separatorBlock.contains(QStringLiteral("PlasmaExtras.MenuItem {")));
+    QVERIFY(separatorBlock.contains(QStringLiteral("separator: true")));
+}
+
 // ------------------------------------------------------------------------
 // main.cpp CLI and startup boundary paths
 // ------------------------------------------------------------------------
@@ -4253,6 +4288,32 @@ void SourceContractTest::mainQmlCreateAppletItemRetryCeilingAt80()
     // The applet item creation retry loop must stop at 80 attempts.
     QVERIFY(src.contains(QStringLiteral("retryCount >= 80")));
     QVERIFY(src.contains(QStringLiteral("createAppletItem")));
+}
+
+void SourceContractTest::mainQmlRetryTimerUsesDeclaredComponentNotStringCompilation()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+                           "/containment/package/contents/ui/main.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The retry timer is a declared Component so qmllint checks it and the file
+    // compiles it, instead of building it from a string on every retry.
+    QVERIFY(!src.contains(QStringLiteral("Qt.createQmlObject")));
+    QVERIFY(src.contains(QStringLiteral("var retryTimer = appletRetryTimerComponent.createObject(appletContainer);")));
+
+    // The template keeps the 50 ms interval and the repeating flag the retry loop relies on.
+    const int componentStart = src.indexOf(QStringLiteral("id: appletRetryTimerComponent"));
+    QVERIFY(componentStart > 0);
+    const int componentEnd = src.indexOf(QStringLiteral("///////////////END components"), componentStart);
+    QVERIFY(componentEnd > componentStart);
+    const QString component = src.mid(componentStart, componentEnd - componentStart);
+    QVERIFY(component.contains(QStringLiteral("Timer {")));
+    QVERIFY(component.contains(QStringLiteral("interval: 50")));
+    QVERIFY(component.contains(QStringLiteral("repeat: true")));
+
+    // Both retry outcomes (success and the give-up after 80 attempts) still destroy the timer.
+    QCOMPARE(src.count(QStringLiteral("retryTimer.destroy();")), 2);
 }
 
 void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()

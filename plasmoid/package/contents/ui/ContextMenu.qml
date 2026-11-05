@@ -343,18 +343,29 @@ PlasmaExtras.Menu {
         windowsPreviewCheckerToNotShowTimer.start();
     }
 
+    // Templates for newMenuItem(), newSeparator() and the elide metrics. They are
+    // properties, not child objects: the default property of PlasmaExtras.Menu accepts
+    // only MenuItem, so a child Component would stop this file from loading. Each
+    // createObject(parent) hands ownership to the parent the caller passes, exactly as the
+    // earlier string-based factory did, so every object is destroyed with that parent.
+    readonly property Component menuItemComponent: Component {
+        PlasmaExtras.MenuItem {}
+    }
+    readonly property Component separatorComponent: Component {
+        PlasmaExtras.MenuItem {
+            separator: true
+        }
+    }
+    readonly property Component textMetricsComponent: Component {
+        TextMetrics {}
+    }
+
     function newMenuItem(parent) {
-        return Qt.createQmlObject(
-                    "import org.kde.plasma.extras 2.0 as PlasmaExtras;" +
-                    "PlasmaExtras.MenuItem {}",
-                    parent);
+        return menuItemComponent.createObject(parent);
     }
 
     function newSeparator(parent) {
-        return Qt.createQmlObject(
-                    "import org.kde.plasma.extras 2.0 as PlasmaExtras;" +
-                    "PlasmaExtras.MenuItem { separator: true }",
-                    parent);
+        return separatorComponent.createObject(parent);
     }
 
     function dynamicSectionsForLauncherUrl(launcherUrl) {
@@ -492,7 +503,7 @@ PlasmaExtras.Menu {
 
         // QMenu does not limit its width automatically. Even if we set a maximumWidth
         // it would just cut off text rather than eliding. So we do this manually.
-        var textMetrics = Qt.createQmlObject("import QtQuick 2.4; TextMetrics {}", menu);
+        var textMetrics = textMetricsComponent.createObject(menu);
         textMetrics.elide = Qt.ElideRight;
         var gridUnit = 16;
         if (typeof PlasmaCore !== "undefined" && PlasmaCore && PlasmaCore.Units && PlasmaCore.Units.gridUnit) {
