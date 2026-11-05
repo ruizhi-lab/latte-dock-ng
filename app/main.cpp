@@ -94,6 +94,9 @@ inline void ensureKdeSessionEnvironment();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
 inline bool configureProcessEnvironment(int argc, char **argv);
+inline int printVersion();
+inline int runPrivateAppHostSmoke();
+inline void prepareApplication(QApplication &app);
 inline void addCommandLineOptions(QCommandLineParser &parser);
 inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
 inline bool runOneShotCommand(const QCommandLineParser &parser);
@@ -106,9 +109,7 @@ inline int stopReplacedInstance(const QCommandLineParser &parser, const QLockFil
 inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile);
 inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayoutOptions &startup);
 inline void installDebugMessageHandler(const QCommandLineParser &parser);
-inline int printVersion();
-inline int runPrivateAppHostSmoke();
-inline void prepareApplication(QApplication &app);
+inline Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding);
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -278,41 +279,7 @@ int main(int argc, char **argv)
         //! user can still cancel the logout.  The monitor samples ksmserver
         //! only while plasma-shutdown runs; it is declared after the Corona so
         //! it is destroyed first and its hooks never outlive the views.
-        Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), {
-            .isSessionShuttingDown = []() {
-                return Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus());
-            },
-            .isSessionEnding = [&app]() {
-                return app.property("latte_session_ending").toBool();
-            },
-            .markSessionEnding = markSessionEnding,
-            .clearSessionEnding = [&app]() {
-                app.setProperty("latte_session_ending", false);
-                qunsetenv("LATTE_SESSION_ENDING");
-            },
-            .hideViews = [&corona]() {
-                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
-                    manager->synchronizer()->hideAllViews();
-                    manager->synchronizer()->setHelperWindowsSuspended(true);
-                }
-            },
-            .restoreViews = [&corona]() {
-                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
-                    const auto views = manager->synchronizer()->currentViews();
-
-                    for (Latte::View *view : views) {
-                        if (!view->isVisible()) {
-                            view->setVisible(true);
-                        }
-                    }
-
-                    manager->synchronizer()->setHelperWindowsSuspended(false);
-                }
-            },
-            .quit = [&app]() {
-                app.quit();
-            },
-        });
+        Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), sessionShutdownHooks(app, corona, markSessionEnding));
 
         KDBusService service(KDBusService::Unique);
         result = app.exec();
@@ -853,6 +820,46 @@ inline void installDebugMessageHandler(const QCommandLineParser &parser)
 
         qInstallMessageHandler(noMessageOutput);
     }
+}
+
+//! Hooks through which Session::ShutdownMonitor reads ksmserver and hides or restores the views of the Corona.
+inline Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding)
+{
+    return {
+        .isSessionShuttingDown = []() {
+            return Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus());
+        },
+        .isSessionEnding = [&app]() {
+            return app.property("latte_session_ending").toBool();
+        },
+        .markSessionEnding = markSessionEnding,
+        .clearSessionEnding = [&app]() {
+            app.setProperty("latte_session_ending", false);
+            qunsetenv("LATTE_SESSION_ENDING");
+        },
+        .hideViews = [&corona]() {
+            if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                manager->synchronizer()->hideAllViews();
+                manager->synchronizer()->setHelperWindowsSuspended(true);
+            }
+        },
+        .restoreViews = [&corona]() {
+            if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                const auto views = manager->synchronizer()->currentViews();
+
+                for (Latte::View *view : views) {
+                    if (!view->isVisible()) {
+                        view->setVisible(true);
+                    }
+                }
+
+                manager->synchronizer()->setHelperWindowsSuspended(false);
+            }
+        },
+        .quit = [&app]() {
+            app.quit();
+        },
+    };
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)

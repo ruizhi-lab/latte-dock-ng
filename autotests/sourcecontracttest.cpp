@@ -1054,10 +1054,13 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(!saveStateBlock.contains(QStringLiteral("markSessionEnding")));
 
     //! main.cpp only supplies the hooks; the decision order lives in the
-    //! monitor. The ending flag and quit must stay wired to QApplication.
-    const int hooksEnd = mainSource.indexOf(QStringLiteral("KDBusService service(KDBusService::Unique);"), pollerStart);
-    QVERIFY(hooksEnd > pollerStart);
-    const QString hooks = mainSource.mid(pollerStart, hooksEnd - pollerStart);
+    //! monitor. The ending flag and quit must stay wired to QApplication. The
+    //! hooks are built by sessionShutdownHooks(), a function after main().
+    const int hooksStart = mainSource.indexOf(QStringLiteral("Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding)\n{"));
+    QVERIFY(hooksStart > pollerStart);
+    const int hooksEnd = mainSource.indexOf(QStringLiteral("\n}\n"), hooksStart);
+    QVERIFY(hooksEnd > hooksStart);
+    const QString hooks = mainSource.mid(hooksStart, hooksEnd - hooksStart);
     QVERIFY(hooks.contains(QStringLiteral("Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus())")));
     QVERIFY(hooks.contains(QStringLiteral("return app.property(\"latte_session_ending\").toBool();")));
     QVERIFY(hooks.contains(QStringLiteral(".markSessionEnding = markSessionEnding,")));
