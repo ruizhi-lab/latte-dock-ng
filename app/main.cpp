@@ -28,6 +28,7 @@
 #include <unistd.h>
 
 // C++
+#include <functional>
 #include <memory>
 
 // Qt
@@ -88,6 +89,9 @@ inline bool configureProcessEnvironment(int argc, char **argv);
 inline void addCommandLineOptions(QCommandLineParser &parser);
 inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
 inline bool runOneShotCommand(const QCommandLineParser &parser);
+inline void watchShutdownSignals();
+inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding);
+inline void connectSessionManagement(QApplication &app);
 inline int printVersion();
 inline int runPrivateAppHostSmoke();
 inline void prepareApplication(QApplication &app);
@@ -157,24 +161,7 @@ int main(int argc, char **argv)
         }
     };
 
-    //! Follow Plasma 6 plasmashell's shutdown pattern exactly:
-    //!   1. KSignalHandler (signalfd) watches SIGTERM → calls app.quit()
-    //!   2. setQuitLockEnabled(false) — prevents KJob from blocking quit
-    //!   3. setQuitOnLastWindowClosed(false) — already set above
-    //!
-    //! Reference: plasma-workspace/shell/main.cpp (bug 470604)
-    //! plasmashell also sets AA_DisableSessionManager to opt out of the
-    //! legacy XSMP-based Qt session protocol on Wayland.
-    //!
-    //! SIGINT is excluded from KSignalHandler because it is handled by the
-    //! self-pipe fallback below, which is more reliable across platforms.
-    KSignalHandler::self()->watchSignal(SIGTERM);
-    KSignalHandler::self()->watchSignal(SIGHUP);
-
-    //! Prevent KJob and friends from locking quit() — same as plasmashell.
-    //! Without this, an in-flight KJob can silently suppress QCoreApplication::quit(),
-    //! causing latte-dock to stay alive and trigger the KSMServer "wait or cancel" dialog.
-    QCoreApplication::setQuitLockEnabled(false);
+    watchShutdownSignals();
 
     //! Self-pipe signal handler for SIGINT (Ctrl-C) as a reliable fallback
     //! independent of KSignalHandler's signalfd mechanism.  On some platforms
@@ -222,24 +209,8 @@ int main(int argc, char **argv)
         });
     }
 
-    //! Signal handler: the primary shutdown trigger (matches plasmashell).
-    QObject::connect(KSignalHandler::self(), &KSignalHandler::signalReceived,
-    &app, [&app, &markSessionEnding](int signal) {
-        qInfo() << "[shutdown] KSignalHandler received signal" << signal << "→ calling quit()";
-        markSessionEnding();
-        app.quit();
-    });
-
-    //! Match plasmashell: disable Qt session restoration, but do not quit from
-    //! commitDataRequest/saveStateRequest.  Those requests can happen while
-    //! the logout confirmation is still cancellable.
-    auto disableSessionManagement = [](QSessionManager & sm) {
-        qInfo() << "[shutdown] session management disabled → RestartNever.";
-        sm.setRestartHint(QSessionManager::RestartNever);
-    };
-
-    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, disableSessionManagement, Qt::DirectConnection);
-    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, disableSessionManagement, Qt::DirectConnection);
+    connectSignalShutdown(app, markSessionEnding);
+    connectSessionManagement(app);
 
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
@@ -775,6 +746,56 @@ inline bool runOneShotCommand(const QCommandLineParser &parser)
     }
 
     return false;
+}
+
+//! Quit-on-signal policy: KSignalHandler watches SIGTERM and SIGHUP, and a KJob cannot lock quit().
+inline void watchShutdownSignals()
+{
+    //! Follow Plasma 6 plasmashell's shutdown pattern exactly:
+    //!   1. KSignalHandler (signalfd) watches SIGTERM → calls app.quit()
+    //!   2. setQuitLockEnabled(false) — prevents KJob from blocking quit
+    //!   3. setQuitOnLastWindowClosed(false) — already set above
+    //!
+    //! Reference: plasma-workspace/shell/main.cpp (bug 470604)
+    //! plasmashell also sets AA_DisableSessionManager to opt out of the
+    //! legacy XSMP-based Qt session protocol on Wayland.
+    //!
+    //! SIGINT is excluded from KSignalHandler because it is handled by the
+    //! self-pipe fallback below, which is more reliable across platforms.
+    KSignalHandler::self()->watchSignal(SIGTERM);
+    KSignalHandler::self()->watchSignal(SIGHUP);
+
+    //! Prevent KJob and friends from locking quit() — same as plasmashell.
+    //! Without this, an in-flight KJob can silently suppress QCoreApplication::quit(),
+    //! causing latte-dock to stay alive and trigger the KSMServer "wait or cancel" dialog.
+    QCoreApplication::setQuitLockEnabled(false);
+}
+
+//! Routes KSignalHandler::signalReceived to the session-ending marker and to quit().
+inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding)
+{
+    //! Signal handler: the primary shutdown trigger (matches plasmashell).
+    QObject::connect(KSignalHandler::self(), &KSignalHandler::signalReceived,
+    &app, [&app, markSessionEnding](int signal) {
+        qInfo() << "[shutdown] KSignalHandler received signal" << signal << "→ calling quit()";
+        markSessionEnding();
+        app.quit();
+    });
+}
+
+//! Disables Qt session restoration; commitData and saveState requests never quit the dock.
+inline void connectSessionManagement(QApplication &app)
+{
+    //! Match plasmashell: disable Qt session restoration, but do not quit from
+    //! commitDataRequest/saveStateRequest.  Those requests can happen while
+    //! the logout confirmation is still cancellable.
+    auto disableSessionManagement = [](QSessionManager & sm) {
+        qInfo() << "[shutdown] session management disabled → RestartNever.";
+        sm.setRestartHint(QSessionManager::RestartNever);
+    };
+
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, disableSessionManagement, Qt::DirectConnection);
+    QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, disableSessionManagement, Qt::DirectConnection);
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)

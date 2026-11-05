@@ -1024,12 +1024,18 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(saveStateStart >= 0);
     QVERIFY(commitDataStart >= 0);
     QVERIFY(saveStateStart > commitDataStart);
-    QVERIFY(pollerStart > saveStateStart);
+    //! connectSessionManagement() is called from main() before the monitor is constructed,
+    //! and its body follows main(), so the save-state block runs to the closing brace.
+    const int sessionManagementCall = mainSource.indexOf(QStringLiteral("connectSessionManagement(app);"));
+    const int sessionManagementEnd = mainSource.indexOf(QStringLiteral("\n}\n"), saveStateStart);
+    QVERIFY(sessionManagementCall >= 0);
+    QVERIFY(pollerStart > sessionManagementCall);
+    QVERIFY(sessionManagementEnd > saveStateStart);
     const QString commitDataBlock = mainSource.mid(commitDataStart, saveStateStart - commitDataStart);
     QVERIFY(commitDataBlock.contains(QStringLiteral("disableSessionManagement")));
     QVERIFY(!commitDataBlock.contains(QStringLiteral("app.quit()")));
     QVERIFY(!commitDataBlock.contains(QStringLiteral("markSessionEnding")));
-    const QString saveStateBlock = mainSource.mid(saveStateStart, pollerStart - saveStateStart);
+    const QString saveStateBlock = mainSource.mid(saveStateStart, sessionManagementEnd - saveStateStart);
     QVERIFY(saveStateBlock.contains(QStringLiteral("disableSessionManagement")));
     QVERIFY(!saveStateBlock.contains(QStringLiteral("app.quit()")));
     QVERIFY(!saveStateBlock.contains(QStringLiteral("markSessionEnding")));
