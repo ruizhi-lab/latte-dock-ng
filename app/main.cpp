@@ -100,6 +100,7 @@ inline void prepareApplication(QApplication &app);
 inline void addCommandLineOptions(QCommandLineParser &parser);
 inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
 inline bool runOneShotCommand(const QCommandLineParser &parser);
+inline std::function<void()> sessionEndingMarker(QApplication &app);
 inline void watchShutdownSignals();
 inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding);
 inline void connectSessionManagement(QApplication &app);
@@ -165,16 +166,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    auto markSessionEnding = [&app]() {
-        if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
-            qputenv("LATTE_SESSION_ENDING", "1");
-        }
-
-        if (!app.property("latte_session_ending").toBool()) {
-            app.setProperty("latte_session_ending", true);
-            qInfo() << "[shutdown] session-ending flag set; fast teardown enabled.";
-        }
-    };
+    const std::function<void()> markSessionEnding = sessionEndingMarker(app);
 
     watchShutdownSignals();
 
@@ -568,6 +560,21 @@ inline bool runOneShotCommand(const QCommandLineParser &parser)
     }
 
     return false;
+}
+
+//! Sets the session-ending flag that the fast teardown path reads: the app property and LATTE_SESSION_ENDING.
+inline std::function<void()> sessionEndingMarker(QApplication &app)
+{
+    return [&app]() {
+        if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
+            qputenv("LATTE_SESSION_ENDING", "1");
+        }
+
+        if (!app.property("latte_session_ending").toBool()) {
+            app.setProperty("latte_session_ending", true);
+            qInfo() << "[shutdown] session-ending flag set; fast teardown enabled.";
+        }
+    };
 }
 
 //! Quit-on-signal policy: KSignalHandler watches SIGTERM and SIGHUP, and a KJob cannot lock quit().
