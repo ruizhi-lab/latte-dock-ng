@@ -84,6 +84,8 @@ inline void applyUserLocalPluginPaths();
 inline void ensureKdeSessionEnvironment();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
+inline int printVersion();
+inline int runPrivateAppHostSmoke();
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
@@ -119,37 +121,11 @@ int main(int argc, char **argv)
     // exits with the "requires a Wayland Plasma session" error.
     const QStringList earlyArguments = QCoreApplication::arguments();
     if (earlyArguments.contains(QStringLiteral("--version")) || earlyArguments.contains(QStringLiteral("-v"))) {
-        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
-        configureAboutData();
-        std::printf("%s %s\n",
-                    qPrintable(KAboutData::applicationData().componentName()),
-                    qPrintable(KAboutData::applicationData().version()));
-        return 0;
+        return printVersion();
     }
 
     if (qEnvironmentVariableIntValue("LATTE_PRIVATE_APP_HOST_SMOKE") == 1) {
-        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
-        QQmlEngine engine;
-        engine.addImportPath(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../qml")));
-
-        QQmlComponent component(&engine);
-        component.setData(QByteArrayLiteral("import QtQml\n"
-                                            "import org.kde.latte.private.app 0.1 as LatteApp\n"
-                                            "LatteApp.ContextMenuLayer {}"),
-                          QUrl(QStringLiteral("latte-private-app-host-smoke.qml")));
-        QObject *root = component.create();
-
-        if (!root) {
-            qCritical() << "private.app host smoke failed:" << component.errors();
-            return 1;
-        }
-
-        // This process is the real exporting application executable. Loading
-        // the module here verifies private.app's host symbol contract, which a
-        // standalone QQmlEngine test cannot establish.
-        delete root;
-        qInfo() << "private.app loaded in latte-dock-ng host process";
-        return 0;
+        return runPrivateAppHostSmoke();
     }
 
     // The QPA platform is fixed when QApplication is constructed and
@@ -718,6 +694,44 @@ int main(int argc, char **argv)
     sharedEngine.reset();
 
     return result;
+}
+
+//! Prints "<component> <version>" for --version and -v; needs no Wayland session.
+inline int printVersion()
+{
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+    configureAboutData();
+    std::printf("%s %s\n",
+                qPrintable(KAboutData::applicationData().componentName()),
+                qPrintable(KAboutData::applicationData().version()));
+    return 0;
+}
+
+//! Loads private.app in this executable; packaging CI runs it with LATTE_PRIVATE_APP_HOST_SMOKE=1.
+inline int runPrivateAppHostSmoke()
+{
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+    QQmlEngine engine;
+    engine.addImportPath(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../qml")));
+
+    QQmlComponent component(&engine);
+    component.setData(QByteArrayLiteral("import QtQml\n"
+                                        "import org.kde.latte.private.app 0.1 as LatteApp\n"
+                                        "LatteApp.ContextMenuLayer {}"),
+                      QUrl(QStringLiteral("latte-private-app-host-smoke.qml")));
+    QObject *root = component.create();
+
+    if (!root) {
+        qCritical() << "private.app host smoke failed:" << component.errors();
+        return 1;
+    }
+
+    // This process is the real exporting application executable. Loading
+    // the module here verifies private.app's host symbol contract, which a
+    // standalone QQmlEngine test cannot establish.
+    delete root;
+    qInfo() << "private.app loaded in latte-dock-ng host process";
+    return 0;
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)
