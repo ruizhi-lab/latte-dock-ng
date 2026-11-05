@@ -1317,12 +1317,23 @@ void GenericLayout::syncLatteViewsToScreens()
     qCDebug(latteLayout) << "LATTEVIEWS MAP :: " << viewsMap;
 
     //! add views
-    //! clazy:exclude=range-loop-detach: the loop iterates the live m_containments list, as before. addView() below
-    //! can append to it: addView() -> View::setLayout() emits layoutChanged -> OriginalView::syncClonesToScreens()
-    //! -> createClone() -> GenericLayout::newView() -> Storage::newView() -> Storage::importLayoutFile()
-    //! -> ImportedContainments::restore() emits Corona::containmentAdded -> GenericLayout::addContainment()
-    //! -> m_containments.append(). A snapshot would change which containments the loop visits: a later decision.
-    for (const auto containment : m_containments) { // clazy:exclude=range-loop-detach
+    //! The loop walks a copy of m_containments because addView() can append to the live list: addView() ->
+    //! View::setLayout() emits layoutChanged -> OriginalView::syncClonesToScreens() -> createClone() -> newView() ->
+    //! Storage::newView() -> Storage::importLayoutFile() -> ImportedContainments::restore() emits
+    //! Corona::containmentAdded -> GenericLayout::addContainment() -> m_containments.append(). An append can
+    //! reallocate the buffer the loop reads, which is undefined behavior. The copy shares that buffer, and
+    //! m_containments detaches on its first append, so the copy keeps the entries present when the loop started.
+    //! Containments appended during the loop are not visited: validViewsMap() ran before the loop, so their ids
+    //! are not in viewsMap and the body would do nothing for them. An entry that left m_containments meanwhile
+    //! (containmentDestroyed() drops a destroyed containment, removeViewWithoutDestroyingContainment() drops a
+    //! clone) fails the membership test before its pointer is dereferenced.
+    const auto containmentsSnapshot = m_containments;
+
+    for (const auto containment : containmentsSnapshot) {
+        if (!m_containments.contains(containment)) {
+            continue;
+        }
+
         if (!hasLatteView(containment) && mapContainsId(&viewsMap, containment->id())) {
             qCDebug(latteLayout) << "syncLatteViewsToScreens: view must be added... for containment:" << containment->id() << " at screen:" << mapScreenName(&viewsMap, containment->id());
             addView(containment);
@@ -1349,11 +1360,25 @@ void GenericLayout::syncLatteViewsToScreens()
     }
 
     //! reconsider views
-    //! clazy:exclude=range-loop-detach: the loop iterates the live m_latteViews hash, as before. reconsiderScreen() of an
-    //! original view runs OriginalView::syncClonesToScreens(), which calls removeClone() for a clone on a screen that is no
-    //! longer used; removeClone() calls removeViewWithoutDestroyingContainment(), which does m_latteViews.take(). A snapshot
-    //! or a restart would change what the loop visits: a behavior decision for a later change.
-    for (const auto view : m_latteViews) { // clazy:exclude=range-loop-detach
+    //! The loop walks QPointer copies of m_latteViews because reconsiderScreen() of an original view can take other
+    //! entries out of the hash: OriginalView::syncClonesToScreens() -> removeClone() ->
+    //! removeViewWithoutDestroyingContainment() -> m_latteViews.take(). A QHash must not change while it is iterated.
+    //! An entry is used only while it is still registered for its containment. The null check alone is not enough:
+    //! deleteLater() keeps a removed view alive until the event loop runs. Views created during the loop are not
+    //! visited; the body ignores clones anyway, because it requires isOriginal().
+    QList<QPointer<Latte::View>> reconsiderSnapshot;
+
+    for (const auto view : std::as_const(m_latteViews)) {
+        reconsiderSnapshot << view;
+    }
+
+    for (const auto &guardedView : std::as_const(reconsiderSnapshot)) {
+        Latte::View *view = guardedView.data();
+
+        if (!view || m_latteViews.value(view->containment()) != view) {
+            continue;
+        }
+
         if (view->containment() && view->isOriginal() && mapContainsId(&viewsMap, view->containment()->id())) {
             //! if the dock will not be deleted its a very good point to reconsider
             //! if the screen in which is running is the correct one
