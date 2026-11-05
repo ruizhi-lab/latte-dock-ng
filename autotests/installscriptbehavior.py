@@ -210,8 +210,83 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     )
     assert not (prefix / "share/latte").exists()
 
+    # The generated dev-env.sh must not turn an unset XDG_CONFIG_DIRS into the
+    # bare "kdedefaults:/etc/xdg" overlay: a dock started from a bare SSH shell
+    # with that value made KSycoca clients rewrite the database against each
+    # other. Render the heredoc exactly as install.sh writes it, then source it
+    # in env -i shells whose first PATH entry is a fake user manager.
+    install_lines = (repo / "install.sh").read_text(encoding="utf-8").splitlines()
+    heredoc_start = next(index for index, line in enumerate(install_lines)
+                         if line.strip() == 'cat > "$env_file" <<ENVEOF')
+    heredoc_end = next(index for index in range(heredoc_start + 1, len(install_lines))
+                       if install_lines[index] == "ENVEOF")
+    dev_env_template = "\n".join(install_lines[heredoc_start + 1:heredoc_end]) + "\n"
+
+    dev_env_root = test_root / "dev-env"
+    dev_env_root.mkdir()
+    render = dev_env_root / "render.sh"
+    render.write_text("kde_install_qmldir=/x\ncat <<ENVEOF\n" + dev_env_template + "ENVEOF\n", encoding="utf-8")
+    dev_env = dev_env_root / "dev-env.sh"
+    dev_env.write_text(
+        subprocess.run(["bash", str(render)], check=True, capture_output=True, text=True).stdout,
+        encoding="utf-8",
+    )
+    subprocess.run(["bash", "-n", str(dev_env)], check=True)
+
+    dev_env_home = dev_env_root / "home"
+    dev_env_home.mkdir()
+    fake_bin = dev_env_root / "bin"
+    fake_bin.mkdir()
+    session_value = "/usr/share/kde-settings/kde-profile/default/xdg"
+    defaults_overlay = f"{dev_env_home}/.config/kdedefaults:/etc/xdg"
+
+    def fake_user_manager(lines, status=0):
+        body = "".join(f"{line}\n" for line in lines)
+        systemctl = fake_bin / "systemctl"
+        systemctl.write_text(
+            '#!/bin/bash\n[[ "$*" == "--user show-environment" ]] || exit 2\n'
+            f"cat <<'MANAGER'\n{body}MANAGER\nexit {status}\n",
+            encoding="utf-8",
+        )
+        systemctl.chmod(0o755)
+
+    def sourced_xdg_config_dirs(variables):
+        """XDG_CONFIG_DIRS after sourcing dev-env.sh in an env -i shell; None when unset."""
+        result = subprocess.run(
+            ["env", "-i", f"PATH={fake_bin}{os.pathsep}{os.environ['PATH']}", f"HOME={dev_env_home}", *variables,
+             "bash", "-c", 'source "$1"; printf "%s" "${XDG_CONFIG_DIRS-__unset__}"', "bash", str(dev_env)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return None if result.stdout == "__unset__" else result.stdout
+
+    # A set value keeps today's overlay in front of it; the user manager is not read.
+    fake_user_manager([f"XDG_CONFIG_DIRS={session_value}"])
+    value = sourced_xdg_config_dirs(["XDG_CONFIG_DIRS=/custom/config:/etc/alt"])
+    assert value == f"{defaults_overlay}:/custom/config:/etc/alt", value
+
+    # Unset: the user manager's value is used exactly as reported.
+    fake_user_manager(["PATH=/usr/bin", f"XDG_CONFIG_DIRS={session_value}", "LANG=zh_CN.UTF-8"])
+    value = sourced_xdg_config_dirs([])
+    assert value == session_value, value
+    # An empty value counts as unset (XDG Base Directory specification).
+    value = sourced_xdg_config_dirs(["XDG_CONFIG_DIRS="])
+    assert value == session_value, value
+
+    # Unset and no value from the user manager, whether it omits the line or
+    # fails: the variable stays unset instead of becoming the overlay alone.
+    fake_user_manager(["PATH=/usr/bin", "LANG=zh_CN.UTF-8"])
+    value = sourced_xdg_config_dirs([])
+    assert value is None, value
+    value = sourced_xdg_config_dirs(["XDG_CONFIG_DIRS="])
+    assert value is None, value
+    fake_user_manager([], status=1)
+    value = sourced_xdg_config_dirs([])
+    assert value is None, value
+
 print(
     "PASS: manifestless cleanup, config/shared-module preservation, "
     "persisted manifest, escaping-path rejection, build-failure preservation, "
-    "and downloaded-indicator preservation"
+    "downloaded-indicator preservation, and dev-env XDG_CONFIG_DIRS handling"
 )

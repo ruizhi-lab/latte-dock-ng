@@ -514,9 +514,25 @@ export QML2_IMPORT_PATH="${kde_install_qmldir}\${QML2_IMPORT_PATH:+:\${QML2_IMPO
 export QML_IMPORT_PATH="${kde_install_qmldir}\${QML_IMPORT_PATH:+:\${QML_IMPORT_PATH}}"
 export QT_QML_IMPORT_PATH="${kde_install_qmldir}\${QT_QML_IMPORT_PATH:+:\${QT_QML_IMPORT_PATH}}"
 # Plasma stores the session's selected look-and-feel package in the KDE
-# defaults overlay. Preserve the existing search path so development launches
-# receive the same theme as the XDG desktop-session launch.
-export XDG_CONFIG_DIRS="\${HOME}/.config/kdedefaults:/etc/xdg\${XDG_CONFIG_DIRS:+:\${XDG_CONFIG_DIRS}}"
+# defaults overlay. A set XDG_CONFIG_DIRS keeps its search path behind the
+# overlay, as the XDG desktop-session launch does. An unset or empty value (the
+# XDG Base Directory specification treats both alike) must not become
+# "defaults:/etc/xdg" alone: a dock started from a bare SSH shell with that value
+# made the Dock, plasmashell and KWin rewrite the shared KSycoca database against
+# each other. The session's value is read from the user manager instead, used
+# exactly as reported, and the variable stays unset when the manager reports
+# none. autotests/installscriptbehavior.py renders this block and checks the cases.
+if [[ -n "\${XDG_CONFIG_DIRS:-}" ]]; then
+    export XDG_CONFIG_DIRS="\${HOME}/.config/kdedefaults:/etc/xdg:\${XDG_CONFIG_DIRS}"
+else
+    latte_session_config_dirs="\$(systemctl --user show-environment 2>/dev/null | sed -n 's/^XDG_CONFIG_DIRS=//p' | head -n 1)"
+    if [[ -n "\${latte_session_config_dirs}" ]]; then
+        export XDG_CONFIG_DIRS="\${latte_session_config_dirs}"
+    else
+        unset XDG_CONFIG_DIRS
+    fi
+    unset latte_session_config_dirs
+fi
 # Match the KDE session language for terminal/nohup debug launches.  A stale
 # LC_ALL from the command runner otherwise overrides plasma-localerc.
 if [[ -f "\${HOME}/.config/plasma-localerc" ]]; then
