@@ -1,0 +1,20 @@
+# Build: g++ -std=c++20 -fPIC $(pkg-config --cflags Qt6Gui) -I/usr/include/qt6/QtGui/6.11.2/QtGui screen-order-probe.cpp $(pkg-config --libs Qt6Gui) -o screen-order-probe
+# Run:   QT_QPA_PLATFORM=offscreen ./screen-order-probe
+# Output on Qt 6.11.2 (pkg-config Qt6Gui 6.11.2), copied from the run:
+initial                list=[0] count=1 primary.x=0
+  screenAdded: new screen is listed: true | list=[0,1000] count=2 primary.x=0
+after add(second)      list=[0,1000] count=2 primary.x=0
+  screenAdded: new screen is listed: true | list=[2000,0,1000] count=3 primary.x=2000
+  primaryScreenChanged | list=[2000,0,1000] count=3 primary.x=2000
+after add(third, primary) list=[2000,0,1000] count=3 primary.x=2000
+  screenRemoved: removed screen is still listed: false | list=[2000,0] count=2 primary.x=2000
+  removed QScreen destroyed
+after remove(second)   list=[2000,0] count=2 primary.x=2000
+  primaryScreenChanged | list=[0] count=1 primary.x=0
+  screenRemoved: removed screen is still listed: false | list=[0] count=1 primary.x=0
+  removed QScreen destroyed
+after remove(third)    list=[0] count=1 primary.x=0
+  screenAdded: new screen is listed: true | list=[0,3000] count=2 primary.x=0
+after add(fourth)      list=[0,3000] count=2 primary.x=0
+  primaryScreenChanged | list=[3000,0] count=2 primary.x=3000
+after primary(fourth)  list=[3000,0] count=2 primary.x=3000

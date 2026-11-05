@@ -54,8 +54,16 @@ UniversalSettings::UniversalSettings(KSharedConfig::Ptr config, QObject *parent)
 
     connect(this, &UniversalSettings::screenScalesChanged, this, &UniversalSettings::saveScalesConfig);
 
+    //! screensChanged is the NOTIFY of the screens property, which reads qGuiApp->screens() on each access.
+    //! Qt updates that list before it emits these signals (verified on Qt 6.11.2), so a binding re-read from
+    //! the handler sees the new list. If a Qt version emitted first, such a binding would keep the old list.
+    //! primaryScreenChanged is included because a primary change reorders the list without add or remove.
+    //! screensCountChanged keeps its own two connections for BehaviorConfig.qml.
     connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensCountChanged);
     connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensCountChanged);
+    connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensChanged);
+    connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensChanged);
+    connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &UniversalSettings::screensChanged);
 
 }
 

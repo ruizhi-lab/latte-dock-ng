@@ -58,10 +58,9 @@ class UniversalSettings : public QObject
     Q_PROPERTY(QStringList contextMenuActionsAlwaysShown READ contextMenuActionsAlwaysShown WRITE setContextMenuActionsAlwaysShown NOTIFY actionsChanged)
 
 
-    //! Reviewed exception to qproperty-without-notify: screens is built from qGuiApp->screens() on each read and has no change
-    //! signal. Screen hotplug is announced by screensCountChanged instead, and BehaviorConfig.qml reads screens only inside
-    //! updateScreens(), so no binding depends on it. Adding a NOTIFY would change when such bindings re-evaluate (a follow-up).
-    Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens) // clazy:exclude=qproperty-without-notify
+    //! screens is read from qGuiApp->screens() on each access, so it is never stale. Its NOTIFY is screensChanged,
+    //! emitted when a screen is added or removed or the primary screen changes (the constructor connects those signals).
+    Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens NOTIFY screensChanged)
 
 public:
     UniversalSettings(KSharedConfig::Ptr config, QObject *parent = nullptr);
@@ -139,6 +138,7 @@ Q_SIGNALS:
     void isAvailableGeometryBroadcastedToPlasmaChanged();
     void metaPressAndHoldEnabledChanged();
     void parabolicSpreadChanged();
+    void screensChanged();
     void screensCountChanged();
     void screenScalesChanged();
     void screenTrackerIntervalChanged();

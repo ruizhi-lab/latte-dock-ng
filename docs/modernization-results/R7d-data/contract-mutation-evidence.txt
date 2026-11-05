@@ -1,0 +1,45 @@
+== baseline (restored state, expected PASS)
+ctest exit 0
+   1/1 Test #7: sourcecontracttest ...............   Passed    0.04 sec
+   100% tests passed, 0 tests failed out of 1
+== M1 NOTIFY removed from Q_PROPERTY
+ctest exit 8 (expected 8 = test failed)
+   1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+   FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() 'headerSource.contains(QStringLiteral("Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens NOTIFY screensChanged)"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2134)]
+   0% tests passed, 1 tests failed out of 1
+   7 - sourcecontracttest (Failed)
+== M2 primaryScreenChanged connection removed
+ctest exit 8 (expected 8 = test failed)
+   1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+   FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() 'constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &UniversalSettings::screensChanged);"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2150)]
+   0% tests passed, 1 tests failed out of 1
+   7 - sourcecontracttest (Failed)
+== M3 clazy exclusion restored on the Q_PROPERTY line
+ctest exit 8 (expected 8 = test failed)
+   1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+   FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() '!headerSource.contains(QStringLiteral("clazy:exclude=qproperty-without-notify"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2137)]
+   0% tests passed, 1 tests failed out of 1
+   7 - sourcecontracttest (Failed)
+== M4 screenRemoved connection to screensChanged removed
+ctest exit 8 (expected 8 = test failed)
+   1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+   FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() 'constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenRemoved, this, &UniversalSettings::screensChanged);"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2149)]
+   0% tests passed, 1 tests failed out of 1
+   7 - sourcecontracttest (Failed)
+== M5 screenAdded connection to screensCountChanged removed
+ctest exit 8 (expected 8 = test failed)
+   1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+   FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() 'constructor.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenAdded, this, &UniversalSettings::screensCountChanged);"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2152)]
+   0% tests passed, 1 tests failed out of 1
+   7 - sourcecontracttest (Failed)
+== restore check
+universalsettings.h identical to backup: True
+universalsettings.cpp identical to backup: True
+ctest exit after restore 0 (expected 0)
+   1/1 Test #7: sourcecontracttest ...............   Passed    0.03 sec
+   100% tests passed, 0 tests failed out of 1

@@ -1,0 +1,5 @@
+# ctest -R sourcecontract on the header before the change (only the new contract was added):
+1/1 Test #7: sourcecontracttest ...............***Failed    0.03 sec
+FAIL!  : SourceContractTest::screensPropertyNotifiesOnScreenChanges() 'headerSource.contains(QStringLiteral("Q_PROPERTY(QQmlListProperty<QScreen> screens READ screens NOTIFY screensChanged)"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/r7d-screens-notify-b84309/autotests/sourcecontracttest.cpp(2134)]
+Totals: 225 passed, 1 failed, 0 skipped, 0 blacklisted, 32ms
