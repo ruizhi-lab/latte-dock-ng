@@ -134,3 +134,14 @@ clazy 1.17.1.
   `claude/r2c-batch-e-fc8dc7`; merged into the integration branch in `4e403af80` by the main
   session. `main` was fast-forwarded to `6b51b43a6` and pushed on 2026-11-02 with the user's
   approval.
+
+## Resolved in claude/r7d-screens-notify-b84309
+
+The NOTIFY follow-up (item 4 of [R2c](R2c.md#follow-ups)) is done in [R7d](R7d.md).
+`UniversalSettings::screens` now has `NOTIFY screensChanged`. The
+`clazy:exclude=qproperty-without-notify` line and the exception comment above it are gone.
+`screensChanged()` is emitted for screen add, screen remove and primary-screen change.
+The open ordering question in the Fix section is answered: on Qt 6.11.2, Qt has already
+updated `qGuiApp->screens()` when `screenAdded`, `screenRemoved` and `primaryScreenChanged`
+are emitted. `screensCountChanged()`, its connections and its one consumer
+(`BehaviorConfig.qml`) are unchanged. The sections above describe the state before R7d.
