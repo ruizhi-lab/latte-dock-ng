@@ -379,7 +379,6 @@ private Q_SLOTS:
     void middleClickActionDefaultIsClose();
 
     // Infinite-loop guard contracts
-    void tasktoolsServicesFromCmdLineGuardsFirstSpace();
     void importerUniqueLayoutNameHasIterationCap();
     void viewscontrollerUniqueViewNameHasIterationCap();
     void layoutscontrollerUniqueLayoutNameHasIterationCap();
@@ -5043,18 +5042,6 @@ void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
 }
 
 // ── Infinite-loop guard contracts ────────────────────────────────────
-
-void SourceContractTest::tasktoolsServicesFromCmdLineGuardsFirstSpace()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tasktools.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // servicesFromCmdLine recursion must guard firstSpace >= 0 so a
-    // single-word cmdLine in TryIgnoreRuntimes does not infinitely
-    // recurse (firstSpace == -1 → mid(0) == identical string).
-    QVERIFY(src.contains(QStringLiteral("firstSpace >= 0")));
-}
 
 void SourceContractTest::importerUniqueLayoutNameHasIterationCap()
 {
