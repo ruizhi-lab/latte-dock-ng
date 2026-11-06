@@ -28,6 +28,7 @@
 #include <unistd.h>
 
 // C++
+#include <functional>
 #include <memory>
 
 // Qt
@@ -75,6 +76,14 @@
 #define CIRED    "\x1b[1;31m"
 #define CRED     "\x1b[0;31m"
 
+//! Layout choices from the command line, read once when the Corona is constructed.
+struct StartupLayoutOptions {
+    bool defaultLayout{false};
+    int memoryUsage{-1};
+    QString layoutName;
+    QString addViewTemplateName;
+};
+
 inline void configureAboutData();
 inline void detectPlatform(int argc, char **argv);
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
@@ -84,31 +93,32 @@ inline void applyUserLocalPluginPaths();
 inline void ensureKdeSessionEnvironment();
 inline void autoClearQmlCacheOnVersionChange();
 inline void configureQtQuickGraphicsPreference();
+inline bool configureProcessEnvironment(int argc, char **argv);
+inline int printVersion();
+inline int runPrivateAppHostSmoke();
+inline void prepareApplication(QApplication &app);
+inline void addCommandLineOptions(QCommandLineParser &parser);
+inline void addHiddenDeveloperOptions(QCommandLineParser &parser);
+inline bool runOneShotCommand(const QCommandLineParser &parser);
+inline std::function<void()> sessionEndingMarker(QApplication &app);
+inline void watchShutdownSignals();
+inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding);
+inline void connectSessionManagement(QApplication &app);
+inline bool chooseStartupLayout(const QCommandLineParser &parser, StartupLayoutOptions &startup);
+inline QString singleInstanceLockPath();
+inline int stopReplacedInstance(const QCommandLineParser &parser, const QLockFile &lockFile);
+inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile);
+inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayoutOptions &startup);
+inline void installDebugMessageHandler(const QCommandLineParser &parser);
+inline Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding);
 
 QString filterDebugMessageText;
 QString filterDebugLogFile;
 
 int main(int argc, char **argv)
 {
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-
-    // Keep fractional scale behavior deterministic under Wayland.
-    // Qt6 enables High DPI by default, so we only sanitize legacy env overrides.
-    if (!qEnvironmentVariableIsSet("PLASMA_USE_QT_SCALING")) {
-        qunsetenv("QT_DEVICE_PIXEL_RATIO");
-    }
-
-    QQuickWindow::setDefaultAlphaBuffer(true);
-    configureQtQuickGraphicsPreference();
-    collectUserLocalPaths(argc, argv);
-
-    qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
-    const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
-    detectPlatform(argc, argv);
-    // Set desktop file id before app initialization so Wayland app_id is correct
-    // from the earliest possible point for privileged interface checks.
-    QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
-    ensureKdeSessionEnvironment();
+    // Qt reads these settings when QApplication is constructed, so they come first.
+    const bool qpaVariable = configureProcessEnvironment(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_DisableSessionManager);
     QApplication app(argc, argv);
     applyUserLocalPluginPaths();
@@ -119,37 +129,11 @@ int main(int argc, char **argv)
     // exits with the "requires a Wayland Plasma session" error.
     const QStringList earlyArguments = QCoreApplication::arguments();
     if (earlyArguments.contains(QStringLiteral("--version")) || earlyArguments.contains(QStringLiteral("-v"))) {
-        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
-        configureAboutData();
-        std::printf("%s %s\n",
-                    qPrintable(KAboutData::applicationData().componentName()),
-                    qPrintable(KAboutData::applicationData().version()));
-        return 0;
+        return printVersion();
     }
 
     if (qEnvironmentVariableIntValue("LATTE_PRIVATE_APP_HOST_SMOKE") == 1) {
-        KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
-        QQmlEngine engine;
-        engine.addImportPath(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../qml")));
-
-        QQmlComponent component(&engine);
-        component.setData(QByteArrayLiteral("import QtQml\n"
-                                            "import org.kde.latte.private.app 0.1 as LatteApp\n"
-                                            "LatteApp.ContextMenuLayer {}"),
-                          QUrl(QStringLiteral("latte-private-app-host-smoke.qml")));
-        QObject *root = component.create();
-
-        if (!root) {
-            qCritical() << "private.app host smoke failed:" << component.errors();
-            return 1;
-        }
-
-        // This process is the real exporting application executable. Loading
-        // the module here verifies private.app's host symbol contract, which a
-        // standalone QQmlEngine test cannot establish.
-        delete root;
-        qInfo() << "private.app loaded in latte-dock-ng host process";
-        return 0;
+        return runPrivateAppHostSmoke();
     }
 
     // The QPA platform is fixed when QApplication is constructed and
@@ -168,6 +152,226 @@ int main(int argc, char **argv)
         qunsetenv("QT_QPA_PLATFORM");
     }
 
+    prepareApplication(app);
+
+    configureAboutData();
+
+    QCommandLineParser parser;
+    addCommandLineOptions(parser);
+    addHiddenDeveloperOptions(parser);
+
+    parser.process(app);
+
+    if (runOneShotCommand(parser)) {
+        return 0;
+    }
+
+    const std::function<void()> markSessionEnding = sessionEndingMarker(app);
+
+    watchShutdownSignals();
+
+    //! Self-pipe signal handler for SIGINT (Ctrl-C) as a reliable fallback
+    //! independent of KSignalHandler's signalfd mechanism.  On some platforms
+    //! signalfd-based delivery can silently miss signals, leaving the process
+    //! unkillable with Ctrl-C and resistant to SIGTERM from --replace.
+    //!
+    //! The self-pipe trick (pipe + QSocketNotifier) is the canonical pattern
+    //! for signal handling in event-loop applications and does not depend on
+    //! signalfd or sigprocmask behaviour.
+    static int sigPipe[2] = {-1, -1};
+
+    //! O_NONBLOCK keeps the signal handler from blocking when the pipe buffer
+    //! is full. O_CLOEXEC keeps both ends out of helper processes such as
+    //! latte-dock-ng-preview; an inherited write end would let a helper wake
+    //! the dock's SIGINT path and keeps the descriptors open in every child.
+    if (pipe2(sigPipe, O_CLOEXEC | O_NONBLOCK) == 0) {
+        // Use sigaction (async-signal-safe) to install a handler that writes
+        // a byte to the pipe.  This runs in signal context so only
+        // async-signal-safe functions are used.
+        struct sigaction sa {};
+
+        sa.sa_handler = [](int) {
+            const char c = 1;
+            // The pipe is non-blocking; when it is full a wake-up is already
+            // pending, so a failed write can be safely ignored.
+            const ssize_t written = write(sigPipe[1], &c, 1);
+            (void)written;
+        };
+
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART;
+        sigaction(SIGINT, &sa, nullptr);
+
+        // QSocketNotifier translates the pipe byte into a Qt event that
+        // safely calls quit() from the main event loop.
+        auto *sigNotifier = new QSocketNotifier(sigPipe[0], QSocketNotifier::Read, &app);
+        QObject::connect(sigNotifier, &QSocketNotifier::activated, &app, [&app, &markSessionEnding](int) {
+            char c;
+
+            if (read(sigPipe[0], &c, 1) == 1) {
+                qInfo() << "[shutdown] SIGINT received via self-pipe → calling quit()";
+                markSessionEnding();
+                app.quit();
+            }
+        });
+    }
+
+    connectSignalShutdown(app, markSessionEnding);
+    connectSessionManagement(app);
+
+    //! choose layout for startup
+    StartupLayoutOptions startupLayout;
+    if (!chooseStartupLayout(parser, startupLayout)) {
+        return 0;
+    }
+
+    //! --replace option
+    QLockFile lockFile {singleInstanceLockPath()};
+    const int timeout = stopReplacedInstance(parser, lockFile);
+
+    if (!lockFile.tryLock(timeout)) {
+        forwardToRunningInstance(parser, lockFile);
+        return 0;
+    }
+
+    if (!applyPostLockOptions(parser, startupLayout)) {
+        return 0;
+    }
+
+    installDebugMessageHandler(parser);
+
+    //! Prime the Plasma global shared QML engine singleton after one-instance
+    //! checks. Duplicate invocations only forward DBus actions and exit; they
+    //! must not create a shared engine that would need full app teardown.
+#if __has_include(<plasmaquick/sharedqmlengine.h>)
+    std::shared_ptr<PlasmaQuick::SharedQmlEngine> sharedEngine =
+        std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);
+    QQmlEngine *const sharedQmlEngine = sharedEngine->engine().get();
+#else
+    //! libplasma 6.8 replaced SharedQmlEngine with globalEngine(), which only
+    //! keeps a weak reference: holding this shared_ptr for the whole run keeps
+    //! one engine (and the import paths added below) for all views and applets.
+    std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();
+    QQmlEngine *const sharedQmlEngine = sharedEngine.get();
+#endif
+
+    // Add latte-dock QML import paths to the shared engine (engine-scoped, no env var leakage)
+    addLatteQmlImportPaths(sharedQmlEngine);
+
+    int result;
+    {
+        Latte::Corona corona(startupLayout.defaultLayout,
+                             startupLayout.layoutName,
+                             startupLayout.addViewTemplateName,
+                             startupLayout.memoryUsage);
+
+        //! Session shutdown observer.  On Wayland, ksmserver may expose the
+        //! logout confirmation phase only through isShuttingDown().  Use that
+        //! state to prepare the fast teardown path, but never quit while the
+        //! user can still cancel the logout.  The monitor samples ksmserver
+        //! only while plasma-shutdown runs; it is declared after the Corona so
+        //! it is destroyed first and its hooks never outlive the views.
+        Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), sessionShutdownHooks(app, corona, markSessionEnding));
+
+        KDBusService service(KDBusService::Unique);
+        result = app.exec();
+    }
+
+#if __has_include(<plasmaquick/sharedqmlengine.h>)
+    // Detach the SharedQmlEngine from the QApplication before app is
+    // destroyed.  Without this, ~QApplication() → deleteChildren() deletes
+    // the SharedQmlEngine that is managed by a static shared_ptr, and the
+    // subsequent shared_ptr destructor double-frees it.
+    if (sharedEngine) {
+        sharedEngine->setParent(nullptr);
+    }
+#endif
+
+    // Drain any remaining DeferredDelete events.  The Corona destructor
+    // already processes its own via deleteLater() + immediate flush, so
+    // this loop mainly handles events from KDBusService or other globals.
+    // Limit to a few passes to avoid spinning on cascading events.
+    for (int pass = 0; pass < 5; ++pass) {
+        QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    }
+
+    // Destroy the shared engine while QApplication and QtGui globals are
+    // still alive.  Leaving it to static destruction can crash when QQC2
+    // popups owned by the engine tear down after QApplication has gone away.
+    sharedEngine.reset();
+
+    return result;
+}
+
+//! Process-wide Qt settings and environment fix-ups that must exist before QApplication is constructed.
+inline bool configureProcessEnvironment(int argc, char **argv)
+{
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+
+    // Keep fractional scale behavior deterministic under Wayland.
+    // Qt6 enables High DPI by default, so we only sanitize legacy env overrides.
+    if (!qEnvironmentVariableIsSet("PLASMA_USE_QT_SCALING")) {
+        qunsetenv("QT_DEVICE_PIXEL_RATIO");
+    }
+
+    QQuickWindow::setDefaultAlphaBuffer(true);
+    configureQtQuickGraphicsPreference();
+    collectUserLocalPaths(argc, argv);
+
+    // Qt's Wayland client library reads this variable, so it must be set before
+    // QApplication is constructed. main() unsets it right after QApplication.
+    qputenv("QT_WAYLAND_DISABLE_FIXED_POSITIONS", {});
+    const bool qpaVariable = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
+    detectPlatform(argc, argv);
+    // Set desktop file id before app initialization so Wayland app_id is correct
+    // from the earliest possible point for privileged interface checks.
+    QGuiApplication::setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
+    ensureKdeSessionEnvironment();
+    // main() removes the QT_QPA_PLATFORM that detectPlatform() forced, unless the user set it.
+    return qpaVariable;
+}
+
+//! Prints "<component> <version>" for --version and -v; needs no Wayland session.
+inline int printVersion()
+{
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+    configureAboutData();
+    std::printf("%s %s\n",
+                qPrintable(KAboutData::applicationData().componentName()),
+                qPrintable(KAboutData::applicationData().version()));
+    return 0;
+}
+
+//! Loads private.app in this executable; packaging CI runs it with LATTE_PRIVATE_APP_HOST_SMOKE=1.
+inline int runPrivateAppHostSmoke()
+{
+    KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
+    QQmlEngine engine;
+    engine.addImportPath(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../qml")));
+
+    QQmlComponent component(&engine);
+    component.setData(QByteArrayLiteral("import QtQml\n"
+                                        "import org.kde.latte.private.app 0.1 as LatteApp\n"
+                                        "LatteApp.ContextMenuLayer {}"),
+                      QUrl(QStringLiteral("latte-private-app-host-smoke.qml")));
+    QObject *root = component.create();
+
+    if (!root) {
+        qCritical() << "private.app host smoke failed:" << component.errors();
+        return 1;
+    }
+
+    // This process is the real exporting application executable. Loading
+    // the module here verifies private.app's host symbol contract, which a
+    // standalone QQmlEngine test cannot establish.
+    delete root;
+    qInfo() << "private.app loaded in latte-dock-ng host process";
+    return 0;
+}
+
+//! Translation domain, QML disk cache policy, KNS compat, window icon and quit policy for the QApplication.
+inline void prepareApplication(QApplication &app)
+{
     KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
 
     // Automatically clear stale QML disk cache when the installed version changes.
@@ -184,10 +388,11 @@ int main(int argc, char **argv)
     app.setWindowIcon(QIcon::fromTheme(Latte::App::ICONNAME));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);
+}
 
-    configureAboutData();
-
-    QCommandLineParser parser;
+//! Help, version and the user-facing command-line options.
+inline void addCommandLineOptions(QCommandLineParser &parser)
+{
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions({
@@ -208,7 +413,11 @@ int main(int argc, char **argv)
         , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
         , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
     });
+}
 
+//! Hidden options for developer and debugging usage; parsed, but not listed in --help.
+inline void addHiddenDeveloperOptions(QCommandLineParser &parser)
+{
     //! START: Hidden options for Developer and Debugging usage
     QCommandLineOption graphicsOption(QStringList() << QStringLiteral("graphics"));
     graphicsOption.setDescription(QStringLiteral("Draw boxes around of the applets."));
@@ -277,21 +486,23 @@ int main(int argc, char **argv)
     filterDebugLogCmd.setValueName(i18nc("command line: log-filepath", "filter_log_filepath"));
     parser.addOption(filterDebugLogCmd);
     //! END: Hidden options
+}
 
-    parser.process(app);
-
+//! Autostart toggles and --available-* listings; returns true when one ran, before any dock or lock exists.
+inline bool runOneShotCommand(const QCommandLineParser &parser)
+{
     if (parser.isSet(QStringLiteral("enable-autostart"))) {
         Latte::Layouts::Importer::enableAutostart();
 
         qGuiApp->exit();
-        return 0;
+        return true;
     }
 
     if (parser.isSet(QStringLiteral("disable-autostart"))) {
         Latte::Layouts::Importer::disableAutostart();
 
         qGuiApp->exit();
-        return 0;
+        return true;
     }
 
     //! print available-layouts
@@ -309,7 +520,7 @@ int main(int argc, char **argv)
         }
 
         qGuiApp->exit();
-        return 0;
+        return true;
     }
 
     //! print available-layout-templates
@@ -327,7 +538,7 @@ int main(int argc, char **argv)
         }
 
         qGuiApp->exit();
-        return 0;
+        return true;
     }
 
     //! print available-dock-templates
@@ -345,10 +556,16 @@ int main(int argc, char **argv)
         }
 
         qGuiApp->exit();
-        return 0;
+        return true;
     }
 
-    auto markSessionEnding = [&app]() {
+    return false;
+}
+
+//! Sets the session-ending flag that the fast teardown path reads: the app property and LATTE_SESSION_ENDING.
+inline std::function<void()> sessionEndingMarker(QApplication &app)
+{
+    return [&app]() {
         if (!qEnvironmentVariableIsSet("LATTE_SESSION_ENDING")) {
             qputenv("LATTE_SESSION_ENDING", "1");
         }
@@ -358,7 +575,11 @@ int main(int argc, char **argv)
             qInfo() << "[shutdown] session-ending flag set; fast teardown enabled.";
         }
     };
+}
 
+//! Quit-on-signal policy: KSignalHandler watches SIGTERM and SIGHUP, and a KJob cannot lock quit().
+inline void watchShutdownSignals()
+{
     //! Follow Plasma 6 plasmashell's shutdown pattern exactly:
     //!   1. KSignalHandler (signalfd) watches SIGTERM → calls app.quit()
     //!   2. setQuitLockEnabled(false) — prevents KJob from blocking quit
@@ -377,61 +598,23 @@ int main(int argc, char **argv)
     //! Without this, an in-flight KJob can silently suppress QCoreApplication::quit(),
     //! causing latte-dock to stay alive and trigger the KSMServer "wait or cancel" dialog.
     QCoreApplication::setQuitLockEnabled(false);
+}
 
-    //! Self-pipe signal handler for SIGINT (Ctrl-C) as a reliable fallback
-    //! independent of KSignalHandler's signalfd mechanism.  On some platforms
-    //! signalfd-based delivery can silently miss signals, leaving the process
-    //! unkillable with Ctrl-C and resistant to SIGTERM from --replace.
-    //!
-    //! The self-pipe trick (pipe + QSocketNotifier) is the canonical pattern
-    //! for signal handling in event-loop applications and does not depend on
-    //! signalfd or sigprocmask behaviour.
-    static int sigPipe[2] = {-1, -1};
-
-    //! O_NONBLOCK keeps the signal handler from blocking when the pipe buffer
-    //! is full. O_CLOEXEC keeps both ends out of helper processes such as
-    //! latte-dock-ng-preview; an inherited write end would let a helper wake
-    //! the dock's SIGINT path and keeps the descriptors open in every child.
-    if (pipe2(sigPipe, O_CLOEXEC | O_NONBLOCK) == 0) {
-        // Use sigaction (async-signal-safe) to install a handler that writes
-        // a byte to the pipe.  This runs in signal context so only
-        // async-signal-safe functions are used.
-        struct sigaction sa {};
-
-        sa.sa_handler = [](int) {
-            const char c = 1;
-            // The pipe is non-blocking; when it is full a wake-up is already
-            // pending, so a failed write can be safely ignored.
-            const ssize_t written = write(sigPipe[1], &c, 1);
-            (void)written;
-        };
-
-        sigemptyset(&sa.sa_mask);
-        sa.sa_flags = SA_RESTART;
-        sigaction(SIGINT, &sa, nullptr);
-
-        // QSocketNotifier translates the pipe byte into a Qt event that
-        // safely calls quit() from the main event loop.
-        auto *sigNotifier = new QSocketNotifier(sigPipe[0], QSocketNotifier::Read, &app);
-        QObject::connect(sigNotifier, &QSocketNotifier::activated, &app, [&app, &markSessionEnding](int) {
-            char c;
-
-            if (read(sigPipe[0], &c, 1) == 1) {
-                qInfo() << "[shutdown] SIGINT received via self-pipe → calling quit()";
-                markSessionEnding();
-                app.quit();
-            }
-        });
-    }
-
+//! Routes KSignalHandler::signalReceived to the session-ending marker and to quit().
+inline void connectSignalShutdown(QApplication &app, const std::function<void()> &markSessionEnding)
+{
     //! Signal handler: the primary shutdown trigger (matches plasmashell).
     QObject::connect(KSignalHandler::self(), &KSignalHandler::signalReceived,
-    &app, [&app, &markSessionEnding](int signal) {
+    &app, [&app, markSessionEnding](int signal) {
         qInfo() << "[shutdown] KSignalHandler received signal" << signal << "→ calling quit()";
         markSessionEnding();
         app.quit();
     });
+}
 
+//! Disables Qt session restoration; commitData and saveState requests never quit the dock.
+inline void connectSessionManagement(QApplication &app)
+{
     //! Match plasmashell: disable Qt session restoration, but do not quit from
     //! commitDataRequest/saveStateRequest.  Those requests can happen while
     //! the logout confirmation is still cancellable.
@@ -442,34 +625,41 @@ int main(int argc, char **argv)
 
     QObject::connect(&app, &QGuiApplication::commitDataRequest, &app, disableSessionManagement, Qt::DirectConnection);
     QObject::connect(&app, &QGuiApplication::saveStateRequest, &app, disableSessionManagement, Qt::DirectConnection);
+}
 
-    //! choose layout for startup
-    bool defaultLayoutOnStartup = false;
-    int memoryUsage = -1;
-    QString layoutNameOnStartup;
-    QString addViewTemplateNameOnStartup;
-
+//! Reads --default-layout and --layout before the instance lock; returns false when the named layout is missing.
+inline bool chooseStartupLayout(const QCommandLineParser &parser, StartupLayoutOptions &startup)
+{
     //! --default-layout option
     if (parser.isSet(QStringLiteral("default-layout"))) {
-        defaultLayoutOnStartup = true;
+        startup.defaultLayout = true;
     } else if (parser.isSet(QStringLiteral("layout"))) {
-        layoutNameOnStartup = parser.value(QStringLiteral("layout"));
+        startup.layoutName = parser.value(QStringLiteral("layout"));
 
-        if (!Latte::Layouts::Importer::layoutExists(layoutNameOnStartup)) {
+        if (!Latte::Layouts::Importer::layoutExists(startup.layoutName)) {
             qInfo() << i18nc("layout missing", "This layout doesn't exist in the system.");
             qGuiApp->exit();
-            return 0;
+            return false;
         }
     }
 
-    //! --replace option
+    return true;
+}
+
+//! Per-user lock file that makes latte-dock-ng a single instance.
+inline QString singleInstanceLockPath()
+{
     QString username = QString::fromLocal8Bit(qgetenv("USER"));
 
     if (username.isEmpty())
         username = QString::fromLocal8Bit(qgetenv("USERNAME"));
 
-    QLockFile lockFile {QDir::tempPath() + QLatin1Char('/') + QString::fromLatin1(Latte::App::BINARYNAME) + QLatin1Char('.') + username + QLatin1String(".lock")};
+    return QDir::tempPath() + QLatin1Char('/') + QString::fromLatin1(Latte::App::BINARYNAME) + QLatin1Char('.') + username + QLatin1String(".lock");
+}
 
+//! Asks a running instance to quit for --replace and --import-full; returns the lock timeout in milliseconds.
+inline int stopReplacedInstance(const QCommandLineParser &parser, const QLockFile &lockFile)
+{
     int timeout {100};
 
     if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
@@ -484,62 +674,68 @@ int main(int argc, char **argv)
         }
     }
 
-    if (!lockFile.tryLock(timeout)) {
-        bool addview{parser.isSet(QStringLiteral("add-dock"))};
-        bool importlayout{parser.isSet(QStringLiteral("import-layout"))};
-        bool enableautostart{parser.isSet(QStringLiteral("enable-autostart"))};
-        bool disableautostart{parser.isSet(QStringLiteral("disable-autostart"))};
+    return timeout;
+}
 
-        bool validaction{false};
+//! Forwards this start to the running instance over D-Bus, or reports why it cannot take over.
+inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile)
+{
+    bool addview{parser.isSet(QStringLiteral("add-dock"))};
+    bool importlayout{parser.isSet(QStringLiteral("import-layout"))};
+    bool enableautostart{parser.isSet(QStringLiteral("enable-autostart"))};
+    bool disableautostart{parser.isSet(QStringLiteral("disable-autostart"))};
 
-        if (addview) {
-            validaction = true;
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("addView"));
-            msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
-            QDBusConnection::sessionBus().call(msg);
-            return 0;
-        } else if (importlayout) {
-            validaction = true;
-            QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("importLayoutFile"));
-            msg.setArguments({parser.value(QStringLiteral("import-layout")), suggestedname});
-            QDBusConnection::sessionBus().call(msg);
-            return 0;
-        } else if (enableautostart || disableautostart) {
-            validaction = true;
-        } else {
-            // LayoutPage = 0
-            QDBusMessage msg = QDBusMessage::createMethodCall(
-                                   QStringLiteral("org.kde.lattedock"),
-                                   QStringLiteral("/Latte"), QString(),
-                                   QStringLiteral("showSettingsWindow"));
-            msg.setArguments({0});
-            QDBusConnection::sessionBus().call(msg);
-        }
+    bool validaction{false};
 
-        if (!validaction) {
-            if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
-                qint64 pid{ -1};
-
-                if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
-                    qInfo() << i18n("Old instance (PID %1) did not exit in time. Try killing it manually.", pid);
-                } else {
-                    qInfo() << i18n("Failed to acquire lock. Another instance may be starting.");
-                }
-            } else {
-                qInfo() << i18n("An instance is already running!, use --replace to restart Latte");
-            }
-        }
-
-        return 0;
+    if (addview) {
+        validaction = true;
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("addView"));
+        msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
+        QDBusConnection::sessionBus().call(msg);
+        return;
+    } else if (importlayout) {
+        validaction = true;
+        QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("importLayoutFile"));
+        msg.setArguments({parser.value(QStringLiteral("import-layout")), suggestedname});
+        QDBusConnection::sessionBus().call(msg);
+        return;
+    } else if (enableautostart || disableautostart) {
+        validaction = true;
+    } else {
+        // LayoutPage = 0
+        QDBusMessage msg = QDBusMessage::createMethodCall(
+                               QStringLiteral("org.kde.lattedock"),
+                               QStringLiteral("/Latte"), QString(),
+                               QStringLiteral("showSettingsWindow"));
+        msg.setArguments({0});
+        QDBusConnection::sessionBus().call(msg);
     }
 
+    if (!validaction) {
+        if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
+            qint64 pid{ -1};
+
+            if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
+                qInfo() << i18n("Old instance (PID %1) did not exit in time. Try killing it manually.", pid);
+            } else {
+                qInfo() << i18n("Failed to acquire lock. Another instance may be starting.");
+            }
+        } else {
+            qInfo() << i18n("An instance is already running!, use --replace to restart Latte");
+        }
+    }
+}
+
+//! Options that change the configuration or the QML cache; they run only while this instance holds the lock. Returns false when an import failed.
+inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayoutOptions &startup)
+{
     //! clear-cache option
     if (parser.isSet(QStringLiteral("clear-cache"))) {
         QDir cacheDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QStringLiteral("/lattedock/qmlcache"));
@@ -557,7 +753,7 @@ int main(int argc, char **argv)
         if (!imported) {
             qInfo() << i18n("The configuration cannot be imported");
             qGuiApp->exit();
-            return 0;
+            return false;
         }
     }
 
@@ -569,17 +765,17 @@ int main(int argc, char **argv)
         if (importedLayout.isEmpty()) {
             qInfo() << i18n("The layout cannot be imported");
             qGuiApp->exit();
-            return 0;
+            return false;
         } else {
-            layoutNameOnStartup = importedLayout;
+            startup.layoutName = importedLayout;
         }
     }
 
     //! memory usage option
     if (parser.isSet(QStringLiteral("multiple"))) {
-        memoryUsage = static_cast<int>(Latte::MemoryUsage::MultipleLayouts);
+        startup.memoryUsage = static_cast<int>(Latte::MemoryUsage::MultipleLayouts);
     } else if (parser.isSet(QStringLiteral("single"))) {
-        memoryUsage = static_cast<int>(Latte::MemoryUsage::SingleLayout);
+        startup.memoryUsage = static_cast<int>(Latte::MemoryUsage::SingleLayout);
     }
 
     //! add-dock usage option
@@ -588,7 +784,7 @@ int main(int argc, char **argv)
         QStringList viewTemplates = Latte::Layouts::Importer::availableViewTemplates();
 
         if (viewTemplates.contains(viewTemplateName)) {
-            if (layoutNameOnStartup.isEmpty()) {
+            if (startup.layoutName.isEmpty()) {
                 //! Clean layout template is applied and proper name is used
                 QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(QLatin1String(Latte::Templates::EMPTYLAYOUTTEMPLATENAME));
                 QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : viewTemplateName;
@@ -597,16 +793,22 @@ int main(int argc, char **argv)
                 if (importedLayout.isEmpty()) {
                     qInfo() << i18n("The layout cannot be imported");
                     qGuiApp->exit();
-                    return 0;
+                    return false;
                 } else {
-                    layoutNameOnStartup = importedLayout;
+                    startup.layoutName = importedLayout;
                 }
             }
 
-            addViewTemplateNameOnStartup = viewTemplateName;
+            startup.addViewTemplateName = viewTemplateName;
         }
     }
 
+    return true;
+}
+
+//! Routes Qt messages through the --debug, --mask, --debug-text and --log-file filters.
+inline void installDebugMessageHandler(const QCommandLineParser &parser)
+{
     //! text filter for debug messages
     if (parser.isSet(QStringLiteral("debug-text"))) {
         filterDebugMessageText = parser.value(QStringLiteral("debug-text"));
@@ -625,99 +827,46 @@ int main(int argc, char **argv)
 
         qInstallMessageHandler(noMessageOutput);
     }
+}
 
-    //! Prime the Plasma global shared QML engine singleton after one-instance
-    //! checks. Duplicate invocations only forward DBus actions and exit; they
-    //! must not create a shared engine that would need full app teardown.
-#if __has_include(<plasmaquick/sharedqmlengine.h>)
-    std::shared_ptr<PlasmaQuick::SharedQmlEngine> sharedEngine =
-        std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);
-    QQmlEngine *const sharedQmlEngine = sharedEngine->engine().get();
-#else
-    //! libplasma 6.8 replaced SharedQmlEngine with globalEngine(), which only
-    //! keeps a weak reference: holding this shared_ptr for the whole run keeps
-    //! one engine (and the import paths added below) for all views and applets.
-    std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();
-    QQmlEngine *const sharedQmlEngine = sharedEngine.get();
-#endif
+//! Hooks through which Session::ShutdownMonitor reads ksmserver and hides or restores the views of the Corona.
+inline Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding)
+{
+    return {
+        .isSessionShuttingDown = []() {
+            return Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus());
+        },
+        .isSessionEnding = [&app]() {
+            return app.property("latte_session_ending").toBool();
+        },
+        .markSessionEnding = markSessionEnding,
+        .clearSessionEnding = [&app]() {
+            app.setProperty("latte_session_ending", false);
+            qunsetenv("LATTE_SESSION_ENDING");
+        },
+        .hideViews = [&corona]() {
+            if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                manager->synchronizer()->hideAllViews();
+                manager->synchronizer()->setHelperWindowsSuspended(true);
+            }
+        },
+        .restoreViews = [&corona]() {
+            if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                const auto views = manager->synchronizer()->currentViews();
 
-    // Add latte-dock QML import paths to the shared engine (engine-scoped, no env var leakage)
-    addLatteQmlImportPaths(sharedQmlEngine);
-
-    int result;
-    {
-        Latte::Corona corona(defaultLayoutOnStartup, layoutNameOnStartup, addViewTemplateNameOnStartup, memoryUsage);
-
-        //! Session shutdown observer.  On Wayland, ksmserver may expose the
-        //! logout confirmation phase only through isShuttingDown().  Use that
-        //! state to prepare the fast teardown path, but never quit while the
-        //! user can still cancel the logout.  The monitor samples ksmserver
-        //! only while plasma-shutdown runs; it is declared after the Corona so
-        //! it is destroyed first and its hooks never outlive the views.
-        Latte::Session::ShutdownMonitor sessionShutdownMonitor(QDBusConnection::sessionBus(), {
-            .isSessionShuttingDown = []() {
-                return Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus());
-            },
-            .isSessionEnding = [&app]() {
-                return app.property("latte_session_ending").toBool();
-            },
-            .markSessionEnding = markSessionEnding,
-            .clearSessionEnding = [&app]() {
-                app.setProperty("latte_session_ending", false);
-                qunsetenv("LATTE_SESSION_ENDING");
-            },
-            .hideViews = [&corona]() {
-                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
-                    manager->synchronizer()->hideAllViews();
-                    manager->synchronizer()->setHelperWindowsSuspended(true);
-                }
-            },
-            .restoreViews = [&corona]() {
-                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
-                    const auto views = manager->synchronizer()->currentViews();
-
-                    for (Latte::View *view : views) {
-                        if (!view->isVisible()) {
-                            view->setVisible(true);
-                        }
+                for (Latte::View *view : views) {
+                    if (!view->isVisible()) {
+                        view->setVisible(true);
                     }
-
-                    manager->synchronizer()->setHelperWindowsSuspended(false);
                 }
-            },
-            .quit = [&app]() {
-                app.quit();
-            },
-        });
 
-        KDBusService service(KDBusService::Unique);
-        result = app.exec();
-    }
-
-#if __has_include(<plasmaquick/sharedqmlengine.h>)
-    // Detach the SharedQmlEngine from the QApplication before app is
-    // destroyed.  Without this, ~QApplication() → deleteChildren() deletes
-    // the SharedQmlEngine that is managed by a static shared_ptr, and the
-    // subsequent shared_ptr destructor double-frees it.
-    if (sharedEngine) {
-        sharedEngine->setParent(nullptr);
-    }
-#endif
-
-    // Drain any remaining DeferredDelete events.  The Corona destructor
-    // already processes its own via deleteLater() + immediate flush, so
-    // this loop mainly handles events from KDBusService or other globals.
-    // Limit to a few passes to avoid spinning on cascading events.
-    for (int pass = 0; pass < 5; ++pass) {
-        QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
-    }
-
-    // Destroy the shared engine while QApplication and QtGui globals are
-    // still alive.  Leaving it to static destruction can crash when QQC2
-    // popups owned by the engine tear down after QApplication has gone away.
-    sharedEngine.reset();
-
-    return result;
+                manager->synchronizer()->setHelperWindowsSuspended(false);
+            }
+        },
+        .quit = [&app]() {
+            app.quit();
+        },
+    };
 }
 
 inline bool shouldUseUserLocalQmlImports(int argc, char **argv)

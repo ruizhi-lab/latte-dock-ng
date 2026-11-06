@@ -350,6 +350,7 @@ private Q_SLOTS:
     void mainCppImportLayoutExitsOnImportFailure();
     void mainCppDeferredDeleteDrainHardLimit5Passes();
     void mainCppDetectPlatformPreservesExplicitPlatformArg();
+    void mainCppMainFunctionStaysWithinLineLimit();
     // main.qml startup sequence contacts
     void mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped();
     void mainQmlStartupDelayerTriggeredByHasRestoredAppletsSignal();
@@ -701,17 +702,30 @@ void SourceContractTest::duplicateInstanceExitsWithoutQGuiAppExit()
     QVERIFY(mainSource.open(QFile::ReadOnly));
     const QString source = QString::fromUtf8(mainSource.readAll());
 
+    //! The duplicate-instance branch is the tryLock() failure in main(), which only
+    //! forwards the request and returns. The message lives in the forwarding helper,
+    //! so that body gets the same checks as the branch.
     const int lockFail = source.indexOf(QStringLiteral("if (!lockFile.tryLock(timeout)) {"));
-    const int clearCache = source.indexOf(QStringLiteral("//! clear-cache option"), lockFail);
+    const int lockBlockEnd = source.indexOf(QStringLiteral("\n\n"), lockFail);
     QVERIFY(lockFail >= 0);
-    QVERIFY(clearCache > lockFail);
+    QVERIFY(lockBlockEnd > lockFail);
 
-    const QString duplicateInstanceBlock = source.mid(lockFail, clearCache - lockFail);
+    const QString duplicateInstanceBlock = source.mid(lockFail, lockBlockEnd - lockFail);
+    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("forwardToRunningInstance(parser, lockFile);")));
+    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("return 0;")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("qGuiApp->exit();")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("SharedQmlEngine")));
     QVERIFY(!duplicateInstanceBlock.contains(QStringLiteral("globalEngine()")));
-    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("i18n(\"An instance is already running!, use --replace to restart Latte\")")));
-    QVERIFY(duplicateInstanceBlock.contains(QStringLiteral("return 0;")));
+
+    const int forwardBody = source.indexOf(QStringLiteral("inline void forwardToRunningInstance(const QCommandLineParser &parser, const QLockFile &lockFile)\n{"));
+    QVERIFY(forwardBody >= 0);
+    const int forwardEnd = source.indexOf(QStringLiteral("\n}\n"), forwardBody);
+    QVERIFY(forwardEnd > forwardBody);
+    const QString forwardBlock = source.mid(forwardBody, forwardEnd - forwardBody);
+    QVERIFY(!forwardBlock.contains(QStringLiteral("qGuiApp->exit();")));
+    QVERIFY(!forwardBlock.contains(QStringLiteral("SharedQmlEngine")));
+    QVERIFY(!forwardBlock.contains(QStringLiteral("globalEngine()")));
+    QVERIFY(forwardBlock.contains(QStringLiteral("i18n(\"An instance is already running!, use --replace to restart Latte\")")));
 }
 
 void SourceContractTest::allScreensCloneAppletSyncContracts()
@@ -1029,21 +1043,30 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(saveStateStart >= 0);
     QVERIFY(commitDataStart >= 0);
     QVERIFY(saveStateStart > commitDataStart);
-    QVERIFY(pollerStart > saveStateStart);
+    //! connectSessionManagement() is called from main() before the monitor is constructed,
+    //! and its body follows main(), so the save-state block runs to the closing brace.
+    const int sessionManagementCall = mainSource.indexOf(QStringLiteral("connectSessionManagement(app);"));
+    const int sessionManagementEnd = mainSource.indexOf(QStringLiteral("\n}\n"), saveStateStart);
+    QVERIFY(sessionManagementCall >= 0);
+    QVERIFY(pollerStart > sessionManagementCall);
+    QVERIFY(sessionManagementEnd > saveStateStart);
     const QString commitDataBlock = mainSource.mid(commitDataStart, saveStateStart - commitDataStart);
     QVERIFY(commitDataBlock.contains(QStringLiteral("disableSessionManagement")));
     QVERIFY(!commitDataBlock.contains(QStringLiteral("app.quit()")));
     QVERIFY(!commitDataBlock.contains(QStringLiteral("markSessionEnding")));
-    const QString saveStateBlock = mainSource.mid(saveStateStart, pollerStart - saveStateStart);
+    const QString saveStateBlock = mainSource.mid(saveStateStart, sessionManagementEnd - saveStateStart);
     QVERIFY(saveStateBlock.contains(QStringLiteral("disableSessionManagement")));
     QVERIFY(!saveStateBlock.contains(QStringLiteral("app.quit()")));
     QVERIFY(!saveStateBlock.contains(QStringLiteral("markSessionEnding")));
 
     //! main.cpp only supplies the hooks; the decision order lives in the
-    //! monitor. The ending flag and quit must stay wired to QApplication.
-    const int hooksEnd = mainSource.indexOf(QStringLiteral("KDBusService service(KDBusService::Unique);"), pollerStart);
-    QVERIFY(hooksEnd > pollerStart);
-    const QString hooks = mainSource.mid(pollerStart, hooksEnd - pollerStart);
+    //! monitor. The ending flag and quit must stay wired to QApplication. The
+    //! hooks are built by sessionShutdownHooks(), a function after main().
+    const int hooksStart = mainSource.indexOf(QStringLiteral("Latte::Session::ShutdownMonitor::Hooks sessionShutdownHooks(QApplication &app, Latte::Corona &corona, const std::function<void()> &markSessionEnding)\n{"));
+    QVERIFY(hooksStart > pollerStart);
+    const int hooksEnd = mainSource.indexOf(QStringLiteral("\n}\n"), hooksStart);
+    QVERIFY(hooksEnd > hooksStart);
+    const QString hooks = mainSource.mid(hooksStart, hooksEnd - hooksStart);
     QVERIFY(hooks.contains(QStringLiteral("Latte::Session::ksmServerShutdownState(QDBusConnection::sessionBus())")));
     QVERIFY(hooks.contains(QStringLiteral("return app.property(\"latte_session_ending\").toBool();")));
     QVERIFY(hooks.contains(QStringLiteral(".markSessionEnding = markSessionEnding,")));
@@ -1326,10 +1349,17 @@ void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()
     QVERIFY(mainSource.contains(QStringLiteral("requested Qt Quick OpenGL rendering")));
     QVERIFY(mainSource.contains(QStringLiteral("respecting explicit Qt Quick graphics override")));
 
-    const int gpuPreferenceCall = mainSource.indexOf(QStringLiteral("configureQtQuickGraphicsPreference();"));
+    //! The preference is applied by configureProcessEnvironment(), which main()
+    //! calls before QApplication exists. Anchor on that call site: the forward
+    //! declaration of configureQtQuickGraphicsPreference() also contains the name.
+    const int gpuPreferenceCall = mainSource.indexOf(QStringLiteral("configureProcessEnvironment(argc, argv);"));
     const int applicationCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
     QVERIFY(gpuPreferenceCall >= 0);
     QVERIFY(applicationCreation > gpuPreferenceCall);
+    const int processEnvironmentBody = mainSource.indexOf(QStringLiteral("inline bool configureProcessEnvironment(int argc, char **argv)\n{"));
+    QVERIFY(processEnvironmentBody >= 0);
+    const int gpuPreferenceInBody = mainSource.indexOf(QStringLiteral("configureQtQuickGraphicsPreference();"), processEnvironmentBody);
+    QVERIFY(gpuPreferenceInBody > processEnvironmentBody);
 
     QFile environmentQml(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/client/Environment.qml"));
     QVERIFY(environmentQml.open(QFile::ReadOnly));
@@ -1371,13 +1401,19 @@ void SourceContractTest::knsCompatImportsAreAvailableForSystemInstall()
     // class and exposes the same engine as PlasmaQuick::globalEngine().
     const int appCreation = mainSource.indexOf(QStringLiteral("QApplication app(argc, argv);"));
     QVERIFY(appCreation >= 0);
-    const int ensureCompatCall = mainSource.indexOf(QStringLiteral("ensureKnsCompat();"), appCreation);
+    //! ensureKnsCompat() runs inside prepareApplication(), which main() calls after
+    //! QApplication exists and before the shared engine is created.
+    const int prepareCall = mainSource.indexOf(QStringLiteral("prepareApplication(app);"), appCreation);
+    const int prepareBody = mainSource.indexOf(QStringLiteral("inline void prepareApplication(QApplication &app)\n{"));
+    const int ensureCompatCall = mainSource.indexOf(QStringLiteral("ensureKnsCompat();"), prepareBody);
     const int sharedEngineCreation = mainSource.indexOf(QStringLiteral("std::make_shared<PlasmaQuick::SharedQmlEngine>(&app);"), appCreation);
     const int globalEngineCreation = mainSource.indexOf(QStringLiteral("std::shared_ptr<QQmlEngine> sharedEngine = PlasmaQuick::globalEngine();"), appCreation);
     const int addImportPathsCall = mainSource.indexOf(QStringLiteral("addLatteQmlImportPaths(sharedQmlEngine);"), appCreation);
-    QVERIFY(ensureCompatCall > appCreation);
-    QVERIFY(sharedEngineCreation > ensureCompatCall);
-    QVERIFY(globalEngineCreation > ensureCompatCall);
+    QVERIFY(prepareCall > appCreation);
+    QVERIFY(prepareBody >= 0);
+    QVERIFY(ensureCompatCall > prepareBody);
+    QVERIFY(sharedEngineCreation > prepareCall);
+    QVERIFY(globalEngineCreation > prepareCall);
     QVERIFY(addImportPathsCall > sharedEngineCreation);
     QVERIFY(addImportPathsCall > globalEngineCreation);
 
@@ -2177,14 +2213,21 @@ void SourceContractTest::enableAutostartExitsImmediately()
     QVERIFY(mainCpp.open(QFile::ReadOnly));
     const QString content = QString::fromUtf8(mainCpp.readAll());
 
-    const int enableIdx = content.indexOf(QStringLiteral("\"enable-autostart\""));
+    //! Anchor on the branch in main(): the option name also appears in the option
+    //! table and in the lock section that forwards the request.
+    const int enableIdx = content.indexOf(QStringLiteral("if (parser.isSet(QStringLiteral(\"enable-autostart\"))) {"));
     QVERIFY(enableIdx >= 0);
 
     const int exitCall = content.indexOf(QStringLiteral("qGuiApp->exit();"), enableIdx);
     QVERIFY(exitCall > enableIdx);
 
-    const int returnZero = content.indexOf(QStringLiteral("return 0;"), exitCall);
+    //! The branch now lives in runOneShotCommand(), which returns true, so main()
+    //! returns 0 without starting the dock. The return must sit inside this branch.
+    QVERIFY(content.contains(QStringLiteral("if (runOneShotCommand(parser)) {\n        return 0;")));
+    const int branchEnd = content.indexOf(QStringLiteral("\n    }\n"), exitCall);
+    const int returnZero = content.indexOf(QStringLiteral("return true;"), exitCall);
     QVERIFY(returnZero > exitCall);
+    QVERIFY(returnZero < branchEnd);
 }
 
 void SourceContractTest::autostartInterfacesUseXdgState()
@@ -4247,6 +4290,25 @@ void SourceContractTest::mainCppDetectPlatformPreservesExplicitPlatformArg()
     QVERIFY(src.contains(QStringLiteral("detectPlatform")));
     QVERIFY(src.contains(QStringLiteral("-platform")));
     QVERIFY(src.contains(QStringLiteral("qt.qpa.platform")) || src.contains(QStringLiteral("QT_QPA_PLATFORM")));
+}
+
+void SourceContractTest::mainCppMainFunctionStaysWithinLineLimit()
+{
+    //! main() is the start-up sequence and each step is a named helper defined after it.
+    //! A block pasted back into main() grows the function past this limit.
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    const int mainStart = src.indexOf(QStringLiteral("\nint main(int argc, char **argv)\n{\n"));
+    QVERIFY(mainStart >= 0);
+    const int mainEnd = src.indexOf(QStringLiteral("\n}\n"), mainStart);
+    QVERIFY(mainEnd > mainStart);
+
+    constexpr qsizetype mainLineLimit = 200;
+    const qsizetype mainLines = src.mid(mainStart, mainEnd - mainStart).count(QLatin1Char('\n'));
+    QVERIFY2(mainLines <= mainLineLimit,
+             qPrintable(QStringLiteral("main() has %1 lines; the limit is %2").arg(mainLines).arg(mainLineLimit)));
 }
 
 // ------------------------------------------------------------------------
