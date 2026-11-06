@@ -332,7 +332,6 @@ private Q_SLOTS:
     // ScreenPool fallback paths
     void screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent();
     void plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector();
-    void screenPoolIsScreenActiveReturnsFalseForStaleDisconnectedId();
     // Launchers QML boundary conditions
     void launchersNormalizeLauncherListExpandsOnlyLength2to4();
     void launchersFreeSeparatorNameExhaustionReturnsEmptyString();
@@ -4031,18 +4030,6 @@ void SourceContractTest::plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnecto
     // When the connector matches the primary screen name but is not in the
     // internal map, id() must return 0 as the primary-screen sentinel.
     QVERIFY(src.contains(QStringLiteral("primaryScreen()->name() == connector")));
-}
-
-void SourceContractTest::screenPoolIsScreenActiveReturnsFalseForStaleDisconnectedId()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // isScreenActive must return false when the screen ID exists in the
-    // mapping table but the physical screen is no longer connected.
-    QVERIFY(src.contains(QStringLiteral("isScreenActive")));
-    QVERIFY(src.contains(QStringLiteral("qGuiApp->screens()")));
 }
 
 // ------------------------------------------------------------------------
