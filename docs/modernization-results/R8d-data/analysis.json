@@ -1,0 +1,660 @@
+{
+ "bucket_min": 5.0,
+ "mapping_notes": {
+  "nested-kwin": "smaps is not readable by this user (non-dumpable process)"
+ },
+ "mappings": {
+  "desktop-dock": {
+   "objects": 594,
+   "top": [
+    {
+     "delta": {
+      "Anonymous": 1356,
+      "Pss": 1356,
+      "Rss": 1356
+     },
+     "mappings_after": 1,
+     "mappings_before": 1,
+     "object": "[heap]"
+    },
+    {
+     "delta": {
+      "Anonymous": 832,
+      "Pss": 832,
+      "Rss": 832
+     },
+     "mappings_after": 107,
+     "mappings_before": 107,
+     "object": "[anon rw-p]"
+    },
+    {
+     "delta": {
+      "Anonymous": 320,
+      "Pss": 320,
+      "Rss": 320
+     },
+     "mappings_after": 27,
+     "mappings_before": 31,
+     "object": "/memfd:JSGCHeap:QtQml (deleted)"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 73,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libnvidia-gpucomp.so.595.104.02"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 47,
+      "Rss": 0
+     },
+     "mappings_after": 8,
+     "mappings_before": 8,
+     "object": "/usr/lib64/libnvidia-glcore.so.595.104.02"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 25,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Core.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 24,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Gui.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 22,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Quick.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 18,
+      "Rss": 0
+     },
+     "mappings_after": 1,
+     "mappings_before": 1,
+     "object": "/run/user/1000/cache/ksycoca6_zh_efhnsPHbmVa5cgn6MGZm5gcvZ30="
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 14,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libKF6Service.so.6.29.0"
+    }
+   ],
+   "totals": {
+    "delta": {
+     "Anonymous": 2508,
+     "Pss": 2912,
+     "Rss": 2508
+    },
+    "pss_after": 517499,
+    "pss_before": 514587
+   }
+  },
+  "nested-dock": {
+   "objects": 560,
+   "top": [
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 79,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libnvidia-gpucomp.so.595.104.02"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 48,
+      "Rss": 0
+     },
+     "mappings_after": 8,
+     "mappings_before": 8,
+     "object": "/usr/lib64/libnvidia-glcore.so.595.104.02"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 25,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Core.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 23,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Gui.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 22,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Quick.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 14,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Qml.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 13,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libKF6Service.so.6.29.0"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 11,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6Widgets.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 10,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6WaylandClient.so.6.11.2"
+    },
+    {
+     "delta": {
+      "Anonymous": 0,
+      "Pss": 9,
+      "Rss": 0
+     },
+     "mappings_after": 5,
+     "mappings_before": 5,
+     "object": "/usr/lib64/libQt6QuickTemplates2.so.6.11.2"
+    }
+   ],
+   "totals": {
+    "delta": {
+     "Anonymous": 0,
+     "Pss": 413,
+     "Rss": 0
+    },
+    "pss_after": 128062,
+    "pss_before": 127649
+   }
+  }
+ },
+ "runs": {
+  "desktop": {
+   "directory": "docs/modernization-results/R8d-data/desktop",
+   "summary": {
+    "clk_tck": 100,
+    "coredumps": {
+     "after": [
+      "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+      "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+      "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+      "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+     ],
+     "before": [
+      "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+      "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+      "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+      "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+     ],
+     "error_after": null,
+     "error_before": null,
+     "new": []
+    },
+    "duration_s_requested": 9000.0,
+    "interval_s": 30.0,
+    "last_elapsed_s": 9000.0,
+    "reason": "duration reached",
+    "snapshots": [
+     "0min-desktop-dock.json",
+     "15min-desktop-dock.json",
+     "75min-desktop-dock.json",
+     "end-desktop-dock.json"
+    ],
+    "ticks": 301,
+    "unreadable": {
+     "desktop-dock": []
+    },
+    "wall_end": "2026-11-06T12:36:31",
+    "wall_start": "2026-11-06T10:06:31",
+    "watched": [
+     {
+      "comm": "latte-dock-ng",
+      "exe": "/usr/bin/latte-dock-ng (deleted)",
+      "pid": 4760,
+      "series": "desktop-dock",
+      "starttime_ticks": 2953
+     }
+    ]
+   }
+  },
+  "nested": {
+   "directory": "docs/modernization-results/R8d-data/nested",
+   "summary": {
+    "clk_tck": 100,
+    "coredumps": {
+     "after": [
+      "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+      "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+      "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+      "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+     ],
+     "before": [
+      "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+      "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+      "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+      "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+      "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+     ],
+     "error_after": null,
+     "error_before": null,
+     "new": []
+    },
+    "duration_s_requested": 9000.0,
+    "interval_s": 30.0,
+    "last_elapsed_s": 9000.0,
+    "reason": "duration reached",
+    "snapshots": [
+     "0min-nested-dock.json",
+     "0min-nested-kwin.json",
+     "15min-nested-dock.json",
+     "15min-nested-kwin.json",
+     "75min-nested-dock.json",
+     "75min-nested-kwin.json",
+     "end-nested-dock.json",
+     "end-nested-kwin.json"
+    ],
+    "ticks": 301,
+    "unreadable": {
+     "nested-dock": [],
+     "nested-kwin": [
+      "fd",
+      "smaps",
+      "smaps_rollup"
+     ]
+    },
+    "wall_end": "2026-11-06T12:36:35",
+    "wall_start": "2026-11-06T10:06:31",
+    "watched": [
+     {
+      "comm": "latte-dock-ng",
+      "exe": "/tmp/r8d-20261106-095302/home/.local/bin/latte-dock-ng",
+      "pid": 1417998,
+      "series": "nested-dock",
+      "starttime_ticks": 4812465
+     },
+     {
+      "comm": "kwin_wayland",
+      "exe": "unknown",
+      "pid": 1417962,
+      "series": "nested-kwin",
+      "starttime_ticks": 4812124
+     }
+    ]
+   }
+  }
+ },
+ "series": {
+  "desktop-dock": {
+   "first_s": 0.0,
+   "gpu_mib": {
+    "0min": 204,
+    "15min": 206,
+    "75min": 199,
+    "end": 200
+   },
+   "last_s": 9000.0,
+   "mean_cpu_percent": 0.24012345679012345,
+   "metrics": {
+    "Pss_Anon": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 1521.952403065132,
+      "lo": 317.87177275904355,
+      "n": 13,
+      "slope": 919.9120879120878
+     },
+     "first_kib": 426716.0,
+     "last_kib": 429224.0,
+     "max_kib": 429224.0,
+     "min_kib": 426716.0,
+     "second_half": {
+      "hi": 2141.815372478849,
+      "lo": 719.19561653214,
+      "n": 14,
+      "slope": 1430.5054945054944
+     },
+     "source": "Pss_Anon",
+     "whole": {
+      "hi": 953.6357364809808,
+      "lo": 453.54375069850636,
+      "n": 27,
+      "slope": 703.5897435897435
+     }
+    },
+    "Pss_File": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 514.0118997304336,
+      "lo": 74.84524312670922,
+      "n": 13,
+      "slope": 294.4285714285714
+     },
+     "first_kib": 58697.0,
+     "last_kib": 59086.0,
+     "max_kib": 59086.0,
+     "min_kib": 58693.5,
+     "second_half": {
+      "hi": 1.0479602735166669,
+      "lo": -0.38861961417600754,
+      "n": 14,
+      "slope": 0.3296703296703296
+     },
+     "source": "Pss_File",
+     "whole": {
+      "hi": 133.36950574606624,
+      "lo": 21.42902905246858,
+      "n": 27,
+      "slope": 77.3992673992674
+     }
+    },
+    "Rss": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 1521.9524030651323,
+      "lo": 317.87177275904344,
+      "n": 13,
+      "slope": 919.9120879120878
+     },
+     "first_kib": 711900.0,
+     "last_kib": 714408.0,
+     "max_kib": 714408.0,
+     "min_kib": 711900.0,
+     "second_half": {
+      "hi": 2141.815372478849,
+      "lo": 719.19561653214,
+      "n": 14,
+      "slope": 1430.5054945054944
+     },
+     "source": "Rss",
+     "whole": {
+      "hi": 953.6357364809808,
+      "lo": 453.54375069850636,
+      "n": 27,
+      "slope": 703.5897435897435
+     }
+    }
+   },
+   "post_warmup_span_h": 2.25,
+   "samples": 301,
+   "verdict": {
+    "detail": "whole-run Pss_Anon (column Pss_Anon) slope 704 KiB/h (0.69 MiB/h), 95 % CI [454, 954] KiB/h",
+    "verdict": "no growth"
+   }
+  },
+  "nested-dock": {
+   "first_s": 0.0,
+   "gpu_mib": {
+    "0min": 0,
+    "15min": 28,
+    "75min": 28,
+    "end": 28
+   },
+   "last_s": 9000.0,
+   "mean_cpu_percent": 0.0,
+   "metrics": {
+    "Pss_Anon": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 13,
+      "slope": 0.0
+     },
+     "first_kib": 73192.0,
+     "last_kib": 73192.0,
+     "max_kib": 73192.0,
+     "min_kib": 73192.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "Pss_Anon",
+     "whole": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 27,
+      "slope": 0.0
+     }
+    },
+    "Pss_File": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 534.6285700898743,
+      "lo": 66.03077056946637,
+      "n": 13,
+      "slope": 300.3296703296703
+     },
+     "first_kib": 31201.0,
+     "last_kib": 31606.0,
+     "max_kib": 31606.0,
+     "min_kib": 31201.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "Pss_File",
+     "whole": {
+      "hi": 136.44486863136896,
+      "lo": 18.60275041625011,
+      "n": 27,
+      "slope": 77.52380952380953
+     }
+    },
+    "Rss": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 13,
+      "slope": 0.0
+     },
+     "first_kib": 278888.0,
+     "last_kib": 278888.0,
+     "max_kib": 278888.0,
+     "min_kib": 278888.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "Rss",
+     "whole": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 27,
+      "slope": 0.0
+     }
+    }
+   },
+   "post_warmup_span_h": 2.25,
+   "samples": 301,
+   "verdict": {
+    "detail": "whole-run Pss_Anon (column Pss_Anon) slope 0 KiB/h (0.00 MiB/h), 95 % CI [0, 0] KiB/h",
+    "verdict": "no growth"
+   }
+  },
+  "nested-kwin": {
+   "first_s": 0.0,
+   "gpu_mib": {
+    "0min": 29,
+    "15min": 29,
+    "75min": 29,
+    "end": 29
+   },
+   "last_s": 9000.0,
+   "mean_cpu_percent": 0.15567901234567902,
+   "metrics": {
+    "Pss_Anon": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 13,
+      "slope": 0.0
+     },
+     "first_kib": 79176.0,
+     "last_kib": 79176.0,
+     "max_kib": 79176.0,
+     "min_kib": 79176.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "RssAnon",
+     "whole": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 27,
+      "slope": 0.0
+     }
+    },
+    "Pss_File": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 13,
+      "slope": 0.0
+     },
+     "first_kib": 232568.0,
+     "last_kib": 232568.0,
+     "max_kib": 232568.0,
+     "min_kib": 232568.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "RssFile",
+     "whole": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 27,
+      "slope": 0.0
+     }
+    },
+    "Rss": {
+     "buckets": 27,
+     "first_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 13,
+      "slope": 0.0
+     },
+     "first_kib": 371516.0,
+     "last_kib": 371516.0,
+     "max_kib": 371516.0,
+     "min_kib": 371516.0,
+     "second_half": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 14,
+      "slope": 0.0
+     },
+     "source": "VmRSS",
+     "whole": {
+      "hi": 0.0,
+      "lo": 0.0,
+      "n": 27,
+      "slope": 0.0
+     }
+    }
+   },
+   "post_warmup_span_h": 2.25,
+   "samples": 301,
+   "verdict": {
+    "detail": "whole-run Pss_Anon (column RssAnon) slope 0 KiB/h (0.00 MiB/h), 95 % CI [0, 0] KiB/h",
+    "verdict": "no growth"
+   }
+  }
+ },
+ "warmup_min": 15.0
+}

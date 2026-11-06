@@ -1,0 +1,6 @@
+2026-11-06T10:06:31 +0.0s watching desktop-dock pid 4760 comm latte-dock-ng exe /usr/bin/latte-dock-ng (deleted)
+2026-11-06T10:06:31 +0.1s snapshot 0min written for desktop-dock (pid 4760)
+2026-11-06T10:21:31 +900.1s snapshot 15min written for desktop-dock (pid 4760)
+2026-11-06T11:21:31 +4500.1s snapshot 75min written for desktop-dock (pid 4760)
+2026-11-06T12:36:31 +9000.1s snapshot end written for desktop-dock (pid 4760)
+2026-11-06T12:36:31 +9000.1s coredumps listed for latte-dock-ng: 0 new since the start

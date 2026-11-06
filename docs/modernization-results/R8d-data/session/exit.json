@@ -1,0 +1,12 @@
+{
+ "reason": "stop file",
+ "started": "2026-11-06T10:06:31",
+ "exit_status": {
+  "dock": 0,
+  "qml-A": -15,
+  "qml-B": -15,
+  "qml-C": -15,
+  "kwin": 15
+ },
+ "ended": "2026-11-06T12:36:36"
+}
