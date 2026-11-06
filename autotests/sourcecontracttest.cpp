@@ -330,7 +330,6 @@ private Q_SLOTS:
     void importerLayoutCanBeImportedRejectsVersionBelow2();
     void importerUniqueLayoutNameCollisionLoopHasGuard();
     // ScreenPool fallback paths
-    void screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent();
     void plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector();
     // Launchers QML boundary conditions
     void launchersNormalizeLauncherListExpandsOnlyLength2to4();
@@ -4008,18 +4007,6 @@ void SourceContractTest::importerUniqueLayoutNameCollisionLoopHasGuard()
 // ------------------------------------------------------------------------
 // ScreenPool fallback paths
 // ------------------------------------------------------------------------
-
-void SourceContractTest::screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // When the requested screen ID is valid but the screen is not currently
-    // connected, the function must fall back to the primary screen.
-    QVERIFY(src.contains(QStringLiteral("screenForId")));
-    QVERIFY(src.contains(QStringLiteral("primaryScreen()")));
-}
 
 void SourceContractTest::plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector()
 {

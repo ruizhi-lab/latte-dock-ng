@@ -52,6 +52,7 @@ private Q_SLOTS:
     void screenPoolLoadsStoredConnectorsAndIgnoresInvalidIds();
     void plasmaExtendedScreenPoolRejectsInvalidConnectors();
     void screenPoolIsScreenActiveRequiresAttachedScreen();
+    void screenPoolScreenForIdFallsBackToPrimaryScreen();
     void backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge();
     void backgroundTrackerEmitsOnlyForChangedHints();
 };
@@ -183,6 +184,26 @@ void CoreComponentsTest::screenPoolIsScreenActiveRequiresAttachedScreen()
     QVERIFY(!pool.isScreenActive(Latte::ScreenPool::FIRSTSCREENID + 50));
     // The offscreen platform gives its only screen an empty name, which
     // insertScreenMapping() refuses, so the attached branch is not exercised here.
+}
+
+void CoreComponentsTest::screenPoolScreenForIdFallsBackToPrimaryScreen()
+{
+    // ScreenPool::screenForId() returns the screen of a mapped id only while
+    // its connector is attached. A detached mapping or an unmapped id must
+    // fall back to the primary screen, never to nullptr, because the dock
+    // positions its view from the returned screen.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.path() + QStringLiteral("/lattedockrc"));
+
+    TestScreenPool pool(config);
+    QVERIFY(pool.primaryScreen() != nullptr);
+
+    pool.insertScreenMapping(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    const int detachedId = pool.id(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    QVERIFY(pool.hasScreenId(detachedId));
+    QCOMPARE(pool.screenForId(detachedId), pool.primaryScreen());
+    QCOMPARE(pool.screenForId(Latte::ScreenPool::FIRSTSCREENID + 50), pool.primaryScreen());
 }
 
 void CoreComponentsTest::backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge()
