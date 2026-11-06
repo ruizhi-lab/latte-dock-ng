@@ -163,11 +163,10 @@ def select_translation_units(
 
     Production sources are the sources outside autotests/. Files inside the build
     directory are generated (AUTOMOC, rcc, QML type registration, plugin entry
-    points, D-Bus adaptors, Wayland protocol glue and the configure_file() copies
-    of production sources): their originals are analyzed through their own
-    translation unit. A production source compiled by several targets, including
-    the test targets that rebuild it, is analyzed once, preferably with the flags
-    of the production target.
+    points, D-Bus adaptors and Wayland protocol glue): their originals are
+    analyzed through their own translation unit. A production source compiled
+    by several targets, including the test targets that rebuild it, is analyzed
+    once, preferably with the flags of the production target.
     """
     skipped: Counter[str] = Counter()
     candidates: dict[Path, list[dict[str, str]]] = {}
