@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import json
 import math
 import statistics
@@ -226,10 +227,15 @@ def cpu_percent(rows: list, warmup_s: float, clk_tck: float) -> float | None:
 
 
 def load_snapshot(run_dir: Path, label: str, series: str):
-    path = run_dir / "snapshots" / f"{label}-{series}.json"
-    if not path.exists():
-        return None
-    return json.loads(path.read_text(encoding="utf-8"))
+    """A snapshot of a sampler directory; the repository copies are gzip-compressed."""
+    base = run_dir / "snapshots" / f"{label}-{series}.json"
+    if base.exists():
+        return json.loads(base.read_text(encoding="utf-8"))
+    compressed = base.with_name(base.name + ".gz")
+    if compressed.exists():
+        with gzip.open(compressed, "rt", encoding="utf-8") as handle:
+            return json.loads(handle.read())
+    return None
 
 
 def mapping_changes(before: dict, after: dict, top: int = 10) -> dict:
@@ -315,13 +321,20 @@ def analyze(args: argparse.Namespace) -> dict:
         }
 
     report["mappings"] = {}
+    report["mapping_notes"] = {}
     for series in sorted(series_rows):
-        for name, run_dir in runs:
+        found = None
+        for _, run_dir in runs:
             before = load_snapshot(run_dir, "15min", series)
             after = load_snapshot(run_dir, "end", series)
-            if before is not None and after is not None and "by_object" in before and "by_object" in after:
-                report["mappings"][series] = mapping_changes(before, after)
+            if before is not None and after is not None:
+                found = (before, after)
                 break
+        if found is not None and all("by_object" in snapshot for snapshot in found):
+            report["mappings"][series] = mapping_changes(*found)
+        else:
+            reasons = [snapshot.get("unreadable") for snapshot in found or () if snapshot.get("unreadable")]
+            report["mapping_notes"][series] = reasons[0] if reasons else "no 15min and end snapshot pair"
     return report
 
 
@@ -393,7 +406,8 @@ def render_markdown(report: dict) -> str:
     lines.append("## Verdicts")
     lines.append("")
     for series, data in report["series"].items():
-        lines.append(f"- **{series}**: {data['verdict']['verdict']}. {data['verdict']['detail']}")
+        detail = data["verdict"]["detail"]
+        lines.append(f"- **{series}**: {data['verdict']['verdict']}" + (f". {detail}" if detail else ""))
     lines.append("")
     lines.append("## GPU memory at the snapshots (nvidia-smi, MiB)")
     lines.append("")
@@ -430,6 +444,9 @@ def render_markdown(report: dict) -> str:
                 f"{delta['Pss'] / 1024:+,.2f} | {delta['Anonymous'] / 1024:+,.2f} | {delta['Rss'] / 1024:+,.2f} |"
             )
         lines.append("")
+    for series, reason in report["mapping_notes"].items():
+        lines.append(f"- {series}: no mapping table ({reason})")
+    lines.append("")
     lines.append("## Sampler events")
     lines.append("")
     for name, info in report["runs"].items():
