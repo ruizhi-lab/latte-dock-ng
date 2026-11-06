@@ -388,7 +388,7 @@ class Sampler:
         csv_path = self.out / "samples.csv"
         write_header = not csv_path.exists() or csv_path.stat().st_size == 0
         with csv_path.open("a", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
+            writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS, lineterminator="\n")
             if write_header:
                 writer.writeheader()
                 handle.flush()
