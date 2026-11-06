@@ -191,12 +191,18 @@ where the launcher sources `~/.config/latte-dock-ng/dev-env.sh` (Debug only) and
 only the display and bus variables into an SSH launch is not enough: the
 [R5 report](modernization-results/R5.md) traced the 20 % idle CPU that P0
 measured in this VM to such a launch. `dev-env.sh` prepends `kdedefaults:/etc/xdg`
-to `XDG_CONFIG_DIRS`; from a bare SSH environment the result lacks the session's
-`/usr/share/kde-settings/kde-profile/default/xdg`, and the Dock and the session
-daemons then rewrite the shared KSycoca database against each other at least 2.7
-times per second, every rewrite rebuilding the hosted app dashboard's models (the
-Dock used 18 % of a core, plasmashell 22 % and KWin 26 %). A launch that imports
-`XDG_CONFIG_DIRS` too, or goes through `systemd-run --user`, idles at 0.00 %.
+to a set `XDG_CONFIG_DIRS`, keeping its value behind it. An unset or empty variable
+takes the value that `systemctl --user show-environment` reports for
+`XDG_CONFIG_DIRS`, exactly as reported, and stays unset when the user manager
+reports none. Before that rule, an unset variable became `kdedefaults:/etc/xdg`
+alone, which lacks the session's `/usr/share/kde-settings/kde-profile/default/xdg`;
+the Dock and the session daemons then rewrote the shared KSycoca database against
+each other at least 2.7 times per second, every rewrite rebuilding the hosted app
+dashboard's models (the Dock used 18 % of a core, plasmashell 22 % and KWin 26 %).
+`autotests/installscriptbehavior.py` renders the generated file and checks the
+three outcomes with a fake user manager. The VM numbers above were measured before
+that rule existed and the rule has not been measured in the VM. A launch that
+imports `XDG_CONFIG_DIRS` too, or goes through `systemd-run --user`, idles at 0.00 %.
 Check a suspicious idle reading before trusting it: the VM's load average stays
 near 1.0 and `stat -c %y ~/.cache/ksycoca6_*` changes from one second to the next.
 
