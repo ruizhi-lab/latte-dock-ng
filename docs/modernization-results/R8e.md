@@ -24,6 +24,8 @@ Commits (in order):
   target_sources() instead of PARENT_SCOPE lists (Part B)
 - record commit: this file, `docs/modernization-results/R8e-tools/compat_probe.py`
   (Part C)
+- `828874e03` test: untrack the bytecode cache of the comparison tool (a Part B
+  side effect of running its unit tests; `R8e-tools/.gitignore` now ignores `__pycache__`)
 
 Dependencies and evidence links: frozen baseline in `/tmp/r8e-baseline/` (read-only):
 `gcc-debug-compile_commands.json`, `gcc-debug-latte-dock-ng.dynsyms`,
