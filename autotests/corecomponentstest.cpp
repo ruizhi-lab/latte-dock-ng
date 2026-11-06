@@ -53,6 +53,7 @@ private Q_SLOTS:
     void plasmaExtendedScreenPoolRejectsInvalidConnectors();
     void screenPoolIsScreenActiveRequiresAttachedScreen();
     void screenPoolScreenForIdFallsBackToPrimaryScreen();
+    void plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero();
     void backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge();
     void backgroundTrackerEmitsOnlyForChangedHints();
 };
@@ -204,6 +205,24 @@ void CoreComponentsTest::screenPoolScreenForIdFallsBackToPrimaryScreen()
     QVERIFY(pool.hasScreenId(detachedId));
     QCOMPARE(pool.screenForId(detachedId), pool.primaryScreen());
     QCOMPARE(pool.screenForId(Latte::ScreenPool::FIRSTSCREENID + 50), pool.primaryScreen());
+}
+
+void CoreComponentsTest::plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero()
+{
+    // The extended pool never stores the primary screen. id() answers 0 for
+    // the primary connector by name, and connector(0) gives that name back, so
+    // 0 is the primary sentinel. Any other connector that is not mapped is -1.
+    // The offscreen platform names its only screen "", so the name compared
+    // here is empty; the call still goes through the real primary-name lookup.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    qputenv("XDG_CONFIG_HOME", dir.path().toUtf8());
+
+    Latte::PlasmaExtended::ScreenPool pool;
+    const QString primary = QGuiApplication::primaryScreen()->name();
+    QCOMPARE(pool.id(primary), 0);
+    QCOMPARE(pool.connector(0), primary);
+    QCOMPARE(pool.id(QStringLiteral("LATTE-TEST-DETACHED-1")), -1);
 }
 
 void CoreComponentsTest::backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge()

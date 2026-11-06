@@ -329,7 +329,6 @@ private Q_SLOTS:
     void importerLayoutCanBeImportedRejectsVersionBelow2();
     void importerUniqueLayoutNameCollisionLoopHasGuard();
     // ScreenPool fallback paths
-    void plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector();
     // Launchers QML boundary conditions
     void launchersNormalizeLauncherListExpandsOnlyLength2to4();
     void launchersFreeSeparatorNameExhaustionReturnsEmptyString();
@@ -3990,17 +3989,6 @@ void SourceContractTest::importerUniqueLayoutNameCollisionLoopHasGuard()
 // ------------------------------------------------------------------------
 // ScreenPool fallback paths
 // ------------------------------------------------------------------------
-
-void SourceContractTest::plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/plasma/extended/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // When the connector matches the primary screen name but is not in the
-    // internal map, id() must return 0 as the primary-screen sentinel.
-    QVERIFY(src.contains(QStringLiteral("primaryScreen()->name() == connector")));
-}
 
 // ------------------------------------------------------------------------
 // Launchers QML boundary conditions
