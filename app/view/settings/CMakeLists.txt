@@ -1,10 +1,8 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/canvasconfigview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/indicatoruimanager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/primaryconfigview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/subconfigview.cpp    
-    ${CMAKE_CURRENT_SOURCE_DIR}/viewsettingsfactory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/widgetexplorerview.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    canvasconfigview.cpp
+    indicatoruimanager.cpp
+    primaryconfigview.cpp
+    subconfigview.cpp
+    viewsettingsfactory.cpp
+    widgetexplorerview.cpp
 )

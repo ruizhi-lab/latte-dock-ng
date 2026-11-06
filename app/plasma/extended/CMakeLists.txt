@@ -1,9 +1,7 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}   
-    ${CMAKE_CURRENT_SOURCE_DIR}/backgroundcache.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/panelbackground.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/screengeometries.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/screenpool.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/theme.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    backgroundcache.cpp
+    panelbackground.cpp
+    screengeometries.cpp
+    screenpool.cpp
+    theme.cpp
 )

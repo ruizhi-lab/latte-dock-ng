@@ -1,8 +1,6 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/detailsdialog.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/detailshandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/schemescombobox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/schemesmodel.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    detailsdialog.cpp
+    detailshandler.cpp
+    schemescombobox.cpp
+    schemesmodel.cpp
 )

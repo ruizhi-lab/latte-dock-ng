@@ -293,7 +293,7 @@ and Debian 13 gate.
 
 Applied to `/tmp/privateapp-proto` (not committed; patch in the shared notes folder):
 
-1. `app/CMakeLists.txt`: add the two sources to `lattedock-app_SRCS`. Remove
+1. `app/CMakeLists.txt`: add the two sources with `target_sources(latte-dock-ng PRIVATE ...)`. Remove
    `add_subdirectory(declarativeimports)`. After `add_executable`, add the `qt_add_qml_module`
    call with `OUTPUT_DIRECTORY` and `TYPEINFO latteprivateapp.qmltypes`, and the
    `target_include_directories` block. Change the two link calls to `PRIVATE`. Install only

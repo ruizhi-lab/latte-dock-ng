@@ -1,15 +1,13 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/clonedview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/containmentinterface.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/effects.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/eventssink.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/panelshadows.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/parabolic.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/positioner.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tasksmodel.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/view.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/originalview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/visibilitymanager.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    clonedview.cpp
+    containmentinterface.cpp
+    effects.cpp
+    eventssink.cpp
+    panelshadows.cpp
+    parabolic.cpp
+    positioner.cpp
+    tasksmodel.cpp
+    view.cpp
+    originalview.cpp
+    visibilitymanager.cpp
 )

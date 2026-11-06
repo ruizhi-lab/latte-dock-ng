@@ -1,13 +1,11 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}   
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutscontroller.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutsheaderview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutsmodel.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutstableview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/settingsdialog.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tablayoutshandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tabpreferenceshandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/templateskeeper.cpp    
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    layoutscontroller.cpp
+    layoutsheaderview.cpp
+    layoutsmodel.cpp
+    layoutstableview.cpp
+    settingsdialog.cpp
+    tablayoutshandler.cpp
+    tabpreferenceshandler.cpp
+    templateskeeper.cpp
 )
 
