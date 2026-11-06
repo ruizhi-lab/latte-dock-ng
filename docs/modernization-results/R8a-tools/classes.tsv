@@ -1,0 +1,229 @@
+1|visibilityManagerBlockerWrappersDelegateTransitions|B3|Blocker call order inside VisibilityManager; needs a View or Corona.
+2|plasmaVolumeBootstrapContractMovedToQmlSmokeTest|S|Forwarding stub: only checks that the moved qmlsmoketest case still exists.
+3|compactAppletPopupSizingContractMovedToQmlSmokeTest|S|Forwarding stub: only checks that the moved qmlsmoketest case still exists.
+4|applicationLauncherUsesFixedExternalSlot|K|QML text in AppletItem.qml.
+5|widgetsZoomCanBeDisabledIndependently|K|QML and config XML text for the zoom toggle.
+6|animationsSpeedFactorMapsToDurationMultipliers|K|QML function text in Animations.qml.
+7|effectsConfigAnimationButtonsMatchDurationValues|K|QML page text in EffectsConfig.qml.
+8|appletShadowFadesInsteadOfPoppingWhileWidgetsZoom|K|QML text in ItemWrapper.qml.
+9|defaultTemplatesExcludeMailLauncher|K|Layout and view template text under shell/package.
+10|latteTasksExposesPlasmaLauncherApi|K|QML API text in plasmoid main.qml.
+11|latteDockDbusExportsLauncherApi|K|DBus XML and header text; the interface is a compatibility surface.
+12|plasmaKickerActionAddsLaunchersToLatteDock|K|Desktop action file, CMake and install script text.
+13|containmentClearsParabolicStateWhenEdgeChanges|K|QML text in containment main.qml.
+14|duplicateInstanceExitsWithoutQGuiAppExit|B3|Lock-before-QGuiApplication order in main(); needs a running binary.
+15|allScreensCloneAppletSyncContracts|B3|Clone sync across ContainmentInterface, ClonedView and LayoutManager; needs live views.
+16|layoutManagerRepairSkipsAppletsInDestruction|B2|LayoutManager repair path; needs a containment and applet fake.
+17|layoutManagerScheduledDestructionTogglesItemVisibility|B2|LayoutManager destruction visibility; needs a containment and applet fake.
+18|cloneViewOrderSyncDropsStaleTargetEntries|B2|ClonedView order sync; clonedviewpolicytest covers preferences only.
+19|cloneViewRemovalSyncUsesSyncingFromOriginalGuard|B2|ClonedView removal guard; needs a view and original applet fixture.
+20|waylandStrutGhostWindowBindsLayerShellScreen|B3|Wayland layer-shell binding; needs a Wayland display.
+21|launchersRestoreContractMovedToQmlSmokeTest|S|Forwarding stub: only checks that the moved qmlsmoketest case still exists.
+22|sessionShutdownHandlingMatchesStableWaylandPath|B3|Signal and logout wiring across main(), Corona and views; needs a session.
+23|sessionShutdownMonitorHidesViewsAndRestoresOnCancel|D|Duplicate of shutdownmonitortest confirmedLogoutHidesViewsOnce and cancelledLogoutRestoresViewsWhenServiceLeaves.
+24|coronaTeardownSkipsFactoryFreedByQuitCleanup|D|Duplicate of teardowntest deleteNowSkipsServiceFreedByQuitCleanup.
+25|plasmaThemeDestructorToleratesMissingSchemes|B2|theme.cpp is in no test target; needs a Plasma theme fixture.
+26|needsAttentionStatusBlocksHidingWithoutWindowReconfiguration|B3|View hiding and window reconfiguration; needs a View and display.
+27|appletPopupHidesOnWindowDeactivateByDefault|K|QML and config default text in CompactApplet.qml.
+28|viewTracksPointerWindowsAndResetsCascadingSubmenus|B3|View event filter and submenu reset; needs a View and window system.
+29|pointerWindowTrackerRemovesDestroyedWindows|B3|Destroyed-window cleanup lives in View; needs a View with windows.
+30|qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable|B3|Graphics preference and software fallback; needs a GPU or Wayland session.
+31|knsCompatImportsAreAvailableForSystemInstall|B3|knscompat calls are wired in main(); needs the executable.
+32|mainCppKeepsQtContainerStaticsFunctionLocal|K|Static-destruction style rule in main.cpp; main() is not reachable by tests.
+33|layerShellSetScreenGuardPreventsBuildRegression|K|Build-probe text: CMake check file and Wayland call site.
+34|taskIconsRefreshAfterIconThemeChanges|K|QML text in TaskIcon.qml.
+35|genericLayoutUnloadUsesSynchronousDelete|B3|Unload delete order in GenericLayout; needs a Corona-owned layout.
+36|synchronizerUnloadUsesSynchronousDelete|B2|Synchronizer unload delete order; needs layout fixtures; no class-level test.
+37|pointerWindowTrackingDisconnectsOnLeave|B3|View pointer-window connections; needs a View.
+38|viewDestructorDropsPointerWindowTrackingConnections|B3|View destructor cleanup; needs a View.
+39|taskAudioBadgesScaleWithParabolicZoom|K|QML text in AudioStream.qml.
+40|parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval|K|QML text in ParabolicEventsArea.qml.
+41|widgetExplorerLaunchesKnsDialogOutOfProcess|K|QML text in WidgetExplorer.qml; the out-of-process launch needs a session.
+42|widgetExplorerUsesPlasmaTranslationContexts|K|QML translation-context text in WidgetExplorer.qml.
+43|settingsQmlWaitsForLiveViewContext|K|QML text in LatteDockConfiguration.qml.
+44|qmlConnectionsMatchQtNotifySignals|K|QML Connections text in settings files.
+45|itemsAlignmentIsSeparateAndJustifyOnly|K|Config XML, QML and translation text for alignment.
+46|itemsAlignmentNormalizesDirectionsByFormFactor|K|QML text in Containment.qml and LayoutsContainer.qml.
+47|itemsAlignmentConfigDefaultsToCenter|K|Config XML default text.
+48|appearancePaletteExposesLayoutCustomColors|K|QML text in AppearanceConfig.qml and Manager.qml.
+49|modernDockBackgroundShadowDefaultIsCompact|K|QML constants and qmldir text.
+50|classicCustomRadiusPreservesThemeDefaultShadow|K|QML text in MultiLayered.qml.
+51|panelShadowSelectionMatrixIsStable|K|QML text in MultiLayered.qml.
+52|layoutDetailsExposeCustomColorSchemeSelector|K|Qt Designer .ui text in the details dialog.
+53|showWindowAnimationContractMovedToQmlSmokeTest|S|Forwarding stub: only checks that the moved qmlsmoketest case still exists.
+54|parabolicItemContractMovedToQmlSmokeTest|S|Forwarding stub: only checks that the moved qmlsmoketest case still exists.
+55|autotestAggregateTargetDocumentsFullSuiteBuild|K|CMake and docs text for the aggregate target.
+56|coverageEstimateUsesReusableScript|K|Script and docs text.
+57|cmakeTargetResolutionUsesSharedHelpers|K|CMake module text.
+58|cmakeImportedTargetResolutionUsesSharedHelper|K|CMake module text.
+59|cmakeTargetResolutionHelpersLiveInModule|K|CMake module text.
+60|cmakeOffscreenTestsUseSharedHelper|K|CMake test registration text.
+61|cmakeAutotestRegistrationMaintainsAggregateTarget|K|CMake test registration text.
+62|cmakePackagingConfigLivesInModule|K|CMake packaging text.
+63|autostartUsesXdgStateOnly|B2|UniversalSettings autostart; needs a KConfig fixture; no test covers the class.
+64|screensPropertyNotifiesOnScreenChanges|B2|UniversalSettings screens notify; needs a screen-change fixture.
+65|desktopFileHasAutostartPhaseKey|K|Desktop file text.
+66|enableAutostartExitsImmediately|B3|--enable-autostart exit path in main(); needs a running binary.
+67|autostartInterfacesUseXdgState|B2|Settings handler and corona autostart wiring; needs a settings fixture.
+68|autostartPreservesEntryFields|D|Duplicate of autostartlogictest enableUnhidesEntryAndPreservesFields and disableHidesEntryAndPreservesFields.
+69|firstRunEnablesDefaultAutostart|B2|LayoutsManager first-run path; no test target; needs a layouts fixture.
+70|waylandCheckFailsWithoutDeadRetryLoop|B3|Wayland startup check in main(); needs a session.
+71|normalStartupDoesNotMutateAutostart|B2|UniversalSettings startup load; needs a KConfig fixture.
+72|autoSizeLoopsUseInequalityNotStrictEquality|K|QML text in AutoSize.qml.
+73|cmakeWarningRelaxationLivesInModule|K|CMake module text.
+74|cmakeFindsQtCoreToolsBeforeKdeInstallDirs|K|Top-level CMake ordering text.
+75|compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow|K|QML text in CompactApplet.qml.
+76|contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly|B2|Middle-click guard in a QQuickItem not linked into contextmenuunittest.
+77|appletIconOverrideStripsSymbolicForOriginalColors|B3|Icon override across ContainmentInterface, LayoutManager and QML; needs live applets.
+78|widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized|K|QML text in AppletItem.qml and ItemWrapper.qml.
+79|containmentLayoutAutotestLinksIconThemes|K|CMake test link and compat text.
+80|appletContextMenuExposesKeepOriginalColorsToggle|K|Menu label text in the context menu source.
+81|appletQmlParentInputsDoNotShadowContextIds|K|QML text in AppletItem.qml and main.qml.
+82|trashKeepOriginalColorsDefaultsToCheckedForAllConfigs|B2|LayoutManager default config for the trash applet; needs a containment fixture.
+83|settingsDialogUiLabelsAreTranslatable|K|Qt Designer .ui translation text.
+84|poFilesHaveNoStaleDockPanelMsgids|K|Translation (.po) file text.
+85|translationExtractionReferencesValidDirectories|K|Messages.sh script text.
+86|mouseHandlerAutoPinOnDragPromotesNonLauncherTasks|K|QML text in MouseHandler.qml.
+87|scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing|K|QML text in containment main.qml.
+88|scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize|K|QML text in containment main.qml and EnvironmentActions.qml.
+89|globalMenuUsesNativeVisibilityAndSizing|K|QML text in applet and containment files.
+90|systrayGuardsInAppletItemPreventLayoutAndInteractionBreakage|K|QML text in AppletItem.qml.
+91|volumeAndAppMenuPopupSizingUsesLargerMinimumInCompactApplet|K|QML text in CompactApplet.qml.
+92|clipboardAndDigitalClockErrorSuppressionInMainCpp|K|Message-filter text in main.cpp; not observable without the binary.
+93|systemTrayAndPlasmoidActAsAppletInsertionBoundary|B3|Insertion boundary in ContainmentInterface; needs a Corona.
+94|separatorAndSpacerDetectionAndBehaviorInAppletItem|K|QML text in AppletItem.qml.
+95|separatorGuardsAcrossLayoutAndDragDropFiles|K|QML text across applet and drag-drop files.
+96|separatorContentContainerStaysTightWithFallback|K|QML text in ItemWrapper.qml.
+97|restoreZoomTimerGracePeriodPreventsBoundaryBlip|K|QML text in ParabolicEffectPrivate.qml.
+98|myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined|K|QML text in MyView.qml.
+99|indicatorFactoryExcludesBuiltinPluginsFromCustomLists|B1|Converted in R8a: indicatorunittest factoryBuiltInIndicatorsAreNotCustom. Target: indicatorunittest.
+100|waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist|B3|Window acceptance in WaylandInterface; needs a Wayland display.
+101|windowHintPerformanceTraceMarksScheduledAndExecutedWork|B3|Trace markers in the window tracker; needs a running tracker.
+102|genericLayoutReassertsDefaultContextMenuOnContainmentWiring|B3|Context-menu wiring in GenericLayout; needs a Corona.
+103|genericLayoutSyncLatteViewsToScreensIteratesSnapshots|B3|View-to-screen sync in GenericLayout; needs live views.
+104|layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets|B2|Layouts manager startup cleanup; no test target; needs layout fixtures.
+105|containmentInterfaceHasSeparatorPluginConstantsAndHelper|D|Same separator plugin IDs classified by dataunittest pluginIdClassifiesLatteBuiltInsAndSeparators.
+106|appletsModelHasNoPersonalDataAppletList|B2|Applets model in the export dialog; needs an applet catalogue fixture.
+107|lattePackageShellPluginNameBranchingIsCorrect|D|Duplicate of packageunittest lattePackageResolvesShellDefinitions.
+108|indicatorPlasmaTypeIsRemappedToDefault|B3|Indicator type remap inside view indicator code; needs a View.
+109|dynamicWindowDotsAreOptInAndAggregateOverflow|K|Indicator config XML and QML text.
+110|appearanceConfigPreservesIndicatorStyleConfiguration|K|QML text in AppearanceConfig.qml.
+111|mainCppMessageSuppressionCoversFrameworkWarnings|K|Message-filter text in main.cpp; not observable without the binary.
+112|appletItemInternalViewSplitterAndSortDragGuards|K|QML text in AppletItem.qml.
+113|appletItemFallbackTrackedWindowsAndConstraintHints|K|QML text in AppletItem.qml.
+114|plasmoidLaunchersAndDragDropHavePluginDetectionGuards|K|QML text in Launchers.qml and DragDropArea.qml.
+115|containmentMainQmlHasPlasmoidWheelBypassGuards|K|QML text in containment main.qml.
+116|compactAppletFallbackSizingAndMinimumDimensionGuards|K|QML text in CompactApplet.qml.
+117|clonedViewDefersInitialAppletOrderSyncUntilStructuralReady|B2|ClonedView startup sync; needs a view fixture.
+118|layoutManagerShouldRetryGatedByMaxRetries|B2|LayoutManager retry gate; needs a containment fixture.
+119|mainCppSelfPipeSigintHandlerAndReplaceLockTimeout|B3|Signal handler and lock timeout in main(); needs a running binary.
+120|layoutManagerRestoreMaxRetryExhaustionFallsThrough|B2|LayoutManager restore retries; needs a containment fixture.
+121|layoutManagerRestoreBuildsOrderFromLiveAppletsWhenStoredEmpty|B2|LayoutManager restore order; needs live applet fixtures.
+122|layoutManagerRestoreInvalidAppletCleanupPreservesValidIds|B2|LayoutManager cleanup of invalid applets; needs a containment fixture.
+123|layoutManagerRestoreAppletContainerCreationRetryLimit|B2|LayoutManager retry limit; needs a containment fixture.
+124|visibilityManagerSlotMustBeShownGuardsStartupAndMode|K|QML text in VisibilityManager.qml.
+125|visibilityManagerSlotMustBeHideGuardsMouseAndBlockHiding|K|QML text in VisibilityManager.qml.
+126|visibilityManagerUpdateMaskAreaClampingPreventsNegativeBounds|K|QML text in VisibilityManager.qml.
+127|visibilityManagerSlidingOutAnimationInitGatesInStartup|K|QML text in VisibilityManager.qml.
+128|positionerStartupPaintOffScreenAtNegative9999|B3|Positioner startup position; needs a View and screen.
+129|positionerSyncGeometrySuppressedDuringSlideAnimation|B3|Positioner geometry sync; needs a View.
+130|positionerResizeWindowEnforcesWaylandMinimumSize|B3|Positioner window resize; needs a Wayland window.
+131|positionerPlasmaPanelGeometryIntersectionGuardsEmptyList|B3|Panel intersection guard runs under Corona window manager; positionergeometrytest covers the helper only.
+132|storageAvailableIdUpperBoundExcludesId32000|D|Duplicate of storagelogictest availableIdEmptyWhenExhausted.
+133|storageNewUniqueIdsFileCircularAssignmentDetection|B2|Storage id-file rewrite; needs a layout file fixture.
+134|storageExpectedViewScreenIdAllSecondaryEmptyFallback|B3|Expected screen id takes a Corona; needs a live Corona.
+135|importerFileVersionDetectsLayoutVersion2AndConfigVersion1|D|Layout-version part duplicates importerlogictest layoutV2Recognized.
+136|importerLayoutCanBeImportedRejectsVersionBelow2|D|Duplicate of importerlogictest layoutV1IsUnknown.
+137|importerUniqueLayoutNameCollisionLoopHasGuard|B2|Importer unique-name loop; needs a layouts directory fixture.
+138|screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent|B1|Converted in R8a: corecomponentstest screenPoolScreenForIdFallsBackToPrimaryScreen. Target: corecomponentstest.
+139|plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector|B1|Converted in R8a: corecomponentstest plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero. Target: corecomponentstest.
+140|screenPoolIsScreenActiveReturnsFalseForStaleDisconnectedId|B1|Converted in R8a: corecomponentstest screenPoolIsScreenActiveRequiresAttachedScreen. Target: corecomponentstest.
+141|launchersNormalizeLauncherListExpandsOnlyLength2to4|K|QML text in Launchers.qml.
+142|launchersFreeSeparatorNameExhaustionReturnsEmptyString|K|QML text in Launchers.qml.
+143|launchersTransientEmptyRecoveryCeilingAt8|K|QML text in Launchers.qml.
+144|launchersIsSeparatorGuardsDesktopExtensionPosition|K|QML text in Launchers.qml.
+145|launchersAddDroppedLauncherIconDataTruncationBoundary|K|QML text in Launchers.qml.
+146|launchersRemoveInternalSeparatorRefusesEmptyUrl|K|QML text in Launchers.qml.
+147|taskItemIsSeparatorNeverTurnsUrlLessWindowsIntoDividers|K|QML text in TaskItem.qml.
+148|contextMenuSeparatorRemovalRoutesThroughGuardedLauncherPath|K|QML text in ContextMenu.qml.
+149|contextMenuFactoriesUseDeclaredComponentsNotStringCompilation|K|QML text in ContextMenu.qml.
+150|mainCppAvailableLayoutsPrintsDifferentMessageWhenEmpty|B3|CLI output in main(); needs running the binary.
+151|mainCppLayoutOptionExitsForMissingLayout|B3|CLI exit path in main(); needs running the binary.
+152|mainCppClearCacheSkipsNonexistentDirectory|B3|CLI cache path in main(); needs running the binary.
+153|mainCppImportLayoutExitsOnImportFailure|B3|CLI import exit in main(); needs running the binary.
+154|mainCppDeferredDeleteDrainHardLimit5Passes|B3|Deferred-delete drain in main(); needs running the binary.
+155|mainCppDetectPlatformPreservesExplicitPlatformArg|B3|Platform argument handling in main(); needs running the binary.
+156|mainCppMainFunctionStaysWithinLineLimit|S|Pins main() length, a style proxy that protects no runtime failure.
+157|mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped|K|QML text in VisibilityManager.qml.
+158|mainQmlStartupDelayerTriggeredByHasRestoredAppletsSignal|K|QML text in containment main.qml.
+159|mainQmlCreateAppletItemRetryCeilingAt80|K|QML text in containment main.qml.
+160|mainQmlRetryTimerUsesDeclaredComponentNotStringCompilation|K|QML text in containment main.qml.
+161|mainQmlPanelCfgSyncTransparencySevenInputClasses|K|QML text in containment main.qml and BindingsExternal.qml.
+162|mainQmlOnInStartupChangedMustCheckLatteViewExists|K|QML text in containment main.qml.
+163|appletItemForAppletInSafeContextsUsesPublicApi|B2|Public API for applet items; needs a QML engine and containment fake.
+164|appletItemForAppletExcludedContextsPreservePropertyAccess|B3|Property access across View and settings views; needs live views.
+165|mouseButtonEnumUsesMiddleButtonNotMidButton|K|QML enum text in task and layout files.
+166|taskMouseAreaSkipsInactivePreviewChecks|K|QML text in TaskMouseArea.qml.
+167|taskMouseAreaUsesAuthoritativeEditModeState|K|QML text in task and containment files.
+168|appletIconResourcePathsUseQmlUrlScheme|B2|Icon resource path in LayoutManager; needs a containment fixture.
+169|isolatedWindowPreviewProcessIsFailClosed|D|Fail-closed rules duplicate previewprocessunittest disabledGateStaysClosed and forgedCloseReplyIsRejected; QML text remains.
+170|latteCoreQmlModuleDeclaresPlasmaCoreDependency|K|CMake dependency text for the QML module.
+171|taskFallbackTooltipRespectsLatteTooltipSetting|K|QML and layout template text.
+172|taskTooltipUsesHoveredVisualState|K|QML text in TaskItem.qml.
+173|thinTooltipHandlesMissingTextAndRepositionsAfterShowing|K|QML text in ThinTooltip.qml.
+174|tooltipDialogRoutesRepositioningThroughPlasmaGeometry|B3|Popup repositioning needs a Wayland popup surface.
+175|contextMenuHandlesIncompleteDbusData|B2|Menu decodes DBus data into private state; needs a fake service.
+176|contextMenuMarksCurrentLayoutsInMoveMenu|D|Duplicate of containmentactionmenuunittest onlyListedCurrentLayoutsAreMarked and emptyCurrentListMarksNothing.
+177|dockViewFollowsSystemColorSchemeAtRuntime|B3|View color-scheme follow; needs a View and palette change.
+178|environmentActionsDoesNotAcceptMiddleButton|K|QML text in EnvironmentActions.qml.
+179|upgraderQmlUsesPlasmoidConfiguration|K|QML text in Upgrader.qml.
+180|middleClickActionDefaultIsClose|K|Plasmoid config XML default text.
+181|dragDropHandlersUseBindingSyntaxForQt6|K|QML text in DragDropArea.qml.
+182|tasktoolsServicesFromCmdLineGuardsFirstSpace|B1|Converted in R8a: wmunittest servicesFromCmdLineSingleWordRuntimeDoesNotRecurse. Target: wmunittest.
+183|importerUniqueLayoutNameHasIterationCap|B2|Importer unique-name loop cap; needs a layouts directory fixture.
+184|viewscontrollerUniqueViewNameHasIterationCap|B2|Views controller name loop; no test target; needs a settings fixture.
+185|layoutscontrollerUniqueLayoutNameHasIterationCap|B2|Layouts controller name loop; no test target; needs a settings fixture.
+186|lattecoronaUnloadUsesCappedLiveListLoop|B3|Corona unload loop; needs a live Corona.
+187|lattecoronaScreenForContainmentHasDepthGuard|B3|Corona screen lookup depth guard; needs a live Corona.
+188|lattecoronaAlternativesCallbacksFollowTheirOwners|B3|Corona alternatives callbacks; needs a live Corona.
+189|originalViewCleanClonesDrainsFromLocalCopy|B3|Original view clone cleanup; needs a live view.
+190|layoutManagerResolveAppletQuickItemUsesVisitedSet|B2|LayoutManager cycle guard; needs a QML item graph fixture.
+191|levelOptionsHasIsBackgroundIsForegroundReentryGuards|K|QML text in LevelOptions.qml.
+192|templatesmanagerUniqueNameLoopsHaveIterationCaps|B2|Templates manager name loops; needs a templates directory fixture.
+193|synchronizerUnloadLayoutsHasIterationCap|B2|Synchronizer unload loop; needs layout fixtures.
+194|layoutsSaveRewritesRenamedIdsFromOneSnapshot|B2|LayoutsController save; needs a settings and file fixture.
+195|layoutsSaveLocksRenamedLayoutsAtTheirNewFile|B2|LayoutsController save; needs a settings and file fixture.
+196|layoutsSaveHandsSynchronizerTableAfterRename|B2|LayoutsController rename hand-off; needs a Synchronizer fixture.
+197|synchronizerGuardsStoredLayoutLookups|D|Duplicate of synchronizerlogictest lookupExistingAndNonExisting.
+198|layoutsSaveMovesFilesThroughCheckedTemporaryDir|B2|LayoutsController save; needs a settings and file fixture.
+199|layoutsSaveMovesBeforeRewritingIds|B2|LayoutsController save order; needs a file fixture.
+200|layoutsSaveRenamesOnlyMovedLayouts|B2|LayoutsController save; needs a file fixture.
+201|layoutFileMoveRenamesOnlyThroughNoOverwriteCheck|D|Duplicate of storagelogictest layoutMoveChainBlockedByExistingTargetKeepsEveryFile.
+202|layoutScannersListOnlyFiles|B2|Directory scanners in several classes; each needs a fixture.
+203|uniqueNameExhaustionFallsBackToRandomSuffix|B2|Unique-name fallback in several classes; each needs a fixture.
+204|layoutManagerResolveAppletQuickItemThreadsVisitedSet|B2|LayoutManager recursion frames; needs a QML item graph fixture.
+205|appdataComponentIdKeepsHyphenInLastSegment|K|Appdata XML CMake text.
+206|applicationMetadataUsesCurrentIconName|K|Appdata XML and metadata JSON text.
+207|positionShortcutHandlersDeclareSignalParameters|K|QML text in BasicItem.qml and AppletItem.qml.
+208|positionShortcutHostLookupIsRecursiveAndResettable|B3|Host lookup in ContainmentInterface; needs a live Corona.
+209|panelShadowRoundnessRejectsIncompleteThemeAssets|B2|Private updater in PanelBackground; needs a KSvg theme fixture.
+210|qmlCacheRevisionInvalidatesSameVersionBuilds|B3|QML cache across builds; needs two installed builds.
+211|taskRemovalDefersAnimationOutsideGeometryBindings|K|QML text in TaskItem.qml.
+212|externalTouchingBindingsGuardClearedScreenGeometry|K|QML text in BindingsExternal.qml.
+213|viewTeardownBindingsGuardClearedVisibility|K|QML text in MyView.qml and VisibilityManager.qml.
+214|taskBackgroundThicknessKeepsItsMetricsContract|K|QML text in task and main files.
+215|plasma68ContainmentScreenAndImportContracts|K|Plasma 6.8 API call-site text; a compile probe covers it.
+216|importedAppletIdsStayUniqueIncludingNestedApplets|D|Duplicate of appletidsunittest duplicatedTrayGetsUniqueNestedIds and deeplyNestedAppletsAreResolved.
+217|sharedConfigWindowFollowsEveryDockSwitch|B3|Settings windows follow the dock switch; needs live views.
+218|settingsWindowsUseRootInputsInsteadOfContextProperties|K|QML root-input text in settings windows.
+219|settingsQmlRootsDeclareEveryInput|K|QML root declarations in settings files.
+220|waylandWindowsAcceptedAfterCreationAreTracked|B3|Wayland window tracking; needs a Wayland display.
+221|viewBindingsKeepTheirValueWhileFrozen|K|QML text in BindingsExternal.qml.
+222|layoutInfoWindowNeverAppliesAnEmptySize|B2|InfoView window size; needs a QML window fixture.
+223|appletAlternativesUseLattesOwnDialogOnPlasma65|D|Duplicate of packageunittest appletAlternativesDialogMatchesPlasmaRelease; QML text remains.
+224|qmlParameterlessHandlersDoNotReadUndeclaredIndex|K|Scans every QML root for undeclared index use.
+225|taskScrollMaskProvidesWindowAssociatedTexture|K|QML text in task scroll mask files.
+226|dataRecordsKeepRuleOfZero|B1|Not converted: a single-class test cannot replace the scan of all app/data headers. Target: dataunittest.
+227|metaHoldPreferenceIsAnOptInThatTheDialogDoesNotForce|B2|Settings handler and dialog; needs a handler fixture.
+228|shortcutBadgeShadowEffectsAnchorToTheirLoader|K|QML text in ShortcutBadge.qml.
+229|activitiesDelegatePaintSkipsUnknownActivityIds|B2|Delegate paint; needs a model index and painter fixture.
