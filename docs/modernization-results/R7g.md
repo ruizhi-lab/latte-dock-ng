@@ -3,6 +3,8 @@
 Status: Complete (audit only). No tracked source, CMake, packaging or doc file was changed; this record is the only output.
 Date: 2026-11-06. Branch: `claude/r7g-floor-audit-4da23c`. Start HEAD: `e18a0f9a7` (release v1.3.0).
 
+**Applied.** Option A of section 6 was applied on 2026-11-06 in `072cbcb76` (merge `23cc38eb4`). The text below is otherwise unchanged; only this note is new.
+
 ## Verdict
 
 - **Not reachable.** Qt 6.6 and KF6 6.0 cannot be built together with Plasma 6.3: libplasma 6.3.0 requires Qt 6.7.0 and KF6 6.10.0 (libplasma v6.3.0 `CMakeLists.txt:6, 8`). The declared pair is the floor of Plasma 6.0.0, not 6.3.

@@ -7,13 +7,16 @@ The local HEAD and remote `refs/heads/main` matched when checked on that date.
 
 ## Authority and how to use this plan
 
-Preserve the current features, C++20, CMake 3.20, Qt 6.6, KF6 6.0, Plasma 6.3
+Preserve the current features, C++20, CMake 3.20, Qt 6.7, KF6 6.10, Plasma 6.3
 and Wayland. This plan authorizes no implementation, release or remote mutation
 by itself. The user's selected batch determines the implementation scope.
 
 ## Compatibility and validation environments
 
-Keep the source-declared floors at CMake 3.20, Qt 6.6, KF6 6.0 and Plasma 6.3.
+Keep the source-declared floors at CMake 3.20, Qt 6.7.0, KF6 6.10.0 and
+Plasma 6.3.0. R7g raised Qt and KF6 from 6.6 and 6.0 (`072cbcb76`): libplasma
+6.3.0 itself requires Qt 6.7.0 and KF6 6.10.0, so the older pair could never
+build with Plasma 6.3.
 Validate the CMake preset minimum at 3.20 and separately test the oldest
 supported Debian desktop stack using Debian 13.7 packages: CMake 3.31.6-2,
 Qt 6.8.2, KDE Frameworks 6.13 and the Plasma 6.3.6 desktop release. Debian's
@@ -22,7 +25,8 @@ Qt 6.8.2, KDE Frameworks 6.13 and the Plasma 6.3.6 desktop release. Debian's
 retest records the installed Plasma runtime version. Gentoo, Arch and Fedora CI
 checks represent forward-compatibility coverage against their current stable
 component versions; capture those versions from each run rather than pinning a
-moving “latest”.
+moving “latest”. No job builds exactly the declared Qt 6.7.0 and KF6 6.10.0:
+Debian 13 is the oldest stack that is built and tested (R7g audit).
 
 Read [AGENTS.md](../AGENTS.md) and the relevant entries in the
 [architecture map](architecture-overview.md). Then read this plan's selected
@@ -205,7 +209,7 @@ do not reopen completed M, P, A or S batches without a concrete regression.
 | --- | --- | --- | --- |
 | R1a | None | Event-driven logout monitor, bounded ksmserver queries, dead Wayland retry loop removed, close-on-exec self-pipe, `QPointer` for QML-owned items, event-driven original-icon fallback | Behavior tests on a private bus, zero-delta QML lint, idle wakeup A/B, logout confirm and cancel retest |
 | R1b | None | Quit teardown use-after-free of the view settings factory | Backtrace, reproduction test, D-Bus and menu quit retest |
-| R2a | R1a | `ecm_set_disabled_deprecation_versions()` at the Qt 6.6 / KF 6.0 floors | Zero warnings on GCC/Clang Debug/Release locally and on the Debian 13 floor in CI; any replaced API explained beside the change |
+| R2a | R1a | `ecm_set_disabled_deprecation_versions()` at the declared Qt and KF6 floors (Qt 6.6 / KF 6.0 when R2a landed, Qt 6.7.0 / KF6 6.10.0 since R7g) | Zero warnings on GCC/Clang Debug/Release locally and on the Debian 13 floor in CI; any replaced API explained beside the change |
 | R2b | R1a | Give the context-less lambda connections a context object with the right lifetime, then define `QT_NO_CONTEXTLESS_CONNECT` (enforced from Qt 6.7) | Per-site lifetime note in the handoff, builds and CTest, desktop smoke of the touched paths |
 | R2c | M4a | clazy inventory on production code; gate only checks with zero findings, or one fixed family per slice, with a negative fixture | Requires clazy in the CI image or on a review host |
 | R3 | M4a | Rule of Zero for `app/data`: default the copy/move members that only copy fields, keep custom equality, lock with clang-tidy scoped to `app/data` | Field-by-field equivalence review, `dataunittest` and dependent tests, tidy negative check |
@@ -257,7 +261,7 @@ do not reopen completed M, P, A or S batches without a concrete regression.
 | R7e | Pending validation | [Report](modernization-results/R7e.md): merge `c90a7838d` (refactor `52b2c17d5`). The deep qmllint delta is 0 added and 0 removed on the author's host; the CI QML lint job runs on the push. The merged `main` (the four merges together) built with GCC 16.2.1 and Clang 22.1.8 in the Debug and Release presets with 0 compiler warnings and passed 61/61 CTest in each | User: dock start with several applets (the retry path only runs when an applet is not ready), and a right-click on a task: items, separators and elided long names as before |
 | R7a | Pending validation | [Report](modernization-results/R7a.md): merge `72d186d64` (R1a note `637e1b318`, R4 update `0453ba35e`, `dev-env.sh` `d2d6cfe78`, Mageia retry `82a8bf58d`). The install-script test and the packaging contract fail on the old text; the retry loop was run against a fake `dnf` by the author and again by the main session (first try, third try, always failing); `autotests/installscriptbehavior.py` passes on the merged tree. The merged `main` built with GCC 16.2.1 and Clang 22.1.8 in the Debug and Release presets with 0 compiler warnings and passed 61/61 CTest in each | `dev-env.sh` was not launched in a VM session and the new rule has not been measured there; the Mageia retry only shows when a Cauldron mirror misses a package (CI); whether dnf reuses downloaded packages between attempts is unverified |
 | R7f | Pending validation | [Report](modernization-results/R7f.md): merge `97af590a1` (twelve commits). `main()` went from 631 to 187 lines with 18 named helpers defined after it, and a source contract keeps it at 200 lines or fewer. The author ran the logout simulation (nested KWin) and five mutation checks; the main session compared `--help`, `-v` and the three `--available-*` listings with the base binary: identical, `--help` differs only in the program path. The merged `main` built with GCC 16.2.1 and Clang 22.1.8 in the Debug and Release presets with 0 compiler warnings and passed 61/61 CTest in each, including `privateapphostsmoketest` | User: start-up in the real session, `--replace`, `--import-full`, the autostart toggles and a real logout (only simulated) |
-| R7g | Complete (audit) | [Report](modernization-results/R7g.md): merge `d4d18b85a`. Qt 6.6 with KF6 6.0 cannot be built with Plasma 6.3: libplasma 6.3.0 needs Qt 6.7.0 and KF6 6.10.0, so the effective floor is Qt 6.7.0, KF6 6.10.0 and Plasma 6.3.0; the code also needs PlasmaWaylandProtocols 1.10.0 (declared 1.6) and the preview helper needs KF6 6.8 (`KF6::I18nQml`). Only Debian 13 (Qt 6.8.2, KF 6.13) is tested. The record recommends raising the declared floors (option A) and holds the diff, which passes `git apply --check`; nothing was applied | User: decide whether to raise the declared floors; this plan keeps them as declared until then |
+| R7g | Complete | [Report](modernization-results/R7g.md): audit merge `d4d18b85a`; option A applied in `072cbcb76` (merge `23cc38eb4`). Qt 6.6 with KF6 6.0 could not be built with Plasma 6.3: libplasma 6.3.0 needs Qt 6.7.0 and KF6 6.10.0, so the declared floors are now Qt 6.7.0, KF6 6.10.0 and Plasma 6.3.0. KWayland is looked up against `PLASMA_MIN_VERSION` (it is released with Plasma), PlasmaWaylandProtocols moved from 1.6 to 1.10.0 (`kde-output-order-v1.xml`), and the KF6 6.8 need of the preview helper (`KF6::I18nQml`) is covered. The R2a deprecation gate follows the raised floors. CI run 42142374314 for `23cc38eb4` passed all 23 jobs, and a local build of that merge with GCC 16.2.1 and Clang 22.1.8 in the Debug and Release presets had 0 compiler warnings and passed 61/61 CTest in each. Only Debian 13 (Qt 6.8.2, KF 6.13) is built at a distribution floor; no job builds exactly Qt 6.7.0 and KF6 6.10.0 | None |
 | R6 designs | Complete (documents) | Merges `479157e44`, `ca1e56563` and `31207fa35`; no code. [LayoutManager](modernization-results/R6-layoutmanager-design.md): keep `LayoutManager` in the plugin behind a typed `LayoutManagerApi`; first slice makes the name contracts fail loudly. [Corona](modernization-results/R6-corona-design.md): decompose by consumer family; first slice is the available-screen-area reduction as a pure header. [private.app](modernization-results/R6-privateapp-design.md): conditional go as one coordinated slice; four mandatory changes were found on a scratch prototype that is not committed. The counts in these records are `git grep` inventories; two of them mention raw lists or a patch kept outside the repository | User: pick at most one candidate; R6 stays Deferred until one has an accepted design |
 
 ## Git and rollback

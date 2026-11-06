@@ -18,7 +18,8 @@ The user has offered their Fedora VM for functional validation. Resolve the
 actual SSH alias/address, login user and checkout from local configuration and
 existing access; do not assume that historical VM versions or addresses apply.
 
-Keep Qt 6.6, KF6 6.0, Plasma 6.3 and C++20 floors. Use the existing branch unless
+Keep the declared Qt, KF6, Plasma 6.3 and C++20 floors (Qt 6.7.0 and KF6 6.10.0
+since R7g; 6.6 and 6.0 when this plan was written). Use the existing branch unless
 the user requests another branch. The user authorized automatic commits per
 completed batch. Commit a coherent accepted slice; leave a runtime slice
 Pending validation while its required desktop feedback or checks are missing.

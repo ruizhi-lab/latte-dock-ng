@@ -53,7 +53,7 @@ These findings remain for M2a/M2b and M3; M0 made no production changes.
 
 | Area | Evidence | Consequence |
 | --- | --- | --- |
-| Source floors | CMake 3.20; C++20; Qt 6.6; KF6 6.0; Plasma 6.3 | Preserve these declared source compatibility floors. |
+| Source floors | CMake 3.20; C++20; Qt 6.6; KF6 6.0; Plasma 6.3 | Preserve these declared source compatibility floors. R7g later raised Qt to 6.7.0 and KF6 to 6.10.0 (2026-11-06); this table keeps the 2026-09-29 state. |
 | Oldest supported distro acceptance | Debian 13.7: CMake 3.31.6-2; Qt 6.8.2; KF6 6.13; Plasma 6.3.6 | Verify and record these packaged versions in the Debian 13 CI build; do not confuse them with source-declared floors. |
 | Forward-compatibility distro acceptance | Gentoo, Arch and Fedora stable package stacks | Record versions from CI runs; rolling package versions are not pinned in the plan. |
 | Application | app/CMakeLists.txt collects sources in latte-dock-ng; subdirectories append through PARENT_SCOPE | A directory is not an enforced library boundary. |
@@ -152,4 +152,4 @@ storage.cpp 1,911. Length is navigation context, not a refactoring objective.
   profile actual work and distinguish invisible objects from inactive ones.
 - [Qt 6.8 QML module build integration](https://doc.qt.io/qt-6.8/qt-add-qml-module.html):
   QML_FILES enables build-time caching; generated metadata and paths remain
-  integration contracts. Check used APIs against Qt 6.6 before implementation.
+  integration contracts. Check used APIs against the declared Qt floor (6.7.0 since R7g) before implementation.

@@ -17,8 +17,8 @@ Concrete syntax cleanup and Fedora VM acceptance are tracked separately in the
 [Qt 6 syntax implementation plan](qt6-syntax-modernization-plan.md). Its S
 batches do not count as completion of the deferred A batches below.
 
-The active build requires C++20, Qt 6.6+, KF6, Plasma 6.3+ and Wayland. No
-Qt5/KF5 link target, X11 backend or XCB build dependency was found in the
+The active build requires C++20, Qt 6.7+, KF6 6.10+, Plasma 6.3+ and Wayland.
+No Qt5/KF5 link target, X11 backend or XCB build dependency was found in the
 reviewed active paths. Search matches are not by themselves removal candidates:
 `qt5compat` is a distribution package name, XWayland may be a runtime
 dependency of the desktop stack, persisted legacy identifiers are compatibility

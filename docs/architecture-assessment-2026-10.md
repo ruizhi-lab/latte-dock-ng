@@ -15,6 +15,9 @@ not authorize implementation, commits or releases by itself.
   desktop (Gentoo, Plasma 6.7.5, Wayland). The VM figures quoted below come from
   [P0](modernization-results/P0.md) and were not re-measured.
 - No profiler session of interactive paths (parabolic hover, drag) was run.
+- The floors quoted below (Qt 6.6, KF6 6.0) were the declared floors on that
+  date. R7g raised them to Qt 6.7.0 and KF6 6.10.0 (`072cbcb76`); the text
+  is otherwise unchanged.
 
 ## Summary
 
