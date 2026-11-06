@@ -22,8 +22,8 @@ growth over a long idle period. This run does, for one scenario.
 ## Question and scenario
 
 Does the dock's memory keep growing while it idles? One run: a Release dock idles for
-150 minutes in a nested, headless KWin session with three idle qml6 windows in the task
-list. There is no user input and no click. The desktop's own dock (`/usr/bin/latte-dock-ng`,
+150 minutes in a nested, headless KWin session with three idle qml6 windows open. Whether the dock's
+task list shows them was not checked. There is no user input and no click. The desktop's own dock (`/usr/bin/latte-dock-ng`,
 pid 4760) is sampled read-only in parallel as the desktop series. The first 15 minutes
 are warm-up and are dropped from the verdict.
 
@@ -38,8 +38,8 @@ are warm-up and are dropped from the verdict.
   `dev-env.sh` is not sourced: install.sh calls it development-only and says the binary
   finds its own QML path. The desktop's `XDG_CONFIG_DIRS` and `XDG_DATA_DIRS` are kept for
   every nested process, as the logout simulation keeps them. install.sh's comment on
-  dev-env.sh says that a different value makes the dock and KWin rewrite one KSycoca
-  database against each other, so the nested processes must share one value. No desktop
+  dev-env.sh says that a shorter value made the dock and KWin rewrite the shared KSycoca
+  database against each other, so every nested process gets the same value. No desktop
   display, bus or session manager reaches the session.
 - `R8d-tools/memsample.py` (standard library only, read-only, `/proc` plus two read-only
   queries): every 30 s one CSV row per watched process with the smaps_rollup sizes, the
@@ -75,13 +75,13 @@ are warm-up and are dropped from the verdict.
 | Python | 3.14.10 | `python3 --version` |
 | Desktop series | `/usr/bin/latte-dock-ng` pid 4760; its executable is a deleted inode (`/proc/4760/exe` shows "(deleted)"); package `latte-dock-ng-1.3.0` from `ruizhi-overlay` with `CMAKE_BUILD_TYPE="RelWithDebInfo"` in the package environment | `/proc`, `/var/db/pkg` (read only) |
 
-The nested KWin does not render without a driver on this host. `nvidia-smi` lists the
+On this host the nested KWin does not render in software. `nvidia-smi` lists the
 nested `kwin_wayland` (29 MiB) and the nested dock (28 MiB) as GPU clients, so the
-session renders on the NVIDIA GPU. The premise that the nested KWin "renders without a
-real GPU driver" therefore does not hold here. The consequences are recorded in the
-Limitations: the dock's RSS includes the driver's user-mode mappings (the mapping table
-shows `/dev/nvidiactl`), video memory is not in RSS, and it is sampled only at the four
-snapshot times.
+both render on the NVIDIA GPU. The task's premise that the nested KWin "renders without
+a real GPU driver" does not hold here. The consequences are recorded in the Limitations:
+the dock's RSS includes the driver's user-mode libraries (`libnvidia-glcore` and
+`libnvidia-gpucomp` in the mapping tables), video memory is not in RSS, and it is
+sampled only at the four snapshot times.
 
 ## Commands and exit status
 
@@ -130,9 +130,9 @@ point slope, +100 MiB would take about 145 h. A straight line describes this ser
 poorly (next section).
 
 Other metrics: for the nested dock, Rss and RssAnon are flat; Pss_File moves by about
-0.08 MiB/h (CI [0.02, 0.13]). Its RSS is constant, so this is a redistribution of PSS
-across shared-library pages as other processes map them, not growth of memory the dock
-holds. The desktop Pss_File has the same slope (0.08 MiB/h, CI [0.02, 0.13]) and its
+0.08 MiB/h (CI [0.02, 0.13]). Its RSS is constant, so the dock's own mappings did not change; the movement is
+consistent with the PSS share of shared-library pages being redistributed as other
+processes map them. The desktop Pss_File has the same slope (0.08 MiB/h, CI [0.02, 0.13]) and its
 Rss moves with Pss_Anon (same slope, 704 KiB/h).
 
 ### Levels and CPU (MiB; bucket medians)
@@ -160,7 +160,7 @@ loop, but it also means the nested dock may be lighter than a user's dock (see L
 
 Between the steps the value is flat. The whole post-warm-up rise is +2.45 MiB, so the
 linear slope is an average over discrete events. The largest event, at 12:14, falls in
-the second half and is what lifts that half's slope above 1 MiB/h. The series does not
+the second half and is the main reason its slope exceeds 1 MiB/h. The series does not
 show what caused the steps. It had no controlled input, and the session was shared with
 other applications, so the steps are not attributed.
 
@@ -191,7 +191,7 @@ status fields over the same window are also flat: VmRSS 291976 KiB, RssAnon 7319
 | nested-dock | 0 | 28 | 28 | 28 |
 | nested-kwin | 29 | 29 | 29 | 29 |
 
-The nested dock had no GPU context at its 0-minute snapshot (4 s after start). Video memory
+The nested dock had no GPU context at its 0-minute snapshot (about 1 s after the dock started). Video memory
 of both nested processes stayed constant after that. The desktop dock's video memory stayed
 between 199 and 206 MiB.
 
@@ -238,12 +238,11 @@ between 199 and 206 MiB.
 - The desktop's own KWin is not sampled, so a session-wide drift on the desktop cannot be
   separated from the dock's own growth.
 - One scenario, one run, 150 minutes, no user input and no clicks, three idle qml6
-  windows. Only the dock's idle behaviour is measured.
+  windows (their presence in the dock's task list was not checked). Only the dock's idle
+  behaviour is measured.
 - The control's smaps is hidden (non-dumpable KWin), so the KWin control has RSS fields
   from the status file (RssAnon, RssFile, VmRSS), not PSS, and no mapping table.
 - Video memory is read with `nvidia-smi` at the snapshot times only (0, 15, 75 and end).
-- The desktop series comes from a different build (package `RelWithDebInfo`; the running
-  executable has been replaced on disk). Compare its slope, not its absolute level.
 - The desktop dock was read only; nothing was signalled, attached to, traced or restarted.
 - The nested session runs on the host's GPU and the desktop's theme settings
   (`XDG_CONFIG_DIRS` is inherited and only read), so it is not a clean-room measurement.
