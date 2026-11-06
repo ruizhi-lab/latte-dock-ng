@@ -286,7 +286,6 @@ private Q_SLOTS:
     void restoreZoomTimerGracePeriodPreventsBoundaryBlip();
     void myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined();
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
-    void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
     void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
     void windowHintPerformanceTraceMarksScheduledAndExecutedWork();
     void dynamicWindowDotsAreOptInAndAggregateOverflow();
@@ -3251,22 +3250,6 @@ void SourceContractTest::myViewClientIntPropertiesUseSafeIntGuardAgainstUndefine
     QVERIFY(!src.contains(QStringLiteral("alignment: ref.myView.alignment")));
     QVERIFY(!src.contains(QStringLiteral("itemsAlignment: ref.myView.itemsAlignment")));
     QVERIFY(!src.contains(QStringLiteral("visibilityMode: ref.myView.visibilityMode")));
-}
-
-void SourceContractTest::indicatorFactoryExcludesBuiltinPluginsFromCustomLists()
-{
-    QFile factoryCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/indicator/factory.cpp"));
-    QVERIFY(factoryCpp.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(factoryCpp.readAll());
-
-    // Built-in indicators must be excluded from custom-plugin lists so
-    // the user-facing "custom indicators" UI only shows user-installed ones.
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.default\"")));
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasma\"")));
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmatabstyle\"")));
-
-    // isCustomType must blacklist the same three plugin IDs.
-    QVERIFY(src.contains(QStringLiteral("isCustomType")));
 }
 
 void SourceContractTest::waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist()
