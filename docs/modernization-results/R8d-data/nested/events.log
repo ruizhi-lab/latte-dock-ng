@@ -1,0 +1,12 @@
+2026-11-06T10:06:35 +4.0s watching nested-dock pid 1417998 comm latte-dock-ng exe /tmp/r8d-20261106-095302/home/.local/bin/latte-dock-ng
+2026-11-06T10:06:35 +4.0s watching nested-kwin pid 1417962 comm kwin_wayland exe unknown
+2026-11-06T10:06:35 +4.0s nested-kwin: not readable by this user ['fd', 'smaps_rollup']; those cells stay empty
+2026-11-06T10:06:35 +4.1s snapshot 0min written for nested-dock (pid 1417998)
+2026-11-06T10:06:35 +4.1s snapshot 0min written for nested-kwin (pid 1417962)
+2026-11-06T10:21:35 +904.1s snapshot 15min written for nested-dock (pid 1417998)
+2026-11-06T10:21:35 +904.1s snapshot 15min written for nested-kwin (pid 1417962)
+2026-11-06T11:21:35 +4504.1s snapshot 75min written for nested-dock (pid 1417998)
+2026-11-06T11:21:35 +4504.1s snapshot 75min written for nested-kwin (pid 1417962)
+2026-11-06T12:36:35 +9004.1s snapshot end written for nested-dock (pid 1417998)
+2026-11-06T12:36:35 +9004.1s snapshot end written for nested-kwin (pid 1417962)
+2026-11-06T12:36:35 +9004.1s coredumps listed for latte-dock-ng: 0 new since the start

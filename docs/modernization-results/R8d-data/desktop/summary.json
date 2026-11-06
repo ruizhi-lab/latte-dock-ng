@@ -1,0 +1,53 @@
+{
+ "reason": "duration reached",
+ "wall_start": "2026-11-06T10:06:31",
+ "wall_end": "2026-11-06T12:36:31",
+ "interval_s": 30.0,
+ "duration_s_requested": 9000.0,
+ "ticks": 301,
+ "last_elapsed_s": 9000.0,
+ "clk_tck": 100,
+ "watched": [
+  {
+   "series": "desktop-dock",
+   "pid": 4760,
+   "comm": "latte-dock-ng",
+   "exe": "/usr/bin/latte-dock-ng (deleted)",
+   "starttime_ticks": 2953
+  }
+ ],
+ "snapshots": [
+  "0min-desktop-dock.json",
+  "15min-desktop-dock.json",
+  "75min-desktop-dock.json",
+  "end-desktop-dock.json"
+ ],
+ "unreadable": {
+  "desktop-dock": []
+ },
+ "coredumps": {
+  "before": [
+   "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+   "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+   "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+   "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+  ],
+  "error_before": null,
+  "after": [
+   "Sun 2026-10-04 12:54:06 CST   5457 1000 1000 SIGSEGV missing /usr/bin/latte-dock-ng                                                           -",
+   "Sun 2026-10-04 16:47:30 CST  38182 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Mon 2026-10-05 01:55:01 CST 242530 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build/modernization/gcc-debug/bin/latte-dock-ng     -",
+   "Mon 2026-10-05 01:55:01 CST 242542 1000 1000 SIGABRT missing /data/projects/latte-dock-ng/build-autotests-gcc/bin/latte-dock-ng               -",
+   "Sun 2026-10-18 21:17:37 CST  48485 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-18 21:17:51 CST  48809 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-18 22:49:20 CST  91243 1000 1000 SIGABRT missing /home/ruizhi/.local/bin/latte-dock-ng                                            -",
+   "Sun 2026-10-25 15:45:25 CST  58769 1000 1000 SIGABRT present /home/ruizhi/.local/bin/latte-dock-ng                                        20.2M"
+  ],
+  "error_after": null,
+  "new": []
+ }
+}
