@@ -53,7 +53,8 @@ not authorize implementation, commits or releases by itself.
   CLI handling, single-instance D-Bus, signal handling and session shutdown.
 - **Compatibility shims.** `compat/` forwards KF5-era include paths through a
   global `include_directories(BEFORE compat)`, although the floors are KF6 6.0
-  and Plasma 6.3.
+  and Plasma 6.3. [R8e](modernization-results/R8e.md) inventoried the 26 headers
+  without removing any.
 
 Strengths to preserve: the isolated preview process with watchdog and fallback,
 `View` composed of focused parts, the QML abilities interfaces
@@ -68,7 +69,7 @@ Strengths to preserve: the isolated preview process with watchdog and fallback,
 | Original-icon fallback poll | A 100 ms timer per applet with "keep original icon colors" resolved the icon through C++ on every tick | Fixed in R1a |
 | Unbounded quit-time query | `Corona::onAboutToQuit()` called ksmserver with the 25 s default timeout | Fixed in R1a |
 | VM idle CPU | P0 measured about 20 % of one core and about 390 context switches per second at idle in the Fedora VM; hardware shows 0.27 % | Explained in [R5](modernization-results/R5.md): a launch artifact (an SSH launch with a shorter `XDG_CONFIG_DIRS` than the session starts a KSycoca rewrite loop); the dock idles at 0.000 % when launched with the session environment |
-| Memory | 567 MiB RSS, 265 MiB anonymous after 58 minutes on hardware; P0 saw PSS rise during samples | Needs a long-run growth check |
+| Memory | 567 MiB RSS, 265 MiB anonymous after 58 minutes on hardware; P0 saw PSS rise during samples | Measured in [R8d](modernization-results/R8d.md): no growth in the idle nested session (weak evidence), +0.69 MiB/h in three steps on the live desktop dock (a watch item); a 12-hour desktop series is running |
 | Heavy task delegates | Each task instantiates roughly 100+ QML objects and 300+ bindings; unqualified lookups keep most bindings out of compiled code | Strategic; R6 |
 | Parabolic zoom | Scales propagate between neighbours in JavaScript (`sltUpdateItemScale` relay) | Strategic; R6 |
 
@@ -135,7 +136,9 @@ debouncing and inactive-view filtering, lazy preview helper, OpenGL RHI choice
   excepted with a reason (batch 3 passed CI and the desktop smoke).
 - Application sources are collected through `PARENT_SCOPE` lists in about 30
   subdirectories; `configure_file()` copies `.cpp` files between targets; some
-  directories use `add_definitions()`.
+  directories use `add_definitions()`. The source lists and the copies are
+  replaced in [R8e](modernization-results/R8e.md); the `add_definitions()` calls
+  for translation domains remain.
 - `sourcecontracttest` locks implementation text rather than behaviour in many
   cases, which makes refactoring expensive. New behavioural tests from R1a
   (`shutdownmonitortest`) and R1b (`teardowntest`) show the preferred shape.
