@@ -325,11 +325,6 @@ configure_file(declarativeimports/coretypes.h.in app/coretypes.h)
 set(CORETYPESHEADER "LATTEGENERALCONTAINMENTTYPES_H")
 configure_file(declarativeimports/coretypes.h.in containment/plugin/lattetypes.h)
 
-# Share App::Settings::GenericTools to containment actions
-configure_file(app/settings/generic/generictools.h containmentactions/contextmenu/generictools.h)
-configure_file(app/settings/generic/generictools.cpp containmentactions/contextmenu/generictools.cpp)
-configure_file(app/data/contextmenudata.h containmentactions/contextmenu/contextmenudata.h)
-
 # subdirectories
 add_subdirectory(compat/qml)
 add_subdirectory(declarativeimports)

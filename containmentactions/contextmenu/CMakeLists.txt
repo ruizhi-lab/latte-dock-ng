@@ -1,12 +1,23 @@
 add_definitions(-DTRANSLATION_DOMAIN=\"plasma_containmentactions_lattecontextmenu\")
 
 set(contextmenu_SRCS
-    generictools.cpp
+    # The plugin compiles the app's own generictools.cpp; the TRANSLATION_DOMAIN
+    # defined above still reaches it because add_definitions() is inherited by
+    # every target created in this directory, whatever the source location.
+    ../../app/settings/generic/generictools.cpp
     layoutmenuitemwidget.cpp
     menu.cpp
 )
 
 add_library(plasma_containmentactions_lattecontextmenu MODULE ${contextmenu_SRCS})
+
+# The plugin's quote includes ("generictools.h", "contextmenudata.h") are not next
+# to its sources, so these app directories must be on its include path; without
+# them the plugin fails to compile.
+target_include_directories(plasma_containmentactions_lattecontextmenu PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../app/settings/generic
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../app/data
+)
 
 # Plasma's PluginLoader looks up containmentactions plugins by relative path
 # "plasma/containmentactions/<plugin id>", and KF6 derives the plugin id from

@@ -1,11 +1,9 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}   
-    ${CMAKE_CURRENT_SOURCE_DIR}/genericdialog.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/generichandler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/generictools.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/genericviewtools.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutscombobox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/persistentmenu.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    genericdialog.cpp
+    generichandler.cpp
+    generictools.cpp
+    genericviewtools.cpp
+    layoutscombobox.cpp
+    persistentmenu.cpp
 )
 

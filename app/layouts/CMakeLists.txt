@@ -1,13 +1,11 @@
-set(lattedock-app_SRCS
-    ${lattedock-app_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/appletids.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/importedcontainments.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/importer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutfilelock.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/layoutfilemove.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/manager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/storage.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/syncedlaunchers.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/synchronizer.cpp
-    PARENT_SCOPE
+target_sources(latte-dock-ng PRIVATE
+    appletids.cpp
+    importedcontainments.cpp
+    importer.cpp
+    layoutfilelock.cpp
+    layoutfilemove.cpp
+    manager.cpp
+    storage.cpp
+    syncedlaunchers.cpp
+    synchronizer.cpp
 )

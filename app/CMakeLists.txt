@@ -1,4 +1,9 @@
-set(lattedock-app_SRCS
+# latte-dock-ng is created before the subdirectories because each of them adds its
+# sources with target_sources(latte-dock-ng PRIVATE ...), which fails at configure
+# time for a target that does not exist yet. Nothing between this point and the
+# former add_executable() call changed directory properties, so moving it up keeps
+# the executable's compile flags unchanged.
+add_executable(latte-dock-ng
     alternativeshelper.cpp
     apptypes.cpp
     infoview.cpp
@@ -43,17 +48,22 @@ add_subdirectory(view/windowstracker)
 add_subdirectory(wm)
 add_subdirectory(wm/tracker)
 
+# Generated sources are collected in latte_generated_SRCS and added once, after the
+# subdirectories. The generators stay in this directory: ki18n_wrap_ui() and
+# ecm_add_qtwayland_client_protocol() write into CMAKE_CURRENT_BINARY_DIR, which the
+# sources reach through this directory's include path. Run from a subdirectory, the
+# generated headers would land where no include path finds them.
 set(latte_dbusXML dbus/org.kde.LatteDock.xml)
-qt_add_dbus_adaptor(lattedock-app_SRCS ${latte_dbusXML} lattecorona.h Latte::Corona lattedockadaptor)
+qt_add_dbus_adaptor(latte_generated_SRCS ${latte_dbusXML} lattecorona.h Latte::Corona lattedockadaptor)
 
-ki18n_wrap_ui(lattedock-app_SRCS settings/actionsdialog/actionsdialog.ui)
-ki18n_wrap_ui(lattedock-app_SRCS settings/detailsdialog/detailsdialog.ui)
-ki18n_wrap_ui(lattedock-app_SRCS settings/exporttemplatedialog/exporttemplatedialog.ui)
-ki18n_wrap_ui(lattedock-app_SRCS settings/screensdialog/screensdialog.ui)
-ki18n_wrap_ui(lattedock-app_SRCS settings/settingsdialog/settingsdialog.ui)
-ki18n_wrap_ui(lattedock-app_SRCS settings/viewsdialog/viewsdialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/actionsdialog/actionsdialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/detailsdialog/detailsdialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/exporttemplatedialog/exporttemplatedialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/screensdialog/screensdialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/settingsdialog/settingsdialog.ui)
+ki18n_wrap_ui(latte_generated_SRCS settings/viewsdialog/viewsdialog.ui)
 
-ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
+ecm_add_qtwayland_client_protocol(latte_generated_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-primary-output-v1.xml
     BASENAME kde-primary-output-v1
 )
@@ -61,12 +71,12 @@ ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
 # Plasma 6 KWin no longer advertises kde_primary_output_v1; kde_output_order_v1
 # replaces it (compositor sends the desktop output order; first entry is the
 # logical primary). Bind both so we work on old and new sessions.
-ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
+ecm_add_qtwayland_client_protocol(latte_generated_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-output-order-v1.xml
     BASENAME kde-output-order-v1
 )
 
-add_executable(latte-dock-ng ${lattedock-app_SRCS})
+target_sources(latte-dock-ng PRIVATE ${latte_generated_SRCS})
 qt_add_resources(latte-dock-ng "paneltracker" PREFIX "/latte" FILES wm/plasmapaneltracker.js)
 add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)
 
