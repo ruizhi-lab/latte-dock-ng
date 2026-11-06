@@ -51,6 +51,9 @@ private Q_SLOTS:
     void screenPoolAllocatesStableIdsAndRejectsInvalidConnectors();
     void screenPoolLoadsStoredConnectorsAndIgnoresInvalidIds();
     void plasmaExtendedScreenPoolRejectsInvalidConnectors();
+    void screenPoolIsScreenActiveRequiresAttachedScreen();
+    void screenPoolScreenForIdFallsBackToPrimaryScreen();
+    void plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero();
     void backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge();
     void backgroundTrackerEmitsOnlyForChangedHints();
 };
@@ -160,6 +163,66 @@ void CoreComponentsTest::plasmaExtendedScreenPoolRejectsInvalidConnectors()
     QCOMPARE(pool.connector(2), QString());
     QCOMPARE(pool.connector(3), QStringLiteral("HDMI-A-1"));
     QCOMPARE(pool.id(QStringLiteral("HDMI-A-1")), 3);
+}
+
+void CoreComponentsTest::screenPoolIsScreenActiveRequiresAttachedScreen()
+{
+    // ScreenPool::isScreenActive() is true only for a mapped id whose connector
+    // names a screen that is attached now. A mapping for a detached monitor
+    // stays in the table, so the check must not count it as active; otherwise
+    // views would be placed on a screen that no longer exists.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.path() + QStringLiteral("/lattedockrc"));
+
+    TestScreenPool pool(config);
+    pool.insertScreenMapping(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    const int detachedId = pool.id(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    QVERIFY(pool.hasScreenId(detachedId));
+    QVERIFY(!pool.isScreenActive(detachedId));
+
+    QVERIFY(!pool.isScreenActive(Latte::ScreenPool::NOSCREENID));
+    QVERIFY(!pool.isScreenActive(Latte::ScreenPool::FIRSTSCREENID + 50));
+    // The offscreen platform gives its only screen an empty name, which
+    // insertScreenMapping() refuses, so the attached branch is not exercised here.
+}
+
+void CoreComponentsTest::screenPoolScreenForIdFallsBackToPrimaryScreen()
+{
+    // ScreenPool::screenForId() returns the screen of a mapped id only while
+    // its connector is attached. A detached mapping or an unmapped id must
+    // fall back to the primary screen, never to nullptr, because the dock
+    // positions its view from the returned screen.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.path() + QStringLiteral("/lattedockrc"));
+
+    TestScreenPool pool(config);
+    QVERIFY(pool.primaryScreen() != nullptr);
+
+    pool.insertScreenMapping(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    const int detachedId = pool.id(QStringLiteral("LATTE-TEST-DETACHED-1"));
+    QVERIFY(pool.hasScreenId(detachedId));
+    QCOMPARE(pool.screenForId(detachedId), pool.primaryScreen());
+    QCOMPARE(pool.screenForId(Latte::ScreenPool::FIRSTSCREENID + 50), pool.primaryScreen());
+}
+
+void CoreComponentsTest::plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero()
+{
+    // The extended pool never stores the primary screen. id() answers 0 for
+    // the primary connector by name, and connector(0) gives that name back, so
+    // 0 is the primary sentinel. Any other connector that is not mapped is -1.
+    // The offscreen platform names its only screen "", so the name compared
+    // here is empty; the call still goes through the real primary-name lookup.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    qputenv("XDG_CONFIG_HOME", dir.path().toUtf8());
+
+    Latte::PlasmaExtended::ScreenPool pool;
+    const QString primary = QGuiApplication::primaryScreen()->name();
+    QCOMPARE(pool.id(primary), 0);
+    QCOMPARE(pool.connector(0), primary);
+    QCOMPARE(pool.id(QStringLiteral("LATTE-TEST-DETACHED-1")), -1);
 }
 
 void CoreComponentsTest::backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge()

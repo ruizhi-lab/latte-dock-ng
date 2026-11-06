@@ -25,6 +25,7 @@ class WindowSystemUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void servicesFromCmdLineSingleWordRuntimeDoesNotRecurse();
     void defaultApplicationRejectsNonPreferredUrls();
     void defaultApplicationRejectsUnknownPreferredUrl();
     void metadataLookupRequiresRulesConfig();
@@ -81,6 +82,24 @@ void WindowSystemUnitTest::processLookupsRejectEmptyInputs()
     QVERIFY(Latte::WindowSystem::servicesFromPid(0).isEmpty());
     QVERIFY(Latte::WindowSystem::servicesFromCmdLine(QString(), QString()).isEmpty());
     QVERIFY(Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("/usr/bin/foo"), QStringLiteral("foo")).isEmpty());
+}
+
+void WindowSystemUnitTest::servicesFromCmdLineSingleWordRuntimeDoesNotRecurse()
+{
+    // servicesFromCmdLine() strips a configured runtime from the command line
+    // only when arguments follow it (firstSpace >= 0). Without that guard the
+    // bare runtime word is passed back unchanged and the recursion never ends
+    // (fix 1d051010c). The authoritative list is [Settings]TryIgnoreRuntimes.
+    // The runtime name is not an executable, so no fallback service is created.
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(dir.filePath(QStringLiteral("rulesrc")), KConfig::SimpleConfig);
+    config->group(QStringLiteral("Settings")).writeEntry(QStringLiteral("TryIgnoreRuntimes"), QStringList{QStringLiteral("latte-test-runtime")});
+    config->sync();
+
+    const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-test-runtime"), QStringLiteral("probe"), config);
+    QVERIFY(services.isEmpty());
 }
 
 void WindowSystemUnitTest::processLookupFallsBackToExecutableWhenConfigured()

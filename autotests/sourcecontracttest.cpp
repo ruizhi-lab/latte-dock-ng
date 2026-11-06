@@ -286,7 +286,6 @@ private Q_SLOTS:
     void restoreZoomTimerGracePeriodPreventsBoundaryBlip();
     void myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined();
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
-    void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
     void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
     void windowHintPerformanceTraceMarksScheduledAndExecutedWork();
     void dynamicWindowDotsAreOptInAndAggregateOverflow();
@@ -330,9 +329,6 @@ private Q_SLOTS:
     void importerLayoutCanBeImportedRejectsVersionBelow2();
     void importerUniqueLayoutNameCollisionLoopHasGuard();
     // ScreenPool fallback paths
-    void screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent();
-    void plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector();
-    void screenPoolIsScreenActiveReturnsFalseForStaleDisconnectedId();
     // Launchers QML boundary conditions
     void launchersNormalizeLauncherListExpandsOnlyLength2to4();
     void launchersFreeSeparatorNameExhaustionReturnsEmptyString();
@@ -379,7 +375,6 @@ private Q_SLOTS:
     void middleClickActionDefaultIsClose();
 
     // Infinite-loop guard contracts
-    void tasktoolsServicesFromCmdLineGuardsFirstSpace();
     void importerUniqueLayoutNameHasIterationCap();
     void viewscontrollerUniqueViewNameHasIterationCap();
     void layoutscontrollerUniqueLayoutNameHasIterationCap();
@@ -3256,22 +3251,6 @@ void SourceContractTest::myViewClientIntPropertiesUseSafeIntGuardAgainstUndefine
     QVERIFY(!src.contains(QStringLiteral("visibilityMode: ref.myView.visibilityMode")));
 }
 
-void SourceContractTest::indicatorFactoryExcludesBuiltinPluginsFromCustomLists()
-{
-    QFile factoryCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/indicator/factory.cpp"));
-    QVERIFY(factoryCpp.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(factoryCpp.readAll());
-
-    // Built-in indicators must be excluded from custom-plugin lists so
-    // the user-facing "custom indicators" UI only shows user-installed ones.
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.default\"")));
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasma\"")));
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmatabstyle\"")));
-
-    // isCustomType must blacklist the same three plugin IDs.
-    QVERIFY(src.contains(QStringLiteral("isCustomType")));
-}
-
 void SourceContractTest::waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist()
 {
     QFile waylandCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/waylandinterface.cpp"));
@@ -4010,41 +3989,6 @@ void SourceContractTest::importerUniqueLayoutNameCollisionLoopHasGuard()
 // ------------------------------------------------------------------------
 // ScreenPool fallback paths
 // ------------------------------------------------------------------------
-
-void SourceContractTest::screenPoolScreenForIdFallsBackToPrimaryWhenScreenAbsent()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // When the requested screen ID is valid but the screen is not currently
-    // connected, the function must fall back to the primary screen.
-    QVERIFY(src.contains(QStringLiteral("screenForId")));
-    QVERIFY(src.contains(QStringLiteral("primaryScreen()")));
-}
-
-void SourceContractTest::plasmaExtendedScreenPoolIdReturnsZeroForPrimaryConnector()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/plasma/extended/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // When the connector matches the primary screen name but is not in the
-    // internal map, id() must return 0 as the primary-screen sentinel.
-    QVERIFY(src.contains(QStringLiteral("primaryScreen()->name() == connector")));
-}
-
-void SourceContractTest::screenPoolIsScreenActiveReturnsFalseForStaleDisconnectedId()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/screenpool.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // isScreenActive must return false when the screen ID exists in the
-    // mapping table but the physical screen is no longer connected.
-    QVERIFY(src.contains(QStringLiteral("isScreenActive")));
-    QVERIFY(src.contains(QStringLiteral("qGuiApp->screens()")));
-}
 
 // ------------------------------------------------------------------------
 // Launchers QML boundary conditions
@@ -5043,18 +4987,6 @@ void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
 }
 
 // ── Infinite-loop guard contracts ────────────────────────────────────
-
-void SourceContractTest::tasktoolsServicesFromCmdLineGuardsFirstSpace()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tasktools.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(f.readAll());
-
-    // servicesFromCmdLine recursion must guard firstSpace >= 0 so a
-    // single-word cmdLine in TryIgnoreRuntimes does not infinitely
-    // recurse (firstSpace == -1 → mid(0) == identical string).
-    QVERIFY(src.contains(QStringLiteral("firstSpace >= 0")));
-}
 
 void SourceContractTest::importerUniqueLayoutNameHasIterationCap()
 {

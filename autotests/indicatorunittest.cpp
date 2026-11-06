@@ -121,7 +121,20 @@ private Q_SLOTS:
     void indicatorConfigurationMapWritesConfigToGroupOnModification();
     void factoryFallsBackToRemainingCopyWhenOverrideIsRemoved();
     void factoryForgetsCustomIndicatorWithoutAnotherCopy();
+    void factoryBuiltInIndicatorsAreNotCustom();
 };
+
+void IndicatorUnitTest::factoryBuiltInIndicatorsAreNotCustom()
+{
+    // Factory::isCustomType() decides which indicators the settings UI lists as
+    // user-installed. The three built-in ids must never be listed as custom,
+    // and any other id must be; the comparison list lives in factory.cpp.
+    Latte::Indicator::Factory factory(nullptr);
+    QVERIFY(!factory.isCustomType(QStringLiteral("org.kde.latte.default")));
+    QVERIFY(!factory.isCustomType(QStringLiteral("org.kde.latte.plasma")));
+    QVERIFY(!factory.isCustomType(QStringLiteral("org.kde.latte.plasmatabstyle")));
+    QVERIFY(factory.isCustomType(QStringLiteral("org.example.custom")));
+}
 
 void IndicatorUnitTest::metadataFileAbsolutePathPrefersJson()
 {
