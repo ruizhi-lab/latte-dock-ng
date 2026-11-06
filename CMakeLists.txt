@@ -12,8 +12,8 @@ set(WEBSITE "https://github.com/ruizhi-lab/latte-dock-ng")
 set(BUG_ADDRESS "https://github.com/ruizhi-lab/latte-dock-ng/issues")
 set(FAQS "https://github.com/ruizhi-lab/latte-dock-ng#readme")
 
-set(QT_MIN_VERSION "6.6.0")
-set(KF6_MIN_VERSION "6.0.0")
+set(QT_MIN_VERSION "6.7.0")
+set(KF6_MIN_VERSION "6.10.0")
 set(PLASMA_MIN_VERSION "6.3.0")
 set(KDE_COMPILERSETTINGS_LEVEL "6.0.0")
 
@@ -85,7 +85,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBu
 # Qt 6.8+ moved the default QML resource prefix to :/qt/qml/; adopt the new
 # behavior project-wide so qt_add_qml_module stops warning about QTP0001.
 # qt_policy comes with the Qt6::Core macros loaded by the find_package call
-# above (QTP0001 exists since Qt 6.5; our minimum is 6.6).
+# above (QTP0001 exists since Qt 6.5; our minimum is 6.7).
 qt_policy(SET QTP0001 NEW)
 if(BUILD_TESTING)
     find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Test)
@@ -98,7 +98,9 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
 find_package(Plasma ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaQuick ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(PlasmaActivities ${PLASMA_MIN_VERSION} REQUIRED)
-find_package(KWayland ${KF6_MIN_VERSION} REQUIRED)
+# KWayland is released with Plasma, not with KDE Frameworks: its version
+# follows PLASMA_MIN_VERSION (6.3.0 ships with Plasma 6.3).
+find_package(KWayland ${PLASMA_MIN_VERSION} REQUIRED)
 find_package(LayerShellQt REQUIRED)
 
 # Detect whether LayerShellQt::Window::setScreen(QScreen*) is available.
@@ -145,7 +147,9 @@ find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)
 
 find_package(QtWaylandScanner REQUIRED)
 find_package(Qt${QT_MAJOR_VERSION}WaylandClient REQUIRED)
-find_package(PlasmaWaylandProtocols 1.6 REQUIRED)
+# app/CMakeLists.txt compiles kde-output-order-v1.xml, which plasma-wayland-protocols
+# 1.9.0 does not ship and 1.10.0 does.
+find_package(PlasmaWaylandProtocols 1.10.0 REQUIRED)
 find_package(Wayland REQUIRED COMPONENTS Client)
 
 message(STATUS "KF6 VERSION : ${KF6_VERSION}")
@@ -303,7 +307,7 @@ ecm_set_disabled_deprecation_versions(
 
 # Reject QObject::connect() without a context object: such a functor keeps
 # running after the objects it captures are destroyed. Qt 6.7 and newer
-# enforce the macro; the Qt 6.6 floor ignores it.
+# enforce the macro; with the Qt 6.7 floor it is always active.
 add_compile_definitions(QT_NO_CONTEXTLESS_CONNECT)
 
 # Share Same Core Types between declarativeimports and app.

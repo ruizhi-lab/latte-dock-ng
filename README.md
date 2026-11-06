@@ -36,7 +36,7 @@ Installation
 Runtime requirements:
 
 - **Plasma >= 6.3.0** (developed and fully verified on Plasma 6.5+)
-- **Qt >= 6.6**
+- **Qt >= 6.7**
 - **KCMUtils, Kirigami and NewStuff QML modules**
 - **Wayland session (X11 is not supported in this fork)**
 
@@ -50,42 +50,42 @@ Source build requirements:
 
 **development packages for:**
 ```
- Qt6Core >= 6.6.0
- Qt6Gui >= 6.6.0
- Qt6DBus >= 6.6.0
- Qt6Qml >= 6.6.0
- Qt6Quick >= 6.6.0
- Qt6Widgets >= 6.6.0
- Qt6WaylandClient >= 6.6.0
+ Qt6Core >= 6.7.0
+ Qt6Gui >= 6.7.0
+ Qt6DBus >= 6.7.0
+ Qt6Qml >= 6.7.0
+ Qt6Quick >= 6.7.0
+ Qt6Widgets >= 6.7.0
+ Qt6WaylandClient >= 6.7.0
 
  Plasma >= 6.3.0
  PlasmaQuick >= 6.3.0
  PlasmaActivities >= 6.3.0
- KWayland >= 6.0.0
+ KWayland >= 6.3.0
  PlasmaActivitiesStats >= 6.3.0
  LibTaskManager >= 6.3.0
 
- KF6Config >= 6.0.0
- KF6CoreAddons >= 6.0.0
- KF6GuiAddons >= 6.0.0
- KF6DBusAddons >= 6.0.0
- KF6Declarative >= 6.0.0
- KF6Package >= 6.0.0
- KF6XmlGui >= 6.0.0
- KF6IconThemes >= 6.0.0
- KF6KIO >= 6.0.0
- KF6I18n >= 6.0.0
- KF6Notifications >= 6.0.0
- KF6NewStuff >= 6.0.0
- KF6Archive >= 6.0.0
- KF6GlobalAccel >= 6.0.0
- KF6Crash >= 6.0.0
- KF6WindowSystem >= 6.0.0
- KF6Svg >= 6.0.0
+ KF6Config >= 6.10.0
+ KF6CoreAddons >= 6.10.0
+ KF6GuiAddons >= 6.10.0
+ KF6DBusAddons >= 6.10.0
+ KF6Declarative >= 6.10.0
+ KF6Package >= 6.10.0
+ KF6XmlGui >= 6.10.0
+ KF6IconThemes >= 6.10.0
+ KF6KIO >= 6.10.0
+ KF6I18n >= 6.10.0
+ KF6Notifications >= 6.10.0
+ KF6NewStuff >= 6.10.0
+ KF6Archive >= 6.10.0
+ KF6GlobalAccel >= 6.10.0
+ KF6Crash >= 6.10.0
+ KF6WindowSystem >= 6.10.0
+ KF6Svg >= 6.10.0
 
  PlasmaWaylandProtocols >= 1.6
  Wayland::Client
- LayerShellQt >= 6.0.0
+ LayerShellQt >= 6.3.0
 ```
 
 ### Repository installation (recommended)

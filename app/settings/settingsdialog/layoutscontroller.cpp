@@ -926,7 +926,7 @@ void Layouts::save()
     //! directory is never taken for a layout. QTemporaryDir removes it on every return from save(),
     //! except when a file could not be moved back (see below).
     //! It is held by a pointer because the fallback replaces the directory object: QTemporaryDir cannot be
-    //! copied, and its move assignment was not checked against the declared Qt minimum (6.6; it exists in 6.8.2).
+    //! copied, and its move assignment was not checked against the declared Qt minimum (6.7; it exists in 6.8.2).
     auto layoutTempDir = std::make_unique<QTemporaryDir>(Latte::Layouts::Importer::layoutUserDir() + QStringLiteral("/.apply-XXXXXX"));
 
     if (!layoutTempDir->isValid()) {

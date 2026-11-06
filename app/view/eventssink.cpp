@@ -88,7 +88,7 @@ QEvent *EventsSink::onEvent(QEvent *e)
     QEvent *sunkevent = e;
 
     // Qt 6.12 changed drag-event constructors to QPointF; retain QPoint for the
-    // supported Qt 6.6-6.11 range and preserve fractional positions on newer Qt.
+    // supported Qt 6.7-6.11 range and preserve fractional positions on newer Qt.
     switch (e->type()) {
         case QEvent::Leave:
             release();

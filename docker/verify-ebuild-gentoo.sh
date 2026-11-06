@@ -86,29 +86,29 @@ ${properties_line}
 
 COMMON_DEPEND="
 	>=dev-libs/wayland-1.22
-	>=dev-qt/qtbase-6.6:6[dbus,gui,widgets]
-	>=dev-qt/qtdeclarative-6.6:6
-	>=dev-qt/qtwayland-6.6:6
-	>=kde-frameworks/karchive-6.0:6
-	>=kde-frameworks/kcmutils-6.0:6
-	>=kde-frameworks/kconfig-6.0:6
-	>=kde-frameworks/kcoreaddons-6.0:6
-	>=kde-frameworks/kcrash-6.0:6
-	>=kde-frameworks/kdbusaddons-6.0:6
-	>=kde-frameworks/kdeclarative-6.0:6
-	>=kde-frameworks/kglobalaccel-6.0:6
-	>=kde-frameworks/kguiaddons-6.0:6
-	>=kde-frameworks/ki18n-6.0:6
-	>=kde-frameworks/kiconthemes-6.0:6
-	>=kde-frameworks/kio-6.0:6
-	>=kde-frameworks/kirigami-6.0:6
-	>=kde-frameworks/kitemmodels-6.0:6
-	>=kde-frameworks/knewstuff-6.0:6
-	>=kde-frameworks/knotifications-6.0:6
-	>=kde-frameworks/kpackage-6.0:6
-	>=kde-frameworks/ksvg-6.0:6
-	>=kde-frameworks/kwindowsystem-6.0:6
-	>=kde-frameworks/kxmlgui-6.0:6
+	>=dev-qt/qtbase-6.7:6[dbus,gui,widgets]
+	>=dev-qt/qtdeclarative-6.7:6
+	>=dev-qt/qtwayland-6.7:6
+	>=kde-frameworks/karchive-6.10:6
+	>=kde-frameworks/kcmutils-6.10:6
+	>=kde-frameworks/kconfig-6.10:6
+	>=kde-frameworks/kcoreaddons-6.10:6
+	>=kde-frameworks/kcrash-6.10:6
+	>=kde-frameworks/kdbusaddons-6.10:6
+	>=kde-frameworks/kdeclarative-6.10:6
+	>=kde-frameworks/kglobalaccel-6.10:6
+	>=kde-frameworks/kguiaddons-6.10:6
+	>=kde-frameworks/ki18n-6.10:6
+	>=kde-frameworks/kiconthemes-6.10:6
+	>=kde-frameworks/kio-6.10:6
+	>=kde-frameworks/kirigami-6.10:6
+	>=kde-frameworks/kitemmodels-6.10:6
+	>=kde-frameworks/knewstuff-6.10:6
+	>=kde-frameworks/knotifications-6.10:6
+	>=kde-frameworks/kpackage-6.10:6
+	>=kde-frameworks/ksvg-6.10:6
+	>=kde-frameworks/kwindowsystem-6.10:6
+	>=kde-frameworks/kxmlgui-6.10:6
 	>=kde-plasma/kpipewire-6.5:6
 	>=kde-plasma/kwayland-6.5:6
 	>=kde-plasma/layer-shell-qt-6.5:6
@@ -120,12 +120,12 @@ COMMON_DEPEND="
 RDEPEND="\${COMMON_DEPEND}"
 # Build-only: ECM reads these XML definitions to generate Wayland client bindings.
 DEPEND="\${COMMON_DEPEND}
-	>=dev-libs/plasma-wayland-protocols-1.6
+	>=dev-libs/plasma-wayland-protocols-1.10
 "
 BDEPEND="
 ${git_bdepend}
-	>=dev-qt/qtbase-6.6:6
-	>=kde-frameworks/extra-cmake-modules-6.0
+	>=dev-qt/qtbase-6.7:6
+	>=kde-frameworks/extra-cmake-modules-6.10
 	virtual/pkgconfig
 "
 

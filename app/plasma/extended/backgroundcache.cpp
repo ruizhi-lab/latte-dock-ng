@@ -41,7 +41,7 @@ BackgroundCache::BackgroundCache(QObject *parent)
       m_initialized(false),
       m_plasmaConfig(KSharedConfig::openConfig(PLASMACONFIG))
 {
-    // QT_USE_QSTRINGBUILDER makes `+` return a QStringBuilder. Up to Qt 6.6 (our floor) a
+    // QT_USE_QSTRINGBUILDER makes `+` return a QStringBuilder. Up to Qt 6.6 a
     // builder keeps references to its operands, which here are temporaries that are gone
     // after this statement, so `auto` would pass a dangling builder to addFile() below
     // (ASan reports stack-use-after-scope). Name the type; the clazy

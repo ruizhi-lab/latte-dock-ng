@@ -1145,7 +1145,7 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         // Plasma clipboard applet — QML type mismatch with Plasma 6 framework.
         || (msg.contains(QStringLiteral("org.kde.plasma.clipboard")) && msg.contains(QStringLiteral("error when loading")))) {
         //! block warnings from dependencies that still ship legacy QML snippets.
-        //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
+        //! this project requires Qt 6.7+, so warnings related to Qt < 6 fallback code are irrelevant here.
         //! this also filters a known Qt/Plasma startup warning from workspace calendar internals.
         return;
     }
