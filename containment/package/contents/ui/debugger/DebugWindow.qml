@@ -13,9 +13,39 @@ import org.kde.plasma.components as PlasmaComponents
 
 import org.kde.latte.core as LatteCore
 
+import ".." as ContainmentUi
+import "../abilities" as Ability
+import "../background" as Background
+import "../layouts" as Layouts
+
 Window{
+    id: debugWindow
+
+    //! main.qml sets these inputs when it loads the window, so the window reads
+    //! no name from the containment's context and qmllint checks the typed
+    //! ones. Two stay var because qmllint cannot see their members: the
+    //! containment root declares its properties in main.qml, which is not an
+    //! importable type, and the layouter publishes its three layouts as Item.
+    required property var containmentRoot
+    required property var layouter
+    required property Ability.Animations animations
+    required property Ability.AutoSize autosize
+    required property Background.MultiLayered background
+    required property Ability.Indexer indexer
+    required property Layouts.LayoutsContainer layoutsContainer
+    required property Ability.Metrics metrics
+    required property Ability.ParabolicEffect parabolic
+    required property ContainmentUi.VisibilityManager visibilityManager
+
+    //! Bound through the root, so they follow it: Interfaces resolves the view
+    //! after the containment loads and clears it when the view goes away.
+    //! Neither has a QML type name (the view is a QObject from private.app,
+    //! Plasma::Containment is not exported).
+    readonly property var latteView: debugWindow.containmentRoot.latteView
+    readonly property var plasmoid: debugWindow.containmentRoot.plasmoid
+
     width: mainGrid.width + 10
-    height: Math.min(mainGrid.height+10, Screen.height - metrics.mask.thickness.maxNormalForItems)
+    height: Math.min(mainGrid.height+10, Screen.height - debugWindow.metrics.mask.thickness.maxNormalForItems)
     visible: true
     title: "#debugwindow#"
 
@@ -33,29 +63,29 @@ Window{
             columns: 2
 
             Text{
-                text: "Name"+space
+                text: "Name"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.name.length > 0 ? latteView.name : "___"
+                text: debugWindow.latteView && debugWindow.latteView.name.length > 0 ? debugWindow.latteView.name : "___"
             }
 
             Text{
-                text: "Screen id"+space
+                text: "Screen id"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.positioner ? latteView.positioner.currentScreenName : "___"
+                text: debugWindow.latteView && debugWindow.latteView.positioner ? debugWindow.latteView.positioner.currentScreenName : "___"
             }
 
             Text{
-                text: "Screen Geometry"+space
+                text: "Screen Geometry"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.screenGeometry){
-                        return latteView.screenGeometry.x+","+latteView.screenGeometry.y+ " "+latteView.screenGeometry.width+"x"+latteView.screenGeometry.height;
+                    if (debugWindow.latteView && debugWindow.latteView.screenGeometry){
+                        return debugWindow.latteView.screenGeometry.x+","+debugWindow.latteView.screenGeometry.y+ " "+debugWindow.latteView.screenGeometry.width+"x"+debugWindow.latteView.screenGeometry.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -63,13 +93,13 @@ Window{
             }
 
             Text{
-                text: "Window Geometry"+space
+                text: "Window Geometry"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView) {
-                        return  latteView.x + "," + latteView.y + " "+latteView.width+ "x"+latteView.height;
+                    if (debugWindow.latteView) {
+                        return  debugWindow.latteView.x + "," + debugWindow.latteView.y + " "+debugWindow.latteView.width+ "x"+debugWindow.latteView.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -77,12 +107,12 @@ Window{
             }
 
             Text{
-                text: "On Primary"+space
+                text: "On Primary"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.onPrimary)
+                    if (debugWindow.latteView && debugWindow.latteView.onPrimary)
                         return "Yes";
                     else
                         return "No";
@@ -98,69 +128,69 @@ Window{
             }
 
             Text{
-                text: "Contents Width"+space
+                text: "Contents Width"+debugWindow.space
             }
 
             Text{
-                text: layoutsContainer.contentsWidth
+                text: debugWindow.layoutsContainer.contentsWidth
             }
 
             Text{
-                text: "Contents Height"+space
+                text: "Contents Height"+debugWindow.space
             }
 
             Text{
-                text: layoutsContainer.contentsHeight
+                text: debugWindow.layoutsContainer.contentsHeight
             }
 
             Text{
-                text: "Max Length"+space
+                text: "Max Length"+debugWindow.space
             }
 
             Text{
-                text: root.maxLengthPerCentage +"%"
+                text: debugWindow.containmentRoot.maxLengthPerCentage +"%"
             }
 
             Text{
-                text: "Max Length (pixels)"+space
+                text: "Max Length (pixels)"+debugWindow.space
             }
 
             Text{
-                text: root.maxLength
+                text: debugWindow.containmentRoot.maxLength
             }
 
             Text{
-                text: "Min Length"+space
+                text: "Min Length"+debugWindow.space
             }
 
             Text{
-                text: root.minLengthPerCentage +"%"
+                text: debugWindow.containmentRoot.minLengthPerCentage +"%"
             }
 
             Text{
-                text: "Min Length (pixels)"+space
+                text: "Min Length (pixels)"+debugWindow.space
             }
 
             Text{
-                text: root.minLength
+                text: debugWindow.containmentRoot.minLength
             }
 
             Text{
-                text: "Offset (pixels)"+space
+                text: "Offset (pixels)"+debugWindow.space
             }
 
             Text{
-                text: root.offset
+                text: debugWindow.containmentRoot.offset
             }
 
             Text{
-                text: "Mask"+space
+                text: "Mask"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.effects && latteView.effects.mask) {
-                        return latteView.effects.mask.x +", "+ latteView.effects.mask.y+"  "+latteView.effects.mask.width+"x"+latteView.effects.mask.height;
+                    if (debugWindow.latteView && debugWindow.latteView.effects && debugWindow.latteView.effects.mask) {
+                        return debugWindow.latteView.effects.mask.x +", "+ debugWindow.latteView.effects.mask.y+"  "+debugWindow.latteView.effects.mask.width+"x"+debugWindow.latteView.effects.mask.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -168,13 +198,13 @@ Window{
             }
 
             Text{
-                text: "Input "+space
+                text: "Input "+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.effects && latteView.effects.inputMask) {
-                        return latteView.effects.inputMask.x +", "+ latteView.effects.inputMask.y+"  "+latteView.effects.inputMask.width+"x"+latteView.effects.inputMask.height;
+                    if (debugWindow.latteView && debugWindow.latteView.effects && debugWindow.latteView.effects.inputMask) {
+                        return debugWindow.latteView.effects.inputMask.x +", "+ debugWindow.latteView.effects.inputMask.y+"  "+debugWindow.latteView.effects.inputMask.width+"x"+debugWindow.latteView.effects.inputMask.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -182,13 +212,13 @@ Window{
             }
 
             Text{
-                text: "Local Geometry"+space
+                text: "Local Geometry"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.localGeometry) {
-                        return latteView.localGeometry.x + ", " + latteView.localGeometry.y + "  " + latteView.localGeometry.width + "x" + latteView.localGeometry.height;
+                    if (debugWindow.latteView && debugWindow.latteView.localGeometry) {
+                        return debugWindow.latteView.localGeometry.x + ", " + debugWindow.latteView.localGeometry.y + "  " + debugWindow.latteView.localGeometry.width + "x" + debugWindow.latteView.localGeometry.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -196,13 +226,13 @@ Window{
             }
 
             Text{
-                text: "Absolute Geometry"+space
+                text: "Absolute Geometry"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.absoluteGeometry) {
-                        return latteView.absoluteGeometry.x + ", " + latteView.absoluteGeometry.y + "  " + latteView.absoluteGeometry.width + "x" + latteView.absoluteGeometry.height;
+                    if (debugWindow.latteView && debugWindow.latteView.absoluteGeometry) {
+                        return debugWindow.latteView.absoluteGeometry.x + ", " + debugWindow.latteView.absoluteGeometry.y + "  " + debugWindow.latteView.absoluteGeometry.width + "x" + debugWindow.latteView.absoluteGeometry.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -211,12 +241,12 @@ Window{
 
 
             Text{
-                text: "Draw Effects"+space
+                text: "Draw Effects"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.effects && latteView.effects.drawEffects)
+                    if (debugWindow.latteView && debugWindow.latteView.effects && debugWindow.latteView.effects.drawEffects)
                         return "Yes";
                     else
                         return "No";
@@ -224,13 +254,13 @@ Window{
             }
 
             Text{
-                text: "Effects Area"+space
+                text: "Effects Area"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.effects && latteView.effects.rect) {
-                        return latteView.effects.rect.x + ", " + latteView.effects.rect.y + "  " +latteView.effects.rect.width + "x" + latteView.effects.rect.height;
+                    if (debugWindow.latteView && debugWindow.latteView.effects && debugWindow.latteView.effects.rect) {
+                        return debugWindow.latteView.effects.rect.x + ", " + debugWindow.latteView.effects.rect.y + "  " +debugWindow.latteView.effects.rect.width + "x" + debugWindow.latteView.effects.rect.height;
                     } else {
                         return "_,_ _x_";
                     }
@@ -246,12 +276,12 @@ Window{
             }
 
             Text{
-                text: "Is Hidden (flag)"+space
+                text: "Is Hidden (flag)"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.visibility && latteView.visibility.isHidden)
+                    if (debugWindow.latteView && debugWindow.latteView.visibility && debugWindow.latteView.visibility.isHidden)
                         return "Yes";
                     else
                         return "No";
@@ -259,12 +289,12 @@ Window{
             }
 
             Text{
-                text: "Contains Mouse (flag)"+space
+                text: "Contains Mouse (flag)"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (latteView && latteView.visibility && latteView.visibility.containsMouse)
+                    if (debugWindow.latteView && debugWindow.latteView.visibility && debugWindow.latteView.visibility.containsMouse)
                         return "Yes";
                     else
                         return "No";
@@ -272,12 +302,12 @@ Window{
             }
 
             Text{
-                text: "Edit Mode"+space
+                text: "Edit Mode"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (root.editMode)
+                    if (debugWindow.containmentRoot.editMode)
                         return "Yes";
                     else
                         return "No";
@@ -293,12 +323,12 @@ Window{
             }
 
             Text{
-                text: "Location"+space
+                text: "Location"+debugWindow.space
             }
 
             Text{
                 text: {
-                    switch(plasmoid.location){
+                    switch(debugWindow.plasmoid.location){
                     case PlasmaCore.Types.LeftEdge:
                         return "Left Edge";
                     case PlasmaCore.Types.RightEdge:
@@ -309,17 +339,17 @@ Window{
                         return "Bottom Edge";
                     }
 
-                    return " <unknown> : " + plasmoid.location;
+                    return " <unknown> : " + debugWindow.plasmoid.location;
                 }
             }
 
             Text{
-                text: "Alignment"+space
+                text: "Alignment"+debugWindow.space
             }
 
             Text{
                 text: {
-                    switch(plasmoid.configuration.alignment){
+                    switch(debugWindow.plasmoid.configuration.alignment){
                     case LatteCore.types.Left:
                         return "Left";
                     case LatteCore.types.Right:
@@ -334,20 +364,20 @@ Window{
                         return "Justify";
                     }
 
-                    return "<unknown> : " + plasmoid.configuration.alignment;
+                    return "<unknown> : " + debugWindow.plasmoid.configuration.alignment;
                 }
             }
 
             Text{
-                text: "Visibility"+space
+                text: "Visibility"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (!latteView || !latteView.visibility)
+                    if (!debugWindow.latteView || !debugWindow.latteView.visibility)
                         return "";
 
-                    switch(latteView.visibility.mode){
+                    switch(debugWindow.latteView.visibility.mode){
                     case LatteCore.types.AlwaysVisible:
                         return "Always Visible";
                     case LatteCore.types.AutoHide:
@@ -376,16 +406,16 @@ Window{
                         return "None";
                     }
 
-                    return "<unknown> : " + latteView.visibility.mode;
+                    return "<unknown> : " + debugWindow.latteView.visibility.mode;
                 }
             }
 
             Text{
-                text: "Zoom Factor"+space
+                text: "Zoom Factor"+debugWindow.space
             }
 
             Text{
-                text: parabolic.factor.zoom
+                text: debugWindow.parabolic.factor.zoom
             }
 
             Text{
@@ -397,36 +427,36 @@ Window{
             }
 
             Text{
-                text: "Icon Size (current)"+space
+                text: "Icon Size (current)"+debugWindow.space
             }
 
             Text{
-                text: metrics.iconSize
+                text: debugWindow.metrics.iconSize
             }
 
             Text{
-                text: "Icon Size (user)"+space
+                text: "Icon Size (user)"+debugWindow.space
             }
 
             Text{
-                text: plasmoid.configuration.iconSize
+                text: debugWindow.plasmoid.configuration.iconSize
             }
 
             Text{
-                text: "Icon Size (portion)"+space
+                text: "Icon Size (portion)"+debugWindow.space
             }
 
             Text{
-                text: metrics.portionIconSize
+                text: debugWindow.metrics.portionIconSize
             }
 
             Text{
-                text: "Icon Size (auto decrease), Enabled"+space
+                text: "Icon Size (auto decrease), Enabled"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (autosize.isActive)
+                    if (debugWindow.autosize.isActive)
                         return "Yes";
                     else
                         return "No";
@@ -434,43 +464,43 @@ Window{
             }
 
             Text{
-                text: "Icon Size (auto decrease)"+space
+                text: "Icon Size (auto decrease)"+debugWindow.space
             }
 
             Text{
-                text: autosize.iconSize
+                text: debugWindow.autosize.iconSize
             }
 
             Text{
-                text: "Length Padding (pixels)"+space
+                text: "Length Padding (pixels)"+debugWindow.space
             }
 
             Text{
-                text: metrics.padding.length
+                text: debugWindow.metrics.padding.length
             }
 
             Text{
-                text: "Length Margin (pixels)"+space
+                text: "Length Margin (pixels)"+debugWindow.space
             }
 
             Text{
-                text: metrics.margin.length
+                text: debugWindow.metrics.margin.length
             }
 
             Text{
-                text: "Head Thickness Margin"+space
+                text: "Head Thickness Margin"+debugWindow.space
             }
 
             Text{
-                text: metrics.margin.headThickness
+                text: debugWindow.metrics.margin.headThickness
             }
 
             Text{
-                text: "Tail Thickness Margin"+space
+                text: "Tail Thickness Margin"+debugWindow.space
             }
 
             Text{
-                text: metrics.margin.tailThickness
+                text: debugWindow.metrics.margin.tailThickness
             }
 
             Text{
@@ -482,12 +512,12 @@ Window{
             }
 
             Text{
-                text: "Show Panel Background (user)"+space
+                text: "Show Panel Background (user)"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (plasmoid.configuration.useThemePanel)
+                    if (debugWindow.plasmoid.configuration.useThemePanel)
                         return "Yes";
                     else
                         return "No";
@@ -495,12 +525,12 @@ Window{
             }
 
             Text{
-                text: "Force Transparent Panel (auto)"+space
+                text: "Force Transparent Panel (auto)"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (root.forceTransparentPanel)
+                    if (debugWindow.containmentRoot.forceTransparentPanel)
                         return "Yes";
                     else
                         return "No";
@@ -508,44 +538,44 @@ Window{
             }
 
             Text{
-                text: "Background Length"+space
+                text: "Background Length"+debugWindow.space
             }
 
             Text{
-                text: background.totals.visualLength
+                text: debugWindow.background.totals.visualLength
             }
 
             Text{
-                text: "Background Thickness(user)"+space
+                text: "Background Thickness(user)"+debugWindow.space
             }
 
             Text{
-                text: plasmoid.configuration.panelSize + "%"
+                text: debugWindow.plasmoid.configuration.panelSize + "%"
             }
 
             Text{
-                text: "Background Thickness(auto)"+space
+                text: "Background Thickness(auto)"+debugWindow.space
             }
 
             Text{
-                text: background.totals.visualThickness
+                text: debugWindow.background.totals.visualThickness
             }
 
             Text{
-                text: "Background Opacity"+space
+                text: "Background Opacity"+debugWindow.space
             }
 
             Text{
-                text: (root.myView.backgroundOpacity * 100) + "%"
+                text: (debugWindow.containmentRoot.myView.backgroundOpacity * 100) + "%"
             }
 
             Text{
-                text: "Background Shadows Active"+space
+                text: "Background Shadows Active"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (root.panelShadowsActive)
+                    if (debugWindow.containmentRoot.panelShadowsActive)
                         return "Yes";
                     else
                         return "No";
@@ -553,19 +583,19 @@ Window{
             }
 
             Text{
-                text: "Background Shadow"+space
+                text: "Background Shadow"+debugWindow.space
             }
 
             Text{
-                text: background.shadows.headThickness
+                text: debugWindow.background.shadows.headThickness
             }
 
             Text{
-                text: "Background Head Thickness Padding"+space
+                text: "Background Head Thickness Padding"+debugWindow.space
             }
 
             Text{
-                text: background.paddings.headThickness
+                text: debugWindow.background.paddings.headThickness
             }
 
             Text{
@@ -577,28 +607,28 @@ Window{
             }
 
             Text{
-                text: "Mask - Normal Thickness"+space
+                text: "Mask - Normal Thickness"+debugWindow.space
             }
 
             Text{
-                text: metrics.mask.thickness.normal
+                text: debugWindow.metrics.mask.thickness.normal
             }
 
             Text{
-                text: "Thickness Uses Panel Size"+space
+                text: "Thickness Uses Panel Size"+debugWindow.space
             }
 
             Text{
-                text: background.isGreaterThanItemThickness
+                text: debugWindow.background.isGreaterThanItemThickness
             }
 
             Text{
-                text: "Draw Shadows (external)"+space
+                text: "Draw Shadows (external)"+debugWindow.space
             }
 
             Text{
                 text: {
-                    if (root.drawShadowsExternal)
+                    if (debugWindow.containmentRoot.drawShadowsExternal)
                         return "Yes";
                     else
                         return "No";
@@ -614,7 +644,7 @@ Window{
             }
 
             Text{
-                text: "Applet Hovered"+space
+                text: "Applet Hovered"+debugWindow.space
             }
 
             Text{
@@ -622,67 +652,35 @@ Window{
             }
 
             Text{
-                text: "In Normal State"+space
+                text: "In Normal State"+debugWindow.space
             }
 
             Text{
-                text: visibilityManager.inNormalState
+                text: debugWindow.visibilityManager.inNormalState
             }
 
             Text{
-                text: "Animations Both Axis"+space
+                text: "Animations Both Axis"+debugWindow.space
             }
 
             Text{
-                text: animations.needBothAxis.count
+                text: debugWindow.animations.needBothAxis.count
             }
 
             Text{
-                text: "Animations Only Length"+space
+                text: "Animations Only Length"+debugWindow.space
             }
 
             Text{
-                text: animations.needLength.count
+                text: debugWindow.animations.needLength.count
             }
 
             Text{
-                text: "Animations Need Thickness"+space
+                text: "Animations Need Thickness"+debugWindow.space
             }
 
             Text{
-                text: animations.needThickness.count
-            }
-
-            Text{
-                text: "   -----------   "
-            }
-
-            Text{
-                text: " -----------   "
-            }
-
-            Text{
-                text: "Start Layout Shown Applets"+space
-            }
-
-            Text{
-                text: layouter.startLayout.shownApplets
-            }
-
-            Text{
-                text: "Start Layout Applets (with fill)"+space
-            }
-
-            Text{
-                text: layouter.startLayout.fillApplets
-            }
-
-            Text{
-                text: "Start Layout Size (no fill applets)"+space
-            }
-
-            Text{
-                text: layouter.startLayout.sizeWithNoFillApplets+" px."
+                text: debugWindow.animations.needThickness.count
             }
 
             Text{
@@ -694,59 +692,27 @@ Window{
             }
 
             Text{
-                text: "Main Layout Shown Applets"+space
+                text: "Start Layout Shown Applets"+debugWindow.space
             }
 
             Text{
-                text: layouter.mainLayout.shownApplets
+                text: debugWindow.layouter.startLayout.shownApplets
             }
 
             Text{
-                text: "Main Layout Applets (with fill)"+space
+                text: "Start Layout Applets (with fill)"+debugWindow.space
             }
 
             Text{
-                text: layouter.mainLayout.fillApplets
+                text: debugWindow.layouter.startLayout.fillApplets
             }
 
             Text{
-                text: "Main Layout Size (no fill applets)"+space
+                text: "Start Layout Size (no fill applets)"+debugWindow.space
             }
 
             Text{
-                text: layouter.mainLayout.sizeWithNoFillApplets+" px."
-            }
-
-            Text{
-                text: "   -----------   "
-            }
-
-            Text{
-                text: " -----------   "
-            }
-
-            Text{
-                text: "End Layout Shown Applets"+space
-            }
-
-            Text{
-                text: layouter.endLayout.shownApplets
-            }
-
-            Text{
-                text: "End Layout Applets (with fill)"+space
-            }
-
-            Text{
-                text: layouter.endLayout.fillApplets
-            }
-
-            Text{
-                text: "End Layout Size (no fill applets)"+space
-            }
-
-            Text{
-                text: layouter.endLayout.sizeWithNoFillApplets+" px."
+                text: debugWindow.layouter.startLayout.sizeWithNoFillApplets+" px."
             }
 
             Text{
@@ -758,11 +724,27 @@ Window{
             }
 
             Text{
-                text: "Animations ZoomFactor" + space
+                text: "Main Layout Shown Applets"+debugWindow.space
             }
 
             Text{
-                text: animations.requirements.zoomFactor
+                text: debugWindow.layouter.mainLayout.shownApplets
+            }
+
+            Text{
+                text: "Main Layout Applets (with fill)"+debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.layouter.mainLayout.fillApplets
+            }
+
+            Text{
+                text: "Main Layout Size (no fill applets)"+debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.layouter.mainLayout.sizeWithNoFillApplets+" px."
             }
 
             Text{
@@ -774,48 +756,96 @@ Window{
             }
 
             Text{
-                text: "Applets need Windows Tracking"+space
+                text: "End Layout Shown Applets"+debugWindow.space
             }
 
             Text{
-                text: indexer.clientsTrackingWindowsCount
+                text: debugWindow.layouter.endLayout.shownApplets
             }
 
             Text{
-                text: "Last Active Window Current Screen (id)"+space
+                text: "End Layout Applets (with fill)"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.windowsTracker && latteView.windowsTracker.currentScreen.lastActiveWindow && latteView.windowsTracker.currentScreen.lastActiveWindow.isValid ?
-                          latteView.windowsTracker.currentScreen.lastActiveWindow.winId : "--"
+                text: debugWindow.layouter.endLayout.fillApplets
             }
 
             Text{
-                text: "Last Active Window Current Screen (title)"+space
+                text: "End Layout Size (no fill applets)"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.windowsTracker && latteView.windowsTracker.currentScreen.lastActiveWindow && latteView.windowsTracker.currentScreen.lastActiveWindow.isValid ?
-                          latteView.windowsTracker.currentScreen.lastActiveWindow.display : "--"
+                text: debugWindow.layouter.endLayout.sizeWithNoFillApplets+" px."
+            }
+
+            Text{
+                text: "   -----------   "
+            }
+
+            Text{
+                text: " -----------   "
+            }
+
+            Text{
+                text: "Animations ZoomFactor" + debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.animations.requirements.zoomFactor
+            }
+
+            Text{
+                text: "   -----------   "
+            }
+
+            Text{
+                text: " -----------   "
+            }
+
+            Text{
+                text: "Applets need Windows Tracking"+debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.indexer.clientsTrackingWindowsCount
+            }
+
+            Text{
+                text: "Last Active Window Current Screen (id)"+debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.latteView && debugWindow.latteView.windowsTracker && debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow && debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow.isValid ?
+                          debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow.winId : "--"
+            }
+
+            Text{
+                text: "Last Active Window Current Screen (title)"+debugWindow.space
+            }
+
+            Text{
+                text: debugWindow.latteView && debugWindow.latteView.windowsTracker && debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow && debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow.isValid ?
+                          debugWindow.latteView.windowsTracker.currentScreen.lastActiveWindow.display : "--"
                 elide: Text.ElideRight
             }
 
             Text{
-                text: "Last Active Window All Screens (id)"+space
+                text: "Last Active Window All Screens (id)"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.windowsTracker && latteView.windowsTracker.allScreens.lastActiveWindow && latteView.windowsTracker.allScreens.lastActiveWindow.isValid ?
-                          latteView.windowsTracker.allScreens.lastActiveWindow.winId : "--"
+                text: debugWindow.latteView && debugWindow.latteView.windowsTracker && debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow && debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow.isValid ?
+                          debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow.winId : "--"
             }
 
             Text{
-                text: "Last Active Window All Screens (title)"+space
+                text: "Last Active Window All Screens (title)"+debugWindow.space
             }
 
             Text{
-                text: latteView && latteView.windowsTracker && latteView.windowsTracker.allScreens.lastActiveWindow && latteView.windowsTracker.allScreens.lastActiveWindow.isValid ?
-                          latteView.windowsTracker.allScreens.lastActiveWindow.display : "--"
+                text: debugWindow.latteView && debugWindow.latteView.windowsTracker && debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow && debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow.isValid ?
+                          debugWindow.latteView.windowsTracker.allScreens.lastActiveWindow.display : "--"
                 elide: Text.ElideRight
             }
         }
