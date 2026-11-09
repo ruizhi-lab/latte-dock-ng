@@ -144,3 +144,57 @@ fractions. A rule that cannot be evaluated (a missing dump or sample) is reporte
   mappings are outside it.
 - heaptrack and valgrind are not installed; installing them needs root, which is the
   user's step. They are needed only if the verdict is "live growth" or "inconclusive".
+
+## Pilot runs (not counted)
+
+Six short nested sessions ran before the formal runs, to check the harness and the
+configuration. No pilot is in a verdict. Their screenshots and summaries are in
+`R8j-data/pilot/`.
+
+| run | scenario | settings | result |
+|---|---|---|---|
+| W1 | W | warm-up 60 s, 1 cycle, 1 post-trim cycle | the qml6 window is on the nested output, but the dock shows only its launchers: no task for it (`R8j-data/pilot/W1-window-no-task.png`) |
+| W2 | W | the same | still no task; the copied desktop file still named the template's binary (see amendment 1) |
+| W3 | W | no `--debug`; Qt logging rules set | three lines in the dock log: Latte drops its debug messages without `--debug` (`app/main.cpp`) |
+| W4 | W | `--dock-arg=--debug`, warm-up 15 s, screenshot in cycle 1 | the window's task appears in the dock; KWin logs `authorized … org_kde_plasma_window_management` for the run's binary |
+| W5 | W | the formal configuration (no debug, no screenshot), warm-up 15 s, screenshot in cycle 1 | the window's task appears (`R8j-data/pilot/W5-window-task.png`); exit 0, no coredump |
+| A1 | A (kcalc) | the formal configuration, warm-up 15 s, screenshot in cycle 1 | KCalc's window and its task with the KCalc icon appear (`R8j-data/pilot/A1-kcalc-task.png`); exit 0, no coredump |
+
+W4 also started without a session once: argparse read `--dock-arg --debug` as two
+options. The value is passed as `--dock-arg=--debug` from then on. The probe worked in
+W1: `SIGUSR2` wrote the counters, and `SIGUSR1` returned 1 from `malloc_trim(0)`, with
+`fordblks` 6.24 MB to 4.01 MB and the arena 94.0 MB to 91.8 MB (a pilot, not a result).
+
+### Amendments before the formal runs
+
+The design above is unchanged except where this list says so. The verdict rule and its
+thresholds are unchanged.
+
+1. **Task list.** KWin gives the dock its window-management interface only to the
+   executable that the desktop file names in its `Exec` line
+   (`X-KDE-Wayland-Interfaces`; the comment in `install.sh` says the same). The copied
+   desktop files named the template's binary, and the copied KSycoca cache recorded the
+   template's paths, so the copy's dock got no task list (W1, W2). `session.py` now
+   rewrites the copy's `org.kde.latte-dock.desktop` and its preview helper's desktop file to
+   the run's binaries (`localize_desktop_files`) and rebuilds KSycoca once
+   (`rebuild_ksycoca`: `kbuildsycoca6 --noincremental`, its status is in
+   `session/ksycoca.txt`). The first version of the rewrite kept a newline in the `Exec`
+   value and changed nothing; W4, W5 and A1 use the fixed version.
+2. **Application.** `kcalc` (scenario A) opens its window and its task. Nothing changed.
+3. **Pilot-only options.** `--dock-arg` and `--shot-cycle` / `--shot-warm` are for the
+   pilots. The formal runs pass none of them, so they take no screenshot and no debug
+   messages.
+4. **Trim after the cycles.** The harness always sends it after cycle 10, also when a
+   run has no post-trim cycles (the pilots with `--post-cycles 0` did not). The formal
+   sequence is the one in the design: the trim, then cycles 11 and 12.
+
+### Limits found in the pilots
+
+- No PipeWire daemon runs in the nested session: `kwin_screencast: Failed to connect
+  PipeWire context` is in each KWin log. So the preview helper (`latte-dock-ng-preview`)
+  cannot capture window thumbnails here. The helper is a separate process, which this
+  study does not measure. Hover is not in the design, so no preview is exercised.
+- With `--debug` (W4) the dock logs one startup warning, "Failed to register with host
+  portal …", because no portal service is on the private bus. Without `--debug` the dock
+  log has no warning line (W1, W5, A1 each have three lines). No fatal message, assertion
+  or coredump appeared in any pilot.

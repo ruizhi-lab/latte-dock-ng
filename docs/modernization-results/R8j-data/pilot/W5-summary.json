@@ -1,0 +1,37 @@
+{
+ "scenario": "W",
+ "reason": "completed",
+ "dock_status": 0,
+ "kwin_status": 15,
+ "coredumps_new": [],
+ "coredump_errors": [],
+ "signals_sent": 3,
+ "samples": 15,
+ "sampler_stopped": null,
+ "dock_binary": {
+  "path": "/data/tmp/r8j-20261110/pilot/W5/home/.local/bin/latte-dock-ng",
+  "sha256": "0bae01a0942656526ac3a4b9fdde0e0efd408af13478497fbf7583b9fb8e2fed"
+ },
+ "probe": {
+  "path": "/data/tmp/r8j-20261110/tools/r8j_trim.so",
+  "sha256": "d9c3b60c550bce59e4dc3b419b3bda7c4dd64eb33a76a3323ca5f4f25a745f58"
+ },
+ "probe_log_lines": 4,
+ "dock_log": {
+  "lines": 3,
+  "warning": 0,
+  "critical_or_error": 0,
+  "fatal": 0,
+  "assert": 0
+ },
+ "options": {
+  "warmup_s": 15.0,
+  "cycles": 1,
+  "post_cycles": 0,
+  "hold_s": 20.0,
+  "rest_s": 10.0,
+  "sample_s": 5.0,
+  "dock_arg": []
+ },
+ "ended": "2026-11-10T03:28:16"
+}
