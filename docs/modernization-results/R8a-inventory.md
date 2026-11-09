@@ -2,7 +2,7 @@
 
 Scope: the 229 test functions of `autotests/sourcecontracttest.cpp` as they stood at 6bdd43086, before any R8a conversion. Line ranges and source paths come from [contracts-before.md](R8a-tools/contracts-before.md), the output of [list_contracts.py](R8a-tools/list_contracts.py) on that file. Each row gives one class and a reason of at most 15 words. The reason for a converted row says what replaced it; the conversions and their mutation proofs are in [R8a.md](R8a.md).
 
-The 14 D rows were checked by mutation in [R8f](R8f.md): one was removed, four were trimmed and nine kept, with the classes they have now. The rows below are not edited; they record the classification at 6bdd43086.
+The 14 D rows were checked by mutation in [R8f](R8f.md): one was removed, four were trimmed and nine kept, with the classes they have now. Row 107, one of the kept rows, became a behavioural case in [R8g](R8g.md), and its contract was removed. The rows below are not edited; they record the classification at 6bdd43086.
 
 ## Class counts
 

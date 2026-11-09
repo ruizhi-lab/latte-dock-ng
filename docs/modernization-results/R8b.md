@@ -1,8 +1,7 @@
 # R8b: typed inputs for the containment debug window
 
-Status: Pending validation: the CI deep QML lint on the push, which compares the
-reviewed 6.11.1 baseline. The same-host lint A/B, the install and the user's desktop
-check of the window pass.
+Status: Complete. The same-host lint A/B, the install, the user's desktop check of the
+window and, on the push, the CI deep QML lint against the reviewed 6.11.1 baseline pass.
 
 Batch / slice and selected scope: R8b, QML typing of one component,
 `containment/package/contents/ui/debugger/DebugWindow.qml` (201 unqualified
@@ -148,9 +147,12 @@ and the baseline), and no C++ change, so clazy is not affected. The four presets
 (GCC and Clang, Debug and Release) built with nothing to recompile and 0 compiler
 warnings, and passed 61 of 61 tests each (run by a Haiku sub-agent).
 
+Build run 42557674581 on `4741deeab`, the push that carried the merge, passed all 23
+jobs. The deep QML lint step passed in the GCC and Clang, Debug and Release build jobs,
+so CI's qmllint found no identity beyond the reviewed baseline that this slice lowered.
+
 ## Not verified
 
 - No A/B against the old window on the desktop: the check shows that the new window
   reads live values, not that every row equals what the old window showed.
-- The CI deep lint against the reviewed 6.11.1 baseline: it runs on the push.
 - The Debian 13 container build: deferred by the user until the refactor is complete.
