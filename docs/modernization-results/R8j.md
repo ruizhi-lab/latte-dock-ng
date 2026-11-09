@@ -1,7 +1,10 @@
 # R8j: allocator retention or leak in the dock after desktop activity
 
-Status: In progress. The design in this section was fixed and committed before the first
-run of any cycle. The results and the verdict are added after the runs.
+Status: Complete (measurement). The design in this record was committed before the first
+run of any cycle (`2e7325481`). Under the rule fixed in advance, the idle control is "not
+reproduced", and the window and application cycles are "inconclusive": the trim returned
+34 % and 43 % of the growth, and the rule needs 50 % for "allocator retention". The leak
+branch is not met either. See [Results](#results).
 
 Batch / slice and selected scope: R8j, measurement only (plan row R8j, after R8d). No
 production source, CMake, qmllint or clang-tidy baseline changes. Deliverables: the tools
@@ -198,3 +201,187 @@ thresholds are unchanged.
   portal …", because no portal service is on the private bus. Without `--debug` the dock
   log has no warning line (W1, W5, A1 each have three lines). No fatal message, assertion
   or coredump appeared in any pilot.
+
+## Environment (checked on the host, 2026-11-10)
+
+| item | value | source |
+|---|---|---|
+| Host | Gentoo, kernel 6.18.62-gentoo-dist, 16 CPUs, 31 GiB RAM | `uname -r`, `nproc`, `free -g` |
+| GPU | NVIDIA GeForce GTX 1080 Ti, driver 580.178.04 | `nvidia-smi` |
+| Same host as the 12-hour series | yes: R8d's 12-hour record lists these CPUs, RAM, GPU, driver, Qt 6.11.3, KF6 6.31.0 and Plasma 6.7.6 | `R8d.md`, "Run and environment" |
+| Toolchain | GCC 16.2.1, CMake 4.3.4, glibc 2.43 (`mallinfo2` available), Python 3.14.10 | `gcc --version`, `cmake --version`, `ldd --version`, `python3 --version` |
+| Qt, KF6, Plasma, KWin | Qt 6.11.3, KF6 6.31.0, Plasma 6.7.6, KWin 6.7.6 | `libQt6Core.so.6.11.3`, `libKF6CoreAddons.so.6.31.0`, `libPlasma.so.6.7.6`, `kwin_wayland --version` |
+| Yama | `kernel.yama.ptrace_scope` = 1 | `/proc/sys/kernel/yama/ptrace_scope` |
+| Dock under test | `lattedock 1.2.59`, Release user-mode install of `main` at `04589b1e9`, in the scratch HOME `/data/tmp/r8j-20261110/home`; the binary's SHA-256 is `0bae01a0942656526ac3a4b9fdde0e0efd408af13478497fbf7583b9fb8e2fed` | `--version`, `CMakeCache.txt`, `sha256sum` |
+| Probe | `r8j_trim.so`, SHA-256 `d9c3b60c550bce59e4dc3b419b3bda7c4dd64eb33a76a3323ca5f4f25a745f58` | `sha256sum` |
+| Desktop dock | `/usr/bin/latte-dock-ng` (pid 310593 at the start of the runs) was never signalled, traced or restarted; the runs address only the nested dock's `Popen` pid | `ps`, `session.py` |
+| Missing tools | heaptrack and valgrind are not installed (not needed unless the verdict asks for them) | `command -v` |
+
+## Commands and exit status
+
+Commands are run from the worktree at `b9ef20acf` (the tools) unless noted. `$R8J` is
+`/data/tmp/r8j-20261110`.
+
+| step | command | exit |
+|---|---|---|
+| build and install | `env -u DBUS_SESSION_BUS_ADDRESS -u WAYLAND_DISPLAY -u DISPLAY HOME=$R8J/home TMPDIR=$R8J/tmp XDG_RUNTIME_DIR=$R8J/runtime XDG_CACHE_HOME=$R8J/home/.cache XDG_CONFIG_HOME=$R8J/home/.config XDG_DATA_HOME=$R8J/home/.local/share XDG_STATE_HOME=$R8J/home/.local/state bash install.sh --user --jobs 8 --build-dir $R8J/build-user Release` (log `$R8J/install.log`, last line `exit=0`) | 0 |
+| build warnings | the install log has 183 compile lines and no compiler warning. Its three lines with "warning" are "Strict compiler warnings enabled" (information), and two install messages that R8d's log has too: `dialog.h:25: PlasmaQuick::Dialog is used as base type but cannot be found`, printed during the automatic QML type registration of `lattecoreplugin` (a registration-tool message, not a compiler diagnostic; not investigated here), and `uninstall manifests not found` | (informational) |
+| probe | `gcc -std=gnu11 -O2 -Wall -Wextra -Werror -fPIC -shared -o $R8J/tools/r8j_trim.so r8j_trim.c -lpthread`; the same with `clang` (Clang 22) | 0, 0 |
+| unit tests | `python3 -I docs/modernization-results/R8j-tools/test_analyze_cycles.py` (17 tests) | 0 |
+| pilots | six sessions, listed under Pilot runs | not counted |
+| formal runs | `setsid -f nohup bash docs/modernization-results/R8j-tools/run_scenarios.sh $R8J $R8J/tools/r8j_trim.so $R8J/home` (status in `$R8J/runs/status.txt`) | see below |
+| formal I | `session.py --scenario I --out $R8J/runs/I --template $R8J/home --probe $R8J/tools/r8j_trim.so`, then `analyze_cycles.py $R8J/runs/I` (started 03:29:16, both done 03:50:10 +08:00) | session 0, analysis 0 |
+| formal W | the same with `--scenario W` (done 04:11:04) | session 0, analysis 0 |
+| formal A | the same with `--scenario A` (done 04:31:58) | session 0, analysis 0 |
+| run driver | `run_scenarios.sh` writes these lines to `$R8J/runs/status.txt`: `session I/W/A exit=0`, `analysis I/W/A exit=0`, `done at 2026-11-10T04:31:58+08:00` | 0 |
+| dock exit | each formal session sends SIGTERM to the nested dock; the dock exits with status 0 in all three (`summary.json`, `dock_status`); KWin's recorded status is 15; no new latte-dock-ng coredump (`coredumps_new` empty) | 0 |
+| data copy | `cp` of `samples.csv`, `events.jsonl`, `summary.json` and `session/` into `R8j-data/<scenario>/` | 0 |
+| analysis from the committed copy | `python3 -I docs/modernization-results/R8j-tools/analyze_cycles.py docs/modernization-results/R8j-data/<scenario>` for I, W and A; the `analysis.md` differs from the run directory's only in its `Run:` path line | 0, 0, 0 |
+| unit tests after the runs | `python3 -I docs/modernization-results/R8j-tools/test_analyze_cycles.py` | 0 |
+
+## Results
+
+Units: MiB of Pss_Anon, from `smaps_rollup`, and glibc's `mallinfo2` counters (`uordblks`
+in use, `fordblks` free). Every number is from the committed `R8j-data/<scenario>/analysis.json`
+and the sample file beside it.
+
+### Answer
+
+Under the rule fixed before the runs, the window and application cycles are
+**inconclusive**, and the idle control is **not reproduced**. The three runs show:
+
+1. The first window or application start after warm-up adds 4.9 to 5.2 MiB (cycle 1). It
+   is the only step of at least 1 MiB in ten identical cycles. Each later cycle moves the
+   level by about 1 MiB at most, and the later levels stay within a band of about 1.5 MiB
+   (120.0 to 121.8 MiB for both scenarios).
+2. Most of that growth is glibc's free memory. Free bytes rise by 4.2 to 4.4 MiB, while
+   in-use bytes rise by only 0.8 to 1.0 MiB. Between cycles 1 and 10 the in-use bytes change
+   by 0.5 MiB at most, rising and falling without a steady climb.
+3. `malloc_trim(0)` after cycle 10 returns 1.9 MiB (window) and 2.4 MiB (application),
+   which is 34 % and 43 % of the growth. The next start takes back 1.7 and 2.3 MiB within
+   one 5-second sample. The fixed rule's "allocator retention" needs at least 50 %, so it
+   does not decide, and neither does its leak branch (which needs in-use growth of at least
+   half the growth, and a trim return below a quarter).
+4. The baseline trim at the warm-up's end also returned 2.2 to 2.9 MiB, so the dock's
+   startup leaves free memory of the same kind.
+
+Reading: the data fit allocator retention of the first-use allocations, which are arenas and
+free chunks made by the first window or application start, kept and reused by the allocator.
+They do not fit live growth that accumulates per use within these cycles. This reading is not
+the verdict. The rule's verdict is "inconclusive", and telling the first-use free memory apart
+from live memory needs an attribution run (step 3 below). The step is also much smaller than
+the desktop's: 5 MiB here, once, against 27 to 66 MiB on the desktop in R8d's series.
+
+### Verdict by the fixed rule
+
+| scenario | G = A_10 - A_0 | TR = A_10 - T | TR / G | dU (in use) | dF (free) | cycles with a growth of at least 0.5 MiB | late growth, cycles 4 to 10 | cycles with a step of at least 1 MiB | verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| I, idle control | 0.00 | 0.00 | - | 0.00 | 0.00 | 0 | 0.00 | 0 | not reproduced |
+| W, window | 5.57 | 1.91 | 0.34 | 0.98 | 4.24 | 5 | -0.05 | 1 | inconclusive |
+| A, application | 5.54 | 2.36 | 0.43 | 0.81 | 4.40 | 5 | -0.26 | 1 | inconclusive |
+
+The rule's rows, in order: row 1 (G below 5 MiB) gives I. Rows 2 and 3 need TR of at least
+0.5 G, or TR below 0.25 G with in-use growth of at least 0.5 G. Neither W nor A meets them.
+Row 4 needs TR below 0.25 G, which neither meets. Row 5 gives W and A: "inconclusive".
+
+Supporting check, not part of the rule: after the trim, cycle 11 takes back 2.00 MiB (W)
+and 2.66 MiB (A), and cycle 12 takes back 1.41 and 1.96 MiB. Retention predicts at least
+half of the trim's return in cycle 11, and both scenarios meet it.
+
+### Per-cycle levels (Pss_Anon, MiB; step from the previous level in brackets)
+
+| cycle | I, idle | W, window | A, application |
+|---:|---:|---:|---:|
+| 0, post-trim baseline | 115.25 | 115.05 | 115.15 |
+| 1 | 115.25 [0.00] | 119.95 [+4.91] | 120.32 [+5.17] |
+| 2 | 115.25 [0.00] | 120.03 [+0.08] | 120.33 [+0.01] |
+| 3 | 115.25 [0.00] | 120.67 [+0.64] | 120.95 [+0.61] |
+| 4 | 115.25 [0.00] | 121.37 [+0.70] | 121.61 [+0.66] |
+| 5 | 115.25 [0.00] | 120.39 [-0.98] | 120.56 [-1.05] |
+| 6 | 115.25 [0.00] | 120.42 [+0.02] | 120.56 [0.00] |
+| 7 | 115.25 [0.00] | 120.96 [+0.55] | 121.16 [+0.59] |
+| 8 | 115.25 [0.00] | 121.59 [+0.62] | 121.77 [+0.62] |
+| 9 | 115.25 [0.00] | 120.62 [-0.97] | 120.69 [-1.09] |
+| 10 | 115.25 [0.00] | 120.62 [0.00] | 120.69 [0.00] |
+| after the trim T | 115.25 | 118.71 [-1.91] | 118.33 [-2.36] |
+| 11, post-trim | 115.25 | 120.71 [+2.00 from T] | 120.99 [+2.66 from T] |
+| 12, post-trim | 115.25 | 120.12 [+1.41 from T] | 120.29 [+1.96 from T] |
+
+The `dF` column in the verdict table is the free-byte growth from the baseline to cycle 10;
+the per-cycle counters are in each scenario's `analysis.md`.
+
+### glibc counters (MiB, `uordblks` in use / `fordblks` free)
+
+| point | I, idle | W, window | A, application |
+|---|---:|---:|---:|
+| post-trim baseline (after the warm-up trim) | 83.76 / 3.60 | 83.69 / 3.47 | 83.76 / 3.97 |
+| after cycle 1 | 83.76 / 3.60 | 84.15 / 8.22 | 84.34 / 8.60 |
+| after cycle 10 | 83.76 / 3.60 | 84.67 / 7.71 | 84.57 / 8.37 |
+| after the trim T | 83.76 / 3.60 | 84.67 / 6.30 | 84.57 / 7.09 |
+
+The trim leaves the in-use bytes unchanged and lowers the free bytes by 1.41 MiB (W) and
+1.28 MiB (A). Pss_Anon falls by 1.91 and 2.36 MiB, so its drop is larger than the free-byte
+drop by 0.5 and 1.1 MiB. These counters do not explain that difference.
+
+The samples around the trims confirm that the measurement windows were valid. The release
+is complete within 5 seconds, and the level stays flat until the next start: the window's
+run and the application's run both regrow within one sample after the next start
+(`samples.csv`, 5-second rows).
+
+Threads: the idle control peaks at 8 threads in every cycle. The window cycles peak at 10
+(9 in cycle 6). The application cycles peak at 10 in cycle 1 and at 8 from cycle 2.
+
+### Limits of this result
+
+- **Synthetic cycles.** The harness starts the windows and KCalc and holds them for 20 s.
+  No pointer, keyboard or hover reaches the dock, so the user's `hoverAction=PreviewWindows`
+  is not exercised. The nested session runs no PipeWire daemon, so no window thumbnail is
+  captured (`kwin_screencast: Failed to connect PipeWire context`). The preview helper is a
+  separate process that this study does not measure.
+- **Size and duration.** Ten identical cycles after twelve minutes of warm-up do not repeat
+  the desktop's hours of mixed use. The desktop's largest steps (27 to 66 MiB) are not
+  reproduced; the largest nested step is 5 MiB, and it occurs once.
+- **The trim's reach.** Both scenarios sit between the two trim thresholds (34 % and 43 %).
+  malloc_trim releases only the free space that covers whole pages. The free bytes it
+  leaves are interleaved with live chunks, so the 50 % line may be out of reach even for
+  pure retention. The rule was fixed on TR relative to G, and it is not changed here. A new
+  measure would need its own pre-registration.
+- **Attribution.** glibc's counters do not say which code made the first-use allocations.
+  heaptrack and valgrind are not installed here, and installing them needs root.
+- **Outside the malloc counters.** About 0.3 MiB of each scenario's growth (5.57 - 4.24 -
+  0.98 = 0.35 for W; 5.54 - 4.40 - 0.81 = 0.33 for A) is anonymous memory outside the glibc
+  arenas, such as the QML memfd heaps or thread stacks.
+- **One host and one configuration.** The host is the same as the 12-hour series, with a
+  fresh scratch HOME, the default layout, and the locale inherited from the desktop (the menus
+  are in Chinese). Levels differ from the desktop (idle 115 MiB here, 160 to 283 MiB on the
+  desktop); compare slopes and steps, not levels.
+- **Log levels.** Without `--debug` the dock writes no diagnostic lines for tasks, so the
+  task-list evidence is the screenshots of the pilots (`R8j-data/pilot/`), not a log.
+
+### Provenance
+
+- Tools and design: `R8j-tools/` and this record are committed in `2e7325481` (design, before
+  any run) and `b9ef20acf` (harness, probe, pilots and amendments, before the formal runs).
+  The formal runs used the `b9ef20acf` version of `session.py` and `run_scenarios.sh`.
+- Build: `main` at `04589b1e9`, Release, user-mode install into the scratch HOME; the
+  dock's binary SHA-256 is in the environment table.
+- Data: `R8j-data/I`, `R8j-data/W`, `R8j-data/A` (samples, events, summaries, the probe log,
+  the logs and the analysis), and `R8j-data/pilot/` (three screenshots and two summaries).
+  The analysis reproduces from the committed copies (command in the table above).
+
+### Next exact action
+
+The answer is open under the fixed rule, so the next step is step 3 of the plan, an
+attribution run with heaptrack or valgrind. Neither is installed, and installing either needs
+root, which is yours to run. For example, after finding the package name for your system:
+
+```bash
+emerge -s heaptrack
+```
+
+After it is installed, a heaptrack run of the same window cycle would show where cycle 1's
+free bytes were allocated. That run is an attribution, so it needs a new pre-registered
+design before it starts. A cheaper follow-up without root would trim after every cycle, to
+see whether the free bytes release at all; that also needs its own design. If you prefer,
+R8j can close here with the verdict "inconclusive; first-use retention likely" for the
+window and application cycles.

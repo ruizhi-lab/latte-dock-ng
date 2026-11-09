@@ -1,0 +1,213 @@
+{
+ "checks": {
+  "11": 2.66015625,
+  "12": 1.95703125,
+  "trim_release_mib": 2.35546875
+ },
+ "levels": {
+  "baseline_counters": {
+   "arena_mib": 87.7265625,
+   "fordblks_mib": 3.9705352783203125,
+   "hblkhd_mib": 18.046875,
+   "uordblks_mib": 83.75602722167969
+  },
+  "cycles": {
+   "1": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.60186767578125,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.33953857421875
+    },
+    "level": 120.3203125,
+    "peak": 120.3203125,
+    "rest_end": 785.01,
+    "start": 745.0,
+    "threads_peak": 10.0
+   },
+   "10": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.371627807617188,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.56977844238281
+    },
+    "level": 120.6875,
+    "peak": 120.69140625,
+    "rest_end": 1145.05,
+    "start": 1105.04,
+    "threads_peak": 8.0
+   },
+   "2": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.443023681640625,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.49838256835938
+    },
+    "level": 120.33203125,
+    "peak": 120.3359375,
+    "rest_end": 825.01,
+    "start": 785.01,
+    "threads_peak": 8.0
+   },
+   "3": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.3265380859375,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.6148681640625
+    },
+    "level": 120.9453125,
+    "peak": 120.9453125,
+    "rest_end": 865.01,
+    "start": 825.01,
+    "threads_peak": 8.0
+   },
+   "4": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.185211181640625,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.75619506835938
+    },
+    "level": 121.609375,
+    "peak": 121.609375,
+    "rest_end": 905.02,
+    "start": 865.01,
+    "threads_peak": 8.0
+   },
+   "5": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.4896240234375,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.4517822265625
+    },
+    "level": 120.55859375,
+    "peak": 120.5625,
+    "rest_end": 945.02,
+    "start": 905.02,
+    "threads_peak": 8.0
+   },
+   "6": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.366363525390625,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.57504272460938
+    },
+    "level": 120.5625,
+    "peak": 120.5625,
+    "rest_end": 985.03,
+    "start": 945.02,
+    "threads_peak": 8.0
+   },
+   "7": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.242523193359375,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.69888305664062
+    },
+    "level": 121.15625,
+    "peak": 121.15625,
+    "rest_end": 1025.03,
+    "start": 985.03,
+    "threads_peak": 8.0
+   },
+   "8": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.154830932617188,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.78657531738281
+    },
+    "level": 121.7734375,
+    "peak": 121.7734375,
+    "rest_end": 1065.04,
+    "start": 1025.03,
+    "threads_peak": 8.0
+   },
+   "9": {
+    "counters": {
+     "arena_mib": 92.94140625,
+     "fordblks_mib": 8.49188232421875,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.44952392578125
+    },
+    "level": 120.6875,
+    "peak": 120.69140625,
+    "rest_end": 1105.04,
+    "start": 1065.04,
+    "threads_peak": 8.0
+   }
+  },
+  "post_trim_baseline": 115.1484375,
+  "post_trim_cycles": {
+   "11": {
+    "counters": {
+     "arena_mib": 92.78515625,
+     "fordblks_mib": 8.092300415039062,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.69285583496094
+    },
+    "level": 120.9921875,
+    "peak": 120.9921875,
+    "rest_end": 1210.05,
+    "start": 1170.05,
+    "threads_peak": 8.0
+   },
+   "12": {
+    "counters": {
+     "arena_mib": 92.78515625,
+     "fordblks_mib": 8.398635864257812,
+     "hblkhd_mib": 18.046875,
+     "uordblks_mib": 84.38652038574219
+    },
+    "level": 120.2890625,
+    "peak": 121.3515625,
+    "rest_end": 1250.05,
+    "start": 1210.05,
+    "threads_peak": 8.0
+   }
+  },
+  "pre_trim": 118.07291666666667,
+  "trimmed": 118.33203125,
+  "trimmed_counters": {
+   "arena_mib": 91.66015625,
+   "fordblks_mib": 7.0903778076171875,
+   "hblkhd_mib": 18.046875,
+   "uordblks_mib": 84.56977844238281
+  }
+ },
+ "probe_lines": 17,
+ "probe_unparsed_lines": [],
+ "reason": "completed",
+ "run_dir": "docs/modernization-results/R8j-data/A",
+ "samples": 251,
+ "scenario": "A",
+ "signals": 15,
+ "verdict": {
+  "cycle_steps_mib": [
+   5.171875,
+   0.01171875,
+   0.61328125,
+   0.6640625,
+   -1.05078125,
+   0.00390625,
+   0.59375,
+   0.6171875,
+   -1.0859375,
+   0.0
+  ],
+  "cycles_growing": 5,
+  "cycles_with_step": 1,
+  "delta_free_mib": 4.401092529296875,
+  "delta_in_use_mib": 0.813751220703125,
+  "growth_mib": 5.5390625,
+  "label": "inconclusive",
+  "late_growth_mib": -0.2578125,
+  "trim_release_mib": 2.35546875
+ }
+}

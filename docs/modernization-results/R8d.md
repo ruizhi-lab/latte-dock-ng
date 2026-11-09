@@ -420,6 +420,11 @@ and not part of the verdict.
 
 ## Next exact action
 
+Result of slice R8j: see [R8j](R8j.md). Under the rule fixed in advance, the idle control
+is "not reproduced"; the window and application cycles are "inconclusive", because the
+trim returned 34 % and 43 % of their first-use growth, below the 50 % line for allocator
+retention. The numbered steps below were the plan that R8j ran; the result is above.
+
 R8d is complete as a measurement. The 12-hour series answers its question: the dock does
 not grow while it idles, and it holds memory after some desktop activity. Telling a leak
 from allocator retention is slice R8j in the [plan](../architecture-modernization-plan.md):

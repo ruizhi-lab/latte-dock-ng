@@ -1,0 +1,69 @@
+{"elapsed_s": 0.0, "wall": "2026-11-10T04:11:08", "event": "dock-start", "pid": 325634, "comm": "latte-dock-ng", "exe": "/data/tmp/r8j-20261110/runs/A/home/.local/bin/latte-dock-ng"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T04:23:08", "event": "warmup-end"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T04:23:08", "event": "signal", "name": "SIGUSR2", "index": 1, "label": "dump at warm-up end (before the trim)"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T04:23:08", "event": "signal", "name": "SIGUSR1", "index": 2, "label": "trim at warm-up end: baseline"}
+{"elapsed_s": 745.0, "wall": "2026-11-10T04:23:33", "event": "baseline-ready"}
+{"elapsed_s": 745.0, "wall": "2026-11-10T04:23:33", "event": "cycle-start", "cycle": 1}
+{"elapsed_s": 745.0, "wall": "2026-11-10T04:23:33", "event": "app-start", "cycle": 1, "kind": "application", "pid": 327177, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 765.01, "wall": "2026-11-10T04:23:53", "event": "app-stop", "cycle": 1, "pid": 327177, "status": -15}
+{"elapsed_s": 785.01, "wall": "2026-11-10T04:24:13", "event": "rest-end", "cycle": 1}
+{"elapsed_s": 785.01, "wall": "2026-11-10T04:24:13", "event": "signal", "name": "SIGUSR2", "index": 3, "label": "dump after cycle 1"}
+{"elapsed_s": 785.01, "wall": "2026-11-10T04:24:13", "event": "cycle-start", "cycle": 2}
+{"elapsed_s": 785.01, "wall": "2026-11-10T04:24:13", "event": "app-start", "cycle": 2, "kind": "application", "pid": 327282, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 805.01, "wall": "2026-11-10T04:24:33", "event": "app-stop", "cycle": 2, "pid": 327282, "status": -15}
+{"elapsed_s": 825.01, "wall": "2026-11-10T04:24:53", "event": "rest-end", "cycle": 2}
+{"elapsed_s": 825.01, "wall": "2026-11-10T04:24:53", "event": "signal", "name": "SIGUSR2", "index": 4, "label": "dump after cycle 2"}
+{"elapsed_s": 825.01, "wall": "2026-11-10T04:24:53", "event": "cycle-start", "cycle": 3}
+{"elapsed_s": 825.01, "wall": "2026-11-10T04:24:53", "event": "app-start", "cycle": 3, "kind": "application", "pid": 327370, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 845.01, "wall": "2026-11-10T04:25:13", "event": "app-stop", "cycle": 3, "pid": 327370, "status": -15}
+{"elapsed_s": 865.01, "wall": "2026-11-10T04:25:33", "event": "rest-end", "cycle": 3}
+{"elapsed_s": 865.01, "wall": "2026-11-10T04:25:33", "event": "signal", "name": "SIGUSR2", "index": 5, "label": "dump after cycle 3"}
+{"elapsed_s": 865.01, "wall": "2026-11-10T04:25:33", "event": "cycle-start", "cycle": 4}
+{"elapsed_s": 865.02, "wall": "2026-11-10T04:25:33", "event": "app-start", "cycle": 4, "kind": "application", "pid": 327480, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 885.02, "wall": "2026-11-10T04:25:53", "event": "app-stop", "cycle": 4, "pid": 327480, "status": -15}
+{"elapsed_s": 905.02, "wall": "2026-11-10T04:26:13", "event": "rest-end", "cycle": 4}
+{"elapsed_s": 905.02, "wall": "2026-11-10T04:26:13", "event": "signal", "name": "SIGUSR2", "index": 6, "label": "dump after cycle 4"}
+{"elapsed_s": 905.02, "wall": "2026-11-10T04:26:13", "event": "cycle-start", "cycle": 5}
+{"elapsed_s": 905.02, "wall": "2026-11-10T04:26:13", "event": "app-start", "cycle": 5, "kind": "application", "pid": 327582, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 925.02, "wall": "2026-11-10T04:26:33", "event": "app-stop", "cycle": 5, "pid": 327582, "status": -15}
+{"elapsed_s": 945.02, "wall": "2026-11-10T04:26:53", "event": "rest-end", "cycle": 5}
+{"elapsed_s": 945.02, "wall": "2026-11-10T04:26:53", "event": "signal", "name": "SIGUSR2", "index": 7, "label": "dump after cycle 5"}
+{"elapsed_s": 945.02, "wall": "2026-11-10T04:26:53", "event": "cycle-start", "cycle": 6}
+{"elapsed_s": 945.02, "wall": "2026-11-10T04:26:53", "event": "app-start", "cycle": 6, "kind": "application", "pid": 327659, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 965.03, "wall": "2026-11-10T04:27:13", "event": "app-stop", "cycle": 6, "pid": 327659, "status": -15}
+{"elapsed_s": 985.03, "wall": "2026-11-10T04:27:33", "event": "rest-end", "cycle": 6}
+{"elapsed_s": 985.03, "wall": "2026-11-10T04:27:33", "event": "signal", "name": "SIGUSR2", "index": 8, "label": "dump after cycle 6"}
+{"elapsed_s": 985.03, "wall": "2026-11-10T04:27:33", "event": "cycle-start", "cycle": 7}
+{"elapsed_s": 985.03, "wall": "2026-11-10T04:27:33", "event": "app-start", "cycle": 7, "kind": "application", "pid": 327757, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1005.03, "wall": "2026-11-10T04:27:53", "event": "app-stop", "cycle": 7, "pid": 327757, "status": -15}
+{"elapsed_s": 1025.03, "wall": "2026-11-10T04:28:13", "event": "rest-end", "cycle": 7}
+{"elapsed_s": 1025.03, "wall": "2026-11-10T04:28:13", "event": "signal", "name": "SIGUSR2", "index": 9, "label": "dump after cycle 7"}
+{"elapsed_s": 1025.03, "wall": "2026-11-10T04:28:13", "event": "cycle-start", "cycle": 8}
+{"elapsed_s": 1025.03, "wall": "2026-11-10T04:28:13", "event": "app-start", "cycle": 8, "kind": "application", "pid": 327858, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1045.04, "wall": "2026-11-10T04:28:33", "event": "app-stop", "cycle": 8, "pid": 327858, "status": -15}
+{"elapsed_s": 1065.04, "wall": "2026-11-10T04:28:53", "event": "rest-end", "cycle": 8}
+{"elapsed_s": 1065.04, "wall": "2026-11-10T04:28:53", "event": "signal", "name": "SIGUSR2", "index": 10, "label": "dump after cycle 8"}
+{"elapsed_s": 1065.04, "wall": "2026-11-10T04:28:53", "event": "cycle-start", "cycle": 9}
+{"elapsed_s": 1065.04, "wall": "2026-11-10T04:28:53", "event": "app-start", "cycle": 9, "kind": "application", "pid": 327943, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1085.04, "wall": "2026-11-10T04:29:13", "event": "app-stop", "cycle": 9, "pid": 327943, "status": -15}
+{"elapsed_s": 1105.04, "wall": "2026-11-10T04:29:33", "event": "rest-end", "cycle": 9}
+{"elapsed_s": 1105.04, "wall": "2026-11-10T04:29:33", "event": "signal", "name": "SIGUSR2", "index": 11, "label": "dump after cycle 9"}
+{"elapsed_s": 1105.04, "wall": "2026-11-10T04:29:33", "event": "cycle-start", "cycle": 10}
+{"elapsed_s": 1105.04, "wall": "2026-11-10T04:29:33", "event": "app-start", "cycle": 10, "kind": "application", "pid": 328040, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1125.04, "wall": "2026-11-10T04:29:53", "event": "app-stop", "cycle": 10, "pid": 328040, "status": -15}
+{"elapsed_s": 1145.05, "wall": "2026-11-10T04:30:13", "event": "rest-end", "cycle": 10}
+{"elapsed_s": 1145.05, "wall": "2026-11-10T04:30:13", "event": "signal", "name": "SIGUSR2", "index": 12, "label": "dump after cycle 10"}
+{"elapsed_s": 1145.05, "wall": "2026-11-10T04:30:13", "event": "signal", "name": "SIGUSR1", "index": 13, "label": "trim after the cycles"}
+{"elapsed_s": 1170.05, "wall": "2026-11-10T04:30:38", "event": "post-trim-ready"}
+{"elapsed_s": 1170.05, "wall": "2026-11-10T04:30:38", "event": "cycle-start", "cycle": 11}
+{"elapsed_s": 1170.05, "wall": "2026-11-10T04:30:38", "event": "app-start", "cycle": 11, "kind": "application", "pid": 328198, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1190.05, "wall": "2026-11-10T04:30:58", "event": "app-stop", "cycle": 11, "pid": 328198, "status": -15}
+{"elapsed_s": 1210.05, "wall": "2026-11-10T04:31:18", "event": "rest-end", "cycle": 11}
+{"elapsed_s": 1210.05, "wall": "2026-11-10T04:31:18", "event": "signal", "name": "SIGUSR2", "index": 14, "label": "dump after cycle 11"}
+{"elapsed_s": 1210.05, "wall": "2026-11-10T04:31:18", "event": "cycle-start", "cycle": 12}
+{"elapsed_s": 1210.05, "wall": "2026-11-10T04:31:18", "event": "app-start", "cycle": 12, "kind": "application", "pid": 328307, "command": "/usr/bin/kcalc"}
+{"elapsed_s": 1230.05, "wall": "2026-11-10T04:31:38", "event": "app-stop", "cycle": 12, "pid": 328307, "status": -15}
+{"elapsed_s": 1250.05, "wall": "2026-11-10T04:31:58", "event": "rest-end", "cycle": 12}
+{"elapsed_s": 1250.05, "wall": "2026-11-10T04:31:58", "event": "signal", "name": "SIGUSR2", "index": 15, "label": "dump after cycle 12"}
+{"elapsed_s": 1250.05, "wall": "2026-11-10T04:31:58", "event": "timeline-end"}
+{"elapsed_s": 1250.17, "wall": "2026-11-10T04:31:58", "event": "dock-exit", "status": 0}

@@ -1,0 +1,17 @@
+1794255788.424 dump seq=1 rc=-1 uordblks=87824560 fordblks=6391632 hblkhd=18923520 arena=94216192 keepcost=2228768 ordblks=785
+1794255788.424 trim-before seq=2 rc=-1 uordblks=87824560 fordblks=6391632 hblkhd=18923520 arena=94216192 keepcost=2228768 ordblks=785
+1794255788.425 trim-after seq=2 rc=1 uordblks=87824560 fordblks=4163408 hblkhd=18923520 arena=91987968 keepcost=544 ordblks=785
+1794255853.429 dump seq=3 rc=-1 uordblks=88436416 fordblks=9019712 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=2429
+1794255893.433 dump seq=4 rc=-1 uordblks=88602976 fordblks=8853152 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=2798
+1794255933.437 dump seq=5 rc=-1 uordblks=88725120 fordblks=8731008 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=2935
+1794255973.442 dump seq=6 rc=-1 uordblks=88873312 fordblks=8582816 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3131
+1794256013.446 dump seq=7 rc=-1 uordblks=88554112 fordblks=8902016 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3162
+1794256053.450 dump seq=8 rc=-1 uordblks=88683360 fordblks=8772768 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3030
+1794256093.455 dump seq=9 rc=-1 uordblks=88813216 fordblks=8642912 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3199
+1794256133.459 dump seq=10 rc=-1 uordblks=88905168 fordblks=8550960 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3403
+1794256173.464 dump seq=11 rc=-1 uordblks=88551744 fordblks=8904384 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3170
+1794256213.468 dump seq=12 rc=-1 uordblks=88677840 fordblks=8778288 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3214
+1794256213.468 trim-before seq=13 rc=-1 uordblks=88677840 fordblks=8778288 hblkhd=18923520 arena=97456128 keepcost=1347168 ordblks=3214
+1794256213.468 trim-after seq=13 rc=1 uordblks=88677840 fordblks=7434800 hblkhd=18923520 arena=96112640 keepcost=3680 ordblks=3214
+1794256278.473 dump seq=14 rc=-1 uordblks=88806896 fordblks=8485392 hblkhd=18923520 arena=97292288 keepcost=1183328 ordblks=3347
+1794256318.477 dump seq=15 rc=-1 uordblks=88485680 fordblks=8806608 hblkhd=18923520 arena=97292288 keepcost=1183328 ordblks=3426
