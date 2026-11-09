@@ -150,11 +150,16 @@ def enabled_checks(clang_tidy: str, config: str) -> list[str]:
     return names
 
 
-def analyze_unit(clang_tidy: str, database: Path, source: Path, config: str, timeout: int) -> UnitResult:
+def analyze_unit(
+    clang_tidy: str, database: Path, source: Path, config: str, timeout: int, profile: Path | None = None
+) -> UnitResult:
     result = UnitResult(source=str(source))
     # -Wno-error keeps the strict-warning flags of the database from turning compiler
     # warnings into errors; the checks' own diagnostics are not affected.
-    command = [clang_tidy, "-p", str(database), f"--config={config}", "--extra-arg=-Wno-error", "--quiet", str(source)]
+    command = [clang_tidy, "-p", str(database), f"--config={config}", "--extra-arg=-Wno-error", "--quiet"]
+    if profile is not None:
+        command += ["--enable-check-profile", f"--store-check-profile={profile}"]
+    command.append(str(source))
     start = time.monotonic()
     try:
         completed = subprocess.run(command, check=False, text=True, capture_output=True, timeout=timeout)
@@ -169,15 +174,35 @@ def analyze_unit(clang_tidy: str, database: Path, source: Path, config: str, tim
     return result
 
 
-def analyze(clang_tidy: str, entries: list[dict], unit_path, config: str, jobs: int, timeout: int) -> list[UnitResult]:
+def analyze(
+    clang_tidy: str, entries: list[dict], unit_path, config: str, jobs: int, timeout: int, profile: Path | None = None
+) -> list[UnitResult]:
     """One clang-tidy process per selected compile command, from a database that holds only those."""
     with tempfile.TemporaryDirectory(prefix="latte-tidy-db-") as database:
         Path(database, "compile_commands.json").write_text(json.dumps(entries), encoding="utf-8")
         with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
             futures = [
-                pool.submit(analyze_unit, clang_tidy, Path(database), unit_path(entry), config, timeout) for entry in entries
+                pool.submit(analyze_unit, clang_tidy, Path(database), unit_path(entry), config, timeout, profile)
+                for entry in entries
             ]
             return [future.result() for future in futures]
+
+
+def profile_seconds(directory: Path) -> tuple[dict[str, float], dict[str, float]]:
+    """Wall seconds per check and per source from clang-tidy's --store-check-profile files.
+
+    The static analyzer runs outside the check framework and is not in the profile, so
+    a run of clang-analyzer-* checks shows it only in the total time of each unit.
+    """
+    per_check: dict[str, float] = defaultdict(float)
+    per_source: dict[str, float] = defaultdict(float)
+    for path in sorted(directory.glob("*.json")):
+        document = json.loads(path.read_text(encoding="utf-8"))
+        for key, value in document.get("profile", {}).items():
+            if key.startswith("time.clang-tidy.") and key.endswith(".wall"):
+                per_check[key[len("time.clang-tidy.") : -len(".wall")]] += value
+                per_source[os.path.realpath(document["file"])] += value
+    return dict(per_check), dict(per_source)
 
 
 def per_check_counts(checks: list[str], findings: list[Finding]) -> dict[str, dict[str, int]]:
@@ -210,6 +235,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--clang-tidy", default="clang-tidy", help="clang-tidy executable")
     parser.add_argument("--report", type=Path, help="write the findings as JSON (.json or .json.gz)")
     parser.add_argument("--summary", type=Path, help="write per-check counts as TSV")
+    parser.add_argument("--check-profile", type=Path, help="store clang-tidy's per-check timing in this new directory")
     args = parser.parse_args(argv)
     if args.jobs < 1 or args.timeout < 1:
         parser.error("--jobs and --timeout must be at least 1")
@@ -222,6 +248,11 @@ def main(argv: list[str] | None = None) -> int:
     database = build_dir / "compile_commands.json"
     if not database.is_file():
         parser.error(f"compilation database not found: {database}")
+    profile = args.check_profile.resolve() if args.check_profile else None
+    if profile is not None:
+        if profile.exists():
+            parser.error(f"--check-profile directory already exists: {profile}")
+        profile.mkdir(parents=True)
 
     selection = load_source_selection(source_root)
     if Path(selection.ROOT).resolve() != source_root:
@@ -242,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     start = time.monotonic()
-    results = analyze(clang_tidy, selected, selection.unit_path, config, args.jobs, args.timeout)
+    results = analyze(clang_tidy, selected, selection.unit_path, config, args.jobs, args.timeout, profile)
     elapsed = time.monotonic() - start
 
     raw = [finding for result in results for finding in result.findings]
@@ -261,6 +292,14 @@ def main(argv: list[str] | None = None) -> int:
         f"{len(ignored)} in generated or test code not counted; {elapsed:.0f} s with {args.jobs} jobs"
     )
 
+    check_seconds: dict[str, float] = {}
+    source_check_seconds: dict[str, float] = {}
+    if profile is not None:
+        check_seconds, source_check_seconds = profile_seconds(profile)
+        print(f"check profile: {sum(check_seconds.values()):.0f} s in {len(check_seconds)} checks; the most expensive:")
+        for name, seconds in sorted(check_seconds.items(), key=lambda pair: -pair[1])[:15]:
+            print(f"  {name:60} {seconds:8.1f} s")
+
     if args.summary:
         lines = ["check\tfindings\tfiles"] + [f"{name}\t{value['findings']}\t{value['files']}" for name, value in sorted(counts.items())]
         args.summary.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -278,6 +317,10 @@ def main(argv: list[str] | None = None) -> int:
                 "unit_seconds": {selection.relative(result.source): round(result.seconds, 1) for result in results},
                 "failed_sources": {selection.relative(result.source): result.problems[:5] for result in failed},
                 "per_check": counts,
+                "check_wall_s": {name: round(value, 3) for name, value in sorted(check_seconds.items())},
+                "unit_check_wall_s": {
+                    selection.relative(name): round(value, 2) for name, value in sorted(source_check_seconds.items())
+                },
                 "ignored_findings": len(ignored),
                 "findings": [
                     {

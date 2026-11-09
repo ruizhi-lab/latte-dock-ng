@@ -97,6 +97,18 @@ class CountTest(unittest.TestCase):
         self.assertEqual(config["HeaderFilterRegex"], "^/data/latte\\-dock\\-ng/")
 
 
+class ProfileTest(unittest.TestCase):
+    def test_wall_times_are_summed_per_check_and_source(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="latte-tidy-profile-") as temp:
+            for name, file, wall in (("1-a.cpp.json", "/src/app/a.cpp", 0.5), ("2-b.cpp.json", "/src/app/b.cpp", 0.25)):
+                Path(temp, name).write_text(json.dumps({"file": file, "timestamp": "t", "profile": {
+                    "time.clang-tidy.misc-x.wall": wall, "time.clang-tidy.misc-x.user": 9.0,
+                    "time.clang-tidy.bugprone-y.wall": 1.0}}))
+            per_check, per_source = tidy_inventory.profile_seconds(Path(temp))
+        self.assertEqual(per_check, {"misc-x": 0.75, "bugprone-y": 2.0})
+        self.assertEqual(per_source, {"/src/app/a.cpp": 1.5, "/src/app/b.cpp": 1.25})
+
+
 @unittest.skipUnless(shutil.which("clang-tidy"), "clang-tidy is not in PATH")
 class EndToEndTest(unittest.TestCase):
     def test_inventory_of_a_fake_checkout(self) -> None:
@@ -134,7 +146,8 @@ class EndToEndTest(unittest.TestCase):
             with contextlib.redirect_stdout(output):
                 status = tidy_inventory.main(
                     ["--build-dir", str(build), "--source-root", str(root), "--checks=-*,modernize-use-nullptr",
-                     "--jobs", "2", "--report", str(report), "--summary", str(summary)]
+                     "--jobs", "2", "--report", str(report), "--summary", str(summary),
+                     "--check-profile", str(Path(temp, "profile"))]
                 )
 
             self.assertEqual(status, 0, output.getvalue())
@@ -150,6 +163,9 @@ class EndToEndTest(unittest.TestCase):
             self.assertEqual(document["per_check"], {"modernize-use-nullptr": {"findings": 2, "files": 2}})
             self.assertEqual(document["failed_sources"], {})
             self.assertEqual(summary.read_text().splitlines(), ["check\tfindings\tfiles", "modernize-use-nullptr\t2\t2"])
+            # The profile names the check that ran, for both selected sources.
+            self.assertEqual(list(document["check_wall_s"]), ["modernize-use-nullptr"])
+            self.assertEqual(sorted(document["unit_check_wall_s"]), ["app/one.cpp", "app/two.cpp"])
 
 
 if __name__ == "__main__":
