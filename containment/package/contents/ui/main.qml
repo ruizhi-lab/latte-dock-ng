@@ -23,7 +23,6 @@ import "applet" as Applet
 import "colorizer" as Colorizer
 import "layouts" as Layouts
 import "./background" as Background
-import "./debugger" as Debugger
 
 ContainmentItem {
     id: root
@@ -1264,8 +1263,30 @@ ContainmentItem {
     ///////////////BEGIN UI elements
 
     Loader{
+        id: debugWindowLoader
         active: debug.windowEnabled
-        sourceComponent: Debugger.DebugWindow{}
+
+        //! The debug window (--with-window) gets its inputs as initial
+        //! properties instead of reading this file's names from its context.
+        //! They are set here and not in a nested DebugWindow{} declaration:
+        //! this file is not ComponentBehavior: Bound, so an id of this file used
+        //! inside a nested component is an unqualified access for qmllint. Each
+        //! input is a child of root that lives as long as root, so a value stays
+        //! current; DebugWindow binds latteView and plasmoid through
+        //! containmentRoot. While the loader is inactive, setSource() only keeps
+        //! the source and the properties.
+        Component.onCompleted: debugWindowLoader.setSource(Qt.resolvedUrl("debugger/DebugWindow.qml"), {
+            containmentRoot: root,
+            layouter: root.layouter,
+            animations: root.animations,
+            autosize: root.autosize,
+            background: root.background,
+            indexer: root.indexer,
+            layoutsContainer: root.layoutsContainerItem,
+            metrics: root.metrics,
+            parabolic: root.parabolic,
+            visibilityManager: root.maskManager
+        })
     }
 
     Loader{

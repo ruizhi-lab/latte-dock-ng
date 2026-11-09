@@ -1639,13 +1639,6 @@
       "severity": "warning"
     },
     {
-      "category": "unqualified",
-      "count": 201,
-      "file": "containment/package/contents/ui/debugger/DebugWindow.qml",
-      "message": "Unqualified access",
-      "severity": "warning"
-    },
-    {
       "category": "missing-property",
       "count": 8,
       "file": "containment/package/contents/ui/layouts/AppletsContainer.qml",
