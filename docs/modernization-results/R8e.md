@@ -272,6 +272,35 @@ corrected and the run above passed.
   tests, not the clazy 49-check gate or the deep qmllint gate.
 - Comparison tool unit tests: 13 of 13 passed (not registered in CTest).
 
+## Follow-up: stale copies in reused build trees (found 2026-11-09)
+
+Part A removed the three `configure_file()` copies from the root `CMakeLists.txt`, but
+nothing deleted the copies that earlier configures had written to
+`<build>/containmentactions/contextmenu/`. `CMAKE_INCLUDE_CURRENT_DIR`, which
+KDECMakeSettings turns on, puts that binary directory first on the plugin's include
+path (the generated `flags.make` lists it before `app/settings/generic` and `app/data`),
+so a copy shadows the real `contextmenudata.h` and `generictools.h`.
+
+- Found when a sub-agent rebuilt this checkout's `build/modernization/gcc-debug`, last
+  configured on 2026-10-25: `menu.cpp` failed with "no match for call to
+  '(const QString) ()'" at `menu.cpp:115`, because the copy from that date still declares
+  `static const QString ADDVIEWACTION` instead of the accessor that 50ba3074b
+  introduced. The default `install.sh --user` tree (`build-user-<user>`, here last
+  configured on 2026-08-05) and the other three `build/modernization/*` trees hold
+  copies of the same age. Fresh trees, CI and package builds are not affected. Trees
+  configured between 50ba3074b and Part A compile, but the plugin's `menu.cpp` reads the
+  copy, so the next change of either header would compile it against old declarations.
+- Fix: the plugin's `CMakeLists.txt` removes the three copies with `file(REMOVE)` at
+  configure time, with the reason and the condition for dropping it beside the rule.
+- Red/green on one fresh GCC Debug tree of the fix branch: without the fix, copying the
+  three files from `build-user-ruizhi` into the plugin's binary directory and
+  recompiling `menu.cpp` fails (exit 2, 82 ` error: ` lines, the same message); with the
+  fix applied, the build re-runs CMake, the three copies are gone, `menu.cpp` recompiles
+  and the plugin builds (exit 0, 0 warnings). The full GCC Debug build of the branch has
+  0 warnings and passes 61 of 61 tests. A first attempt planted the copies after
+  `menu.cpp` was compiled, so nothing recompiled and it proved nothing; that run is not
+  counted.
+
 ## Not verified
 
 - Release presets (`gcc-release`, `clang-release`) and `gcc-asan-ubsan`: not built or

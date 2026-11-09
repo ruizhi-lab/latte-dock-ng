@@ -19,6 +19,21 @@ target_include_directories(plasma_containmentactions_lattecontextmenu PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../../app/data
 )
 
+# Until 18489612e the root CMakeLists.txt copied these three app files into this
+# binary directory with configure_file(). Nothing writes them any more, but a
+# reused build tree keeps the old copies, and CMAKE_INCLUDE_CURRENT_DIR (set by
+# KDECMakeSettings) puts this directory ahead of the app directories above, so a
+# copy shadows the real header. In a tree configured before 50ba3074b, menu.cpp
+# no longer compiles; in a newer one the plugin builds against the old
+# declarations as soon as either header changes. Keep this while build trees
+# from before 18489612e can be reused, for example install.sh's default
+# build-user-<user> directory.
+file(REMOVE
+    "${CMAKE_CURRENT_BINARY_DIR}/contextmenudata.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/generictools.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/generictools.cpp"
+)
+
 # Plasma's PluginLoader looks up containmentactions plugins by relative path
 # "plasma/containmentactions/<plugin id>", and KF6 derives the plugin id from
 # the file name, so the installed .so must be named org.kde.latte.contextmenu,
