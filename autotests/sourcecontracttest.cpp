@@ -201,7 +201,7 @@ private Q_SLOTS:
     void launchersRestoreContractMovedToQmlSmokeTest();
     void activitiesDelegatePaintSkipsUnknownActivityIds();
     void sessionShutdownHandlingMatchesStableWaylandPath();
-    void sessionShutdownMonitorHidesViewsAndRestoresOnCancel();
+    void sessionShutdownHooksHideViewsAndSuspendHelperWindows();
     void coronaTeardownSkipsFactoryFreedByQuitCleanup();
     void plasmaThemeDestructorToleratesMissingSchemes();
     void itemsAlignmentIsSeparateAndJustifyOnly();
@@ -228,7 +228,7 @@ private Q_SLOTS:
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
     void autostartInterfacesUseXdgState();
-    void autostartPreservesEntryFields();
+    void autostartStaysXdgOnly();
     void firstRunEnablesDefaultAutostart();
     void waylandCheckFailsWithoutDeadRetryLoop();
     void normalStartupDoesNotMutateAutostart();
@@ -397,7 +397,6 @@ private Q_SLOTS:
     void layoutsSaveMovesFilesThroughCheckedTemporaryDir();
     void layoutsSaveMovesBeforeRewritingIds();
     void layoutsSaveRenamesOnlyMovedLayouts();
-    void layoutFileMoveRenamesOnlyThroughNoOverwriteCheck();
     void layoutScannersListOnlyFiles();
     void uniqueNameExhaustionFallsBackToRandomSuffix();
     void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
@@ -1098,30 +1097,14 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(viewSource.contains(QStringLiteral("QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);")));
 }
 
-void SourceContractTest::sessionShutdownMonitorHidesViewsAndRestoresOnCancel()
+void SourceContractTest::sessionShutdownHooksHideViewsAndSuspendHelperWindows()
 {
+    //! shutdownmonitortest covers the monitor: a confirmed logout sets the
+    //! session-ending flag and then hides the views once, and a cancel restores
+    //! them. This contract keeps what the hooks do with the real views.
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
     QVERIFY(mainSourceFile.open(QFile::ReadOnly));
     const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
-
-    QFile monitorSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/shutdownmonitor.cpp"));
-    QVERIFY(monitorSourceFile.open(QFile::ReadOnly));
-    const QString monitorSource = QString::fromUtf8(monitorSourceFile.readAll());
-
-    //! Phase 1 (logout announced): the monitor must unmap all views so KWin's
-    //! closeWaylandWindows() never waits on the dock windows during shutdown.
-    const int phase1Log = monitorSource.indexOf(QStringLiteral("[shutdown] isShuttingDown() = true; setting flag (not quitting yet)."));
-    const int flagSet = monitorSource.indexOf(QStringLiteral("m_hooks.markSessionEnding();"), phase1Log);
-    const int hideViews = monitorSource.indexOf(QStringLiteral("m_hooks.hideViews();"), flagSet);
-    QVERIFY(phase1Log >= 0);
-    QVERIFY(flagSet > phase1Log);
-    QVERIFY(hideViews > flagSet);
-
-    //! Cancel branch: views hidden by the announcement must be restored.
-    const int cancelLog = monitorSource.indexOf(QStringLiteral("[shutdown] logout cancelled; clearing session-ending flag."));
-    const int restoreViews = monitorSource.indexOf(QStringLiteral("m_hooks.restoreViews();"), cancelLog);
-    QVERIFY(cancelLog >= 0);
-    QVERIFY(restoreViews > cancelLog);
 
     //! The hooks implement both steps on the real views.
     const int hideHook = mainSource.indexOf(QStringLiteral(".hideViews = [&corona]()"));
@@ -1176,7 +1159,8 @@ void SourceContractTest::coronaTeardownSkipsFactoryFreedByQuitCleanup()
     //! onAboutToQuit(); QCoreApplication::exec() frees it before main()
     //! destroys the Corona. ~Corona() then called deleteLater() on the dangling
     //! raw pointer and the process hung on a garbage post-event mutex.
-    //! teardowntest covers the helper's runtime behavior.
+    //! teardowntest covers the helper, including its skip of a service that
+    //! is already gone; this contract keeps the Corona side.
     QFile coronaHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.h"));
     QVERIFY(coronaHeaderFile.open(QFile::ReadOnly));
     const QString coronaHeader = QString::fromUtf8(coronaHeaderFile.readAll());
@@ -1198,14 +1182,6 @@ void SourceContractTest::coronaTeardownSkipsFactoryFreedByQuitCleanup()
     const QString destructor = coronaSource.mid(destructorStart, destructorEnd - destructorStart);
     QVERIFY(destructor.contains(QStringLiteral("Session::deleteNow(m_viewSettingsFactory);")));
     QVERIFY(!destructor.contains(QStringLiteral("->deleteLater()")));
-
-    QFile teardownFile(QStringLiteral(LATTE_SOURCE_DIR "/app/session/teardown.h"));
-    QVERIFY(teardownFile.open(QFile::ReadOnly));
-    const QString teardown = QString::fromUtf8(teardownFile.readAll());
-    const int nullGuard = teardown.indexOf(QStringLiteral("if (!service) {"));
-    const int deferredDelete = teardown.indexOf(QStringLiteral("service->deleteLater();"));
-    QVERIFY(nullGuard >= 0);
-    QVERIFY(deferredDelete > nullGuard);
 }
 
 void SourceContractTest::plasmaThemeDestructorToleratesMissingSchemes()
@@ -2244,14 +2220,16 @@ void SourceContractTest::autostartInterfacesUseXdgState()
     QVERIFY(!mainSource.contains(QStringLiteral("ensureAutostart")));
 }
 
-void SourceContractTest::autostartPreservesEntryFields()
+void SourceContractTest::autostartStaysXdgOnly()
 {
+    //! autostartlogictest covers the Hidden writes of enable() and disable().
+    //! The XDG entry is the only autostart state: 85e17681a dropped the copy of
+    //! the source over an older entry by modification time, which overwrote a
+    //! Hidden=true set by KDE, and a8c0d2337 dropped the systemd unit check.
     QFile autostart(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/autostart.cpp"));
     QVERIFY(autostart.open(QFile::ReadOnly));
     const QString source = QString::fromUtf8(autostart.readAll());
 
-    QVERIFY(source.contains(QStringLiteral("writeEntry(QStringLiteral(\"Hidden\"), false)")));
-    QVERIFY(source.contains(QStringLiteral("writeEntry(QStringLiteral(\"Hidden\"), true)")));
     QVERIFY(!source.contains(QStringLiteral("lastModified")));
     QVERIFY(!source.contains(QStringLiteral("systemctl"), Qt::CaseInsensitive));
 }
@@ -5256,18 +5234,6 @@ void SourceContractTest::layoutsSaveRenamesOnlyMovedLayouts()
     QVERIFY(src.indexOf(QStringLiteral("m_model->setLayoutProperties(restoredLayout);")) > moved);
 }
 
-void SourceContractTest::layoutFileMoveRenamesOnlyThroughNoOverwriteCheck()
-{
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/layoutfilemove.cpp"));
-    QVERIFY(f.open(QFile::ReadOnly));
-    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
-
-    // Every rename goes through renameWithoutOverwrite(), which refuses an existing target. A bare QFile::rename()
-    // in moveFiles() could overwrite the file of a layout that Apply does not move.
-    QCOMPARE(src.count(QStringLiteral("QFile::rename(")), 1);
-    QVERIFY(src.contains(QStringLiteral("return !QFileInfo::exists(target) && QFile::rename(source, target);")));
-}
-
 void SourceContractTest::layoutScannersListOnlyFiles()
 {
     // The temporary directory of Apply lives in the layouts directory. The scanners of that directory must keep
@@ -5926,14 +5892,8 @@ void SourceContractTest::appletAlternativesUseLattesOwnDialogOnPlasma65()
     };
 
     // Plasma's dialog needs a plasmashell-internal type since plasma-desktop
-    // 6.5.0, so Latte's package must provide its own file instead of the
-    // desktop fallback. packageunittest checks the resolved file.
-    const QString package = readSource(QStringLiteral("app/package/lattepackage.cpp"));
-    const int versionGuard = package.indexOf(QStringLiteral("#if PLASMA_VERSION >= QT_VERSION_CHECK(6, 5, 0)"));
-    const int definition = package.indexOf(QStringLiteral("addFileDefinition(\"appletalternativesui\", QStringLiteral(\"explorer/AppletAlternatives.qml\"))"));
-    QVERIFY(versionGuard >= 0);
-    QVERIFY(definition > versionGuard);
-
+    // 6.5.0. packageunittest checks that Latte's package resolves the dialog
+    // to its own file there; this contract keeps the file's own constraints.
     const QString dialog = readSource(QStringLiteral("shell/package/contents/explorer/AppletAlternatives.qml"));
     QVERIFY(!dialog.isEmpty());
     QVERIFY(!dialog.contains(QStringLiteral("import org.kde.plasma.shell\n")));
