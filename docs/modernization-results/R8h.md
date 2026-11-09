@@ -1,8 +1,8 @@
 # R8h: ContainmentInterface uses Latte::PluginId for its separator ids
 
-Status: Pending validation: the user's desktop check of the boundary separators, which
-has to wait until the R8d 12-hour series ends (about 23:59 on 2026-11-09). The contract
-mutations, the GCC Debug build and tests and the clazy gate pass.
+Status: Complete. The contract mutations pass on the branch. On the merge commit
+`ed5d0b3c3` the four presets, the clang-tidy and clazy gates and the user's desktop check of
+the boundary separators (2026-11-10) pass.
 
 Batch / slice and selected scope: R8h, the first follow-up of the
 [R8f record](R8f.md). `app/view/containmentinterface.cpp` drops its own copies of the
@@ -15,7 +15,8 @@ Source baseline and start HEAD: `83a03c2c5` (local `main`). Branch
 `claude/r8h-containment-plugin-ids`. It reuses the worktree
 `.claude/worktrees/r8e-stale-copies`: the R8e follow-up branch there is merged, and its
 GCC Debug tree saved a full build. Commit `e070d4d66` and the commit that adds this
-record.
+record. Merged as `ed5d0b3c3` on top of `main` `e769cc2c2` and the R8d record commit
+`dc423e091` (documents only), in the worktree `.claude/worktrees/r8d-desktop-12h`.
 
 ## The copies
 
@@ -84,13 +85,24 @@ After the restore the contract passes again and the worktree is clean.
   the executable's, so it is in the analysed set. The export has no `build/` directory,
   so the sub-agent created an empty one for the read-only mount to take the build tree.
 
-## Desktop check (after the R8d series ends)
+### The merged tree (`ed5d0b3c3`)
 
-Not run yet. Restarting the dock ends the R8d 12-hour desktop series, which runs until
-about 23:59 on 2026-11-09, and installing a user-mode build while the packaged dock runs
-would let it load the new QML packages from `~/.local` later in the series. After the
-series: `bash install.sh --user Debug` from this worktree, start the dock as AGENTS.md
-describes, and check on a horizontal dock whose task manager has pinned applications:
+Run by Haiku sub-agents; the main session checked their logs.
+
+| Check | Result |
+|---|---|
+| `cmake --preset P`, `cmake --build --preset P -j8`, `ctest --preset P` for `gcc-debug`, `clang-debug`, `gcc-release` and `clang-release` (GCC 16.2.1, Clang 22.1.8; fresh trees, `TMPDIR` in the worktree's `build/tmp`) | Exit 0 each; 0 compiler `warning:` lines and 0 `CMake Warning`; 61/61 tests passed in each |
+| `latte-r2c-clazy:noble`, `git archive` export of `ed5d0b3c3` with a fresh build tree: `cmake --preset clang-debug -DVERSION=1.2.59`, `cmake --build --preset clang-debug -j6` | Exit 0; 0 compiler warnings |
+| Same container: `scripts/test-clang-tidy.py --jobs 4` (the R8i gate, clang-tidy 18.1.3) | Exit 0: 155 production sources, both negative fixtures rejected, no findings |
+| Same container: `scripts/test-clazy.py --jobs 6` (clazy 1.17, LLVM 19.1.1) | Exit 0: 155 production sources, 49 negative fixtures rejected, no findings from 49 checks |
+| `bash install.sh --user --jobs 8 Debug` | Exit 0; 0 compiler warnings; the running dock's build ID `36e61da38f923cb00a52df1fcfc2506ea4450fb5` equals the build output's |
+
+## Desktop check (2026-11-10)
+
+It waited for the R8d 12-hour desktop series to end, because restarting the dock would have
+ended the series. The user-mode Debug install of `ed5d0b3c3` was started as AGENTS.md
+describes (pid 264714, 00:24:38, `--replace --debug`), and the user checked a horizontal dock
+whose task manager has pinned applications:
 
 1. With a widget directly left of the task icons: right-click the left-most pinned task
    icon → 添加 左侧分隔线. A separator appears between the widget and the first task icon
@@ -101,14 +113,26 @@ describes, and check on a horizontal dock whose task manager has pinned applicat
    icon with 添加 右侧分隔线 and 移除 右侧分隔线.
 4. The separators the layout already has keep their places after the restart.
 
-Then the log (`/tmp/latte-ng.log`) is reviewed for warnings and errors and the coredump
-count is compared with the one before the launch. Other tasks' 添加/移除 entries use the
-task manager's own separators (`launchers.addInternalSeparatorAtPos()`), which this slice
-does not touch.
+Result: the user reported all four steps as passed. The log of the run (348 lines when
+reviewed) has no warning, error, fatal, assert or critical line. It shows the four edits on
+containment 1 (screen DP-2), whose order was `43, 2, 3` (the task manager is applet 2):
+
+| Time | Log | Order after |
+|---|---|---|
+| 00:52:34 | separator 47 created (`org.kde.latte.separator`) | `43, 47, 2, 3` |
+| 00:52:37 | separator 48 created | `43, 47, 2, 48, 3` |
+| 00:52:48 | `removeApplet` 47 | `43, 2, 48, 3` |
+| 00:53:00 | `removeApplet` 48 | `43, 2, 3` |
+
+So each separator was placed at its boundary and removed again, and the order returned to
+the one before. `coredumpctl` lists no coredump since the launch. Other tasks' 添加/移除
+entries use the task manager's own separators (`launchers.addInternalSeparatorAtPos()`),
+which this slice does not touch.
 
 ## Not verified
 
-- The desktop check above: pending, after the R8d series.
-- Clang Debug on this host and the Release presets: run on the merged `main` after the
-  desktop check.
+- The CI Build run on the push to `main` had not been observed when this record was
+  written.
+- The desktop check covered the four steps above on one dock; vertical docks and the
+  legacy `audoban.applet.separator` were not checked.
 - The Debian 13 container build: deferred by the user until the refactor is complete.
