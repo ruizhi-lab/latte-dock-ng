@@ -56,6 +56,7 @@ private Q_SLOTS:
     void plasmaExtendedScreenPoolMapsPrimaryConnectorToIdZero();
     void backgroundCacheHandlesBroadcastedSmallImagesAtEveryEdge();
     void backgroundTrackerEmitsOnlyForChangedHints();
+    void areaIsBusyTreatsOutOfRangeAsBusy();
 };
 
 void CoreComponentsTest::appTypesMatchOnlyKnownLatteApplicationIds()
@@ -289,6 +290,27 @@ void CoreComponentsTest::backgroundTrackerEmitsOnlyForChangedHints()
 
     QCOMPARE(brightnessSpy.count(), 1);
     QCOMPARE(busySpy.count(), 0);
+}
+
+void CoreComponentsTest::areaIsBusyTreatsOutOfRangeAsBusy()
+{
+    // QTest runs slots in declaration order. The earlier background tests build the
+    // singleton under their isolated XDG directories; keep this test after them.
+    auto *cache = Latte::PlasmaExtended::BackgroundCache::self();
+
+    // Both values in 0..255 and on the same side of the 123 light/dark split.
+    QCOMPARE(cache->areaIsBusy(20.0f, 60.0f), false);
+    QCOMPARE(cache->areaIsBusy(200.0f, 255.0f), false);
+
+    // In range, on opposite sides of the split.
+    QCOMPARE(cache->areaIsBusy(20.0f, 200.0f), true);
+
+    // Out of range is busy at either end. (300, 200) is the case the
+    // bright1 upper bound guards: both values are light, so only the bound makes it busy.
+    QCOMPARE(cache->areaIsBusy(300.0f, 200.0f), true);
+    QCOMPARE(cache->areaIsBusy(256.0f, 255.0f), true);
+    QCOMPARE(cache->areaIsBusy(-1.0f, 50.0f), true);
+    QCOMPARE(cache->areaIsBusy(200.0f, 300.0f), true);
 }
 
 QTEST_MAIN(CoreComponentsTest)

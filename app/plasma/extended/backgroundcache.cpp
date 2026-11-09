@@ -266,7 +266,10 @@ bool BackgroundCache::areaIsBusy(float bright1, float bright2) const {
     bool bright1IsLight = bright1 >= 123;
     bool bright2IsLight = bright2 >= 123;
 
-    bool inBounds = bright1 >= 0 && bright2 <= 255 && bright2 >= 0 && bright2 <= 255;
+    //! colorBrightness() weights sum to 1000, so tile brightness is always 0..255.
+    //! Both ends are checked: an out-of-range value makes the area busy, and dropping
+    //! the bright1 upper bound would let (300, 200) report not busy.
+    bool inBounds = bright1 >= 0 && bright1 <= 255 && bright2 >= 0 && bright2 <= 255;
 
     return !inBounds || bright1IsLight != bright2IsLight;
 }

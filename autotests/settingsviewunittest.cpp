@@ -12,6 +12,7 @@
 #include <QSignalSpy>
 #include <QStandardItemModel>
 #include <QTest>
+#include <QtTest/qtestaccessible.h>
 
 class SettingsViewUnitTest : public QObject
 {
@@ -20,6 +21,7 @@ class SettingsViewUnitTest : public QObject
 private Q_SLOTS:
     void layoutsTableShowsDropOverlayForSupportedMimeTypes();
     void viewsTableClearsSelectionWhenClickingEmptyArea();
+    void viewsTableEmitsSelectionAccessibilityEvents();
 };
 
 
@@ -67,6 +69,37 @@ void SettingsViewUnitTest::viewsTableClearsSelectionWhenClickingEmptyArea()
 
     QVERIFY(!table.selectionModel()->hasSelection());
     QVERIFY(selectionSpy.count() >= 1);
+}
+
+void SettingsViewUnitTest::viewsTableEmitsSelectionAccessibilityEvents()
+{
+#if QT_CONFIG(accessibility)
+    // QTableView::selectionChanged() sends the SelectionAdd/SelectionRemove events,
+    // and only while accessibility is active. ViewsTableView must reach that override
+    // instead of calling QAbstractItemView's directly, which sends none of them.
+    QTestAccessibility::initialize();
+    QAccessible::setActive(true);
+
+    Latte::Settings::View::ViewsTableView table;
+    QStandardItemModel model(3, 1);
+    table.setModel(&model);
+    table.resize(240, 160);
+    table.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&table));
+
+    QTestAccessibility::clearEvents();
+    table.selectRow(1);
+    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionAdd));
+
+    QTestAccessibility::clearEvents();
+    table.selectRow(2);
+    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionRemove));
+    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionAdd));
+
+    QAccessible::setActive(false);
+#else
+    QSKIP("Qt was built without accessibility support");
+#endif
 }
 
 QTEST_MAIN(SettingsViewUnitTest)

@@ -20,6 +20,9 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 
+//! Unit test access to BackgroundCache::areaIsBusy(); see the friend declaration below.
+class CoreComponentsTest;
+
 namespace Latte {
 namespace PlasmaExtended {
 
@@ -55,6 +58,11 @@ private Q_SLOTS:
     void settingsFileChanged(const QString &file);
 
 private:
+    //! areaIsBusy() is only reached from image tiles, and colorBrightness() keeps those
+    //! in 0..255, so busyFor() cannot exercise its out-of-range branch. The test needs
+    //! direct access to check that branch.
+    friend class ::CoreComponentsTest;
+
     BackgroundCache(QObject *parent = nullptr);
 
     bool backgroundIsBroadcasted(QString activity, QString screenName) const;

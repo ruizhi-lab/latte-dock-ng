@@ -32,7 +32,10 @@ void ViewsTableView::mousePressEvent(QMouseEvent *event)
 
 void ViewsTableView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    QAbstractItemView::selectionChanged(selected, deselected);
+    // Call QTableView's override, not QAbstractItemView's: QTableView sends the
+    // accessibility events for the selection, and skipping it hides selection changes
+    // from assistive technology.
+    QTableView::selectionChanged(selected, deselected);
     Q_EMIT selectionsChanged();
 }
 
