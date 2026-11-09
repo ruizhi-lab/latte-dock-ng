@@ -1,0 +1,6 @@
+2026-11-09T11:58:44 +0.0s watching desktop-dock pid 74810 comm latte-dock-ng exe /usr/bin/latte-dock-ng
+2026-11-09T11:58:44 +0.1s snapshot 0min written for desktop-dock (pid 74810)
+2026-11-09T12:13:44 +900.1s snapshot 15min written for desktop-dock (pid 74810)
+2026-11-09T13:13:44 +4500.1s snapshot 75min written for desktop-dock (pid 74810)
+2026-11-09T23:58:44 +43200.1s snapshot end written for desktop-dock (pid 74810)
+2026-11-09T23:58:44 +43200.1s coredumps listed for latte-dock-ng: 0 new since the start

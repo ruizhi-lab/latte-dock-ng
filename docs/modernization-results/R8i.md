@@ -1,7 +1,7 @@
 # R8i: clang-tidy gate over the clazy gate's production sources
 
-Status: Complete for the gate change, verified below. The Build run on the merge commit
-is the remaining check (its Clang Debug job runs this gate); the ledger row says so.
+Status: Complete. The Build run on the merge commit `3e5b69341` passed, including the Clang
+Debug job's clang-tidy step (see After the merge).
 
 Batch / slice and selected scope: R8i, step 1 of the gate order in [R8c](R8c.md)
 ("Proposed gate order"): the gate's two checks over all production sources instead of
@@ -150,10 +150,23 @@ For the container run, export the commit with `git archive` into a directory wit
 `build/`, mount the export read-only at `/src`, mount a writable build tree at `/src/build`, and
 run the CI steps inside `latte-r2c-clazy:noble` (the recipe is in [R2c](R2c.md)).
 
+## After the merge (2026-11-09)
+
+CI Build run 42633564689 on the merge commit `3e5b69341` passed all 23 jobs. In the Clang
+Debug job, `python3 scripts/test-clang-tidy.py --build-dir "build/modernization/clang-debug"`
+ran from 14:32:06 to 14:37:11 UTC and printed:
+
+```text
+Ubuntu LLVM version 18.1.3 Optimized build.
+selected 155 production sources; skipped 55 autotest source, 137 duplicate compile command of a selected source, 86 generated source in the build directory
+2 negative fixtures: each is rejected as an error by its own gated check
+155 production sources: no findings from 2 gated clang-tidy checks
+```
+
+The source selection matches the local runs above.
+
 ## Not verified
 
-- CI: the Build run on the merge commit has not been observed when this record is written.
-  Its Clang Debug job's clang-tidy step is the check the ledger row names.
 - The timings come from this host's 16 cores with `--jobs 4`, not from CI's runners.
 - The qmllint warnings were not compared with a build of `86de58ed6`.
 - The runner has no unit test of its own. Its fail-closed paths were checked by the three

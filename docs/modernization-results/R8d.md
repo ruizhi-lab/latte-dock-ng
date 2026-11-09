@@ -1,8 +1,11 @@
-# R8d: Idle memory growth of the dock (150-minute nested session)
+# R8d: Idle memory growth of the dock (150-minute nested session, 12-hour desktop series)
 
 Status: Complete (measurement). The 150-minute nested run and the read-only desktop
 series both ran to their duration, from 2026-11-06 10:06:31 to 12:36 (+08:00). The
-verdicts are in the Results section and the data are in `R8d-data/`. Nothing is pushed.
+verdicts are in the Results section and the data are in `R8d-data/`. The 12-hour
+read-only desktop series ran from 2026-11-09 11:58:44 to 23:58:44 (+08:00); its results
+are in [its own section](#12-hour-desktop-series-2026-11-09) and its data in
+`R8d-data/desktop-12h/`.
 
 Batch / slice and selected scope: R8d, measurement only. No production source, CMake,
 ledger or qmllint baseline change. Deliverables: the tools in `R8d-tools/`, the data in
@@ -263,20 +266,174 @@ between 199 and 206 MiB.
   the compressed install and KWin logs. The smoke-run data are not committed; their results
   are above.
 
+## 12-hour desktop series (2026-11-09)
+
+This is the next action of the 150-minute record. The first 12-hour series was written to
+`/tmp` and lost when the host rebooted on 2026-11-09, before its data were committed; this
+is the repeat.
+
+### Run and environment
+
+- Sampler: `R8d-tools/memsample.py` as committed in `0734180c6` (sha256
+  `afd052a27f95850a3d4e9b6c9ebb022c4db415aff39bdc1f3dff055ec0cfb8a7`), read only, default
+  30 s interval, run from the `main` checkout at `4741deeab` as a transient user unit:
+
+  ```bash
+  systemd-run --user --unit=r8d-desktop-12h python3 -I /data/projects/latte-dock-ng/docs/modernization-results/R8d-tools/memsample.py --out /data/tmp/r8d-desktop-12h --watch desktop-dock=74810 --duration-min 720 --snapshot-min 0,15,75
+  ```
+
+- It ended on its duration ("duration reached") after 1441 ticks, from 11:58:44 to
+  23:58:44, with pid 74810 alive throughout and no new latte-dock-ng coredump. The unit
+  exited with status 0.
+- Dock: `/usr/bin/latte-dock-ng` (lattedock 1.3.0) from the package
+  `kde-misc/latte-dock-ng-1.3.0` (`CMAKE_BUILD_TYPE="RelWithDebInfo"`, installed
+  2026-11-05), started by its autostart unit at 11:57:55, 49 s before the first sample. It
+  is the packaged build, not a build of the current `main`. Nothing signalled, attached to,
+  traced or restarted it during the run; a desktop check replaced it at 00:04 on
+  2026-11-10, after the end.
+- Host, checked after the run: Gentoo, kernel 6.18.62-gentoo-dist, 16 CPUs, 31 GiB RAM,
+  NVIDIA GeForce GTX 1080 Ti with driver 580.178.04, Qt 6.11.3, KF6 6.31.0, KWin and
+  Plasma 6.7.6, up since 08:19 that day. The 150-minute record lists 32 CPUs, 93 GiB and an
+  RTX 5080, so this is another host: compare slopes and steps with that series, not levels.
+- The session was the user's live desktop with no input log. The other slices' container
+  builds ran on the same host during the run; they open no windows.
+
+### Answer
+
+By the fixed rule the series is "growth": whole-run Pss_Anon slope 10.88 MiB/h (95 % CI
+9.42 to 12.35), first half 0.000 MiB/h, second half 29.39 MiB/h. A straight line describes
+it poorly. For 7.31 h without use the dock's memory did not change at all. The whole rise
+after warm-up, +122.88 MiB of Pss_Anon, came during 4.33 h of desktop use, 116.45 MiB of it
+in ten steps of at least 1 MiB, and it was still held at the end. The steps recur, and they
+are much larger than in the 150-minute series (its largest was +1.32 MiB). Whether the held
+memory is a leak or memory the allocator keeps after a burst of allocations cannot be read
+from this series; that is the next action.
+
+| phase (+08:00) | samples | Pss_Anon, MiB | dock CPU | threads | descriptors |
+|---|---:|---|---:|---|---|
+| warm-up, 11:58:44 to 12:13:44 | 31 | 157.04 to 160.32, one step of +3.98 at 12:07:14 | 0.59 s | 10, 18 at the step | 91 to 92 (100 at the step) |
+| 12:13:44 to 12:20:14 | 14 | 160.32 to 160.33 | 0.00 s | 10 | 92 |
+| no use, 12:20:14 to 19:38:44 | 878 | 160.33 at every sample | 0.06 s | 10 at every sample | 92 at every sample |
+| use, 19:38:44 to 23:58:44 | 521 | 160.33 to 283.20 (283.40 at most) | 27.58 s | 10 to 22 | 92 to 119 (126 at most) |
+
+Levels (5-minute bucket medians, from `analysis.md`): Pss_Anon 160.32 to 283.20 MiB, Rss
+368.47 to 506.32 MiB, Pss_File 63.55 to 73.05 MiB; mean CPU 0.07 % over the post-warm-up
+window. Video memory (`nvidia-smi`): 61, 61, 61 and 70 MiB at 0, 15 and 75 minutes and the
+end.
+
+### Steps after warm-up
+
+A step is a pair of consecutive samples (30 s apart) whose Pss_Anon differs by at least
+1 MiB. The application column is the user manager's `Started …` journal line inside the
+step's interval, if any.
+
+| sample (+08:00) | Pss_Anon, MiB | change | threads | dock CPU in the interval | application start in the interval |
+|---|---|---:|---|---:|---|
+| 19:54:44 | 161.00 to 163.85 | +2.85 | 10 to 18 | 0.97 s | none |
+| 20:25:14 | 164.12 to 166.60 | +2.48 | 10 to 20 | 0.78 s | Claude, 20:25:07 |
+| 20:26:44 | 166.36 to 168.55 | +2.20 | 10 to 15 | 0.71 s | none; Visual Studio Code started one second later |
+| 20:27:14 | 168.55 to 195.66 | +27.11 | 15 to 22 | 1.89 s | Visual Studio Code, 20:26:45 |
+| 21:28:14 | 196.52 to 262.50 | +65.98 | 10 to 17 | 1.97 s | KRDC, 21:28:12 |
+| 22:04:44 | 262.88 to 279.45 | +16.57 | 10 to 13 | 0.75 s | KRDC, 22:04:40 |
+| 23:08:44 | 281.07 to 279.38 | -1.69 | 10 to 12 | 0.23 s | KRDC, 23:08:16 |
+| 23:11:14 | 279.88 to 281.03 | +1.16 | 15 to 13 | 0.96 s | NetEase Cloud Music, 23:10:57 |
+| 23:28:44 | 283.40 to 282.08 | -1.32 | 10 | 0.11 s | none |
+| 23:36:14 | 282.08 to 283.20 | +1.12 | 10 to 13 | 0.58 s | none |
+
+Every graphical application start the user manager logged during use, with the Pss_Anon
+change from the sample before the start to the first sample after it:
+
+| start (+08:00) | application | change, MiB |
+|---|---|---:|
+| 20:20:48 | Ghostty window | -0.28 |
+| 20:21:34 | KRDC | +0.02 |
+| 20:25:07 | Claude | +2.48 |
+| 20:26:45 | Visual Studio Code | +27.11 |
+| 21:28:12 | KRDC | +65.98 |
+| 21:28:25 | Ghostty window | -0.05 |
+| 21:28:49 | KRDC | +0.42 |
+| 22:04:40 | KRDC | +16.57 |
+| 23:08:16 | KRDC | -1.69 |
+| 23:10:12 | Steam | +0.00 |
+| 23:10:57 | NetEase Cloud Music | +1.16 |
+
+- The three largest steps (+27.11, +65.98 and +16.57 MiB, 109.66 MiB together, 89 % of the
+  rise) each came within 30 s after an application start.
+- An application start alone does not make a step: KRDC started five times, with changes
+  of +0.02, +65.98, +0.42, +16.57 and -1.69 MiB. How each application was started (from
+  the dock, the launcher menu or a terminal) and what was done on the dock at those times
+  is not recorded.
+- At every step that added memory the thread count at the step's sample was above 10
+  (13 to 22); it was back at 10 by later samples. The descriptor count rose from 92 to 119.
+
+### Mappings, 15-minute snapshot to end (MiB)
+
+Total Pss 223.46 to 355.90 (+132.44); anonymous +122.88.
+
+| object | mappings | delta Pss | anonymous |
+|---|---|---:|---|
+| `[heap]` | 1 | +78.27 | yes |
+| `[anon rw-p]` | 98 to 104 | +39.98 | yes |
+| `/dev/nvidiactl` | 26 to 27 | +7.01 | no |
+| `/memfd:JSGCHeap:QtQml (deleted)` | 23 to 42 | +4.02 | yes |
+| `/memfd:unknown-usage:QtQml (deleted)` | 99 to 169 | +0.27 | yes |
+| `plasma_theme_klassy-light.kcache` in `~/.cache` | the live file at 15 minutes, a deleted copy at the end | -4.00 and +3.63 | no |
+
+As in the 150-minute series, the held memory is in the brk heap and in anonymous rw-p
+mappings (typically malloc arenas, which fits the thread spikes), with a small part in the
+QML JS heap. Both a leak and allocator retention fit this. The theme cache file was
+replaced on disk during the run, and the dock still maps the old copy; it is file-backed
+and not part of the verdict.
+
+### Limitations
+
+- A live session without an input log: steps are matched to application starts by time
+  only, at 30 s resolution.
+- One day and one build, the 1.3.0 package; current `main` was not measured on the
+  desktop.
+- The desktop's KWin and plasmashell were not sampled.
+- Video memory and the mapping tables come from the four snapshots only.
+- Another host than the 150-minute run (see above).
+- Debian 13 verification: deferred by the user until the refactor is complete.
+
+### Provenance
+
+- `R8d-data/desktop-12h/` is a copy of `/data/tmp/r8d-desktop-12h`. `samples.csv` (LF
+  endings), `events.log` and `summary.json` are unchanged; the four snapshots are
+  `gzip -9 -n` compressed. The `done` file is not copied; it only says "duration reached",
+  which `summary.json` also records.
+- `R8d-data/desktop-12h/analysis/` was produced from the committed copy and gives the same
+  `analysis.md` as the run directory; `analysis.json` differs only in the directory path:
+
+  ```bash
+  python3 -I docs/modernization-results/R8d-tools/analyze.py --nested docs/modernization-results/R8d-data/desktop-12h --out docs/modernization-results/R8d-data/desktop-12h/analysis --warmup-min 15
+  ```
+
+- The step table comes from `samples.csv`, for example:
+
+  ```bash
+  python3 -I -c 'import csv,sys; r=list(csv.DictReader(open(sys.argv[1]))); [print(c["wall_time"], round((float(c["Pss_Anon"])-float(p["Pss_Anon"]))/1024,2), p["Threads"], c["Threads"]) for p,c in zip(r,r[1:]) if abs(float(c["Pss_Anon"])-float(p["Pss_Anon"]))>=1024]' docs/modernization-results/R8d-data/desktop-12h/samples.csv
+  ```
+
+- The application starts come from `journalctl --user` (the user manager's `Started …`
+  lines); the journal is not committed.
+
 ## Next exact action
 
-Extend the read-only desktop series to 12 hours with the same tool and rule, to see whether
-the three steps recur and how often. Use the desktop dock's current pid:
+R8d is complete as a measurement. The 12-hour series answers its question: the dock does
+not grow while it idles, and it holds memory after some desktop activity. Telling a leak
+from allocator retention is slice R8j in the [plan](../architecture-modernization-plan.md):
 
-```bash
-python3 -I docs/modernization-results/R8d-tools/memsample.py --out /tmp/r8d-desktop-12h --watch desktop-dock=$(pgrep -x latte-dock-ng | head -n 1) --duration-min 720 --snapshot-min 0,15,75
-```
-
-Then analyze it with the same warm-up and rule:
-
-```bash
-python3 -I docs/modernization-results/R8d-tools/analyze.py --nested /tmp/r8d-desktop-12h --out /tmp/r8d-desktop-12h/analysis --warmup-min 15
-```
-
-`--nested` takes any sampler directory; here it holds the desktop series. The sampler only
-reads /proc, so it must not be pointed at a nested dock or at any process that is signalled.
+1. In the nested session (`R8d-tools/launch.py`) with a Release dock of current `main`,
+   repeat one fixed cycle, such as opening and closing an application window, about ten
+   times, and sample Pss_Anon after each cycle. If every cycle adds memory, that points to a
+   leak. If only the first cycles add memory, that points to retention. The desktop data do
+   not tell which interaction makes a step, so the record says which cycles it tried and
+   which it could not reproduce.
+2. Ask the nested dock's allocator to return free memory with `malloc_trim(0)` and sample
+   again. A large drop means the allocator kept freed memory. `kernel.yama.ptrace_scope` is
+   1 on this host, so gdb (`/usr/bin/gdb`) has to start the dock itself, or the dock gets a
+   small preloaded library that calls `malloc_trim(0)` on a signal. The desktop dock stays
+   read only.
+3. If a cycle keeps adding memory, attribute it with heaptrack or valgrind's massif. Neither
+   is installed on this host; installing them needs root, so the user has to do it.
