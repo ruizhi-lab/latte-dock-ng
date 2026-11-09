@@ -117,8 +117,8 @@ has two rows to select.
 4. Click one dock row. The row shows the selection highlight, and the buttons 复制(D) [&Duplicate], 移除 [Remove] and 导出(E) [&Export] become enabled.
 5. Ctrl+click a second dock row. Both rows show the highlight and the three buttons stay enabled.
 6. Click the empty area below the rows. The highlight clears and the three buttons are disabled again.
-7. Click one dock row, then 复制(D). A copy of that dock appears. Select the copy and 移除, then confirm the removal. These are staged changes, not applied yet.
-8. Select one dock row, open the 导出(E) menu, and choose 导出备份(E)... [&Export For Backup...] or 导出为模板(T)... [Export As &Template...]. Its file dialog opens for that dock. Cancel it, so no file is written.
+7. Click one dock row, then 复制(D). A copy of that dock appears. Select the copy and 移除. The row leaves the list at once; no confirmation prompt appears. These are staged changes, not applied yet.
+8. Select one dock row, open the 导出(E) menu, and choose 导出备份(E)... [&Export For Backup...] or 导出为模板(T)... [Export As &Template...]. The first opens a save-file dialog for that dock; the second opens the template export dialog. Cancel whichever opens, so no file is written.
 9. Close the 停靠栏 dialog with 取消 [Cancel], which discards the staged changes. Do not press 立即应用 [Apply Now].
 
 Expected: every step behaves as above. The Debug log (`/tmp/latte-ng.log`) has no new
