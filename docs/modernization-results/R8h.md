@@ -2,7 +2,8 @@
 
 Status: Complete. The contract mutations pass on the branch. On the merge commit
 `ed5d0b3c3` the four presets, the clang-tidy and clazy gates and the user's desktop check of
-the boundary separators (2026-11-10) pass.
+the boundary separators (2026-11-10) pass, and so does the Build run on `main` `04589b1e9`,
+which contains the merge (see After the merge).
 
 Batch / slice and selected scope: R8h, the first follow-up of the
 [R8f record](R8f.md). `app/view/containmentinterface.cpp` drops its own copies of the
@@ -129,10 +130,22 @@ the one before. `coredumpctl` lists no coredump since the launch. Other tasks' æ
 entries use the task manager's own separators (`launchers.addInternalSeparatorAtPos()`),
 which this slice does not touch.
 
+Another session stopped this dock at 00:54:55 with SIGTERM to bring back the packaged dock.
+The complete log, 366 lines, still has no warning line. It ends with the fast shutdown path
+through `Latte Corona - deleted...` and `Latte::QuickWindowSystem destructed`, and no
+coredump followed.
+
+## After the merge
+
+CI Build run 42659549026 ran on `main` `04589b1e9`, which is the merge `ed5d0b3c3` plus
+this record's commit (documents only). It ran from 2026-11-09 16:55:13 to 17:21:30 UTC and
+passed all 23 jobs, among them the GCC and Clang Debug and Release builds, qmllint, the
+NixOS check, the install and package verification on seven distributions and the APT
+preflight.
+
 ## Not verified
 
-- The CI Build run on the push to `main` had not been observed when this record was
-  written.
 - The desktop check covered the four steps above on one dock; vertical docks and the
   legacy `audoban.applet.separator` were not checked.
-- The Debian 13 container build: deferred by the user until the refactor is complete.
+- The local Debian 13 container build: deferred by the user until the refactor is complete.
+  CI's Debian 13 install and package jobs passed in run 42659549026.
