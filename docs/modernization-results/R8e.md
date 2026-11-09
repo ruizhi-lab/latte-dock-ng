@@ -2,10 +2,10 @@
 
 Batch / slice: R8e (wave 2, CMake structure). Parts A, B and C, in that order.
 
-Status: Pending validation. Parts A and B are committed and verified with the GCC and
-Clang Debug presets. Part C is an inventory with no file change. The Release presets,
-clazy, the deep qmllint gate, Debian 13 and the other CI jobs were not run; see
-"Not verified".
+Status: Complete. Parts A and B are merged (`60ca9429c`), with the follow-up
+`d8d76944b`; Part C is an inventory with no file change. The Release presets, CI and
+the runtime check passed after the merge; see "Validation after the merge". The
+sections before it describe the branch as it was before the merge.
 
 Source baseline / actual start HEAD: `6bdd43086f14ff680a844d47061143d7bfdc90ec`
 (local `main`, documentation on top of the Qt 6.7.0 and KF6 6.10.0 floor raise).
@@ -301,24 +301,36 @@ so a copy shadows the real `contextmenudata.h` and `generictools.h`.
   `menu.cpp` was compiled, so nothing recompiled and it proved nothing; that run is not
   counted.
 
+## Validation after the merge (2026-11-09)
+
+- Presets: the merged `main` built in the GCC and Clang Debug and Release presets with
+  0 compiler warnings and passed 61 of 61 tests in each, after the merge and again after
+  the follow-up (see the R track ledger).
+- CI: Build run 42545506041 on `e92a534a2`, which contains Parts A and B and the
+  follow-up, passed all 23 jobs. Among them are the Clang Debug job's targeted
+  clang-tidy and gated clazy checks, the deep QML lint in the four presets, the GCC
+  Debug job's targeted ASan/UBSan tests, the Debian 13 install and package checks, and
+  the NixOS release check.
+- Runtime: in the R8b desktop check ([R8b](R8b.md)) the user right-clicked a dock that
+  had loaded `org.kde.latte.contextmenu.so` from a user-mode install
+  (`/proc/<pid>/maps`). The plugin was built in a fresh tree from a branch that contains
+  Parts A and B; the installed file has the same build ID as the tree's. The context
+  menu opened and its 编辑停靠栏 (&E)... entry switched edit mode. The dock quit cleanly
+  and `coredumpctl list latte-dock-ng` stayed at 106 entries.
+
 ## Not verified
 
-- Release presets (`gcc-release`, `clang-release`) and `gcc-asan-ubsan`: not built or
-  tested.
-- Debian 13 verification: deferred by the user until the refactor is complete.
-- clazy (`scripts/test-clazy.py`, 49-check gate): not run; it is CI-only and not
-  installed here. By reading the script: the set of analysed sources is unchanged. But
-  `generictools.cpp` now has two production compile commands (executable and plugin),
-  and the script takes the first one in database order, so its analysis flags may be the
-  plugin's. They differ only by `TRANSLATION_DOMAIN` and the two `-I` entries. The
-  filter logic was not changed.
-- Deep qmllint gate: not run (CI-only). No QML file changed.
-- Other CI jobs (Docker `verify-install`, the NixOS flake, packaging, the install
-  checks) were not run. No Docker image was pulled or built.
-- Runtime: no dock was started against the desktop session. The plugin's loading in a
-  live Plasma session, the Runtime Retest Workflow, and the clean-quit and coredump
-  checks were not run. The build comparison shows the linked symbols and the translation
-  units are unchanged, but that is build evidence, not runtime evidence.
+Written before the merge; the section above settles the Release presets, clazy, the
+deep qmllint gate, the other CI jobs and the runtime check. Still not done:
+
+- The `gcc-asan-ubsan` preset was not built here; CI runs only its targeted subset, in
+  the GCC Debug job.
+- Debian 13 container build here: deferred by the user until the refactor is complete.
+  CI's Debian 13 install and package checks passed.
+- Which of the two production compile commands of `generictools.cpp` (executable or
+  plugin) the clazy gate analysed was not checked. `scripts/test-clazy.py` takes the
+  first in database order; the two differ only by `TRANSLATION_DOMAIN` and the two `-I`
+  entries.
 - `scripts/test-logout-simulation.py` (nested session): not run.
 - The compat results are for this host (Plasma 6.7.5). They say nothing about the
   Plasma 6.3 floor or about Debian 13.
@@ -326,10 +338,5 @@ so a copy shadows the real `contextmenudata.h` and `generictools.h`.
 
 ## Next exact action
 
-Run the Release GCC preset in the worktree, as the first verification this branch still
-lacks: `cmake --build --preset gcc-release --parallel 8 && ctest --preset gcc-release`
-in `/data/projects/latte-dock-ng/.claude/worktrees/r8e-cmake-structure-67c5b2`.
-
-Commit approval status: both implementation commits and this record are committed on
-`claude/r8e-cmake-structure-67c5b2`, as requested by the R8e task. Not pushed, not merged,
-and `main` was not touched.
+None. Commit approval status: merged into `main` and pushed under the standing approval
+for verified work.

@@ -119,17 +119,34 @@ reported every item as expected:
 - right-click on the dock → 编辑停靠栏 (&E)... switches "Edit Mode" on and back;
 - the last active window row follows the focused window.
 
-After the check, with the dock still running (pid 35808): the log has 398 lines and
-none contains "warning", "error", "fatal", "assert", `TypeError`, `ReferenceError`,
-"Unable to assign", "required property", "undefined" or "failed". The 74 lines
-written after the first look at the log are debug messages of the window tracker,
-the view ordering and the configuration view that edit mode opens. `coredumpctl list latte-dock-ng` still lists
-106 entries, the count recorded before the launch.
+The dock writes its log to the file through a buffer, so the file lags behind the
+dock: right after the check it had 398 lines and no warning, but a warning printed
+at 11:28:43 was not in it yet. What follows is the complete log, read after the dock
+was quit with `pkill -x latte-dock-ng` (it exited within a second). Of its 587 lines,
+one is a warning and none is an error. The warning, printed when edit mode created its
+configuration surface, comes from KIO's systemd launcher (`libKF6KIOGui`): "Not
+passing environment variable "SENTRY-TRACE" to systemd because its name contains
+illegal characters". The variable is in the environment of the shell that launched
+the dock (the agent's shell, which the Claude desktop app starts), not in the Plasma
+session's: `plasmashell`'s environment does not have it, so a dock started by the
+session does not print this. No line names the debug window or contains `TypeError`,
+`ReferenceError`, "Unable to assign", "required property", "undefined" or "failed",
+during the run or the shutdown, which reached `~Corona` and `~QuickWindowSystem`.
+`coredumpctl list latte-dock-ng` lists 106 entries before the launch and after the
+quit.
 
 The dock had loaded the context menu plugin of this install
 (`~/.local/lib64/plugins/plasma/containmentactions/org.kde.latte.contextmenu.so`, per
 `/proc/35808/maps`), built from a tree that contains R8e (`18489612e`, `50ba3074b`), so
 the same right-click is the user check that R8e's record left open.
+
+## After the merge
+
+Merged into `main` as `76ae1247b`. The merge brings no QML change from `main`'s side, so
+the linted files are unchanged (`git diff ea1dad3a4 main` is empty for `*.qml`, `*.js`
+and the baseline), and no C++ change, so clazy is not affected. The four presets
+(GCC and Clang, Debug and Release) built with nothing to recompile and 0 compiler
+warnings, and passed 61 of 61 tests each (run by a Haiku sub-agent).
 
 ## Not verified
 
