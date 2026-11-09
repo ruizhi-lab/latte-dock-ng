@@ -53,16 +53,6 @@
 #include <KIconThemes/KIconTheme>
 
 namespace {
-constexpr const char kInternalViewSplitterPluginId[] = "org.kde.latte.splitter";
-constexpr const char kLatteSeparatorPluginId[] = "org.kde.latte.separator";
-constexpr const char kLegacySeparatorPluginId[] = "audoban.applet.separator";
-
-inline bool isSeparatorPluginId(const QString &pluginId)
-{
-    return pluginId == QLatin1String(kLatteSeparatorPluginId)
-           || pluginId == QLatin1String(kLegacySeparatorPluginId);
-}
-
 inline QString pluginIdFromMetaData(const KPluginMetaData &meta)
 {
     QString pluginId = meta.pluginId();
@@ -277,13 +267,11 @@ inline QList<int> sanitizeSeparatorOrder(const QList<int> &order,
             return ItemKind::Unknown;
         }
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId))
-        {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             return ItemKind::Splitter;
         }
 
-        if (isSeparatorPluginId(pluginId))
-        {
+        if (Latte::PluginId::isSeparatorPluginId(pluginId)) {
             return ItemKind::Separator;
         }
 
@@ -1190,7 +1178,7 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
         const int candidateId = effectiveOrder.at(i);
         const QString pluginId = pluginIdForApplet(candidateId);
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             continue;
         }
 
@@ -1203,11 +1191,11 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
         return false;
     }
 
-    if (isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
+    if (Latte::PluginId::isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
         return true;
     }
 
-    const QStringList separatorPlugins{QLatin1String(kLatteSeparatorPluginId)};
+    const QStringList separatorPlugins{ QLatin1String(Latte::PluginId::kSeparator) };
 
     //! Set pending insertion index so that onAppletAdded (fired synchronously
     //! during createApplet) places the separator at the correct target position
@@ -1339,11 +1327,11 @@ bool ContainmentInterface::addInternalSeparatorAtLeftBoundaryOfApplet(const int 
 
         const QString pluginId = pluginIdForApplet(candidateId);
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             continue;
         }
 
-        if (isSeparatorPluginId(pluginId)) {
+        if (Latte::PluginId::isSeparatorPluginId(pluginId)) {
             return true;
         }
 
@@ -1355,7 +1343,7 @@ bool ContainmentInterface::addInternalSeparatorAtLeftBoundaryOfApplet(const int 
         return false;
     }
 
-    if (isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
+    if (Latte::PluginId::isSeparatorPluginId(pluginIdForApplet(leftNeighborId))) {
         return false;
     }
 
@@ -1418,11 +1406,11 @@ bool ContainmentInterface::addInternalSeparatorAtRightBoundaryOfApplet(const int
 
         const QString pluginId = pluginIdForApplet(candidateId);
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             continue;
         }
 
-        if (isSeparatorPluginId(pluginId)) {
+        if (Latte::PluginId::isSeparatorPluginId(pluginId)) {
             return true;
         }
 
@@ -1434,7 +1422,7 @@ bool ContainmentInterface::addInternalSeparatorAtRightBoundaryOfApplet(const int
         return false;
     }
 
-    if (isSeparatorPluginId(pluginIdForApplet(rightNeighborId))) {
+    if (Latte::PluginId::isSeparatorPluginId(pluginIdForApplet(rightNeighborId))) {
         return false;
     }
 
@@ -1493,11 +1481,11 @@ bool ContainmentInterface::removeInternalSeparatorAtLeftBoundaryOfApplet(const i
         const int candidateId = effectiveOrder.at(i);
         const QString pluginId = pluginIdForApplet(candidateId);
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             continue;
         }
 
-        if (isSeparatorPluginId(pluginId)) {
+        if (Latte::PluginId::isSeparatorPluginId(pluginId)) {
             separatorId = candidateId;
         }
 
@@ -1582,11 +1570,11 @@ bool ContainmentInterface::removeInternalSeparatorAtRightBoundaryOfApplet(const 
         const int candidateId = effectiveOrder.at(i);
         const QString pluginId = pluginIdForApplet(candidateId);
 
-        if (pluginId == QLatin1String(kInternalViewSplitterPluginId)) {
+        if (pluginId == QLatin1String(Latte::PluginId::kSplitter)) {
             continue;
         }
 
-        if (isSeparatorPluginId(pluginId)) {
+        if (Latte::PluginId::isSeparatorPluginId(pluginId)) {
             separatorId = candidateId;
         }
 
@@ -1745,13 +1733,13 @@ void ContainmentInterface::cleanupInvalidSeparatorApplets()
             orderIds.insert(id);
         }
 
-        if (!sanitizedOrder.contains(id) && isSeparatorPluginId(pluginIdForApplet(id))) {
+        if (!sanitizedOrder.contains(id) && Latte::PluginId::isSeparatorPluginId(pluginIdForApplet(id))) {
             separatorIdsToDestroy.insert(id);
         }
     }
 
     for (auto it = containmentPlugins.constBegin(); it != containmentPlugins.constEnd(); ++it) {
-        if (!orderIds.contains(it.key()) && isSeparatorPluginId(it.value())) {
+        if (!orderIds.contains(it.key()) && Latte::PluginId::isSeparatorPluginId(it.value())) {
             separatorIdsToDestroy.insert(it.key());
         }
     }
@@ -2307,9 +2295,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
             QList<int> order = m_layoutManager->property("order").value<QList<int >> ();
             if (!order.isEmpty() && !order.contains(applet->id())) {
                 const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
-                if (pluginId != QLatin1String(kLatteSeparatorPluginId)
-                    && pluginId != QLatin1String(kLegacySeparatorPluginId)
-                    && pluginId != QLatin1String(kInternalViewSplitterPluginId)) {
+                if (!Latte::PluginId::isSeparatorPluginId(pluginId) && pluginId != QLatin1String(Latte::PluginId::kSplitter)) {
                     int defaultIndex = calculateDefaultAppletInsertionIndex(order);
                     QMetaObject::invokeMethod(m_layoutManager,
                                               "addAppletItem",
