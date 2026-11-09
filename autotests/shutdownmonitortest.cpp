@@ -26,6 +26,8 @@ struct FakeSession {
     bool sessionEnding{false};
     int probes{0};
     int hides{0};
+    //! The session-ending flag as the hide hook saw it.
+    bool sessionEndingWhenHidden{false};
     int restores{0};
     int quits{0};
 
@@ -46,6 +48,7 @@ struct FakeSession {
                 sessionEnding = false;
             },
             .hideViews = [this]() {
+                sessionEndingWhenHidden = sessionEnding;
                 ++hides;
             },
             .restoreViews = [this]() {
@@ -156,6 +159,9 @@ void ShutdownMonitorTest::confirmedLogoutHidesViewsOnce()
     QVERIFY(session.sessionEnding);
     QCOMPARE(session.hides, 1);
     QCOMPARE(session.quits, 0);
+    // The flag is set before the views hide, so whatever the hide starts
+    // already sees the announced logout.
+    QVERIFY(session.sessionEndingWhenHidden);
 
     monitor.evaluate();
     QCOMPARE(session.hides, 1);
