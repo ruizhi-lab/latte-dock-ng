@@ -1,4 +1,10 @@
-Checks: '-*,bugprone-use-after-move,bugprone-unused-return-value'
+# The clang-tidy gate (scripts/test-clang-tidy.py): GATED_CHECKS there must match Checks here.
+Checks: '-*,bugprone-unused-return-value,bugprone-use-after-move'
 WarningsAsErrors: '*'
-HeaderFilterRegex: '^.*/app/data/.*$'
+# Every .h header that a translation unit reaches is reported, so a finding in any checkout
+# header is seen. The runner counts only the production sources (test-clazy.py's first_party),
+# so findings in generated build files and in autotests/ never count. This regex cannot exclude
+# them itself: clang-tidy regular expressions have no lookahead, and the checkout path is not
+# known here.
+HeaderFilterRegex: '\.h$'
 FormatStyle: file
