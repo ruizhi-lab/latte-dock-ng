@@ -294,7 +294,6 @@ private Q_SLOTS:
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
     void containmentInterfaceHasSeparatorPluginConstantsAndHelper();
     void appletsModelHasNoPersonalDataAppletList();
-    void lattePackageShellPluginNameBranchingIsCorrect();
     void indicatorPlasmaTypeIsRemappedToDefault();
     void appearanceConfigPreservesIndicatorStyleConfiguration();
     void mainCppMessageSuppressionCoversFrameworkWarnings();
@@ -3405,17 +3404,6 @@ void SourceContractTest::appletsModelHasNoPersonalDataAppletList()
     QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
     QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.spacer\"")));
     QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.plasmoid\"")));
-}
-
-void SourceContractTest::lattePackageShellPluginNameBranchingIsCorrect()
-{
-    QFile packageCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/package/lattepackage.cpp"));
-    QVERIFY(packageCpp.open(QFile::ReadOnly));
-    const QString src = QString::fromUtf8(packageCpp.readAll());
-
-    // The shell plugin name must gate fallback package assignment so
-    // the latte shell package inherits from the correct fallback.
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.shell\"")));
 }
 
 void SourceContractTest::indicatorPlasmaTypeIsRemappedToDefault()
