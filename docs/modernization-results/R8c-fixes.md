@@ -1,9 +1,9 @@
 # R8c-fix: the two defects of the R8c inventory
 
-Status: Pending desktop check. The code, the tests, the four host presets, the clazy
-gate and the clang-tidy re-check are verified (see Verification). The user-mode
-install, the desktop check of the Docks table and the merge wait for the end of the
-R8d memory series (about 23:59 on 2026-11-09).
+Status: Complete. The code, the tests, the four host presets, the clazy gate, the
+clang-tidy re-check and the nine-step desktop check of the Docks table passed (see
+Verification and Desktop check). `main` (the R8i clang-tidy gate) was merged into the
+branch, and the branch was then merged into `main`.
 
 Batch / slice and selected scope: R8c-fix, fix the two real defects that the
 [R8c record](R8c.md) lists under "Findings worth a look". Acceptance: each check no
@@ -100,10 +100,20 @@ fails only on QML errors and broken generated modules, and it summarizes the leg
 warnings. This change touches no QML file and no class registered to QML. The deep QML
 lint itself was not run here, because `qmllint` is not on this host's PATH.
 
-## Desktop check (zh_CN, to run after the R8d series ends)
+### Merged tree
 
-Run on the user-mode Debug build of this branch (the install and the restart follow the
-Development Debug workflow in `AGENTS.md` and must not start before 23:59 on
+`main` (`3e5b69341`, the R8i clang-tidy gate) was merged into the branch as `9ef11558d`.
+R8i changed no C++ or CMake file, so the app code is unchanged from the matrix above. On
+the merged tree, the four presets build with exit 0 and CTest passes 61/61 in each. The
+builds were incremental, so the zero-warning count is the fresh-tree count above. The R8i
+clang-tidy gate (`scripts/test-clang-tidy.py --jobs 12`) exits 0 with the host's clang-tidy
+22.1.8: 155 production sources, no findings from its two checks, and both negative
+fixtures rejected. CI's clang-tidy 18.1.3 was not run on the merged tree here.
+
+## Desktop check (zh_CN, run on 2026-11-10)
+
+Run on the user-mode Debug build of this branch (the install and the restart followed the
+Development Debug workflow in `AGENTS.md` and started after 23:59 on
 2026-11-09). The labels are the zh_CN strings from `po/zh_CN/latte-dock.po`; the English
 msgid is in brackets. The menu entry in step 1 comes from the dock context-menu data in
 `app/data/contextmenudata.h`, not from a run, so confirm its wording on screen.
@@ -125,9 +135,18 @@ Expected: every step behaves as above. The Debug log (`/tmp/latte-ng.log`) has n
 warning or error from the dialog or the table. Report each step as passed or failed,
 with what you saw.
 
+Result (2026-11-10): all nine steps passed on the user-mode Debug build of this branch, as
+the user reported. Steps 7 and 8 had been corrected before the run (`5a66f7436`). The Debug
+log of the run (`/tmp/latte-ng.log`, 535 lines when analyzed) has no warning, error, fatal,
+assert or critical line. It shows three openings of the Docks dialog, one Remove, one
+Duplicate and one Cancel, and no Apply: `ViewsDialog::onApply()` logs its call, and that
+line is absent, so no staged change was saved.
+
 ## Limits
 
 - Not run here: the deep QML lint (see above), the Debian 13 container build, the
   ASan/UBSan preset and the install-script tests. They are left to CI.
-- The desktop check is not run yet. The user-mode install and any dock restart wait for
-  the end of the R8d series (about 23:59 on 2026-11-09).
+- The desktop check covered the nine steps above only. The other buttons and the Layouts
+  tab's other actions were not exercised.
+- The merged-tree clang-tidy gate used the host's clang-tidy 22.1.8. The CI version,
+  18.1.3, was not run here; CI runs the gate on the push.
