@@ -52,6 +52,9 @@ FINDING = re.compile(
 )
 # An error line that is not a finding, such as a failed translation unit or a missing input.
 FAILURE = re.compile(r"^(?:\S.*: )?(?:fatal )?error: |^Error while processing ")
+# A diagnostic with a check bracket that FINDING cannot read, for example one with a relative
+# path. It may be a gated finding, so it must not pass as a clean run.
+UNREADABLE_FINDING = re.compile(r": (?:warning|error): .*\[[^\]]+\]$")
 WARNINGS_AS_ERRORS_MARKER = "-warnings-as-errors"
 
 
@@ -150,7 +153,7 @@ def analyze_unit(clang_tidy: str, database: Path, source: Path) -> UnitResult:
                         match["severity"],
                     )
                 )
-        elif FAILURE.match(line):
+        elif FAILURE.match(line) or UNREADABLE_FINDING.search(line):
             result.problems.append(line)
     # A failing exit without any finding is a failed analysis, not a clean run.
     if completed.returncode != 0 and not result.findings and not result.problems:
