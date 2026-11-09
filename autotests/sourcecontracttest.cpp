@@ -292,7 +292,7 @@ private Q_SLOTS:
     void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
     void genericLayoutSyncLatteViewsToScreensIteratesSnapshots();
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
-    void containmentInterfaceHasSeparatorPluginConstantsAndHelper();
+    void containmentInterfaceUsesSharedSeparatorPluginIds();
     void appletsModelHasNoPersonalDataAppletList();
     void indicatorPlasmaTypeIsRemappedToDefault();
     void appearanceConfigPreservesIndicatorStyleConfiguration();
@@ -3378,19 +3378,24 @@ void SourceContractTest::layoutManagerCleanupOnStartupRemovesLegacyAndGhostApple
     QVERIFY(src.contains(QStringLiteral("kAnalogClock")));
 }
 
-void SourceContractTest::containmentInterfaceHasSeparatorPluginConstantsAndHelper()
+void
+SourceContractTest::containmentInterfaceUsesSharedSeparatorPluginIds()
 {
     QFile interfaceCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
     QVERIFY(interfaceCpp.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(interfaceCpp.readAll());
 
-    // The anonymous-namespace separator constants must recognise both
-    // the latte separator and the legacy audoban separator.
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
-    QVERIFY(src.contains(QStringLiteral("\"audoban.applet.separator\"")));
-
-    // The internal view splitter plugin ID must be defined.
-    QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.splitter\"")));
+    // The separator ordering, the boundary separators of an applet, the cleanup
+    // of stray separators and the default placement of new applets tell
+    // separators and the splitter apart through Latte::PluginId (pluginids.h),
+    // whose values dataunittest checks. A local copy of the ids or of
+    // isSeparatorPluginId() can drift from that list: a separator id added
+    // there would then be handled as an ordinary applet here.
+    QVERIFY(!src.contains(QStringLiteral("\"org.kde.latte.separator\"")));
+    QVERIFY(!src.contains(QStringLiteral("\"audoban.applet.separator\"")));
+    QVERIFY(!src.contains(QStringLiteral("\"org.kde.latte.splitter\"")));
+    QVERIFY(src.contains(QStringLiteral("Latte::PluginId::isSeparatorPluginId(")));
+    QVERIFY(src.contains(QStringLiteral("Latte::PluginId::kSplitter")));
 }
 
 void SourceContractTest::appletsModelHasNoPersonalDataAppletList()
