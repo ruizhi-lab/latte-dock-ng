@@ -657,3 +657,21 @@ A `.qml` file in this repository belongs to the QML lint's file set: `scripts/qm
 refuses a comparison when the set of files differs from the reviewed baseline. The first merge of
 these copies as `.qml` made the set 253 files against the baseline's 241, and the Build run for
 `95ce13dcc` failed in its deep QML lint step. The rename restores the set of 241 files.
+
+### Step 3 commands and exit codes
+
+`$R8J` is `/data/tmp/r8j-20261110`. Commands run from the worktree at `e1a1b9d43` (the tools are
+unchanged since `0c4fef68b`; the data and this record were added after the run).
+
+| step | command | exit |
+|---|---|---|
+| tool check | `command -v heaptrack` (`/usr/bin/heaptrack`, the user's install of `dev-util/heaptrack-1.5.80_pre20251017`; `heaptrack --version` prints 1.6.80) | 0 |
+| preload and reader | `/usr/lib64/heaptrack/libheaptrack_preload.so` (SHA-256 `3d38c0055681731b1a516fdd9e7f21c577bd3579f613a430dfbe37000d4d407b`), `/usr/lib64/heaptrack/libexec/heaptrack_interpret` (SHA-256 `f3509d23e97e1afb56804ce1fd59e720e1d0c6cc209de31c191c551149469d34`) | - |
+| pilots | `session.py --scenario W --heaptrack` with warm-up 60 s, one cycle (`WH1`, then `WH2` with maps) | 0, 0 |
+| formal run | `python3 -I docs/modernization-results/R8j-tools/session.py --scenario W --out $R8J/runs/WH --template $R8J/home --probe $R8J/tools/r8j_trim.so --heaptrack` (08:46:44 to 09:07:39) | 0 |
+| verdict by the rule | `python3 -I docs/modernization-results/R8j-tools/analyze_cycles.py $R8J/runs/WH` (outside malloc on this run; see the controls) | 0 |
+| attribution | `python3 -I docs/modernization-results/R8j-tools/heaptrack_attr.py --data $R8J/runs/WH/heaptrack/heaptrack.zst --run $R8J/runs/WH --out $R8J/runs/WH/attribution` (45 s) | 0 |
+| supplementary | `python3 -I docs/modernization-results/R8j-tools/window_sites.py $R8J/runs/WH --data $R8J/runs/WH/heaptrack/heaptrack.zst --out $R8J/runs/WH/attribution/window-sites.md` | 0 |
+| unit tests | `python3 -I docs/modernization-results/R8j-tools/test_heaptrack_attr.py` (15 tests) and `test_analyze_cycles.py` (17 tests) | 0, 0 |
+| data copy | `R8j-data/WH`: `samples.csv`, `events.jsonl`, `summary.json`, `session/`, `heaptrack/pipeline.log`, the attribution and the supplementary table; `analysis.*` regenerated from the copy | 0 |
+| CI on the merge | Build `42694728596` for `95ce13dcc`: failure in Deep QML lint (the QML coverage check, 253 files against 241). Fixed by `e1a1b9d43`; its Build `42734618367` was in progress when this record was written and has not been polled | - |
