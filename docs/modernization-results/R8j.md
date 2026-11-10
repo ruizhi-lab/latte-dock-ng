@@ -4,7 +4,8 @@ Status: Complete (measurement). The design in this record was committed before t
 run of any cycle (`2e7325481`). Under the rule fixed in advance, the idle control is "not
 reproduced", and the window and application cycles are "inconclusive": the trim returned
 34 % and 43 % of the growth, and the rule needs 50 % for "allocator retention". The leak
-branch is not met either. See [Results](#results).
+branch is not met either. See [Results](#results). Step 3 (attribution with heaptrack) has run; its results are in
+[Step 3 results](#step-3-results-the-formal-attribution-run-wh) at the end of this record.
 
 Batch / slice and selected scope: R8j, measurement only (plan row R8j, after R8d). No
 production source, CMake, qmllint or clang-tidy baseline changes. Deliverables: the tools
@@ -369,7 +370,7 @@ Threads: the idle control peaks at 8 threads in every cycle. The window cycles p
   the logs and the analysis), and `R8j-data/pilot/` (three screenshots and two summaries).
   The analysis reproduces from the committed copies (command in the table above).
 
-### Next exact action
+### Next exact action (superseded: step 3 has run; see the next section)
 
 The answer is open under the fixed rule, so the next step is step 3 of the plan, an
 attribution run with heaptrack or valgrind. Neither is installed, and installing either needs
@@ -506,3 +507,145 @@ and that site is inside the NVIDIA EGL library (its named frames are nearest exp
 symbols), with its first dock frame at `main`. The pilot is not a result; it shows that the tool
 and its names work on the dock's recording.
 
+
+## Step 3 results: the formal attribution run `WH`
+
+The run used the design and the amendments above, unchanged: scenario W, the formal timeline
+(warm-up 720 s, the baseline trim, cycles 1 to 10, the trim, post-trim cycles 11 and 12, hold
+20 s, rest 20 s, sampling every 5 s), the same build and probe, and `--heaptrack`. It started at
+08:46:44 and ended at 09:07:39 (+08:00). Session status 0, the dock exited with status 0, the
+reader pipeline exited with status 0, and no new latte-dock-ng coredump. The dock log has three
+lines (no warning, fatal or assertion). The data are in `R8j-data/WH/`.
+
+### Recording
+
+- The raw heaptrack file, `heaptrack.zst`, is not committed (20,813,780 bytes; SHA-256
+  `6c66daf0720ce08c9cb0fb2ef17effae9eb3032754fe2a590cc5176b44369a4d`). It is in
+  `/data/tmp/r8j-20261110/runs/WH/heaptrack/`.
+- The heaptrack stats: 9,809,826 allocations, 37,588 still allocated at the end, 581,896
+  temporary (`R8j-data/WH/heaptrack/pipeline.log`).
+- The tool read 19,582,064 events and 293,389 allocation infos, with no unknown info and no
+  unparsed line, in 45 s. heaptrack's last time (1,250,337 ms) matches the harness's dock exit
+  (1250.42 s) to about 0.1 s, so the time offset is taken as zero.
+
+### Controls
+
+- **C1 (representativeness).** The cycle-1 step is 6.20 MiB of Pss_Anon, against 4.91 MiB in
+  the formal W run (no heaptrack). The difference, 1.29 MiB, is within the 2 MiB of the
+  pre-registered rule, so the run is representative by C1. The synchronized release of cycle 1
+  is 4.08 MiB, against the formal run's 4.24 MiB of free growth.
+- **C2 (heaptrack's own memory).** The in-use counter (`uordblks`) at the post-trim baseline is
+  137.05 MiB here, against 83.69 MiB in the formal W run: 53 MiB more. heaptrack's own
+  bookkeeping is allocated with glibc malloc and counted there. So the in-use growth of this
+  run (3.96 MiB, against 0.98 MiB) is not the dock's alone, and the counter-based verdict below
+  is affected by it. The attribution does not use the counters.
+
+### Verdict by the fixed rule, on this run
+
+By the rule as written, this run gives "outside malloc" (G = 8.46 MiB; TR = 1.73 MiB, which is
+0.20 G; dU = 3.96 MiB, below the 4.23 MiB that is half of G). The formal W run without heaptrack
+gives "inconclusive" (`R8j-data/W`), and that is the verdict of the scenario. The difference
+comes from C2, so this run's label does not change the scenario's verdict.
+
+### Attribution, cycle 1 (P1)
+
+- The synchronized release of cycle 1 is 4.08 MiB, which is at least the 2 MiB of the rule, so
+  P1 holds.
+- The attribution set is one site. It covers 50 % of the positive shares and holds 69.1 % of
+  them: a call inside the NVIDIA EGL library (`libnvidia-eglcore`), 2.84 MiB, from 4,104
+  allocations and 4,065 frees. The names inside that library are the nearest exported symbols
+  of it (`+0xOFFSET` marks them), so they say the module, not the function. Its first frame
+  in the dock is `main+0xf32`.
+
+The largest shares in cycle 1 (share in MiB; allocations; first dock frame, which is `main` for
+every row):
+
+| site (innermost first, as the tool names it) | share | allocations / frees |
+|---|---:|---:|
+| `libnvidia-eglcore` (nearest exported symbols), called from `NvGlEglGetFunctions` | 2.844 | 4104 / 4065 |
+| `operator new` < `QSGBatchRenderer::Renderer::Renderer` < `QSGRhiLayer::grab` (Qt Quick, the scene graph) | 0.073 | 5 / 5 |
+| `operator new` < `QQmlType::create` < `QQmlObjectCreator::createInstance` (QML) | 0.061 | 300 / 300 |
+| `libnvidia-eglcore` (nearest exported symbols), second call site | 0.035 | 5 / 5 |
+| `operator new` < `QSGBatchRenderer::Renderer::Renderer` < `QSGRhiLayer::grab` (second call site) | 0.028 | 5 / 5 |
+| `operator new` < `QQmlBinding::newBinding` < `QQmlBinding::create` (QML) | 0.025 | 211 / 211 |
+
+The full table is in `R8j-data/WH/attribution.md`.
+
+### Live growth in cycle 1 (P2)
+
+The positive net bytes of window 1 sum to 0.486 MiB (the net of all sites is 0.392 MiB). P2
+needs 0.5 MiB, so P2 is not met, narrowly. The largest live sites are Qt image data from
+`qt_blurImage` (+0.126 MiB, 17 allocations, 1 free), a QML property capture (+0.055 MiB) and
+the NVIDIA site (+0.037 MiB).
+
+### Reuse and new growth in windows 2 to 10 (P3)
+
+- The window-1 set supplies 0.0 % of the releases of each of windows 2 to 10 (its total share
+  there is -0.007 MiB). P3 needs at least 80 % in each window, so P3 fails.
+- Each of windows 2 to 10 releases about 2.13 MiB. The largest releaser, in all nine windows
+  together, is a Qt Quick positioner's item vector (`QQuickBasePositioner::PositionedItem`,
+  `reserve`): 9.00 MiB, about 1 MiB per cycle. The other large releasers are Qt Quick and QML
+  allocations and the NVIDIA site, each under 0.7 MiB in total (`R8j-data/WH/window-sites.md`).
+- The positive net bytes of sites outside the set, summed over windows 2 to 10, are 1.007 MiB,
+  so the rule's reading "a per-use source exists" applies (1 MiB is its line). The total net of
+  windows 2 to 10 is only 0.451 MiB: the 1.007 MiB counts small increases at some sites that
+  are partly offset by decreases at others. The largest of these sites is 0.277 MiB in total
+  (Qt image data from `qt_blurImage`), then 0.113 MiB (`QMetaType::create`), 0.111 MiB
+  (`QV4::ExecutionEngine::newVariantObject`), 0.083 MiB (`QVariant::fromMetaType`) and 0.067 MiB
+  (`QQmlEnginePrivate::createInternalContext`).
+
+### The last window (post-trim cycle 12): an observation outside the rules
+
+Window 12 releases 32.17 MiB and nets -29.82 MiB. The frees of 1210 to 1212 s (50 and 36 MiB)
+and of 1230 to 1231 s (14 and 31 MiB) are matched by similar allocations, so they are churn, as
+in the other cycles. The 31 MiB freed between 1250.0 and 1250.2 s has no allocation in the same
+0.2 s. That is 0.2 s before the rest ended, and before the dock was signalled to quit (the map
+save at 1250.21 s and the quit at about 1250.2 s). The cause is not identified. Window 12 is
+the post-trim check, which is not part of any rule, so the outcomes above do not depend on it.
+
+### Reading, by the rules fixed in advance
+
+- P1 holds: the first window's release is one site, inside the NVIDIA EGL library, with 69 % of
+  the positive shares, and the synchronized release (4.08 MiB) matches the formal run's free
+  growth (4.24 MiB).
+- P2 is not met (0.486 MiB, narrowly below 0.5).
+- P3 fails: the first window's set does not supply the later releases.
+- The new live growth of windows 2 to 10 is 1.007 MiB, so the rule's reading gives "a per-use
+  source exists", with the sites above named as candidates, and "a further run needs its own
+  design". The candidates are small and spread over many Qt and QML allocations (none is above
+  0.28 MiB in total), and the net over windows 2 to 10 is 0.451 MiB. No site stands out as a
+  leak.
+
+What this answers. The first window's retained memory (about 4 MiB) is memory that the dock's
+rendering of the new task allocated in the NVIDIA driver and in Qt Quick and QML, and that the
+allocator kept after the window closed. In the later cycles the dock churns about 2.1 MiB per
+window, mostly in a Qt Quick positioner's vector, and the free space stays about the same
+(in this run the free bytes stay at about 6.5 MiB from cycle 3 on). The live growth is 0.45 MiB over nine
+cycles and does not come from one site. The best-supported reading is therefore retention of
+a first-use rendering burst, not a leak with a site. The fixed verdict rule still says
+"inconclusive" for the scenario, and the strict reuse test (P3) fails.
+
+### Limits of step 3
+
+- Names inside libraries without symbols are the nearest exported symbols. The top site is
+  named by its module only, and the Qt and QML names are nearest exported symbols too
+  (`+0xOFFSET`), so a name is a pointer into the library, not the function.
+- Frees are counted per allocation info, so the transient bytes are an estimate. The
+  synchronized release and the shares are exact for the definitions above.
+- heaptrack adds its own memory to glibc's counters (C2), so the counter-based verdict of this
+  run is affected. The attribution is not.
+- One scenario and one run. The first dock frame is `main` for every top site: the stacks
+  reach the dock's own code only at `main`, so the attribution names the libraries that do the
+  allocating, not the dock's functions.
+- The window-12 release is not explained (see above).
+
+### Next exact action
+
+The answer is now open at the level of a single site, and the rule for a further run needs its
+own design. Two choices, which are yours to make:
+
+1. Close R8j as it stands: the window scenario's first-use rendering burst is retained, and no
+   leak site is found within ten cycles. The per-use candidates are small (0.45 MiB net).
+2. Test the per-use candidates with a run of many more cycles (for example 60 windows, the same
+   timeline otherwise), with its own pre-registered rule for whether their net live growth
+   accumulates. This would also show whether the Qt Quick positioner's churn ever keeps memory.

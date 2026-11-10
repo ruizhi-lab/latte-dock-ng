@@ -1,0 +1,822 @@
+{
+ "data": "/data/tmp/r8j-20261110/runs/WH/heaptrack/heaptrack.zst",
+ "events": 19582064,
+ "infos": 293389,
+ "instruction_records": 34290,
+ "last_heaptrack_time_ms": 1250337,
+ "maps": [
+  "/data/tmp/r8j-20261110/runs/WH/session/maps-end.txt",
+  "/data/tmp/r8j-20261110/runs/WH/session/maps-warmup.txt"
+ ],
+ "reuse": {
+  "window_1_set": [
+   "_glDeterministicTPCModeDistParams+0xfb594 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04"
+  ],
+  "windows": {
+   "10": {
+    "net_bytes_from_new_sites": 99280,
+    "release_bytes": 2233552,
+    "share_from_window_1_set": 0.0
+   },
+   "2": {
+    "net_bytes_from_new_sites": 261844,
+    "release_bytes": 2233392,
+    "share_from_window_1_set": 0.0
+   },
+   "3": {
+    "net_bytes_from_new_sites": 248380,
+    "release_bytes": 2233552,
+    "share_from_window_1_set": 0.0
+   },
+   "4": {
+    "net_bytes_from_new_sites": 123332,
+    "release_bytes": 2233552,
+    "share_from_window_1_set": 0.0
+   },
+   "5": {
+    "net_bytes_from_new_sites": 18712,
+    "release_bytes": 2232546,
+    "share_from_window_1_set": 0.0
+   },
+   "6": {
+    "net_bytes_from_new_sites": 113396,
+    "release_bytes": 2232960,
+    "share_from_window_1_set": 0.0
+   },
+   "7": {
+    "net_bytes_from_new_sites": 96556,
+    "release_bytes": 2233552,
+    "share_from_window_1_set": 0.0
+   },
+   "8": {
+    "net_bytes_from_new_sites": 92100,
+    "release_bytes": 2233344,
+    "share_from_window_1_set": 0.0
+   },
+   "9": {
+    "net_bytes_from_new_sites": 2020,
+    "release_bytes": 2232530,
+    "share_from_window_1_set": 0.0
+   }
+  }
+ },
+ "run": "/data/tmp/r8j-20261110/runs/WH",
+ "shares": {
+  "cutoff": 0.5,
+  "reuse": 0.8
+ },
+ "strings": 4406,
+ "trace_nodes": 1216977,
+ "unknown_info_events": 0,
+ "unparsed_lines": 0,
+ "window_1": {
+  "attribution_set": [
+   "_glDeterministicTPCModeDistParams+0xfb594 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04"
+  ],
+  "attribution_share": 0.6907997593593975,
+  "cycle": 1,
+  "net_top": [
+   {
+    "alloc_bytes": 132596,
+    "allocations": 17,
+    "freed_bytes": 4,
+    "frees": 1,
+    "net_bytes": 132592,
+    "share_bytes": 4,
+    "site": "_ZN10QImageData6createERK5QSizeN6QImage6FormatE@@Qt_6_PRIVATE_API+0x1bc < _ZN6QImageC2EiiNS_6FormatE@@Qt_6+0x3c < _Z12qt_blurImageR6QImagedbi@@Qt_6+0x3a5b",
+    "transient_bytes": 4
+   },
+   {
+    "alloc_bytes": 57360,
+    "allocations": 1,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 57360,
+    "share_bytes": 0,
+    "site": "_ZN19QQmlPropertyCapture15capturePropertyEP12QQmlNotifier@@Qt_6_PRIVATE_API+0x2cd < _ZN3QV418QQmlContextWrapper14lookupIdObjectEPNS_6LookupEPNS_15ExecutionEngineEPNS_5ValueE@@Qt_6_PRIVATE_API+0xb1 < ??@??",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 57360,
+    "allocations": 1,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 57360,
+    "share_bytes": 0,
+    "site": "_ZN19QQmlPropertyCapture26captureNonBindablePropertyEP7QObjectiib@@Qt_6_PRIVATE_API+0x72e < _ZN3QV414QObjectWrapper11getPropertyEPNS_15ExecutionEngineEPNS_4Heap6ObjectEP7QObjectPK16QQmlPropertyData6QFlagsINS0_4FlagEE@@Qt_6_PRIVATE_API+0xd2 < _ZN3QV414QObjectWrapper14getQmlPropertyEPNS_15ExecutionEngineERK14QQmlRefPointerI15QQmlContextDataEPNS_4Heap6ObjectEP7QObjectPNS_6StringE6QFlagsINS0_4FlagEEPbPPK16QQmlPropertyData@@Qt_6_PRIVATE_API+0x1d6",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 8586551,
+    "allocations": 4104,
+    "freed_bytes": 8548255,
+    "frees": 4065,
+    "net_bytes": 38296,
+    "share_bytes": 2982052,
+    "site": "_glDeterministicTPCModeDistParams+0xfb594 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 8503707
+   },
+   {
+    "alloc_bytes": 35392,
+    "allocations": 36,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 35392,
+    "share_bytes": 0,
+    "site": "_ZN10QByteArray11reallocDataExN10QArrayData16AllocationOptionE@@Qt_6+0x8f < _ZN10QByteArray6resizeEx@@Qt_6+0x49 < _ZrsR11QDataStreamR10QByteArray@@Qt_6+0xdb",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 32768,
+    "allocations": 2,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 32768,
+    "share_bytes": 0,
+    "site": "_ZN10QImageData6createERK5QSizeN6QImage6FormatE@@Qt_6_PRIVATE_API+0x1bc < _ZN6QImageC2ERK5QSizeNS_6FormatE@@Qt_6+0x2a < _ZN15QImageIOHandler13allocateImageE5QSizeN6QImage6FormatEPS1_@@Qt_6+0xf5",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 21680,
+    "allocations": 1,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 21680,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN25QOpenGLProgramBinaryCache4saveERK10QByteArrayj@@Qt_6_PRIVATE_API+0x3495 < _ZN16QSGBatchRenderer8Renderer19ensurePipelineStateEPNS_7ElementEPKNS_19ShaderManagerShaderEb@@Qt_6+0x353",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 121325,
+    "allocations": 202,
+    "freed_bytes": 109124,
+    "frees": 162,
+    "net_bytes": 12201,
+    "share_bytes": 8001,
+    "site": "_glDeterministicTPCModeDistParams+0xfbec0 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 109124
+   },
+   {
+    "alloc_bytes": 10845,
+    "allocations": 1,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 10845,
+    "share_bytes": -10845,
+    "site": "_ZN10QByteArrayC2ExN2Qt14InitializationE@@Qt_6+0x3a < _ZN19QRhiGles2InitParamsC2Ev@@Qt_6_PRIVATE_API+0x11797 < _ZN19QRhiGles2InitParamsC2Ev@@Qt_6_PRIVATE_API+0x173e7",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 27776,
+    "allocations": 8,
+    "freed_bytes": 17360,
+    "frees": 5,
+    "net_bytes": 10416,
+    "share_bytes": 10416,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN25QOpenGLProgramBinaryCache4saveERK10QByteArrayj@@Qt_6_PRIVATE_API+0x2be5 < _ZN16QSGBatchRenderer8Renderer25updateMaterialDynamicDataEPNS_19ShaderManagerShaderERN17QSGMaterialShader11RenderStateEP11QSGMaterialPKNS_5BatchEPNS_7ElementEiiPc@@Qt_6+0x12f0",
+    "transient_bytes": 17360
+   },
+   {
+    "alloc_bytes": 7752,
+    "allocations": 4,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 7752,
+    "share_bytes": -5814,
+    "site": "_ZN10QByteArrayC2EPKcx@@Qt_6+0x65 < _ZN10QByteArray6assignE14QByteArrayView@@Qt_6+0x5e < _ZN16QSGBatchRenderer8Renderer5unmapEPNS_6BufferEb@@Qt_6+0xa0",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 6400,
+    "allocations": 5,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 6400,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN16QSGBatchRenderer8Renderer13prepareInlineEv@@Qt_6+0x167fc < _ZN16QSGBatchRenderer8Renderer12nodeWasAddedEP7QSGNodePNS_4NodeE@@Qt_6+0x2b9",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 6144,
+    "allocations": 8,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 6144,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN12QRhiResource11deleteLaterEv@@Qt_6_PRIVATE_API+0x9516 < _ZN12QRhiResource11deleteLaterEv@@Qt_6_PRIVATE_API+0x9755",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 3928,
+    "allocations": 1,
+    "freed_bytes": 0,
+    "frees": 0,
+    "net_bytes": 3928,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN17QSGMaterialShaderC2Ev@@Qt_6+0x23 < _ZN27QSGDefaultInternalImageNodeC2EP23QSGDefaultRenderContext@@Qt_6_PRIVATE_API+0xe6",
+    "transient_bytes": 0
+   },
+   {
+    "alloc_bytes": 184110,
+    "allocations": 42,
+    "freed_bytes": 180420,
+    "frees": 36,
+    "net_bytes": 3690,
+    "share_bytes": 922,
+    "site": "_glDeterministicTPCModeDistParams+0xfb594 < NvGlEglGetFunctions+0x9b7f < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 179851
+   }
+  ],
+  "share_top": [
+   {
+    "alloc_bytes": 8586551,
+    "allocations": 4104,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_glDeterministicTPCModeDistParams+0xfb594",
+     "??",
+     "??",
+     "??",
+     "_ZN19QRhiGles2InitParamsC2Ev@@Qt_6_PRIVATE_API+0x1315c",
+     "_ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0x5d3",
+     "_ZN11QSGRhiLayer13updateTextureEv@@Qt_6_PRIVATE_API+0x117",
+     "_ZN11QSGRenderer10preprocessEv@@Qt_6_PRIVATE_API+0x1a9"
+    ],
+    "freed_bytes": 8548255,
+    "frees": 4065,
+    "net_bytes": 38296,
+    "share_bytes": 2982052,
+    "site": "_glDeterministicTPCModeDistParams+0xfb594 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 8503707
+   },
+   {
+    "alloc_bytes": 76960,
+    "allocations": 5,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN16QSGBatchRenderer8RendererC2EP23QSGDefaultRenderContextN20QSGRendererInterface10RenderModeE@@Qt_6_PRIVATE_API+0x4af",
+     "_ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xaa2",
+     "_ZN11QSGRhiLayer13updateTextureEv@@Qt_6_PRIVATE_API+0x117",
+     "_ZN11QSGRenderer10preprocessEv@@Qt_6_PRIVATE_API+0x1a9",
+     "_ZN16QSGBatchRenderer8Renderer25removeBatchRootFromParentEPNS_4NodeE@@Qt_6+0x2677",
+     "_ZN19QQuickWindowPrivate16renderSceneGraphEv@@Qt_6_PRIVATE_API+0x5e7",
+     "_ZN13QSGRhiSupport10destroyRhiEP4QRhiRK27QQuickGraphicsConfiguration@@Qt_6_PRIVATE_API+0x715"
+    ],
+    "freed_bytes": 76960,
+    "frees": 5,
+    "net_bytes": 0,
+    "share_bytes": 76960,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN16QSGBatchRenderer8RendererC2EP23QSGDefaultRenderContextN20QSGRendererInterface10RenderModeE@@Qt_6_PRIVATE_API+0x4af < _ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xaa2",
+    "transient_bytes": 76960
+   },
+   {
+    "alloc_bytes": 66568,
+    "allocations": 300,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZNK8QQmlType6createEPPvm@@Qt_6_PRIVATE_API+0x34",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x26a",
+     "_ZN17QQmlObjectCreator26populateDeferredPropertiesEP7QObjectPKN8QQmlData12DeferredDataE@@Qt_6_PRIVATE_API+0x4d7",
+     "_ZN20QQmlIncubatorPrivate8incubateER26QQmlInstantiationInterrupt@@Qt_6_PRIVATE_API+0x6b6",
+     "_ZN17QQmlEnginePrivate8incubateER13QQmlIncubatorRK14QQmlRefPointerI15QQmlContextDataE@@Qt_6_PRIVATE_API+0x2e3",
+     "_ZN17QQmlDelegateModel6cancelEi@@Qt_6_PRIVATE_API+0x1281",
+     "_ZN14QQuickRepeater12modelUpdatedERK13QQmlChangeSetb@@Qt_6_PRIVATE_API+0x11a6"
+    ],
+    "freed_bytes": 66568,
+    "frees": 300,
+    "net_bytes": 0,
+    "share_bytes": 64400,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNK8QQmlType6createEPPvm@@Qt_6_PRIVATE_API+0x34 < _ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x26a",
+    "transient_bytes": 66568
+   },
+   {
+    "alloc_bytes": 26928,
+    "allocations": 306,
+    "dock_frame": "_ZN5Latte13ShortcutsPart16ShortcutsTracker20parseGlobalShortcutsEv+0x947",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN14QObjectPrivate11connectImplEPK7QObjectiS2_PPvPN9QtPrivate15QSlotObjectBaseEiPKiPK11QMetaObject@@Qt_6_PRIVATE_API+0x13d",
+     "_ZN7QObject11connectImplEPKS_PPvS1_S3_PN9QtPrivate15QSlotObjectBaseEN2Qt14ConnectionTypeEPKiPK11QMetaObject@@Qt_6+0x104",
+     "_ZN3QV416QmlSignalHandler9initProtoEPNS_15ExecutionEngineE@@Qt_6_PRIVATE_API+0x13a",
+     "_ZN3QV416QmlSignalHandler9initProtoEPNS_15ExecutionEngineE@@Qt_6_PRIVATE_API+0x513",
+     "_ZN3QV414QObjectWrapper4wrapEPNS_15ExecutionEngineEP7QObject@@Qt_6_PRIVATE_API+0x5362",
+     "_ZN3QV417SequencePrototype9toVariantEPKNS_8SequenceE@@Qt_6_PRIVATE_API+0xf7",
+     "_ZN3QV415ExecutionEngine18consoleCountHelperERK7QStringtt@@Qt_6_PRIVATE_API+0x194f"
+    ],
+    "freed_bytes": 44352,
+    "frees": 504,
+    "net_bytes": -17424,
+    "share_bytes": 42240,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN14QObjectPrivate11connectImplEPK7QObjectiS2_PPvPN9QtPrivate15QSlotObjectBaseEiPKiPK11QMetaObject@@Qt_6_PRIVATE_API+0x13d < _ZN7QObject11connectImplEPKS_PPvS1_S3_PN9QtPrivate15QSlotObjectBaseEN2Qt14ConnectionTypeEPKiPK11QMetaObject@@Qt_6+0x104",
+    "transient_bytes": 26840
+   },
+   {
+    "alloc_bytes": 36840,
+    "allocations": 5,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_glDeterministicTPCModeDistParams+0xfbec0",
+     "NvGlEglGetFunctions+0x31537",
+     "??",
+     "??",
+     "??",
+     "??",
+     "_ZN19QRhiGles2InitParamsC2Ev@@Qt_6_PRIVATE_API+0x12041",
+     "_ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0x6f1"
+    ],
+    "freed_bytes": 36840,
+    "frees": 5,
+    "net_bytes": 0,
+    "share_bytes": 36840,
+    "site": "_glDeterministicTPCModeDistParams+0xfbec0 < NvGlEglGetFunctions+0x31537 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 36840
+   },
+   {
+    "alloc_bytes": 29600,
+    "allocations": 5,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN16QSGBatchRenderer8RendererC2EP23QSGDefaultRenderContextN20QSGRendererInterface10RenderModeE@@Qt_6_PRIVATE_API+0x5a7",
+     "_ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xaa2",
+     "_ZN11QSGRhiLayer13updateTextureEv@@Qt_6_PRIVATE_API+0x117",
+     "_ZN11QSGRenderer10preprocessEv@@Qt_6_PRIVATE_API+0x1a9",
+     "_ZN16QSGBatchRenderer8Renderer25removeBatchRootFromParentEPNS_4NodeE@@Qt_6+0x2677",
+     "_ZN19QQuickWindowPrivate16renderSceneGraphEv@@Qt_6_PRIVATE_API+0x5e7",
+     "_ZN13QSGRhiSupport10destroyRhiEP4QRhiRK27QQuickGraphicsConfiguration@@Qt_6_PRIVATE_API+0x715"
+    ],
+    "freed_bytes": 29600,
+    "frees": 5,
+    "net_bytes": 0,
+    "share_bytes": 29600,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN16QSGBatchRenderer8RendererC2EP23QSGDefaultRenderContextN20QSGRendererInterface10RenderModeE@@Qt_6_PRIVATE_API+0x5a7 < _ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xaa2",
+    "transient_bytes": 29600
+   },
+   {
+    "alloc_bytes": 28696,
+    "allocations": 211,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x201",
+     "_ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0xd33",
+     "_ZN17QQmlObjectCreator13setupBindingsE6QFlagsINS_11BindingModeEE@@Qt_6_PRIVATE_API+0x74d",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x228",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x70d",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x1a3"
+    ],
+    "freed_bytes": 28696,
+    "frees": 211,
+    "net_bytes": 0,
+    "share_bytes": 26112,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x201 < _ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+    "transient_bytes": 28696
+   },
+   {
+    "alloc_bytes": 25200,
+    "allocations": 5,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_glDeterministicTPCModeDistParams+0xfbec0",
+     "_glDeterministicTPCModeDistParams+0xf0297",
+     "_glDeterministicTPCModeDistParams+0xe8ff0",
+     "_glDeterministicTPCModeDistParams+0xf01c1",
+     "NvGlEglApiInit+0x87cf",
+     "??",
+     "??",
+     "??"
+    ],
+    "freed_bytes": 25200,
+    "frees": 5,
+    "net_bytes": 0,
+    "share_bytes": 25200,
+    "site": "_glDeterministicTPCModeDistParams+0xfbec0 < _glDeterministicTPCModeDistParams+0xf0297 < _glDeterministicTPCModeDistParams+0xe8ff0",
+    "transient_bytes": 25200
+   },
+   {
+    "alloc_bytes": 32256,
+    "allocations": 42,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZNSt6vectorIN20QQmlComponentPrivate17ConstructionStateESaIS1_EE17_M_realloc_appendIJS1_EEEvDpOT_@@Qt_6_PRIVATE_API+0x6e8c",
+     "_ZN8QQmlData9deferDataEiRK14QQmlRefPointerIN3QV425ExecutableCompilationUnitEERKS0_I15QQmlContextDataERK7QString@@Qt_6_PRIVATE_API+0x336",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x832",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x70d",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x1a3",
+     "_ZN17QQmlObjectCreator13setupBindingsE6QFlagsINS_11BindingModeEE@@Qt_6_PRIVATE_API+0x74d",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x228"
+    ],
+    "freed_bytes": 32256,
+    "frees": 42,
+    "net_bytes": 0,
+    "share_bytes": 23808,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNSt6vectorIN20QQmlComponentPrivate17ConstructionStateESaIS1_EE17_M_realloc_appendIJS1_EEEvDpOT_@@Qt_6_PRIVATE_API+0x6e8c < _ZN8QQmlData9deferDataEiRK14QQmlRefPointerIN3QV425ExecutableCompilationUnitEERKS0_I15QQmlContextDataERK7QString@@Qt_6_PRIVATE_API+0x336",
+    "transient_bytes": 32256
+   },
+   {
+    "alloc_bytes": 20880,
+    "allocations": 15,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_glDeterministicTPCModeDistParams+0xfbec0",
+     "NvGlEglGetFunctions+0x32939",
+     "??",
+     "??",
+     "NvGlEglGetFunctions+0x8268d",
+     "??",
+     "??",
+     "_ZN19QRhiGles2InitParamsC2Ev@@Qt_6_PRIVATE_API+0x1251f"
+    ],
+    "freed_bytes": 20880,
+    "frees": 15,
+    "net_bytes": 0,
+    "share_bytes": 20880,
+    "site": "_glDeterministicTPCModeDistParams+0xfbec0 < NvGlEglGetFunctions+0x32939 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 20880
+   },
+   {
+    "alloc_bytes": 19600,
+    "allocations": 70,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN19QQmlPropertyBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextES5_17QQmlPropertyIndex@@Qt_6_PRIVATE_API+0x4b",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0xba4",
+     "_ZN17QQmlObjectCreator13setupBindingsE6QFlagsINS_11BindingModeEE@@Qt_6_PRIVATE_API+0x74d",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x228",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x70d",
+     "_ZN17QQmlObjectCreator26populateDeferredPropertiesEP7QObjectPKN8QQmlData12DeferredDataE@@Qt_6_PRIVATE_API+0x4d7",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x100a"
+    ],
+    "freed_bytes": 19600,
+    "frees": 70,
+    "net_bytes": 0,
+    "share_bytes": 19600,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN19QQmlPropertyBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextES5_17QQmlPropertyIndex@@Qt_6_PRIVATE_API+0x4b < _ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0xba4",
+    "transient_bytes": 19600
+   },
+   {
+    "alloc_bytes": 18904,
+    "allocations": 139,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x173",
+     "_ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0xd33",
+     "_ZN17QQmlObjectCreator13setupBindingsE6QFlagsINS_11BindingModeEE@@Qt_6_PRIVATE_API+0x74d",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x228",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x70d",
+     "_ZN17QQmlObjectCreator26populateDeferredPropertiesEP7QObjectPKN8QQmlData12DeferredDataE@@Qt_6_PRIVATE_API+0x4d7"
+    ],
+    "freed_bytes": 18904,
+    "frees": 139,
+    "net_bytes": 0,
+    "share_bytes": 18904,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x173 < _ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+    "transient_bytes": 18904
+   },
+   {
+    "alloc_bytes": 18432,
+    "allocations": 8,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN15QSGPlainTexture11qt_metacallEN11QMetaObject4CallEiPPv@@Qt_6_PRIVATE_API+0xaf29",
+     "_ZN18QSGCurveGlyphAtlasD0Ev@@Qt_6_PRIVATE_API+0x1997",
+     "_ZN11QSGRhiLayer11qt_metacallEN11QMetaObject4CallEiPPv@@Qt_6_PRIVATE_API+0x768",
+     "_ZNK18QQuickShaderEffect3logEv@@Qt_6_PRIVATE_API+0x2fe",
+     "_ZN19QQuickWindowPrivate15updateDirtyNodeEP10QQuickItem@@Qt_6_PRIVATE_API+0xc6b",
+     "_ZN19QQuickWindowPrivate16updateDirtyNodesEv@@Qt_6_PRIVATE_API+0xe3",
+     "_ZN19QQuickWindowPrivate14syncSceneGraphEv@@Qt_6_PRIVATE_API+0xd8"
+    ],
+    "freed_bytes": 18432,
+    "frees": 8,
+    "net_bytes": 0,
+    "share_bytes": 18432,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN15QSGPlainTexture11qt_metacallEN11QMetaObject4CallEiPPv@@Qt_6_PRIVATE_API+0xaf29 < _ZN18QSGCurveGlyphAtlasD0Ev@@Qt_6_PRIVATE_API+0x1997",
+    "transient_bytes": 18432
+   },
+   {
+    "alloc_bytes": 18280,
+    "allocations": 5,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xa91",
+     "_ZN11QSGRhiLayer13updateTextureEv@@Qt_6_PRIVATE_API+0x117",
+     "_ZN11QSGRenderer10preprocessEv@@Qt_6_PRIVATE_API+0x1a9",
+     "_ZN16QSGBatchRenderer8Renderer25removeBatchRootFromParentEPNS_4NodeE@@Qt_6+0x2677",
+     "_ZN19QQuickWindowPrivate16renderSceneGraphEv@@Qt_6_PRIVATE_API+0x5e7",
+     "_ZN13QSGRhiSupport10destroyRhiEP4QRhiRK27QQuickGraphicsConfiguration@@Qt_6_PRIVATE_API+0x715",
+     "_ZN12QQuickWindow5eventEP6QEvent@@Qt_6+0x47c"
+    ],
+    "freed_bytes": 18280,
+    "frees": 5,
+    "net_bytes": 0,
+    "share_bytes": 18280,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN11QSGRhiLayer4grabEv@@Qt_6_PRIVATE_API+0xa91 < _ZN11QSGRhiLayer13updateTextureEv@@Qt_6_PRIVATE_API+0x117",
+    "transient_bytes": 18280
+   },
+   {
+    "alloc_bytes": 18288,
+    "allocations": 127,
+    "dock_frame": "main+0xf32",
+    "frames": [
+     "_Znwm@@GLIBCXX_3.4+0x1b",
+     "_ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x25",
+     "_ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0xd33",
+     "_ZN17QQmlObjectCreator13setupBindingsE6QFlagsINS_11BindingModeEE@@Qt_6_PRIVATE_API+0x74d",
+     "_ZN17QQmlObjectCreator16populateInstanceEiP7QObjectS1_PK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x228",
+     "_ZN17QQmlObjectCreator14createInstanceEiP7QObjectb@@Qt_6_PRIVATE_API+0x70d",
+     "_ZN17QQmlObjectCreator18setPropertyBindingEPK16QQmlPropertyDataPKN3QV412CompiledData7BindingE@@Qt_6_PRIVATE_API+0x1a3"
+    ],
+    "freed_bytes": 18288,
+    "frees": 127,
+    "net_bytes": 0,
+    "share_bytes": 17856,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN11QQmlBinding10newBindingE9QMetaType@@Qt_6_PRIVATE_API+0x25 < _ZN11QQmlBinding6createE9QMetaTypePN3QV48FunctionEP7QObjectRK14QQmlRefPointerI15QQmlContextDataEPNS1_16ExecutionContextE@@Qt_6_PRIVATE_API+0x1c",
+    "transient_bytes": 18288
+   }
+  ],
+  "transient_top": [
+   {
+    "alloc_bytes": 83883520,
+    "allocations": 600,
+    "freed_bytes": 83883520,
+    "frees": 600,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QArrayData19reallocateUnalignedEPS_PvxxNS_16AllocationOptionE@@Qt_6+0x56 < _ZNSt6vectorIN20QQuickBasePositioner14PositionedItemESaIS1_EE7reserveEm@@Qt_6_PRIVATE_API+0x7dcc < _ZThn16_N14QQuickTreeViewD0Ev@@Qt_6_PRIVATE_API+0x13c",
+    "transient_bytes": 83883520
+   },
+   {
+    "alloc_bytes": 34044032,
+    "allocations": 488423,
+    "freed_bytes": 34044032,
+    "frees": 488423,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN7QString11reallocDataExN10QArrayData16AllocationOptionE@@Qt_6+0xa8 < _ZN7QString6resizeEx@@Qt_6+0x30 < _ZrsR11QDataStreamR7QString@@Qt_6+0xa6",
+    "transient_bytes": 34044032
+   },
+   {
+    "alloc_bytes": 10381800,
+    "allocations": 23595,
+    "freed_bytes": 10381800,
+    "frees": 23595,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNK8KService9mimeTypesEv+0x370 < _ZNK15KServiceFactory11createEntryEi+0x4d",
+    "transient_bytes": 10381800
+   },
+   {
+    "alloc_bytes": 8586551,
+    "allocations": 4104,
+    "freed_bytes": 8548255,
+    "frees": 4065,
+    "net_bytes": 38296,
+    "share_bytes": 2982052,
+    "site": "_glDeterministicTPCModeDistParams+0xfb594 < ??@libnvidia-eglcore.so.580.178.04 < ??@libnvidia-eglcore.so.580.178.04",
+    "transient_bytes": 8503707
+   },
+   {
+    "alloc_bytes": 4821960,
+    "allocations": 54795,
+    "freed_bytes": 4821960,
+    "frees": 54795,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_8QVariantESt10_Select1stIS4_ESt4lessIS0_ESaIS4_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS4_ERS2_+0x49b < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_8QVariantESt10_Select1stIS4_ESt4lessIS0_ESaIS4_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS4_ERS2_+0x795",
+    "transient_bytes": 4821960
+   },
+   {
+    "alloc_bytes": 3742440,
+    "allocations": 24765,
+    "freed_bytes": 3742440,
+    "frees": 24765,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QArrayData8allocateEPPS_xxxNS_16AllocationOptionE@@Qt_6+0x62 < _ZN16KMimeTypeFactory13MimeTypeEntry22setServiceOffersOffsetEi+0x585 < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_S0_ESt10_Select1stIS3_ESt4lessIS0_ESaIS3_EE11equal_rangeERS2_+0xcca",
+    "transient_bytes": 3742440
+   },
+   {
+    "alloc_bytes": 1255800,
+    "allocations": 22425,
+    "freed_bytes": 1255800,
+    "frees": 22425,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_8QVariantESt10_Select1stIS4_ESt4lessIS0_ESaIS4_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS4_ERS2_+0x399 < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_8QVariantESt10_Select1stIS4_ESt4lessIS0_ESaIS4_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS4_ERS2_+0x795",
+    "transient_bytes": 1255800
+   },
+   {
+    "alloc_bytes": 1050112,
+    "allocations": 32,
+    "freed_bytes": 1050112,
+    "frees": 32,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "getdents64@@GLIBC_2.30+0xf4 < getdents64@@GLIBC_2.30+0x16e < _ZN16QXmlStreamWriterC2EP7QString@@Qt_6+0x436",
+    "transient_bytes": 1050112
+   },
+   {
+    "alloc_bytes": 994536,
+    "allocations": 15,
+    "freed_bytes": 994536,
+    "frees": 15,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_glDeterministicTPCModeDistParams+0xfb594 < nvGetCompilerInterface+0x1b297d7 < nvGetCompilerInterface+0x1b29942",
+    "transient_bytes": 994536
+   },
+   {
+    "alloc_bytes": 786432,
+    "allocations": 24,
+    "freed_bytes": 786432,
+    "frees": 24,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QByteArray11reallocDataExN10QArrayData16AllocationOptionE@@Qt_6+0x8f < _ZN10QByteArray6resizeEx@@Qt_6+0x49 < _ZN9QIODevice7readAllEv@@Qt_6+0x131",
+    "transient_bytes": 786432
+   },
+   {
+    "alloc_bytes": 622440,
+    "allocations": 4095,
+    "freed_bytes": 622440,
+    "frees": 4095,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZN14KServiceActionC2Ev+0x11 < _ZNSt8_Rb_treeI7QStringSt4pairIKS0_8QVariantESt10_Select1stIS4_ESt4lessIS0_ESaIS4_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS4_ERS2_+0x13f1",
+    "transient_bytes": 622440
+   },
+   {
+    "alloc_bytes": 566280,
+    "allocations": 23595,
+    "freed_bytes": 566280,
+    "frees": 23595,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_Znwm@@GLIBCXX_3.4+0x1b < _ZNK15KServiceFactory11createEntryEi+0x3d < _ZNK14KSycocaFactory10allEntriesEv+0x11d",
+    "transient_bytes": 566280
+   },
+   {
+    "alloc_bytes": 528320,
+    "allocations": 455,
+    "freed_bytes": 528320,
+    "frees": 455,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QArrayData19reallocateUnalignedEPS_PvxxNS_16AllocationOptionE@@Qt_6+0x56 < _ZN13KServiceGroupC2ERK7QStringS2_+0xf2c < _ZN13KServiceGroupC2ERK7QStringS2_+0x122a",
+    "transient_bytes": 528320
+   },
+   {
+    "alloc_bytes": 528320,
+    "allocations": 455,
+    "freed_bytes": 528320,
+    "frees": 455,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QArrayData19reallocateUnalignedEPS_PvxxNS_16AllocationOptionE@@Qt_6+0x56 < _ZN18KApplicationTrader19setPreferredServiceERK7QString28QExplicitlySharedDataPointerI8KServiceE+0x14cc < _ZN15KServiceFactory12virtual_hookEiPv+0x1aa",
+    "transient_bytes": 528320
+   },
+   {
+    "alloc_bytes": 335730,
+    "allocations": 2362,
+    "freed_bytes": 335730,
+    "frees": 2362,
+    "net_bytes": 0,
+    "share_bytes": 0,
+    "site": "_ZN10QByteArrayC2ExN2Qt14InitializationE@@Qt_6+0x3a < _ZN5QUtf818convertFromUnicodeE11QStringViewPN20QStringConverterBase5StateE@@Qt_6_PRIVATE_API+0x25 < _ZN5QUtf818convertFromUnicodeE11QStringViewPN20QStringConverterBase5StateE@@Qt_6_PRIVATE_API+0xc2",
+    "transient_bytes": 335730
+   }
+  ]
+ },
+ "window_totals": [
+  {
+   "alloc_bytes": 158286290,
+   "cycle": 1,
+   "entered": true,
+   "freed_bytes": 157874734,
+   "net_bytes": 411556,
+   "release_bytes_synchronized": 4279184,
+   "share_sum_check": 4279184,
+   "transient_bytes": 157687460
+  },
+  {
+   "alloc_bytes": 149937490,
+   "cycle": 2,
+   "entered": true,
+   "freed_bytes": 149679432,
+   "net_bytes": 258058,
+   "release_bytes_synchronized": 2224264,
+   "share_sum_check": 2224264,
+   "transient_bytes": 149668379
+  },
+  {
+   "alloc_bytes": 145653116,
+   "cycle": 3,
+   "entered": true,
+   "freed_bytes": 145408232,
+   "net_bytes": 244884,
+   "release_bytes_synchronized": 2228600,
+   "share_sum_check": 2228600,
+   "transient_bytes": 145403223
+  },
+  {
+   "alloc_bytes": 145888232,
+   "cycle": 4,
+   "entered": true,
+   "freed_bytes": 145779230,
+   "net_bytes": 109002,
+   "release_bytes_synchronized": 2218832,
+   "share_sum_check": 2218832,
+   "transient_bytes": 145734395
+  },
+  {
+   "alloc_bytes": 145720396,
+   "cycle": 5,
+   "entered": true,
+   "freed_bytes": 145975186,
+   "net_bytes": -254790,
+   "release_bytes_synchronized": 2227474,
+   "share_sum_check": 2227474,
+   "transient_bytes": 145688080
+  },
+  {
+   "alloc_bytes": 147770926,
+   "cycle": 6,
+   "entered": true,
+   "freed_bytes": 147657570,
+   "net_bytes": 113356,
+   "release_bytes_synchronized": 2227888,
+   "share_sum_check": 2227888,
+   "transient_bytes": 147651317
+  },
+  {
+   "alloc_bytes": 145621760,
+   "cycle": 7,
+   "entered": true,
+   "freed_bytes": 145530710,
+   "net_bytes": 91050,
+   "release_bytes_synchronized": 2228480,
+   "share_sum_check": 2228480,
+   "transient_bytes": 145496891
+  },
+  {
+   "alloc_bytes": 145628230,
+   "cycle": 8,
+   "entered": true,
+   "freed_bytes": 145561306,
+   "net_bytes": 66924,
+   "release_bytes_synchronized": 2228272,
+   "share_sum_check": 2228272,
+   "transient_bytes": 145524682
+  },
+  {
+   "alloc_bytes": 145728864,
+   "cycle": 9,
+   "entered": true,
+   "freed_bytes": 145983628,
+   "net_bytes": -254764,
+   "release_bytes_synchronized": 2227458,
+   "share_sum_check": 2227458,
+   "transient_bytes": 145699188
+  },
+  {
+   "alloc_bytes": 145636338,
+   "cycle": 10,
+   "entered": true,
+   "freed_bytes": 145537098,
+   "net_bytes": 99240,
+   "release_bytes_synchronized": 2228480,
+   "share_sum_check": 2228480,
+   "transient_bytes": 145521796
+  },
+  {
+   "alloc_bytes": 145625654,
+   "cycle": 11,
+   "entered": true,
+   "freed_bytes": 145491448,
+   "net_bytes": 134206,
+   "release_bytes_synchronized": 2315416,
+   "share_sum_check": 2315416,
+   "transient_bytes": 145476684
+  },
+  {
+   "alloc_bytes": 146691235,
+   "cycle": 12,
+   "entered": true,
+   "freed_bytes": 177960940,
+   "net_bytes": -31269705,
+   "release_bytes_synchronized": 33728403,
+   "share_sum_check": 33728403,
+   "transient_bytes": 146473162
+  }
+ ]
+}

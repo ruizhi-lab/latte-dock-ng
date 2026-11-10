@@ -1,0 +1,72 @@
+{"elapsed_s": 0.0, "wall": "2026-11-10T08:46:48", "event": "dock-start", "pid": 423113, "comm": "latte-dock-ng", "exe": "/data/tmp/r8j-20261110/runs/WH/home/.local/bin/latte-dock-ng"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T08:58:48", "event": "warmup-end"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T08:58:48", "event": "maps-saved", "name": "warmup"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T08:58:48", "event": "signal", "name": "SIGUSR2", "index": 1, "label": "dump at warm-up end (before the trim)"}
+{"elapsed_s": 720.0, "wall": "2026-11-10T08:58:48", "event": "signal", "name": "SIGUSR1", "index": 2, "label": "trim at warm-up end: baseline"}
+{"elapsed_s": 745.0, "wall": "2026-11-10T08:59:13", "event": "baseline-ready"}
+{"elapsed_s": 745.0, "wall": "2026-11-10T08:59:13", "event": "cycle-start", "cycle": 1}
+{"elapsed_s": 745.0, "wall": "2026-11-10T08:59:13", "event": "app-start", "cycle": 1, "kind": "window", "pid": 425609, "command": "/usr/bin/qml6"}
+{"elapsed_s": 765.02, "wall": "2026-11-10T08:59:33", "event": "app-stop", "cycle": 1, "pid": 425609, "status": -15}
+{"elapsed_s": 785.02, "wall": "2026-11-10T08:59:53", "event": "rest-end", "cycle": 1}
+{"elapsed_s": 785.02, "wall": "2026-11-10T08:59:53", "event": "signal", "name": "SIGUSR2", "index": 3, "label": "dump after cycle 1"}
+{"elapsed_s": 785.02, "wall": "2026-11-10T08:59:53", "event": "cycle-start", "cycle": 2}
+{"elapsed_s": 785.02, "wall": "2026-11-10T08:59:53", "event": "app-start", "cycle": 2, "kind": "window", "pid": 425735, "command": "/usr/bin/qml6"}
+{"elapsed_s": 805.04, "wall": "2026-11-10T09:00:13", "event": "app-stop", "cycle": 2, "pid": 425735, "status": -15}
+{"elapsed_s": 825.04, "wall": "2026-11-10T09:00:33", "event": "rest-end", "cycle": 2}
+{"elapsed_s": 825.04, "wall": "2026-11-10T09:00:33", "event": "signal", "name": "SIGUSR2", "index": 4, "label": "dump after cycle 2"}
+{"elapsed_s": 825.04, "wall": "2026-11-10T09:00:33", "event": "cycle-start", "cycle": 3}
+{"elapsed_s": 825.04, "wall": "2026-11-10T09:00:33", "event": "app-start", "cycle": 3, "kind": "window", "pid": 425914, "command": "/usr/bin/qml6"}
+{"elapsed_s": 845.05, "wall": "2026-11-10T09:00:53", "event": "app-stop", "cycle": 3, "pid": 425914, "status": -15}
+{"elapsed_s": 865.05, "wall": "2026-11-10T09:01:13", "event": "rest-end", "cycle": 3}
+{"elapsed_s": 865.05, "wall": "2026-11-10T09:01:13", "event": "signal", "name": "SIGUSR2", "index": 5, "label": "dump after cycle 3"}
+{"elapsed_s": 865.05, "wall": "2026-11-10T09:01:13", "event": "cycle-start", "cycle": 4}
+{"elapsed_s": 865.05, "wall": "2026-11-10T09:01:13", "event": "app-start", "cycle": 4, "kind": "window", "pid": 426052, "command": "/usr/bin/qml6"}
+{"elapsed_s": 885.07, "wall": "2026-11-10T09:01:33", "event": "app-stop", "cycle": 4, "pid": 426052, "status": -15}
+{"elapsed_s": 905.07, "wall": "2026-11-10T09:01:53", "event": "rest-end", "cycle": 4}
+{"elapsed_s": 905.07, "wall": "2026-11-10T09:01:53", "event": "signal", "name": "SIGUSR2", "index": 6, "label": "dump after cycle 4"}
+{"elapsed_s": 905.07, "wall": "2026-11-10T09:01:53", "event": "cycle-start", "cycle": 5}
+{"elapsed_s": 905.07, "wall": "2026-11-10T09:01:53", "event": "app-start", "cycle": 5, "kind": "window", "pid": 426201, "command": "/usr/bin/qml6"}
+{"elapsed_s": 925.09, "wall": "2026-11-10T09:02:13", "event": "app-stop", "cycle": 5, "pid": 426201, "status": -15}
+{"elapsed_s": 945.09, "wall": "2026-11-10T09:02:33", "event": "rest-end", "cycle": 5}
+{"elapsed_s": 945.09, "wall": "2026-11-10T09:02:33", "event": "signal", "name": "SIGUSR2", "index": 7, "label": "dump after cycle 5"}
+{"elapsed_s": 945.09, "wall": "2026-11-10T09:02:33", "event": "cycle-start", "cycle": 6}
+{"elapsed_s": 945.09, "wall": "2026-11-10T09:02:33", "event": "app-start", "cycle": 6, "kind": "window", "pid": 426333, "command": "/usr/bin/qml6"}
+{"elapsed_s": 965.1, "wall": "2026-11-10T09:02:53", "event": "app-stop", "cycle": 6, "pid": 426333, "status": -15}
+{"elapsed_s": 985.1, "wall": "2026-11-10T09:03:13", "event": "rest-end", "cycle": 6}
+{"elapsed_s": 985.1, "wall": "2026-11-10T09:03:13", "event": "signal", "name": "SIGUSR2", "index": 8, "label": "dump after cycle 6"}
+{"elapsed_s": 985.1, "wall": "2026-11-10T09:03:13", "event": "cycle-start", "cycle": 7}
+{"elapsed_s": 985.1, "wall": "2026-11-10T09:03:13", "event": "app-start", "cycle": 7, "kind": "window", "pid": 426480, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1005.12, "wall": "2026-11-10T09:03:33", "event": "app-stop", "cycle": 7, "pid": 426480, "status": -15}
+{"elapsed_s": 1025.12, "wall": "2026-11-10T09:03:53", "event": "rest-end", "cycle": 7}
+{"elapsed_s": 1025.12, "wall": "2026-11-10T09:03:53", "event": "signal", "name": "SIGUSR2", "index": 9, "label": "dump after cycle 7"}
+{"elapsed_s": 1025.12, "wall": "2026-11-10T09:03:53", "event": "cycle-start", "cycle": 8}
+{"elapsed_s": 1025.12, "wall": "2026-11-10T09:03:53", "event": "app-start", "cycle": 8, "kind": "window", "pid": 426589, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1045.14, "wall": "2026-11-10T09:04:13", "event": "app-stop", "cycle": 8, "pid": 426589, "status": -15}
+{"elapsed_s": 1065.14, "wall": "2026-11-10T09:04:33", "event": "rest-end", "cycle": 8}
+{"elapsed_s": 1065.14, "wall": "2026-11-10T09:04:33", "event": "signal", "name": "SIGUSR2", "index": 10, "label": "dump after cycle 8"}
+{"elapsed_s": 1065.14, "wall": "2026-11-10T09:04:33", "event": "cycle-start", "cycle": 9}
+{"elapsed_s": 1065.14, "wall": "2026-11-10T09:04:33", "event": "app-start", "cycle": 9, "kind": "window", "pid": 426721, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1085.15, "wall": "2026-11-10T09:04:53", "event": "app-stop", "cycle": 9, "pid": 426721, "status": -15}
+{"elapsed_s": 1105.15, "wall": "2026-11-10T09:05:13", "event": "rest-end", "cycle": 9}
+{"elapsed_s": 1105.15, "wall": "2026-11-10T09:05:13", "event": "signal", "name": "SIGUSR2", "index": 11, "label": "dump after cycle 9"}
+{"elapsed_s": 1105.15, "wall": "2026-11-10T09:05:13", "event": "cycle-start", "cycle": 10}
+{"elapsed_s": 1105.15, "wall": "2026-11-10T09:05:13", "event": "app-start", "cycle": 10, "kind": "window", "pid": 426875, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1125.17, "wall": "2026-11-10T09:05:33", "event": "app-stop", "cycle": 10, "pid": 426875, "status": -15}
+{"elapsed_s": 1145.17, "wall": "2026-11-10T09:05:53", "event": "rest-end", "cycle": 10}
+{"elapsed_s": 1145.17, "wall": "2026-11-10T09:05:53", "event": "signal", "name": "SIGUSR2", "index": 12, "label": "dump after cycle 10"}
+{"elapsed_s": 1145.17, "wall": "2026-11-10T09:05:53", "event": "signal", "name": "SIGUSR1", "index": 13, "label": "trim after the cycles"}
+{"elapsed_s": 1170.17, "wall": "2026-11-10T09:06:18", "event": "post-trim-ready"}
+{"elapsed_s": 1170.17, "wall": "2026-11-10T09:06:18", "event": "cycle-start", "cycle": 11}
+{"elapsed_s": 1170.17, "wall": "2026-11-10T09:06:18", "event": "app-start", "cycle": 11, "kind": "window", "pid": 427061, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1190.19, "wall": "2026-11-10T09:06:38", "event": "app-stop", "cycle": 11, "pid": 427061, "status": -15}
+{"elapsed_s": 1210.19, "wall": "2026-11-10T09:06:58", "event": "rest-end", "cycle": 11}
+{"elapsed_s": 1210.19, "wall": "2026-11-10T09:06:58", "event": "signal", "name": "SIGUSR2", "index": 14, "label": "dump after cycle 11"}
+{"elapsed_s": 1210.19, "wall": "2026-11-10T09:06:58", "event": "cycle-start", "cycle": 12}
+{"elapsed_s": 1210.19, "wall": "2026-11-10T09:06:58", "event": "app-start", "cycle": 12, "kind": "window", "pid": 427170, "command": "/usr/bin/qml6"}
+{"elapsed_s": 1230.2, "wall": "2026-11-10T09:07:18", "event": "app-stop", "cycle": 12, "pid": 427170, "status": -15}
+{"elapsed_s": 1250.2, "wall": "2026-11-10T09:07:38", "event": "rest-end", "cycle": 12}
+{"elapsed_s": 1250.2, "wall": "2026-11-10T09:07:38", "event": "signal", "name": "SIGUSR2", "index": 15, "label": "dump after cycle 12"}
+{"elapsed_s": 1250.21, "wall": "2026-11-10T09:07:38", "event": "maps-saved", "name": "end"}
+{"elapsed_s": 1250.21, "wall": "2026-11-10T09:07:38", "event": "timeline-end"}
+{"elapsed_s": 1250.42, "wall": "2026-11-10T09:07:39", "event": "dock-exit", "status": 0}
+{"elapsed_s": 1250.42, "wall": "2026-11-10T09:07:39", "event": "heaptrack-done", "status": 0}

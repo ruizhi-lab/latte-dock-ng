@@ -1,0 +1,47 @@
+{
+ "scenario": "W",
+ "reason": "completed",
+ "dock_status": 0,
+ "heaptrack": {
+  "pipeline_status": 0,
+  "output": "/data/tmp/r8j-20261110/runs/WH/heaptrack/heaptrack.zst",
+  "output_bytes": 20813780,
+  "preload": "/usr/lib64/heaptrack/libheaptrack_preload.so",
+  "preload_sha256": "3d38c0055681731b1a516fdd9e7f21c577bd3579f613a430dfbe37000d4d407b",
+  "interpreter": "/usr/lib64/heaptrack/libexec/heaptrack_interpret",
+  "interpreter_sha256": "f3509d23e97e1afb56804ce1fd59e720e1d0c6cc209de31c191c551149469d34"
+ },
+ "kwin_status": 15,
+ "coredumps_new": [],
+ "coredump_errors": [],
+ "signals_sent": 15,
+ "samples": 251,
+ "sampler_stopped": null,
+ "dock_binary": {
+  "path": "/data/tmp/r8j-20261110/runs/WH/home/.local/bin/latte-dock-ng",
+  "sha256": "0bae01a0942656526ac3a4b9fdde0e0efd408af13478497fbf7583b9fb8e2fed"
+ },
+ "probe": {
+  "path": "/data/tmp/r8j-20261110/tools/r8j_trim.so",
+  "sha256": "d9c3b60c550bce59e4dc3b419b3bda7c4dd64eb33a76a3323ca5f4f25a745f58"
+ },
+ "probe_log_lines": 17,
+ "dock_log": {
+  "lines": 3,
+  "warning": 0,
+  "critical_or_error": 0,
+  "fatal": 0,
+  "assert": 0
+ },
+ "options": {
+  "warmup_s": 720.0,
+  "cycles": 10,
+  "post_cycles": 2,
+  "hold_s": 20.0,
+  "rest_s": 20.0,
+  "sample_s": 5.0,
+  "dock_arg": [],
+  "heaptrack": true
+ },
+ "ended": "2026-11-10T09:07:39"
+}
