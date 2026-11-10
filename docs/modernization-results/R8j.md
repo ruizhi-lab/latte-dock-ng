@@ -649,3 +649,11 @@ own design. Two choices, which are yours to make:
 2. Test the per-use candidates with a run of many more cycles (for example 60 windows, the same
    timeline otherwise), with its own pre-registered rule for whether their net live growth
    accumulates. This would also show whether the Qt Quick positioner's churn ever keeps memory.
+
+### Note on file names
+
+The window definitions copied from the nested sessions are stored as `window-N.qml.txt`.
+A `.qml` file in this repository belongs to the QML lint's file set: `scripts/qmllint-baseline.py`
+refuses a comparison when the set of files differs from the reviewed baseline. The first merge of
+these copies as `.qml` made the set 253 files against the baseline's 241, and the Build run for
+`95ce13dcc` failed in its deep QML lint step. The rename restores the set of 241 files.
