@@ -106,8 +106,9 @@ ctest --preset gcc-debug
 
 Use the equivalent Clang preset and relevant Release presets. Do not install
 sanitizer or performance binaries over the user-mode Debug test binary.
-For runtime work follow AGENTS.md's exact install/stop/fresh-log/dev-env/
-setsid-and-nohup launch sequence, then user feedback and log review. The
+For runtime work follow AGENTS.md's exact install/stop/fresh-log/dev-env/launch
+sequence (`setsid -f nohup` from a terminal, `systemd-run --user` from an AI
+agent's shell), then user feedback and log review. The
 [testing guide](development-testing-guide.md#runtime-retest-workflow) supplies
 clean-quit/coredump requirements. Performance A/B builds use the same mode on
 both sides and the [performance protocol](performance-validation-guide.md).

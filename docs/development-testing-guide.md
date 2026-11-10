@@ -440,6 +440,10 @@ clean quit:
    nohup ~/.local/bin/latte-dock-ng --replace --debug > /tmp/latte-ng.log 2>&1 &
    ```
 
+   An AI agent starts the dock through `systemd-run --user` instead (AGENTS.md,
+   step 5 of the Development Debug & Retest Workflow). Otherwise the dock, and
+   every application it launches, inherits the agent's environment.
+
 3. Exercise the changed behavior, then drive the exact scenario the fix
    targets (dock restart, applet popups and submenus, KDE logout or reboot).
    For a change to the logout handling, run the

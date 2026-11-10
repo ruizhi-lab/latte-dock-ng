@@ -129,6 +129,21 @@ When testing changes to latte-dock-ng, follow this exact workflow:
    ps aux | grep latte-dock-ng | grep -v grep || echo "DOCK FAILED TO START"
    ```
 
+   An AI agent starts the launcher through the user manager instead of
+   `setsid -f nohup`:
+   ```bash
+   systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" /tmp/launch-latte.sh
+   ```
+   The agent's shell carries the agent's own variables (session tokens, account
+   identifiers, proxy settings, `NO_AT_BRIDGE`) and runs in the agent
+   application's cgroup. The dock passes its environment to every application
+   it launches, and stopping that cgroup stops the dock with it. On 2026-11-10 a
+   dock started with `setsid` from an agent shell had 70 variables more than
+   plasmashell and handed them to Thunderbird. A transient user unit gets the
+   session environment, as an autostarted dock does, and a cgroup of its own;
+   compare `/proc/<pid>/environ` with plasmashell's when in doubt.
+   `pkill -x latte-dock-ng` still stops it, and `--collect` removes the unit.
+
    Note: `bash install.sh --user Debug` already installs all plasmoid QML to
    ~/.local/share/plasma/plasmoids/ — a manual `cp` overlay of QML files is
    usually not needed. (If DESTDIR causes prefix duplication like
