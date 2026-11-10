@@ -147,14 +147,18 @@ Run on 2026-11-10 after the user's go-ahead, while the R7 desktop checklist was 
 
 Result: passed for the two adds, and the user confirmed that both docks show on the screen.
 
+- Layout: both views went into `R7f test`, the active single-mode layout (`singleModeLayoutName=R7f test` in `lattedockrc`). Every `Called for layout:` line in the log names it. As the R7 checklist session reports, `R7f test` is a copy of 我的布局 that the checklist imported at 20:26 (its F3 step, through `--import-layout`). These checks did not use 我的布局: its file `我的布局.layout.latte` is still dated 00:53 and holds containments 1 and 13.
 - Install: `bash install.sh --user Debug` exit 0; log in `/data/tmp/r7h/install-user.log`. No privilege escalation (`sudo_cmd` is empty in user mode).
 - The new dock started at 21:01:23 (pid 613162, unit `latte-dock-ng-debug-20261110-210124`, exe `~/.local/bin/latte-dock-ng`). Its locale is `zh_CN.utf8`, the same as plasmashell's.
 - `--add-dock "Default Dock"`: exit 0. The log has `Adding View: 12 - Passed ALL checks` at 21:01:58 on the primary screen DP-2.
 - `--add-dock "默认停靠栏"`: exit 0. The log has `Adding View: 14 - Passed ALL checks` at 21:02:16.
 - Removal: the two test docks were removed over D-Bus, `removeView` for 12 and then 14, both exit 0. The dock logged `dock containment destroyed changed` twice at 21:04:44. `Corona::removeView()` ends in `View::removeView()`, the same action as the context menu. The right-click path itself was not exercised, and the user's docks (containments 1 and 13) were left alone.
-- Log, from 21:01:23 to the end: no `No dock is added` line and no fatal, assert or crash line. One `Warning:` line at 21:04:44.081, `Failed to notify "Created too many similar notifications in quick succession"`, came from the notification service right after the second removal. The add path logged nothing like it, and the removal path is not changed by this commit.
+- Log, from 21:01:23 to 21:05:43: no `No dock is added` line and no fatal, assert or crash line. One `Warning:` line at 21:04:44.081, `Failed to notify "Created too many similar notifications in quick succession"`, came from the notification service right after the second removal. The add path logged nothing like it, and the removal path is not changed by this commit.
 
-The record is closed when the merge into `main` is pushed.
+- Later, at 21:05:43, `R7f test.layout.latte` was saved after view 12 was removed. Its `[Containments][14]` section, the second test dock removed over D-Bus, is still in the file. No save followed before the abort below.
+- Abort at 21:07:40. Two removals ran from the Settings window's Docks page (`ViewsHandler::removeSelectedViews()`, log lines 21:07:36 and 21:07:39). The log does not say who started them. The second removal emptied the table. Then `rowCount() - 1` is -1, so `viewscontroller.cpp:371`, `m_view->selectRow(qBound(0, selectionheadrow, m_model->rowCount() - 1))`, asks `qBound` for a range from 0 to -1. Qt's `qBound` asserts `!(max < min)` (`qminmax.h`), and this Debug build aborted with SIGABRT; a core dump is present. The log ends there, and the dock was not running afterwards. This commit does not change `viewscontroller.cpp`, so the defect predates it and shows only where `Q_ASSERT` is enabled.
+
+The scope of this record is closed by the merge into `main`. The abort is a separate defect for a follow-up, not part of this slice.
 
 ## Limits
 
