@@ -467,3 +467,42 @@ Limits, fixed in advance. One scenario and one run under heaptrack. The frees ar
 per info, so the transient bytes are an estimate. Heaptrack adds its own overhead to the
 dock. The window is 40 s, so an allocation that starts in one cycle and is freed later is
 counted as freed in the later cycle.
+
+### Amendments before the formal attribution run
+
+Made after the pilots WH1 and WH2 (not counted) and before the formal run `WH`. The
+thresholds and the readings above are unchanged. Three things changed.
+
+1. **The measure of what stays free.** In WH1 the transient estimate of cycle 1 was
+   137.6 MiB, against 4.24 MiB of glibc free growth in the formal W run. Almost all of that
+   churn is allocated and freed inside the window and reused, so it is not what stays free.
+   P1 and P3 now use the synchronized release of a window: the total live bytes at the
+   window's peak minus the total at its end. Each site's share is its live count at the
+   peak minus its live count at the end, times its size, so the shares sum exactly to the
+   synchronized release. In WH2 the synchronized release of cycle 1 was 4.08 MiB, close to
+   the formal run's 4.24 MiB. The sum of the sites' own peaks (66.8 MiB in WH2) is not used:
+   the peaks of different sites do not coincide. P1 is unchanged in its numbers: the attribution
+   set covers at least 50 % of the positive shares, and the churn accounts for the free growth if the
+   synchronized release is at least 2 MiB. P3 is unchanged in its numbers, measured on the shares.
+2. **Names.** heaptrack names a frame from debug information only. The dock is a Release build
+   with a symbol table, which the tool reads with `nm` (exact names). The Qt, KF6, libc and
+   NVIDIA libraries have only exported symbols, so a frame in them is named by the nearest
+   exported symbol with its offset (`name+0xOFFSET`). Such a name says where the frame is in
+   the library, not which function it is. The names are demangled with `c++filt`. The harness
+   saves `/proc/<dock pid>/maps` at the warm-up's end and at the end of the timeline, and the
+   tool maps each instruction address to its file through the mapping. The file is matched by
+   its real path (the loader names a library by its link, the maps by the file).
+3. **Reporting.** The table has a column "first dock frame": the innermost frame whose module
+   name contains `latte`. The site is still the first three named frames, innermost first;
+   the file and line are shown where debug information gives them (this build has none).
+
+Checks of the tool. `test_heaptrack_attr.py` runs 15 tests (the parser, the windows and the
+synchronized shares, the file addresses and the names). On the synthetic recording the tool
+gives 1.00 MiB of release in window 1 (the 1 MiB transient), 3.00 MiB of net growth in window 2
+and 2.00 MiB of release in window 3. On the pilot WH2 (about 140 s of dock life, 9.1 MB
+compressed, 4.3 million events) it runs in 8 s and gives the table in
+`R8j-data/pilot/WH2-attribution.md`: one site covers 69 % of the positive shares of cycle 1,
+and that site is inside the NVIDIA EGL library (its named frames are nearest exported
+symbols), with its first dock frame at `main`. The pilot is not a result; it shows that the tool
+and its names work on the dock's recording.
+

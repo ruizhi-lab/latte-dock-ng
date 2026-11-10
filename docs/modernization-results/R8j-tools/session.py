@@ -298,10 +298,20 @@ class Timeline:
         self.journal.write("rest-end", cycle=cycle)
         self.send("SIGUSR2", f"dump after cycle {cycle}")
 
+    def save_maps(self, name: str) -> None:
+        """The dock's memory map, read from /proc (read only), so that heaptrack's instruction addresses can be named."""
+        path = self.session / f"maps-{name}.txt"
+        try:
+            path.write_text(Path(f"/proc/{self.dock.pid}/maps").read_text(encoding="utf-8"), encoding="utf-8")
+            self.journal.write("maps-saved", name=name)
+        except OSError as error:
+            self.journal.write("maps-error", name=name, detail=str(error))
+
     def run(self, scenario: str) -> None:
         args = self.args
         self.clock.wait(args.warmup_s)
         self.journal.write("warmup-end")
+        self.save_maps("warmup")
         if args.shot_warm:
             self.screenshot("shot-warmup-end")
         self.send("SIGUSR2", "dump at warm-up end (before the trim)")
@@ -316,6 +326,7 @@ class Timeline:
         self.journal.write("post-trim-ready")
         for cycle in range(args.cycles + 1, args.cycles + args.post_cycles + 1):
             self.cycle(scenario, cycle)
+        self.save_maps("end")  # modules that the cycles loaded are mapped at the end as well
         self.journal.write("timeline-end")
 
     def stop_all(self) -> None:

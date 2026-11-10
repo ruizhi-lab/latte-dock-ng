@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unit tests for heaptrack_attr.py (R8j step 3): the parser, the sites and the window sums.
+"""Unit tests for heaptrack_attr.py (R8j step 3): the parser, the windows, the releases and the names.
 
 Run it by hand; it is not registered in CTest:
 
@@ -19,8 +19,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import heaptrack_attr as ha  # noqa: E402
-
-MIB = 1024 * 1024
 
 PAIR = """v 10650 3
 X ./pair
@@ -90,6 +88,24 @@ R 40b
 # ips: 12
 """
 
+TIMELINE = """s 3 abc
+i 1000 1 1 1 1
+t 1 0
+a 100 1
+c 0
++ 0
+c 3e8
+- 0
+c 7d0
++ 0
+c 898
+- 0
+c bb8
++ 0
+"""
+
+MIB = 1024 * 1024
+
 
 def lines_of(text: str) -> list:
     return text.splitlines()
@@ -114,6 +130,12 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(self.model.string(21), "site_b")
         self.assertEqual(self.model.string(19), "/data/tmp/r8j-ht/synth/pair.c")
 
+    def test_instruction_records_keep_their_addresses(self):
+        address, module, triples = self.model.ips[9]
+        self.assertEqual(address, 0x55C4DD4781A1)
+        self.assertEqual(module, 1)
+        self.assertEqual(triples, [(0x14, 0x13, 0x9)])
+
     def test_sites_resolve_names_files_and_call_lines(self):
         keys = {info: ha.site_key(self.model.frames(trace)) for info, (_, trace) in enumerate(self.model.infos)}
         self.assertTrue(keys[1].startswith("site_a (pair.c:9) < main (pair.c:21)"), keys[1])
@@ -123,42 +145,27 @@ class ParserTest(unittest.TestCase):
         self.assertTrue(keys[0].startswith("??@libstdc++.so.6"), keys[0])
 
     def test_frees_refer_to_infos_per_the_format(self):
-        # "- 1" frees the first site_a allocation; the second site_a allocation (info 2) is freed later.
         frees = [info for _, info, sign in self.model.events if sign < 0]
         self.assertEqual(frees, [1, 2, 3, 0])
 
 
 class WindowTest(unittest.TestCase):
-    def test_all_pair_events_in_one_window_are_transient(self):
+    def test_all_pair_events_in_one_window_are_released_by_its_end(self):
         model = ha.parse(lines_of(PAIR))
-        result = ha.attribute(model, [(1, 0.0, 10.0)])
-        totals = result["windows"][0]["totals"]
-        # The four infos each allocate once and free once inside the window.
+        reports = ha.window_report(ha.account_windows(model, [(1, 0.0, 10.0)]), model, None)
+        totals = reports[0]["totals"]
         expected = 0x12000 + 0x3E8 + 0x3E8 + 0x7D0
         self.assertEqual(totals["alloc_bytes"], expected)
         self.assertEqual(totals["freed_bytes"], expected)
         self.assertEqual(totals["transient_bytes"], expected)
         self.assertEqual(totals["net_bytes"], 0)
-        chosen = ha.attribution_set(result["windows"][0]["sites"])
-        self.assertEqual(len(chosen), 1)  # the 72 KiB stdio buffer is 95 % of the transient bytes
+        # The site shares add up to the synchronized release (the total at the peak minus the total at the end).
+        self.assertEqual(totals["share_sum_check"], 76728)
+        # The largest total live at once is 76728 bytes (after the 2000-byte allocation); all of it is gone at the end.
+        self.assertEqual(totals["release_bytes_synchronized"], 76728)
+        chosen = ha.attribution_set(reports[0]["sites"])
+        self.assertEqual(len(chosen), 1)  # the 72 KiB stdio buffer is 95 % of the releases
         self.assertTrue(chosen[0].startswith("??@libstdc++.so.6"))
-
-
-TIMELINE = """s 3 abc
-i 1000 1 1 1 1
-t 1 0
-a 100 1
-c 0
-+ 0
-c 3e8
-- 0
-c 7d0
-+ 0
-c 898
-- 0
-c bb8
-+ 0
-"""
 
 
 class TimelineTest(unittest.TestCase):
@@ -172,33 +179,78 @@ class TimelineTest(unittest.TestCase):
 
     def test_windows_split_allocations_and_frees(self):
         windows = [(1, 0.0, 500.0), (2, 900.0, 1100.0), (3, 1500.0, 2100.0), (4, 2900.0, 3100.0)]
-        result = ha.attribute(self.model, windows)["windows"]
-        self.assertEqual(result[0]["totals"]["net_bytes"], 256)  # allocation at 0 ms, not freed in window 1
-        self.assertEqual(result[1]["totals"]["freed_bytes"], 256)  # free at 1000 ms
-        self.assertEqual(result[1]["totals"]["net_bytes"], -256)
-        self.assertEqual(result[2]["totals"]["net_bytes"], 256)  # allocation at 2000 ms, freed at 2200 ms: transient
-        self.assertEqual(result[2]["totals"]["transient_bytes"], 0)  # the free is at 2200, outside [1500, 2100]
-        self.assertEqual(result[3]["totals"]["net_bytes"], 256)
+        reports = ha.window_report(ha.account_windows(self.model, windows), self.model, None)
+        self.assertEqual(reports[0]["totals"]["net_bytes"], 256)  # allocated at 0 ms, not freed in window 1
+        self.assertEqual(reports[0]["totals"]["release_bytes_synchronized"], 0)  # still live at its end
+        self.assertEqual(reports[1]["totals"]["freed_bytes"], 256)  # freed at 1000 ms
+        self.assertEqual(reports[1]["totals"]["net_bytes"], -256)
+        self.assertEqual(reports[1]["totals"]["release_bytes_synchronized"], 256)  # live at its start, gone at its end
+        self.assertEqual(reports[2]["totals"]["net_bytes"], 256)  # allocated at 2000 ms; its free at 2200 is later
+        self.assertEqual(reports[2]["totals"]["freed_bytes"], 0)
+        self.assertEqual(reports[3]["totals"]["net_bytes"], 256)
 
-    def test_transient_estimate_needs_both_events_inside_the_window(self):
+    def test_release_counts_the_peak_of_a_site_inside_the_window(self):
         windows = [(1, 1900.0, 2300.0)]  # allocation at 2000 and free at 2200 both inside
-        result = ha.attribute(self.model, windows)["windows"][0]["totals"]
-        self.assertEqual(result["transient_bytes"], 256)
-        self.assertEqual(result["net_bytes"], 0)  # one allocation and one free inside the window
-        # The allocation at 3000 ms is outside this window and is not counted.
-        self.assertEqual(result["alloc_bytes"], 256)
+        totals = ha.window_report(ha.account_windows(self.model, windows), self.model, None)[0]["totals"]
+        self.assertEqual(totals["transient_bytes"], 256)
+        self.assertEqual(totals["net_bytes"], 0)
+        self.assertEqual(totals["share_sum_check"], 256)
+        self.assertEqual(totals["release_bytes_synchronized"], 256)
+        self.assertEqual(totals["alloc_bytes"], 256)  # the allocation at 3000 ms is outside this window
 
     def test_unknown_info_is_counted_not_fatal(self):
         model = ha.parse(lines_of(TIMELINE + "+ 9\n"))
         self.assertEqual(model.unknown_info_events, 1)
 
 
+class SymbolTest(unittest.TestCase):
+    MAPS = (
+        "55c4dd470000-55c4dd480000 r-xp 00000000 08:01 1234 /data/x/latte-dock-ng\n"
+        "7f0000000000-7f0000010000 r-xp 00001000 08:01 99 /usr/lib64/libQt6Core.so.6\n"
+        "7f0000010000-7f0000011000 rw-p 00000000 00:00 0 [heap]\n"
+    )
+
+    def test_mapping_gives_the_file_address_of_an_instruction(self):
+        mappings = ha.load_mappings(self.MAPS)
+        starts = [row[0] for row in mappings]
+        self.assertEqual(ha.file_address(mappings, starts, 0x55C4DD470123), ("/data/x/latte-dock-ng", 0x123))
+        # A library's text mapping starts at file offset 0x1000: the file address is the offset plus the distance.
+        self.assertEqual(ha.file_address(mappings, starts, 0x7F0000000010), ("/usr/lib64/libQt6Core.so.6", 0x1010))
+        self.assertIsNone(ha.file_address(mappings, starts, 0x7F0000011000))  # anonymous, outside any file
+
+    def test_exact_names_add_an_offset_only_past_the_symbol(self):
+        symbols = ha.Symbols("/x", True, [0x1000, 0x2000], ["f", "g"])
+        self.assertEqual(symbols.name_for(0x1000), "f")
+        self.assertEqual(symbols.name_for(0x1010), "f+0x10")
+        self.assertEqual(symbols.name_for(0x2001), "g+0x1")
+        self.assertIsNone(symbols.name_for(0x0FFF))
+
+    def test_approximate_names_always_show_the_offset(self):
+        symbols = ha.Symbols("/x", False, [0x1000], ["exported"])
+        self.assertEqual(symbols.name_for(0x1000), "exported+0x0")
+
+    def test_resolver_names_a_frame_without_debug_information(self):
+        text = (
+            "s 15 /data/x/latte-dock-ng\n"
+            "i 55c4dd470123 1\n"
+            "t 1 0\n"
+            "a 20 1\n"
+            "+ 0\n"
+        )
+        model = ha.parse(lines_of(text))
+        resolver = ha.Resolver(self.MAPS)
+        resolver.symbols["/data/x/latte-dock-ng"] = ha.Symbols("/data/x/latte-dock-ng", True, [0x100], ["dock_fn"])
+        frames = model.frames(1, resolver)
+        self.assertEqual(frames[0][0], "dock_fn+0x23")  # 0x123 - 0x100
+        self.assertEqual(ha.site_key(frames), "dock_fn+0x23")
+
+
 class ReuseTest(unittest.TestCase):
     def test_reuse_share_is_computed_against_the_window_one_set(self):
         model = ha.parse(lines_of(PAIR))
-        result = ha.attribute(model, [(1, 0.0, 10.0), (2, 20.0, 30.0)])
-        reuse = ha.reuse_check(result)
-        self.assertEqual(reuse["windows"]["2"]["transient_bytes"], 0)
+        reports = ha.window_report(ha.account_windows(model, [(1, 0.0, 10.0), (2, 20.0, 30.0)]), model, None)
+        reuse = ha.reuse_check(reports)
+        self.assertEqual(reuse["windows"]["2"]["release_bytes"], 0)
         self.assertIsNone(reuse["windows"]["2"]["share_from_window_1_set"])
 
 
