@@ -1475,14 +1475,25 @@ void GenericLayout::syncToLayoutFile(bool removeLayoutId)
 
 bool GenericLayout::newView(const QString &templateName)
 {
-    if (!isActive() || !m_corona->templatesManager()->hasViewTemplate(templateName)) {
+    if (!isActive()) {
         return false;
     }
 
-    QString templatefilepath = m_corona->templatesManager()->viewTemplateFilePath(templateName);
+    //! templateName is the shown name or the untranslated base name (viewtemplatenames.h). The template files are
+    //! the authoritative source. An unknown name must not fail silently: --available-dock-templates lists base
+    //! names, and under a translated UI a listed name used to add nothing and log nothing.
+    Templates::Manager *templatesManager = m_corona->templatesManager();
+    const QString templatefilepath = templatesManager->viewTemplateFilePath(templateName);
+
+    if (templatefilepath.isEmpty()) {
+        qCWarning(latteApp) << "No dock is added: the dock template" << templateName << "is unknown. Known dock templates:" << templatesManager->knownViewTemplateNames();
+        return false;
+    }
+
     Data::ViewsTable templateviews = Layouts::Storage::self()->views(templatefilepath);
 
     if (templateviews.rowCount() <= 0) {
+        qCWarning(latteApp) << "No dock is added: the dock template file" << templatefilepath << "has no dock.";
         return false;
     }
 

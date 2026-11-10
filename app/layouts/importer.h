@@ -99,11 +99,13 @@ public:
     static QString nameOfConfigFile(const QString &fileName);
     static QString uniqueLayoutName(QString name);
 
+    //! true for a name that Templates::Manager::hasViewTemplate() accepts; the start-up check of --add-dock uses it
     static bool hasViewTemplate(const QString &name);
     static QString layoutTemplateSystemFilePath(const QString &name);
 
     static QStringList availableLayouts();
     static QStringList availableLayoutTemplates();
+    //! untranslated base names of the view templates, the names --available-dock-templates prints
     static QStringList availableViewTemplates();
     //! it checks the linked file if there are Containments in it that belong
     //! to Original Layouts and moves them accordingly. This is used mainly on

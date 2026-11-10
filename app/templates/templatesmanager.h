@@ -7,6 +7,7 @@
 #define TEMPLATESMANAGER_H
 
 // local
+#include "viewtemplatenames.h"
 #include "../lattecorona.h"
 #include "../data/appletdata.h"
 #include "../data/layoutdata.h"
@@ -15,6 +16,7 @@
 
 // Qt
 #include <QObject>
+#include <QStringList>
 
 // KDE
 #include <KLocalizedString>
@@ -30,6 +32,11 @@ namespace Templates {
 const char DEFAULTLAYOUTTEMPLATENAME[] = "Default";
 const char EMPTYLAYOUTTEMPLATENAME[] = "Empty";
 
+//! Lists the view templates of one folder with the names the UI shows: a system folder's templates are
+//! translated, user templates keep their base name. Manager and the start-up check of --add-dock both use it,
+//! so the set of names they accept is the same.
+QList<ViewTemplateEntry> viewTemplateEntries(const QString &folder, bool systemFolder);
+
 class Manager : public QObject
 {
     Q_OBJECT
@@ -43,6 +50,7 @@ public:
 
     bool hasCustomLayoutTemplate(const QString &templateName) const;
     bool hasLayoutTemplate(const QString &templateName) const;
+    //! true for the name the UI shows and for the untranslated base name (see viewtemplatenames.h)
     bool hasViewTemplate(const QString &templateName) const;
 
     bool exportTemplate(const QString &originFile, const QString &destinationFile, const Data::AppletsTable &approvedApplets);
@@ -58,7 +66,10 @@ public:
 
     QString proposedTemplateAbsolutePath(QString templateFilename);
 
+    //! file path of the view template selected by a shown or base name, empty when none matches
     QString viewTemplateFilePath(const QString templateName) const;
+    //! names that viewTemplateFilePath() accepts, for diagnostics
+    QStringList knownViewTemplateNames() const;
 
     static QString templateName(const QString &filePath);
 

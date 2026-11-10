@@ -90,29 +90,47 @@ void Manager::initLayoutTemplates(const QString &path)
     }
 }
 
-void Manager::initViewTemplates(const QString &path)
+QList<ViewTemplateEntry> viewTemplateEntries(const QString &folder, bool systemFolder)
 {
-    bool istranslated = (m_corona->kPackage().filePath("templates") == path);
+    QList<ViewTemplateEntry> entries;
 
-    QDir templatesDir(path);
+    QDir templatesDir(folder);
     QStringList filter;
     filter.append(QStringLiteral("*.view.latte"));
-    QStringList templates = templatesDir.entryList(filter, QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    const QStringList files = templatesDir.entryList(filter, QDir::Files | QDir::Hidden | QDir::NoSymLinks);
 
-    for (int i = 0; i < templates.count(); ++i) {
-        QString templatePath = templatesDir.path() + QLatin1String("/") + templates[i];
+    for (const QString &file : files) {
+        ViewTemplateEntry entry;
+        entry.id = templatesDir.path() + QLatin1String("/") + file;
 
-        if (!m_viewTemplates.containsId(templatePath)) {
+        const QString baseName = viewTemplateBaseName(entry.id);
+
+        if (systemFolder) {
+            //! msgctxt "view template name": the msgid is the base name, see exposeTranslatedTemplateNames()
+            QByteArray tnamechars = baseName.toUtf8();
+            entry.name = i18nc("view template name", tnamechars.constData());
+        } else {
+            entry.name = baseName;
+        }
+
+        entries << entry;
+    }
+
+    return entries;
+}
+
+void Manager::initViewTemplates(const QString &path)
+{
+    //! Only the shell package's folder is shown translated.
+    const bool istranslated = (m_corona->kPackage().filePath("templates") == path);
+
+    const QList<ViewTemplateEntry> entries = viewTemplateEntries(path, istranslated);
+
+    for (const ViewTemplateEntry &entry : entries) {
+        if (!m_viewTemplates.containsId(entry.id)) {
             Data::Generic vdata;
-            vdata.id = templatePath;
-            QString tname = QFileInfo(templatePath).baseName();
-
-            if (istranslated) {
-                QByteArray tnamechars = tname.toUtf8();
-                vdata.name = i18nc("view template name", tnamechars.constData());
-            } else {
-                vdata.name = tname;
-            }
+            vdata.id = entry.id;
+            vdata.name = entry.name;
 
             m_viewTemplates << vdata;
         }
@@ -245,16 +263,36 @@ bool Manager::hasLayoutTemplate(const QString &templateName) const
 
 bool Manager::hasViewTemplate(const QString &templateName) const
 {
-    return m_viewTemplates.containsName(templateName);
+    return !viewTemplateFilePath(templateName).isEmpty();
 }
 
 QString Manager::viewTemplateFilePath(const QString templateName) const
 {
-    if (m_viewTemplates.containsName(templateName)) {
-        return m_viewTemplates.idForName(templateName);
+    QList<ViewTemplateEntry> entries;
+
+    for (int i = 0; i < m_viewTemplates.rowCount(); ++i) {
+        ViewTemplateEntry entry;
+        entry.id = m_viewTemplates[i].id;
+        entry.name = m_viewTemplates[i].name;
+        entries << entry;
     }
 
-    return QString();
+    return selectViewTemplateId(entries, templateName);
+}
+
+QStringList Manager::knownViewTemplateNames() const
+{
+    QStringList names;
+
+    for (int i = 0; i < m_viewTemplates.rowCount(); ++i) {
+        const QString baseName = viewTemplateBaseName(m_viewTemplates[i].id);
+        const QString shownName = m_viewTemplates[i].name;
+
+        //! Both names select the template, so both are listed when they differ, e.g. "Default Dock (默认停靠栏)"
+        names << (shownName == baseName ? baseName : QStringLiteral("%1 (%2)").arg(baseName, shownName));
+    }
+
+    return names;
 }
 
 void Manager::installCustomLayoutTemplate(const QString &templateFilePath)

@@ -781,9 +781,11 @@ inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayout
     //! add-dock usage option
     if (parser.isSet(QStringLiteral("add-dock"))) {
         QString viewTemplateName = parser.value(QStringLiteral("add-dock"));
-        QStringList viewTemplates = Latte::Layouts::Importer::availableViewTemplates();
 
-        if (viewTemplates.contains(viewTemplateName)) {
+        //! Accepts the same names as the running dock (GenericLayout::newView()): the base name that
+        //! --available-dock-templates prints, or the name the UI shows. Checking only the base names here
+        //! rejected a shown name without a message.
+        if (Latte::Layouts::Importer::hasViewTemplate(viewTemplateName)) {
             if (startup.layoutName.isEmpty()) {
                 //! Clean layout template is applied and proper name is used
                 QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(QLatin1String(Latte::Templates::EMPTYLAYOUTTEMPLATENAME));
@@ -800,6 +802,10 @@ inline bool applyPostLockOptions(const QCommandLineParser &parser, StartupLayout
             }
 
             startup.addViewTemplateName = viewTemplateName;
+        } else {
+            //! installDebugMessageHandler() runs later in main() and would discard this without --debug, so this check
+            //! reports through the handler Qt installs by default.
+            qCWarning(latteApp) << "No dock is added at start-up: the dock template" << viewTemplateName << "is unknown. Known dock templates:" << Latte::Layouts::Importer::availableViewTemplates();
         }
     }
 

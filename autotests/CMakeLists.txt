@@ -1001,6 +1001,16 @@ add_executable(importerlogictest EXCLUDE_FROM_ALL ${importerlogictest_SRCS})
 target_link_libraries(importerlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(importerlogictest)
 
+# The production resolver is compiled directly, so the test runs the code the dock runs.
+set(viewtemplatenamestest_SRCS
+    viewtemplatenamestest.cpp
+    ../app/templates/viewtemplatenames.cpp
+)
+add_executable(viewtemplatenamestest EXCLUDE_FROM_ALL ${viewtemplatenamestest_SRCS})
+target_include_directories(viewtemplatenamestest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../app)
+target_link_libraries(viewtemplatenamestest Qt6::Core Qt6::Test)
+latte_add_test(viewtemplatenamestest)
+
 set(autostartlogictest_SRCS
     autostartlogictest.cpp
     ../app/settings/autostart.cpp

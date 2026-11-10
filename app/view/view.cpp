@@ -633,6 +633,7 @@ void View::newView(const QString &templateFile)
     Data::ViewsTable templateviews = Layouts::Storage::self()->views(templateFile);
 
     if (templateviews.rowCount() <= 0) {
+        qCWarning(latteApp) << "No dock is added: the dock template file" << templateFile << "has no dock.";
         return;
     }
 

@@ -388,6 +388,11 @@ private Q_SLOTS:
     void templatesmanagerUniqueNameLoopsHaveIterationCaps();
     void synchronizerUnloadLayoutsHasIterationCap();
 
+    // Dock template names: an unknown name must be logged, and the start-up check and the running dock share one rule
+    void genericLayoutNewViewWarnsOnUnknownTemplate();
+    void coronaAddViewResolvesTemplateNames();
+    void startupAddDockUsesTheDockNameRule();
+
     // Layouts Apply: renamed ids, lock target and the synchronizer table handed over
     void layoutsSaveRewritesRenamedIdsFromOneSnapshot();
     void layoutsSaveLocksRenamedLayoutsAtTheirNewFile();
@@ -5097,6 +5102,70 @@ void SourceContractTest::synchronizerUnloadLayoutsHasIterationCap()
     // iteration cap so re-entrant additions cannot hang shutdown.
     QVERIFY(src.contains(QStringLiteral("guard++ < 10000")));
     QVERIFY(src.contains(QStringLiteral("unloadLayouts: iteration cap reached")));
+}
+
+void SourceContractTest::genericLayoutNewViewWarnsOnUnknownTemplate()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // A name that selects no template must be logged with the known names. The silent false of
+    // the old check is how "Default Dock" added nothing under zh_CN. Only the body is checked.
+    const int start = src.indexOf(QStringLiteral("bool GenericLayout::newView(const QString &templateName)"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("Data::View GenericLayout::newView(const Latte::Data::View &nextViewData)"), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    QVERIFY(body.contains(QStringLiteral("viewTemplateFilePath(templateName)")));
+    QVERIFY(body.contains(QStringLiteral("qCWarning(latteApp)")));
+    QVERIFY(body.contains(QStringLiteral("knownViewTemplateNames()")));
+}
+
+void SourceContractTest::coronaAddViewResolvesTemplateNames()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The containment branch of addView() takes the same names as the layout branch. Before, it passed the
+    // name to View::newView(), which reads a file, so the name was ignored without a message.
+    const int start = src.indexOf(QStringLiteral("void Corona::addView(const uint &containmentId, const QString &templateId)"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("void Corona::duplicateView("), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    QVERIFY(body.contains(QStringLiteral("viewTemplateFilePath(templateId)")));
+    QVERIFY(body.contains(QStringLiteral("qCWarning(latteApp)")));
+}
+
+void SourceContractTest::startupAddDockUsesTheDockNameRule()
+{
+    QFile mainFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainFile.open(QFile::ReadOnly));
+    const QString mainSrc = QString::fromUtf8(mainFile.readAll());
+
+    // --add-dock at start-up must accept the names the running dock accepts. A check against the base names
+    // alone rejected a shown name without a message; the layout is imported only after the check passes.
+    QVERIFY(mainSrc.contains(QStringLiteral("Latte::Layouts::Importer::hasViewTemplate(viewTemplateName)")));
+    QVERIFY(!mainSrc.contains(QStringLiteral("viewTemplates.contains(viewTemplateName)")));
+    QVERIFY(mainSrc.contains(QStringLiteral("qCWarning(latteApp) << \"No dock is added at start-up")));
+
+    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(importer.open(QFile::ReadOnly));
+    const QString importerSrc = QString::fromUtf8(importer.readAll());
+
+    // The start-up check builds the manager's entries and selects with the manager's rule.
+    const int start = importerSrc.indexOf(QStringLiteral("bool Importer::hasViewTemplate(const QString &name)"));
+    QVERIFY(start >= 0);
+    const int end = importerSrc.indexOf(QStringLiteral("QString Importer::importLayout("), start);
+    QVERIFY(end > start);
+    const QString body = importerSrc.mid(start, end - start);
+
+    QVERIFY(body.contains(QStringLiteral("Templates::viewTemplateEntries(")));
+    QVERIFY(body.contains(QStringLiteral("Templates::selectViewTemplateId(")));
 }
 
 void SourceContractTest::layoutsSaveRewritesRenamedIdsFromOneSnapshot()

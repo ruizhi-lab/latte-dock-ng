@@ -571,7 +571,14 @@ void Importer::disableAutostart()
 
 bool Importer::hasViewTemplate(const QString &name)
 {
-    return availableViewTemplates().contains(name);
+    //! The start-up check of --add-dock runs before the Corona, and so before Templates::Manager, exists. It
+    //! builds the same entries as the manager (system folder first, then the user folder) and selects with the
+    //! same rule, so it accepts exactly the names the running dock accepts. Changing one side alone would let
+    //! --add-dock start a layout for a name the dock then rejects.
+    QList<Templates::ViewTemplateEntry> entries = Templates::viewTemplateEntries(systemShellDataPath() + QLatin1String("/contents/templates"), true);
+    entries << Templates::viewTemplateEntries(layoutUserDir() + QLatin1String("/templates"), false);
+
+    return !Templates::selectViewTemplateId(entries, name).isEmpty();
 }
 
 QString Importer::importLayout(const QString &fileName, const QString &suggestedLayoutName)
@@ -635,20 +642,18 @@ QStringList Importer::availableViewTemplates()
 {
     QStringList templates;
 
-    QDir localDir(layoutUserDir() + QLatin1String("/templates"));
-    QStringList filter;
-    filter.append(QStringLiteral("*.view.latte"));
-    QStringList files = localDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
+    //! Base names are listed, not shown names: they do not change with the UI language, so scripts can rely on them.
+    //! The dock and the start-up check accept the shown name too.
+    const QList<Templates::ViewTemplateEntry> userEntries = Templates::viewTemplateEntries(layoutUserDir() + QLatin1String("/templates"), false);
 
-    for (const auto &file : std::as_const(files)) {
-        templates.append(Templates::Manager::templateName(file));
+    for (const auto &entry : userEntries) {
+        templates.append(Templates::viewTemplateBaseName(entry.id));
     }
 
-    QDir systemDir(systemShellDataPath() + QLatin1String("/contents/templates"));
-    QStringList sfiles = systemDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
+    const QList<Templates::ViewTemplateEntry> systemEntries = Templates::viewTemplateEntries(systemShellDataPath() + QLatin1String("/contents/templates"), true);
 
-    for (const auto &file : std::as_const(sfiles)) {
-        QString name = Templates::Manager::templateName(file);
+    for (const auto &entry : systemEntries) {
+        QString name = Templates::viewTemplateBaseName(entry.id);
 
         if (!templates.contains(name)) {
             templates.append(name);

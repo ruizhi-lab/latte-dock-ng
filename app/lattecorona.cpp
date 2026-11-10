@@ -1602,7 +1602,18 @@ void Corona::addView(const uint &containmentId, const QString &templateId)
         auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
 
         if (view) {
-            view->newView(templateId);
+            //! View::newView() takes a template file, but the D-Bus argument is a template name, as in
+            //! GenericLayout::newView(). An absolute path to an existing file is still accepted; any other
+            //! unknown value is logged, not read as a file name relative to the working directory.
+            const QString templateFile = templatesManager()->viewTemplateFilePath(templateId);
+
+            if (!templateFile.isEmpty()) {
+                view->newView(templateFile);
+            } else if (QFileInfo(templateId).isAbsolute() && QFileInfo::exists(templateId)) {
+                view->newView(templateId);
+            } else {
+                qCWarning(latteApp) << "No dock is added: the dock template" << templateId << "is unknown. Known dock templates:" << templatesManager()->knownViewTemplateNames();
+            }
         }
     }
 }
