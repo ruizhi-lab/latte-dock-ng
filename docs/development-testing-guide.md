@@ -190,7 +190,10 @@ systemd-run --user --unit=latte-dock-ng-dev-$(date +%s) --collect ~/launch-latte
 ```
 
 where the launcher sources `~/.config/latte-dock-ng/dev-env.sh` (Debug only) and
-`exec`s `~/.local/bin/latte-dock-ng --replace` with the wanted flags. Importing
+`exec`s `~/.local/bin/latte-dock-ng --replace` with the wanted flags. For a test
+that includes a logout, add `-p PartOf=graphical-session.target` and
+`-p After=graphical-session.target` as AGENTS.md step 5 does: without them the
+end of the session does not stop the unit. Importing
 only the display and bus variables into an SSH launch is not enough: the
 [R5 report](modernization-results/R5.md) traced the 20 % idle CPU that P0
 measured in this VM to such a launch. `dev-env.sh` prepends `kdedefaults:/etc/xdg`

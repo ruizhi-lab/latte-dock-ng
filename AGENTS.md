@@ -130,9 +130,11 @@ When testing changes to latte-dock-ng, follow this exact workflow:
    ```
 
    An AI agent starts the launcher through the user manager instead of
-   `setsid -f nohup`:
+   `setsid -f nohup`, bound to the graphical session like the autostart unit:
    ```bash
-   systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" /tmp/launch-latte.sh
+   systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" \
+     -p PartOf=graphical-session.target -p After=graphical-session.target \
+     -p TimeoutStopSec=5s /tmp/launch-latte.sh
    ```
    The agent's shell carries the agent's own variables (session tokens, account
    identifiers, proxy settings, `NO_AT_BRIDGE`) and runs in the agent
@@ -141,7 +143,11 @@ When testing changes to latte-dock-ng, follow this exact workflow:
    dock started with `setsid` from an agent shell had 70 variables more than
    plasmashell and handed them to Thunderbird. A transient user unit gets the
    session environment, as an autostarted dock does, and a cgroup of its own;
-   compare `/proc/<pid>/environ` with plasmashell's when in doubt.
+   compare `/proc/<pid>/environ` with plasmashell's when in doubt. The three
+   properties copy the autostart unit's. Without `PartOf=` the end of the
+   session does not stop the unit, because a lingering user manager outlives the
+   session: at logout the dock loses its Wayland connection instead of receiving
+   SIGTERM, and a logout test no longer exercises its teardown.
    `pkill -x latte-dock-ng` still stops it, and `--collect` removes the unit.
 
    Note: `bash install.sh --user Debug` already installs all plasmoid QML to
