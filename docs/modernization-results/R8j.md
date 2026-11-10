@@ -1,6 +1,6 @@
 # R8j: allocator retention or leak in the dock after desktop activity
 
-Status: Complete (measurement). The design in this record was committed before the first
+Status: Closed on 2026-11-10 (measurement complete; see [Closure](#closure)). The design in this record was committed before the first
 run of any cycle (`2e7325481`). Under the rule fixed in advance, the idle control is "not
 reproduced", and the window and application cycles are "inconclusive": the trim returned
 34 % and 43 % of the growth, and the rule needs 50 % for "allocator retention". The leak
@@ -641,14 +641,9 @@ a first-use rendering burst, not a leak with a site. The fixed verdict rule stil
 
 ### Next exact action
 
-The answer is now open at the level of a single site, and the rule for a further run needs its
-own design. Two choices, which are yours to make:
-
-1. Close R8j as it stands: the window scenario's first-use rendering burst is retained, and no
-   leak site is found within ten cycles. The per-use candidates are small (0.45 MiB net).
-2. Test the per-use candidates with a run of many more cycles (for example 60 windows, the same
-   timeline otherwise), with its own pre-registered rule for whether their net live growth
-   accumulates. This would also show whether the Qt Quick positioner's churn ever keeps memory.
+Decided on 2026-11-10: close R8j as it stands. The alternative, a run of 60 windows to test the
+per-use candidates, is not run and is not scheduled. A later run needs its own design, with its
+rule committed before its first cycle. See [Closure](#closure).
 
 ### Note on file names
 
@@ -674,4 +669,32 @@ unchanged since `0c4fef68b`; the data and this record were added after the run).
 | supplementary | `python3 -I docs/modernization-results/R8j-tools/window_sites.py $R8J/runs/WH --data $R8J/runs/WH/heaptrack/heaptrack.zst --out $R8J/runs/WH/attribution/window-sites.md` | 0 |
 | unit tests | `python3 -I docs/modernization-results/R8j-tools/test_heaptrack_attr.py` (15 tests) and `test_analyze_cycles.py` (17 tests) | 0, 0 |
 | data copy | `R8j-data/WH`: `samples.csv`, `events.jsonl`, `summary.json`, `session/`, `heaptrack/pipeline.log`, the attribution and the supplementary table; `analysis.*` regenerated from the copy | 0 |
-| CI on the merge | Build `42694728596` for `95ce13dcc`: failure in Deep QML lint (the QML coverage check, 253 files against 241). Fixed by `e1a1b9d43`; its Build `42734618367` was in progress when this record was written and has not been polled | - |
+| CI on the merge | Build `42694728596` for `95ce13dcc`: failure in Deep QML lint (the QML coverage check, 253 files against 241). Fixed by `e1a1b9d43`; its Build `42734618367` was in progress when this record was first written and finished with success when the record was closed (checked once, not polled) | - |
+
+## Closure
+
+Closed on 2026-11-10 at the user's decision: close R8j as it stands, rather than run 60 windows
+to test the per-use candidates. The results above stand as written. What the record establishes,
+by the rules fixed in advance:
+
+- Idle control (I): not reproduced; growth 0.00 MiB.
+- Window (W) and application (A) cycles: inconclusive. The first start after warm-up adds about
+  5 MiB; `malloc_trim(0)` returns 34 % and 43 % of it, below the 50 % line for retention.
+- Attribution (WH, heaptrack): 69 % of cycle 1's positive shares sit in one call site inside the
+  NVIDIA EGL library. Its names are the nearest exported symbols, so the site is known only by
+  module. P1 holds; P2 is not met (0.486 MiB against 0.5); P3 fails (windows 2 to 10 release
+  about 2.1 MiB each, from other sites).
+- No leak site is found. Windows 2 to 10 add 0.45 MiB of live memory net, spread over many small
+  sites.
+- The nested cycles do not reproduce the three largest steps of R8d's desktop series
+  (+16.57, +27.11 and +65.98 MiB); they show about 5 MiB once, at the first start.
+
+Not done, or not explained:
+
+- The 60-window test of the per-use candidates. A later run needs its own design, with its rule
+  committed before its first cycle.
+- Window 12's 31 MiB release between 1250.0 and 1250.2 s has no matching allocation. Its cause
+  is not identified, and no verdict depends on it.
+- The counter-based label of WH ("outside malloc") is affected by heaptrack's own memory (C2:
+  about 53 MiB in glibc's in-use counter). The scenario's verdict is that of the formal run W.
+- Valgrind is not installed; the attribution used heaptrack alone.
