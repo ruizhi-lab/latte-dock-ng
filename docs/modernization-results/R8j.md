@@ -385,3 +385,85 @@ design before it starts. A cheaper follow-up without root would trim after every
 see whether the free bytes release at all; that also needs its own design. If you prefer,
 R8j can close here with the verdict "inconclusive; first-use retention likely" for the
 window and application cycles.
+
+## Step 3: attribution with heaptrack (design fixed before the run)
+
+Status: the design below is fixed and committed before the formal attribution run. The
+run and its results are added after it.
+
+Why: the formal window run (`R8j-data/W`) has a first-cycle step of +4.91 MiB of Pss_Anon,
+with +4.24 MiB of glibc free bytes and +0.98 MiB in use, and the trim returns 1.91 MiB
+of it. The verdict rule cannot say what allocates that memory. Step 3 names the call
+sites, so that the next decision (a leak candidate, or retention of a first-use burst)
+rests on code, not on counters.
+
+Tool. heaptrack from the Gentoo package `dev-util/heaptrack-1.5.80_pre20251017` (installed
+on this host by the user; `heaptrack --version` prints 1.6.80), its preload
+`/usr/lib64/heaptrack/libheaptrack_preload.so` and its reader
+`/usr/lib64/heaptrack/libexec/heaptrack_interpret`. Valgrind is not installed and is not
+used. The reader's output is read by `R8j-tools/heaptrack_attr.py`, which is checked
+against a real recording of a program with known allocations (1 MiB freed, 3 MiB kept,
+2 MiB freed; `test_heaptrack_attr.py`, ten tests, and the CLI on that recording).
+
+Run. Scenario W, the same timeline and options as the formal W run (warm-up 720 s, the
+baseline trim, cycles 1 to 10, the trim, post-trim cycles 11 and 12; hold 20 s; rest 20 s;
+sampling every 5 s), the same build (`main`, Release, the scratch HOME copy) and the same
+probe. The only addition is `session.py --heaptrack`: the dock is started with heaptrack's
+preload before the probe, and its raw data go to a FIFO in the run directory, read by the
+reader and compressed by zstd (the wrapper's pipeline, without the wrapper, so that the
+dock keeps the pid that the harness signals). Output: `runs/WH`, copied to `R8j-data/WH`.
+
+Controls, fixed in advance.
+
+- C1 (overhead): the run is representative if its cycle-1 step (A_1 - A_0) is at least
+  1 MiB and within 2 MiB of the formal W run's 4.91 MiB. Otherwise the attribution is
+  reported and labeled "not representative of the formal run".
+- C2 (heaptrack's own memory): the probe's counters and Pss_Anon include heaptrack's own
+  buffers. Its effect is reported, not corrected.
+
+Measurement. Each cycle k has a window [cycle start, rest end] in harness time; heaptrack's
+time is taken as harness time from the dock's start (offset 0; the uncertainty is about
+0.5 s, far below a 40 s window). For each site and window the tool reports:
+
+- allocated bytes (allocations x size of the allocation's info) and freed bytes (frees x
+  size), both exact per info and window;
+- transient bytes, estimated as min(allocations, frees) x size inside the window, a lower
+  bound per info, because heaptrack's format counts frees per info and does not match them to
+  single allocations;
+- net bytes = allocated - freed (the live change of the window, exact).
+
+A site is the first three named frames of the allocation's stack, innermost first, with the
+file and line of the first two, so that two calls of one function from different lines stay
+apart.
+
+Rules, fixed in advance.
+
+- P1 (the source of window 1's churn). The attribution set is the smallest set of sites,
+  by transient bytes in window 1, that covers at least 50 % of that window's transient bytes.
+  The churn accounts for the first-cycle free growth if the attribution set exists and its
+  transient bytes are at least 2 MiB (half of the formal run's 4.24 MiB of free growth).
+- P2 (the live growth of window 1). The live sites are those with a positive net byte
+  change in window 1. The live growth is accounted for if their total is at least 0.5 MiB
+  (half of the formal run's 0.98 MiB in use).
+- P3 (reuse in windows 2 to 10). Reuse holds when, in each window k from 2 to 10, the
+  window-1 attribution set supplies at least 80 % of window k's transient bytes. New live
+  growth is the positive net bytes of sites that are not in the window-1 set, summed over
+  windows 2 to 10; it is a per-use candidate if that sum is at least 1 MiB.
+
+Reading, fixed in advance.
+
+- P1 holds, P3 holds and the new live growth is below 1 MiB: the first-cycle free growth comes
+  from a fixed set of call sites that churn in every cycle and reuse the freed memory. That
+  is the retention pattern, and the record names the sites. The rule of the verdict stays as
+  it was: the step does not change the window and application verdicts.
+- P3 fails, or the new live growth is at least 1 MiB: a per-use source exists. The record
+  names those sites as leak candidates, and a further run needs its own design.
+- P1 fails: the first-cycle free growth is not explained by transient churn of these sites.
+  The record reports the sites that were found and stops there.
+- Whatever the outcome, the record gives the top sites with their frames, the controls and
+  the limits. The step proposes no production change; a fix would be a separate slice.
+
+Limits, fixed in advance. One scenario and one run under heaptrack. The frees are counted
+per info, so the transient bytes are an estimate. Heaptrack adds its own overhead to the
+dock. The window is 40 s, so an allocation that starts in one cycle and is freed later is
+counted as freed in the later cycle.

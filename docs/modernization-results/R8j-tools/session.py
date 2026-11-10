@@ -170,6 +170,39 @@ def start_group(command: list, env: dict, log: Path) -> subprocess.Popen:
         return subprocess.Popen(command, env=env, stdout=handle, stderr=subprocess.STDOUT, start_new_session=True)
 
 
+HEAPTRACK_PRELOAD = Path("/usr/lib64/heaptrack/libheaptrack_preload.so")
+HEAPTRACK_INTERPRETER = Path("/usr/lib64/heaptrack/libexec/heaptrack_interpret")
+
+
+def start_heaptrack(out: Path) -> tuple:
+    """Start heaptrack's reader and return it with the dock's environment for recording.
+
+    This is the pipeline of the heaptrack wrapper (`/usr/bin/heaptrack`), without the wrapper:
+    the wrapper runs the program as a child of its shell, which would change the dock's pid,
+    and the probe's signals go to the pid that the harness started. The preload writes its
+    raw data to DUMP_HEAPTRACK_OUTPUT, a FIFO in the run directory (not /tmp); the reader is
+    heaptrack_interpret, and zstd writes the interpreted file that heaptrack_attr.py reads.
+    """
+    for path in (HEAPTRACK_PRELOAD, HEAPTRACK_INTERPRETER):
+        if not path.is_file():
+            raise RuntimeError(f"heaptrack file missing: {path}")
+    directory = out / "heaptrack"
+    directory.mkdir(parents=True, exist_ok=True)
+    fifo = directory / "heaptrack.fifo"
+    if not fifo.exists():
+        os.mkfifo(fifo)
+    output = directory / "heaptrack.zst"
+    command = ["sh", "-c", f"'{HEAPTRACK_INTERPRETER}' < '{fifo}' | zstd -c > '{output}'"]
+    # Its own session, so a signal to the harness's process group does not end the reader early.
+    pipeline = subprocess.Popen(
+        command,
+        stdout=subprocess.DEVNULL,
+        stderr=(directory / "pipeline.log").open("ab"),
+        start_new_session=True,
+    )
+    return pipeline, {"DUMP_HEAPTRACK_OUTPUT": str(fifo)}
+
+
 def count_lines(path: Path) -> int:
     if not path.exists():
         return 0
@@ -298,6 +331,7 @@ def child(args: argparse.Namespace) -> int:
     procs: dict = {}
     timeline = None
     sampler = None
+    heaptrack_pipeline = None
     clock = Clock()
     journal = Journal(out / "events.jsonl", clock)
     summary: dict = {"scenario": args.scenario, "reason": None, "dock_status": None}
@@ -328,8 +362,14 @@ def child(args: argparse.Namespace) -> int:
         client_env = dict(os.environ)
         client_env.update(WAYLAND_DISPLAY=launch.WAYLAND_SOCKET, QT_QPA_PLATFORM="wayland")
         dock_env = dict(client_env)
+        preloads = [str(Path(args.probe).resolve())]
+        if args.heaptrack:
+            # heaptrack's reader starts first: the dock's writes block until it is open.
+            heaptrack_pipeline, heaptrack_env = start_heaptrack(out)
+            dock_env.update(heaptrack_env)
+            preloads.insert(0, str(HEAPTRACK_PRELOAD))
         dock_env.update(
-            LD_PRELOAD=str(Path(args.probe).resolve()),
+            LD_PRELOAD=" ".join(preloads),
             R8J_LOG=str(session / "probe.log"),
             QT_FORCE_STDERR_LOGGING="1",
         )
@@ -369,6 +409,26 @@ def child(args: argparse.Namespace) -> int:
                 dock.wait()
             summary["dock_status"] = dock.returncode
             journal.write("dock-exit", status=dock.returncode)
+        if heaptrack_pipeline is not None:
+            if "dock" not in procs and heaptrack_pipeline.poll() is None:
+                # The dock never started, so nothing writes the FIFO and the reader would wait forever.
+                heaptrack_pipeline.kill()
+            try:
+                heaptrack_pipeline.wait(timeout=900)
+            except subprocess.TimeoutExpired:
+                heaptrack_pipeline.kill()
+                heaptrack_pipeline.wait()
+            output = out / "heaptrack" / "heaptrack.zst"
+            summary["heaptrack"] = {
+                "pipeline_status": heaptrack_pipeline.returncode,
+                "output": str(output),
+                "output_bytes": output.stat().st_size if output.exists() else 0,
+                "preload": str(HEAPTRACK_PRELOAD),
+                "preload_sha256": sha256_of(HEAPTRACK_PRELOAD),
+                "interpreter": str(HEAPTRACK_INTERPRETER),
+                "interpreter_sha256": sha256_of(HEAPTRACK_INTERPRETER),
+            }
+            journal.write("heaptrack-done", status=heaptrack_pipeline.returncode)
         if "kwin" in procs:
             kwin = procs["kwin"]
             if kwin.poll() is None:
@@ -392,7 +452,7 @@ def child(args: argparse.Namespace) -> int:
                 "probe": {"path": str(Path(args.probe).resolve()), "sha256": sha256_of(Path(args.probe))},
                 "probe_log_lines": count_lines(session / "probe.log"),
                 "dock_log": dock_log_counts(session / "dock.log"),
-                "options": {k: getattr(args, k) for k in ("warmup_s", "cycles", "post_cycles", "hold_s", "rest_s", "sample_s", "dock_arg")},
+                "options": {k: getattr(args, k) for k in ("warmup_s", "cycles", "post_cycles", "hold_s", "rest_s", "sample_s", "dock_arg", "heaptrack")},
                 "ended": now_text(),
             }
         )
@@ -525,6 +585,8 @@ def outer(args: argparse.Namespace) -> int:
     for dock_arg in args.dock_arg:
         # The = form: a value that starts with "--" would otherwise be read as an option.
         command += [f"--dock-arg={dock_arg}"]
+    if args.heaptrack:
+        command += ["--heaptrack"]
     if args.shot_cycle is not None:
         command += ["--shot-cycle", str(args.shot_cycle)]
     if args.shot_warm:
@@ -592,6 +654,7 @@ def parse_args(argv: list) -> argparse.Namespace:
     parser.add_argument("--rest-s", type=float, default=20.0)
     parser.add_argument("--sample-s", type=float, default=5.0)
     parser.add_argument("--dock-arg", action="append", default=[], help="pilot only: extra argument for the dock (for example --debug)")
+    parser.add_argument("--heaptrack", action="store_true", help="record the dock's allocations with heaptrack (step 3)")
     parser.add_argument("--shot-cycle", type=int, default=None, help="pilot only: screenshot in this cycle")
     parser.add_argument("--shot-warm", action="store_true", help="pilot only: screenshot at the warm-up end")
     args = parser.parse_args(argv)
