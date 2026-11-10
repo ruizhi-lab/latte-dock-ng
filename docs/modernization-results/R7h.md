@@ -1,8 +1,8 @@
 # R7h: dock template names in the running dock and at start-up
 
-Status: pending validation. The code and tests are committed as `d2bc32e71` on branch
-`claude/cool-goldwasser-3086cd`; the zh_CN desktop check and the merge into `main`
-are still open. Base: `main` `311c93ff5`.
+Status: complete. The fix is `d2bc32e71` on branch `claude/cool-goldwasser-3086cd`. The zh_CN
+desktop check passed on 2026-11-10, and this record is the last commit of the fast-forward
+merge into `main`, which was `311c93ff5`.
 
 ## Defect
 
@@ -135,7 +135,7 @@ Each step's exit code is recorded above; the logs are in `/data/tmp/r7h` (not co
 
 ## Desktop check (zh_CN)
 
-Not run. The desktop dock belongs to the R7 desktop checklist, so the install and the restart wait for the user's go-ahead. The check uses a user-mode Debug build of this commit:
+Run on 2026-11-10 after the user's go-ahead, while the R7 desktop checklist was done with its dock (pid 572691, unit `latte-dock-ng-debug-r7-…`), which was stopped first. The check used a user-mode Debug build of `d2bc32e71`, the steps below:
 
 1. From the worktree: `bash install.sh --user Debug`, then `pkill -x latte-dock-ng || true` and `rm -f /tmp/latte-ng.log`.
 2. `source ~/.config/latte-dock-ng/dev-env.sh`, then launch the dock as AGENTS.md step 5 says for AI agents (`systemd-run --user` with the launcher script, which sources `dev-env.sh`).
@@ -145,7 +145,16 @@ Not run. The desktop dock belongs to the R7 desktop checklist, so the install an
 6. Optional: `~/.local/bin/latte-dock-ng --add-dock "No Such Dock"` adds nothing, and `/tmp/latte-ng.log` has the line `No dock is added: the dock template "No Such Dock" is unknown. Known dock templates: ...`.
 7. Read `/tmp/latte-ng.log`: steps 3 to 5 must add no warning or error line.
 
-The record is closed only after this check passes; then the branch is merged into `main` and pushed.
+Result: passed for the two adds, and the user confirmed that both docks show on the screen.
+
+- Install: `bash install.sh --user Debug` exit 0; log in `/data/tmp/r7h/install-user.log`. No privilege escalation (`sudo_cmd` is empty in user mode).
+- The new dock started at 21:01:23 (pid 613162, unit `latte-dock-ng-debug-20261110-210124`, exe `~/.local/bin/latte-dock-ng`). Its locale is `zh_CN.utf8`, the same as plasmashell's.
+- `--add-dock "Default Dock"`: exit 0. The log has `Adding View: 12 - Passed ALL checks` at 21:01:58 on the primary screen DP-2.
+- `--add-dock "默认停靠栏"`: exit 0. The log has `Adding View: 14 - Passed ALL checks` at 21:02:16.
+- Removal: the two test docks were removed over D-Bus, `removeView` for 12 and then 14, both exit 0. The dock logged `dock containment destroyed changed` twice at 21:04:44. `Corona::removeView()` ends in `View::removeView()`, the same action as the context menu. The right-click path itself was not exercised, and the user's docks (containments 1 and 13) were left alone.
+- Log, from 21:01:23 to the end: no `No dock is added` line and no fatal, assert or crash line. One `Warning:` line at 21:04:44.081, `Failed to notify "Created too many similar notifications in quick succession"`, came from the notification service right after the second removal. The add path logged nothing like it, and the removal path is not changed by this commit.
+
+The record is closed when the merge into `main` is pushed.
 
 ## Limits
 
