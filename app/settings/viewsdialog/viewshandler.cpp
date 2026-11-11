@@ -28,12 +28,14 @@
 #include "../../tools/commontools.h"
 
 // Qt
+#include <QDir>
 #include <QFileDialog>
 
 // KDE
 #include <KLocalizedString>
 #include <KStandardGuiItem>
 #include <KIO/OpenFileManagerWindowJob>
+#include <KIO/OpenUrlJob>
 
 namespace Latte {
 namespace Settings {
@@ -167,12 +169,22 @@ void ViewsHandler::initViewTemplatesSubMenu()
     }
 
     if (templates.rowCount() > 0) {
+        //! This item opens a folder and creates no dock, so it is kept apart from the template entries above.
+        m_viewTemplatesSubMenu->addSeparator();
+
         QAction *openTemplatesDirectory = m_viewTemplatesSubMenu->addAction(i18n("Templates..."));
         openTemplatesDirectory->setToolTip(i18n("Open templates directory"));
         openTemplatesDirectory->setIcon(QIcon::fromTheme(QStringLiteral("edit")));
 
-        connect(openTemplatesDirectory, &QAction::triggered, this, []() {
-            KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(Latte::configPath() + QLatin1String("/latte/templates/Dock.view.latte"))}));
+        connect(openTemplatesDirectory, &QAction::triggered, this, [this]() {
+            //! Custom *.view.latte templates live in this folder, which Templates::Manager watches. It is opened as a
+            //! folder: the file that this item used to name is not in the folder, so the file manager showed a listing
+            //! with nothing highlighted. The folder is created when missing, so the window opens on every system.
+            const QString folder = Latte::configPath() + QLatin1String("/latte/templates");
+            QDir().mkpath(folder);
+
+            auto job = new KIO::OpenUrlJob(QUrl::fromLocalFile(folder), QStringLiteral("inode/directory"), this);
+            job->start();
         });
     }
 }
@@ -297,15 +309,20 @@ void ViewsHandler::newView(const Data::Generic &templateData)
 {
     Data::ViewsTable views = Latte::Layouts::Storage::self()->views(templateData.id);
 
-    if (views.rowCount() > 0) {
-        Data::View viewfromtemplate = views[0];
-        viewfromtemplate.setState(Data::View::OriginFromViewTemplate, templateData.id);
-        viewfromtemplate.name = templateData.name;
-        Data::View newview = m_viewsController->appendViewFromViewTemplate(viewfromtemplate);
-
-        showInlineMessage(i18nc("settings:dock added successfully", "<b>%1</b> added successfully...", newview.name),
-                          KMessageWidget::Positive);
+    if (views.rowCount() <= 0) {
+        //! The file holds no dock: a file of another kind, or an empty one. Refuse it visibly and name the file. This
+        //! used to return without a word, so the New menu and Import looked like they did nothing.
+        qCWarning(latteSettings) << "No dock is added: the dock file" << templateData.id << "has no dock.";
+        showInlineMessage(i18nc("settings:dock file without dock", "<b>%1</b> has no dock, so no dock was added.", templateData.name), KMessageWidget::Warning);
+        return;
     }
+
+    Data::View viewfromtemplate = views[0];
+    viewfromtemplate.setState(Data::View::OriginFromViewTemplate, templateData.id);
+    viewfromtemplate.name = templateData.name;
+    Data::View newview = m_viewsController->appendViewFromViewTemplate(viewfromtemplate);
+
+    showInlineMessage(i18nc("settings:dock added successfully", "<b>%1</b> added successfully...", newview.name), KMessageWidget::Positive);
 }
 
 void ViewsHandler::removeSelectedViews()

@@ -391,6 +391,9 @@ private Q_SLOTS:
     // Dock template names: an unknown name must be logged, and the start-up check and the running dock share one rule
     void genericLayoutNewViewWarnsOnUnknownTemplate();
     void coronaAddViewResolvesTemplateNames();
+    void viewsTemplatesMenuOpensTemplatesFolder();
+    void viewsDialogNewViewReportsTemplateWithoutDock();
+    void viewsDialogSaveReportsRefusedDock();
     void startupAddDockUsesTheDockNameRule();
 
     // Layouts Apply: renamed ids, lock target and the synchronizer table handed over
@@ -5139,6 +5142,75 @@ void SourceContractTest::coronaAddViewResolvesTemplateNames()
 
     QVERIFY(body.contains(QStringLiteral("viewTemplateFilePath(templateId)")));
     QVERIFY(body.contains(QStringLiteral("qCWarning(latteApp)")));
+}
+
+void SourceContractTest::viewsTemplatesMenuOpensTemplatesFolder()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/viewsdialog/viewshandler.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // The "Templates..." item of the New menu used to name a file that the user templates folder does not hold, so
+    // the file manager opened a listing with nothing highlighted. It must open the folder itself, and it must sit
+    // apart from the template entries above it, because it is not a template.
+    const int start = src.indexOf(QStringLiteral("void ViewsHandler::initViewTemplatesSubMenu()"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("void ViewsHandler::initViewExportSubMenu()"), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    QVERIFY(!body.contains(QStringLiteral("Dock.view.latte")));
+    QVERIFY(body.contains(QStringLiteral("KIO::OpenUrlJob")));
+    QVERIFY(body.contains(QStringLiteral("QLatin1String(\"/latte/templates\")")));
+
+    const int block = body.indexOf(QStringLiteral("if (templates.rowCount() > 0)"));
+    QVERIFY(block >= 0);
+    const int separator = body.indexOf(QStringLiteral("addSeparator();"), block);
+    const int openitem = body.indexOf(QStringLiteral("openTemplatesDirectory = m_viewTemplatesSubMenu->addAction("), block);
+    QVERIFY(separator > block);
+    QVERIFY(openitem > separator);
+}
+
+void SourceContractTest::viewsDialogNewViewReportsTemplateWithoutDock()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/viewsdialog/viewshandler.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // A dock template, or an imported file, that holds no dock returned from newView() without a word, so the
+    // New menu and Import did nothing visible. The refusal must reach the log and the dialog, and name the file.
+    const int start = src.indexOf(QStringLiteral("void ViewsHandler::newView(const Data::Generic &templateData)"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("void ViewsHandler::removeSelectedViews()"), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    QVERIFY(body.contains(QStringLiteral("if (views.rowCount() <= 0) {")));
+    QVERIFY(body.contains(QStringLiteral("qCWarning(latteSettings)")));
+    QVERIFY(body.contains(QStringLiteral("showInlineMessage(")));
+    QVERIFY(body.contains(QStringLiteral("KMessageWidget::Warning")));
+}
+
+void SourceContractTest::viewsDialogSaveReportsRefusedDock()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/viewsdialog/viewscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = withoutComments(QString::fromUtf8(f.readAll()));
+
+    // When the layout refuses a new dock, Storage::newView() returns an invalid view. save() used to store that view
+    // over the pending row, which left a blank row and no message. The refused row must be removed and reported.
+    const int start = src.indexOf(QStringLiteral("void Views::save()"));
+    QVERIFY(start >= 0);
+    const int end = src.indexOf(QStringLiteral("QString Views::uniqueViewName(QString name)"), start);
+    QVERIFY(end > start);
+    const QString body = src.mid(start, end - start);
+
+    QVERIFY(body.contains(QStringLiteral("if (addedview.isValid()) {")));
+    QVERIFY(body.contains(QStringLiteral("m_model->removeView(")));
+    QVERIFY(body.contains(QStringLiteral("m_handler->showInlineMessage(")));
+
+    // A cut or pasted view whose destination refused it keeps its origin: the origin removal must skip it.
+    QVERIFY(body.contains(QStringLiteral("if (refusednewviews.contains(cuttedview.id)) {")));
 }
 
 void SourceContractTest::startupAddDockUsesTheDockNameRule()

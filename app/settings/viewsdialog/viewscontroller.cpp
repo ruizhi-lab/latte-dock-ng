@@ -889,6 +889,8 @@ void Views::save()
     QHash<QString, Data::View> newviewsresponses;
     QHash<QString, Data::View> cuttedpastedviews;
     QHash<QString, Data::View> cuttedpastedactiveviews;
+    //! temp id -> name, for new docks that the layout refused
+    QHash<QString, QString> refusednewviews;
 
     m_debugSaveCall++;
     qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() call: " << m_debugSaveCall << "-------- ";
@@ -907,16 +909,26 @@ void Views::save()
             cuttedpastedviews[newViews[i].id] = newViews[i];
         }
 
+        //! Storage::newView() returns an invalid view when the layout refuses the dock. Such a row is kept apart and
+        //! removed after the loop, see refusednewviews below.
         if (newViews[i].state() == Data::View::OriginFromViewTemplate) {
             Data::View addedview = central->newView(newViews[i]);
 
-            newviewsresponses[newViews[i].id] = addedview;
+            if (addedview.isValid()) {
+                newviewsresponses[newViews[i].id] = addedview;
+            } else {
+                refusednewviews[newViews[i].id] = newViews[i].name;
+            }
         } else if (newViews[i].state() == Data::View::OriginFromLayout) {
             Data::View adjustedview = newViews[i];
             adjustedview.setState(Data::View::OriginFromViewTemplate, newViews[i].originFile(), QString(), QString());
             Data::View addedview = central->newView(adjustedview);
 
-            newviewsresponses[newViews[i].id] = addedview;
+            if (addedview.isValid()) {
+                newviewsresponses[newViews[i].id] = addedview;
+            } else {
+                refusednewviews[newViews[i].id] = newViews[i].name;
+            }
         }
     }
 
@@ -944,6 +956,11 @@ void Views::save()
 
         if (vid_str.isEmpty() || !viewidisinteger || vid_int <= 0) {
             //! ignore origin views that have not been created already
+            continue;
+        }
+
+        //! A paste that the destination layout refused must not take the origin view away: the dock would be lost.
+        if (refusednewviews.contains(cuttedview.id)) {
             continue;
         }
 
@@ -1002,6 +1019,20 @@ void Views::save()
     //! setOriginalView() takes a non-const reference, so the loop uses mutable iterators
     for (auto response = newviewsresponses.begin(); response != newviewsresponses.end(); ++response) {
         m_model->setOriginalView(response.key(), response.value());
+    }
+
+    //! A refused dock is not in the layout. Its pending row must go: setOriginalView() is not called for it, and the
+    //! row would stay in the table as a dock that does not exist, with no message. The user is told which docks failed.
+    if (!refusednewviews.isEmpty()) {
+        QStringList refusednames;
+
+        for (auto refused = refusednewviews.constBegin(); refused != refusednewviews.constEnd(); ++refused) {
+            qCWarning(latteSettings) << "org.kde.latte ViewsDialog::save() the layout refused the new dock :: " << refused.value();
+            m_model->removeView(refused.key());
+            refusednames << refused.value();
+        }
+
+        m_handler->showInlineMessage(i18n("Could not add <b>%1</b> to the layout.", refusednames.join(QStringLiteral(", "))), KMessageWidget::Error);
     }
 
     //! update all table with latest data and make the original one
