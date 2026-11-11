@@ -1,0 +1,4 @@
+container clang-debug build exit 0  compiler-warning-lines 0
+container clazy gate exit 0
+container clang-tidy gate exit 0
+ci gates done

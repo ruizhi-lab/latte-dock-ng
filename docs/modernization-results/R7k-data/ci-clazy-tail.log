@@ -1,0 +1,4 @@
+Ubuntu LLVM version 19.1.1 Optimized build. clazy version 1.17
+selected 156 production sources; skipped 57 autotest source, 139 duplicate compile command of a selected source, 88 generated source in the build directory
+49 negative fixtures: each is rejected by its own gated check
+156 production sources: no findings from 49 gated clazy checks

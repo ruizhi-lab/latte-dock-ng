@@ -1,0 +1,9 @@
+********* Start testing of SourceContractTest *********
+Config: Using QtTest library 6.11.3, Qt 6.11.3 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 16.2.1 20260926), 'gentoo' '2.18'
+PASS   : SourceContractTest::initTestCase()
+PASS   : SourceContractTest::viewsTemplatesMenuOpensTemplatesFolder()
+PASS   : SourceContractTest::viewsDialogNewViewReportsTemplateWithoutDock()
+PASS   : SourceContractTest::viewsDialogSaveReportsRefusedDock()
+PASS   : SourceContractTest::cleanupTestCase()
+Totals: 5 passed, 0 failed, 0 skipped, 0 blacklisted, 1ms
+********* Finished testing of SourceContractTest *********

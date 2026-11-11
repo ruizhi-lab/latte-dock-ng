@@ -1,0 +1,12 @@
+********* Start testing of SourceContractTest *********
+Config: Using QtTest library 6.11.3, Qt 6.11.3 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 16.2.1 20260926), 'gentoo' '2.18'
+PASS   : SourceContractTest::initTestCase()
+FAIL!  : SourceContractTest::viewsTemplatesMenuOpensTemplatesFolder() '!body.contains(QStringLiteral("Dock.view.latte"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/fervent-sinoussi-f8ffb2/autotests/sourcecontracttest.cpp(5162)]
+FAIL!  : SourceContractTest::viewsDialogNewViewReportsTemplateWithoutDock() 'body.contains(QStringLiteral("if (views.rowCount() <= 0) {"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/fervent-sinoussi-f8ffb2/autotests/sourcecontracttest.cpp(5188)]
+FAIL!  : SourceContractTest::viewsDialogSaveReportsRefusedDock() 'body.contains(QStringLiteral("if (addedview.isValid()) {"))' returned FALSE. ()
+   Loc: [/data/projects/latte-dock-ng/.claude/worktrees/fervent-sinoussi-f8ffb2/autotests/sourcecontracttest.cpp(5208)]
+PASS   : SourceContractTest::cleanupTestCase()
+Totals: 2 passed, 3 failed, 0 skipped, 0 blacklisted, 1ms
+********* Finished testing of SourceContractTest *********

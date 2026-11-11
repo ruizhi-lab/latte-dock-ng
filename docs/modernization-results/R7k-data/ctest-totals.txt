@@ -1,0 +1,4 @@
+gcc-debug: 100% tests passed, 0 tests failed out of 63
+clang-debug: 100% tests passed, 0 tests failed out of 63
+gcc-release: 100% tests passed, 0 tests failed out of 63
+clang-release: 100% tests passed, 0 tests failed out of 63

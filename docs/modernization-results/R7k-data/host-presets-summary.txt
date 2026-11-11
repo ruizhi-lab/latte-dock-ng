@@ -1,0 +1,14 @@
+stale clang-debug build finished; starting final presets 23:10:11
+configure clang-debug exit 0
+configure gcc-debug exit 0
+build clang-debug exit 0  compiler-warning-lines 0
+build gcc-debug exit 0  compiler-warning-lines 0
+ctest clang-debug exit 0
+ctest gcc-debug exit 0
+configure gcc-release exit 0
+configure clang-release exit 0
+build gcc-release exit 0  compiler-warning-lines 0
+build clang-release exit 0  compiler-warning-lines 0
+ctest gcc-release exit 0
+ctest clang-release exit 0
+all final presets done 23:17:11

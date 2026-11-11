@@ -1,0 +1,11 @@
+# command: probe-views '<installed Default Dock.view.latte>'
+file: /home/ruizhi/.local/share/plasma/shells/org.kde.latte.shell/contents/templates/Default Dock.view.latte exists: true
+groupList count: 1 ids: QList(1)
+  cId 1 name() 1 plugin org.kde.latte.containment
+exit=0
+# command: probe-views '~/.config/latte/templates/我的布局.layout.latte' (a layout file, for comparison)
+file: /home/ruizhi/.config/latte/templates/我的布局.layout.latte exists: true
+groupList count: 2 ids: QList(13, 1)
+  cId 13 name() 13 plugin org.kde.latte.containment
+  cId 1 name() 1 plugin org.kde.latte.containment
+exit=0
