@@ -2,7 +2,8 @@
 
 Status: the fix is merged into `main` by a merge commit after the R7j record commits. The zh_CN desktop check
 passed steps 1–6 (reported by the user, 2026-11-11). Step 7 left the activity of 我的布局 empty, and the user then
-restored it to 全部活动 by hand; the saved files confirm it (see the Desktop check section).
+restored it to 全部活动 by hand; the saved files confirm it. The packaged dock is back since 21:00 (see the Desktop
+check section).
 
 ## Summary
 
@@ -241,7 +242,7 @@ pre-install cleanup keeps the configuration, the layouts and the autostart entry
 `--no-purge-user-data` and `--preserve-autostart` are its defaults. It runs without sudo. The debug log is
 `/tmp/latte-ng.log`; after the check it is read for warnings and errors (AGENTS.md step 7).
 
-### Restore to the packaged dock (only on the user's word; not part of the check)
+### Restore to the packaged dock (done 2026-11-11 21:00, on the user's word)
 
 The uninstall dry run against the manifest of the current user-mode install
 (`/data/tmp/r7j/desktop-check/uninstall-dryrun.log`) lists about 1,100 removal lines in `~/.local`,
@@ -257,8 +258,18 @@ pkill -x latte-dock-ng || true
 systemctl --user start 'app-org.kde.latte\x2ddock@autostart.service'
 ```
 
-The check, the configuration comparison and the restore are not run yet. The result is recorded after the
-check.
+Done at 21:00:
+
+- The Debug dock stopped after SIGTERM. Its log is archived as `/data/tmp/r7j/desktop-check/latte-ng-debug-run.log`
+  (1297 lines).
+- `uninstall.sh --user --preserve-autostart` ran with the install manifest and exited 0
+  (`/data/tmp/r7j/desktop-check/uninstall-restore.log`). The Debug binary and the `~/.local` plasmoids are gone;
+  `dev-env.sh` and two cache directories went with them. The layouts, `lattedockrc` and the autostart entry were kept.
+- `app-org.kde.latte\x2ddock@autostart.service` was started: pid 1272222, running `/usr/bin/latte-dock-ng`,
+  `Restart=no`. Its journal has no warning, error or fatal line.
+- After the restore, 我的布局 has `activities={0}` and the mode is single. Against the baseline, the layout differs
+  only in the renumbered ids, and the hidden multiple-layouts file has two added lines; `lattedockrc` differs only
+  in the layouts table's sort column.
 
 ## Not verified
 
