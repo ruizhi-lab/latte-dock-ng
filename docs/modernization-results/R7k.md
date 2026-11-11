@@ -90,7 +90,7 @@ Notes.
 - The new texts show in English on zh_CN until they are translated: "… added successfully...", "… has no dock, so no dock was added.".
 - 默认停靠栏 and Default Dock both sit on the primary screen's bottom edge, centred, so they overlap. Three docks now share that edge in 我的布局. This is the follow-up above.
 - The refusal path ("Could not add …") was not reached on the desktop. The source contract covers it.
-- The check changed 我的布局, which now has four docks. Restoring the backup needs a dock restart, and it was not done.
+- The check changed 我的布局, which then had four docks. It was restored afterwards; see Restore below.
 - The two menu screenshots were deleted after review.
 
 Commands and exit codes:
@@ -100,6 +100,10 @@ Commands and exit codes:
 - `busctl --user call org.kde.lattedock /Latte org.kde.LatteDock showSettingsWindow i 0`: 0
 - `spectacle -b -n -m -o …` (two shots, both taken without a delay): 0
 - `git ls-remote --tags origin 'refs/tags/v1.2.59*'`: 0. The tag exists, so pushing `main` creates no release.
+
+## Restore (2026-11-12)
+
+The user chose to restore 我的布局 from the backup. The Debug dock was stopped with `pkill -x latte-dock-ng` and waited on until it had exited. The layout file was copied back with `cp -p` from `config-before/latte/我的布局.layout.latte`. Its sha256 (`630068beb3bb…`) matches the backup, and the dock was started again with `systemd-run --user` as `latte-dock-ng-debug-r7k-restore-20261112-002525.service` (pid 146296). After the restart the layout file still matched the backup, the start-up log had no warning, error or assert line, and the two original docks passed `addView` ("Passed ALL checks"). Every backed-up config file matches its backup hash. The test log is kept as `/data/tmp/dock-template-fix/desktop-check/latte-ng-check-2026-11-12.log`. The packaged dock is still stopped; the R7i session owns its restore.
 
 ## Follow-up (not changed here)
 
