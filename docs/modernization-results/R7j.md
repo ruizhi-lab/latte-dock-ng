@@ -2,7 +2,8 @@
 
 Status: the fix is committed on `claude/sleepy-hugle-be343e` as `7a4100b6a` (the
 PersistentMenu fix and its test). It is not merged into `main` and not pushed. The
-zh_CN desktop check is still to be done; the steps are in the Desktop check section.
+zh_CN desktop check passed steps 1–6 (reported by the user, 2026-11-11). The restore of
+the activity of 我的布局 is still to be done; see the Desktop check section.
 
 ## Summary
 
@@ -157,7 +158,7 @@ point. The rerun used the same commit. The tools in `R7j-tools/` were then rebui
 committed copies: the offscreen `ok` case and a nested Wayland `ok` run gave the results shown
 above.
 
-## Desktop check (zh_CN, Plasma 6 Wayland): ready, waiting for the user's go
+## Desktop check (zh_CN, Plasma 6 Wayland): steps 1–6 passed, restore pending
 
 The desktop was handed over to this session on 2026-11-11, after the R7 session finished its
 logout tests (L1 and L2). Read-only state at 19:58 CST:
@@ -180,15 +181,42 @@ The check changes the layout mode and one activity assignment, so both are resto
 
 1. Right-click a dock → 编辑布局(&L)… → 布局 tab. Select 基于活动的多个布局 there, and press 应用 if the
    dialog asks for it.
-2. Click the 活动 cell of 我的布局 (empty before the check). The menu lists 全部活动, 可用活动, the current
-   activity, 默认 and Work.
+2. Click the 活动 cell of 我的布局. Before the check the saved activity is 全部活动 (`activities={0}`), so
+   the menu opens with 全部活动 ticked. The menu lists 全部活动, 可用活动, the current activity, 默认 and Work.
 3. Click Work. Expected: the menu stays open and Work is ticked.
 4. Click 确定. Expected: the menu closes and the cell shows Work.
 5. Click 应用. Expected: the layout is assigned to Work.
 6. Optional: tick Work again and press 取消. Expected: the cell is unchanged.
-7. Restore: untick Work in the 活动 cell and press 确定, switch the layout mode back to the single-layout
-   option in the 布局 tab, press 应用, and tell this session. The configuration is then compared with
-   `config-before`.
+7. Restore: in the 活动 cell of 我的布局, tick 全部活动 (ticking it unticks Work by itself) and press 确定.
+   Then switch the layout mode back to the single-layout option in the 布局 tab, press 应用 once, and tell
+   this session. The saved activity must read 全部活动 again (`activities={0}`); then the configuration is
+   compared with `config-before`.
+
+### Result of the desktop run (reported by the user, 2026-11-11)
+
+Steps 1–6 passed. Step 7 did not restore the activity: it unticked Work without ticking 全部活动, so the
+saved activity of 我的布局 became empty. Ticking Work had already unticked 全部活动 (the master item), so after
+step 7 nothing was ticked. Both behaviours are how the menu works today: ticking a specific activity
+unticks 全部活动, and an empty selection saves no activity. The fix itself is not involved.
+
+The Debug log (ANSI stripped) shows these saves, with the times of `apply()`:
+
+- 20:15:40 start in single mode, with 我的布局 active.
+- 20:28:11 Apply, single to multiple (step 1).
+- 20:29:07 Apply in multiple mode, Work assigned (step 5).
+- 20:30:14 Apply, multiple to single, with the empty activity saved (step 7). The layout files were
+  written at 20:30:15.
+
+Configuration against `config-before`:
+
+- `我的布局.layout.latte`: `activities={0}` became `activities=`. The reload renumbered the containments
+  and applets (1 to 12, 2 to 40, 3 to 41); apart from that and the activity line, the file is unchanged.
+- `.multiple-layouts_hidden.layout.latte`: gained `[ActionPlugins]` and `[MultipleLayoutsSettings] status=-1`.
+- `lattedockrc`, `Default.layout.latte` and `Empty.layout.latte`: unchanged.
+- The Debug log has 787 lines and no warning, error, critical, fatal or assert line.
+
+The record's earlier statement that the cell was empty before the check was wrong: the baseline is
+全部活动 (`activities={0}`).
 
 ### Commands, run by this session after the user's go
 
