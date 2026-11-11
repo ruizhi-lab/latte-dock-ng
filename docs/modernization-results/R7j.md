@@ -2,7 +2,7 @@
 
 Status: the fix is committed on `claude/sleepy-hugle-be343e` as `7a4100b6a` (the
 PersistentMenu fix and its test). It is not merged into `main` and not pushed. The
-zh_CN desktop check is still to be done; the steps are at the end of this record.
+zh_CN desktop check is still to be done; the steps are in the Desktop check section.
 
 ## Summary
 
@@ -30,8 +30,8 @@ zh_CN desktop check is still to be done; the steps are at the end of this record
   nested session runs `kwin_wayland --virtual` 6.7.6 with a scratch HOME and a private bus.
   Its environment sets KWin's own test switch `KWIN_WAYLAND_NO_PERMISSION_CHECKS=1`, which
   lets the pointer client use `org_kde_kwin_fake_input`; the switch applies to that KWin only.
-- The user's desktop (zh_CN, Plasma 6 Wayland) was not touched. Its Qt version is not known;
-  the desktop check asks for it.
+- The user's desktop (zh_CN, Plasma 6 Wayland) was not touched. The packaged dock on this host loads Qt 6.11.3
+  (read from its process map on 2026-11-11), the same Qt as the harness and the nested-session runs above.
 - Dialog buttons in the harness show Qt's zh_CN strings (`确定(&O)`, `取消(&C)`).
 
 ## Reproduction
@@ -157,24 +157,75 @@ point. The rerun used the same commit. The tools in `R7j-tools/` were then rebui
 committed copies: the offscreen `ok` case and a nested Wayland `ok` run gave the results shown
 above.
 
-## Desktop check (zh_CN, Plasma 6 Wayland): not done yet
+## Desktop check (zh_CN, Plasma 6 Wayland): ready, waiting for the user's go
 
-This check needs the desktop handed over by the R7 session (the desktop dock is in use there), and
-an install of this branch with `install.sh --user Debug` (AGENTS.md step 1 and the launch rules in
-step 5). Steps on the user's desktop:
+The desktop was handed over to this session on 2026-11-11, after the R7 session finished its
+logout tests (L1 and L2). Read-only state at 19:58 CST:
 
-1. Preconditions: activities 默认 and Work both running; a layout whose 活动 cell is empty, in
-   the 布局 tab's 基于活动的多个布局 mode.
-2. Right-click a dock → 编辑布局(&L)… → 布局 tab → 基于活动的多个布局 → click the 活动 cell of the
-   layout. The menu lists 全部活动, 可用活动, the current activity, 默认 and Work.
+- The packaged dock `/usr/bin/latte-dock-ng` (pid 853910) runs under the autostart unit
+  `app-org.kde.latte\x2ddock@autostart.service`, which has `Restart=no`. Its autostart entry
+  `~/.config/autostart/org.kde.latte-dock.desktop` starts `/usr/bin/latte-dock-ng`.
+- Latte's configuration is `~/.config/latte` and `~/.config/lattedockrc`. The layouts folder is identical
+  to the R7 snapshot `/data/tmp/r7-pre-c2-220815/latte`. `lattedockrc` differs in one section only:
+  `[PlasmaTransientsConfig][Indicator]` is gone. The file was written at 19:41:49, which the R7 session
+  reports as the exit time of its Debug dock.
+- The activity manager lists `Work` and `默认`. Their running state was not read.
+- The session is Wayland. plasmashell and KWin are 6.7.6, and the packaged dock loads Qt 6.11.3,
+  KF6 CoreAddons 6.31.0 and Plasma 6.7.6 (read from `/proc/853910/maps`).
+- The configuration before the check is copied to `/data/tmp/r7j/desktop-check/config-before`.
+
+The check changes the layout mode and one activity assignment, so both are restored afterwards.
+
+### Steps on the user's desktop
+
+1. Right-click a dock → 编辑布局(&L)… → 布局 tab. Select 基于活动的多个布局 there, and press 应用 if the
+   dialog asks for it.
+2. Click the 活动 cell of 我的布局 (empty before the check). The menu lists 全部活动, 可用活动, the current
+   activity, 默认 and Work.
 3. Click Work. Expected: the menu stays open and Work is ticked.
 4. Click 确定. Expected: the menu closes and the cell shows Work.
-5. Click 应用. Expected: the layout is assigned to Work (the cell still shows Work after the
-   apply; the Work dock shows this layout).
-6. Optional: tick Work again and press 取消; expected: the cell is unchanged.
+5. Click 应用. Expected: the layout is assigned to Work.
+6. Optional: tick Work again and press 取消. Expected: the cell is unchanged.
+7. Restore: untick Work in the 活动 cell and press 确定, switch the layout mode back to the single-layout
+   option in the 布局 tab, press 应用, and tell this session. The configuration is then compared with
+   `config-before`.
 
-Also send the Qt version of the desktop: `qmake6 -query QT_VERSION` (or the version of
-`libQt6Core` that `plasmashell` loads).
+### Commands, run by this session after the user's go
+
+Run from the worktree. The build directory is outside the worktree, and the logs are under `/data/tmp`.
+
+```bash
+bash install.sh --user Debug --build-dir /data/tmp/r7j/build-user > /data/tmp/r7j/desktop-check/install-user.log 2>&1
+pkill -x latte-dock-ng || true
+rm -f /tmp/latte-ng.log
+systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" \
+  -p PartOf=graphical-session.target -p After=graphical-session.target \
+  -p TimeoutStopSec=5s /data/tmp/r7j/desktop-check/launch-latte.sh
+```
+
+`install.sh` always runs a clean build (`--clean-first`), so the install takes several minutes. Its
+pre-install cleanup keeps the configuration, the layouts and the autostart entry, because
+`--no-purge-user-data` and `--preserve-autostart` are its defaults. It runs without sudo. The debug log is
+`/tmp/latte-ng.log`; after the check it is read for warnings and errors (AGENTS.md step 7).
+
+### Restore to the packaged dock (only on the user's word; not part of the check)
+
+The uninstall dry run against the manifest of the current user-mode install
+(`/data/tmp/r7j/desktop-check/uninstall-dryrun.log`) lists about 1,100 removal lines in `~/.local`,
+including the `org.kde.latte.*` plasmoids under `~/.local/share/plasma/plasmoids`. It also removes
+`dev-env.sh` and two cache directories, and it keeps `~/.config/latte`, `lattedockrc` and the autostart
+entry. Plasma searches `~/.local/share` before `/usr/share`, so these plasmoids are expected to shadow the
+packaged QML until the uninstall runs; this was not measured.
+
+```bash
+bash uninstall.sh --user --preserve-autostart --manifest "$HOME/.local/share/latte-dock-ng/install-manifest.txt" --dry-run
+bash uninstall.sh --user --preserve-autostart --manifest "$HOME/.local/share/latte-dock-ng/install-manifest.txt"
+pkill -x latte-dock-ng || true
+systemctl --user start 'app-org.kde.latte\x2ddock@autostart.service'
+```
+
+The check, the configuration comparison and the restore are not run yet. The result is recorded after the
+check.
 
 ## Not verified
 
