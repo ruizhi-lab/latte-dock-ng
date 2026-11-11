@@ -1,0 +1,41 @@
+R7J      0 START mode=external platform=wayland
+R7J     66 FOCUS (none) -> QTableView visible=1
+R7J    433 FOCUS QTableView visible=1 -> QPushButton text='' visible=1
+R7J    433 EDITOR created=1
+R7J    934 R7J-BUTTON 659 54
+R7J    934 R7J-READY
+R7J   2335 EVENT editor MouseButtonPress on QPushButton text='' visible=1
+R7J   2363 SIGNAL menu aboutToShow
+R7J   2363 EVENT menu Show on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   2363 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J   2456 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   2515 R7J-WORK 659 208
+R7J   2515 R7J-OK 669 244
+R7J   2515 R7J-CANCEL 759 244
+R7J   3717 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3837 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3837 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3837 SIGNAL action 'Work' toggled(1)
+R7J   3837 SIGNAL action 'Work' triggered(1)
+R7J   5337 STATE requested: Work checked=1 menuVisible=1 editorAlive=1 buttonText='Work' activePopup=Latte::Settings::Layout::Delegate::PersistentMenu visible=1 focus=QPushButton text='Work' visible=1
+R7J   5337 STATE requested: checkable items [[ All Activities ]=0][[ Free Activities ]=0][[ Current Activity ]=0][默认=0][Work=1]
+R7J   5396 SHOT /data/tmp/r7j/wl-runs/prod-ok-224007/shots/window-1-requested.png
+R7J   5399 SHOT /data/tmp/r7j/wl-runs/prod-ok-224007/shots/menu-2-requested.png
+R7J   6338 EVENT editor FocusOut on QPushButton text='Work' visible=1
+R7J   6338 FOCUS QPushButton text='Work' visible=1 -> QPushButton text='确定(&O)' visible=1
+R7J   6458 EVENT editor FocusIn on QPushButton text='Work' visible=1
+R7J   6458 FOCUS QPushButton text='确定(&O)' visible=1 -> QPushButton text='Work' visible=1
+R7J   6458 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0
+R7J   6458 EVENT editor FocusOut on QPushButton text='Work' visible=1
+R7J   6458 MODEL setData(UserRole) = [22222222-0000-0000-0000-000000000002]
+R7J   6458 SIGNAL delegate commitData OKPRESSED=1
+R7J   6458 EVENT editor Hide on QPushButton text='Work' visible=0
+R7J   6458 SIGNAL delegate closeEditor hint=0
+R7J   6458 FOCUS QPushButton text='Work' visible=0 -> (none)
+R7J   6458 SIGNAL menu aboutToHide
+R7J   6458 SIGNAL dialog button '确定(&O)' clicked
+R7J   6458 SIGNAL editor destroyed
+R7J   7958 STATE requested: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   8015 SHOT /data/tmp/r7j/wl-runs/prod-ok-224007/shots/window-3-requested.png
+R7J   8558 STATE quit: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   8614 SHOT /data/tmp/r7j/wl-runs/prod-ok-224007/shots/window-4-quit.png

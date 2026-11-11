@@ -1,0 +1,45 @@
+R7J      0 START mode=qtest platform=offscreen
+This plugin does not support propagateSizeHints()
+R7J     41 FOCUS (none) -> QTableView visible=1
+R7J    444 FOCUS QTableView visible=1 -> QPushButton text='' visible=1
+R7J    444 EDITOR created=1
+R7J    444 EVENT editor MouseButtonPress on QPushButton text='' visible=1
+R7J    459 SIGNAL menu aboutToShow
+This plugin does not support raise()
+R7J    459 EVENT menu Show on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+This plugin does not support grabbing the keyboard
+R7J    459 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J    709 QTEST after press on the editor: menuVisible=1
+R7J    710 EVENT editor MouseButtonRelease on QPushButton text='' visible=1
+R7J    961 QTEST after release on the editor: menuVisible=1
+R7J    961 STATE before-work: Work checked=0 menuVisible=1 editorAlive=1 buttonText='' activePopup=Latte::Settings::Layout::Delegate::PersistentMenu visible=1 focus=QPushButton text='' visible=1
+R7J    961 STATE before-work: checkable items [[ All Activities ]=0][[ Free Activities ]=0][[ Current Activity ]=0][默认=0][Work=0]
+R7J    961 SHOT /data/tmp/r7j/out/prod/ok/window-1-before-work.png
+R7J    962 SHOT /data/tmp/r7j/out/prod/ok/menu-2-before-work.png
+R7J    962 QTEST click Work at menu-local 149,109
+R7J   1013 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   1064 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   1064 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   1064 SIGNAL action 'Work' toggled(1)
+R7J   1064 SIGNAL action 'Work' triggered(1)
+R7J   1664 STATE after-work: Work checked=1 menuVisible=1 editorAlive=1 buttonText='Work' activePopup=Latte::Settings::Layout::Delegate::PersistentMenu visible=1 focus=QPushButton text='Work' visible=1
+R7J   1664 STATE after-work: checkable items [[ All Activities ]=0][[ Free Activities ]=0][[ Current Activity ]=0][默认=0][Work=1]
+R7J   1665 SHOT /data/tmp/r7j/out/prod/ok/window-3-after-work.png
+R7J   1665 SHOT /data/tmp/r7j/out/prod/ok/menu-4-after-work.png
+R7J   1665 QTEST click ok button
+R7J   1665 EVENT editor FocusOut on QPushButton text='Work' visible=1
+R7J   1665 FOCUS QPushButton text='Work' visible=1 -> QPushButton text='确定' visible=1
+R7J   1666 EVENT editor FocusIn on QPushButton text='Work' visible=1
+R7J   1666 FOCUS QPushButton text='确定' visible=1 -> QPushButton text='Work' visible=1
+R7J   1666 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0
+R7J   1666 EVENT editor FocusOut on QPushButton text='Work' visible=1
+R7J   1666 MODEL setData(UserRole) = [22222222-0000-0000-0000-000000000002]
+R7J   1666 SIGNAL delegate commitData OKPRESSED=1
+R7J   1666 EVENT editor Hide on QPushButton text='Work' visible=0
+R7J   1666 SIGNAL delegate closeEditor hint=0
+R7J   1666 FOCUS QPushButton text='Work' visible=0 -> (none)
+R7J   1666 SIGNAL menu aboutToHide
+R7J   1666 SIGNAL dialog button '确定' clicked
+R7J   1666 SIGNAL editor destroyed
+R7J   2267 STATE after-ok: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   2267 SHOT /data/tmp/r7j/out/prod/ok/window-5-after-ok.png

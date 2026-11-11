@@ -567,6 +567,28 @@ target_link_libraries(toolsunittest
 
 latte_add_offscreen_test(toolsunittest)
 
+# PersistentMenu alone: the popup of the Layouts editor's activity cell. The click-release
+# contract is tested on the real Qt popup, so the test links the widgets module only.
+set(persistentmenutest_SRCS
+    persistentmenutest.cpp
+    ../app/settings/generic/persistentmenu.cpp
+)
+
+add_executable(persistentmenutest EXCLUDE_FROM_ALL ${persistentmenutest_SRCS})
+
+target_include_directories(persistentmenutest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/settings/generic
+)
+
+target_link_libraries(persistentmenutest
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Test
+    Qt6::Widgets
+)
+
+latte_add_offscreen_test(persistentmenutest)
+
 
 set(knscompatunittest_SRCS
     knscompatunittest.cpp

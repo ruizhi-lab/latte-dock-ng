@@ -1,0 +1,38 @@
+R7J      0 START mode=external platform=wayland
+R7J     65 FOCUS (none) -> QTableView visible=1
+R7J    433 FOCUS QTableView visible=1 -> QPushButton text='' visible=1
+R7J    434 EDITOR created=1
+R7J    934 R7J-BUTTON 659 54
+R7J    934 R7J-READY
+R7J   2335 EVENT editor MouseButtonPress on QPushButton text='' visible=1
+R7J   2360 SIGNAL menu aboutToShow
+R7J   2361 EVENT menu Show on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   2361 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J   2456 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   2576 R7J-WORK 659 208
+R7J   2576 R7J-OK 669 244
+R7J   2576 R7J-CANCEL 759 244
+R7J   3778 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3898 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3898 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3898 SIGNAL action 'Work' toggled(1)
+R7J   3898 SIGNAL action 'Work' triggered(1)
+R7J   5398 STATE requested: Work checked=1 menuVisible=1 editorAlive=1 buttonText='Work' activePopup=Latte::Settings::Layout::Delegate::PersistentMenu visible=1 focus=QPushButton text='Work' visible=1
+R7J   5398 STATE requested: checkable items [[ All Activities ]=0][[ Free Activities ]=0][[ Current Activity ]=0][默认=0][Work=1]
+R7J   5454 SHOT /data/tmp/r7j/wl-runs/prod-outside-224032/shots/window-1-requested.png
+R7J   5458 SHOT /data/tmp/r7j/wl-runs/prod-outside-224032/shots/menu-2-requested.png
+R7J   6399 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   6399 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   6399 EVENT editor FocusIn on QPushButton text='Work' visible=1
+R7J   6399 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0
+R7J   6399 EVENT editor FocusOut on QPushButton text='Work' visible=1
+R7J   6399 SIGNAL delegate commitData OKPRESSED=unset
+R7J   6399 EVENT editor Hide on QPushButton text='Work' visible=0
+R7J   6399 SIGNAL delegate closeEditor hint=0
+R7J   6399 FOCUS QPushButton text='Work' visible=0 -> (none)
+R7J   6399 SIGNAL menu aboutToHide
+R7J   6399 SIGNAL editor destroyed
+R7J   8019 STATE requested: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   8074 SHOT /data/tmp/r7j/wl-runs/prod-outside-224032/shots/window-3-requested.png
+R7J   8619 STATE quit: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   8674 SHOT /data/tmp/r7j/wl-runs/prod-outside-224032/shots/window-4-quit.png
