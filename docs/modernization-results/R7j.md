@@ -1,9 +1,8 @@
 # R7j: a click on a checkable activity item closes the Layouts menu (tick lost)
 
-Status: the fix is merged into `main` by a merge commit after the R7j record commits, and the
-branch `claude/sleepy-hugle-be343e` holds the same history. The zh_CN desktop check passed steps 1–6
-(reported by the user, 2026-11-11). Step 7 left the activity of 我的布局 empty; restoring it is the
-user's step (see the Desktop check section).
+Status: the fix is merged into `main` by a merge commit after the R7j record commits. The zh_CN desktop check
+passed steps 1–6 (reported by the user, 2026-11-11). Step 7 left the activity of 我的布局 empty, and the user then
+restored it to 全部活动 by hand; the saved files confirm it (see the Desktop check section).
 
 ## Summary
 
@@ -158,7 +157,7 @@ point. The rerun used the same commit. The tools in `R7j-tools/` were then rebui
 committed copies: the offscreen `ok` case and a nested Wayland `ok` run gave the results shown
 above.
 
-## Desktop check (zh_CN, Plasma 6 Wayland): steps 1–6 passed, restore pending
+## Desktop check (zh_CN, Plasma 6 Wayland): steps 1–6 passed; restore done by the user
 
 The desktop was handed over to this session on 2026-11-11, after the R7 session finished its
 logout tests (L1 and L2). Read-only state at 19:58 CST:
@@ -199,6 +198,10 @@ saved activity of 我的布局 became empty. Ticking Work had already unticked �
 step 7 nothing was ticked. Both behaviours are how the menu works today: ticking a specific activity
 unticks 全部活动, and an empty selection saves no activity. The fix itself is not involved.
 
+The user then restored the activity by hand in the Layouts editor, before the next instruction: multiple
+mode was applied at 20:50:48, and single mode with 全部活动 was applied at 20:51:01. The saved files match the
+baseline: `activities={0}` and single mode. Only the container and applet numbers differ, as the reload renumbers them.
+
 The Debug log (ANSI stripped) shows these saves, with the times of `apply()`:
 
 - 20:15:40 start in single mode, with 我的布局 active.
@@ -212,7 +215,9 @@ Configuration against `config-before`:
 - `我的布局.layout.latte`: `activities={0}` became `activities=`. The reload renumbered the containments
   and applets (1 to 12, 2 to 40, 3 to 41); apart from that and the activity line, the file is unchanged.
 - `.multiple-layouts_hidden.layout.latte`: gained `[ActionPlugins]` and `[MultipleLayoutsSettings] status=-1`.
-- `lattedockrc`, `Default.layout.latte` and `Empty.layout.latte`: unchanged.
+- `Default.layout.latte` and `Empty.layout.latte`: unchanged.
+- `lattedockrc`: only `[LatteSettingsDialog][TabLayouts] sortColumn` differs (5 to 3), the layouts table's sort
+  column, which the dialog saves. It is a UI setting and was left as it is.
 - The Debug log has 787 lines and no warning, error, critical, fatal or assert line.
 
 The record's earlier statement that the cell was empty before the check was wrong: the baseline is
