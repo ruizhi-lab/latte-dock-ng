@@ -1,9 +1,9 @@
 # R7j: a click on a checkable activity item closes the Layouts menu (tick lost)
 
-Status: the fix is committed on `claude/sleepy-hugle-be343e` as `7a4100b6a` (the
-PersistentMenu fix and its test). It is not merged into `main` and not pushed. The
-zh_CN desktop check passed steps 1–6 (reported by the user, 2026-11-11). The restore of
-the activity of 我的布局 is still to be done; see the Desktop check section.
+Status: the fix is merged into `main` by a merge commit after the R7j record commits, and the
+branch `claude/sleepy-hugle-be343e` holds the same history. The zh_CN desktop check passed steps 1–6
+(reported by the user, 2026-11-11). Step 7 left the activity of 我的布局 empty; restoring it is the
+user's step (see the Desktop check section).
 
 ## Summary
 
@@ -262,7 +262,7 @@ check.
 - The 应用 step of the Layouts editor and the layout switch on the real dock: the harness stops
   at the model's `setData`.
 - Keyboard navigation inside the menu (Up, Down, Escape) is unchanged in the code; it was not run.
-- The CI Build run for the merge: none, because nothing is pushed yet.
+- The CI Build run for the merge is not recorded here; check `gh run list --branch main`.
 
 ## Tools and data
 
