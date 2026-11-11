@@ -1,6 +1,6 @@
 # R7k: the docks dialog's template and import entries
 
-Status: the fix is `bd045d9ee` and the record before this one is `7c107751b`, on branch `claude/fervent-sinoussi-f8ffb2`, based on `main` at `99a09d1f2`. The zh_CN desktop check passed on 2026-11-12 (see Desktop check). This commit records it, and the branch is merged into `main` right after it. The packaged dock is still stopped; the R7i session owns its restore.
+Status: the fix is `bd045d9ee`, the record is `7c107751b`, and the desktop result is `13b6f8d14`, on branch `claude/fervent-sinoussi-f8ffb2`, based on `main` at `99a09d1f2`. The zh_CN desktop check passed on 2026-11-12 (see Desktop check), and the layout was restored from the backup afterwards (see Restore). The R7i session then restored the packaged dock at 00:31:55 (pid 152862) and uninstalled the Debug build that the check used.
 
 ## Report
 
@@ -103,7 +103,7 @@ Commands and exit codes:
 
 ## Restore (2026-11-12)
 
-The user chose to restore 我的布局 from the backup. The Debug dock was stopped with `pkill -x latte-dock-ng` and waited on until it had exited. The layout file was copied back with `cp -p` from `config-before/latte/我的布局.layout.latte`. Its sha256 (`630068beb3bb…`) matches the backup, and the dock was started again with `systemd-run --user` as `latte-dock-ng-debug-r7k-restore-20261112-002525.service` (pid 146296). After the restart the layout file still matched the backup, the start-up log had no warning, error or assert line, and the two original docks passed `addView` ("Passed ALL checks"). Every backed-up config file matches its backup hash. The test log is kept as `/data/tmp/dock-template-fix/desktop-check/latte-ng-check-2026-11-12.log`. The packaged dock is still stopped; the R7i session owns its restore.
+The user chose to restore 我的布局 from the backup. The Debug dock was stopped with `pkill -x latte-dock-ng` and waited on until it had exited. The layout file was copied back with `cp -p` from `config-before/latte/我的布局.layout.latte`. Its sha256 (`630068beb3bb…`) matches the backup, and the dock was started again with `systemd-run --user` as `latte-dock-ng-debug-r7k-restore-20261112-002525.service` (pid 146296). After the restart the layout file still matched the backup, the start-up log had no warning, error or assert line, and the two original docks passed `addView` ("Passed ALL checks"). Every backed-up config file matches its backup hash. The test log is kept as `/data/tmp/dock-template-fix/desktop-check/latte-ng-check-2026-11-12.log`. The R7i session later restored the packaged dock at 00:31:55 (pid 152862) and uninstalled the Debug build (`uninstall.sh --user --preserve-autostart`), so the Debug dock described above is no longer running.
 
 ## Follow-up (not changed here)
 
