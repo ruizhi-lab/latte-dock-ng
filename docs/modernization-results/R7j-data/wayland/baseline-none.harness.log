@@ -1,0 +1,41 @@
+R7J      0 START mode=external platform=wayland
+R7J     54 FOCUS (none) -> QTableView visible=1
+R7J    434 FOCUS QTableView visible=1 -> QPushButton text='' visible=1
+R7J    434 EDITOR created=1
+R7J    934 R7J-BUTTON 659 54
+R7J    934 R7J-READY
+R7J   2335 EVENT editor MouseButtonPress on QPushButton text='' visible=1
+R7J   2361 SIGNAL menu aboutToShow
+R7J setVisible( true ) blockHide= false isVisible= false activePopup= false
+R7J   2361 EVENT menu Show on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J showEvent
+R7J   2361 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J   2456 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J mouseRelease pos= QPoint(149,-15) actionAt= (none) activeAction= (none)
+R7J after QMenu::mouseReleaseEvent blockHide= false isVisible= true
+R7J   2513 R7J-WORK 659 208
+R7J   2513 R7J-OK 669 244
+R7J   2513 R7J-CANCEL 759 244
+R7J   3714 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   3834 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J mouseRelease pos= QPoint(149,139) actionAt= Work activeAction= Work
+R7J   3834 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J setVisible( false ) blockHide= true isVisible= true activePopup= true
+R7J   -> blocked, blockHide cleared
+R7J   3834 EVENT editor FocusIn on QPushButton text='' visible=1
+R7J   3834 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0
+R7J hideEvent activePopup= false
+R7J   3834 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J   3835 SIGNAL delegate commitData OKPRESSED=unset
+R7J   3835 EVENT editor Hide on QPushButton text='' visible=0
+R7J   3835 SIGNAL delegate closeEditor hint=0
+R7J   3835 FOCUS QPushButton text='' visible=0 -> (none)
+R7J   3835 SIGNAL menu aboutToHide
+R7J   3835 SIGNAL action 'Work' toggled(1)
+R7J   3835 SIGNAL action 'Work' triggered(1)
+R7J after QMenu::mouseReleaseEvent blockHide= false isVisible= false
+R7J   3835 SIGNAL editor destroyed
+R7J   5334 STATE requested: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   5392 SHOT /data/tmp/r7j/wl-runs/baseline-none-223248/shots/window-1-requested.png
+R7J   5935 STATE quit: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   5990 SHOT /data/tmp/r7j/wl-runs/baseline-none-223248/shots/window-2-quit.png

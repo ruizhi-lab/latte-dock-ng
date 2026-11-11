@@ -1,0 +1,47 @@
+=== QWidget::close()
+#0  0x00007ffff75c9f70 in QWidget::close() () at /usr/lib64/libQt6Widgets.so.6
+#1  0x00007ffff7420188 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#2  0x00007ffff741d604 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#3  0x00007ffff741db1d in ??? () at /usr/lib64/libQt6Widgets.so.6
+#4  0x00005555555c1bdc in Latte::Settings::Layout::Delegate::PersistentMenu::mouseReleaseEvent (this=..., e=...) at /data/tmp/r7j/instr/persistentmenu.cpp:75
+#5  0x00007ffff75e49d8 in QWidget::event(QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+#6  0x00007ffff75d42df in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+#7  0x00007ffff75d813e in QApplication::notify(QObject*, QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+#8  0x00005555555b2bff in QTest::mouseEvent (action=..., widget=..., button=..., stateKey=..., pos=..., delay=...) at /usr/include/qt6/QtTest/qtestmouse.h:216
+#9  0x00005555555bc0fa in QTest::mouseRelease (widget=..., button=..., stateKey=..., pos=..., delay=...) at /usr/include/qt6/QtTest/qtestmouse.h:232
+#10 0x00005555555b7a72 in main (argc=..., argv=...) at /data/tmp/r7j/harness/repro.cpp:443
+R7J   1214 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+=== PersistentMenu::setVisible(0)
+#0  Latte::Settings::Layout::Delegate::PersistentMenu::setVisible (this=..., visible=...) at /data/tmp/r7j/instr/persistentmenu.cpp:24
+#1  0x00007ffff75c9ade in QWidgetPrivate::handleClose(QWidgetPrivate::CloseMode) () at /usr/lib64/libQt6Widgets.so.6
+#2  0x00007ffff75c9f0f in ??? () at /usr/lib64/libQt6Widgets.so.6
+#3  0x00007ffff54072eb in QWindow::event(QEvent*) () at /usr/lib64/libQt6Gui.so.6
+#4  0x00007ffff75d42df in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+#5  0x00007ffff4d7c468 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /usr/lib64/libQt6Core.so.6
+#6  0x00007ffff539d285 in QGuiApplicationPrivate::processCloseEvent(QWindowSystemInterfacePrivate::CloseEvent*) () at /usr/lib64/libQt6Gui.so.6
+#7  0x00007ffff5415c9b in ??? () at /usr/lib64/libQt6Gui.so.6
+#8  0x00007ffff53fe848 in QWindow::close() () at /usr/lib64/libQt6Gui.so.6
+#9  0x00007ffff7420188 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#10 0x00007ffff741d604 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#11 0x00007ffff741db1d in ??? () at /usr/lib64/libQt6Widgets.so.6
+#12 0x00005555555c1bdc in Latte::Settings::Layout::Delegate::PersistentMenu::mouseReleaseEvent (this=..., e=...) at /data/tmp/r7j/instr/persistentmenu.cpp:75
+#13 0x00007ffff75e49d8 in QWidget::event(QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+R7J setVisible( false ) blockHide= true isVisible= true activePopup= true
+R7J   -> blocked, blockHide cleared
+=== QWidgetPrivate::hide_helper()
+#0  0x00007ffff75da4f0 in QWidgetPrivate::hide_helper() () at /usr/lib64/libQt6Widgets.so.6
+#1  0x00007ffff75e4040 in QWidgetPrivate::setVisible(bool) () at /usr/lib64/libQt6Widgets.so.6
+#2  0x00007ffff760e664 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#3  0x00007ffff5404ac9 in ??? () at /usr/lib64/libQt6Gui.so.6
+#4  0x00007ffff540722b in QWindow::event(QEvent*) () at /usr/lib64/libQt6Gui.so.6
+#5  0x00007ffff75d42df in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /usr/lib64/libQt6Widgets.so.6
+#6  0x00007ffff4d7c468 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /usr/lib64/libQt6Core.so.6
+#7  0x00007ffff539d285 in QGuiApplicationPrivate::processCloseEvent(QWindowSystemInterfacePrivate::CloseEvent*) () at /usr/lib64/libQt6Gui.so.6
+#8  0x00007ffff5415c9b in ??? () at /usr/lib64/libQt6Gui.so.6
+#9  0x00007ffff53fe848 in QWindow::close() () at /usr/lib64/libQt6Gui.so.6
+#10 0x00007ffff7420188 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#11 0x00007ffff741d604 in ??? () at /usr/lib64/libQt6Widgets.so.6
+#12 0x00007ffff741db1d in ??? () at /usr/lib64/libQt6Widgets.so.6
+#13 0x00005555555c1bdc in Latte::Settings::Layout::Delegate::PersistentMenu::mouseReleaseEvent (this=..., e=...) at /data/tmp/r7j/instr/persistentmenu.cpp:75
+R7J   1219 EVENT editor FocusIn on QPushButton text='' visible=1
+R7J   1219 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0

@@ -1,0 +1,10 @@
+22:40:32 run root /data/tmp/r7j/wl-runs/prod-outside-224032, scenario outside
+22:40:36 nested KWin pid 639625 on r7j-wl
+22:40:37 editor button at (659, 54)
+22:40:38 press the editor button: move to (659, 54)
+22:40:38 Work item at (659, 208), OK at (669, 244), Cancel at (759, 244)
+22:40:39 click Work: move to (659, 208)
+22:40:42 click outside the menu: move to (1500, 900)
+22:40:44 scenario done
+22:40:44 harness exit 0, kwin exit 15
+22:40:45 session ended with status 0

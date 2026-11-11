@@ -1,0 +1,43 @@
+R7J      0 START mode=qtest platform=offscreen
+This plugin does not support propagateSizeHints()
+R7J     40 FOCUS (none) -> QTableView visible=1
+R7J    442 FOCUS QTableView visible=1 -> QPushButton text='' visible=1
+R7J    442 EDITOR created=1
+R7J    442 EVENT editor MouseButtonPress on QPushButton text='' visible=1
+R7J    457 SIGNAL menu aboutToShow
+R7J setVisible( true ) blockHide= false isVisible= false activePopup= false
+This plugin does not support raise()
+R7J    457 EVENT menu Show on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J showEvent
+This plugin does not support grabbing the keyboard
+R7J    457 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J    708 QTEST after press on the editor: menuVisible=1
+R7J    708 EVENT editor MouseButtonRelease on QPushButton text='' visible=1
+R7J    960 QTEST after release on the editor: menuVisible=1
+R7J    960 STATE before-work: Work checked=0 menuVisible=1 editorAlive=1 buttonText='' activePopup=Latte::Settings::Layout::Delegate::PersistentMenu visible=1 focus=QPushButton text='' visible=1
+R7J    961 SHOT /data/tmp/r7j/out/cases/r7j-repro-ok/window-1-before-work.png
+R7J    961 SHOT /data/tmp/r7j/out/cases/r7j-repro-ok/menu-2-before-work.png
+R7J    961 QTEST click Work at menu-local 149,109
+R7J   1012 EVENT menu MouseButtonPress on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J   1063 EVENT menu MouseButtonRelease on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J mouseRelease pos= QPoint(149,109) actionAt= Work activeAction= Work
+R7J   1063 EVENT menu Close on Latte::Settings::Layout::Delegate::PersistentMenu visible=1
+R7J setVisible( false ) blockHide= true isVisible= true activePopup= true
+R7J   -> blocked, blockHide cleared
+R7J   1063 EVENT editor FocusIn on QPushButton text='' visible=1
+R7J   1063 EVENT menu Hide on Latte::Settings::Layout::Delegate::PersistentMenu visible=0
+R7J hideEvent activePopup= false
+R7J   1063 EVENT editor FocusOut on QPushButton text='' visible=1
+R7J   1063 SIGNAL delegate commitData OKPRESSED=unset
+R7J   1063 EVENT editor Hide on QPushButton text='' visible=0
+R7J   1063 SIGNAL delegate closeEditor hint=0
+R7J   1063 FOCUS QPushButton text='' visible=0 -> (none)
+R7J   1063 SIGNAL menu aboutToHide
+R7J   1063 SIGNAL action 'Work' toggled(1)
+R7J   1063 SIGNAL action 'Work' triggered(1)
+R7J after QMenu::mouseReleaseEvent blockHide= false isVisible= false
+R7J   1063 SIGNAL editor destroyed
+R7J   1664 STATE after-work: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   1664 SHOT /data/tmp/r7j/out/cases/r7j-repro-ok/window-3-after-work.png
+R7J   2265 STATE after-ok: Work checked=1 menuVisible=0 editorAlive=0 buttonText='' activePopup=(none) focus=(none)
+R7J   2265 SHOT /data/tmp/r7j/out/cases/r7j-repro-ok/window-4-after-ok.png
