@@ -1,8 +1,9 @@
 # R7d: UniversalSettings::screens NOTIFY
 
-Status: Pending validation. The code change, the source contract and the GCC and Clang
-Debug builds and ctest runs are done in this worktree. The real-desktop hot-plug check and
-the Debian 13 verification are left for the user (see Handoff).
+Status: Complete. The code change, the source contract and the GCC and Clang Debug
+builds and ctest runs are done in this worktree. The hot-plug cycles ran on the desktop on
+2026-11-10 without a warning. The optional 屏幕 list observation was not reported
+(see [Desktop validation](#desktop-validation)). Debian 13 verification is deferred by the user.
 Date: 2026-11-06. Branch: `claude/r7d-screens-notify-b84309`. Start HEAD: `e18a0f9a7`
 (release v1.3.0). Implementation commit: `1c72ce577`. This record: the commit that adds it.
 Follow-up of [R2c-qproperty-without-notify](R2c-qproperty-without-notify.md), item 4 of
@@ -279,3 +280,7 @@ no `qmllint-deep.sh` before-state was kept.
   and updates the ledger from CI.
 - **Commit approval status / push approval status:** committed on `claude/r7d-screens-notify-b84309`
   (`1c72ce577` for the code and contract, and the commit that adds this record). Not pushed.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. Two HDMI-A-1 off/on cycles ran without a warning or a coredump. The optional 屏幕 list observation was not reported. Full record: [R7-desktop-check](R7-desktop-check.md).

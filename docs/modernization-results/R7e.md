@@ -1,9 +1,11 @@
 # R7e: Declared QML components replace Qt.createQmlObject
 
-Status: Pending validation. Both Debug builds (GCC 16.2.1 and Clang 22.1.8) compile
+Status: Complete; the desktop checks passed on 2026-11-10 (see
+[Desktop validation](#desktop-validation)). Both Debug builds (GCC 16.2.1 and Clang 22.1.8) compile
 with zero warnings and zero errors, both full ctest runs pass 61 of 61, and the deep
 qmllint comparison adds no diagnostic identity. The desktop checks listed under
-[Desktop checks for the user](#desktop-checks-for-the-user) have not been run here.
+[Desktop checks for the user](#desktop-checks-for-the-user) were not run by the session
+that wrote this record.
 
 Date: 2026-11-06. Branch: `claude/r7e-createqmlobject-d6fee3`, started at
 `e18a0f9a7b85c6fd03d15264fa59582468aaa89e` (main, release v1.3.0). Implementation
@@ -284,3 +286,7 @@ session refreshes `docs/qmllint-baseline.json` from CI evidence.
 
 Committed on `claude/r7e-createqmlobject-d6fee3`, as the task requested. Not pushed; no push
 was requested.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. After a restart every widget appeared on both docks, and the log had no `createAppletItem` or `appletRetryTimerComponent` warning. The task context menu behaved as before. Full record: [R7-desktop-check](R7-desktop-check.md).

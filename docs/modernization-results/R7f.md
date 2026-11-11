@@ -1,10 +1,11 @@
 # R7f: Split main() into named start-up steps
 
-Status: Pending validation. The split is complete on branch
+Status: Complete. The real-desktop checks passed on 2026-11-10 and 2026-11-11, except
+start-up at login (see [Desktop validation](#desktop-validation)). The split is complete on branch
 `claude/r7f-main-split-9cf795` and was built and tested here with GCC and Clang
 Debug, the source contracts, the logout simulation and five mutation checks.
-Not run: the real-desktop checks under "Not verified", and the Debian 13
-verification, which the user deferred until the refactor is complete.
+The session that wrote this record did not run the real-desktop checks under "Not verified".
+The Debian 13 verification is deferred by the user until the refactor is complete.
 
 Date: 2026-11-06. Start HEAD: `e18a0f9a7` (main, release v1.3.0). Implementation
 HEAD: `5a34f2d10`. This record is the commit after it.
@@ -249,3 +250,7 @@ Debian 13 verification are left to the user.
 
 Commit status: committed on `claude/r7f-main-split-9cf795` only. Not pushed, not
 merged, and main was not touched. Push is not approved.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. These passed: `--replace`, `--add-dock` (after the template-name defect was fixed by R7h), `--import-layout`, `--import-full`, the autostart toggles, a cancelled logout and a real logout. The real logout ended through the shutdown monitor's logout path, with a complete teardown and no coredump. The Debug build starting at login was not checked. Full record: [R7-desktop-check](R7-desktop-check.md).

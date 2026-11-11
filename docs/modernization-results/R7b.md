@@ -1,8 +1,8 @@
 # R7b: Snapshot iteration in syncLatteViewsToScreens
 
-Status: Pending validation. The code, the source contract, the GCC and Clang Debug
-builds and ctest runs are done. The desktop hot-plug retest with clones (section
-[Desktop retest](#desktop-retest)) has not been run and needs the user's session.
+Status: Complete. The code, the source contract, the GCC and Clang Debug builds and
+ctest runs are done. The desktop hot-plug retest ran on 2026-11-10 in a two-output
+variant (see [Desktop validation](#desktop-validation)).
 Date: 2026-11-06. Branch: `claude/r7b-sync-views-93477d`. Start HEAD: `e18a0f9a7`
 (main, release v1.3.0). Commits: `1df198b38` (fix), `72b624e28` (contract),
 and the last commit on the branch, which adds this record. Nothing is pushed.
@@ -216,3 +216,7 @@ send back the output of the five `grep` and `coredumpctl` commands.
 
 Commit approval: the branch commits above are made, and the work is on this branch
 only. Push approval: not requested, so nothing is pushed.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. Two-output variant: in two HDMI-A-1 off/on cycles, the clone of an all-screens test dock was removed and created again. Every sync START had its end, and only originals were reconsidered. There was no fatal marker and no coredump. The three-output scenario and scenario B were not run. Full record: [R7-desktop-check](R7-desktop-check.md).

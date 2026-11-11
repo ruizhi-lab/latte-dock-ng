@@ -1,8 +1,8 @@
 # R7a: Closing items for R1a, R4, dev-env.sh and the Mageia build
 
-Status: Complete for the four items. The checks that need a real desktop, a
-live user manager or the live Cauldron mirrors were not run; see
-[Not verified](#not-verified).
+Status: Complete for the four items. The `dev-env.sh` rule passed on the real desktop on 2026-11-10
+(see [Desktop validation](#desktop-validation)). A VM session and the live Cauldron mirrors
+were not checked; see [Not verified](#not-verified).
 Date: 2026-11-06. Branch: `claude/r7a-closing-items-417aa9`, cut from `main` at
 `e18a0f9a7` (release v1.3.0).
 
@@ -318,3 +318,7 @@ After that, make the follow-up 1 change in `scripts/test-logout-simulation.py`.
 
 Commit approval status: committed on the branch; not pushed; not merged. A push or
 a merge needs the user's approval.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. Both the subshell check and the real-session check of the unset-`XDG_CONFIG_DIRS` branch passed. The dock got the user manager's value once, used 0 CPU ticks in 10 s and caused no KSycoca activity. A VM session, the Mageia retry and dnf's reuse of downloaded packages were not checked. Full record: [R7-desktop-check](R7-desktop-check.md).

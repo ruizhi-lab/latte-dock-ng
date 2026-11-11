@@ -1,8 +1,8 @@
 # R7c: Move To Layout marks the current layouts again
 
-Status: Pending validation. The GCC and Clang Debug builds and the full CTest suite pass on this
-branch. Two checks belong to the user: the Multiple Layouts desktop comparison in "Next action",
-and the decision to keep or discard the branch as a whole. Debian 13 verification: deferred by the
+Status: Complete. The GCC and Clang Debug builds and the full CTest suite pass on this
+branch. On 2026-11-11 the user kept the current-activity marking. The menu data was checked on
+the desktop, but the submenu itself was not seen (see [Desktop validation](#desktop-validation)). Debian 13 verification: deferred by the
 user until the refactor is complete.
 
 Scope: R2c follow-up 7, finding F5 of
@@ -201,3 +201,7 @@ bold items with the bold layouts in Preferences > Layouts. Then accept or discar
 
 Committed locally on `claude/r7c-move-menu-mark-ea9cdd`: the implementation `21f715767`, then this
 record. Not pushed, and `main` was not touched. The user accepts or discards the branch as a whole.
+
+## Desktop validation
+
+Checked on 2026-11-10 and 2026-11-11 on the user's desktop. Multiple Layouts mode with Empty on Work was set in the configuration, because the editor's 活动 menu did not keep the tick (R7j). Among the entries Empty and 我的布局, `contextMenuData()` returned 我的布局 as the only current layout, so 我的布局 is drawn bold and Empty plain. The Layouts Editor showed both loaded layouts in bold. The user kept the current-activity rule. The submenu was not seen on screen. Full record: [R7-desktop-check](R7-desktop-check.md).
