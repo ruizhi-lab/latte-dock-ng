@@ -1,6 +1,6 @@
 # R7k: the docks dialog's template and import entries
 
-Status: fix committed as `bd045d9ee` on branch `claude/fervent-sinoussi-f8ffb2`, based on `main` at `99a09d1f2`. Not merged into `main`. The zh_CN desktop check has not run; it needs the user's approval, because it installs a build and replaces the running dock. The packaged dock is still stopped; the R7i session owns its restore.
+Status: the fix is `bd045d9ee` and the record before this one is `7c107751b`, on branch `claude/fervent-sinoussi-f8ffb2`, based on `main` at `99a09d1f2`. The zh_CN desktop check passed on 2026-11-12 (see Desktop check). This commit records it, and the branch is merged into `main` right after it. The packaged dock is still stopped; the R7i session owns its restore.
 
 ## Report
 
@@ -13,7 +13,7 @@ The 新建 menu lists the dock templates (the shipped one shows as 默认停靠�
 - **模板…** (`initViewTemplatesSubMenu()` in `app/settings/viewsdialog/viewshandler.cpp`) called `KIO::highlightInFileManager()` on `~/.config/latte/templates/Dock.view.latte`. That file does not exist. The shipped template is `Default Dock.view.latte` in the shell package, and the user's folder holds only layouts. The file manager therefore opened the folder with nothing highlighted, which is a file window that imports nothing.
 - **导入…** (`importView()`) opens a Qt file dialog, 导入停靠栏, for `*.view.latte`.
 
-Only 模板… is reached from the 新建 menu and opens a file manager. The record cannot tell which item the user clicked. The desktop check asks the user to confirm it (step 1 below).
+Only 模板… is reached from the 新建 menu and opens a file manager. The record cannot tell which item the user clicked, and the desktop check did not establish it.
 
 ## What the code does on base (99a09d1f2)
 
@@ -73,15 +73,33 @@ Run in the local image `latte-r2c-clazy:noble` (Ubuntu 24.04, clazy 1.17, Ubuntu
 
 Logs: `R7k-data/ci-gates-summary.txt`, `R7k-data/ci-clazy-tail.log`, `R7k-data/ci-clang-tidy-tail.log`.
 
-## Desktop check (not run)
+## Desktop check (2026-11-12): passed
 
-The check needs the user's approval before it starts. Its steps, in zh_CN, with the Latte Debug build from this branch installed in `~/.local`:
+Setup. The Debug build of `bd045d9ee` was installed for the user with `bash install.sh --user Debug` (exit 0, 0 compiler-warning lines). The R7i dock (pid 70050, unit `latte-dock-ng-debug-r7i-20261111-222209.service`) was stopped with `pkill -x latte-dock-ng`. The fixed build was started with `systemd-run --user` as `latte-dock-ng-debug-r7k-20261111-233322.service` (pid 135767). Its start-up log had no warning, error or assert line. The packaged dock stayed stopped. Before the check, `~/.config/latte` and the related config files were copied to `/data/tmp/dock-template-fix/desktop-check/config-before/`, with hashes in `config-before.sha256`.
 
-1. On the dock: right-click → 编辑布局 → 布局编辑器 → select 我的布局 → 停靠栏… . In the 新建 menu, record which entries are there.
-2. 新建 → 默认停靠栏. Expect a row in the list and the message "默认停靠栏 added successfully…". Then 立即应用. Expect the new dock on the desktop; see the follow-up below about the edge.
-3. 新建 → 模板… (the item below the separator). Expect a file manager on the templates folder and no new row.
-4. 导入… → pick the shipped `Default Dock.view.latte` from `~/.local/share/plasma/shells/org.kde.latte.shell/contents/templates/`. Expect a row. Then pick a file that holds no dock. Expect the warning "<b>…</b> has no dock, so no dock was added."
-5. Log: `grep -E "No dock is added|refused the new dock|Could not add" <log>`.
+Steps and results. The labels are the zh_CN UI as seen in a screenshot of the docks dialog (title `我的布局 Docks`). The user confirmed that each result matched the expectation. The log times are the dock's wall-clock times.
+
+| Step | Result | Evidence |
+| --- | --- | --- |
+| 新建(&N) → 默认停靠栏, then 立即应用 | A row (主屏幕, 下, 居中) was added, and Apply created the dock in 我的布局 | Log 00:05:33.062: `onApply`, `save() call: 1`, `Storage::newView` ("new view for layout"). Layout file: new `[Containments][14]` named 默认停靠栏, location 4, onPrimary true |
+| 新建(&N) → 模板... | The templates folder opened in the file manager, and no row was added | User report. No log line on this path |
+| Import... → Default Dock.view.latte, then 立即应用 | A row was added, and Apply created it as "Default Dock - 2" because the name was taken | Log 00:06:04.406 `importView()`. Apply at 00:19:16.429 with `save() call: 2` and `Storage::newView`. Layout file: new `[Containments][15]` named "Default Dock - 2" |
+| Import... → a file that holds no dock | Refused, with no row | Log 00:07:33.377: "No dock is added: the dock file … has no dock." |
+
+Notes.
+- The new texts show in English on zh_CN until they are translated: "… added successfully...", "… has no dock, so no dock was added.".
+- 默认停靠栏 and Default Dock both sit on the primary screen's bottom edge, centred, so they overlap. Three docks now share that edge in 我的布局. This is the follow-up above.
+- The refusal path ("Could not add …") was not reached on the desktop. The source contract covers it.
+- The check changed 我的布局, which now has four docks. Restoring the backup needs a dock restart, and it was not done.
+- The two menu screenshots were deleted after review.
+
+Commands and exit codes:
+- `bash install.sh --user Debug`: 0
+- `pkill -x latte-dock-ng`: 0
+- `systemd-run --user … launch-latte.sh`: 0 (unit active)
+- `busctl --user call org.kde.lattedock /Latte org.kde.LatteDock showSettingsWindow i 0`: 0
+- `spectacle -b -n -m -o …` (two shots, both taken without a delay): 0
+- `git ls-remote --tags origin 'refs/tags/v1.2.59*'`: 0. The tag exists, so pushing `main` creates no release.
 
 ## Follow-up (not changed here)
 
