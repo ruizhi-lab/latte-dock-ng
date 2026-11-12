@@ -2792,7 +2792,11 @@ void QmlSmokeTest::taskIconRasterSizeStaysStableDuringZoom()
 import QtQuick
 import org.kde.kirigami as Kirigami
 Item {
+    id: taskIconContainer
     width: 48; height: 48
+    property real iconSize: 48
+    property real zoom: 1.6
+    property real maxZoom: 1.8
     property alias raster: taskIconRaster
     property alias icon: taskIconItem
     QtObject {

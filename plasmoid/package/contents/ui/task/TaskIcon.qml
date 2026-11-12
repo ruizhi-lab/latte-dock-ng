@@ -20,6 +20,9 @@ Item {
     id: taskIconContainer
     anchors.fill: parent
     property bool toBeDestroyed: false
+    required property real iconSize
+    required property real zoom
+    required property real maxZoom
 
     readonly property color backgroundColor: iconColorsLoader.active ? iconColorsLoader.item.backgroundColor : theme.backgroundColor
     readonly property color glowColor: iconColorsLoader.active ? iconColorsLoader.item.glowColor : theme.textColor
@@ -102,11 +105,8 @@ Item {
             source: LatteCore.Environment.iconSourceForTheme(decoration)
 
             readonly property real currentLength: Math.min(taskIconItem.width, taskIconItem.height)
-            readonly property real baseLength: taskItem.abilities.metrics.iconSize
-            readonly property real maxLength: {
-                var factor = taskItem.abilities.parabolic.factor;
-                return Math.ceil(baseLength * Math.max(1, factor.zoom, factor.maxZoom));
-            }
+            readonly property real baseLength: taskIconContainer.iconSize
+            readonly property real maxLength: Math.ceil(baseLength * Math.max(1, taskIconContainer.zoom, taskIconContainer.maxZoom))
             readonly property bool isZoomed: currentLength > baseLength + 0.5 && maxLength > baseLength
 
             anchors.centerIn: parent

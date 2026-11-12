@@ -2563,7 +2563,7 @@ void SourceContractTest::widgetOriginalIconColorsFallbackKeepsHoverAndStateSynch
     QVERIFY(wrapperSource.contains(QStringLiteral("z: 1200")));
     QVERIFY(wrapperSource.contains(QStringLiteral("scale: originalIconFallback.scale")));
     QVERIFY(wrapperSource.contains(QStringLiteral("transformOrigin: originalIconFallback.transformOrigin")));
-    QVERIFY(wrapperSource.contains(QStringLiteral("opacity: isSupported && appletItem.containsMouse ? 1 : 0")));
+    QVERIFY(wrapperSource.contains(QStringLiteral("opacity: isSupported && wrapper.appletItem.containsMouse ? 1 : 0")));
     QVERIFY(wrapperSource.contains(QStringLiteral("brightness: 0.30")));
     QVERIFY(wrapperSource.contains(QStringLiteral("contrast: 0.1")));
 }
@@ -6325,7 +6325,7 @@ void SourceContractTest::parabolicIconsKeepStableRasterAndSuspendInvisibleEffect
     const QString source = QString::fromUtf8(taskIcon.readAll());
     QVERIFY(source.contains(QStringLiteral("property alias source: taskIconRaster.source")));
     QVERIFY(source.contains(QStringLiteral("property alias active: taskIconRaster.active")));
-    QVERIFY(source.contains(QStringLiteral("Math.max(1, factor.zoom, factor.maxZoom)")));
+    QVERIFY(source.contains(QStringLiteral("Math.max(1, taskIconContainer.zoom, taskIconContainer.maxZoom)")));
     QVERIFY(source.contains(QStringLiteral("width: isZoomed ? maxLength : taskIconItem.width")));
     QVERIFY(source.contains(QStringLiteral("height: isZoomed ? maxLength : taskIconItem.height")));
     QVERIFY(source.contains(QStringLiteral("scale: isZoomed ? currentLength / maxLength : 1")));
@@ -6345,9 +6345,13 @@ void SourceContractTest::parabolicIconsKeepStableRasterAndSuspendInvisibleEffect
         const int end = wrapperSource.indexOf(QStringLiteral("\n    }"), start);
         QVERIFY(start >= 0 && end > start);
         const QString effect = wrapperSource.mid(start, end - start);
-        QVERIFY(effect.contains(QStringLiteral("visible: isSupported && (appletItem.containsMouse || opacity > 0)")));
+        const QString effectOpacity = id.contains(QStringLiteral("hoveredAppletEffect"))
+            ? QStringLiteral("hoveredAppletEffect.opacity")
+            : QStringLiteral("hoveredOriginalIconEffect.opacity");
+        QVERIFY(effect.contains(QStringLiteral("visible: isSupported && (wrapper.appletItem.containsMouse || ")
+                                + effectOpacity + QStringLiteral(" > 0)")));
         // Opacity must not depend on visibility: that would create a cycle.
-        QVERIFY(effect.contains(QStringLiteral("opacity: isSupported && appletItem.containsMouse ? 1 : 0")));
+        QVERIFY(effect.contains(QStringLiteral("opacity: isSupported && wrapper.appletItem.containsMouse ? 1 : 0")));
         QVERIFY(!effect.contains(QStringLiteral("opacity: visible")));
     }
 }

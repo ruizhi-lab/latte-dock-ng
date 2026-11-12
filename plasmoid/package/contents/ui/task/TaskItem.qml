@@ -359,6 +359,9 @@ AbilityItem.BasicItem {
     //! Content Item
     contentItem: TaskIcon{
         id:taskIcon
+        iconSize: taskItem.abilities.metrics.iconSize
+        zoom: taskItem.abilities.parabolic.factor.zoom
+        maxZoom: taskItem.abilities.parabolic.factor.maxZoom
         z: 1
     }
     //////

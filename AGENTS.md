@@ -32,14 +32,17 @@ part of local mirror maintenance.
 ## User Rules (always apply)
 
 1. **Main branch commit/push protection** — On `main`, never commit or push
-   without explicit user approval. Commit and push are two SEPARATE approvals:
-   after committing, ask "push?". "commit" alone never implies "push". On
-   every non-`main` branch, an explicitly requested implementation may be
-   committed and pushed automatically after the required checks pass. Do not
-   silently switch branches, rewrite published history, or push a different
-   branch than the one being worked on. A user request to commit or push on
-   `main` authorizes only that requested operation; release tags and other
-   remote mutations still require their own explicit authorization.
+   without explicit user approval. If the user explicitly requests both commit
+   and push in the same instruction (for example, “commit and push”), that
+   authorizes both operations in sequence after the required checks pass; do
+   not pause between them to ask again. If the user requests only a commit,
+   never infer permission to push. If commit and push are requested separately,
+   get approval for each before its operation. On every non-`main` branch, an
+   explicitly requested implementation may be committed and pushed automatically
+   after the required checks pass. Do not silently switch branches, rewrite
+   published history, or push a different branch than the one being worked on.
+   A user request to commit and push on `main` does not authorize release tags
+   or other remote mutations; get explicit authorization for those separately.
 2. **English only** — All codebase content in English: commit messages,
    release notes/GitHub descriptions, code comments, documentation.
 3. **No AI attribution** — Commit messages must NOT include `Co-Authored-By`,
