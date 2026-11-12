@@ -6,6 +6,7 @@
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QQuickItem>
 #include <QQuickView>
 #include <QSignalSpy>
 #include <QWheelEvent>
@@ -66,6 +67,7 @@ class QmlSmokeTest : public QObject
 
 private Q_SLOTS:
     void initTestCase();
+    void taskIconRasterSizeStaysStableDuringZoom();
     void containerWheelPreservesTaskCyclingWithOverflow();
     void containmentWheelScrollsTaskViewport();
     void editModeBlockerLeavesRightClicksToContextMenu();
@@ -2772,6 +2774,63 @@ void QmlSmokeTest::zoomRestoreDelegatedToBehaviorAnimation()
     //! delegated to the Behavior on zoom, not to exit-path zoom assignments.
     QVERIFY(!eventsAreaSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
     QVERIFY(!launcherAnimationSource.contains(QStringLiteral("parabolicAreaContainsMouse")));
+}
+
+void QmlSmokeTest::taskIconRasterSizeStaysStableDuringZoom()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/TaskIcon.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.indexOf(QStringLiteral("    Item {\n        id: taskIconItem"));
+    const int end = source.indexOf(QStringLiteral("        ///states for launcher animation"), start);
+    QVERIFY(start >= 0 && end > start);
+    // Exercise the production wrapper with real Kirigami sizing. Animation
+    // anchors and the platform icon resolver are outside this geometry test.
+    QString wrapper = source.mid(start, end - start) + QStringLiteral("\n}");
+    wrapper.replace(QStringLiteral("LatteCore.Environment.iconSourceForTheme(decoration)"), QStringLiteral("\"application-x-executable\""));
+    const QString harness = QStringLiteral(R"(
+import QtQuick
+import org.kde.kirigami as Kirigami
+Item {
+    width: 48; height: 48
+    property alias raster: taskIconRaster
+    property alias icon: taskIconItem
+    QtObject {
+        id: taskItem
+        property var abilities: ({metrics: {iconSize: 48}, parabolic: {factor: {zoom: 1.6, maxZoom: 1.8}}})
+    }
+)") + wrapper + QStringLiteral("\n}");
+    QQmlEngine engine;
+    QQmlComponent component(&engine);
+    component.setData(harness.toUtf8(), QUrl(QStringLiteral("task-icon-raster.qml")));
+    QTRY_VERIFY_WITH_TIMEOUT(component.status() != QQmlComponent::Loading, 5000);
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+    std::unique_ptr<QObject> object(component.create());
+    QVERIFY(object);
+    auto *slot = qobject_cast<QQuickItem *>(object.get());
+    auto *raster = qvariant_cast<QQuickItem *>(object->property("raster"));
+    auto *icon = qvariant_cast<QQuickItem *>(object->property("icon"));
+    QVERIFY(slot && raster && icon);
+    QCOMPARE(raster->width(), 48.0);
+    QCOMPARE(raster->scale(), 1.0);
+    for (int length = 49; length <= 86; ++length) {
+        slot->setSize(QSizeF(length, length));
+        QCOMPARE(raster->width(), 87.0);
+        QCOMPARE(raster->height(), 87.0);
+        QVERIFY(std::abs(raster->width() * raster->scale() - length) < 0.001);
+        // Qt centers anchors on whole pixels, allowing a half-pixel offset
+        // when the stable raster and slot have different parity.
+        QVERIFY(std::abs(raster->x() + raster->width() / 2 - length / 2.0) <= 0.5);
+    }
+    // Returning to rest restores native pixels, and the public aliases still
+    // reach the raster after a source refresh or active-state change.
+    slot->setSize(QSizeF(48, 48));
+    QCOMPARE(raster->width(), 48.0);
+    QCOMPARE(raster->scale(), 1.0);
+    QVERIFY(icon->setProperty("source", QStringLiteral("folder")));
+    QCOMPARE(raster->property("source").toString(), QStringLiteral("folder"));
+    QVERIFY(icon->setProperty("active", true));
+    QCOMPARE(raster->property("active").toBool(), true);
 }
 
 QTEST_MAIN(QmlSmokeTest)

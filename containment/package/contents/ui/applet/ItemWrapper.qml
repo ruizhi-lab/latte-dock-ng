@@ -554,12 +554,15 @@ Item{
         // the hover copy remains exactly aligned with the icon.
         scale: _wrapperContainer.scale
         transformOrigin: _wrapperContainer.transformOrigin
-        visible: wrapper.supportsHoveredIconEffect
+        //! Only render while the effect can be seen; otherwise the MultiEffect keeps
+        //! rendering its source offscreen all the time, on every frame of the wave.
+        readonly property bool isSupported: wrapper.supportsHoveredIconEffect
                  && appletItem.indicators
                  && !appletItem.indicators.info.providesHoveredAnimation
+        visible: isSupported && (appletItem.containsMouse || opacity > 0)
         // Reuse Latte's existing parabolic hover state.  Adding an input item
         // above applets would steal the wave from neighbouring task icons.
-        opacity: visible && appletItem.containsMouse ? 1 : 0
+        opacity: isSupported && appletItem.containsMouse ? 1 : 0
         brightness: 0.30
         contrast: 0.1
 
@@ -649,10 +652,11 @@ Item{
         source: originalIconFallback
         scale: originalIconFallback.scale
         transformOrigin: originalIconFallback.transformOrigin
-        visible: originalIconFallback.visible
+        readonly property bool isSupported: originalIconFallback.visible
                  && appletItem.indicators
                  && !appletItem.indicators.info.providesHoveredAnimation
-        opacity: visible && appletItem.containsMouse ? 1 : 0
+        visible: isSupported && (appletItem.containsMouse || opacity > 0)
+        opacity: isSupported && appletItem.containsMouse ? 1 : 0
         brightness: 0.30
         contrast: 0.1
 

@@ -82,11 +82,38 @@ Item {
         }
     }
 
-    Kirigami.Icon {
+    // Keep animation anchors and effect sources on the wrapper. The abilities
+    // metrics and maximum zoom define a stable raster size during the wave;
+    // resizing Kirigami.Icon every frame re-rasterizes and uploads the icon
+    // repeatedly on high-refresh displays (issue #69). At rest use the actual
+    // slot size for a sharp unscaled icon. Theme refresh still uses source.
+    Item {
         id: taskIconItem
         anchors.fill: parent
-        roundToIconSize: false
-        source: LatteCore.Environment.iconSourceForTheme(decoration)
+
+        property alias source: taskIconRaster.source
+        property alias active: taskIconRaster.active
+        property alias roundToIconSize: taskIconRaster.roundToIconSize
+
+        Kirigami.Icon {
+            id: taskIconRaster
+            roundToIconSize: false
+            smooth: true
+            source: LatteCore.Environment.iconSourceForTheme(decoration)
+
+            readonly property real currentLength: Math.min(taskIconItem.width, taskIconItem.height)
+            readonly property real baseLength: taskItem.abilities.metrics.iconSize
+            readonly property real maxLength: {
+                var factor = taskItem.abilities.parabolic.factor;
+                return Math.ceil(baseLength * Math.max(1, factor.zoom, factor.maxZoom));
+            }
+            readonly property bool isZoomed: currentLength > baseLength + 0.5 && maxLength > baseLength
+
+            anchors.centerIn: parent
+            width: isZoomed ? maxLength : taskIconItem.width
+            height: isZoomed ? maxLength : taskIconItem.height
+            scale: isZoomed ? currentLength / maxLength : 1
+        }
         // Always visible — badges render as overlays on top (z:30).
         // Previously hidden when badges were active, which forced the icon
         // through a MultiEffect pipeline that produced subtly different
@@ -365,6 +392,7 @@ Item {
         source: badgesLoader.active ? badgesLoader : taskIconItem
 
         opacity:0
+        visible: opacity > 0   //! do not render the effect while it is fully transparent
 
         saturation: -1.0
     }
@@ -386,6 +414,7 @@ Item {
         opacity: taskItem.visualContainsMouse
                  && !clickedAnimation.running
                  && !taskItem.abilities.indicators.info.providesHoveredAnimation ? 1 : 0
+        visible: opacity > 0   //! do not render the effect while it is fully transparent
         brightness: 0.30
         contrast: 0.1
 
