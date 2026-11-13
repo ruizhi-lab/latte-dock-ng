@@ -1,24 +1,24 @@
 Architectures: amd64
 Codename: testing
 Components: main
-Date: Thu, 12 Nov 2026 16:38:39 +0000
+Date: Fri, 13 Nov 2026 15:18:29 +0000
 Description: Latte Dock NG packages
 Label: Latte Dock NG
 Origin: ruizhi-lab
 Suite: testing
 MD5Sum:
- 8c7ca82d3921a4ded43677cbf48407ff              185 Release
- 0058703be29f074c7ac5d51e54687d77            22160 main/binary-amd64/Packages
- 34c7fd55ad3a4861c576afa25e824506             2135 main/binary-amd64/Packages.gz
+ fce9bb13914d27433a5f94cba2b2f9ba              185 Release
+ 8a3737457c37d2437ed29262ff45e516            24173 main/binary-amd64/Packages
+ 895531ed4fd7b9676ea1ceebdf8254e2             2256 main/binary-amd64/Packages.gz
 SHA1:
- 813014b5622a84cd19126c9a8487b4d715bc5127              185 Release
- 8ac41700f0ccc93dfd602539a793bbbf817aa70f            22160 main/binary-amd64/Packages
- 6f8775ee00a3159c539fd11489d6f634b56602a8             2135 main/binary-amd64/Packages.gz
+ dde5af3fa4f9a1b4b86443a2bf930e6913bb6a46              185 Release
+ 6b28c41f8b07b4f2b4b2f02654e38da85dfdbf87            24173 main/binary-amd64/Packages
+ 7ac07a1722fe8b4cc0eec6b444ed1bf35b55c282             2256 main/binary-amd64/Packages.gz
 SHA256:
- 444698daa97eaf23f85cd4aa6a2a6dbff66a84efe2fecf54bfc0edc05ba9986e              185 Release
- 224917cdc678548b4b1bbebc092a58e61cd0882f8e6a910664c2c5912405c0f5            22160 main/binary-amd64/Packages
- 406bd3542d1ee1fb7798444fe702febd2fef4a1b20cbb86c087e0bff370d8f68             2135 main/binary-amd64/Packages.gz
+ bc8809b579454342755c06a91247a5534a58b948a48b33b498937a1244507fee              185 Release
+ d4e9b9d9ac483f4e3d947c131bc3139570280cd79bcd4875c5630fba46d48750            24173 main/binary-amd64/Packages
+ 74dad147dee5474942e559b84f15e6f4a48a2ae012a1ae98c5f0cfb260667512             2256 main/binary-amd64/Packages.gz
 SHA512:
- 9c6dab51e5009f11a32cb3443524261b570c6a36d82a0f4ef8dfa2d67391da518c819281529e3b0d41a172ca3f7f94d00573e186727e5a6275e8ddd28d2998aa              185 Release
- 095cdd694306051ec7bc311d1b3f0ddad35d5d7e80084d2c10eca761b9f9bb754066dc9a25d07cbf644d70bfc6c09d4bd4e81e0edcb5b55afcd298dbc40ce7a8            22160 main/binary-amd64/Packages
- eb10b8c02d3e14bfcae52ad5ac5f9245f34ffbe8283d60bca7041aae0adb75f1f46239d524d5bdeed170dd6cf32bd792e8d0cb09fff1e6fa80767246cffe4ef7             2135 main/binary-amd64/Packages.gz
+ 133e07e008ca4960380b291d29b954cf243a9b5631c40c75f0f6f7801c667ac497f4a9154f63f67b06256d6fbb041b3896f2f853fbe0f5ea1144776b6fc8f8c9              185 Release
+ 37c68a73bc92c66ae53f41b05adcde6b0564e80b30fb891a9fb1edd01f393c987ee4989c7886427c82e2b66eeb95011633fafd7ecc58368d3aa697f8d42b1da7            24173 main/binary-amd64/Packages
+ ad8ae7fe4f2764e2b65bd84d2359824ad8da46add1fadae9a56b4c88e508d35f9a2eab9f2cd4555746f2ecc74f63c72763fa2e6aef945c55ec6b5b6952aadf5c             2256 main/binary-amd64/Packages.gz
