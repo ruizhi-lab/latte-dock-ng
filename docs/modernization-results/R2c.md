@@ -1143,10 +1143,11 @@ file that could not be moved back.
 The R2c fix slices are complete: each of the 19 checks of the inventory is fixed or
 excepted with a reason, the gate holds 49 checks, and [fix batch 3](#fix-batch-3) passed
 CI and the desktop smoke. What is left is the [follow-ups](#follow-ups): decisions and
-defects the slices found on the way, not findings. Items 3, 5, 6, 9, 10 and 12 and F1 to F4
-of item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Items 1, 2 and 4 each need a
-decision and a test, F5 of item 7 needs the decision about the Move To Layout menu, and
-item 11 is a CI hardening.
+defects the slices found on the way, not findings. Item 1 and item 4 were resolved by
+R7b and R7d; F5 of item 7 was resolved by R7c. Items 3, 5, 6, 9, 10 and 12 and F1 to F4
+of item 7 are fixed ([follow-up fixes](#follow-up-fixes)). Item 2 remains unobserved in
+its required multi-screen scenario. Item 11's retry implementation was completed
+by [R7a](R7a.md); real Mageia cache reuse was not verified in that local record.
 
 ## Reproducing the environment
 

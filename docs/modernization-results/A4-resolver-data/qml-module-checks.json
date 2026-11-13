@@ -1,0 +1,18 @@
+[
+  {
+    "preset": "gcc-debug",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-debug",
+    "exit_code": 0
+  },
+  {
+    "preset": "gcc-release",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-release",
+    "exit_code": 0
+  }
+]

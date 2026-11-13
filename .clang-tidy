@@ -1,5 +1,5 @@
 # The clang-tidy gate (scripts/test-clang-tidy.py): GATED_CHECKS there must match Checks here.
-Checks: '-*,bugprone-unused-return-value,bugprone-use-after-move'
+Checks: '-*,bugprone-assignment-in-if-condition,bugprone-casting-through-void,bugprone-compare-pointer-to-member-virtual-function,bugprone-copy-constructor-init,bugprone-forwarding-reference-overload,bugprone-inaccurate-erase,bugprone-incorrect-enable-if,bugprone-lambda-function-name,bugprone-optional-value-conversion,bugprone-redundant-branch-condition,bugprone-shared-ptr-array-mismatch,bugprone-sizeof-container,bugprone-string-integer-assignment,bugprone-string-literal-with-embedded-nul,bugprone-suspicious-missing-comma,bugprone-terminating-continue,bugprone-throw-keyword-missing,bugprone-too-small-loop-variable,bugprone-unique-ptr-array-mismatch,bugprone-unused-return-value,bugprone-use-after-move,misc-misleading-bidirectional,misc-uniqueptr-reset-release,performance-faster-string-find,performance-for-range-copy,performance-implicit-conversion-in-loop,performance-inefficient-string-concatenation,performance-inefficient-vector-operation,performance-trivially-destructible'
 WarningsAsErrors: '*'
 # Every .h header that a translation unit reaches is reported, so a finding in any checkout
 # header is seen. The runner counts only the production sources (test-clazy.py's first_party),

@@ -380,6 +380,7 @@ private Q_SLOTS:
     void layoutscontrollerUniqueLayoutNameHasIterationCap();
     void lattecoronaUnloadUsesCappedLiveListLoop();
     void lattecoronaScreenForContainmentHasDepthGuard();
+    void genericLayoutScreenMappingUsesLazyAuthoritativeAdapters();
     void lattecoronaAlternativesCallbacksFollowTheirOwners();
     void originalViewCleanClonesDrainsFromLocalCopy();
     void layoutManagerResolveAppletQuickItemUsesVisitedSet();
@@ -5024,6 +5025,35 @@ void SourceContractTest::lattecoronaScreenForContainmentHasDepthGuard()
     // screenForContainment parent-applet chain walk must be
     // depth-limited (max 16 hops) instead of unbounded recursion.
     QVERIFY(src.contains(QStringLiteral("depth < 16")));
+}
+
+void SourceContractTest::genericLayoutScreenMappingUsesLazyAuthoritativeAdapters()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+    const qsizetype start = src.indexOf(QStringLiteral("int GenericLayout::screenForContainment("));
+    QVERIFY(start >= 0);
+    const qsizetype end = src.indexOf(QStringLiteral("\nbool GenericLayout::containsView("), start);
+    QVERIFY(end > start);
+    const QString method = withoutComments(src.mid(start, end - start));
+
+    const qsizetype nullGuard = method.indexOf(QStringLiteral("if (!containment)"));
+    const qsizetype containmentIdRead = method.indexOf(QStringLiteral("containment->id()"));
+    QVERIFY(nullGuard >= 0);
+    QVERIFY(containmentIdRead > nullGuard);
+    QVERIFY(method.contains(QStringLiteral("m_pendingContainmentUpdates.containsId(containmentId)")));
+    QVERIFY(method.contains(QStringLiteral("PendingContainmentScreen{ update.onPrimary, update.screen }")));
+    QVERIFY(method.contains(QStringLiteral("m_corona != nullptr")));
+    QVERIFY(method.contains(QStringLiteral("m_corona->screenPool()->primaryScreenId()")));
+    const qsizetype liveLookup = method.indexOf(QStringLiteral("if (m_latteViews.contains(containment))"));
+    const qsizetype waitingLookup = method.indexOf(QStringLiteral("else if (m_waitingLatteViews.contains(containment))"));
+    QVERIFY(liveLookup >= 0);
+    QVERIFY(waitingLookup > liveLookup);
+    QVERIFY(method.contains(QStringLiteral("view->screen()")));
+    QVERIFY(method.contains(QStringLiteral("m_corona->screenPool()->id(view->screen()->name())")));
+    QVERIFY(method.contains(QStringLiteral("ContainmentScreenResolver::resolve(")));
+    QVERIFY(method.contains(QStringLiteral("containmentLastScreen(containment)")));
 }
 
 void SourceContractTest::lattecoronaAlternativesCallbacksFollowTheirOwners()

@@ -92,4 +92,10 @@ all 236 files with zero failed exits, and contained no additions or removals
 against the Gentoo candidate. Installing `plasma-pa` supplies the expected
 `org.kde.plasma.private.volume` module and keeps the comparison free of
 environment-only import warnings. The selected report was reviewed and copied
-into the machine baseline; a green CI comparison against it remains pending.
+into the machine baseline. M3b's four preset comparisons and application-host
+smoke passed in run 36633737377. The later CI run 42557674581 passed deep QML
+lint against the reviewed baseline in all four presets; see the
+[M3b record](modernization-results/M3b.md) and
+[R8b record](modernization-results/R8b.md). Further refreshes require review of
+the full identity delta. Fingerprint or tracked-file inventory changes require
+a fresh candidate under the rules above.

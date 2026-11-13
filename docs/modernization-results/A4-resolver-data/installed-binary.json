@@ -1,0 +1,7 @@
+{
+  "installed": "/home/ruizhi/.local/bin/latte-dock-ng",
+  "build_id": "6bb4d66801266717542d88ed9abc6616b5361f56",
+  "build_id_matches": true,
+  "installed_sha256": "2bb3c27497a8d66c377e5562f33c050a27e695e9db3f7341243c63bfec9ddd01",
+  "note": "CMake changes RUNPATH on installation, so whole-file hashes differ."
+}

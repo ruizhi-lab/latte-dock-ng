@@ -1,0 +1,136 @@
+[
+  {
+    "label": "pending_precedence-build",
+    "command": [
+      "cmake",
+      "--build",
+      "build/modernization/gcc-debug",
+      "--target",
+      "containmentscreenresolvertest",
+      "--parallel",
+      "8"
+    ],
+    "exit_code": 0,
+    "expected": "zero"
+  },
+  {
+    "label": "pending_precedence-red",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^containmentscreenresolvertest$",
+      "--output-on-failure"
+    ],
+    "exit_code": 8,
+    "expected": "nonzero"
+  },
+  {
+    "label": "primary_identity-build",
+    "command": [
+      "cmake",
+      "--build",
+      "build/modernization/gcc-debug",
+      "--target",
+      "containmentscreenresolvertest",
+      "--parallel",
+      "8"
+    ],
+    "exit_code": 0,
+    "expected": "zero"
+  },
+  {
+    "label": "primary_identity-red",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^containmentscreenresolvertest$",
+      "--output-on-failure"
+    ],
+    "exit_code": 8,
+    "expected": "nonzero"
+  },
+  {
+    "label": "negative_and_zero-build",
+    "command": [
+      "cmake",
+      "--build",
+      "build/modernization/gcc-debug",
+      "--target",
+      "containmentscreenresolvertest",
+      "--parallel",
+      "8"
+    ],
+    "exit_code": 0,
+    "expected": "zero"
+  },
+  {
+    "label": "negative_and_zero-red",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^containmentscreenresolvertest$",
+      "--output-on-failure"
+    ],
+    "exit_code": 8,
+    "expected": "nonzero"
+  },
+  {
+    "label": "pending_adapter-red",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^sourcecontracttest$",
+      "--output-on-failure"
+    ],
+    "exit_code": 8,
+    "expected": "nonzero"
+  },
+  {
+    "label": "primary_adapter-red",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^sourcecontracttest$",
+      "--output-on-failure"
+    ],
+    "exit_code": 8,
+    "expected": "nonzero"
+  },
+  {
+    "label": "restored-build",
+    "command": [
+      "cmake",
+      "--build",
+      "build/modernization/gcc-debug",
+      "--target",
+      "containmentscreenresolvertest",
+      "--parallel",
+      "8"
+    ],
+    "exit_code": 0,
+    "expected": "zero"
+  },
+  {
+    "label": "restored-green",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build/modernization/gcc-debug",
+      "-R",
+      "^(sourcecontracttest|containmentscreenresolvertest)$",
+      "--output-on-failure"
+    ],
+    "exit_code": 0,
+    "expected": "zero"
+  }
+]

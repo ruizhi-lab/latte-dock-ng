@@ -1,0 +1,29 @@
+pending_precedence:
+FAIL!  : ContainmentScreenResolverTest::pendingScreenWinsWithoutReadingLiveState() Compared values are not the same
+   Actual   (result): 8
+   Expected (-7)    : -7
+FAIL!  : ContainmentScreenResolverTest::onPrimaryUsesActualPrimaryIdOnlyWhenCoronaExists() Compared values are not the same
+   Actual   (result): 8
+   Expected (6)     : 6
+
+primary_identity:
+FAIL!  : ContainmentScreenResolverTest::onPrimaryUsesActualPrimaryIdOnlyWhenCoronaExists() Compared values are not the same
+   Actual   (result): 0
+   Expected (6)     : 6
+
+negative_and_zero:
+PASS   : ContainmentScreenResolverTest::onPrimaryUsesActualPrimaryIdOnlyWhenCoronaExists()
+FAIL!  : ContainmentScreenResolverTest::liveViewMappingReturnsValidIdWithoutFallback(negative unknown/disconnected sentinel) Compared values are not the same
+   Actual   (result)  : 10
+   Expected (screenId): -5
+FAIL!  : ContainmentScreenResolverTest::liveViewMappingReturnsValidIdWithoutFallback(zero connector ID) Compared values are not the same
+   Actual   (result)  : 10
+   Expected (screenId): 0
+
+pending_adapter:
+PASS   : SourceContractTest::storageExpectedViewScreenIdAllSecondaryEmptyFallback()
+FAIL!  : SourceContractTest::genericLayoutScreenMappingUsesLazyAuthoritativeAdapters() 'method.contains(QStringLiteral("PendingContainmentScreen{ update.onPrimary, update.screen }"))' returned FALSE. ()
+
+primary_adapter:
+PASS   : SourceContractTest::storageExpectedViewScreenIdAllSecondaryEmptyFallback()
+FAIL!  : SourceContractTest::genericLayoutScreenMappingUsesLazyAuthoritativeAdapters() 'method.contains(QStringLiteral("m_corona->screenPool()->primaryScreenId()"))' returned FALSE. ()

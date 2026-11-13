@@ -37,8 +37,35 @@ FIXTURE_FLAGS_SOURCE = ROOT / "app/lattecorona.cpp"
 # enables checks that 18 lacks, so a wildcard would change with the CI image. A check joins this
 # list only after a clean run over the production sources and with its fixture.
 GATED_CHECKS: tuple[str, ...] = (
+    "bugprone-assignment-in-if-condition",
+    "bugprone-casting-through-void",
+    "bugprone-compare-pointer-to-member-virtual-function",
+    "bugprone-copy-constructor-init",
+    "bugprone-forwarding-reference-overload",
+    "bugprone-inaccurate-erase",
+    "bugprone-incorrect-enable-if",
+    "bugprone-lambda-function-name",
+    "bugprone-optional-value-conversion",
+    "bugprone-redundant-branch-condition",
+    "bugprone-shared-ptr-array-mismatch",
+    "bugprone-sizeof-container",
+    "bugprone-string-integer-assignment",
+    "bugprone-string-literal-with-embedded-nul",
+    "bugprone-suspicious-missing-comma",
+    "bugprone-terminating-continue",
+    "bugprone-throw-keyword-missing",
+    "bugprone-too-small-loop-variable",
+    "bugprone-unique-ptr-array-mismatch",
     "bugprone-unused-return-value",
     "bugprone-use-after-move",
+    "misc-misleading-bidirectional",
+    "misc-uniqueptr-reset-release",
+    "performance-faster-string-find",
+    "performance-for-range-copy",
+    "performance-implicit-conversion-in-loop",
+    "performance-inefficient-string-concatenation",
+    "performance-inefficient-vector-operation",
+    "performance-trivially-destructible",
 )
 
 # One translation unit must finish well inside this; a hung clang-tidy fails the gate.

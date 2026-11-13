@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "wall_seconds": 63.554,
+  "jobs": 4,
+  "timing": "Bash time real",
+  "environment": "Gentoo host clang-tidy 22.1.8; existing Clang Debug database"
+}

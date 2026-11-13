@@ -1,0 +1,2 @@
+qmllint: linting 241 QML files with /usr/lib64/qt6/bin/qmllint (gate: errors only)
+qmllint: OK

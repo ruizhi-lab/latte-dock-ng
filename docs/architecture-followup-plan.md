@@ -89,7 +89,7 @@ is not a durable handoff.
 | A1 | Complete | [Comment-only cleanup](modernization-results/A1.md) | A2: classify each log filter against captured emitters before changing behavior. |
 | A2 | Deferred | [Filtered messages need pre-filter observation](modernization-results/A2.md) | Capture candidate messages before the handler returns; record context and runtime, then remove temporary instrumentation. |
 | A3 | Deferred | [Legacy splitter branch analysis](modernization-results/A3.md) | Reopen only with fixture coverage and user retest for Justify alignment, separators and drag ordering. |
-| A4 | Pending validation | [Mapping trace and comment correction](modernization-results/A4.md) | Add production mapping tests and retest primary-not-zero, nested applets and display hotplug before changing mapping logic. |
+| A4 | Pending validation | [Mapping trace](modernization-results/A4.md); [fixture investigation](modernization-results/A4-validation.md); [production resolver and focused tests](modernization-results/A4-resolver.md) | The bounded production policy is now directly tested, with adapter source guards. Finish runtime acceptance; full-chain primary-not-zero and nested mapping remain unproven. Reuse R7 hotplug evidence separately. |
 | A5 | Deferred | [No new extraction candidate justified](modernization-results/A5.md) | Reopen with a concrete ownership defect, duplication or measured maintenance/build cost. |
 | A6 | Complete | [Follow-up review](modernization-results/A6.md) | Keep A2-A5 candidates deferred/pending until their stated evidence exists. |
 

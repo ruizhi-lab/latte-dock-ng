@@ -1,0 +1,42 @@
+[
+  {
+    "preset": "gcc-debug",
+    "before": 63,
+    "after": 64,
+    "added": [
+      "containmentscreenresolvertest"
+    ],
+    "removed": []
+  },
+  {
+    "preset": "clang-debug",
+    "before": 63,
+    "after": 64,
+    "added": [
+      "containmentscreenresolvertest"
+    ],
+    "removed": []
+  },
+  {
+    "preset": "gcc-release",
+    "before": 61,
+    "after": 64,
+    "added": [
+      "containmentscreenresolvertest",
+      "persistentmenutest",
+      "viewtemplatenamestest"
+    ],
+    "removed": []
+  },
+  {
+    "preset": "clang-release",
+    "before": 61,
+    "after": 64,
+    "added": [
+      "containmentscreenresolvertest",
+      "persistentmenutest",
+      "viewtemplatenamestest"
+    ],
+    "removed": []
+  }
+]

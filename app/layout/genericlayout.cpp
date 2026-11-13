@@ -6,6 +6,7 @@
 
 #include <latte_debug.h>
 #include "genericlayout.h"
+#include "containmentscreenresolver.h"
 
 #include <algorithm>
 
@@ -381,32 +382,37 @@ int GenericLayout::screenForContainment(Plasma::Containment *containment)
         return -1;
     }
 
-    //! there is a pending update
-    QString containmentid = QString::number(containment->id());
-
-    if (m_pendingContainmentUpdates.containsId(containmentid)) {
-        if (m_corona && m_pendingContainmentUpdates[containmentid].onPrimary) {
-            return m_corona->screenPool()->primaryScreenId();
-        } else {
-            return m_pendingContainmentUpdates[containmentid].screen;
-        }
+    const QString containmentId = QString::number(containment->id());
+    std::optional<PendingContainmentScreen> pending;
+    if (m_pendingContainmentUpdates.containsId(containmentId)) {
+        const auto &update = m_pendingContainmentUpdates[containmentId];
+        pending = PendingContainmentScreen{ update.onPrimary, update.screen };
     }
 
-    //! there is a view present
-    Latte::View *view{nullptr};
+    // The pending table wins before either live view map is read. When absent,
+    // the live map remains authoritative over waiting views even for a null
+    // entry. Preserve ScreenPool's negative unknown/disconnected sentinel as
+    // the live-map result; a higher caller may apply its own fallback. Defer
+    // this lookup so lastScreen cannot override either authoritative source.
+    return ContainmentScreenResolver::resolve(
+      pending,
+      m_corona != nullptr,
+      [this] { return m_corona->screenPool()->primaryScreenId(); },
+      [this, containment]() -> std::optional<int> {
+          Latte::View *view{ nullptr };
+          if (m_latteViews.contains(containment)) {
+              view = m_latteViews[containment];
+          } else if (m_waitingLatteViews.contains(containment)) {
+              view = m_waitingLatteViews[containment];
+          }
 
-    if (m_latteViews.contains(containment)) {
-        view = m_latteViews[containment];
-    } else if (m_waitingLatteViews.contains(containment)) {
-        view = m_waitingLatteViews[containment];
-    }
+          if (view && view->screen()) {
+              return m_corona->screenPool()->id(view->screen()->name());
+          }
 
-    if (view && view->screen()) {
-        return m_corona->screenPool()->id(view->screen()->name());
-    }
-
-    //! fallback scenario
-    return containmentLastScreen(containment);
+          return std::nullopt;
+      },
+      [containment] { return containmentLastScreen(containment); });
 }
 
 bool GenericLayout::containsView(const int &containmentId) const

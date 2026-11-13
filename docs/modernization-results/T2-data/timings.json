@@ -1,0 +1,16 @@
+[
+  {
+    "tool": "22",
+    "exit_code": 0,
+    "wall_seconds": 69.889,
+    "jobs": 4,
+    "note": "host LLVM22 / isolated LLVM18+GCC13 headers; not CI parity"
+  },
+  {
+    "tool": "18",
+    "exit_code": 0,
+    "wall_seconds": 88.601,
+    "jobs": 4,
+    "note": "host LLVM22 / isolated LLVM18+GCC13 headers; not CI parity"
+  }
+]

@@ -1,0 +1,5 @@
+LLVM (http://llvm.org/): LLVM version 22.1.8 Optimized build.
+selected 156 production sources; skipped 57 autotest source, 139 duplicate compile command of a selected source, 88 generated source in the build directory
+15 negative fixtures: each is rejected as an error by its own gated check
+156 production sources: no findings from 15 gated clang-tidy checks
+wall=63.554 seconds
