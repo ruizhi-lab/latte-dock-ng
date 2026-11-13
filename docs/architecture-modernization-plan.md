@@ -385,6 +385,15 @@ now has 51 checks; LLVM18/22 full gates and all four 64-test configurations
 pass with zero compiler warnings. Four affected data sources are clazy-clean.
 This slice is locally accepted; its new remote acceptance is pending.
 
+T4e was published as `bbc8f6782`; run 43436056930 passed all 23 jobs on its
+51-check source.
+[T4f](modernization-results/T4f-forward-declarations.md) removes three unused
+namespace-mismatched forward declarations and adds the fifty-second check.
+Actual dialog/layout types and QML registration remain unchanged. LLVM18/22
+full gates, four zero-warning 64-test builds, and focused clazy checks pass.
+One external Plasma SDK diagnostic was audited; the production filter remains
+unchanged. T4f is locally accepted; its new remote acceptance is pending.
+
 ## Git and rollback
 
 On main, editing/testing is allowed within the requested batch; committing and

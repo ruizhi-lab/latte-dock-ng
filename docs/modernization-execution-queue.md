@@ -145,7 +145,16 @@ subsequent T4d changes.
   explicitly in its two embedding headers. The gate has 51 checks; LLVM18/22
   full gates and all four 64-test compiler configurations pass, with zero
   compiler warnings. Four affected data sources are clazy-clean. This slice
-  is locally accepted; its new remote acceptance remains pending.
+  was published as `bbc8f6782`; [run 43436056930](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43436056930)
+  passed all 23 jobs on the 51-check source.
+
+- T4f: [forward declaration namespaces](modernization-results/T4f-forward-declarations.md)
+  removes three unused, incorrectly scoped declarations without changing the
+  actual dialog/layout types or QML registration. The gate has 52 checks;
+  LLVM18/22 full gates and all four 64-test configurations pass with zero
+  compiler warnings. Three consumer sources are clazy-clean. One external SDK
+  diagnostic was audited and remains outside the unchanged production scope.
+  This slice is locally accepted; its new remote acceptance is pending.
 
 ## Later waves
 

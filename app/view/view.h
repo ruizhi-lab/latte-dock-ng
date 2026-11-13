@@ -62,7 +62,6 @@ class PlasmaShellSurface;
 
 namespace Latte {
 class Corona;
-class GenericLayout;
 }
 
 namespace Latte {

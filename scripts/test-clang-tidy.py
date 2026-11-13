@@ -43,6 +43,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-casting-through-void",
     "bugprone-compare-pointer-to-member-virtual-function",
     "bugprone-copy-constructor-init",
+    "bugprone-forward-declaration-namespace",
     "bugprone-forwarding-reference-overload",
     "bugprone-inaccurate-erase",
     "bugprone-incorrect-enable-if",
@@ -295,7 +296,7 @@ def run_gate(clang_tidy: str, entries: list[dict[str, str]], build_dir: Path, jo
         raise RuntimeError("\n".join(lines))
     print(
         f"{len(selected)} production sources: no findings from {len(GATED_CHECKS)} gated clang-tidy checks"
-        + (f" ({len(ignored)} in generated or test code were not counted)" if ignored else "")
+        + (f" ({len(ignored)} outside first-party production scope were not counted)" if ignored else "")
     )
 
 

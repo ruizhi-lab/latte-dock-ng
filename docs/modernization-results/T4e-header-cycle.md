@@ -24,8 +24,8 @@ Focused clang-tidy runs with only `misc-header-include-cycle` completed successf
 [full gate evidence](T4e-data/tidy18-final.log) retain the results. No dependency,
 minimum-version or installation change is needed. No desktop restart was
 performed for this include-only repair. No build-time or CPU/PSS gain is
-claimed without measurement. This slice is prepared for publication; its new remote acceptance
-is separate from the preceding T4d CI run.
+claimed without measurement. Published as `bbc8f6782`; [run 43436056930](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43436056930)
+passed all 23 jobs, separately from the preceding T4d CI run.
 
 The preceding T4d source `6f9757229` passed all 23 jobs in
 [run 43432385377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43432385377).

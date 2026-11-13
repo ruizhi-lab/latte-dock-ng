@@ -29,7 +29,6 @@
 namespace Latte {
 class CentralLayout;
 class Corona;
-class ViewsDialog;
 
 namespace Settings {
 namespace Handler {
