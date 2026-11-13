@@ -392,7 +392,10 @@ Indicator::restoreDefaults()
         return false;
     }
     QStringList keys;
-    for (const auto *item : m_configLoader->items()) {
+    // Keep the returned item list as a const snapshot: iterating the temporary
+    // through a mutable range iterator detaches Qt's implicitly shared list.
+    const auto items = m_configLoader->items();
+    for (const auto *item : items) {
         keys.append(item->name());
     }
     const bool restored = Config::DockPreset::restore(m_configLoader, m_configuration, keys, KConfigGroup());

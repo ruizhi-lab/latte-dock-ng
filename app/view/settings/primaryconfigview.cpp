@@ -145,7 +145,10 @@ PrimaryConfigView::restoreDockPreset()
     };
     QList<TaskConfig> tasks;
     int taskIndex = 0;
-    for (auto *applet : containment->applets()) {
+    // Keep the returned applet list as a const snapshot: iterating the temporary
+    // through a mutable range iterator detaches Qt's implicitly shared list.
+    const auto applets = containment->applets();
+    for (auto *applet : applets) {
         if (applet->pluginMetaData().pluginId() != QLatin1String(PluginId::kPlasmoid)) {
             continue;
         }

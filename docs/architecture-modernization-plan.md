@@ -309,7 +309,7 @@ must identify custom-background and scheduled-color settings; the new optional
 wall-clock timer and appearance choices are not a measured performance result.
 Release help review remains a release gate; current handbook tests pass.
 
-## Tooling follow-up (T1/T2/T3/T4a)
+## Tooling follow-up (T1/T2/T3/T4)
 
 The [T1 gate expansion](modernization-results/T1.md) follows R8c's proposed
 Band A order. It adds thirteen proven candidates from the first fifteen to
@@ -335,7 +335,7 @@ full-source gates pass; T3's remote acceptance is not claimed.
 The A4/T1/T2 batch was committed and pushed as `803cce3d9` on 2026-11-13.
 [Build run 43350616185](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43350616185)
 passed all 23 jobs. It tests the published twenty-nine-check gate, not T3/T4a's
-uncommitted expansion. [T4a](modernization-results/T4a.md) adds the already-fixed
+subsequent expansion. [T4a](modernization-results/T4a.md) adds the already-fixed
 redundant-expression family, for forty-seven checks. Both local full-source
 gates pass on the newer user-commit baseline; all four compiler configurations
 pass 64/64 tests with zero compiler warnings.
@@ -343,8 +343,14 @@ pass 64/64 tests with zero compiler warnings.
 The [QML baseline review](modernization-results/QML-baseline-2026-11-13.md)
 accepts the 243-file CI report after inspecting both diagnostic delta directions
 and source authorities. It fixes the coverage mismatch introduced by the new
-helpers without changing the accepted qmllint 6.11.1 environment. Publication
-and new remote CI for these changes remain pending.
+helpers without changing the accepted qmllint 6.11.1 environment. The batch was published as `9e62bfaa9`.
+[Run 43404434373](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43404434373)
+passed the refreshed deep QML and 47-check clang-tidy gates; its Clang Debug
+clazy step found two list-detach regressions in the newer preset feature.
+The [follow-up repair](modernization-results/CI-9e62bfaa9-clazy.md) retains
+const snapshots. [T4b](modernization-results/T4b-move-constructor.md) adds the
+move-constructor check after fixing two window-ID copies, for 48 checks.
+Its new remote acceptance remains pending.
 
 ## Git and rollback
 

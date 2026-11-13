@@ -7,6 +7,7 @@
 
 #include "windowinfowrap.h"
 
+#include <utility>
 
 namespace Latte {
 namespace WindowSystem {
@@ -51,8 +52,8 @@ WindowInfoWrap::WindowInfoWrap(const WindowInfoWrap &o)
 }
 
 WindowInfoWrap::WindowInfoWrap(WindowInfoWrap &&o)
-    : m_wid(o.m_wid)
-    , m_parentId(o.m_parentId)
+    : m_wid(std::move(o.m_wid))
+    , m_parentId(std::move(o.m_parentId))
     , m_geometry(o.m_geometry)
     , m_isValid(o.m_isValid)
     , m_isActive(o.m_isActive)

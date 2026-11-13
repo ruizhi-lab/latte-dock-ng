@@ -90,7 +90,7 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
 - T3: the remaining sixteen Band A candidates plus the deferred string check
   are now proven and promoted. Both local full-source gates pass with forty-six
   fixtures and no findings in 156 production sources. The coordinator reviewed
-  the actual diff; these new changes are not committed or pushed.
+  the actual diff; the expansion was published in `9e62bfaa9`.
   [Record](modernization-results/T3.md). Band A has forty-four promoted
   candidates and two exception-dependent exclusions; the original two checks
   bring the current total to forty-six.
@@ -98,14 +98,21 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   `misc-redundant-expression` gate and negative fixture. All forty-seven checks
   pass on both local tool versions against `796344495`; all four application
   configurations have zero compiler warnings and pass 64/64 tests. This
-  revalidates the uncommitted T3 expansion against the newer source.
+  revalidates T3 against the newer source; both were published in `9e62bfaa9`.
   [Record](modernization-results/T4a.md).
 - QML inventory refresh: the user's two new QML helpers expand coverage to 243
   files. The [reviewed CI baseline](modernization-results/QML-baseline-2026-11-13.md)
   preserves the 6.11.1 fingerprint and all visible warnings; three independent
   CI reports match. The previous 241-file baseline caused the current CI
-  coverage failure. The refresh and T3/T4a remain uncommitted and need their
-  own post-publication CI acceptance.
+  coverage failure. The refresh and T3/T4a were published in `9e62bfaa9`. Run
+  [43404434373](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43404434373)
+  passed the deep QML and clang-tidy gates but failed on two pre-existing
+  clazy loop findings in the user's preset feature. The
+  [CI repair](modernization-results/CI-9e62bfaa9-clazy.md) preserves list snapshots.
+- T4b: [move-constructor initialization](modernization-results/T4b-move-constructor.md)
+  moves two window-ID byte arrays and expands the explicit gate to 48 checks.
+  Remote acceptance remains pending. Genuine Plasma 6.8 and 6.3 validation
+  will use the user's Arch and Debian 13 VMs; no version macro is forced.
 
 ## Later waves
 
