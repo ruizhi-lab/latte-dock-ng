@@ -6,6 +6,17 @@
 */
 
 #include "primaryconfigview.h"
+#include "dockpresetdefaults.h"
+#include "../containmentinterface.h"
+#include "../indicator/indicator.h"
+#include "../visibilitymanager.h"
+#include "../../pluginids.h"
+#include <latte_debug.h>
+#include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <QFileInfo>
+#include <KConfig>
+#include <utility>
 
 // local
 #include <config-latte.h>
@@ -97,6 +108,93 @@ PrimaryConfigView::~PrimaryConfigView()
         delete m_canvasConfigView;
     }
 
+}
+
+bool
+PrimaryConfigView::restoreDockPreset()
+{
+    auto *view = parentView();
+    auto *containment = view ? view->containment() : nullptr;
+    if (!isReady() || !containment || !view->indicator() || !view->visibility()) {
+        return false;
+    }
+    const QString templatePath = corona()->kPackage().filePath("templates") + QStringLiteral("/Default Dock.view.latte");
+    if (!QFileInfo::exists(templatePath)) {
+        qCWarning(latteView) << "Cannot restore Dock preset: missing default Dock template" << templatePath;
+        return false;
+    }
+    KConfig preset(templatePath, KConfig::SimpleConfig);
+    const auto dockPreset = preset.group(QStringLiteral("Containments")).group(QStringLiteral("1"));
+    const auto taskPreset = dockPreset.group(QStringLiteral("Applets")).group(QStringLiteral("2")).group(QStringLiteral("Configuration")).group(QStringLiteral("General"));
+    // The editor's graphic plasmoid is the authority for its live map. A
+    // separately created Applet map can persist values without updating UI bindings.
+    auto *plasmoid = rootObject() ? rootObject()->property("plasmoid").value<QObject *>() : nullptr;
+    auto *dockMap = plasmoid ? qobject_cast<KConfigPropertyMap *>(plasmoid->property("configuration").value<QObject *>()) : nullptr;
+    auto *dockSchema = containment->configScheme();
+    if (!dockMap || !dockSchema) {
+        return false;
+    }
+
+    // Resolve and guard every live task map before changing any settings. The
+    // Tasks page may use a context-owned map rather than Applet::configuration().
+    struct TaskConfig
+    {
+        QPointer<Plasma::Applet> applet;
+        QPointer<KConfigPropertyMap> map;
+        QStringList launchers;
+    };
+    QList<TaskConfig> tasks;
+    int taskIndex = 0;
+    for (auto *applet : containment->applets()) {
+        if (applet->pluginMetaData().pluginId() != QLatin1String(PluginId::kPlasmoid)) {
+            continue;
+        }
+        auto *map = qobject_cast<KConfigPropertyMap *>(view->extendedInterface()->configurationForAppletVisualIndex(taskIndex++));
+        if (!map || !applet->configScheme()) {
+            qCWarning(latteView) << "Cannot restore Dock preset: task configuration is unavailable";
+            return false;
+        }
+        const auto group = static_cast<Types::LaunchersGroup>(map->value(QStringLiteral("launchersGroup")).toInt());
+        QStringList launchers = map->value(QStringLiteral("launchers59")).toStringList();
+        if (group == Types::LayoutLaunchers && view->layout()) {
+            launchers = view->layout()->launchers();
+        } else if (group == Types::GlobalLaunchers) {
+            launchers = corona()->universalSettings()->launchers();
+        }
+        tasks.append({ applet, map, launchers });
+    }
+    if (!view->indicator()->restoreDefaults()) {
+        qCWarning(latteView) << "Cannot restore Dock preset: default indicator configuration is unavailable";
+        return false;
+    }
+    Config::DockPreset::restore(dockSchema, dockMap, Config::DockPreset::dockKeys(), dockPreset.group(QStringLiteral("General")));
+    for (const auto &task : std::as_const(tasks)) {
+        if (!task.applet || !task.map) {
+            qCWarning(latteView) << "Dock preset restore interrupted: task configuration was destroyed";
+            return false;
+        }
+        // Reset launcher sharing to the preset without losing the effective
+        // shared list or modifying another Dock's layout/global launcher source.
+        auto keys = Config::DockPreset::taskKeys();
+        if (!task.map->isImmutable(QStringLiteral("launchers59")) && !task.map->isImmutable(QStringLiteral("launchersGroup"))) {
+            task.map->insert(QStringLiteral("launchers59"), task.launchers);
+        } else {
+            keys.removeAll(QStringLiteral("launchersGroup"));
+        }
+        Config::DockPreset::restore(task.applet->configScheme(), task.map, keys, taskPreset);
+    }
+    view->setAlignment(static_cast<Types::Alignment>(dockMap->value(QStringLiteral("alignment")).toInt()));
+    view->setIsPreferredForShortcuts(dockPreset.readEntry(QStringLiteral("isPreferredForShortcuts"), false));
+    auto *visibility = view->visibility();
+    visibility->setTimerShow(dockPreset.readEntry(QStringLiteral("timerShow"), 0));
+    visibility->setTimerHide(dockPreset.readEntry(QStringLiteral("timerHide"), 700));
+    visibility->setRaiseOnDesktop(dockPreset.readEntry(QStringLiteral("raiseOnDesktopChange"), false));
+    visibility->setRaiseOnActivity(dockPreset.readEntry(QStringLiteral("raiseOnActivityChange"), false));
+    visibility->setEnableKWinEdges(dockPreset.readEntry(QStringLiteral("enableKWinEdges"), true));
+    visibility->setMode(static_cast<Types::Visibility>(dockPreset.readEntry(QStringLiteral("visibility"), static_cast<int>(Types::DodgeActive))));
+    containment->config().sync();
+    syncGeometry();
+    return true;
 }
 
 void PrimaryConfigView::init()

@@ -96,6 +96,7 @@ public Q_SLOTS:
     Q_INVOKABLE void setSticker(bool blockFocusLost);
     Q_INVOKABLE void openHelp(const QString &section);
     Q_INVOKABLE void updateEffects();
+    Q_INVOKABLE bool restoreDockPreset();
 
 Q_SIGNALS:
     void availableScreenGeometryChanged();

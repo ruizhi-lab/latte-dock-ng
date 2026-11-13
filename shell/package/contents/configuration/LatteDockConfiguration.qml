@@ -688,6 +688,18 @@ Loader {
                 }
 
                 LatteComponents.Button {
+                    id: restorePreset
+                    Layout.fillWidth: true
+                    enabled: viewConfig.isReady
+                    text: failed ? i18n("Restore Failed") : i18n("Restore Preset")
+                    icon.name: "edit-undo"
+                    property bool failed: false
+                    tooltip: failed ? i18n("Could not restore Dock preset. See the debug log for details.")
+                                    : i18n("Restore all Dock options to the current Classic or Modern preset. Keep the screen, edge, launchers and widgets")
+                    onClicked: failed = !viewConfig.restoreDockPreset()
+                }
+
+                LatteComponents.Button {
                     id: removeView
                     Layout.fillWidth: true
                     enabled: dialog.advancedLevel

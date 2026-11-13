@@ -5,6 +5,7 @@
 
 #include "factory.h"
 #include "importer.h"
+#include "../app/view/settings/dockpresetdefaults.h"
 
 #include <KArchive/KZip>
 #include <KConfig>
@@ -112,6 +113,7 @@ class IndicatorUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void dockPresetDefaultsRestoreEditorOptionsButPreserveContents();
     void metadataFileAbsolutePathPrefersJson();
     void metadataValidationRequiresIndicatorCategoryAndMainScript();
     void importIndicatorFileInstallsZipIntoIsolatedDataPath();
@@ -123,6 +125,73 @@ private Q_SLOTS:
     void factoryForgetsCustomIndicatorWithoutAnotherCopy();
     void factoryBuiltInIndicatorsAreNotCustom();
 };
+
+void
+IndicatorUnitTest::dockPresetDefaultsRestoreEditorOptionsButPreserveContents()
+{
+    const QString dockXml = QFINDTESTDATA("../containment/package/contents/config/main.xml");
+    const QString taskXml = QFINDTESTDATA("../plasmoid/package/contents/config/main.xml");
+    const QString presetPath = QFINDTESTDATA("../shell/package/contents/templates/Default Dock.view.latte");
+    QVERIFY(!dockXml.isEmpty());
+    QVERIFY(!taskXml.isEmpty());
+    QVERIFY(!presetPath.isEmpty());
+    QTemporaryDir temp;
+    QVERIFY(temp.isValid());
+    KConfig config(temp.filePath(QStringLiteral("dockrc")), KConfig::SimpleConfig);
+    KConfig preset(presetPath, KConfig::SimpleConfig);
+    const auto presetDock = preset.group(QStringLiteral("Containments")).group(QStringLiteral("1"));
+    QFile dockFile(dockXml);
+    KConfigLoader dockLoader(config.group(QStringLiteral("Dock")), &dockFile);
+    KConfigPropertyMap dockMap(&dockLoader);
+    for (int style : { 0, 1 }) {
+        dockMap.insert(QStringLiteral("dockStyle"), style);
+        dockMap.insert(QStringLiteral("iconSize"), 120);
+        dockMap.insert(QStringLiteral("customBackgroundColorEnabled"), true);
+        dockMap.insert(QStringLiteral("titleTooltips"), false);
+        dockMap.insert(QStringLiteral("appletOrder"), QStringLiteral("42;2;8"));
+        dockMap.insert(QStringLiteral("splitterPosition"), 2);
+        QSignalSpy changes(&dockMap, &QQmlPropertyMap::valueChanged);
+        QVERIFY(Latte::ViewPart::Config::DockPreset::restore(&dockLoader, &dockMap, Latte::ViewPart::Config::DockPreset::dockKeys(), presetDock.group(QStringLiteral("General"))));
+        QVERIFY(!changes.isEmpty());
+        QCOMPARE(dockMap.value(QStringLiteral("dockStyle")).toInt(), style);
+        QCOMPARE(dockMap.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("42;2;8"));
+        QCOMPARE(dockMap.value(QStringLiteral("splitterPosition")).toInt(), 2);
+        QCOMPARE(dockMap.value(QStringLiteral("iconSize")).toInt(), 64);
+        QCOMPARE(dockMap.value(QStringLiteral("shadows")).toInt(), 2);
+        QCOMPARE(dockMap.value(QStringLiteral("zoomLevel")).toInt(), 17); // Shipped Dock overrides schema's 10.
+        QCOMPARE(dockMap.value(QStringLiteral("customBackgroundColorEnabled")).toBool(), false);
+        QCOMPARE(dockMap.value(QStringLiteral("titleTooltips")).toBool(), true);
+        const auto notifications = changes.count();
+        QVERIFY(Latte::ViewPart::Config::DockPreset::restore(&dockLoader, &dockMap, Latte::ViewPart::Config::DockPreset::dockKeys(), presetDock.group(QStringLiteral("General"))));
+        QCOMPARE(changes.count(), notifications);
+        for (const QString &key : Latte::ViewPart::Config::DockPreset::dockKeys()) {
+            QVERIFY2(dockLoader.findItemByName(key), qPrintable(key));
+        }
+    }
+    QFile taskFile(taskXml);
+    KConfigLoader taskLoader(config.group(QStringLiteral("Tasks")), &taskFile);
+    KConfigPropertyMap taskMap(&taskLoader);
+    const QStringList launchers{ QStringLiteral("applications:org.kde.konsole.desktop") };
+    taskMap.insert(QStringLiteral("launchers59"), launchers);
+    taskMap.insert(QStringLiteral("launchersGroup"), 2);
+    taskMap.insert(QStringLiteral("hideAllTasks"), true);
+    QVERIFY(
+      Latte::ViewPart::Config::DockPreset::restore(&taskLoader,
+                                                   &taskMap,
+                                                   Latte::ViewPart::Config::DockPreset::taskKeys(),
+                                                   presetDock.group(QStringLiteral("Applets")).group(QStringLiteral("2")).group(QStringLiteral("Configuration")).group(QStringLiteral("General"))));
+    QCOMPARE(taskMap.value(QStringLiteral("launchers59")).toStringList(), launchers);
+    QCOMPARE(taskMap.value(QStringLiteral("launchersGroup")).toInt(), 0);
+    QCOMPARE(taskMap.value(QStringLiteral("hideAllTasks")).toBool(), false);
+    for (const QString &key : Latte::ViewPart::Config::DockPreset::taskKeys()) {
+        QVERIFY2(taskLoader.findItemByName(key), qPrintable(key));
+    }
+    dockMap.insert(QStringLiteral("titleTooltips"), false);
+    QVERIFY(Latte::ViewPart::Config::DockPreset::restore(&dockLoader, &dockMap,
+        {QStringLiteral("titleTooltips")}, KConfigGroup()));
+    QCOMPARE(dockMap.value(QStringLiteral("titleTooltips")).toBool(), true);
+    QVERIFY(!Latte::ViewPart::Config::DockPreset::restore(nullptr, &taskMap, {}, KConfigGroup()));
+}
 
 void IndicatorUnitTest::factoryBuiltInIndicatorsAreNotCustom()
 {

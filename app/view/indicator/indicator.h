@@ -114,6 +114,7 @@ public:
 
     void load(QString type);
     void unloadIndicators();
+    bool restoreDefaults();
 
 Q_SIGNALS:
     void customPluginsChanged();

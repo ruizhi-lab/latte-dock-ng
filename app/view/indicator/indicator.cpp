@@ -5,6 +5,7 @@
 
 #include <latte_debug.h>
 #include "indicator.h"
+#include "../settings/dockpresetdefaults.h"
 
 // local
 #include "pluginids.h"
@@ -381,6 +382,27 @@ void Indicator::updateScheme()
     }
 
     Q_EMIT configurationChanged();
+}
+
+bool
+Indicator::restoreDefaults()
+{
+    setType(QStringLiteral("org.kde.latte.default"));
+    if (!m_configLoader || !m_configuration) {
+        return false;
+    }
+    QStringList keys;
+    for (const auto *item : m_configLoader->items()) {
+        keys.append(item->name());
+    }
+    const bool restored = Config::DockPreset::restore(m_configLoader, m_configuration, keys, KConfigGroup());
+    if (restored) {
+        setEnabled(true);
+        setEnabledForApplets(true);
+        setCustomType(QString());
+        saveConfig();
+    }
+    return restored;
 }
 
 void Indicator::loadConfig()

@@ -4403,3 +4403,23 @@ msgstr "日間開始時間（本地時間）"
 #, kde-format
 msgid "Night starts (local time)"
 msgstr "夜間開始時間（本地時間）"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Preset"
+msgstr "還原預設"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Failed"
+msgstr "還原失敗"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Could not restore Dock preset. See the debug log for details."
+msgstr "無法還原 Dock 預設，請查看偵錯日誌瞭解詳情。"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore all Dock options to the current Classic or Modern preset. Keep the screen, edge, launchers and widgets"
+msgstr "依目前經典或現代樣式還原 Dock 的所有選項，保留螢幕、停靠邊緣、啟動器和元件"
