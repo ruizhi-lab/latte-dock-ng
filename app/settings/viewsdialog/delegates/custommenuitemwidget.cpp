@@ -80,8 +80,7 @@ QSize CustomMenuItemWidget::sizeHint() const
     int screenTotal = 0;
 
     if (!m_screen.id.isEmpty()) {
-        QStyleOptionMenuItem screenOpt = opt;
-        const int scrMaxLength = Latte::screenMaxLength(screenOpt, kMaxIconSize);
+        const int scrMaxLength = Latte::screenMaxLength(opt, kMaxIconSize);
         screenTotal = scrMaxLength + kMargin * 2 + 1;
     }
 

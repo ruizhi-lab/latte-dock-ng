@@ -58,3 +58,7 @@ clang-tidy 18.1.3 wrapper: 49/49 fixtures rejected and no findings across 156
 production sources. See the [Arch tool-version evidence](T4c-data/arch-clang-tidy23-fixture-setup.txt).
 The existing VM checkout and settings were left untouched; validation used a
 staged `/tmp` source and build tree.
+
+Published as `1d36b229b`. [Run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818)
+passed all 23 jobs, including Clang Debug's 49-check clang-tidy gate, clazy,
+tests and deep QML checks. GCC Debug sanitizer validation also passed.

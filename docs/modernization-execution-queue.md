@@ -119,7 +119,7 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   reaches 49 checks. The intentional ancestor call was reproduced on the real
   Arch Plasma 6.8 SDK before adding one line-specific exception; the normal
   immediate-base path remains unchanged. Both host full gates and four 64-test
-  configurations pass; remote acceptance is pending.
+  configurations pass. Published as `1d36b229b`; run 43429056818 passed all 23 jobs.
 - Cross-version test API compatibility: [Qt test repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
   preserve the assertions on Qt 6.8 and 6.12. Arch passes both 64-test suites;
   Debian's accessibility test passes in its actual Wayland session. Debian's
@@ -127,14 +127,17 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   as verified against plain QMenu. Final per-platform results are recorded
   separately; the initial failures are not called passes.
 
-Next selected T4 slice: `performance-unnecessary-copy-initialization`. A fresh
-LLVM 22 targeted analysis with the current Clang Debug database reproduces
-three findings: unused `myOptions` in `backgrounddelegate.cpp`, read-only
-`screenOpt` in `custommenuitemwidget.cpp`, and the per-item `layoutCurrentData`
-copy in `layoutscontroller.cpp`. The last fix must retain the independent
-`alteredLayouts` snapshot: Apply's rename/recovery/lock order uses original IDs,
-so only the per-item copy may become a const reference. This is planning and
-consumer review, not a new promoted check or a full-source inventory pass.
+- T4d: [copy initialization](modernization-results/T4d-copy-initialization.md)
+  removes three audited copies while retaining the independent Apply-time
+  layout snapshot and original-ID lock mapping. The gate now has 50 checks;
+  both full host tool versions reject all fixtures and report no findings in
+  156 production sources. Four compiler configurations pass 64/64 tests each
+  with zero compiler warnings; focused clazy passes all three changed sources.
+  This slice is locally accepted and uncommitted; remote acceptance is pending.
+
+T4c was published as `1d36b229b`; [run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818)
+passed all 23 jobs on that 49-check source. It does not validate the
+subsequent T4d changes.
 
 ## Later waves
 

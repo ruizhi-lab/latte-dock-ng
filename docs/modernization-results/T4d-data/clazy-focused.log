@@ -1,0 +1,3 @@
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/settingsdialog/layoutscontroller.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/viewsdialog/delegates/custommenuitemwidget.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/settingsdialog/delegates/backgrounddelegate.cpp', findings=[], problems=[])

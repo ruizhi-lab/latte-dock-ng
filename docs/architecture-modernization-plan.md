@@ -365,7 +365,18 @@ migration remains separate from this gate promotion. The
 [Qt test compatibility repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
 preserve the same assertions across Qt 6.8 and 6.12. Debian's offscreen platform
 cannot activate accessibility; that case passes in the actual Wayland session
-and is not mislabeled as an offscreen pass. Publication acceptance is pending.
+and is not mislabeled as an offscreen pass. T4c was published as `1d36b229b`;
+[run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818)
+passed all 23 jobs, including the 49-check gate and deep QML checks.
+
+[T4d](modernization-results/T4d-copy-initialization.md) adds the fiftieth check,
+`performance-unnecessary-copy-initialization`, after removing three audited
+copies. The independent layout snapshot and original-ID lock mapping remain
+intact. LLVM 18/22 full gates and all four 64-test compiler configurations pass,
+with zero compiler warnings; focused clazy is clean on the changed sources.
+This is local acceptance, not remote CI acceptance or a measured CPU/PSS gain.
+The preceding T4c source was published as `1d36b229b`; its remote CI run is
+separate from this uncommitted slice.
 
 ## Git and rollback
 

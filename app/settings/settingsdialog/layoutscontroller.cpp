@@ -1096,7 +1096,8 @@ void Layouts::save()
     //! lock layouts in the end when the user has chosen it; the lock goes to the file the layout
     //! has after the rename, because a layout object may still point to the pre-rename path
     for (int i = 0; i < alteredLayouts.count(); ++i) {
-        Latte::Data::Layout layoutCurrentData = alteredLayouts[i];
+        // Keep the Apply-time snapshot's original id; the live model can already have rewritten ids.
+        const Latte::Data::Layout &layoutCurrentData = alteredLayouts.at(i);
 
         if (layoutCurrentData.isLocked) {
             Latte::Layouts::LayoutFileLock::lock(newFileForOldId.value(layoutCurrentData.id, layoutCurrentData.id));

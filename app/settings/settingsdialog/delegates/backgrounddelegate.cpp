@@ -29,7 +29,6 @@ BackgroundDelegate::BackgroundDelegate(QObject *parent)
 
 void BackgroundDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItem myOptions = option;
     Latte::Data::LayoutIcon icon = index.data(Qt::UserRole).value<Latte::Data::LayoutIcon>();
 
     //! background
