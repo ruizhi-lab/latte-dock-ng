@@ -73,6 +73,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-unused-return-value",
     "bugprone-use-after-move",
     "concurrency-thread-canceltype-asynchronous",
+    "misc-header-include-cycle",
     "misc-misleading-bidirectional",
     "misc-redundant-expression",
     "misc-uniqueptr-reset-release",

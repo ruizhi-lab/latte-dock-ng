@@ -1,0 +1,4 @@
+UnitResult(source='/data/projects/latte-dock-ng/app/data/genericdata.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/data/errordata.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/data/viewdata.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/data/generictable.cpp', findings=[], problems=[])

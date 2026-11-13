@@ -9,6 +9,7 @@
 // local
 #include <coretypes.h>
 #include "genericdata.h"
+#include "generictable.h"
 #include "../screenpool.h"
 
 // Qt

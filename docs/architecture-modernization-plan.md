@@ -375,8 +375,15 @@ copies. The independent layout snapshot and original-ID lock mapping remain
 intact. LLVM 18/22 full gates and all four 64-test compiler configurations pass,
 with zero compiler warnings; focused clazy is clean on the changed sources.
 This is local acceptance, not remote CI acceptance or a measured CPU/PSS gain.
-The preceding T4c source was published as `1d36b229b`; its remote CI run is
-separate from this uncommitted slice.
+T4d was published as `6f9757229`; run 43432385377 tracks that 50-check source
+passed all 23 jobs and remains separate from subsequent local work.
+
+[T4e](modernization-results/T4e-header-cycle.md) removes the Generic record/table
+include cycle and explicitly includes the table in its embedding headers.
+This changes no type layout, ownership, serialization or module boundary. The gate
+now has 51 checks; LLVM18/22 full gates and all four 64-test configurations
+pass with zero compiler warnings. Four affected data sources are clazy-clean.
+This slice is locally accepted; its new remote acceptance is pending.
 
 ## Git and rollback
 

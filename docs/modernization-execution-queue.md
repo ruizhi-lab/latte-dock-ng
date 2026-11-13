@@ -133,11 +133,19 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   both full host tool versions reject all fixtures and report no findings in
   156 production sources. Four compiler configurations pass 64/64 tests each
   with zero compiler warnings; focused clazy passes all three changed sources.
-  This slice is locally accepted and uncommitted; remote acceptance is pending.
+  Published as `6f9757229`; [run 43432385377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43432385377)
+  passed all 23 jobs on the 50-check source.
 
 T4c was published as `1d36b229b`; [run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818)
 passed all 23 jobs on that 49-check source. It does not validate the
 subsequent T4d changes.
+
+- T4e: [header include direction](modernization-results/T4e-header-cycle.md)
+  removes the record/table include cycle and declares the table dependencies
+  explicitly in its two embedding headers. The gate has 51 checks; LLVM18/22
+  full gates and all four 64-test compiler configurations pass, with zero
+  compiler warnings. Four affected data sources are clazy-clean. This slice
+  is locally accepted; its new remote acceptance remains pending.
 
 ## Later waves
 

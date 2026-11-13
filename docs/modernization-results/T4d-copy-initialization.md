@@ -41,7 +41,9 @@ No dependency, minimum-version, QML, ownership or persisted-config contract
 changed. The call paths retain the same rendering inputs and original-ID lock
 targets; no desktop install/restart was performed for these copy-only changes.
 No CPU or memory reduction is claimed without measurement. Remote acceptance
-is pending publication of this slice; CI for the preceding T4c batch is separate.
+passed for published commit `6f9757229` in
+[run 43432385377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43432385377) (23/23 jobs successful);
+CI for the preceding T4c batch is separate.
 
 The preceding T4c batch passed all 23 jobs in
 [run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818).

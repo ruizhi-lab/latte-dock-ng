@@ -6,15 +6,14 @@
 #ifndef GENERICDATA_H
 #define GENERICDATA_H
 
-// local
-#include "generictable.h"
-
 // Qt
 #include <QString>
 
 namespace Latte {
 namespace Data {
 
+// GenericTable depends on this record. Headers that embed tables include generictable.h directly;
+// including that table here would recreate the record/table include cycle.
 //! Data records are plain values: copy and move are compiler-generated (Rule
 //! of Zero), so every member, including one added later, is copied and moved.
 //! The former hand-written versions copied on move and had to list each field

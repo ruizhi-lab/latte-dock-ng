@@ -8,6 +8,7 @@
 
 //! local
 #include "genericdata.h"
+#include "generictable.h"
 #include "appletdata.h"
 #include "errorinformationdata.h"
 
