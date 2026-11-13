@@ -1,0 +1,5 @@
+UnitResult(source='/data/projects/latte-dock-ng/app/view/containmentinterface.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/wm/tasktools.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/indicator/factory.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/lattecorona.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/containment/plugin/layoutmanager.cpp', findings=[], problems=[])

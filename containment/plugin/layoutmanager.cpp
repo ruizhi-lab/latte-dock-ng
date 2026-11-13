@@ -991,7 +991,7 @@ QString LayoutManager::appletIconPath(QObject *applet) const
         return {};
     }
 
-    const QString iconPath = KIconLoader::global()->iconPath(icon, -64, true);
+    QString iconPath = KIconLoader::global()->iconPath(icon, -64, true);
 
     if (iconPath.startsWith(QStringLiteral(":/"))) {
         // KIconLoader can return a Qt resource path for Plasma-bundled icons.

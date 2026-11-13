@@ -89,7 +89,7 @@ inline QString pluginIdFromMetaData(const KPluginMetaData &meta)
 
     if (!fileName.isEmpty()) {
         const QFileInfo fileInfo(fileName);
-        const QString leaf = fileInfo.fileName();
+        QString leaf = fileInfo.fileName();
 
         // If metadata lives under <plugin-id>/metadata.json (or metadata.desktop),
         // use the plugin directory name instead of the metadata file name.

@@ -392,7 +392,14 @@ namespace-mismatched forward declarations and adds the fifty-second check.
 Actual dialog/layout types and QML registration remain unchanged. LLVM18/22
 full gates, four zero-warning 64-test builds, and focused clazy checks pass.
 One external Plasma SDK diagnostic was audited; the production filter remains
-unchanged. T4f is locally accepted; its new remote acceptance is pending.
+unchanged. T4f was published as `d0ce8cf89` and run 43440085083 passed all
+23 jobs.
+
+[T4g](modernization-results/T4g-automatic-move.md) enables automatic moves on
+six return paths and adds the fifty-third check. Both local full gates and all
+four 64-test compiler configurations pass, with zero compiler warnings. The
+five affected sources are clazy-clean. Remote acceptance is pending, and no
+CPU or memory reduction is claimed without measurement.
 
 ## Git and rollback
 

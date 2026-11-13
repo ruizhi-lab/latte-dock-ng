@@ -750,7 +750,7 @@ QString defaultApplication(const QUrl &url)
         return browserApp;
     } else if (application.compare(QLatin1String("terminal"), Qt::CaseInsensitive) == 0) {
         KConfigGroup confGroup(KSharedConfig::openConfig(), QStringLiteral("General"));
-        const QString terminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
+        QString terminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
 
         if (KService::Ptr service = serviceFromIdOrDesktopEntry(terminal)) {
             return service->storageId();

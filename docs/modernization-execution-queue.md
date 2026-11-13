@@ -154,7 +154,13 @@ subsequent T4d changes.
   LLVM18/22 full gates and all four 64-test configurations pass with zero
   compiler warnings. Three consumer sources are clazy-clean. One external SDK
   diagnostic was audited and remains outside the unchanged production scope.
-  This slice is locally accepted; its new remote acceptance is pending.
+  Published as `d0ce8cf89`; run 43440085083 passed all 23 jobs.
+
+- T4g: [automatic moves](modernization-results/T4g-automatic-move.md) removes
+  `const` from five value-return locals covering six diagnostics. Both full
+  LLVM gates pass with 53 checks; four compiler configurations pass 64/64
+  tests with zero compiler warnings, and five affected sources are clazy-clean.
+  This slice is locally accepted; remote acceptance remains pending.
 
 ## Later waves
 

@@ -87,6 +87,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "performance-inefficient-string-concatenation",
     "performance-inefficient-vector-operation",
     "performance-move-constructor-init",
+    "performance-no-automatic-move",
     "performance-unnecessary-copy-initialization",
     "performance-trivially-destructible",
 )

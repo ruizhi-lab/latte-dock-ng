@@ -1,0 +1,14 @@
+{
+  "production_sources": 156,
+  "findings": [
+    {
+      "check": "bugprone-forward-declaration-namespace",
+      "path": "/usr/include/Plasma/plasma/applet.h",
+      "line": 45,
+      "column": 7,
+      "message": "no definition found for 'Package', but a definition with the same name 'Package' found in another namespace 'Latte'",
+      "severity": "error",
+      "first_party": false
+    }
+  ]
+}

@@ -111,7 +111,7 @@ QUrl launcherUrlFromString(const QString &launcherUrl)
         return QUrl();
     }
 
-    const QUrl parsed(trimmed);
+    QUrl parsed(trimmed);
 
     if (parsed.scheme() == QLatin1String("applications")
         || parsed.scheme() == QLatin1String("file")) {

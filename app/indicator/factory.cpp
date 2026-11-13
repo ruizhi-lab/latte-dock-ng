@@ -51,7 +51,7 @@ KPluginMetaData readIndicatorMetaData(const QString &metadataFile)
 
 QString kPackageToolExecutable()
 {
-    const QString kde6Tool = QStandardPaths::findExecutable(QStringLiteral("kpackagetool6"));
+    QString kde6Tool = QStandardPaths::findExecutable(QStringLiteral("kpackagetool6"));
 
     if (!kde6Tool.isEmpty()) {
         return kde6Tool;
