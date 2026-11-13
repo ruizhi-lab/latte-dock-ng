@@ -1,0 +1,27 @@
+"normal" platform "xcb" geometry QRect(40,44 120x25) item QPoint(59,12)
+"normal" move QPoint(0,12) true
+"normal" move QPoint(7,12) true
+"normal" move QPoint(14,12) true
+"normal" move QPoint(22,12) true
+"normal" move QPoint(29,12) true
+"normal" move QPoint(36,12) true
+"normal" move QPoint(44,12) true
+"normal" move QPoint(51,12) true
+"normal" move QPoint(59,12) true
+"normal" after press true
+"normal" after release false
+"normal" toggles 1 checked true visible false
+"persistent" platform "xcb" geometry QRect(40,44 120x25) item QPoint(59,12)
+"persistent" move QPoint(0,12) true
+"persistent" move QPoint(7,12) true
+"persistent" move QPoint(14,12) true
+"persistent" move QPoint(22,12) true
+"persistent" move QPoint(29,12) true
+"persistent" move QPoint(36,12) true
+"persistent" move QPoint(44,12) true
+"persistent" move QPoint(51,12) true
+"persistent" move QPoint(59,12) true
+"persistent" after press true
+"persistent" after release true
+"persistent" toggles 1 checked true visible true
+A/B 1 1

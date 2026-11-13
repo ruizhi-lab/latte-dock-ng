@@ -38,3 +38,8 @@ Test registration stayed at 64 with no removals. The 49-check clazy gate passed
 before the constructor edit; a focused recheck of the final constructor also
 had no clazy findings. [Machine-readable evidence](T4b-data/validation-summary.json)
 and [gate logs](T4b-data/tidy18-final.log) retain the local validation results.
+
+Published as `64a7f1ae5`; [CI run 43424231020](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43424231020)
+passed all 23 jobs. The 48-check clang-tidy gate, 49-check clazy gate, tests
+and deep QML checks passed. GCC Debug sanitizer checks passed; those steps
+were intentionally skipped in Clang Debug by the workflow matrix.

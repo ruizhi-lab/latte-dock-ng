@@ -1,0 +1,5 @@
+"normal" platform "xcb" geometry QRect(40,44 120x25) item QPoint(59,12)
+"normal" toggles 0 checked false visible false
+"persistent" platform "xcb" geometry QRect(40,44 120x25) item QPoint(59,12)
+"persistent" toggles 0 checked false visible false
+A/B 0 0

@@ -111,8 +111,30 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   [CI repair](modernization-results/CI-9e62bfaa9-clazy.md) preserves list snapshots.
 - T4b: [move-constructor initialization](modernization-results/T4b-move-constructor.md)
   moves two window-ID byte arrays and expands the explicit gate to 48 checks.
-  Remote acceptance remains pending. Genuine Plasma 6.8 and 6.3 validation
+  Remote acceptance passed in [run 43424231020](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43424231020)
+  on `64a7f1ae5` (23/23 successful jobs). Genuine Plasma 6.8 and 6.3 validation
   will use the user's Arch and Debian 13 VMs; no version macro is forced.
+
+- T4c: [parent-virtual-call gate](modernization-results/T4c-parent-virtual-call.md)
+  reaches 49 checks. The intentional ancestor call was reproduced on the real
+  Arch Plasma 6.8 SDK before adding one line-specific exception; the normal
+  immediate-base path remains unchanged. Both host full gates and four 64-test
+  configurations pass; remote acceptance is pending.
+- Cross-version test API compatibility: [Qt test repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
+  preserve the assertions on Qt 6.8 and 6.12. Arch passes both 64-test suites;
+  Debian's accessibility test passes in its actual Wayland session. Debian's
+  persistent-menu fixture now satisfies Qt 6.8's pointer-movement precondition,
+  as verified against plain QMenu. Final per-platform results are recorded
+  separately; the initial failures are not called passes.
+
+Next selected T4 slice: `performance-unnecessary-copy-initialization`. A fresh
+LLVM 22 targeted analysis with the current Clang Debug database reproduces
+three findings: unused `myOptions` in `backgrounddelegate.cpp`, read-only
+`screenOpt` in `custommenuitemwidget.cpp`, and the per-item `layoutCurrentData`
+copy in `layoutscontroller.cpp`. The last fix must retain the independent
+`alteredLayouts` snapshot: Apply's rename/recovery/lock order uses original IDs,
+so only the per-item copy may become a const reference. This is planning and
+consumer review, not a new promoted check or a full-source inventory pass.
 
 ## Later waves
 

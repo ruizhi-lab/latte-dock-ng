@@ -9,10 +9,41 @@
 #include <QDragEnterEvent>
 #include <QLabel>
 #include <QMimeData>
+#include <QPointF>
 #include <QSignalSpy>
 #include <QStandardItemModel>
 #include <QTest>
 #include <QtTest/qtestaccessible.h>
+
+#include <algorithm>
+#include <type_traits>
+
+namespace {
+
+template<typename Event>
+Event
+makeDragEnterEvent(const QPointF &position, const QMimeData *mimeData)
+{
+    // Qt 6.8 exposes the QPoint constructor; newer Qt releases deprecate it in favor of QPointF.
+    // Probe the constructor so this test uses the available API without pinning a Qt version.
+    if constexpr (std::is_constructible_v<Event, QPointF, Qt::DropActions, const QMimeData *, Qt::MouseButtons, Qt::KeyboardModifiers>) {
+        return Event(position, Qt::CopyAction, mimeData, Qt::LeftButton, Qt::NoModifier);
+    } else {
+        return Event(position.toPoint(), Qt::CopyAction, mimeData, Qt::LeftButton, Qt::NoModifier);
+    }
+}
+
+#if QT_CONFIG(accessibility)
+bool
+containsAccessibilityEvent(QAccessible::Event type)
+{
+    // events() is available across supported Qt versions; filtering retains exact event-type checks.
+    const auto events = QTestAccessibility::events();
+    return std::any_of(events.cbegin(), events.cend(), [type](const QAccessibleEvent *event) { return event && event->type() == type; });
+}
+#endif
+
+} // namespace
 
 class SettingsViewUnitTest : public QObject
 {
@@ -36,7 +67,7 @@ void SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes()
 
     QMimeData urlMime;
     urlMime.setUrls({QUrl::fromLocalFile(QStringLiteral("/tmp/sample.layout.latte"))});
-    QDragEnterEvent urlEvent(QPoint(20, 20), Qt::CopyAction, &urlMime, Qt::LeftButton, Qt::NoModifier);
+    auto urlEvent = makeDragEnterEvent<QDragEnterEvent>(QPointF(20, 20), &urlMime);
     table.dragEntered(&urlEvent);
     QVERIFY(overlay->isVisibleTo(&table));
     QVERIFY(overlay->text().contains(QStringLiteral("layout files")));
@@ -46,7 +77,7 @@ void SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes()
 
     QMimeData textMime;
     textMime.setText(QStringLiteral("[LayoutSettings]"));
-    QDragEnterEvent textEvent(QPoint(20, 20), Qt::CopyAction, &textMime, Qt::LeftButton, Qt::NoModifier);
+    auto textEvent = makeDragEnterEvent<QDragEnterEvent>(QPointF(20, 20), &textMime);
     table.dragEntered(&textEvent);
     QVERIFY(overlay->isVisibleTo(&table));
     QVERIFY(overlay->text().contains(QStringLiteral("raw layout text")));
@@ -86,15 +117,19 @@ void SettingsViewUnitTest::viewsTableEmitsSelectionAccessibilityEvents()
     table.resize(240, 160);
     table.show();
     QVERIFY(QTest::qWaitForWindowExposed(&table));
+    // Mapping the window can change platform accessibility state, so activate it at the point
+    // where selection events are generated and verify that the platform accepted the request.
+    QAccessible::setActive(true);
+    QVERIFY(QAccessible::isActive());
 
     QTestAccessibility::clearEvents();
     table.selectRow(1);
-    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionAdd));
+    QVERIFY(containsAccessibilityEvent(QAccessible::SelectionAdd));
 
     QTestAccessibility::clearEvents();
     table.selectRow(2);
-    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionRemove));
-    QVERIFY(QTestAccessibility::containsEventOfType(QAccessible::SelectionAdd));
+    QVERIFY(containsAccessibilityEvent(QAccessible::SelectionRemove));
+    QVERIFY(containsAccessibilityEvent(QAccessible::SelectionAdd));
 
     QAccessible::setActive(false);
 #else

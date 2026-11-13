@@ -23,3 +23,7 @@ The next slice also adds a move-constructor check; its combined build/test
 validation is recorded in [T4b](T4b-move-constructor.md). A fresh remote run is
 required after publication; rerunning the unchanged failing commit would not
 repair these deterministic findings.
+
+The repair was published as `64a7f1ae5`. [Run 43424231020](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43424231020)
+passed all 23 jobs, including the previously failing Clang Debug clazy step.
+The retry is accepted; the uncommitted T4c expansion is a separate batch.

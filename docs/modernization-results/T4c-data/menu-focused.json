@@ -1,0 +1,42 @@
+[
+  {
+    "preset": "gcc-debug",
+    "stage": "build",
+    "exit_code": 0
+  },
+  {
+    "preset": "gcc-debug",
+    "stage": "test",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-debug",
+    "stage": "build",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-debug",
+    "stage": "test",
+    "exit_code": 0
+  },
+  {
+    "preset": "gcc-release",
+    "stage": "build",
+    "exit_code": 0
+  },
+  {
+    "preset": "gcc-release",
+    "stage": "test",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-release",
+    "stage": "build",
+    "exit_code": 0
+  },
+  {
+    "preset": "clang-release",
+    "stage": "test",
+    "exit_code": 0
+  }
+]

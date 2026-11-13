@@ -330,7 +330,8 @@ Band A candidates and resolves T2's string-constructor fixture. All seventeen
 are promoted, bringing the gate to forty-six checks: forty-four Band A
 candidates plus the two original checks. The two exception-dependent Band A
 checks remain excluded under production `-fno-exceptions`. Local LLVM 22/18
-full-source gates pass; T3's remote acceptance is not claimed.
+full-source gates pass; remote acceptance passed in run 43424231020 on
+`64a7f1ae5`, which retains the expansion.
 
 The A4/T1/T2 batch was committed and pushed as `803cce3d9` on 2026-11-13.
 [Build run 43350616185](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43350616185)
@@ -350,7 +351,21 @@ clazy step found two list-detach regressions in the newer preset feature.
 The [follow-up repair](modernization-results/CI-9e62bfaa9-clazy.md) retains
 const snapshots. [T4b](modernization-results/T4b-move-constructor.md) adds the
 move-constructor check after fixing two window-ID copies, for 48 checks.
-Its new remote acceptance remains pending.
+T4b remote acceptance passed in
+[run 43424231020](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43424231020),
+with all 23 jobs successful. The Clang Debug clang-tidy, clazy, Test and deep
+QML steps passed; GCC Debug sanitizer checks also passed.
+
+[T4c](modernization-results/T4c-parent-virtual-call.md) brings the gate to 49
+checks. The intentional root-null ancestor call was verified on the user's
+actual Arch Plasma 6.8.2 SDK before adding one line-scoped exception. Full
+LLVM 18/22 host gates and the LLVM 18 gate on Arch pass across 156 production
+sources. The newer Arch LLVM 23 tool deprecates an older check name; that
+migration remains separate from this gate promotion. The
+[Qt test compatibility repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
+preserve the same assertions across Qt 6.8 and 6.12. Debian's offscreen platform
+cannot activate accessibility; that case passes in the actual Wayland session
+and is not mislabeled as an offscreen pass. Publication acceptance is pending.
 
 ## Git and rollback
 

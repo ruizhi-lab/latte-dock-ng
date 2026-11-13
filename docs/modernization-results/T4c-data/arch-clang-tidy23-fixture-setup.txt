@@ -1,0 +1,24 @@
+Arch clang-tidy 23.1.4 (LLVM 23.1.4), libplasma 6.8.2, Qt 6.12.0.
+Command: python3 scripts/test-clang-tidy.py --build-dir build/modernization/clang-debug --jobs 4
+Source set selected: 156 production sources; skipped 58 autotest sources, 139 duplicate compile commands, 89 generated sources.
+
+The runner stopped during fixture setup, before production-source analysis:
+
+49 translation unit(s) could not be analyzed:
+  /tmp/latte-clang-tidy-fixtures-jebfcdqz/bugprone-assignment-in-if-condition.cpp
+    error: 'performance-faster-string-find' check is deprecated and will be removed in a future release; consider using 'performance-prefer-single-char-overloads' instead [clang-tidy-config,-warnings-as-errors]
+
+The same clang-tidy-config error occurred for all 49 fixtures because the existing `WarningsAsErrors: '*'` promotes the tool's deprecation diagnostic. No check list or warning policy was changed to work around this version difference. Independently, the new parent-virtual-call fixture and the intentional View call were checked directly with clang-tidy 23.1.4 under the fresh Clang Debug production compile database.
+
+The archived CI-version LLVM 18 wrapper initially could not start because it requires `libxml2.so.2`, while Arch provides `libxml2.so.16`. Its compatible libxml2 and ICU runtime files were copied into the wrapper's isolated `/tmp` library directory; no system library or configuration was changed. The wrapper then passed the full gate on the same Arch compile database:
+
+```text
+Ubuntu LLVM version 18.1.3
+selected 156 production sources; skipped 58 autotest source, 139 duplicate compile command of a selected source, 89 generated source in the build directory
+49 negative fixtures: each is rejected as an error by its own gated check
+156 production sources: no findings from 49 gated clang-tidy checks
+```
+
+Arch clang 23.1.4, clang-libs 23.1.4, llvm 23.1.4 and llvm-lit 23.1.4 were
+installed to provide the Clang Debug compiler; the configured system mirror was
+not changed. The LLVM 18 runtime bundle remained under `/tmp`.

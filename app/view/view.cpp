@@ -1797,8 +1797,9 @@ void View::resizeEvent(QResizeEvent *event)
     //! and positions it before init() loads the view QML with setSource().
     //! setSource() sizes the new root item to the window, so skipping the
     //! base handler until then loses nothing and avoids a startup crash.
+    //! Remove this exemption with the bypass once all supported libplasma versions guard null roots.
     if (!rootObject()) {
-        QQuickWindow::resizeEvent(event);
+        QQuickWindow::resizeEvent(event); // NOLINT(bugprone-parent-virtual-call)
         return;
     }
 

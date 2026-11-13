@@ -50,6 +50,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-misplaced-pointer-arithmetic-in-alloc",
     "bugprone-move-forwarding-reference",
     "bugprone-optional-value-conversion",
+    "bugprone-parent-virtual-call",
     "bugprone-posix-return",
     "bugprone-redundant-branch-condition",
     "bugprone-shared-ptr-array-mismatch",

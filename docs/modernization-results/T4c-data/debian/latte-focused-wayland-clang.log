@@ -1,0 +1,18 @@
+********* Start testing of SettingsViewUnitTest *********
+Config: Using QtTest library 6.8.2, Qt 6.8.2 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 14.2.0), debian 13
+INFO   : SettingsViewUnitTest::initTestCase() entering
+PASS   : SettingsViewUnitTest::initTestCase()
+INFO   : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() entering
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop layout files here..." msgid_plural: "" msgctxt: ""
+QDEBUG : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() latte.settings: "#000000"  _  "#efefef"
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop layout files here..." msgid_plural: "" msgctxt: ""
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop raw layout text here..." msgid_plural: "" msgctxt: ""
+PASS   : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes()
+INFO   : SettingsViewUnitTest::viewsTableClearsSelectionWhenClickingEmptyArea() entering
+PASS   : SettingsViewUnitTest::viewsTableClearsSelectionWhenClickingEmptyArea()
+INFO   : SettingsViewUnitTest::viewsTableEmitsSelectionAccessibilityEvents() entering
+PASS   : SettingsViewUnitTest::viewsTableEmitsSelectionAccessibilityEvents()
+INFO   : SettingsViewUnitTest::cleanupTestCase() entering
+PASS   : SettingsViewUnitTest::cleanupTestCase()
+Totals: 5 passed, 0 failed, 0 skipped, 0 blacklisted, 32ms
+********* Finished testing of SettingsViewUnitTest *********

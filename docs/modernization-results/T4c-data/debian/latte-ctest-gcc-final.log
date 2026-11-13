@@ -1,0 +1,201 @@
+Internal ctest changing into directory: /tmp/latte-build-gcc
+Test project /tmp/latte-build-gcc
+      Start  1: appstreamtest
+ 1/64 Test  #1: appstreamtest ....................   Passed    0.01 sec
+      Start  2: dataunittest
+ 2/64 Test  #2: dataunittest .....................   Passed    0.01 sec
+      Start  3: modelunittest
+ 3/64 Test  #3: modelunittest ....................   Passed    0.01 sec
+      Start  4: coreunittest
+ 4/64 Test  #4: coreunittest .....................   Passed    0.03 sec
+      Start  5: corecomponentstest
+ 5/64 Test  #5: corecomponentstest ...............   Passed    0.05 sec
+      Start  6: qmlsmoketest
+ 6/64 Test  #6: qmlsmoketest .....................   Passed   11.26 sec
+      Start  7: sourcecontracttest
+ 7/64 Test  #7: sourcecontracttest ...............   Passed    0.04 sec
+      Start  8: packagingcontracttest
+ 8/64 Test  #8: packagingcontracttest ............   Passed    0.00 sec
+      Start  9: typesunittest
+ 9/64 Test  #9: typesunittest ....................   Passed    0.00 sec
+      Start 10: taskpluginunittest
+10/64 Test #10: taskpluginunittest ...............   Passed    0.02 sec
+      Start 11: packageunittest
+11/64 Test #11: packageunittest ..................   Passed    0.01 sec
+      Start 12: indicatorunittest
+12/64 Test #12: indicatorunittest ................   Passed    1.05 sec
+      Start 13: layoutunittest
+13/64 Test #13: layoutunittest ...................   Passed    0.02 sec
+      Start 14: launcherunittest
+14/64 Test #14: launcherunittest .................   Passed    0.02 sec
+      Start 15: genericsettingstest
+15/64 Test #15: genericsettingstest ..............   Passed    0.04 sec
+      Start 16: schemecolorsunittest
+16/64 Test #16: schemecolorsunittest .............   Passed    0.01 sec
+      Start 17: wmunittest
+17/64 Test #17: wmunittest .......................   Passed    0.02 sec
+      Start 18: toolsunittest
+18/64 Test #18: toolsunittest ....................   Passed    0.04 sec
+      Start 19: persistentmenutest
+19/64 Test #19: persistentmenutest ...............   Passed    0.07 sec
+      Start 20: knscompatunittest
+20/64 Test #20: knscompatunittest ................   Passed    0.01 sec
+      Start 21: interfacesunittest
+21/64 Test #21: interfacesunittest ...............   Passed    0.03 sec
+      Start 22: viewpartunittest
+22/64 Test #22: viewpartunittest .................   Passed    0.03 sec
+      Start 23: panelshadowunittest
+23/64 Test #23: panelshadowunittest ..............   Passed    0.01 sec
+      Start 24: contextmenuunittest
+24/64 Test #24: contextmenuunittest ..............   Passed    0.03 sec
+      Start 25: shortcutunittest
+25/64 Test #25: shortcutunittest .................   Passed    6.66 sec
+      Start 26: declarativecoreunittest
+26/64 Test #26: declarativecoreunittest ..........   Passed    0.04 sec
+      Start 27: containmentlayoutunittest
+27/64 Test #27: containmentlayoutunittest ........   Passed    0.04 sec
+      Start 28: pluginregistrationunittest
+28/64 Test #28: pluginregistrationunittest .......   Passed    0.05 sec
+      Start 29: plasmaextendedunittest
+29/64 Test #29: plasmaextendedunittest ...........   Passed    0.03 sec
+      Start 30: taskspluginunittest
+30/64 Test #30: taskspluginunittest ..............   Passed    0.03 sec
+      Start 31: previewprocessunittest
+31/64 Test #31: previewprocessunittest ...........   Passed    0.51 sec
+      Start 32: containmentactionmenuunittest
+32/64 Test #32: containmentactionmenuunittest ....   Passed    0.03 sec
+      Start 33: settingsviewunittest
+33/64 Test #33: settingsviewunittest .............***Failed    0.03 sec
+********* Start testing of SettingsViewUnitTest *********
+Config: Using QtTest library 6.8.2, Qt 6.8.2 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 14.2.0), debian 13
+PASS   : SettingsViewUnitTest::initTestCase()
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop layout files here..." msgid_plural: "" msgctxt: ""
+QDEBUG : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() latte.settings: "#000000"  _  "#efefef"
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop layout files here..." msgid_plural: "" msgctxt: ""
+QWARN  : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes() kf.i18n: KLocalizedString: Domain is not set for this string, translation will not work. Please see https://api.kde.org/frameworks/ki18n/html/prg_guide.html msgid: "Drop raw layout text here..." msgid_plural: "" msgctxt: ""
+PASS   : SettingsViewUnitTest::layoutsTableShowsDropOverlayForSupportedMimeTypes()
+PASS   : SettingsViewUnitTest::viewsTableClearsSelectionWhenClickingEmptyArea()
+FAIL!  : SettingsViewUnitTest::viewsTableEmitsSelectionAccessibilityEvents() 'QAccessible::isActive()' returned FALSE. ()
+   Loc: [/tmp/latte-modernization-20261113-src/autotests/settingsviewunittest.cpp(124)]
+PASS   : SettingsViewUnitTest::cleanupTestCase()
+Totals: 4 passed, 1 failed, 0 skipped, 0 blacklisted, 22ms
+********* Finished testing of SettingsViewUnitTest *********
+
+      Start 34: positionergeometrytest
+34/64 Test #34: positionergeometrytest ...........   Passed    0.03 sec
+      Start 35: parabolicmathtest
+35/64 Test #35: parabolicmathtest ................   Passed    0.00 sec
+      Start 36: parabolicstatetest
+36/64 Test #36: parabolicstatetest ...............   Passed    0.01 sec
+      Start 37: visibilitylogictest
+37/64 Test #37: visibilitylogictest ..............   Passed    0.00 sec
+      Start 38: blockhidingeventstest
+38/64 Test #38: blockhidingeventstest ............   Passed    0.00 sec
+      Start 39: storagelogictest
+39/64 Test #39: storagelogictest .................   Passed    0.00 sec
+      Start 40: qmlobjectsharedenginetest
+40/64 Test #40: qmlobjectsharedenginetest ........   Passed    0.04 sec
+      Start 41: appletidsunittest
+41/64 Test #41: appletidsunittest ................   Passed    0.00 sec
+      Start 42: importedcontainmentsunittest
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.kde.ActivityManager' requested by ':1.2' (uid=1000 pid=20516 comm="/tmp/latte-build-gcc/bin/importedcontainmentsunitt")
+42/64 Test #42: importedcontainmentsunittest .....   Passed    0.03 sec
+      Start 43: synchronizerlogictest
+43/64 Test #43: synchronizerlogictest ............   Passed    0.00 sec
+      Start 44: containmentscreenresolvertest
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.3' (uid=1000 pid=20520 comm="/usr/lib/x86_64-linux-gnu/libexec/kactivitymanager")
+qt.qpa.xcb: could not connect to display 
+qt.qpa.plugin: From 6.5.0, xcb-cursor0 or libxcb-cursor0 is needed to load the Qt xcb platform plugin.
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: wayland, xcb, wayland-egl, vkkhrdisplay, minimal, minimalegl, eglfs, vnc, offscreen, linuxfb.
+
+44/64 Test #44: containmentscreenresolvertest ....   Passed    0.00 sec
+      Start 45: effectslogictest
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.4' (uid=1000 pid=20527 comm="/usr/libexec/xdg-desktop-portal")
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.freedesktop.portal.Documents' requested by ':1.4' (uid=1000 pid=20527 comm="/usr/libexec/xdg-desktop-portal")
+45/64 Test #45: effectslogictest .................   Passed    0.01 sec
+      Start 46: importerlogictest
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Successfully activated service 'org.freedesktop.portal.Documents'
+fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
+error: fuse init failed: Can't mount path /run/user/1000/doc
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.457: Document portal fuse mount point unknown: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name :1.6 was not provided by any .service files
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.457: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.4' (uid=1000 pid=20527 comm="/usr/libexec/xdg-desktop-portal")
+46/64 Test #46: importerlogictest ................   Passed    0.00 sec
+      Start 47: viewtemplatenamestest
+47/64 Test #47: viewtemplatenamestest ............   Passed    0.00 sec
+      Start 48: autostartlogictest
+48/64 Test #48: autostartlogictest ...............   Passed    0.01 sec
+      Start 49: windowviewbackendtest
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.8' (uid=1000 pid=20554 comm="/usr/libexec/xdg-desktop-portal-gtk")
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[20579]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=20554 comm="/usr/libexec/xdg-desktop-portal-gtk")
+dbus-daemon[20579]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.507: Choosing gtk.portal for org.freedesktop.impl.portal.Settings as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.507: Choosing gtk.portal for org.freedesktop.impl.portal.FileChooser as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.508: Choosing gtk.portal for org.freedesktop.impl.portal.AppChooser as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.508: Choosing gtk.portal for org.freedesktop.impl.portal.Print as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.508: Choosing gtk.portal for org.freedesktop.impl.portal.Notification as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.508: Choosing gtk.portal for org.freedesktop.impl.portal.Inhibit as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.509: Choosing gtk.portal for org.freedesktop.impl.portal.Access as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.511: Choosing gtk.portal for org.freedesktop.impl.portal.Account as a last-resort fallback
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Activated service 'org.kde.ActivityManager' failed: Process org.kde.ActivityManager received signal 6
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.512: Choosing gtk.portal for org.freedesktop.impl.portal.Email as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:20527): xdg-desktop-portal-WARNING **: 20:37:57.512: Choosing gtk.portal for org.freedesktop.impl.portal.DynamicLauncher as a last-resort fallback
+dbus-daemon[20288]: [session uid=1000 pid=20288 pidfd=5] Successfully activated service 'org.freedesktop.portal.Desktop'
+49/64 Test #49: windowviewbackendtest ............   Passed    0.32 sec
+      Start 50: shutdownmonitortest
+50/64 Test #50: shutdownmonitortest ..............   Passed    4.66 sec
+      Start 51: teardowntest
+51/64 Test #51: teardowntest .....................   Passed    0.00 sec
+      Start 52: plasmapaneltrackertest
+52/64 Test #52: plasmapaneltrackertest ...........   Passed    0.01 sec
+      Start 53: clonedviewpolicytest
+53/64 Test #53: clonedviewpolicytest .............   Passed    0.00 sec
+      Start 54: handbooktest
+54/64 Test #54: handbooktest .....................   Passed    0.01 sec
+      Start 55: helpmenuqmltest
+55/64 Test #55: helpmenuqmltest ..................   Passed    0.09 sec
+      Start 56: indicatorconfiguimanagertest
+56/64 Test #56: indicatorconfiguimanagertest .....   Passed    3.08 sec
+      Start 57: privateapphostsmoketest
+57/64 Test #57: privateapphostsmoketest ..........   Passed    0.06 sec
+      Start 58: qmllintbaselinetest
+58/64 Test #58: qmllintbaselinetest ..............   Passed    0.17 sec
+      Start 59: handbookdocumenttest
+59/64 Test #59: handbookdocumenttest .............   Passed    0.14 sec
+      Start 60: releaseversiontest
+60/64 Test #60: releaseversiontest ...............   Passed    0.12 sec
+      Start 61: mageiaretrytest
+61/64 Test #61: mageiaretrytest ..................   Passed    0.06 sec
+      Start 62: clazyrunnertest
+62/64 Test #62: clazyrunnertest ..................   Passed    3.42 sec
+      Start 63: neonaptretrytest
+63/64 Test #63: neonaptretrytest .................   Passed    0.04 sec
+      Start 64: logoutsimulationtest
+64/64 Test #64: logoutsimulationtest .............   Passed    0.14 sec
+
+98% tests passed, 1 tests failed out of 64
+
+Total Test time (real) =  32.72 sec
+
+The following tests FAILED:
+	 33 - settingsviewunittest (Failed)
+Errors while running CTest

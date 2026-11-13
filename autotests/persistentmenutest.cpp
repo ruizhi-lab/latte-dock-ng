@@ -41,7 +41,11 @@ PersistentMenuTest::checkableItemClickKeepsMenuOpen()
     QSignalSpy toggles(work, &QAction::toggled);
 
     // Pointer press and release on the item, as a user does it.
-    QTest::mouseMove(&menu, item);
+    // Qt 6.8 ignores an immediate popup click until the pointer has moved enough to rule out
+    // the click that opened the menu; traverse the menu row before pressing the item.
+    for (int step = 0; step <= 8; ++step) {
+        QTest::mouseMove(&menu, QPoint(item.x() * step / 8, item.y()));
+    }
     QTest::mousePress(&menu, Qt::LeftButton, Qt::NoModifier, item);
     QTest::mouseRelease(&menu, Qt::LeftButton, Qt::NoModifier, item);
     QTest::qWait(50);

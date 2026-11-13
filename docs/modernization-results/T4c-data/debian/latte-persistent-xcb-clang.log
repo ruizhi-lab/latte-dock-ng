@@ -1,0 +1,14 @@
+********* Start testing of PersistentMenuTest *********
+Config: Using QtTest library 6.8.2, Qt 6.8.2 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 14.2.0), debian 13
+INFO   : PersistentMenuTest::initTestCase() entering
+PASS   : PersistentMenuTest::initTestCase()
+INFO   : PersistentMenuTest::checkableItemClickKeepsMenuOpen() entering
+PASS   : PersistentMenuTest::checkableItemClickKeepsMenuOpen()
+INFO   : PersistentMenuTest::explicitHideCloses() entering
+PASS   : PersistentMenuTest::explicitHideCloses()
+INFO   : PersistentMenuTest::closeCloses() entering
+PASS   : PersistentMenuTest::closeCloses()
+INFO   : PersistentMenuTest::cleanupTestCase() entering
+PASS   : PersistentMenuTest::cleanupTestCase()
+Totals: 5 passed, 0 failed, 0 skipped, 0 blacklisted, 76ms
+********* Finished testing of PersistentMenuTest *********
