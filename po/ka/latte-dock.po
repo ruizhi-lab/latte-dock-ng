@@ -3780,3 +3780,68 @@ msgstr ""
 #, kde-format
 msgid "Export Template"
 msgstr ""
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Choose dock background color"
+msgstr "აირჩიეთ დოკის ფონის ფერი"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Gap from maximized windows (px)"
+msgstr "დაშორება გაშლილი ფანჯრებიდან (პქს)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Reserve extra space between windows and the dock in Always Visible mode"
+msgstr "ყოველთვის ხილულ რეჟიმში ფანჯრებსა და დოკს შორის დამატებითი ადგილის გამოყოფა"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Use custom background color"
+msgstr "ფონის მორგებული ფერის გამოყენება"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day color"
+msgstr "დღის ფერი"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Switch background colors by time of day"
+msgstr "ფონის ფერების შეცვლა დღის მონაკვეთის მიხედვით"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night color"
+msgstr "ღამის ფერი"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day starts (local time)"
+msgstr "დღის დასაწყისი (ადგილობრივი დრო)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night starts (local time)"
+msgstr "ღამის დასაწყისი (ადგილობრივი დრო)"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Preset"
+msgstr "პარამეტრების აღდგენა"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Failed"
+msgstr "აღდგენა ვერ მოხერხდა"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Could not restore Dock preset. See the debug log for details."
+msgstr "დოკის წინასწარი პარამეტრების აღდგენა ვერ მოხერხდა. დეტალები იხილეთ გამართვის ჟურნალში."
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore all Dock options to the current Classic or Modern preset. Keep the screen, edge, launchers and widgets"
+msgstr "დოკის ყველა პარამეტრის აღდგენა მიმდინარე კლასიკური ან თანამედროვე ნაკრების მიხედვით. ეკრანის, კიდის, გამშვებებისა და ვიჯეტების შენარჩუნება"

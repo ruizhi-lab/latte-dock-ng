@@ -3837,3 +3837,68 @@ msgstr ""
 #, kde-format
 msgid "Export Template"
 msgstr ""
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Choose dock background color"
+msgstr "ドックの背景色を選択"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Gap from maximized windows (px)"
+msgstr "最大化したウィンドウとの間隔 (px)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Reserve extra space between windows and the dock in Always Visible mode"
+msgstr "「常に表示」モードでウィンドウとドックの間に追加のスペースを確保します"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Use custom background color"
+msgstr "カスタム背景色を使用"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day color"
+msgstr "昼の色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Switch background colors by time of day"
+msgstr "時刻に応じて背景色を切り替える"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night color"
+msgstr "夜の色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day starts (local time)"
+msgstr "昼の開始時刻 (現地時間)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night starts (local time)"
+msgstr "夜の開始時刻 (現地時間)"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Preset"
+msgstr "プリセットを復元"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Failed"
+msgstr "復元に失敗"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Could not restore Dock preset. See the debug log for details."
+msgstr "ドックのプリセットを復元できませんでした。詳細はデバッグログを確認してください。"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore all Dock options to the current Classic or Modern preset. Keep the screen, edge, launchers and widgets"
+msgstr "ドックのすべてのオプションを、現在のクラシックまたはモダンスタイルのプリセットに戻します。画面、配置する辺、ランチャー、ウィジェットは保持します"

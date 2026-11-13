@@ -187,3 +187,23 @@ msgstr ""
 
 #~ msgid "Size"
 #~ msgstr "Размер"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "Использовать точечные индикаторы современного стиля"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "Для панелей современного стиля. Сохранять точки в стиле macOS или отключить для выбора линий либо точек независимо от стиля панели"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "Использовать цвета значков приложений"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "Окрашивать индикаторы задач в основной цвет значка соответствующего приложения"

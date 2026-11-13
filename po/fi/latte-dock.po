@@ -4775,3 +4775,68 @@ msgstr ""
 #, kde-format
 msgid "Export Template"
 msgstr ""
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Choose dock background color"
+msgstr "Valitse telakan taustaväri"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Gap from maximized windows (px)"
+msgstr "Väli suurennettuihin ikkunoihin (px)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Reserve extra space between windows and the dock in Always Visible mode"
+msgstr "Varaa lisätilaa ikkunoiden ja telakan väliin Aina näkyvissä -tilassa"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Use custom background color"
+msgstr "Käytä mukautettua taustaväriä"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day color"
+msgstr "Päiväväri"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Switch background colors by time of day"
+msgstr "Vaihda taustaväriä vuorokaudenajan mukaan"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night color"
+msgstr "Yöväri"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day starts (local time)"
+msgstr "Päivä alkaa (paikallista aikaa)"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night starts (local time)"
+msgstr "Yö alkaa (paikallista aikaa)"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Preset"
+msgstr "Palauta"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore Failed"
+msgstr "Palautus epäonnistui"
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Could not restore Dock preset. See the debug log for details."
+msgstr "Telakan esiasetusta ei voitu palauttaa. Lisätietoja on virheenpaikannuslokissa."
+
+#: shell/package/contents/configuration/LatteDockConfiguration.qml
+#, kde-format
+msgid "Restore all Dock options to the current Classic or Modern preset. Keep the screen, edge, launchers and widgets"
+msgstr "Palauta kaikki telakan valinnat nykyiseen klassiseen tai moderniin esiasetukseen. Säilytä näyttö, reuna, käynnistimet ja sovelmat"

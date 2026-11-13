@@ -160,3 +160,23 @@ msgstr ""
 msgid ""
 "Show up to four individual windows and a fifth dot for all remaining windows"
 msgstr ""
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "Úsáid táscairí poncanna sa stíl nua-aimseartha"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "Do dhugaí sa stíl nua-aimseartha. Coinnigh poncanna ar nós macOS, nó díchumasaigh chun línte nó poncanna a roghnú go neamhspleách ar stíl an duga"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "Úsáid dathanna dheilbhíní na bhfeidhmchlár"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "Cuir dath ar tháscairí tascanna le príomhdhath dheilbhín gach feidhmchláir"

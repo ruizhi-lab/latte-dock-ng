@@ -184,3 +184,23 @@ msgstr ""
 #~ msgctxt "dot indicator"
 #~ msgid "Dot"
 #~ msgstr "Punkt"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "Använd punktindikatorer i modern stil"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "För dockor i modern stil. Behåll punkter i macOS-stil eller inaktivera för att välja linjer eller punkter oberoende av dockans stil"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "Använd programikonernas färger"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "Färglägg aktivitetsindikatorer med den dominerande färgen i varje programikon"

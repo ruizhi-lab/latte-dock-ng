@@ -1,0 +1,37 @@
+# Translation catalog for the default Latte indicator.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+msgid ""
+msgstr ""
+"Project-Id-Version: latte_indicator_org.kde.latte.default\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2025-11-17 09:01+0000\n"
+"PO-Revision-Date: 2026-11-13 16:57+0800\n"
+"Last-Translator: \n"
+"Language-Team: Romanian\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "Folosește indicatorii cu puncte ai stilului modern"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "Pentru docuri în stil modern. Păstrează punctele în stil macOS sau dezactivează pentru a alege linii ori puncte independent de stilul docului"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "Folosește culorile pictogramelor aplicațiilor"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "Colorează indicatorii sarcinilor cu culoarea dominantă a pictogramei fiecărei aplicații"

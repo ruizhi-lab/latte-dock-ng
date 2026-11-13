@@ -172,3 +172,23 @@ msgstr ""
 #~ msgctxt "number in percentage, e.g. 85 %"
 #~ msgid "%0 %"
 #~ msgstr "% %0"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "Modern biçemin nokta göstergelerini kullan"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "Modern biçemli rıhtımlar içindir. macOS biçemli noktaları koruyun veya rıhtım biçeminden bağımsız olarak çizgi ya da nokta seçmek için kapatın"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "Uygulama simgelerinin renklerini kullan"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "Görev göstergelerini her uygulama simgesinin baskın rengiyle renklendir"

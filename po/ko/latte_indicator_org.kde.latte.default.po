@@ -185,3 +185,23 @@ msgstr ""
 #~ msgctxt "dot indicator"
 #~ msgid "Dot"
 #~ msgstr "점"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use Modern dot indicators"
+msgstr "모던 스타일 점 표시기 사용"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
+msgstr "모던 스타일 독에 적용됩니다. macOS 스타일의 점을 유지합니다. 비활성화하면 독 스타일과 별개로 선 또는 점을 선택할 수 있습니다"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Use application icon colors"
+msgstr "앱 아이콘 색상 사용"
+
+#: indicators/default/package/config/config.qml
+#, kde-format
+msgid "Color task indicators using the dominant color of each application icon"
+msgstr "각 앱 아이콘의 주요 색상으로 작업 표시기 색상 지정"
