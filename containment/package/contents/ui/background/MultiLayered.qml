@@ -57,11 +57,10 @@ BackgroundProperties{
 
     //! it can accept negative values in DockMode
     screenEdgeMargin: {
-        if (modernDockStyle && root.isVertical) {
-            return -shadows.tailThickness;
-        }
-
         if (modernDockStyle) {
+            // Metrics owns the default and configured floating gap on every edge.
+            // Bypassing it for vertical docks makes their background touch the
+            // screen even while metrics and the horizontal dock retain a gap.
             return metrics.effectiveScreenEdgeMargin - shadows.tailThickness;
         }
 

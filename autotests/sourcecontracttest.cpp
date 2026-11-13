@@ -3510,7 +3510,12 @@ void SourceContractTest::appearanceConfigPreservesIndicatorStyleConfiguration()
 
     QFile background(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/background/MultiLayered.qml"));
     QVERIFY(background.open(QFile::ReadOnly));
-    QVERIFY(!background.readAll().contains("Math.max(0.50, storedOpacity)"));
+    const QByteArray backgroundSource = background.readAll();
+    QVERIFY(!backgroundSource.contains("Math.max(0.50, storedOpacity)"));
+    // Modern floating gaps come from metrics on every edge, independently of
+    // indicator shape. A vertical-only override silently removed the outer gap.
+    QVERIFY(!backgroundSource.contains("if (modernDockStyle && root.isVertical)"));
+    QVERIFY(backgroundSource.contains("return metrics.effectiveScreenEdgeMargin - shadows.tailThickness;"));
 
     // Preset application must not overwrite activeStyle back to Line (0).
     QVERIFY(!appearanceSource.contains(QStringLiteral("activeStyle = targetStyle === 1 ? 1 : 0")));
