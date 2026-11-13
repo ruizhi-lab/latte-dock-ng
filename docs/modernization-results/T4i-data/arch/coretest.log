@@ -1,0 +1,49 @@
+UpdateCTestConfiguration  from :/tmp/latte-modernization-20261114-src/build/modernization/clang-debug/DartConfiguration.tcl
+Parse Config file:/tmp/latte-modernization-20261114-src/build/modernization/clang-debug/DartConfiguration.tcl
+Test project /tmp/latte-modernization-20261114-src/build/modernization/clang-debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 4
+    Start 4: coreunittest
+
+4: Test command: /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/bin/coreunittest
+4: Working Directory: /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/autotests
+4: Environment variables:
+4:  LC_ALL=C.UTF-8
+4:  LANG=C.UTF-8
+4:  LANGUAGE=en_US
+4:  QT_QPA_PLATFORM=offscreen
+4: Test timeout computed to be: 120
+4: ********* Start testing of CoreUnitTest *********
+4: Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 16.2.1 20260810), arch unknown
+4: PASS   : CoreUnitTest::initTestCase()
+4: PASS   : CoreUnitTest::extrasFormatRectsAndEnums()
+4: PASS   : CoreUnitTest::extrasCompareFloatingPointValues()
+4: PASS   : CoreUnitTest::popupGeometryKeepsIntegerHalfSizeRounding()
+4: PASS   : CoreUnitTest::toolsCalculateColorBrightnessAndLumina()
+4: PASS   : CoreUnitTest::toolsCalculatePrimaryColorWeights()
+4: PASS   : CoreUnitTest::environmentExposesConstantsAndVersionEncoding()
+4: PASS   : CoreUnitTest::environmentEncodesVersionBytes()
+4: PASS   : CoreUnitTest::environmentReturnsThemeIconNamesAsSources()
+4: PASS   : CoreUnitTest::environmentDescribesIconAndStringSources()
+4: SKIP   : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange() The kdeglobals watcher requires a desktop platform; run this case on an isolated desktop session bus
+4:    Loc: [/tmp/latte-modernization-20261114-src/autotests/coreunittest.cpp(160)]
+4: QDEBUG : CoreUnitTest::quickWindowSystemReportsWaylandCompositing() latte.qml: Latte::QuickWindowSystem destructed
+4: PASS   : CoreUnitTest::quickWindowSystemReportsWaylandCompositing()
+4: QDEBUG : CoreUnitTest::singletonsCreateExpectedObjects() latte.qml: Latte::QuickWindowSystem destructed
+4: PASS   : CoreUnitTest::singletonsCreateExpectedObjects()
+4: PASS   : CoreUnitTest::cleanupTestCase()
+4: Totals: 13 passed, 0 failed, 1 skipped, 0 blacklisted, 8ms
+4: ********* Finished testing of CoreUnitTest *********
+1/1 Test #4: coreunittest .....................   Passed    0.03 sec
+
+The following tests passed:
+	coreunittest
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.03 sec

@@ -407,7 +407,14 @@ T4g was published as `d77eef902`.
 fallbacks while adding the fifty-fourth check. Both native LLVM gates and
 four zero-warning 64-test configurations pass; focused clazy is clean. A
 Qt 6.12-specific conversion return found on Arch was fixed and the full
-Plasma 6.8 gate and relevant core tests pass. Remote CI remains separate.
+Plasma 6.8 gate and relevant core tests pass. Published as `97c4be752`, it
+passed all 23 jobs in CI run 43481441747.
+
+[T4i](modernization-results/T4i-integer-division.md) preserves popup centering
+rounding and adds the fifty-fifth check. Both native LLVM gates, four
+zero-warning 64-test configurations, and the Arch Qt 6.12 gate pass. Actual
+Wayland popup placement was not re-observed for this slice; remote CI is
+pending. No performance reduction is claimed without measurement.
 
 ## Git and rollback
 

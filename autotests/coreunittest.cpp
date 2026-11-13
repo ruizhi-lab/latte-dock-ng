@@ -5,6 +5,7 @@
 
 #include "environment.h"
 #include "extras.h"
+#include "popupgeometry.h"
 #include "quickwindowsystem.h"
 #include "tools.h"
 
@@ -37,6 +38,7 @@ private Q_SLOTS:
     void initTestCase();
     void extrasFormatRectsAndEnums();
     void extrasCompareFloatingPointValues();
+    void popupGeometryKeepsIntegerHalfSizeRounding();
     void toolsCalculateColorBrightnessAndLumina();
     void toolsCalculatePrimaryColorWeights();
     void environmentExposesConstantsAndVersionEncoding();
@@ -70,6 +72,17 @@ void CoreUnitTest::extrasCompareFloatingPointValues()
 {
     QVERIFY(almost_equal(0.1 + 0.2, 0.3, 2));
     QVERIFY(!almost_equal(0.1, 0.2, 2));
+}
+
+void CoreUnitTest::popupGeometryKeepsIntegerHalfSizeRounding()
+{
+    using Latte::Core::Geometry::centeredPopupOrigin;
+
+    QCOMPARE(centeredPopupOrigin(10, 20.0, 8), 16);
+    QCOMPARE(centeredPopupOrigin(10, 20.0, 5), 18);
+    QCOMPARE(centeredPopupOrigin(10, 21.5, 5), 18);
+    QCOMPARE(centeredPopupOrigin(-20, 11.0, 5), -16);
+    QCOMPARE(centeredPopupOrigin(-10, 8.0, 5), -8);
 }
 
 void CoreUnitTest::toolsCalculateColorBrightnessAndLumina()

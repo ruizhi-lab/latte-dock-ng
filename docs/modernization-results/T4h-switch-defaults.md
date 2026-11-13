@@ -47,7 +47,7 @@ baseline and are not counted as C++ compiler warnings. A clean CMake 4.5
 metadata files and plugins present in both install roots; the four author
 warnings remain. See the [Arch evidence](T4h-data/arch/README.md) and
 [clean install preparation](T4h-data/arch/cmake45/install-prep-qmltypes.md).
-Remote CI is separate.
+Build [run 43481441747](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43481441747) on `97c4be752` passed all 23 jobs; [job evidence](T4i-data/ci-97c4be752.json) includes the gate and deep QML steps.
 
 A separate branch-clone audit traced the private Views sorting-key helper to
 state priorities 10000, 20000 and 30000 only. Its existing uneven prefix widths

@@ -1,0 +1,25 @@
+[  0%] Built target lattecoreplugin_copy_res
+[  0%] Built target generate_qmlls_build_ini_file
+[  0%] Built target lattecoreplugin_copy_qml
+[  0%] Built target latteLogging_autogen_timestamp_deps
+[ 25%] Built target latteLogging_autogen
+[ 25%] Built target latteLogging
+[ 25%] Built target lattecoreplugin_autogen_timestamp_deps
+[ 25%] Automatic MOC for target lattecoreplugin
+[ 25%] Built target lattecoreplugin_autogen
+[ 25%] Running AUTOMOC file extraction for target lattecoreplugin
+[ 25%] Running AUTOMOC file extraction for target lattecoreplugin
+[ 25%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/environment.cpp.o
+[ 25%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/dialog.cpp.o
+[ 50%] Linking CXX shared module ../../qml/org/kde/latte/core/liblattecoreplugin.so
+[100%] Built target lattecoreplugin
+[  0%] Built target latteLogging_autogen_timestamp_deps
+[ 50%] Built target latteLogging_autogen
+[ 50%] Built target latteLogging
+[ 50%] Built target coreunittest_autogen_timestamp_deps
+[ 50%] Automatic MOC for target coreunittest
+[ 50%] Built target coreunittest_autogen
+[ 50%] Building CXX object autotests/CMakeFiles/coreunittest.dir/__/declarativeimports/core/environment.cpp.o
+[ 50%] Building CXX object autotests/CMakeFiles/coreunittest.dir/coreunittest.cpp.o
+[ 50%] Linking CXX executable ../bin/coreunittest
+[100%] Built target coreunittest

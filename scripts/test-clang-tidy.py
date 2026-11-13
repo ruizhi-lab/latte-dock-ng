@@ -47,6 +47,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-forwarding-reference-overload",
     "bugprone-inaccurate-erase",
     "bugprone-incorrect-enable-if",
+    "bugprone-integer-division",
     "bugprone-lambda-function-name",
     "bugprone-misplaced-pointer-arithmetic-in-alloc",
     "bugprone-move-forwarding-reference",

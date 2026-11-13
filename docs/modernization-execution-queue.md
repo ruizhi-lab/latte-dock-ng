@@ -167,7 +167,12 @@ subsequent T4d changes.
   gates and four 64-test configurations pass with zero compiler warnings;
   focused clazy is clean on seven affected sources. The Arch Qt 6.12 follow-up
   also passes the real Plasma 6.8 gate and targeted core behavior tests.
-  Remote CI is pending.
+  Published as `97c4be752`; CI run 43481441747 passed all 23 jobs.
+
+- T4i: [integer-division gate](modernization-results/T4i-integer-division.md)
+  preserves popup centering, adds the 55th check, and passes both native gates,
+  four 64-test configurations, and the Arch Qt 6.12 gate and core test.
+  Wayland popup placement was not visually re-observed. Remote CI is pending.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`

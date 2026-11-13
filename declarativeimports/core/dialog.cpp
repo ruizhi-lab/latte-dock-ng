@@ -4,6 +4,7 @@
 */
 
 #include "dialog.h"
+#include "popupgeometry.h"
 
 // Qt
 #include <QGuiApplication>
@@ -179,11 +180,11 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
         if (m_edge == Plasma::Types::LeftEdge || m_edge == Plasma::Types::RightEdge) {
             //! vertical scenario
             screengeometry -= QMargins(0, popupmargin, 0, popupmargin);
-            y = parenttopleft.y() + (visualparent->height() / 2) - (size.height() / 2);
+            y = Latte::Core::Geometry::centeredPopupOrigin(parenttopleft.y(), visualparent->height(), size.height());
         } else {
             //! horizontal scenario
             screengeometry -= QMargins(popupmargin, 0, popupmargin, 0);
-            x = parenttopleft.x() + (visualparent->width() / 2) - (size.width() / 2);
+            x = Latte::Core::Geometry::centeredPopupOrigin(parenttopleft.x(), visualparent->width(), size.width());
         }
 
         if (m_edge == Plasma::Types::LeftEdge) {
