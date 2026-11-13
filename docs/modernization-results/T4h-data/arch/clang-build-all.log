@@ -1,0 +1,130 @@
+[  0%] Built target latte-dock-ng-add-launcher_autogen_timestamp_deps
+[  0%] Built target latteLogging_autogen_timestamp_deps
+[  0%] Copying latteprivateappplugin qml resources into build dir
+[  0%] Copying lattecoreplugin qml sources into build dir
+[  0%] Copying lattecoreplugin qml resources into build dir
+[  0%] Built target latteprivateappplugin_copy_res
+[  0%] Generating ts...
+[  0%] Built target lattecoreplugin_copy_qml
+[  0%] Built target lattecoreplugin_copy_res
+[  0%] Built target latte_packagestructure_indicator_autogen_timestamp_deps
+[  0%] Built target tsfiles-5a08713cc6c32828b3fce6eca6d15205
+[  0%] Copying latteprivateappplugin qml sources into build dir
+[  2%] Built target latteprivateappplugin_copy_qml
+[  2%] Copying lattecontainmentplugin qml resources into build dir
+[  0%] Populating .qmlls.build.ini file at /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/.qt/.qmlls.build.ini
+[  2%] Copying lattecontainmentplugin qml sources into build dir
+[  2%] Built target latte-dock-ng-preview_autogen_timestamp_deps
+[  2%] Built target lattecontainmentplugin_copy_res
+[  5%] Built target generate_qmlls_build_ini_file
+[  2%] Copying lattetasksplugin qml sources into build dir
+[  5%] Copying lattetasksplugin qml resources into build dir
+[  5%] Built target lattecontainmentplugin_copy_qml
+[  5%] Built target lattetasksplugin_copy_qml
+[  5%] Built target lattetasksplugin_copy_res
+[  7%] Built target latteLogging_autogen
+[  7%] Built target lattetasksplugin_autogen_timestamp_deps
+[  7%] Built target latteLogging
+[  5%] Automatic MOC for target latte-dock-ng-add-launcher
+[  7%] Built target latte-dock-ng-add-launcher_autogen
+[  7%] Built target latte-dock-ng_autogen_timestamp_deps
+[  7%] Built target lattecoreplugin_autogen_timestamp_deps
+[  7%] Built target latteprivateappplugin_autogen_timestamp_deps
+[  7%] Built target plasma_containmentactions_lattecontextmenu_autogen_timestamp_deps
+[  7%] Built target lattecontainmentplugin_autogen_timestamp_deps
+[  7%] Built target latte-dock-ng_autogen
+[ 10%] Building CXX object app/CMakeFiles/latte-dock-ng-add-launcher.dir/latte-dock-ng-add-launcher_autogen/mocs_compilation.cpp.o
+[  7%] Automatic MOC for target latte_packagestructure_indicator
+[ 10%] Built target latte_packagestructure_indicator_autogen
+[  7%] Automatic MOC for target latte-dock-ng-preview
+[ 10%] Built target latte-dock-ng-preview_autogen
+[  7%] Automatic MOC for target lattetasksplugin
+[ 10%] Automatic MOC for target plasma_containmentactions_lattecontextmenu
+[ 10%] Built target lattetasksplugin_autogen
+[ 10%] Built target plasma_containmentactions_lattecontextmenu_autogen
+[  0%] Generating mo...
+[ 10%] Automatic MOC for target lattecontainmentplugin
+[ 10%] Running rcc for resource preview_resources
+[ 10%] Built target pofiles-5a08713cc6c32828b3fce6eca6d15205
+[  7%] Automatic MOC for target latteprivateappplugin
+[ 10%] Built target lattecontainmentplugin_autogen
+[ 10%] Built target latteprivateappplugin_autogen
+[ 12%] Running AUTOMOC file extraction for target lattetasksplugin
+[ 12%] Running AUTOMOC file extraction for target lattecontainmentplugin
+[ 12%] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/latte-dock-ng-preview_autogen/mocs_compilation.cpp.o
+[ 12%] Running rcc for resource qmake_org_kde_latte_private_tasks
+[ 12%] Running rcc for resource qmake_org_kde_latte_private_containment
+[ 12%] Running moc --collect-json for target lattetasksplugin
+[ 12%] Running moc --collect-json for target lattecontainmentplugin
+[ 12%] Generating meta_types/qt6lattetasksplugin_metatypes.json
+[ 12%] Generating meta_types/qt6lattecontainmentplugin_metatypes.json
+[ 76%] Built target latte-dock-ng
+[ 76%] Running AUTOMOC file extraction for target latteprivateappplugin
+[ 15%] Automatic QML type registration for target lattecontainmentplugin
+[ 12%] Automatic QML type registration for target lattetasksplugin
+[ 76%] Running rcc for resource qmake_org_kde_latte_private_app
+[ 76%] Running moc --collect-json for target latteprivateappplugin
+[ 79%] Generating meta_types/qt6latteprivateappplugin_metatypes.json
+[ 79%] Automatic QML type registration for target latteprivateappplugin
+[ 10%] Automatic MOC for target lattecoreplugin
+[ 79%] Built target lattecoreplugin_autogen
+[ 10%] Building CXX object app/CMakeFiles/latte-dock-ng-add-launcher.dir/launcherhelper.cpp.o
+[ 79%] Linking CXX executable ../bin/latte-dock-ng-add-launcher
+[ 79%] Built target latte-dock-ng-add-launcher
+[ 10%] Building CXX object app/packageplugins/indicator/CMakeFiles/latte_packagestructure_indicator.dir/latte_packagestructure_indicator_autogen/mocs_compilation.cpp.o
+[ 79%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_LatteTasksPlugin.cpp.o
+[ 12%] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/plasma_containmentactions_lattecontextmenu_autogen/mocs_compilation.cpp.o
+[ 79%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_autogen/mocs_compilation.cpp.o
+[ 79%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_autogen/mocs_compilation.cpp.o
+[ 12%] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/preview/main.cpp.o
+[ 82%] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/.qt/rcc/qrc_preview_resources.cpp.o
+[ 76%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_autogen/mocs_compilation.cpp.o
+[ 82%] Linking CXX executable ../bin/latte-dock-ng-preview
+[ 82%] Built target latte-dock-ng-preview
+[ 82%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_tasks.cpp.o
+[ 82%] Running AUTOMOC file extraction for target lattecoreplugin
+[ 82%] Running rcc for resource qmake_org_kde_latte_core
+[ 82%] Running moc --collect-json for target lattecoreplugin
+[ 82%] Generating meta_types/qt6lattecoreplugin_metatypes.json
+[ 84%] Automatic QML type registration for target lattecoreplugin
+[ 79%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_LattePrivateAppPlugin.cpp.o
+[ 84%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_app.cpp.o
+[ 79%] Building CXX object app/packageplugins/indicator/CMakeFiles/latte_packagestructure_indicator.dir/indicatorpackage.cpp.o
+[ 87%] Linking CXX shared module ../../../bin/kf6/packagestructure/latte_indicator.so
+[ 87%] Built target latte_packagestructure_indicator
+[ 79%] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/layoutmenuitemwidget.cpp.o
+[ 79%] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/__/__/app/settings/generic/generictools.cpp.o
+[ 79%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_qmltyperegistrations.cpp.o
+[ 82%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_LatteContainmentPlugin.cpp.o
+[ 79%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_qmltyperegistrations.cpp.o
+[ 87%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/previewprocess.cpp.o
+[ 87%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/windowviewbackend.cpp.o
+[ 87%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/types.cpp.o
+[ 92%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_containment.cpp.o
+[ 87%] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/contextmenuactionsbackend.cpp.o
+[ 92%] Linking CXX shared module ../qml/org/kde/latte/private/tasks/liblattetasksplugin.so
+[ 92%] Built target lattetasksplugin
+[ 87%] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/menu.cpp.o
+[ 84%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_autogen/mocs_compilation.cpp.o
+[ 87%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_qmltyperegistrations.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_core.cpp.o
+[ 97%] Linking CXX shared module ../../bin/org.kde.latte.contextmenu.so
+[ 97%] Built target plasma_containmentactions_lattecontextmenu
+[ 92%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_LatteCorePlugin.cpp.o
+[ 89%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/interfaces.cpp.o
+[ 89%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/__/plasma/extended/backgroundtracker.cpp.o
+[ 87%] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/contextmenulayerquickitem.cpp.o
+[ 97%] Linking CXX shared module ../../qml/org/kde/latte/private/app/liblatteprivateappplugin.so
+[ 97%] Built target latteprivateappplugin
+[ 97%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/plugin/types.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/quickwindowsystem.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/dialog.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/environment.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/tools.cpp.o
+[ 97%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/iconitem.cpp.o
+[ 97%] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/plugin/layoutmanager.cpp.o
+[ 97%] Linking CXX shared module ../qml/org/kde/latte/private/containment/liblattecontainmentplugin.so
+[ 97%] Built target lattecontainmentplugin
+[ 94%] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_qmltyperegistrations.cpp.o
+[100%] Linking CXX shared module ../../qml/org/kde/latte/core/liblattecoreplugin.so
+[100%] Built target lattecoreplugin

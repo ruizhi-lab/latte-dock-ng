@@ -31,3 +31,7 @@ The preceding T4f source `d0ce8cf89` passed all 23 jobs in
 [run 43440085083](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43440085083).
 That run does not validate T4g. The local source baseline additionally includes
 the user's existing changelog commit `3cbbee3a8`.
+
+Published as `d77eef902`; [run 43474161451](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43474161451) passed all 23 jobs.
+A later Arch Qt 6.12 gate exposed one additional conversion return in
+`Environment::iconSourceForTheme()`; its follow-up is recorded in T4h.

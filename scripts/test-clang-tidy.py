@@ -64,6 +64,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-suspicious-memory-comparison",
     "bugprone-suspicious-missing-comma",
     "bugprone-suspicious-realloc-usage",
+    "bugprone-switch-missing-default-case",
     "bugprone-terminating-continue",
     "bugprone-throw-keyword-missing",
     "bugprone-too-small-loop-variable",

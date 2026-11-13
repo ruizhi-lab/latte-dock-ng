@@ -1,0 +1,6 @@
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/screensdialog/screensmodel.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/exporttemplatedialog/appletsmodel.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/detailsdialog/schemesmodel.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/lattecorona.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/settingsdialog/layoutsmodel.cpp', findings=[], problems=[])
+UnitResult(source='/data/projects/latte-dock-ng/app/settings/viewsdialog/viewsmodel.cpp', findings=[], problems=[])

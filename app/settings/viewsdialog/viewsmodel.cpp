@@ -154,6 +154,8 @@ int Views::sortingFactorForSubContainments(const Data::View &view) const
     return view.subcontainments.rowCount() + 1;
 }
 
+// ID/name sorting supplies a state factor (1..3) times HIGHESTPRIORITY. Extending
+// that domain needs a key-format review: unequal prefix widths can reverse order.
 QString Views::sortableText(const int &priority, const QString &text) const
 {
     QString numberPart;
@@ -780,6 +782,9 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
             }
 
             break;
+
+        default:
+            break;
     };
 
     return false;
@@ -1028,6 +1033,9 @@ QVariant Views::data(const QModelIndex &index, int role) const
                 int priority = (fsta * HIGHESTPRIORITY) + (fsub * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fedg * NORMALPRIORITY);
                 return priority;
             }
+
+        default:
+            break;
     };
 
     return QVariant{};

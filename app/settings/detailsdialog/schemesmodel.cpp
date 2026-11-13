@@ -130,6 +130,9 @@ QVariant Schemes::data(const QModelIndex &index, int role) const
         case BACKGROUNDCOLORROLE:
             return d->backgroundColor();
             break;
+
+        default:
+            break;
     }
 
     return QVariant();

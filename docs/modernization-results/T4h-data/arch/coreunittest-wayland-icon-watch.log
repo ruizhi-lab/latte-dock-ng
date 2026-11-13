@@ -1,0 +1,118 @@
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.0' (uid=1000 pid=6142 comm="build/modernization/clang-debug/bin/coreunittest e")
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.portal.Documents' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Successfully activated service 'org.freedesktop.portal.Documents'
+********* Start testing of CoreUnitTest *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 16.2.1 20260810), arch unknown
+PASS   : CoreUnitTest::initTestCase()
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.202: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6174): Gtk-WARNING **: 02:08:28.211: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.213: Choosing gtk.portal for org.freedesktop.impl.portal.Access as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: MESA-LOADER: failed to retrieve device information
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA: error: ZINK: vkCreateInstance failed (VK_ERROR_INCOMPATIBLE_DRIVER)
+MESA-EGL: warning: egl: failed to create dri2 screen
+
+(xdg-desktop-portal-gtk:6177): Gtk-WARNING **: 02:08:28.222: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.228: Failed to load RealtimeKit property: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.228: Failed to load RealtimeKit property: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.228: Failed to load RealtimeKit property: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.228: Choosing gtk.portal for org.freedesktop.impl.portal.Settings as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6183): Gtk-WARNING **: 02:08:28.236: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.237: Failed to create settings proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.237: Not providing Settings portal: No working backend
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.237: Choosing gtk.portal for org.freedesktop.impl.portal.FileChooser as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6186): Gtk-WARNING **: 02:08:28.243: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.244: Failed to create file chooser proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.244: Choosing gtk.portal for org.freedesktop.impl.portal.AppChooser as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6195): Gtk-WARNING **: 02:08:28.254: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.257: Failed to create app chooser proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.257: Choosing gtk.portal for org.freedesktop.impl.portal.Print as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6212): Gtk-WARNING **: 02:08:28.264: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.264: Failed to create print proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.264: Choosing gtk.portal for org.freedesktop.impl.portal.Notification as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6215): Gtk-WARNING **: 02:08:28.271: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.274: Failed to create notification proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.274: Choosing gtk.portal for org.freedesktop.impl.portal.Inhibit as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6219): Gtk-WARNING **: 02:08:28.281: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.282: Failed to create inhibit proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.282: The location portal requires an access impl
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.282: The camera portal requires an access impl
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.282: Choosing gtk.portal for org.freedesktop.impl.portal.Account as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6223): Gtk-WARNING **: 02:08:28.289: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.289: Failed to create account proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.289: Choosing gtk.portal for org.freedesktop.impl.portal.Email as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6226): Gtk-WARNING **: 02:08:28.296: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.297: Failed to create email proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.297: Choosing gtk.portal for org.freedesktop.impl.portal.DynamicLauncher as a last-resort fallback
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.1' (uid=1000 pid=6145 comm="/usr/lib/xdg-desktop-portal")
+
+(xdg-desktop-portal-gtk:6229): Gtk-WARNING **: 02:08:28.309: cannot open display: 
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Activated service 'org.freedesktop.impl.portal.desktop.gtk' failed: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+
+(/usr/lib/xdg-desktop-portal:6145): xdg-desktop-portal-WARNING **: 02:08:28.310: Failed to create dynamic_launcher proxy: Error calling StartServiceByName for org.freedesktop.impl.portal.desktop.gtk: Process org.freedesktop.impl.portal.desktop.gtk exited with status 1
+dbus-daemon[6141]: [session uid=1000 pid=6141 pidfd=5] Successfully activated service 'org.freedesktop.portal.Desktop'
+QWARN  : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange() qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: App info not found for ''")
+QDEBUG : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange() latte.qml: Environment::kdeglobals changed => reconfigure icon loader "latte-blue"
+QDEBUG : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange() latte.qml: Environment::iconThemeVersionChanged 1
+QDEBUG : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange() latte.qml: [widget-icon-refresh] Icon(0x55d8bd976410, name="nativeWidgetIcon", parent=0x7f0d24002550, geometry=0,0 64x64) QVariant(QString, "latte-widget-probe")
+PASS   : CoreUnitTest::environmentRefreshesWidgetIconPathsAfterThemeChange()
+PASS   : CoreUnitTest::cleanupTestCase()
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted, 273ms
+********* Finished testing of CoreUnitTest *********

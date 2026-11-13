@@ -398,8 +398,16 @@ unchanged. T4f was published as `d0ce8cf89` and run 43440085083 passed all
 [T4g](modernization-results/T4g-automatic-move.md) enables automatic moves on
 six return paths and adds the fifty-third check. Both local full gates and all
 four 64-test compiler configurations pass, with zero compiler warnings. The
-five affected sources are clazy-clean. Remote acceptance is pending, and no
-CPU or memory reduction is claimed without measurement.
+five affected sources are clazy-clean. CI run 43474161451 passed all 23 jobs;
+an additional Qt 6.12-only finding was subsequently fixed in T4h. No CPU or
+memory reduction is claimed without measurement.
+
+T4g was published as `d77eef902`.
+[T4h](modernization-results/T4h-switch-defaults.md) retains the existing
+fallbacks while adding the fifty-fourth check. Both native LLVM gates and
+four zero-warning 64-test configurations pass; focused clazy is clean. A
+Qt 6.12-specific conversion return found on Arch was fixed and the full
+Plasma 6.8 gate and relevant core tests pass. Remote CI remains separate.
 
 ## Git and rollback
 

@@ -1,0 +1,14 @@
+[  0%] Built target latteLogging_autogen_timestamp_deps
+[ 50%] Built target latteLogging_autogen
+[ 50%] Built target latteLogging
+[ 50%] Built target coreunittest_autogen_timestamp_deps
+[ 50%] Automatic MOC for target coreunittest
+[ 50%] Built target coreunittest_autogen
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/__/declarativeimports/core/tools.cpp.o
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/__/declarativeimports/core/quickwindowsystem.cpp.o
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/coreunittest_autogen/mocs_compilation.cpp.o
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/__/declarativeimports/core/extras.cpp.o
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/__/declarativeimports/core/environment.cpp.o
+[100%] Building CXX object autotests/CMakeFiles/coreunittest.dir/coreunittest.cpp.o
+[100%] Linking CXX executable ../bin/coreunittest
+[100%] Built target coreunittest

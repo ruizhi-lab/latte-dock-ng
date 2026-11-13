@@ -944,6 +944,11 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
                         case Latte::Types::Right:
                             x = view->geometry().right() + 1 - w - offsetW;
                             break;
+
+                        // Persisted alignment is an int; unknown or opposite-axis values keep the initialized zero
+                        // coordinate.
+                        default:
+                            break;
                     }
 
                     break;
@@ -965,6 +970,11 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
 
                         case Latte::Types::Bottom:
                             y = view->geometry().bottom() - h - offsetH;
+                            break;
+
+                        // Persisted alignment is an int; unknown or opposite-axis values keep the initialized zero
+                        // coordinate.
+                        default:
                             break;
                     }
 

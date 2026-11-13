@@ -1,0 +1,76 @@
+24 translation unit(s) could not be analyzed:
+  app/alternativeshelper.cpp
+    /tmp/latte-modernization-20261114-src/app/alternativeshelper.cpp:126:10: error: 'moc_alternativeshelper.cpp' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/alternativeshelper.cpp.
+  app/lattecorona.cpp
+    /tmp/latte-modernization-20261114-src/app/lattecorona.cpp:15:10: error: 'lattedockadaptor.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/lattecorona.cpp.
+  app/packageplugins/indicator/indicatorpackage.cpp
+    /tmp/latte-modernization-20261114-src/app/packageplugins/indicator/indicatorpackage.cpp:46:10: error: 'indicatorpackage.moc' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/packageplugins/indicator/indicatorpackage.cpp.
+  app/primaryoutputwatcher.cpp
+    /tmp/latte-modernization-20261114-src/app/primaryoutputwatcher.cpp:15:10: error: 'qwayland-kde-primary-output-v1.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/primaryoutputwatcher.cpp.
+  app/settings/actionsdialog/actionsdialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/actionsdialog/actionsdialog.cpp:10:10: error: 'ui_actionsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/actionsdialog/actionsdialog.cpp.
+  app/settings/actionsdialog/actionshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/actionsdialog/actionshandler.cpp:10:10: error: 'ui_actionsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/actionsdialog/actionshandler.cpp.
+  app/settings/detailsdialog/detailsdialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/detailsdialog/detailsdialog.cpp:10:10: error: 'ui_detailsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/detailsdialog/detailsdialog.cpp.
+  app/settings/detailsdialog/detailshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/detailsdialog/detailshandler.cpp:9:10: error: 'ui_detailsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/detailsdialog/detailshandler.cpp.
+  app/settings/exporttemplatedialog/exporttemplatedialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/exporttemplatedialog/exporttemplatedialog.cpp:10:10: error: 'ui_exporttemplatedialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/exporttemplatedialog/exporttemplatedialog.cpp.
+  app/settings/exporttemplatedialog/exporttemplatehandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/exporttemplatedialog/exporttemplatehandler.cpp:10:10: error: 'ui_exporttemplatedialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/exporttemplatedialog/exporttemplatehandler.cpp.
+  app/settings/screensdialog/screensdialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/screensdialog/screensdialog.cpp:10:10: error: 'ui_screensdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/screensdialog/screensdialog.cpp.
+  app/settings/screensdialog/screenshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/screensdialog/screenshandler.cpp:10:10: error: 'ui_screensdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/screensdialog/screenshandler.cpp.
+  app/settings/settingsdialog/layoutscontroller.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/layoutscontroller.cpp:10:10: error: 'ui_settingsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/layoutscontroller.cpp.
+  app/settings/settingsdialog/settingsdialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/settingsdialog.cpp:13:10: error: 'ui_settingsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/settingsdialog.cpp.
+  app/settings/settingsdialog/tablayoutshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/tablayoutshandler.cpp:11:10: error: 'ui_settingsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/tablayoutshandler.cpp.
+  app/settings/settingsdialog/tabpreferenceshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/tabpreferenceshandler.cpp:10:10: error: 'ui_settingsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/settingsdialog/tabpreferenceshandler.cpp.
+  app/settings/viewsdialog/viewscontroller.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewscontroller.cpp:12:10: error: 'ui_viewsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewscontroller.cpp.
+  app/settings/viewsdialog/viewsdialog.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewsdialog.cpp:10:10: error: 'ui_viewsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewsdialog.cpp.
+  app/settings/viewsdialog/viewshandler.cpp
+    /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewshandler.cpp:10:10: error: 'ui_viewsdialog.h' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/settings/viewsdialog/viewshandler.cpp.
+  app/shortcuts/globalshortcuts.cpp
+    /tmp/latte-modernization-20261114-src/app/shortcuts/globalshortcuts.cpp:558:10: error: 'moc_globalshortcuts.cpp' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/shortcuts/globalshortcuts.cpp.
+  app/view/panelshadows.cpp
+    /tmp/latte-modernization-20261114-src/app/view/panelshadows.cpp:299:10: error: 'moc_panelshadows_p.cpp' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/view/panelshadows.cpp.
+  app/wm/waylandinterface.cpp
+    /tmp/latte-modernization-20261114-src/app/wm/waylandinterface.cpp:1312:10: error: 'waylandinterface.moc' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/app/wm/waylandinterface.cpp.
+  containmentactions/contextmenu/menu.cpp
+    /tmp/latte-modernization-20261114-src/containmentactions/contextmenu/menu.cpp:540:10: error: 'menu.moc' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/containmentactions/contextmenu/menu.cpp.
+  plasmoid/preview/main.cpp
+    /tmp/latte-modernization-20261114-src/plasmoid/preview/main.cpp:365:10: error: 'main.moc' file not found [clang-diagnostic-error]
+    Error while processing /tmp/latte-modernization-20261114-src/plasmoid/preview/main.cpp.
+Ubuntu LLVM version 18.1.3 Optimized build.
+selected 156 production sources; skipped 58 autotest source, 139 duplicate compile command of a selected source, 89 generated source in the build directory
+54 negative fixtures: each is rejected as an error by its own gated check

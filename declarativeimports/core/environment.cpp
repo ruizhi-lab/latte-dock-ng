@@ -111,7 +111,9 @@ QVariant Environment::iconSourceForTheme(const QVariant &source) const
 {
     if (source.canConvert<QIcon>()) {
         const QIcon icon = source.value<QIcon>();
-        const QString iconName = icon.name();
+        // Qt 6.12 can move the owned name into QVariant; const would force a copy.
+        // Older Qt versions use their const-reference conversion for the same value.
+        QString iconName = icon.name();
 
         if (!iconName.isEmpty()) {
             return iconName;

@@ -160,7 +160,21 @@ subsequent T4d changes.
   `const` from five value-return locals covering six diagnostics. Both full
   LLVM gates pass with 53 checks; four compiler configurations pass 64/64
   tests with zero compiler warnings, and five affected sources are clazy-clean.
-  This slice is locally accepted; remote acceptance remains pending.
+  Published as `d77eef902`; run 43474161451 passed all 23 jobs on its
+  53-check source. An additional Qt 6.12-only finding was fixed in T4h.
+- T4h: [explicit switch defaults](modernization-results/T4h-switch-defaults.md)
+  preserves all eight existing fallbacks and adds the 54th check. Both local
+  gates and four 64-test configurations pass with zero compiler warnings;
+  focused clazy is clean on seven affected sources. The Arch Qt 6.12 follow-up
+  also passes the real Plasma 6.8 gate and targeted core behavior tests.
+  Remote CI is pending.
+
+- Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
+  install-preparation dependencies. On Arch a verified clean `install_prep/all`
+  and staged install generated and installed all four typeinfo/plugin pairs in
+  both QML roots. The warnings remain; investigate explicit producer dependencies
+  without suppressing them or raising the existing CMake floor.
+  [Evidence](modernization-results/T4h-data/arch/cmake45/install-prep-qmltypes.md).
 
 ## Later waves
 

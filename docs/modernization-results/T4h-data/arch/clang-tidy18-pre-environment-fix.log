@@ -1,0 +1,5 @@
+1 clang-tidy finding(s) in gated checks:
+  declarativeimports/core/environment.cpp:117:20: [performance-no-automatic-move] constness of 'iconName' prevents automatic move
+Ubuntu LLVM version 18.1.3 Optimized build.
+selected 156 production sources; skipped 58 autotest source, 139 duplicate compile command of a selected source, 89 generated source in the build directory
+54 negative fixtures: each is rejected as an error by its own gated check

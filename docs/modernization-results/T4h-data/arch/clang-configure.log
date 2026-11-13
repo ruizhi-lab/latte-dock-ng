@@ -1,0 +1,150 @@
+-- The C compiler identification is Clang 23.1.4
+-- The CXX compiler identification is Clang 23.1.4
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Installing in the same prefix as Qt, adopting their path scheme.
+-- Found Python3: /usr/bin/python3.14 (found version "3.14.10") found components: Interpreter
+-- Looking for __GLIBC__
+-- Looking for __GLIBC__ - found
+-- Performing Test _OFFT_IS_64BIT
+-- Performing Test _OFFT_IS_64BIT - Success
+-- Performing Test HAVE_DATE_TIME
+-- Performing Test HAVE_DATE_TIME - Success
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Found OpenGL: /usr/lib/libOpenGL.so
+-- Found WrapOpenGL: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Found KF6Archive: /usr/lib/cmake/KF6Archive/KF6ArchiveConfig.cmake (found version "6.31.0")
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Found KF6Config: /usr/lib/cmake/KF6Config/KF6ConfigConfig.cmake (found version "6.31.0")
+-- Found KF6CoreAddons: /usr/lib/cmake/KF6CoreAddons/KF6CoreAddonsConfig.cmake (found version "6.31.0")
+-- Found KF6GuiAddons: /usr/lib/cmake/KF6GuiAddons/KF6GuiAddonsConfig.cmake (found version "6.31.0")
+-- Found KF6Crash: /usr/lib/cmake/KF6Crash/KF6CrashConfig.cmake (found version "6.31.0")
+-- Found KF6DBusAddons: /usr/lib/cmake/KF6DBusAddons/KF6DBusAddonsConfig.cmake (found version "6.31.0")
+-- Found KF6Declarative: /usr/lib/cmake/KF6Declarative/KF6DeclarativeConfig.cmake (found version "6.31.0")
+-- Found KF6GlobalAccel: /usr/lib/cmake/KF6GlobalAccel/KF6GlobalAccelConfig.cmake (found version "6.31.0")
+-- Found Gettext: /usr/bin/msgmerge (found version "1.0")
+-- Found KF6I18n: /usr/lib/cmake/KF6I18n/KF6I18nConfig.cmake (found version "6.31.0")
+-- Found KF6IconThemes: /usr/lib/cmake/KF6IconThemes/KF6IconThemesConfig.cmake (found version "6.31.0")
+-- Found X11: /usr/include
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Found KF6KIO: /usr/lib/cmake/KF6KIO/KF6KIOConfig.cmake (found version "6.31.0")
+-- Found KF6NewStuff: /usr/lib/cmake/KF6NewStuff/KF6NewStuffConfig.cmake (found version "6.31.0")
+-- Found KF6Notifications: /usr/lib/cmake/KF6Notifications/KF6NotificationsConfig.cmake (found version "6.31.0")
+-- Found KF6Package: /usr/lib/cmake/KF6Package/KF6PackageConfig.cmake (found version "6.31.0")
+-- Found KF6Svg: /usr/lib/cmake/KF6Svg/KF6SvgConfig.cmake (found version "6.31.0")
+-- Found KF6WindowSystem: /usr/lib/cmake/KF6WindowSystem/KF6WindowSystemConfig.cmake (found version "6.31.0")
+-- Found KF6XmlGui: /usr/lib/cmake/KF6XmlGui/KF6XmlGuiConfig.cmake (found version "6.31.0")
+-- Found KF6: success (found suitable version "6.31.0", minimum required is "6.10.0") found components: Archive Config CoreAddons GuiAddons Crash DBusAddons Declarative GlobalAccel I18n IconThemes KIO NewStuff Notifications Package Svg WindowSystem XmlGui
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Performing Test LATTE_LAYERSHELL_HAS_SET_SCREEN
+-- Performing Test LATTE_LAYERSHELL_HAS_SET_SCREEN - Success
+-- LayerShellQt::Window::setScreen detected — enabled
+-- Performing Test LATTE_LAYERSHELL_HAS_DESIRED_SIZE
+-- Performing Test LATTE_LAYERSHELL_HAS_DESIRED_SIZE - Success
+-- LayerShellQt::Window::setDesiredSize detected — enabled
+-- Performing Test LATTE_LAYERSHELL_HAS_ACTIVATE_ON_SHOW
+-- Performing Test LATTE_LAYERSHELL_HAS_ACTIVATE_ON_SHOW - Success
+-- LayerShellQt::Window::setActivateOnShow detected — enabled
+-- Found QtWaylandScanner: /usr/lib/qt6/qtwaylandscanner
+-- Found Wayland_Client: /usr/lib/libwayland-client.so (found version "1.26.0")
+-- Found Wayland_Server: /usr/lib/libwayland-server.so (found version "1.26.0")
+-- Found Wayland_Cursor: /usr/lib/libwayland-cursor.so (found version "1.26.0")
+-- Found Wayland_Egl: /usr/lib/libwayland-egl.so (found version "18.1.0")
+-- Found Wayland: /usr/lib/libwayland-client.so;/usr/lib/libwayland-server.so;/usr/lib/libwayland-cursor.so;/usr/lib/libwayland-egl.so (found version "1.26.0")
+-- Found WaylandScanner: /usr/bin/wayland-scanner
+-- Found Wayland: /usr/lib/libwayland-client.so;/usr/lib/libwayland-server.so;/usr/lib/libwayland-cursor.so;/usr/lib/libwayland-egl.so (found version "1.26.0") found components: Client
+-- KF6 VERSION : 6.31.0
+-- LibTaskManager VERSION : 6.8.2
+-- No explicit KQuickAddons link target is exported by this KF6 build.
+-- No explicit KDeclarative link target is exported by this KF6 build.
+-- Resolved KDeclarative target: 
+-- Resolved QuickAddons target: 
+-- Resolved NewStuff target: KF6::NewStuffWidgets
+-- Resolved KWayland client target: Plasma::KWaylandClient
+-- Resolved KConfigQml target: KF6::ConfigQml
+-- Resolved KSvg target: KF6::Svg
+-- Found QtQuick-QMLModule: TRUE
+-- Found QtQuick.Layouts-QMLModule: TRUE
+-- Found QtQuick.Controls-QMLModule: TRUE
+-- Found org.kde.kquickcontrolsaddons-QMLModule: TRUE (found version "6.31.0")
+-- Found org.kde.plasma.core-QMLModule: TRUE (found version "6.8.2")
+-- Found org.kde.plasma.components-QMLModule: TRUE (found version "6.8.2")
+-- Installing compat taskmanager QML module to /usr/lib/qt6/qml/org/kde/latte/compat/taskmanager
+-- Found qmllint: /usr/lib64/qt6/bin/qmllint
+-- Enabling QML debugging and profiling
+-- Strict compiler warnings enabled for 66 first-party compile targets
+-- Configuring done (5.9s)
+CMake Warning (author) at declarativeimports/core/CMakeLists.txt:56 (install):
+  An install rule installs or depends on file
+
+    /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/qml/org/kde/latte/core/lattecoreplugin.qmltypes
+
+  which is generated but is not the unique output of a build target, so
+  "install_prep/" targets cannot build it with this generator.  Produce the
+  file with a custom command attached to a single target, or name the target
+  that produces it with BUILD_DEPENDS, to prepare it.
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+CMake Warning (author) at app/declarativeimports/CMakeLists.txt:62 (install):
+  An install rule installs or depends on file
+
+    /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/qml/org/kde/latte/private/app/latteprivateappplugin.qmltypes
+
+  which is generated but is not the unique output of a build target, so
+  "install_prep/" targets cannot build it with this generator.  Produce the
+  file with a custom command attached to a single target, or name the target
+  that produces it with BUILD_DEPENDS, to prepare it.
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+CMake Warning (author) at containment/CMakeLists.txt:52 (install):
+  An install rule installs or depends on file
+
+    /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/qml/org/kde/latte/private/containment/lattecontainmentplugin.qmltypes
+
+  which is generated but is not the unique output of a build target, so
+  "install_prep/" targets cannot build it with this generator.  Produce the
+  file with a custom command attached to a single target, or name the target
+  that produces it with BUILD_DEPENDS, to prepare it.
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+CMake Warning (author) at plasmoid/CMakeLists.txt:81 (install):
+  An install rule installs or depends on file
+
+    /tmp/latte-modernization-20261114-src/build/modernization/clang-debug/qml/org/kde/latte/private/tasks/lattetasksplugin.qmltypes
+
+  which is generated but is not the unique output of a build target, so
+  "install_prep/" targets cannot build it with this generator.  Produce the
+  file with a custom command attached to a single target, or name the target
+  that produces it with BUILD_DEPENDS, to prepare it.
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Generating done (0.2s)
+-- Build files have been written to: /tmp/latte-modernization-20261114-src/build/modernization/clang-debug

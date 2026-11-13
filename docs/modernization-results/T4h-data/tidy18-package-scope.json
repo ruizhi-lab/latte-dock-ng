@@ -1,0 +1,20 @@
+[
+  {
+    "source": "/data/projects/latte-dock-ng/app/lattecorona.cpp",
+    "findings": [
+      {
+        "check": "bugprone-forward-declaration-namespace",
+        "path": "/usr/include/Plasma/plasma/applet.h",
+        "line": 45,
+        "column": 7,
+        "message": "no definition found for 'Package', but a definition with the same name 'Package' found in another namespace 'Latte'",
+        "severity": "error",
+        "first_party": false
+      }
+    ]
+  },
+  {
+    "source": "/data/projects/latte-dock-ng/app/package/lattepackage.cpp",
+    "findings": []
+  }
+]

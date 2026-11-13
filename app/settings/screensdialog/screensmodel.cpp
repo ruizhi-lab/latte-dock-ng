@@ -271,6 +271,9 @@ bool Screens::setData(const QModelIndex &index, const QVariant &value, int role)
             }
 
             break;
+
+        default:
+            break;
     };
 
     return false;

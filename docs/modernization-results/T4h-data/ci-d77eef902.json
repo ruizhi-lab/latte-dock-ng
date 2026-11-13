@@ -1,0 +1,135 @@
+{
+  "commit": "d77eef90245a8571b05d489fbc10d6cd9f94998d",
+  "run_id": 43474161451,
+  "url": "https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43474161451",
+  "jobs": [
+    {
+      "name": "Resolve and validate candidate version",
+      "conclusion": "success"
+    },
+    {
+      "name": "NixOS release check",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (GCC Release)",
+      "conclusion": "success"
+    },
+    {
+      "name": "QML lint (qmllint)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (Clang Release)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (GCC Debug)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (fedora)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (arch)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (Clang Debug)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (ubuntu)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (debian-testing)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (debian13)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (arch)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (debian-testing)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (ubuntu)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (mageia)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (opensuse)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (fedora)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (mageia)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (opensuse)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (debian13)",
+      "conclusion": "success"
+    },
+    {
+      "name": "APT repository preflight (no publish)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bind validated packages to version and source",
+      "conclusion": "success"
+    }
+  ],
+  "clang_debug_steps": [
+    {
+      "name": "Run targeted clang-tidy checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run gated clazy checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Test",
+      "conclusion": "success"
+    },
+    {
+      "name": "Deep QML lint",
+      "conclusion": "success"
+    }
+  ],
+  "gcc_debug_sanitizer": [
+    {
+      "name": "Configure targeted ASan/UBSan tree",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build targeted ASan/UBSan tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run targeted ASan/UBSan tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify sanitizer fixtures report both defect classes",
+      "conclusion": "success"
+    }
+  ]
+}
