@@ -1,3 +1,52 @@
+## [v1.3.2] - 2026-11-13
+
+This release adds the dock appearance options requested in
+[#70](https://github.com/ruizhi-lab/latte-dock-ng/issues/70). Modern docks
+still show macOS-style dots by default; the indicator shape is now a choice
+instead of a fixed part of the Modern style.
+
+### Added
+- Indicators, Effects → Indicators: "Use Modern dot indicators" keeps the
+  macOS-style dots of Modern docks by default and can be disabled to choose Line
+  or Dots independently of the dock style. The option is shown but disabled in
+  Classic docks, which always use the saved Line/Dots choice. Existing docks
+  keep the previous behavior, so nothing changes until the option is switched
+  off. The choice is stored in the indicator configuration
+  (`modernDotPreset`).
+- Indicators, Effects → Indicators: "Use application icon colors" colors a
+  task's indicator with the dominant color of its application icon, adjusted for
+  background contrast. Select Line to get a colored underline. Disabled by
+  default; applets keep palette colors because they have no task icon.
+- Appearance → Colors: per-dock custom background color with an optional day and
+  night color switched by local time (defaults 07:00 and 19:00). Intervals can
+  cross midnight; disabling the schedule keeps the day color. Text contrast
+  follows the chosen color. Window-derived palettes and the Plasma palette of
+  expanded applets keep priority, and opacity remains a separate setting.
+- Appearance → Margins: "Gap from maximized windows (px)", 0–128 pixels,
+  reserve a gap between maximized windows and an always-visible dock. It adds to
+  any mirrored floating gap and does not apply to auto-hide modes.
+- Appearance: custom background opacity is no longer clamped.
+
+### Fixed
+- Modern docks on a vertical screen edge no longer lose their floating gap and
+  touch the screen; the metrics-owned floating gap is used on every edge.
+- Edit Dock → Restore Preset restores Behavior, Appearance, Effects and Tasks
+  from the shipped Default Dock template and the configuration schemas while
+  keeping the selected style, screen, edge, launchers and widgets, including the
+  task and indicator defaults. Previously a restored dock could keep edited
+  values.
+- Indicator option pages show the current dock style after a live Dock Style
+  change instead of a cached value.
+
+### Changed
+- Color buttons in the dock editor are sized from their content with the native
+  style padding.
+- The dock appearance, preset, window-gap and indicator strings are translated
+  for the shipped interface locales, and the English, Simplified Chinese and
+  Traditional Chinese guides describe the new options.
+- Code quality: clang-tidy Band A checks and further source-contract gates are
+  enforced in CI; no behavior change is intended.
+
 ## [v1.3.0] - 2026-11-05
 
 This release fixes the logout and quit paths, the Layouts editor's Apply and
