@@ -7,6 +7,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Dialogs as QtDialogs
 import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
@@ -14,6 +15,8 @@ import org.kde.plasma.components as PlasmaComponents
 import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
 import org.kde.latte.private.containment as LatteContainment
+
+import "../../controls" as LatteExtraControls
 
 PlasmaComponents.Page {
     id: page
@@ -24,6 +27,56 @@ PlasmaComponents.Page {
     readonly property var units: page.dialog.units
     width: content.width + content.Layout.leftMargin * 2
     height: content.height + units.smallSpacing * 2
+
+    // The containment configuration map remains the single authority for the
+    // appearance controls; inline controls receive it explicitly rather than
+    // relying on the editor's legacy plasmoid context inside their component scope.
+    readonly property var dockConfiguration: plasmoid.configuration
+
+    component BackgroundColorButton: LatteExtraControls.ColorButton {
+        id: colorButton
+        Layout.fillWidth: true
+        required property var configuration
+        required property string setting
+        selectedColor: colorButton.configuration[colorButton.setting]
+        onClicked: {
+            backgroundColorDialog.setting = colorButton.setting;
+            backgroundColorDialog.selectedColor = colorButton.configuration[colorButton.setting];
+            page.viewConfig.setSticker(true);
+            backgroundColorDialog.open();
+        }
+    }
+
+    component ScheduleTime: QQC2.SpinBox {
+        id: timeField
+        required property var configuration
+        required property string setting
+        from: 0
+        to: 1439
+        stepSize: 30
+        editable: true
+        value: timeField.configuration[timeField.setting]
+        validator: RegularExpressionValidator { regularExpression: /([01][0-9]|2[0-3]):[0-5][0-9]/ }
+        textFromValue: function(value, locale) {
+            return String(Math.floor(value / 60)).padStart(2, "0") + ":" + String(value % 60).padStart(2, "0");
+        }
+        valueFromText: function(text, locale) {
+            var parts = text.split(":");
+            return Number(parts[0]) * 60 + Number(parts[1]);
+        }
+        onValueModified: timeField.configuration[timeField.setting] = timeField.value
+    }
+
+    QtDialogs.ColorDialog {
+        id: backgroundColorDialog
+        property string setting: "customBackgroundColor"
+        title: i18n("Choose dock background color")
+        onAccepted: {
+            page.dockConfiguration[backgroundColorDialog.setting] = backgroundColorDialog.selectedColor;
+            page.viewConfig.setSticker(false);
+        }
+        onRejected: page.viewConfig.setSticker(false)
+    }
 
     Timer {
         id: syncGeometry
@@ -728,6 +781,22 @@ PlasmaComponents.Page {
                 text: i18n("Margins")
             }
 
+            RowLayout {
+                Layout.leftMargin: units.smallSpacing * 2
+                Layout.rightMargin: units.smallSpacing * 2
+                PlasmaComponents.Label { text: i18n("Gap from maximized windows (px)") }
+                QQC2.SpinBox {
+                    from: 0
+                    to: 128
+                    editable: true
+                    value: page.dockConfiguration.windowGap
+                    enabled: page.latteView && page.latteView.visibility.mode === LatteCore.types.AlwaysVisible
+                    onValueModified: page.dockConfiguration.windowGap = value
+                    QQC2.ToolTip.visible: hovered
+                    QQC2.ToolTip.text: i18n("Reserve extra space between windows and the dock in Always Visible mode")
+                }
+            }
+
             ColumnLayout{
                 Layout.leftMargin: units.smallSpacing * 2
                 Layout.rightMargin: units.smallSpacing * 2
@@ -934,6 +1003,44 @@ PlasmaComponents.Page {
                             return 5;
                         }
                     }
+                }
+
+                QQC2.CheckBox {
+                    Layout.columnSpan: 2
+                    text: i18n("Use custom background color")
+                    checked: page.dockConfiguration.customBackgroundColorEnabled
+                    onToggled: page.dockConfiguration.customBackgroundColorEnabled = checked
+                }
+                PlasmaComponents.Label { text: i18n("Day color") }
+                BackgroundColorButton {
+                    configuration: page.dockConfiguration
+                    setting: "customBackgroundColor"
+                    enabled: page.dockConfiguration.customBackgroundColorEnabled
+                }
+                QQC2.CheckBox {
+                    Layout.columnSpan: 2
+                    text: i18n("Switch background colors by time of day")
+                    enabled: page.dockConfiguration.customBackgroundColorEnabled
+                    checked: page.dockConfiguration.backgroundColorScheduleEnabled
+                    onToggled: page.dockConfiguration.backgroundColorScheduleEnabled = checked
+                }
+                PlasmaComponents.Label { text: i18n("Night color") }
+                BackgroundColorButton {
+                    configuration: page.dockConfiguration
+                    setting: "customNightBackgroundColor"
+                    enabled: page.dockConfiguration.customBackgroundColorEnabled && page.dockConfiguration.backgroundColorScheduleEnabled
+                }
+                PlasmaComponents.Label { text: i18n("Day starts (local time)") }
+                ScheduleTime {
+                    configuration: page.dockConfiguration
+                    setting: "backgroundDayStart"
+                    enabled: page.dockConfiguration.customBackgroundColorEnabled && page.dockConfiguration.backgroundColorScheduleEnabled
+                }
+                PlasmaComponents.Label { text: i18n("Night starts (local time)") }
+                ScheduleTime {
+                    configuration: page.dockConfiguration
+                    setting: "backgroundNightStart"
+                    enabled: page.dockConfiguration.customBackgroundColorEnabled && page.dockConfiguration.backgroundColorScheduleEnabled
                 }
 
 

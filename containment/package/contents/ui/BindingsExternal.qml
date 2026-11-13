@@ -334,6 +334,11 @@ Item {
 
             var edgeThickness = isCapableToHideScreenGap ? thicknessForIsCapableToHideScreenGap : metrics.mask.screenEdge * mirrorGapFactor;
 
+            // The configured window gap belongs to the reserved work area, not
+            // the dock surface or its input region. VisibilityManager publishes
+            // these struts only in Always Visible mode; auto-hide must reserve nothing.
+            edgeThickness += Math.max(0, Math.min(128, plasmoid.configuration.windowGap));
+
             //! Reserve the full visible panel thickness + screen edge gap
             //! so windows cannot slide under any part of the dock background.
             //! Both styles use the same formula: screen edge gap + full panel

@@ -190,7 +190,7 @@ ContainmentItem {
     property int themeColors: plasmoid.configuration.themeColors
     property int windowColors: plasmoid.configuration.windowColors
 
-    property bool colorizerEnabled: themeColors !== LatteContainment.types.PlasmaThemeColors || windowColors !== LatteContainment.types.NoneWindowColors
+    property bool colorizerEnabled: plasmoid.configuration.customBackgroundColorEnabled || themeColors !== LatteContainment.types.PlasmaThemeColors || windowColors !== LatteContainment.types.NoneWindowColors
 
     property bool plasmaBackgroundForPopups: plasmoid.configuration.plasmaBackgroundForPopups
 

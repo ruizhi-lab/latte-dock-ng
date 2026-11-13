@@ -35,6 +35,8 @@ ColumnLayout {
     readonly property bool latteTasksArePresent: (typeof indicator !== "undefined") && indicator && indicator.latteTasksArePresent
     property var indicatorConfigFallback: ({
         activeStyle: 0,
+        modernDotPreset: true,
+        useIconColor: false,
         size: 0.08,
         thickMargin: 0.0,
         lengthPadding: 0.0,
@@ -88,8 +90,11 @@ ColumnLayout {
     }
 
     readonly property int activeStyleValue: configInt(indicatorConfig.activeStyle, indicatorConfigFallback.activeStyle)
-    readonly property bool modernDockStyleValue: (typeof indicator !== "undefined" && indicator && indicator.isModernDockStyle === true)
-    readonly property int effectiveActiveStyleValue: modernDockStyleValue ? 1 : activeStyleValue
+    readonly property bool modernDockStyleValue: (typeof dialog !== "undefined" && dialog && dialog.isModernDockStyle !== undefined)
+                                                 ? dialog.isModernDockStyle
+                                                 : (typeof indicator !== "undefined" && indicator && indicator.isModernDockStyle === true)
+    readonly property bool modernDotPresetValue: configBool(indicatorConfig.modernDotPreset, true)
+    readonly property int effectiveActiveStyleValue: modernDockStyleValue && modernDotPresetValue ? 1 : activeStyleValue
     readonly property real thicknessValue: configReal(indicatorConfig.size, indicatorConfigFallback.size)
     readonly property real thickMarginValue: configReal(indicatorConfig.thickMargin, indicatorConfigFallback.thickMargin)
     readonly property real lengthPaddingValue: configReal(indicatorConfig.lengthPadding, indicatorConfigFallback.lengthPadding)
@@ -113,8 +118,18 @@ ColumnLayout {
         text: i18nc("indicator style","Style")
     }
 
+    LatteComponents.CheckBox {
+        Layout.maximumWidth: root.safeOptionsWidth
+        enabled: root.modernDockStyleValue
+        text: i18n("Use Modern dot indicators")
+        tooltip: i18n("Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style")
+        value: root.modernDotPresetValue
+        onClicked: root.indicatorConfig.modernDotPreset = !value
+    }
+
     RowLayout {
         Layout.fillWidth: true
+        enabled: !root.modernDockStyleValue || !root.modernDotPresetValue
         spacing: 2
 
         property int indicatorType: root.effectiveActiveStyleValue
@@ -477,6 +492,14 @@ ColumnLayout {
     LatteComponents.SubHeader {
         enabled: root.glowApplyToValue!==0/*None*/
         text: i18n("Options")
+    }
+
+    LatteComponents.CheckBox {
+        Layout.maximumWidth: root.safeOptionsWidth
+        text: i18n("Use application icon colors")
+        tooltip: i18n("Color task indicators using the dominant color of each application icon")
+        value: root.configBool(root.indicatorConfig.useIconColor, false)
+        onClicked: root.indicatorConfig.useIconColor = !value
     }
 
     LatteComponents.CheckBox {

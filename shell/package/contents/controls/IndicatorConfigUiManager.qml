@@ -52,6 +52,10 @@ Item {
         Kirigami.Theme.highlightColor: uiManager.cfgHighlightColor
         Kirigami.Theme.highlightedTextColor: uiManager.cfgHighlightedTextColor
 
+        // C++ publishes this hidden host as the cached options page's dialog.
+        // Forward the live style here; putting it only on StackView leaves the
+        // options page using Indicator's stale CONSTANT snapshot after a style switch.
+        readonly property bool isModernDockStyle: uiManager.stackView && uiManager.stackView.isModernDockStyle === true
         readonly property int optionsWidth: dialog.optionsWidth
         readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
 

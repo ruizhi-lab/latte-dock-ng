@@ -3449,7 +3449,7 @@ void SourceContractTest::dynamicWindowDotsAreOptInAndAggregateOverflow()
     // The legacy two-dot behavior must remain active unless the option is
     // explicitly enabled, while the dynamic mode is capped at five dots.
     QVERIFY(indicatorSrc.contains(QStringLiteral("dynamicWindowDotsEnabled: dynamicWindowDots")));
-    QVERIFY(indicatorSrc.contains(QStringLiteral("effectiveActiveStyle: modernDockStyle ? 1 /*Dot*/ : activeStyle")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("effectiveActiveStyle: modernDockStyle && modernDotPreset ? 1 /*Dot*/ : activeStyle")));
     QVERIFY(indicatorSrc.contains(QStringLiteral("value === \"Dot\" || value === \"Dots\" ? 1 : 0")));
     QVERIFY(indicatorSrc.contains(QStringLiteral("Math.min(5, indicator.windowsCount")));
     QVERIFY(indicatorSrc.contains(QStringLiteral("indicator.activeWindowIndex >= 4")));
@@ -3483,6 +3483,34 @@ void SourceContractTest::appearanceConfigPreservesIndicatorStyleConfiguration()
     // AppearanceConfig must not run applyDockStylePreset on Component.onCompleted,
     // which would clobber user configuration when the settings dialog is opened.
     QVERIFY(!appearanceSource.contains(QStringLiteral("applyDockStylePreset(plasmoid.configuration.dockStyle")));
+
+    QFile indicatorOptions(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default/package/config/config.qml"));
+    QVERIFY(indicatorOptions.open(QFile::ReadOnly));
+    const QString optionsSource = QString::fromUtf8(indicatorOptions.readAll());
+    QVERIFY(optionsSource.contains(QStringLiteral("effectiveActiveStyleValue: modernDockStyleValue && modernDotPresetValue ? 1 : activeStyleValue")));
+    QVERIFY(optionsSource.contains(QStringLiteral("dialog.isModernDockStyle")));
+    QVERIFY(!optionsSource.contains(QStringLiteral("visible: root.modernDockStyleValue")));
+    QFile optionsHost(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/controls/IndicatorConfigUiManager.qml"));
+    QVERIFY(optionsHost.open(QFile::ReadOnly));
+    QVERIFY(optionsHost.readAll().contains("uiManager.stackView.isModernDockStyle === true"));
+    QVERIFY(optionsSource.contains(QStringLiteral("enabled: !root.modernDockStyleValue || !root.modernDotPresetValue")));
+
+    QFile indicatorConfig(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default/package/config/main.xml"));
+    QVERIFY(indicatorConfig.open(QFile::ReadOnly));
+    const QString indicatorDefaults = QString::fromUtf8(indicatorConfig.readAll());
+    QVERIFY(indicatorDefaults.contains(QStringLiteral("<entry name=\"modernDotPreset\" type=\"Bool\">\n      <default>true</default>")));
+
+    QFile bindings(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/BindingsExternal.qml"));
+    QVERIFY(bindings.open(QFile::ReadOnly));
+    const QString bindingsSource = QString::fromUtf8(bindings.readAll());
+    const int strutsStart = bindingsSource.indexOf(QStringLiteral("property: \"strutsThickness\""));
+    const int windowGap = bindingsSource.indexOf(QStringLiteral("edgeThickness += Math.max(0, Math.min(128, plasmoid.configuration.windowGap));"));
+    const int strutsEnd = bindingsSource.indexOf(QStringLiteral("property: \"isFloatingGapWindowEnabled\""));
+    QVERIFY(strutsStart >= 0 && windowGap > strutsStart && windowGap < strutsEnd);
+
+    QFile background(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/background/MultiLayered.qml"));
+    QVERIFY(background.open(QFile::ReadOnly));
+    QVERIFY(!background.readAll().contains("Math.max(0.50, storedOpacity)"));
 
     // Preset application must not overwrite activeStyle back to Line (0).
     QVERIFY(!appearanceSource.contains(QStringLiteral("activeStyle = targetStyle === 1 ? 1 : 0")));

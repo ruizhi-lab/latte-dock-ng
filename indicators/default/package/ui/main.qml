@@ -13,6 +13,8 @@ LatteComponents.IndicatorItem{
     id: root
     extraMaskThickness: reversedEnabled && glowEnabled ? 1.7 * (factor * indicator.maxIconSize) : 0
 
+    needsIconColors: indicator && indicator.configuration && indicator.configuration.useIconColor
+
     enabledForApplets: indicator && indicator.configuration ? indicator.configuration.enabledForApplets : true
     lengthPadding: modernDockStyle ? 0.05
                                    : (indicator && indicator.configuration ? indicator.configuration.lengthPadding : 0.08)
@@ -36,7 +38,10 @@ LatteComponents.IndicatorItem{
                                        : (textColorBrightness > 127.5 ? "#202020" : "#e8e8e8")
 
     property real backgroundColorBrightness: colorBrightness(backgroundColorSafe)
-    property color isActiveColor: oppositeToBackgroundColor(textColorSafe)
+    // Icon extraction is requested only while enabled. The task icon owns its
+    // dominant color; applets retain palette colors because they have no task icon.
+    property color isActiveColor: oppositeToBackgroundColor(needsIconColors && indicator.isTask
+                                                            ? indicator.iconBackgroundColor : textColorSafe)
     property color minimizedColor: {
         if (minimizedTaskColoredDifferently) {
             return tonedDownOppositeColor(isActiveColor);
@@ -76,7 +81,10 @@ LatteComponents.IndicatorItem{
 
         return configModern || apiModern;
     }
-    readonly property int effectiveActiveStyle: modernDockStyle ? 1 /*Dot*/ : activeStyle
+    // Modern defaults to macOS-style dots. The explicit preset toggle owns that
+    // override; disabling it restores the saved shape without changing dock geometry.
+    readonly property bool modernDotPreset: indicator.configuration.modernDotPreset !== false
+    readonly property int effectiveActiveStyle: modernDockStyle && modernDotPreset ? 1 /*Dot*/ : activeStyle
     readonly property real modernDockIconEdgeGap: modernDockStyle
                                                  ? Math.max(0, indicator.tailThickness !== undefined ? indicator.tailThickness : thickLocalMargin)
                                                  : 0

@@ -50,8 +50,11 @@
 <tr><td>动态长度调整 <span class="advanced">高级</span><small>Dynamic Length Adjustments</small></td><td>存在最大化窗口时把面板长度扩展到最大。需要先启用背景。</td></tr>
 <tr class="group"><td colspan="2">外边距</td></tr>
 <tr><td>外边距 / 长度 / 厚度 / 浮动间距 <span class="advanced">高级</span><small>Margins / Length / Thickness / Floating gap</small></td><td>分别设置沿停靠栏长度方向的外边距、厚度方向的外边距，以及停靠栏与屏幕边缘之间的间隙。</td></tr>
+<tr><td>与最大化窗口的间距（像素） <span class="advanced">高级</span><small>Gap from maximized windows (px)</small></td><td>在始终可见模式下，在窗口与当前停靠栏之间额外预留 0–128 像素，默认为 0。此项独立于屏幕边缘浮动间距，并与镜像间距叠加；自动隐藏模式不预留此空间。</td></tr>
 <tr class="group"><td colspan="2">颜色</td></tr>
 <tr><td>颜色 / 调色板 <span class="advanced">高级</span><small>Colors / Palette</small></td><td>选择 Plasma 主题颜色、深色、浅色、布局自定义颜色、反转，或基于桌面背景的智能颜色。布局自定义颜色使用布局自己的配色方案；智能颜色跟随壁纸。</td></tr>
+<tr><td>使用自定义背景颜色 / 日间颜色 <span class="advanced">高级</span><small>Use custom background color / Day color</small></td><td>为当前停靠栏选择背景颜色，文字对比度自动调整，默认关闭。跟随窗口配色和展开小部件时的 Plasma 配色优先。不透明度仍由独立的背景设置控制。</td></tr>
+<tr><td>按时段切换背景颜色 / 夜间颜色 / 日间开始时间（本地时间）/ 夜间开始时间（本地时间） <span class="advanced">高级</span><small>Switch background colors by time of day / Night color / Day starts (local time) / Night starts (local time)</small></td><td>按本地 24 小时时间在两种自定义颜色之间切换，默认日间 07:00、夜间 19:00，从开始时间起生效。时段可以跨越午夜；两个时间相同时全天使用日间颜色。关闭定时切换后使用日间颜色。每秒检查时钟，休眠恢复后也会更新。</td></tr>
 <tr class="group"><td colspan="2">背景</td></tr>
 <tr><td>背景<small>Background</small></td><td>“背景”是开关。启用后，可用下面的控件设置厚度、不透明度、半径和阴影。</td></tr>
 <tr><td>不透明度 / 繁忙时不透明度<small>Opacity / Busy Opacity</small></td><td>设置背景不透明度。同时启用“不需要时隐藏背景”和“贴靠窗口时背景不透明”时，同一滑块会显示为“繁忙时不透明度”。“默认”使用主题默认值。</td></tr>
@@ -74,6 +77,8 @@
 <tr><td>动画 / x1 / x2 / x3<small>Animations / x1 / x2 / x3</small></td><td>开启或关闭所有停靠栏动画。x1 为正常速度，x2 较慢，x3 最慢。</td></tr>
 <tr class="group"><td colspan="2">指示器</td></tr>
 <tr><td>任务指示器<small>Indicators</small></td><td>开启或关闭活动任务指示器。启用后可选择 Latte 指示器或自定义指示器插件；插件专属选项会显示在其标签页中。</td></tr>
+<tr><td>使用现代风格圆点指示器<small>Use Modern dot indicators</small></td><td>Latte 指示器在现代风格下默认使用 macOS 风格圆点。在特效中关闭此选项即可独立选择线条或圆点。经典风格下此选项仍显示，但不可操作，始终采用已保存的线条或圆点设置。</td></tr>
+<tr><td>使用应用图标颜色<small>Use application icon colors</small></td><td>使用各应用图标的主色为任务指示器着色，并根据背景调整对比度。选择线条即可显示彩色下划线。默认关闭；小部件仍使用调色板颜色。</td></tr>
 </tbody></table></div>
 <h3 id="tasks">任务</h3>
 <p class="note">徽章、动画、滚动、操作以及部分交互/过滤选项需要开启“高级”。开启“只显示启动器并隐藏所有任务”会禁用与窗口相关的操作和过滤。</p>

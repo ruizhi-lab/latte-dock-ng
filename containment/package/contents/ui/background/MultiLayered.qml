@@ -614,7 +614,8 @@ BackgroundProperties{
                 return 0;
             } else if (barLine.modernDockStyle) {
                 var storedOpacity = barLine.isDefaultOpacityEnabled ? 0.62 : root.myView.backgroundStoredOpacity;
-                return Math.max(0.50, storedOpacity);
+                // The user opacity owns transparency; Modern only supplies a default.
+                return storedOpacity;
             } else {
                 return root.myView.backgroundStoredOpacity;
             }

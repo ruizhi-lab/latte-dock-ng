@@ -127,6 +127,11 @@ public:
         m_items.value(type)->setParentItem(m_parentItem);
     }
 
+    QQuickItem *optionsHost() const
+    {
+        return m_parentItem;
+    }
+
     QQuickItem *optionsItem(const QString &type) const
     {
         return m_items.value(type);
@@ -216,6 +221,7 @@ Item {
             Layout.maximumHeight: Layout.minimumHeight
 
             property bool forwardSliding: true
+            property bool isModernDockStyle: false
 
             replaceEnter: Transition {
                 ParallelAnimation {
@@ -268,6 +274,7 @@ class IndicatorConfigUiManagerTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void optionsHostForwardsLiveDockStyle();
     void showsTheSelectedIndicatorOptions_data();
     void showsTheSelectedIndicatorOptions();
     void rerequestKeepsTheShownOptions_data();
@@ -289,6 +296,20 @@ private:
     static QString load(Harness &harness, const QString &initialType, int transitionDuration);
     static QString shownOptionsError(Harness &harness, const QString &type);
 };
+
+void IndicatorConfigUiManagerTest::optionsHostForwardsLiveDockStyle()
+{
+    Harness harness;
+    const QString error = load(harness, kLatte, 0);
+    QVERIFY2(error.isEmpty(), qPrintable(error));
+    auto *host = harness.viewConfig.m_manager.optionsHost();
+    QVERIFY(host);
+    QCOMPARE(host->property("isModernDockStyle").toBool(), false);
+    QVERIFY(harness.stackView->setProperty("isModernDockStyle", true));
+    QCOMPARE(host->property("isModernDockStyle").toBool(), true);
+    QVERIFY(harness.stackView->setProperty("isModernDockStyle", false));
+    QCOMPARE(host->property("isModernDockStyle").toBool(), false);
+}
 
 QString IndicatorConfigUiManagerTest::load(Harness &harness, const QString &initialType, int transitionDuration)
 {

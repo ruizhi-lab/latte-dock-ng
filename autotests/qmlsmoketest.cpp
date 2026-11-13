@@ -13,6 +13,7 @@
 #include <QtQml/qqml.h>
 
 #include <QColor>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QMetaObject>
@@ -67,6 +68,11 @@ class QmlSmokeTest : public QObject
 
 private Q_SLOTS:
     void initTestCase();
+    void colorButtonSeparatesSwatchAndText_data();
+    void colorButtonSeparatesSwatchAndText();
+    void backgroundColorScheduleFollowsLocalTime();
+    void indicatorShapeFollowsSavedOption_data();
+    void indicatorShapeFollowsSavedOption();
     void taskIconRasterSizeStaysStableDuringZoom();
     void containerWheelPreservesTaskCyclingWithOverflow();
     void containmentWheelScrollsTaskViewport();
@@ -1598,6 +1604,243 @@ Item {
 void QmlSmokeTest::initTestCase()
 {
     ensurePlasmaPlasmoidModuleAvailable();
+}
+
+void
+QmlSmokeTest::colorButtonSeparatesSwatchAndText_data()
+{
+    QTest::addColumn<int>("pointSize");
+    QTest::newRow("normal-text") << 10;
+    QTest::newRow("large-text") << 20;
+}
+
+void
+QmlSmokeTest::colorButtonSeparatesSwatchAndText()
+{
+    QFETCH(int, pointSize);
+    QQuickView view;
+    QQmlComponent component(view.engine());
+    component.setData(R"(
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import "../shell/package/contents/controls" as Controls
+GridLayout {
+    width: 480
+    columns: 2
+    property int pointSize: 10
+    QQC2.Label { text: "Day color" }
+    Controls.ColorButton {
+        objectName: "testColorButton"
+        selectedColor: "#133557"
+        Layout.fillWidth: true
+        font.pointSize: parent.pointSize
+    }
+}
+)",
+                      QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/autotests/color-button-test.qml")));
+    std::unique_ptr<QObject> object(component.createWithInitialProperties({ { QStringLiteral("pointSize"), pointSize } }));
+    QVERIFY2(object, qPrintable(component.errorString()));
+    auto *layout = qobject_cast<QQuickItem *>(object.get());
+    QVERIFY(layout);
+    layout->setParentItem(view.contentItem());
+    auto *button = layout->findChild<QQuickItem *>(QStringLiteral("testColorButton"));
+    QVERIFY(button);
+    view.resize(480, 120);
+    view.show();
+    auto *swatch = button->findChild<QQuickItem *>(QStringLiteral("colorSwatch"));
+    auto *label = button->findChild<QQuickItem *>(QStringLiteral("colorLabel"));
+    QVERIFY(swatch);
+    QVERIFY(label);
+    // The native style must have no text to paint a second time. The single
+    // content label and swatch must retain separate geometry at larger fonts.
+    QCOMPARE(button->property("text").toString(), QString());
+    QCOMPARE(label->property("text").toString(), QStringLiteral("#133557"));
+    QTRY_VERIFY(swatch->width() > 0);
+    QTRY_VERIFY(label->x() >= swatch->x() + swatch->width());
+    QTRY_VERIFY(label->width() + 1 >= label->implicitWidth());
+    QTRY_VERIFY(swatch->mapToItem(button, QPointF()).x() >= button->property("leftPadding").toReal() - 1);
+    QTRY_VERIFY(label->mapToItem(button, QPointF(label->width(), 0)).x() <= button->width() - button->property("rightPadding").toReal() + 1);
+    QVERIFY(button->setProperty("selectedColor", QColor(QStringLiteral("#ff2020"))));
+    QCOMPARE(label->property("text").toString(), QStringLiteral("#ff2020"));
+}
+
+void
+QmlSmokeTest::backgroundColorScheduleFollowsLocalTime()
+{
+    QQmlEngine engine;
+    auto config = createQmlObject(engine,
+                                  R"(
+import QtQuick
+QtObject {
+    property bool customBackgroundColorEnabled: true
+    property bool backgroundColorScheduleEnabled: false
+    property color customBackgroundColor: "#fafafa"
+    property color customNightBackgroundColor: "#202020"
+    property int backgroundDayStart: 420
+    property int backgroundNightStart: 1140
+}
+)",
+                                  QUrl(QStringLiteral("background-config.qml")));
+    QVERIFY(config);
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/colorizer/BackgroundColorPolicy.qml")));
+    std::unique_ptr<QObject> policy(component.createWithInitialProperties({ { QStringLiteral("configuration"), QVariant::fromValue(config.get()) } }));
+    QVERIFY2(policy, qPrintable(component.errorString()));
+    const auto setTime = [&policy](int hour, int minute) { return policy->setProperty("currentTime", QDateTime(QDate(2026, 11, 13), QTime(hour, minute))); };
+    const auto color = [&policy]() { return policy->property("backgroundColor").value<QColor>(); };
+    QVERIFY(setTime(23, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#fafafa"))); // Disabled schedule keeps the day color.
+    QVERIFY(config->setProperty("backgroundColorScheduleEnabled", true));
+    QVERIFY(setTime(6, 59));
+    QCOMPARE(color(), QColor(QStringLiteral("#202020")));
+    QCOMPARE(policy->property("textColor").value<QColor>(), QColor(Qt::white));
+    QVERIFY(setTime(7, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#fafafa")));
+    QVERIFY(setTime(18, 59));
+    QCOMPARE(color(), QColor(QStringLiteral("#fafafa")));
+    QVERIFY(setTime(19, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#202020")));
+    // Reversed boundaries represent a daytime interval that crosses midnight.
+    QVERIFY(config->setProperty("backgroundDayStart", 1140));
+    QVERIFY(config->setProperty("backgroundNightStart", 420));
+    QVERIFY(setTime(23, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#fafafa")));
+    QVERIFY(setTime(7, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#202020")));
+    QVERIFY(config->setProperty("backgroundNightStart", 1140));
+    QCOMPARE(color(), QColor(QStringLiteral("#fafafa"))); // Equal boundaries mean all day.
+    QVERIFY(config->setProperty("customBackgroundColor", QColor(QStringLiteral("#ffcc00"))));
+    QCOMPARE(color(), QColor(QStringLiteral("#ffcc00")));
+    QVERIFY(config->setProperty("backgroundColorScheduleEnabled", false));
+    QVERIFY(setTime(2, 0));
+    QCOMPARE(color(), QColor(QStringLiteral("#ffcc00")));
+}
+
+void
+QmlSmokeTest::indicatorShapeFollowsSavedOption_data()
+{
+    QTest::addColumn<int>("dockStyle");
+    QTest::addColumn<bool>("vertical");
+    QTest::newRow("classic-horizontal") << 0 << false;
+    QTest::newRow("modern-horizontal") << 1 << false;
+    QTest::newRow("classic-vertical") << 0 << true;
+    QTest::newRow("modern-vertical") << 1 << true;
+}
+
+void
+QmlSmokeTest::indicatorShapeFollowsSavedOption()
+{
+    QFETCH(int, dockStyle);
+    QFETCH(bool, vertical);
+    QTemporaryDir importRoot;
+    QQmlEngine engine;
+    addLatteCoreImport(engine, importRoot);
+    addLatteComponentsImport(engine, importRoot);
+    for (const QString &name : { QStringLiteral("IndicatorItem.qml"), QStringLiteral("GlowPoint.qml") }) {
+        QVERIFY(QFile::copy(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/components/") + name, importRoot.path() + QStringLiteral("/org/kde/latte/components/") + name));
+    }
+
+    // Load the production renderer with an active task's public API. Shape must
+    // follow configuration changes without recreating the task or switching dock style.
+    auto host = createQmlObject(engine,
+                                R"(
+import QtQuick
+import org.kde.plasma.core as PlasmaCore
+Item {
+    id: host
+    width: 64; height: 64
+    property int dockStyle: 0
+    property bool vertical: false
+    property QtObject plasmoid: QtObject {
+        property var configuration: ({dockStyle: host.dockStyle})
+        property int location: host.vertical ? PlasmaCore.Types.LeftEdge : PlasmaCore.Types.BottomEdge
+        property int formFactor: host.vertical ? PlasmaCore.Types.Vertical : PlasmaCore.Types.Horizontal
+    }
+    property QtObject config: QtObject {
+        property int activeStyle: 0
+        property bool modernDotPreset: true
+        property bool useIconColor: false
+        property real size: 0.1
+        property real thickMargin: 0
+        property real lengthPadding: 0.08
+        property real backgroundCornerMargin: 1
+        property bool reversed: false
+        property bool extraDotOnActive: false
+        property bool dynamicWindowDots: false
+        property bool minimizedTaskColoredDifferently: false
+        property bool glowEnabled: false
+        property bool glow3D: false
+        property int glowApplyTo: 0
+        property real glowOpacity: 1
+        property bool enabledForApplets: true
+    }
+    property Item level: Item {
+        property var requested: ({iconOffsetX: 0, iconOffsetY: 0})
+        property Item bridge: Item {
+            property QtObject configuration: host.config
+            property bool isModernDockStyle: host.dockStyle === 1
+            property int currentIconSize: 48
+            property int maxIconSize: 48
+            property int screenEdgeMargin: 0
+            property int tailThickness: 8
+            property var palette: ({textColor: "white", backgroundColor: "black", negativeTextColor: "red"})
+            property bool isMinimized: false
+            property bool isActive: true
+            property bool hasActive: true
+            property bool isGroup: false
+            property bool isTask: true
+            property bool isApplet: false
+            property bool isEmptySpace: false
+            property bool isLauncher: false
+            property bool isWindow: true
+            property bool inRemoving: false
+            property bool inAttention: false
+            property real durationTime: 0
+            property real scaleFactor: 1
+            property color iconBackgroundColor: "#62dd85"
+            property color shadowColor: "black"
+        }
+    }
+}
+)",
+                                QUrl(QStringLiteral("indicator-host.qml")));
+    QVERIFY(host);
+    host->setProperty("dockStyle", dockStyle);
+    host->setProperty("vertical", vertical);
+    engine.rootContext()->setContextProperty(QStringLiteral("plasmoid"), host->property("plasmoid").value<QObject *>());
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default/package/ui/main.qml")));
+    const QVariantMap initial{ { QStringLiteral("parent"), QVariant::fromValue(qobject_cast<QQuickItem *>(host.get())) }, { QStringLiteral("width"), 64 }, { QStringLiteral("height"), 64 } };
+    std::unique_ptr<QObject> renderer(component.createWithInitialProperties(initial));
+    QVERIFY2(renderer, qPrintable(component.errorString()));
+    QObject *point = nullptr;
+    for (auto *child : renderer->findChildren<QObject *>()) {
+        if (child->metaObject()->indexOfProperty("stateWidth") >= 0) {
+            point = child;
+            break;
+        }
+    }
+    QVERIFY(point);
+    auto *config = host->property("config").value<QObject *>();
+    QVERIFY(config);
+    const char *length = vertical ? "stateHeight" : "stateWidth";
+    QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), dockStyle == 1 ? 1 : 0);
+    if (dockStyle == 1) {
+        QCOMPARE(point->property(length).toInt(), renderer->property("size").toInt());
+    }
+    QVERIFY(config->setProperty("modernDotPreset", false));
+    QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), 0);
+    QVERIFY(point->property(length).toInt() > renderer->property("size").toInt());
+    QVERIFY(config->setProperty("activeStyle", 1));
+    QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), 1);
+    QCOMPARE(point->property(length).toInt(), renderer->property("size").toInt());
+    QVERIFY(config->setProperty("activeStyle", 0));
+    QVERIFY(point->property(length).toInt() > renderer->property("size").toInt());
+    QCOMPARE(renderer->property("needsIconColors").toBool(), false);
+    QVERIFY(config->setProperty("useIconColor", true));
+    QCOMPARE(renderer->property("needsIconColors").toBool(), true);
+    QCOMPARE(renderer->property("isActiveColor").value<QColor>(), QColor(QStringLiteral("#62dd85")));
+    QVERIFY(config->setProperty("useIconColor", false));
+    QCOMPARE(renderer->property("isActiveColor").value<QColor>(), QColor(Qt::white));
 }
 
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()

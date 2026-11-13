@@ -50,8 +50,11 @@
 <tr><td>動態長度調整 <span class="advanced">進階</span><small>Dynamic Length Adjustments</small></td><td>存在最大化視窗時把面板長度擴展到最大。需要先啟用背景。</td></tr>
 <tr class="group"><td colspan="2">外邊距</td></tr>
 <tr><td>外邊距 / 長度 / 厚度 / 浮動間距 <span class="advanced">進階</span><small>Margins / Length / Thickness / Floating gap</small></td><td>分別設定沿 Dock 長度方向的外邊距、厚度方向的外邊距，以及 Dock 與螢幕邊緣之間的間隙。</td></tr>
+<tr><td>與最大化視窗的間距（像素） <span class="advanced">進階</span><small>Gap from maximized windows (px)</small></td><td>在永遠可見模式下，在視窗與目前 Dock 之間額外預留 0–128 像素，預設為 0。此項獨立於螢幕邊緣浮動間隙，並與鏡像間隙相加；自動隱藏模式不預留此空間。</td></tr>
 <tr class="group"><td colspan="2">顏色</td></tr>
 <tr><td>顏色 / 調色盤 <span class="advanced">進階</span><small>Colors / Palette</small></td><td>選擇 Plasma 佈景主題顏色、深色、淺色、佈局自訂顏色、反轉，或基於桌面背景的智慧顏色。佈局自訂顏色使用佈局自己的配色方案；智慧顏色跟隨桌布。</td></tr>
+<tr><td>使用自訂背景顏色 / 日間顏色 <span class="advanced">進階</span><small>Use custom background color / Day color</small></td><td>為目前 Dock 選擇背景顏色，文字對比度自動調整，預設關閉。跟隨視窗配色和展開元件時的 Plasma 配色優先。不透明度仍由獨立的背景設定控制。</td></tr>
+<tr><td>依時段切換背景顏色 / 夜間顏色 / 日間開始時間（本地時間）/ 夜間開始時間（本地時間） <span class="advanced">進階</span><small>Switch background colors by time of day / Night color / Day starts (local time) / Night starts (local time)</small></td><td>依本地 24 小時時間在兩種自訂顏色之間切換，預設日間 07:00、夜間 19:00，從開始時間起生效。時段可以跨越午夜；兩個時間相同時全天使用日間顏色。關閉定時切換後使用日間顏色。每秒檢查時鐘，休眠恢復後也會更新。</td></tr>
 <tr class="group"><td colspan="2">背景</td></tr>
 <tr><td>背景<small>Background</small></td><td>「背景」是開關。啟用後，可用下方的控制項設定厚度、不透明度、半徑和陰影。</td></tr>
 <tr><td>不透明度 / 忙碌時不透明度<small>Opacity / Busy Opacity</small></td><td>設定背景不透明度。同時啟用「非必要時隱藏背景」和「接觸任何視窗時都偏好不透明的背景」時，同一滑桿會顯示為「忙碌時不透明度」。「預設」使用佈景主題預設值。</td></tr>
@@ -74,6 +77,8 @@
 <tr><td>動畫 / x1 / x2 / x3<small>Animations / x1 / x2 / x3</small></td><td>開啟或關閉所有 Dock 動畫。x1 為正常速度，x2 較慢，x3 最慢。</td></tr>
 <tr class="group"><td colspan="2">指示器</td></tr>
 <tr><td>指示器<small>Indicators</small></td><td>開啟或關閉作用中工作指示器。啟用後可選擇 Latte 指示器或自訂指示器外掛程式；外掛程式專屬選項會顯示在其分頁中。</td></tr>
+<tr><td>使用現代風格圓點指示器<small>Use Modern dot indicators</small></td><td>Latte 指示器在現代風格下預設使用 macOS 風格圓點。在效果中關閉此選項即可獨立選擇線條或圓點。經典風格下此選項仍顯示，但無法操作，一律採用已儲存的線條或圓點設定。</td></tr>
+<tr><td>使用應用程式圖示顏色<small>Use application icon colors</small></td><td>使用各應用程式圖示的主色為工作指示器著色，並依背景調整對比度。選擇線條即可顯示彩色底線。預設關閉；元件仍使用調色盤顏色。</td></tr>
 </tbody></table></div>
 <h3 id="tasks">工作</h3>
 <p class="note">徽章、動畫、捲動、操作以及部分互動/過濾選項需要開啟「進階」。開啟「僅顯示啟動器並隱藏所有工作」會停用與視窗相關的操作和過濾。</p>

@@ -50,8 +50,11 @@
 <tr><td>Dynamic Length Adjustments <span class="advanced">Advanced</span></td><td>Maximize panel length in presence of maximized windows: extend the dock to full length when a maximized window is present. The background must be enabled.</td></tr>
 <tr class="group"><td colspan="2">Margins</td></tr>
 <tr><td>Margins / Length / Thickness / Floating gap <span class="advanced">Advanced</span></td><td>Set the external margin along the dock, the margin across its thickness, and the gap between the dock and the screen edge.</td></tr>
+<tr><td>Gap from maximized windows (px) <span class="advanced">Advanced</span></td><td>Reserve an additional 0–128 pixels between windows and this dock in Always Visible mode. Default: 0. This is separate from the screen-edge floating gap and adds to any mirrored gap; auto-hide modes do not reserve this space.</td></tr>
 <tr class="group"><td colspan="2">Colors</td></tr>
 <tr><td>Colors / Palette <span class="advanced">Advanced</span></td><td>Choose Plasma Theme Colors, Dark Colors, Light Colors, Layout Custom Colors, Reverse, or Smart Colors Based On Desktop Background. Layout Custom Colors uses the layout’s color scheme; Smart follows the wallpaper.</td></tr>
+<tr><td>Use custom background color / Day color <span class="advanced">Advanced</span></td><td>Override this dock’s background with a chosen color; text contrast adjusts automatically. Disabled by default. Window-derived palettes and the Plasma palette for expanded applets retain priority. Opacity remains a separate background setting.</td></tr>
+<tr><td>Switch background colors by time of day / Night color / Day starts (local time) / Night starts (local time) <span class="advanced">Advanced</span></td><td>Optionally switch between two custom colors using local 24-hour times. Defaults: day 07:00, night 19:00. The start time is inclusive. Intervals can cross midnight; equal times keep the day color all day. Disabling the schedule keeps the day color. The clock is checked every second, including after resume.</td></tr>
 <tr class="group"><td colspan="2">Background</td></tr>
 <tr><td>Background</td><td>Background is an on/off switch. When enabled, use the controls below to set thickness, opacity, radius and shadow.</td></tr>
 <tr><td>Opacity / Busy Opacity</td><td>Set background opacity. The same slider is called Busy Opacity when Hide background when not needed and Prefer opaque background when touching any window are both enabled. Def. restores the theme default.</td></tr>
@@ -74,6 +77,8 @@
 <tr><td>Animations / x1 / x2 / x3</td><td>Turn all dock animations on or off. x1 is normal speed, x2 is slower, x3 is slowest.</td></tr>
 <tr class="group"><td colspan="2">Indicators</td></tr>
 <tr><td>Indicators</td><td>Turn active-task indicators on or off. When enabled, choose the Latte indicator or a custom indicator plugin; plugin-specific options appear in its tab.</td></tr>
+<tr><td>Use Modern dot indicators</td><td>The Latte indicator keeps macOS-style dots in Modern docks by default. Disable this option in Effects to choose Line or Dots independently. The option remains visible but disabled in Classic docks, which always use the saved Line/Dots choice.</td></tr>
+<tr><td>Use application icon colors</td><td>Optionally color task indicators with each application icon’s dominant color, adjusted for background contrast. Select Line for colored underlines. Disabled by default; applets keep palette colors.</td></tr>
 </tbody></table></div>
 <h3 id="tasks">Tasks</h3>
 <p class="note">Badges, Animations, Scrolling, Actions and some Interaction/Filters options require Advanced mode. Show only launchers and hide all tasks disables window-related actions and filters.</p>

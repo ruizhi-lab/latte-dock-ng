@@ -479,6 +479,11 @@ PlasmaComponents.Page {
 
                     property bool forwardSliding: true
 
+                    // Cached indicator option pages must follow the live dock style,
+                    // not the legacy CONSTANT snapshot exposed by Indicator.
+                    readonly property bool isModernDockStyle: plasmoid.configuration.dockStyle === 1
+                                                              || plasmoid.configuration.dockStyle === "1"
+                                                              || plasmoid.configuration.dockStyle === "Modern"
                     readonly property int optionsWidth: page.dialog.optionsWidth
                     readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
 

@@ -4358,3 +4358,48 @@ msgstr "回報問題（GitHub Issue）…"
 #, kde-format
 msgid "Open Latte Dock NG issue tracker on GitHub"
 msgstr "開啟 Latte Dock NG 在 GitHub 上的問題追蹤頁面"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Choose dock background color"
+msgstr "選擇 Dock 背景顏色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Gap from maximized windows (px)"
+msgstr "與最大化視窗的間距（像素）"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Reserve extra space between windows and the dock in Always Visible mode"
+msgstr "在永遠可見模式下，在視窗與 Dock 之間預留額外空間"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Use custom background color"
+msgstr "使用自訂背景顏色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day color"
+msgstr "日間顏色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Switch background colors by time of day"
+msgstr "依時段切換背景顏色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night color"
+msgstr "夜間顏色"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Day starts (local time)"
+msgstr "日間開始時間（本地時間）"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml
+#, kde-format
+msgid "Night starts (local time)"
+msgstr "夜間開始時間（本地時間）"

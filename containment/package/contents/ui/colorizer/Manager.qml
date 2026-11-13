@@ -42,7 +42,18 @@ Loader{
         }
     }
 
-    readonly property bool mustBeShown: (applyTheme && applyTheme !== theme)
+    // Window-derived palettes and the explicit popup Plasma palette retain
+    // priority. Otherwise the per-dock custom color owns background and contrast;
+    // routing it through this manager also recolors Classic backgrounds and applets.
+    readonly property bool customBackgroundActive: plasmoid.configuration.customBackgroundColorEnabled
+                                                    && !applyingWindowColors
+                                                    && !(root.plasmaBackgroundForPopups && root.hasExpandedApplet)
+    BackgroundColorPolicy {
+        id: backgroundPolicy
+        configuration: plasmoid.configuration
+    }
+
+    readonly property bool mustBeShown: customBackgroundActive || (applyTheme && applyTheme !== theme)
 
     readonly property real currentBackgroundBrightness: item ? item.currentBrightness : -1000
 
@@ -82,6 +93,10 @@ Loader{
                         && root.forceSolidPanel) ) {
                 /* plasma style*/
                 return theme;
+            }
+
+            if (customBackgroundActive) {
+                return backgroundPolicy.brightness > 0.5 ? themeExtended.lightTheme : themeExtended.darkTheme;
             }
 
             if (root.themeColors === LatteContainment.types.DarkThemeColors) {
@@ -131,11 +146,11 @@ Loader{
 
     property color applyColor: textColor
 
-    readonly property color backgroundColor:applyTheme.backgroundColor
-    readonly property color textColor: applyTheme.textColor
+    readonly property color backgroundColor: customBackgroundActive ? backgroundPolicy.backgroundColor : applyTheme.backgroundColor
+    readonly property color textColor: customBackgroundActive ? backgroundPolicy.textColor : applyTheme.textColor
 
-    readonly property color inactiveBackgroundColor: applyTheme === theme ? theme.backgroundColor : applyTheme.inactiveBackgroundColor
-    readonly property color inactiveTextColor: applyTheme === theme ? theme.textColor : applyTheme.inactiveTextColor
+    readonly property color inactiveBackgroundColor: customBackgroundActive ? backgroundColor : (applyTheme === theme ? theme.backgroundColor : applyTheme.inactiveBackgroundColor)
+    readonly property color inactiveTextColor: customBackgroundActive ? textColor : (applyTheme === theme ? theme.textColor : applyTheme.inactiveTextColor)
 
     readonly property color highlightColor: applyTheme.highlightColor
     readonly property color highlightedTextColor: applyTheme.highlightedTextColor
