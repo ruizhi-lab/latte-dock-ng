@@ -294,13 +294,28 @@ do not reopen completed M, P, A or S batches without a concrete regression.
 | R8i | Complete | [Report](modernization-results/R8i.md): branch `claude/distracted-chatterjee-722eed` (`3baa2252c`, `85f34625b` and the record commit), merged into `main` as `3e5b69341`. The clang-tidy gate analyzes the clazy gate's 155 production sources with its two named checks, each proven by a fixture under the production flags (R8c's gate-order step 1). CI's clang-tidy 18.1.3 in the local CI image: 0 findings, 200 s at `--jobs 4` (R8c's two-check run: 213 s); clang-tidy 22.1.8: 0 findings. GCC and Clang Debug: 0 compiler warnings; CTest 61/61 on the host, 60/60 in the container (no `appstreamcli` there). Three scratch edits make the gate fail as predicted. CI Build run 42633564689 on the merge commit passed all 23 jobs; its Clang Debug clang-tidy step selected the 155 production sources, rejected both fixtures and found nothing (clang-tidy 18.1.3) | None |
 | R8j | Complete (measurement; verdict inconclusive; step 3 attribution run; closed 2026-11-10) | [Report](modernization-results/R8j.md): the design (cycles, verdict rule) was committed before any run (`2e7325481`); pilots and amendments in `b9ef20acf` and `0c4fef68b`; no production change. A Release dock of `main` (`04589b1e9`) in a nested KWin session, ten cycles each of an idle control, a window open and close, and a KCalc start and close, with a `malloc_trim(0)` and `mallinfo2` probe preloaded into the dock only (`R8j-tools/`). Idle control: not reproduced. Window and application: the first start after warm-up adds about 5 MiB, of which 4.2 to 4.4 MiB is glibc free memory and 0.8 to 1.0 MiB is in use, flat over the later cycles; the trim returns 34 % and 43 % of the growth, below the fixed 50 % line for 'allocator retention', and the next start takes most of it back. The rule's answer is inconclusive. Step 3 (heaptrack, window scenario, `WH`): the first window's retained memory is one site inside the NVIDIA EGL library (69 % of the positive shares; its names are nearest exported symbols); the later windows churn about 2.1 MiB each, mostly in a Qt Quick positioner's vector; per-use live growth is 0.45 MiB net over nine cycles, spread over many small sites. Data in `R8j-data/` | None. Closed at the user's decision on 2026-11-10. The 60-window test of the per-use candidates was not run; it would need its own pre-registered design |
 
-## Tooling follow-up (T1/T2)
+## Source reconciliation (2026-11-13)
+
+User commits `7b3e038c8`, `2e7302712`, `6fe63197d` and `796344495` add
+appearance controls, correct vertical Modern gaps, restore whole-Dock presets
+and complete shipped UI catalog entries. They are retained at the current
+`796344495` baseline. `dockpresetdefaults.h` already owns the new preset
+policy; future extraction reviews must account for this existing helper.
+
+R7k's template/import repair and its free-edge follow-up remain separate from
+the preset reset action. A4's full-chain screen mapping evidence is still
+pending. P5/P6 still require their declared cost evidence. Future P5 scenarios
+must identify custom-background and scheduled-color settings; the new optional
+wall-clock timer and appearance choices are not a measured performance result.
+Release help review remains a release gate; current handbook tests pass.
+
+## Tooling follow-up (T1/T2/T3/T4a)
 
 The [T1 gate expansion](modernization-results/T1.md) follows R8c's proposed
 Band A order. It adds thirteen proven candidates from the first fifteen to
 R8i's two checks, for fifteen explicitly named checks. Two catch-based checks
 are excluded because their fixtures conflict with production `-fno-exceptions`.
-Remote CI acceptance remains pending; local version coverage and its environment
+Published CI acceptance passed in run 43350616185; local coverage and environment
 limits are recorded in T1. This does not complete the remaining Band A/B/C work.
 
 The [T2 expansion](modernization-results/T2.md) adds fourteen proven checks
@@ -308,7 +323,28 @@ from the next fifteen candidates, bringing the gate to twenty-nine checks.
 `bugprone-string-constructor` is not promoted because its fixture proof is
 unresolved. The final twenty-nine-check gates passed on local clang-tidy
 22.1.8 and isolated 18.1.3 across 156 production sources, with no findings.
-Remote CI acceptance and the remaining Band A candidates are still pending.
+Publication acceptance and the subsequent Band A closure are recorded below.
+
+The [T3 expansion](modernization-results/T3.md) evaluates the final sixteen
+Band A candidates and resolves T2's string-constructor fixture. All seventeen
+are promoted, bringing the gate to forty-six checks: forty-four Band A
+candidates plus the two original checks. The two exception-dependent Band A
+checks remain excluded under production `-fno-exceptions`. Local LLVM 22/18
+full-source gates pass; T3's remote acceptance is not claimed.
+
+The A4/T1/T2 batch was committed and pushed as `803cce3d9` on 2026-11-13.
+[Build run 43350616185](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43350616185)
+passed all 23 jobs. It tests the published twenty-nine-check gate, not T3/T4a's
+uncommitted expansion. [T4a](modernization-results/T4a.md) adds the already-fixed
+redundant-expression family, for forty-seven checks. Both local full-source
+gates pass on the newer user-commit baseline; all four compiler configurations
+pass 64/64 tests with zero compiler warnings.
+
+The [QML baseline review](modernization-results/QML-baseline-2026-11-13.md)
+accepts the 243-file CI report after inspecting both diagnostic delta directions
+and source authorities. It fixes the coverage mismatch introduced by the new
+helpers without changing the accepted qmllint 6.11.1 environment. Publication
+and new remote CI for these changes remain pending.
 
 ## Git and rollback
 

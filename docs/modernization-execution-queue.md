@@ -1,6 +1,8 @@
 # Modernization execution queue
 
 Date: 2026-11-13. Planning source: `main` at `7c6c88845`.
+Reconciled source: `796344495` after the user's appearance, vertical-gap,
+preset-restore and translation commits; current validation is in T4a.
 This queue decomposes the remaining work; it does not mark proposed checks as run.
 The existing plan ledgers and batch reports remain the completion authority.
 
@@ -74,15 +76,36 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
 - T1: thirteen candidates promoted and two exception-dependent checks excluded;
   fifteen total checks passed local gates on clang-tidy 22.1.8 and 18.1.3 across
   156 production sources. See the [slice record](modernization-results/T1.md)
-  for the isolated LLVM 18 environment limits. Remote CI validation is pending.
+  for the isolated LLVM 18 environment limits. The published A4/T1/T2 batch's
+  CI run 43350616185 subsequently passed all 23 jobs.
 - Q1: coordinator reviewed the combined production adapter/helper, tests,
   configuration and all new fixtures; independently verified five mutations.
   Four compiler/configuration builds have zero warnings and pass 64/64 tests
-  each. No commit, push or remote CI run was performed.
+  each. This initial acceptance preceded authorized commit/push `803cce3d9`;
+  its 23-job CI pass remains separate from later local work.
 - T2: fourteen more candidates promoted, bringing the gate to twenty-nine;
   both local tool versions rejected all fixtures and found nothing in 156
-  production sources. Remote CI acceptance remains pending;
+  production sources. Published CI acceptance passed in run 43350616185;
   [record](modernization-results/T2.md).
+- T3: the remaining sixteen Band A candidates plus the deferred string check
+  are now proven and promoted. Both local full-source gates pass with forty-six
+  fixtures and no findings in 156 production sources. The coordinator reviewed
+  the actual diff; these new changes are not committed or pushed.
+  [Record](modernization-results/T3.md). Band A has forty-four promoted
+  candidates and two exception-dependent exclusions; the original two checks
+  bring the current total to forty-six.
+- T4a: the existing BackgroundCache correction now has a
+  `misc-redundant-expression` gate and negative fixture. All forty-seven checks
+  pass on both local tool versions against `796344495`; all four application
+  configurations have zero compiler warnings and pass 64/64 tests. This
+  revalidates the uncommitted T3 expansion against the newer source.
+  [Record](modernization-results/T4a.md).
+- QML inventory refresh: the user's two new QML helpers expand coverage to 243
+  files. The [reviewed CI baseline](modernization-results/QML-baseline-2026-11-13.md)
+  preserves the 6.11.1 fingerprint and all visible warnings; three independent
+  CI reports match. The previous 241-file baseline caused the current CI
+  coverage failure. The refresh and T3/T4a remain uncommitted and need their
+  own post-publication CI acceptance.
 
 ## Later waves
 

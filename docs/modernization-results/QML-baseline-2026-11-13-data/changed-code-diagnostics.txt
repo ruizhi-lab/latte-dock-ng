@@ -1,0 +1,41 @@
+shell/package/contents/configuration/pages/AppearanceConfig.qml:34:46 unqualified Unqualified access | readonly property var dockConfiguration: plasmoid.configuration
+shell/package/contents/configuration/pages/AppearanceConfig.qml:73:16 unqualified Unqualified access | title: i18n("Choose dock background color")
+shell/package/contents/configuration/pages/AppearanceConfig.qml:785:36 unqualified Unqualified access | Layout.leftMargin: units.smallSpacing * 2
+shell/package/contents/configuration/pages/AppearanceConfig.qml:786:37 unqualified Unqualified access | Layout.rightMargin: units.smallSpacing * 2
+shell/package/contents/configuration/pages/AppearanceConfig.qml:787:48 unqualified Unqualified access | PlasmaComponents.Label { text: i18n("Gap from maximized windows (px)") }
+shell/package/contents/configuration/pages/AppearanceConfig.qml:796:40 unqualified Unqualified access | QQC2.ToolTip.text: i18n("Reserve extra space between windows and the dock in Always Visible mode")
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1010:27 unqualified Unqualified access | text: i18n("Use custom background color")
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1014:48 unqualified Unqualified access | PlasmaComponents.Label { text: i18n("Day color") }
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1022:27 unqualified Unqualified access | text: i18n("Switch background colors by time of day")
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1027:48 unqualified Unqualified access | PlasmaComponents.Label { text: i18n("Night color") }
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1033:48 unqualified Unqualified access | PlasmaComponents.Label { text: i18n("Day starts (local time)") }
+shell/package/contents/configuration/pages/AppearanceConfig.qml:1039:48 unqualified Unqualified access | PlasmaComponents.Label { text: i18n("Night starts (local time)") }
+shell/package/contents/configuration/pages/EffectsConfig.qml:484:63 unqualified Unqualified access | readonly property bool isModernDockStyle: plasmoid.configuration.dockStyle === 1
+shell/package/contents/configuration/pages/EffectsConfig.qml:485:66 unqualified Unqualified access | || plasmoid.configuration.dockStyle === "1"
+shell/package/contents/configuration/pages/EffectsConfig.qml:486:66 unqualified Unqualified access | || plasmoid.configuration.dockStyle === "Modern"
+shell/package/contents/controls/IndicatorConfigUiManager.qml:58:94 missing-property Member "isModernDockStyle" not found on type "QQuickItem" | readonly property bool isModernDockStyle: uiManager.stackView && uiManager.stackView.isModernDockStyle === true
+containment/package/contents/ui/BindingsExternal.qml:340:56 unqualified Unqualified access | edgeThickness += Math.max(0, Math.min(128, plasmoid.configuration.windowGap));
+containment/package/contents/ui/colorizer/Manager.qml:48:52 unqualified Unqualified access | readonly property bool customBackgroundActive: plasmoid.configuration.customBackgroundColorEnabled
+containment/package/contents/ui/colorizer/Manager.qml:50:58 unqualified Unqualified access | && !(root.plasmaBackgroundForPopups && root.hasExpandedApplet)
+containment/package/contents/ui/colorizer/Manager.qml:50:92 unqualified Unqualified access | && !(root.plasmaBackgroundForPopups && root.hasExpandedApplet)
+containment/package/contents/ui/colorizer/Manager.qml:99:60 unqualified Unqualified access | return backgroundPolicy.brightness > 0.5 ? themeExtended.lightTheme : themeExtended.darkTheme;
+containment/package/contents/ui/colorizer/Manager.qml:99:87 unqualified Unqualified access | return backgroundPolicy.brightness > 0.5 ? themeExtended.lightTheme : themeExtended.darkTheme;
+containment/package/contents/ui/colorizer/Manager.qml:149:117 missing-property Member "backgroundColor" not found on type "QObject" | readonly property color backgroundColor: customBackgroundActive ? backgroundPolicy.backgroundColor : applyTheme.backgroundColor
+containment/package/contents/ui/colorizer/Manager.qml:150:105 missing-property Member "textColor" not found on type "QObject" | readonly property color textColor: customBackgroundActive ? backgroundPolicy.textColor : applyTheme.textColor
+containment/package/contents/ui/colorizer/Manager.qml:152:156 missing-property Member "inactiveBackgroundColor" not found on type "QObject" | readonly property color inactiveBackgroundColor: customBackgroundActive ? backgroundColor : (applyTheme === theme ? theme.backgroundColor : applyTheme.inactiveBackgroundColor)
+containment/package/contents/ui/colorizer/Manager.qml:153:138 missing-property Member "inactiveTextColor" not found on type "QObject" | readonly property color inactiveTextColor: customBackgroundActive ? textColor : (applyTheme === theme ? theme.textColor : applyTheme.inactiveTextColor)
+containment/package/contents/ui/colorizer/Manager.qml:53:24 unqualified Unqualified access | configuration: plasmoid.configuration
+indicators/default/package/config/config.qml:93:84 unqualified Unqualified access | readonly property bool modernDockStyleValue: (typeof dialog !== "undefined" && dialog && dialog.isModernDockStyle !== undefined)
+indicators/default/package/config/config.qml:93:94 unqualified Unqualified access | readonly property bool modernDockStyleValue: (typeof dialog !== "undefined" && dialog && dialog.isModernDockStyle !== undefined)
+indicators/default/package/config/config.qml:94:52 unqualified Unqualified access | ? dialog.isModernDockStyle
+indicators/default/package/config/config.qml:95:89 unqualified Unqualified access | : (typeof indicator !== "undefined" && indicator && indicator.isModernDockStyle === true)
+indicators/default/package/config/config.qml:95:102 unqualified Unqualified access | : (typeof indicator !== "undefined" && indicator && indicator.isModernDockStyle === true)
+indicators/default/package/config/config.qml:124:15 unqualified Unqualified access | text: i18n("Use Modern dot indicators")
+indicators/default/package/config/config.qml:125:18 unqualified Unqualified access | tooltip: i18n("Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style")
+indicators/default/package/config/config.qml:499:15 unqualified Unqualified access | text: i18n("Use application icon colors")
+indicators/default/package/config/config.qml:500:18 unqualified Unqualified access | tooltip: i18n("Color task indicators using the dominant color of each application icon")
+indicators/default/package/ui/main.qml:16:45 missing-property Member "configuration" not found on type "QQuickItem" | needsIconColors: indicator && indicator.configuration && indicator.configuration.useIconColor
+indicators/default/package/ui/main.qml:16:72 missing-property Member "configuration" not found on type "QQuickItem" | needsIconColors: indicator && indicator.configuration && indicator.configuration.useIconColor
+indicators/default/package/ui/main.qml:43:90 missing-property Member "isTask" not found on type "QQuickItem" | property color isActiveColor: oppositeToBackgroundColor(needsIconColors && indicator.isTask
+indicators/default/package/ui/main.qml:44:73 missing-property Member "iconBackgroundColor" not found on type "QQuickItem" | ? indicator.iconBackgroundColor : textColorSafe)
+indicators/default/package/ui/main.qml:86:55 missing-property Member "configuration" not found on type "QQuickItem" | readonly property bool modernDotPreset: indicator.configuration.modernDotPreset !== false

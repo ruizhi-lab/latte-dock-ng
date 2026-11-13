@@ -164,4 +164,6 @@ not inferred from that label. See [runtime summary](A4-resolver-data/runtime-sum
 This acceptance does not prove primary-not-zero or nested-containment behavior
 through the entire Corona/Synchronizer chain. Keep those original A4 cases
 pending; the isolated production policy tests and adapter contracts are narrower
-evidence. No commit or push was performed on `main`.
+evidence. This local acceptance snapshot preceded the user's authorized
+commit/push of `803cce3d9`; remote CI is tracked separately from the
+subsequent [T3 expansion](T3.md).

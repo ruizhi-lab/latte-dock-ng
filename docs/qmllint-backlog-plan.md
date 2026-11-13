@@ -1,13 +1,13 @@
 # QML lint backlog and baseline governance
 
-Date: 2026-09-30
+Initial inventory: 2026-09-30. Latest reviewed refresh: 2026-11-13.
 
 The reviewed machine baseline is [`qmllint-baseline.json`](qmllint-baseline.json).
-It records all 239 tracked QML files, the qmllint JSON revision, the tool and
+It records all 243 tracked QML files, the qmllint JSON revision, the tool and
 host fingerprint, import roots, successful process exit codes, and normalized
 diagnostic identities with multiplicities. The accepted fingerprint is
-qmllint 6.11.1 on Ubuntu 24.04 with the KDE Neon build stack, using the GCC
-Debug build tree and the installed `plasma-pa` QML module. A fingerprint
+qmllint 6.11.1 on Ubuntu 24.04 with the KDE Neon build stack, using the matching
+CI build-module environment and installed `plasma-pa` QML module. A fingerprint
 mismatch fails closed and is not permission to overwrite this file.
 
 ## Initial measured backlog
@@ -99,3 +99,14 @@ lint against the reviewed baseline in all four presets; see the
 [R8b record](modernization-results/R8b.md). Further refreshes require review of
 the full identity delta. Fingerprint or tracked-file inventory changes require
 a fresh candidate under the rules above.
+
+The 2026-11-13 [reviewed refresh](modernization-results/QML-baseline-2026-11-13.md)
+uses run 43397964476 for `796344495`. The two new helper files have no
+diagnostics. Nine identity/count deltas add 35 occurrences and eleven remove
+35, leaving 7,035 visible occurrences; totals alone were not the acceptance
+criterion. Tool and environment fingerprints are unchanged. Three independent
+CI reports (GCC Debug/Release and Clang Release) are byte-identical, cover all
+243 files with successful exits, and match the reviewed candidate. Fresh CI
+against the published refresh remains required; the old run's coverage failure
+is not reclassified as a pass. No category promotion or warning suppression
+was introduced.

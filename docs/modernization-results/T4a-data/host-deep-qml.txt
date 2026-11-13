@@ -1,0 +1,15 @@
+qmllint-deep: linting 243 QML files with import resolution (/usr/lib64/qt6/bin/qmllint)
+qmllint-deep: import roots: build QML modules, staged Latte modules, system QML
+qmllint-deep: warning counts (raw logs and report: build/modernization/clang-debug/qmllint-baseline):
+   5844 unqualified
+   1276 missing-property
+     18 Quick.anchor-combinations
+      6 incompatible-type
+      5 unused-imports
+      4 Quick.property-changes-parsed
+      4 unresolved-type
+      3 stale-property-read
+      2 import
+qmllint-deep: baseline comparison details:
+qmllint-baseline: error: tool fingerprint changed; establish a reviewed comparable baseline
+qmllint-deep: FAILED (see build/modernization/clang-debug/qmllint-deep.log and build/modernization/clang-debug/qmllint-baseline)

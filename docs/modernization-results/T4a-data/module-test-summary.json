@@ -1,0 +1,26 @@
+[
+  {
+    "preset": "gcc-debug",
+    "module_check_exit": 0,
+    "ctest_targets": 64,
+    "skipped": false
+  },
+  {
+    "preset": "clang-debug",
+    "module_check_exit": 0,
+    "ctest_targets": 64,
+    "skipped": false
+  },
+  {
+    "preset": "gcc-release",
+    "module_check_exit": 0,
+    "ctest_targets": 64,
+    "skipped": false
+  },
+  {
+    "preset": "clang-release",
+    "module_check_exit": 0,
+    "ctest_targets": 64,
+    "skipped": false
+  }
+]

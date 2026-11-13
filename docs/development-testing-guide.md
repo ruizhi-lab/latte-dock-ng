@@ -55,10 +55,11 @@ container separately verifies its packaged minimum stack: CMake 3.31.6, Qt
 6.8.2, KDE Frameworks 6.13 and Plasma 6.3.6. Gentoo, Arch and Fedora checks
 record their current stable versions as forward-compatibility evidence.
 
-The clang-tidy gate runs 29 explicitly named checks over the production sources
+The clang-tidy gate runs 47 explicitly named checks over the production sources
 that the clazy gate selects. The authoritative list is `GATED_CHECKS` in
 `scripts/test-clang-tidy.py`, mirrored exactly in `.clang-tidy`; the
-[T1](modernization-results/T1.md) and [T2](modernization-results/T2.md) records
+[T1](modernization-results/T1.md), [T2](modernization-results/T2.md) and
+[T3](modernization-results/T3.md) and [T4a](modernization-results/T4a.md) records
 explain the promoted checks and excluded candidates. It starts one clang-tidy
 process per source, from a database that holds only the selected commands.
 Each check has a disposable fixture in

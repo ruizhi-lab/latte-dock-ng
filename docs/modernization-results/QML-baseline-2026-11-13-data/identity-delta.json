@@ -1,0 +1,146 @@
+{
+  "added": [
+    {
+      "category": "unqualified",
+      "file": "containment/package/contents/ui/BindingsExternal.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "containment/package/contents/ui/colorizer/Manager.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 6
+    },
+    {
+      "category": "unqualified",
+      "file": "indicators/default/package/config/config.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 7
+    },
+    {
+      "category": "missing-property",
+      "file": "indicators/default/package/ui/main.qml",
+      "message": "Member \"configuration\" not found on type \"QQuickItem\"",
+      "severity": "warning",
+      "count": 3
+    },
+    {
+      "category": "missing-property",
+      "file": "indicators/default/package/ui/main.qml",
+      "message": "Member \"iconBackgroundColor\" not found on type \"QQuickItem\"",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "missing-property",
+      "file": "indicators/default/package/ui/main.qml",
+      "message": "Member \"isTask\" not found on type \"QQuickItem\"",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 12
+    },
+    {
+      "category": "unqualified",
+      "file": "shell/package/contents/configuration/pages/EffectsConfig.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 3
+    },
+    {
+      "category": "missing-property",
+      "file": "shell/package/contents/controls/IndicatorConfigUiManager.qml",
+      "message": "Member \"isModernDockStyle\" not found on type \"QQuickItem\"",
+      "severity": "warning",
+      "count": 1
+    }
+  ],
+  "removed": [
+    {
+      "category": "unqualified",
+      "file": "containment/package/contents/ui/applet/ItemWrapper.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 6
+    },
+    {
+      "category": "unqualified",
+      "file": "containment/package/contents/ui/applet/ShortcutBadge.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "containment/package/contents/ui/background/MultiLayered.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "missing-property",
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"action\" not found on type \"Plasma::Applet\"",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "declarativeimports/abilities/items/basicitem/ShortcutBadge.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "plasmoid/package/contents/ui/task/TaskMouseArea.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 3
+    },
+    {
+      "category": "unqualified",
+      "file": "shell/package/contents/configuration/CanvasConfiguration.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 3
+    },
+    {
+      "category": "Quick.layout-positioning",
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "Quick.layout-positioning",
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "category": "unqualified",
+      "file": "shell/package/contents/controls/IndicatorConfigUiManager.qml",
+      "message": "Unqualified access",
+      "severity": "warning",
+      "count": 16
+    }
+  ]
+}

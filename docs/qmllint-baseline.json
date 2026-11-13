@@ -23,7 +23,7 @@
     },
     {
       "category": "unqualified",
-      "count": 249,
+      "count": 250,
       "file": "containment/package/contents/ui/BindingsExternal.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -1227,7 +1227,7 @@
     },
     {
       "category": "unqualified",
-      "count": 170,
+      "count": 164,
       "file": "containment/package/contents/ui/applet/ItemWrapper.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -1241,7 +1241,7 @@
     },
     {
       "category": "unqualified",
-      "count": 38,
+      "count": 37,
       "file": "containment/package/contents/ui/applet/ShortcutBadge.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -1451,7 +1451,7 @@
     },
     {
       "category": "unqualified",
-      "count": 180,
+      "count": 179,
       "file": "containment/package/contents/ui/background/MultiLayered.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -1633,7 +1633,7 @@
     },
     {
       "category": "unqualified",
-      "count": 71,
+      "count": 77,
       "file": "containment/package/contents/ui/colorizer/Manager.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -1717,7 +1717,7 @@
     },
     {
       "category": "missing-property",
-      "count": 2,
+      "count": 1,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"action\" not found on type \"Plasma::Applet\"",
       "severity": "warning"
@@ -3208,7 +3208,7 @@
     },
     {
       "category": "unqualified",
-      "count": 28,
+      "count": 27,
       "file": "declarativeimports/abilities/items/basicitem/ShortcutBadge.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -3502,7 +3502,7 @@
     },
     {
       "category": "unqualified",
-      "count": 60,
+      "count": 67,
       "file": "indicators/default/package/config/config.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -3523,7 +3523,7 @@
     },
     {
       "category": "missing-property",
-      "count": 21,
+      "count": 24,
       "file": "indicators/default/package/ui/main.qml",
       "message": "Member \"configuration\" not found on type \"QQuickItem\"",
       "severity": "warning"
@@ -3561,6 +3561,13 @@
       "count": 2,
       "file": "indicators/default/package/ui/main.qml",
       "message": "Member \"hasShown\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "indicators/default/package/ui/main.qml",
+      "message": "Member \"iconBackgroundColor\" not found on type \"QQuickItem\"",
       "severity": "warning"
     },
     {
@@ -3628,7 +3635,7 @@
     },
     {
       "category": "missing-property",
-      "count": 1,
+      "count": 2,
       "file": "indicators/default/package/ui/main.qml",
       "message": "Member \"isTask\" not found on type \"QQuickItem\"",
       "severity": "warning"
@@ -4433,7 +4440,7 @@
     },
     {
       "category": "unqualified",
-      "count": 226,
+      "count": 223,
       "file": "plasmoid/package/contents/ui/task/TaskMouseArea.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4734,7 +4741,7 @@
     },
     {
       "category": "unqualified",
-      "count": 11,
+      "count": 8,
       "file": "shell/package/contents/configuration/CanvasConfiguration.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4754,20 +4761,6 @@
       "severity": "warning"
     },
     {
-      "category": "Quick.layout-positioning",
-      "count": 1,
-      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
-      "message": "Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.",
-      "severity": "warning"
-    },
-    {
-      "category": "Quick.layout-positioning",
-      "count": 1,
-      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
-      "message": "Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.",
-      "severity": "warning"
-    },
-    {
       "category": "missing-property",
       "count": 4,
       "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
@@ -4783,7 +4776,7 @@
     },
     {
       "category": "unqualified",
-      "count": 90,
+      "count": 89,
       "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4825,7 +4818,7 @@
     },
     {
       "category": "unqualified",
-      "count": 234,
+      "count": 246,
       "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4853,7 +4846,7 @@
     },
     {
       "category": "unqualified",
-      "count": 69,
+      "count": 72,
       "file": "shell/package/contents/configuration/pages/EffectsConfig.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4894,8 +4887,15 @@
       "severity": "warning"
     },
     {
+      "category": "missing-property",
+      "count": 1,
+      "file": "shell/package/contents/controls/IndicatorConfigUiManager.qml",
+      "message": "Member \"isModernDockStyle\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
-      "count": 46,
+      "count": 30,
       "file": "shell/package/contents/controls/IndicatorConfigUiManager.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -5043,6 +5043,7 @@
       "containment/package/contents/ui/background/types/Paddings.qml",
       "containment/package/contents/ui/background/types/Shadows.qml",
       "containment/package/contents/ui/background/types/Totals.qml",
+      "containment/package/contents/ui/colorizer/BackgroundColorPolicy.qml",
       "containment/package/contents/ui/colorizer/CustomBackground.qml",
       "containment/package/contents/ui/colorizer/KirigamiShadowedRectangle.qml",
       "containment/package/contents/ui/colorizer/Manager.qml",
@@ -5222,6 +5223,7 @@
       "shell/package/contents/configuration/pages/BehaviorConfig.qml",
       "shell/package/contents/configuration/pages/EffectsConfig.qml",
       "shell/package/contents/configuration/pages/TasksConfig.qml",
+      "shell/package/contents/controls/ColorButton.qml",
       "shell/package/contents/controls/CustomIndicatorButton.qml",
       "shell/package/contents/controls/CustomVisibilityModeButton.qml",
       "shell/package/contents/controls/DragCorner.qml",
@@ -5287,6 +5289,7 @@
       "containment/package/contents/ui/background/types/Paddings.qml": 0,
       "containment/package/contents/ui/background/types/Shadows.qml": 0,
       "containment/package/contents/ui/background/types/Totals.qml": 0,
+      "containment/package/contents/ui/colorizer/BackgroundColorPolicy.qml": 0,
       "containment/package/contents/ui/colorizer/CustomBackground.qml": 0,
       "containment/package/contents/ui/colorizer/KirigamiShadowedRectangle.qml": 0,
       "containment/package/contents/ui/colorizer/Manager.qml": 0,
@@ -5466,17 +5469,18 @@
       "shell/package/contents/configuration/pages/BehaviorConfig.qml": 0,
       "shell/package/contents/configuration/pages/EffectsConfig.qml": 0,
       "shell/package/contents/configuration/pages/TasksConfig.qml": 0,
+      "shell/package/contents/controls/ColorButton.qml": 0,
       "shell/package/contents/controls/CustomIndicatorButton.qml": 0,
       "shell/package/contents/controls/CustomVisibilityModeButton.qml": 0,
       "shell/package/contents/controls/DragCorner.qml": 0,
+      "shell/package/contents/controls/HelpMenuButton.qml": 0,
       "shell/package/contents/controls/IndicatorConfigUiManager.qml": 0,
       "shell/package/contents/controls/InnerShadow.qml": 0,
       "shell/package/contents/explorer/AppletAlternatives.qml": 0,
       "shell/package/contents/views/AppletDelegate.qml": 0,
       "shell/package/contents/views/InfoView.qml": 0,
       "shell/package/contents/views/Panel.qml": 0,
-      "shell/package/contents/views/WidgetExplorer.qml": 0,
-      "shell/package/contents/controls/HelpMenuButton.qml": 0
+      "shell/package/contents/views/WidgetExplorer.qml": 0
     },
     "processExitCodes": [
       0,

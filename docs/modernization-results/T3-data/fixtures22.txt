@@ -1,0 +1,2 @@
+46 negative fixtures: each is rejected as an error by its own gated check
+wall=0.965s

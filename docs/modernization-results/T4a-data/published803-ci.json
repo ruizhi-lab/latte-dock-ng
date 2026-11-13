@@ -1,0 +1,122 @@
+{
+  "commit": "803cce3d9ade5fe5b593851a96628069f2c0f540",
+  "run_id": 43350616185,
+  "date": "2026-11-13",
+  "jobs": [
+    {
+      "name": "Resolve and validate candidate version",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "NixOS release check",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (GCC Release)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (Clang Debug)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (Clang Release)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (mageia)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build (GCC Debug)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (debian13)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (fedora)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (debian-testing)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (opensuse)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (mageia)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (arch)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "QML lint (qmllint)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (fedora)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Package install verify (ubuntu)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (opensuse)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (debian13)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (arch)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (debian-testing)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install verify (ubuntu)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "APT repository preflight (no publish)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bind validated packages to version and source",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

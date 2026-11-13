@@ -1,0 +1,267 @@
+{
+  "commit": "803cce3d9ade5fe5b593851a96628069f2c0f540",
+  "run_id": 43350616185,
+  "url": "https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43350616185",
+  "snapshot_date": "2026-11-13",
+  "scope": "Published A4/T1/T2 batch with29 checks; not the uncommitted46-check T3 expansion",
+  "jobs": [
+    {
+      "id": 131640510520,
+      "name": "Resolve and validate candidate version",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568589,
+      "name": "NixOS release check",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568656,
+      "name": "Build (GCC Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Run targeted clang-tidy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run gated clazy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run targeted ASan/UBSan tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Deep QML lint",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 131640568680,
+      "name": "Build (Clang Debug)",
+      "status": "in_progress",
+      "conclusion": null,
+      "steps": [
+        {
+          "name": "Run targeted clang-tidy checks",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Run gated clazy checks",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Test",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Run targeted ASan/UBSan tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Deep QML lint",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "id": 131640568690,
+      "name": "Build (Clang Release)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Run targeted clang-tidy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run gated clazy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run targeted ASan/UBSan tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Deep QML lint",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 131640568705,
+      "name": "Package install verify (mageia)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568707,
+      "name": "Build (GCC Debug)",
+      "status": "in_progress",
+      "conclusion": null,
+      "steps": [
+        {
+          "name": "Run targeted clang-tidy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run gated clazy checks",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run targeted ASan/UBSan tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Deep QML lint",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "id": 131640568710,
+      "name": "Package install verify (debian13)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568737,
+      "name": "Package install verify (fedora)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568749,
+      "name": "Package install verify (debian-testing)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568754,
+      "name": "Package install verify (opensuse)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568766,
+      "name": "Install verify (mageia)",
+      "status": "in_progress",
+      "conclusion": null,
+      "steps": []
+    },
+    {
+      "id": 131640568770,
+      "name": "Package install verify (arch)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568805,
+      "name": "QML lint (qmllint)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568810,
+      "name": "Install verify (fedora)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568811,
+      "name": "Package install verify (ubuntu)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568849,
+      "name": "Install verify (opensuse)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568850,
+      "name": "Install verify (debian13)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568858,
+      "name": "Install verify (arch)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568916,
+      "name": "Install verify (debian-testing)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131640568926,
+      "name": "Install verify (ubuntu)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    },
+    {
+      "id": 131645628606,
+      "name": "APT repository preflight (no publish)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": []
+    }
+  ]
+}

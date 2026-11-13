@@ -1,0 +1,29 @@
+[
+  {
+    "preset": "gcc-release",
+    "exit_code": 0,
+    "candidate_sha256": "87124c9926578772fc49ea9556e3489b2e4d2d90ed69ae063b865bb86fadfea3",
+    "comparison": {
+      "added": [],
+      "removed": []
+    }
+  },
+  {
+    "preset": "clang-release",
+    "exit_code": 0,
+    "candidate_sha256": "87124c9926578772fc49ea9556e3489b2e4d2d90ed69ae063b865bb86fadfea3",
+    "comparison": {
+      "added": [],
+      "removed": []
+    }
+  },
+  {
+    "preset": "gcc-debug",
+    "exit_code": 0,
+    "candidate_sha256": "87124c9926578772fc49ea9556e3489b2e4d2d90ed69ae063b865bb86fadfea3",
+    "comparison": {
+      "added": [],
+      "removed": []
+    }
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "preset": "gcc-debug",
+    "stage": "configure",
+    "exit_code": 0,
+    "wall_seconds": 0.994
+  },
+  {
+    "preset": "gcc-debug",
+    "stage": "build",
+    "exit_code": 0,
+    "wall_seconds": 6.648,
+    "compiler_warning_lines": []
+  },
+  {
+    "preset": "gcc-debug",
+    "stage": "ctest",
+    "exit_code": 0,
+    "wall_seconds": 32.472
+  },
+  {
+    "preset": "clang-debug",
+    "stage": "configure",
+    "exit_code": 0,
+    "wall_seconds": 0.927
+  },
+  {
+    "preset": "clang-debug",
+    "stage": "build",
+    "exit_code": 0,
+    "wall_seconds": 6.039,
+    "compiler_warning_lines": []
+  },
+  {
+    "preset": "clang-debug",
+    "stage": "ctest",
+    "exit_code": 0,
+    "wall_seconds": 32.647
+  },
+  {
+    "preset": "gcc-release",
+    "stage": "configure",
+    "exit_code": 0,
+    "wall_seconds": 0.937
+  },
+  {
+    "preset": "gcc-release",
+    "stage": "build",
+    "exit_code": 0,
+    "wall_seconds": 24.339,
+    "compiler_warning_lines": []
+  },
+  {
+    "preset": "gcc-release",
+    "stage": "ctest",
+    "exit_code": 0,
+    "wall_seconds": 32.721
+  },
+  {
+    "preset": "clang-release",
+    "stage": "configure",
+    "exit_code": 0,
+    "wall_seconds": 0.934
+  },
+  {
+    "preset": "clang-release",
+    "stage": "build",
+    "exit_code": 0,
+    "wall_seconds": 19.912,
+    "compiler_warning_lines": []
+  },
+  {
+    "preset": "clang-release",
+    "stage": "ctest",
+    "exit_code": 0,
+    "wall_seconds": 32.62
+  }
+]

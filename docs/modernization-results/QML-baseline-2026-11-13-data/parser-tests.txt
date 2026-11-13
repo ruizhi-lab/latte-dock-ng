@@ -1,0 +1,26 @@
+test_build_owned_import_failures_are_fatal_even_with_warning_exit (__main__.QmllintBaselineTest.test_build_owned_import_failures_are_fatal_even_with_warning_exit) ... ok
+test_capture_and_compare_cli_return_status_for_regressions (__main__.QmllintBaselineTest.test_capture_and_compare_cli_return_status_for_regressions) ... ok
+test_empty_text_run_is_valid_when_manifest_proves_full_success (__main__.QmllintBaselineTest.test_empty_text_run_is_valid_when_manifest_proves_full_success) ... ok
+test_environment_or_import_root_change_requires_a_new_baseline (__main__.QmllintBaselineTest.test_environment_or_import_root_change_requires_a_new_baseline) ... ok
+test_generated_module_checker_uses_declared_typeinfo_and_plugin_names (__main__.QmllintBaselineTest.test_generated_module_checker_uses_declared_typeinfo_and_plugin_names) ... ok
+test_json_ignores_line_shifts_and_temporary_import_prefixes (__main__.QmllintBaselineTest.test_json_ignores_line_shifts_and_temporary_import_prefixes) ... ok
+test_json_preserves_duplicate_multiplicity_and_zero_warning_files (__main__.QmllintBaselineTest.test_json_preserves_duplicate_multiplicity_and_zero_warning_files) ... ok
+test_malformed_and_truncated_input_fail_closed (__main__.QmllintBaselineTest.test_malformed_and_truncated_input_fail_closed) ... ok
+test_malformed_manifest_and_json_coverage_fail_closed (__main__.QmllintBaselineTest.test_malformed_manifest_and_json_coverage_fail_closed) ... ok
+test_meaningful_identifier_change_is_a_new_identity (__main__.QmllintBaselineTest.test_meaningful_identifier_change_is_a_new_identity) ... ok
+test_missing_or_failed_coverage_fails_closed (__main__.QmllintBaselineTest.test_missing_or_failed_coverage_fails_closed) ... ok
+test_new_identity_fails_even_when_another_identity_disappears (__main__.QmllintBaselineTest.test_new_identity_fails_even_when_another_identity_disappears) ... ok
+test_removed_identity_is_a_clean_comparison (__main__.QmllintBaselineTest.test_removed_identity_is_a_clean_comparison) ... ok
+test_run_collects_all_chunks_raw_logs_and_exit_codes (__main__.QmllintBaselineTest.test_run_collects_all_chunks_raw_logs_and_exit_codes) ... ok
+test_run_preserves_failed_process_exit_and_does_not_write_report (__main__.QmllintBaselineTest.test_run_preserves_failed_process_exit_and_does_not_write_report) ... qmllint-baseline: error: run manifest is not marked complete
+ok
+test_text_parser_counts_categories_and_ignores_source_locations (__main__.QmllintBaselineTest.test_text_parser_counts_categories_and_ignores_source_locations) ... ok
+test_tool_version_change_requires_a_new_comparable_baseline (__main__.QmllintBaselineTest.test_tool_version_change_requires_a_new_comparable_baseline) ... ok
+test_unknown_json_revision_fails_closed (__main__.QmllintBaselineTest.test_unknown_json_revision_fails_closed) ... ok
+test_valid_zero_diagnostic_run_is_comparable (__main__.QmllintBaselineTest.test_valid_zero_diagnostic_run_is_comparable) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.196s
+
+OK
+qmllint-baseline: linted 2 files in 2 processes; wrote /tmp/tmpttq2syrp/report.json (0 identities)
