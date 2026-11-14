@@ -82,6 +82,20 @@ and the log also says the KActivities service was not running. Both trackers
 matched the controlled window, but full activity, configuration and indicator
 state parity was not established.
 
+A later bounded diagnostic run waited for the actual `KActivities::Consumer`
+to reach Running and for both tracker contexts to become available. It first
+observed undefined virtual-desktop values; about 62 ms later both received
+change notifications and agreed on nonempty activity and desktop IDs and the
+same screen rectangle. Once ready, both models matched the controlled Dolphin
+window with the same `IsWindow`, `IsStartup`, `IsActive` and `IsMinimized`
+roles for its foreground, non-minimized state. This establishes that limited
+state parity for one instrumented Debug run, not minimized, activity-switch or
+full lifecycle parity. The private session logged an unavailable portal and
+virtual graphics warnings. It reported no SQL warnings in that run. No Release
+resource measurements were made. The [context comparison](P4-arch-preflight-data/context-validation.log)
+and [window role comparison](P4-arch-preflight-data/row-validation.log) record
+the validator results.
+
 The first attempt shared the normal temporary lock path and exited before the
 test; the process used a private session bus and scratch HOME, and source review
 shows the lock-conflict path returns before applying import options. Its actual
