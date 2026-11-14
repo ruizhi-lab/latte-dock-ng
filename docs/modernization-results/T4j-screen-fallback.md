@@ -29,4 +29,6 @@ assignment after the earlier fallback. The preview issue was resolved by
 selecting the hover preview action following a settings reset, without code
 changes. The tests cover the resolver and source integration boundaries, not a
 live unavailable-to-reconnected QScreen/Plasma transition; that transition has
-not been observed for this fix. Remote CI is pending.
+not been observed for this fix. Published as `e8ba4ad70`,
+[CI run 43545267519](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43545267519)
+passed all 23 jobs.

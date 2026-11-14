@@ -1,0 +1,6 @@
+Ubuntu LLVM version 18.1.3 Optimized build.
+1 checks enabled by -*,bugprone-unchecked-optional-access; analyzing 156 production sources; skipped 58 autotest source, 139 duplicate compile command of a selected source, 89 generated source in the build directory
+0 findings in first-party code from 0 checks; 1 checks with none; 0 in generated or test code not counted; 61 s with 4 jobs
+
+INVENTORY_EXIT=0
+ELAPSED_SECONDS=61.498

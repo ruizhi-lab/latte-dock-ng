@@ -179,7 +179,13 @@ subsequent T4d changes.
   retains the configured screen through temporary startup fallback and merges
   two equivalent drawing branches. Local validation and normal desktop retest
   pass; a live unavailable-to-reconnected output transition remains untested.
-  The branch-clone gate is not enabled.
+  Published as `e8ba4ad70`; CI run 43545267519 passed all 23 jobs. The
+  branch-clone gate is not enabled.
+
+- T5 evaluation: [unchecked optional access](modernization-results/T5-optional-evaluation.md)
+  passed fixture and production scans on LLVM 18 and 22. Three local paired
+  runs showed no large wall-time increase, but CI cost and its budget remain
+  unestablished; the check has not been promoted.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`

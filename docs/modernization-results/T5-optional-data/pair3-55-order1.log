@@ -1,0 +1,14 @@
+STARTED_UTC=2026-11-14T02:38:56.663542+00:00
+ORDER=pair3-55-order1
+GATE_VARIANT=55
+CLANG_TIDY=/usr/lib/llvm/22/bin/clang-tidy (LLVM 22.1.8)
+JOBS=4
+LOAD_BEFORE=(4.1494140625, 3.18115234375, 2.30322265625)
+LOAD_AFTER=(4.40283203125, 3.46044921875, 2.466796875)
+ELAPSED_SECONDS=71.376
+EXIT_CODE=0
+
+LLVM (http://llvm.org/): LLVM version 22.1.8 Optimized build.
+selected 156 production sources; skipped 58 autotest source, 139 duplicate compile command of a selected source, 89 generated source in the build directory
+55 negative fixtures: each is rejected as an error by its own gated check
+156 production sources: no findings from 55 gated clang-tidy checks

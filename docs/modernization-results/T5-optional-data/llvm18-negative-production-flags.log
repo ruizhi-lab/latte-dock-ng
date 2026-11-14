@@ -1,0 +1,6 @@
+1 warning generated.
+/tmp/T5-unchecked-optional-evidence/negative.cpp:5:13: error: unchecked access to optional value [bugprone-unchecked-optional-access,-warnings-as-errors]
+    5 |     return *value;
+      |             ^
+1 warning treated as error
+FIXTURE_EXIT=1
