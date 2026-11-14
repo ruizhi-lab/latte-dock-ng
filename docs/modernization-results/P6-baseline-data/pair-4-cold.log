@@ -1,0 +1,8 @@
+Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
+Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
+If this causes problems, reconfigure your locale. See the locale(1) manual
+for more information.
+engine_import_paths= /tmp/p6-components-probe/qmlroot|/tmp/p6-components-probe/build|qrc:/qt-project.org/imports|qrc:/qt/qml|/usr/lib64/qt6/qml
+expected_qmldir= /tmp/p6-components-probe/qmlroot/org/kde/latte/components/qmldir
+expected_scrollarea= /tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml
+compile_ns= 2394916 create_ns= 151731 root_type= Probe_QMLTYPE_1 scrollarea_type= ScrollArea_QMLTYPE_0

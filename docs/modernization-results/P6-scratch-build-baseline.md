@@ -42,3 +42,18 @@ or establish timing differences. The probe did not invoke Latte's production
 import-path setup, start the Dock, or exercise its Corona, view and applet
 context. It is a feasible isolated module-load path, not the production
 runtime baseline required for P6.
+
+For a limited follow-up, a high-resolution version of the same probe ran five
+sequential cold/warm pairs, without import tracing. Each process was fresh;
+each pair used its own scratch HOME and cache, emptied before cold and retained
+for warm. [The resulting cache unit](P6-baseline-data/cache-attribution.txt)
+contains the actual `ScrollArea.qml` URL and symbols. The timed compile/load
+interval includes inline `QQmlComponent` construction, `setData()`, imports
+and compilation; `component.create()` was timed separately.
+
+The paired warm-minus-cold compile/load differences were +27,010, −42,560,
+−83,931, +714,242 and −140,280 ns (median −42,560 ns). Creation's paired
+median difference was −1,731 ns. All runs succeeded; the [raw samples](P6-baseline-data/quant-data.csv)
+and per-run logs are retained. OS page caches were not cleared and each pair
+always ran cold before warm. The small, mixed-direction differences do not
+establish an effect, module-level improvement, or a full-Dock result.
