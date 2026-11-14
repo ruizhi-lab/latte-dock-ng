@@ -10,7 +10,9 @@
 #include <QTemporaryDir>
 #include <QTest>
 
-// Replicates static helper logic from app/layouts/importer.cpp
+#include "../app/layouts/uniquelayoutname.h"
+
+// Tests the production layout-name helper and legacy importer utility copies.
 
 namespace ImporterLogic {
 
@@ -69,6 +71,8 @@ private Q_SLOTS:
 
     void userFilePathEndsWithExtension();
     void emptyNameProducesEmptyPath();
+    void uniqueLayoutNameUsesAvailableFileSuffix();
+    void uniqueLayoutNameStripsExistingNumericSuffix();
 };
 
 void ImporterLogicTest::nameStripsPathAndExtension()
@@ -125,6 +129,47 @@ void ImporterLogicTest::userFilePathEndsWithExtension()
 void ImporterLogicTest::emptyNameProducesEmptyPath()
 {
     QVERIFY(ImporterLogic::layoutUserFilePath(QString()).isEmpty());
+}
+
+void ImporterLogicTest::uniqueLayoutNameUsesAvailableFileSuffix()
+{
+    QTemporaryDir layoutDir;
+    QVERIFY(layoutDir.isValid());
+
+    const auto createLayout = [&layoutDir](const QString &name) {
+        QFile file(layoutDir.filePath(name + QStringLiteral(".layout.latte")));
+        return file.open(QFile::WriteOnly);
+    };
+
+    QVERIFY(createLayout(QStringLiteral("Work")));
+    QVERIFY(createLayout(QStringLiteral("Work - 2")));
+
+    const auto layoutExists = [&layoutDir](const QString &name) {
+        return QFile::exists(layoutDir.filePath(name + QStringLiteral(".layout.latte")));
+    };
+
+    const QString name = Latte::Layouts::Private::uniqueLayoutName(QStringLiteral("Work"), layoutExists);
+
+    QCOMPARE(name, QStringLiteral("Work - 3"));
+    QVERIFY(!layoutExists(name));
+}
+
+void ImporterLogicTest::uniqueLayoutNameStripsExistingNumericSuffix()
+{
+    QTemporaryDir layoutDir;
+    QVERIFY(layoutDir.isValid());
+
+    QFile file(layoutDir.filePath(QStringLiteral("Work - 2.layout.latte")));
+    QVERIFY(file.open(QFile::WriteOnly));
+
+    const auto layoutExists = [&layoutDir](const QString &name) {
+        return QFile::exists(layoutDir.filePath(name + QStringLiteral(".layout.latte")));
+    };
+
+    const QString name = Latte::Layouts::Private::uniqueLayoutName(QStringLiteral("Work - 2"), layoutExists);
+
+    QCOMPARE(name, QStringLiteral("Work"));
+    QVERIFY(!layoutExists(name));
 }
 
 QTEST_MAIN(ImporterLogicTest)

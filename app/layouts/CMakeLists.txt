@@ -8,4 +8,5 @@ target_sources(latte-dock-ng PRIVATE
     storage.cpp
     syncedlaunchers.cpp
     synchronizer.cpp
+    uniquelayoutname.cpp
 )

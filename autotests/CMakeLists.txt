@@ -1022,10 +1022,18 @@ target_include_directories(effectslogictest PRIVATE ${CMAKE_BINARY_DIR}/app ${CM
 target_link_libraries(effectslogictest Qt6::Core Qt6::Gui Qt6::Test Plasma::Plasma)
 latte_add_test(effectslogictest)
 
-set(importerlogictest_SRCS importerlogictest.cpp)
+set(importerlogictest_SRCS
+    importerlogictest.cpp
+    ../app/layouts/uniquelayoutname.cpp
+    ../app/tools/commontools.cpp
+)
 add_executable(importerlogictest EXCLUDE_FROM_ALL ${importerlogictest_SRCS})
-target_link_libraries(importerlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
-latte_add_test(importerlogictest)
+target_include_directories(importerlogictest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/layouts
+    ${CMAKE_CURRENT_SOURCE_DIR}/../app/tools
+)
+target_link_libraries(importerlogictest Qt6::Core Qt6::Gui Qt6::Test KF6::ConfigCore)
+latte_add_offscreen_test(importerlogictest)
 
 # The production resolver is compiled directly, so the test runs the code the dock runs.
 set(viewtemplatenamestest_SRCS

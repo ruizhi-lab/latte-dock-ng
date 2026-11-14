@@ -7,6 +7,7 @@
 
 #include <latte_debug.h>
 #include "importer.h"
+#include "uniquelayoutname.h"
 
 // local
 #include "pluginids.h"
@@ -23,7 +24,6 @@
 // Qt
 #include <QFile>
 #include <QLatin1String>
-#include <QRandomGenerator>
 
 // KDE
 #include <KArchive/KTar>
@@ -732,26 +732,9 @@ QString Importer::layoutTemplateSystemFilePath(const QString &name)
 
 QString Importer::uniqueLayoutName(QString name)
 {
-    if (layoutExists(name)) {
-        name = Latte::stripUniqueNameSuffix(name);
-    }
-
-    int i = 2;
-
-    QString namePart = name;
-
-    while (layoutExists(name) && i < 10000) {
-        name = namePart + QLatin1String(" - ") + QString::number(i);
-        i++;
-    }
-
-    if (layoutExists(name)) {
-        //! All numbered suffixes are taken — fall back to a random
-        //! suffix instead of returning a name that still exists.
-        name = namePart + QLatin1String(" - ") + QString::number(QRandomGenerator::global()->generate(), 16);
-    }
-
-    return name;
+    return Private::uniqueLayoutName(name, [](const QString &candidate) {
+        return layoutExists(candidate);
+    });
 }
 
 Latte::MultipleLayouts::Status Importer::multipleLayoutsStatus()

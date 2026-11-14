@@ -3992,13 +3992,20 @@ void SourceContractTest::importerLayoutCanBeImportedRejectsVersionBelow2()
 
 void SourceContractTest::importerUniqueLayoutNameCollisionLoopHasGuard()
 {
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/uniquelayoutname.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
     // The name collision resolution loop must not be unbounded.
     QVERIFY(src.contains(QStringLiteral("uniqueLayoutName")));
     QVERIFY(src.contains(QStringLiteral("layoutExists(name)")));
+    QVERIFY(src.contains(QStringLiteral("while (layoutExists(name)")));
+
+    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(importer.open(QFile::ReadOnly));
+    const QString importerSource = QString::fromUtf8(importer.readAll());
+    QVERIFY(importerSource.contains(QStringLiteral("Private::uniqueLayoutName(name")));
+    QVERIFY(importerSource.contains(QStringLiteral("return layoutExists(candidate);")));
 }
 
 // ------------------------------------------------------------------------
@@ -5005,7 +5012,7 @@ void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
 
 void SourceContractTest::importerUniqueLayoutNameHasIterationCap()
 {
-    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/uniquelayoutname.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -5497,7 +5504,7 @@ void SourceContractTest::layoutScannersListOnlyFiles()
 void SourceContractTest::uniqueNameExhaustionFallsBackToRandomSuffix()
 {
     const QStringList sources = {
-        QStringLiteral("/app/layouts/importer.cpp"),
+        QStringLiteral("/app/layouts/uniquelayoutname.cpp"),
         QStringLiteral("/app/settings/settingsdialog/layoutscontroller.cpp"),
         QStringLiteral("/app/settings/viewsdialog/viewscontroller.cpp"),
         QStringLiteral("/app/templates/templatesmanager.cpp"),
