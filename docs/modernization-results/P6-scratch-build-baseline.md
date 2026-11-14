@@ -25,3 +25,20 @@ attribute cost to the components module. A useful P6 decision still needs a
 module-attributable cold/warm Release experiment and a controlled prototype
 that preserves both installation roots and user override precedence. No
 performance improvement is claimed.
+
+A separate offscreen Release feasibility probe used the same PlasmaQuick
+shared-engine branch as this host's main program and explicitly added a scratch
+import root containing the unmodified source module. Two fresh processes loaded
+`org.kde.latte.components` and instantiated its real `ScrollArea`; import trace
+resolved both `qmldir` and the QML type from that scratch root. The first run
+started with an empty dedicated Qt disk-cache directory and created one cache
+file; the second retained it. Logs and cache inventories are in the adjacent
+data directory. A UTF-8 locale fallback notice was emitted by the probe.
+
+Both runs reported 2 ms for the instrumented compile/load interval and less
+than one integer millisecond for creation. One pair with tracing enabled and
+an uncontrolled OS page cache cannot attribute a cache hit to this component
+or establish timing differences. The probe did not invoke Latte's production
+import-path setup, start the Dock, or exercise its Corona, view and applet
+context. It is a feasible isolated module-load path, not the production
+runtime baseline required for P6.

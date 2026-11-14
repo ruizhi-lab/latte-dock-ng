@@ -1,0 +1,61 @@
+Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
+Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
+If this causes problems, reconfigure your locale. See the locale(1) manual
+for more information.
+qt.qml.import: addImportPath: "/usr/lib64/qt6/qml"
+qt.qml.import: addImportPath: "qrc:/qt/qml"
+qt.qml.import: addImportPath: "qrc:/qt-project.org/imports"
+qt.qml.import: addImportPath: "/tmp/p6-components-probe/build"
+qt.qml.import: addImportPath: "/tmp/p6-components-probe/qmlroot"
+engine_import_paths= /tmp/p6-components-probe/qmlroot|/tmp/p6-components-probe/build|qrc:/qt-project.org/imports|qrc:/qt/qml|/usr/lib64/qt6/qml
+expected_qmldir= /tmp/p6-components-probe/qmlroot/org/kde/latte/components/qmldir
+expected_scrollarea= /tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "QtQuick" version "(latest)" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/Probe.qml loaded ":/qt-project.org/imports/QtQuick/qmldir"
+qt.qml.import: resolvePlugin Could not resolve dynamic plugin with base name "qtquick2plugin" in ":/qt-project.org/imports/QtQuick"  file does not exist
+qt.qml.import: loading dependent import "QtQml" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "QtQml" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/Probe.qml loaded ":/qt-project.org/imports/QtQml/qmldir"
+qt.qml.import: resolvePlugin Could not resolve dynamic plugin with base name "qmlplugin" in ":/qt-project.org/imports/QtQml"  file does not exist
+qt.qml.import: loading dependent import "QML" version 1.0 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "QML" version "1.0" as ""
+qt.qml.import: loading dependent import "QtQml.Models" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "QtQml.Models" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/Probe.qml loaded ":/qt-project.org/imports/QtQml/Models/qmldir"
+qt.qml.import: resolvePlugin Could not resolve dynamic plugin with base name "modelsplugin" in ":/qt-project.org/imports/QtQml/Models"  file does not exist
+qt.qml.import: locateLocalQmldir: QtQml.Models module's qmldir found at "/usr/lib64/qt6/qml/QtQml/Models/qmldir"
+qt.qml.import: loading dependent import "QtQml.WorkerScript" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "QtQml.WorkerScript" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/Probe.qml loaded ":/qt-project.org/imports/QtQml/WorkerScript/qmldir"
+qt.qml.import: resolvePlugin Could not resolve dynamic plugin with base name "workerscriptplugin" in ":/qt-project.org/imports/QtQml/WorkerScript"  file does not exist
+qt.qml.import: locateLocalQmldir: QtQml.WorkerScript module's qmldir found at "/usr/lib64/qt6/qml/QtQml/WorkerScript/qmldir"
+qt.qml.import: locateLocalQmldir: QtQml module's qmldir found at "/usr/lib64/qt6/qml/QtQml/qmldir"
+qt.qml.import: locateLocalQmldir: QtQuick module's qmldir found at "/usr/lib64/qt6/qml/QtQuick/qmldir"
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "org.kde.latte.components" version "1.0" as "LatteComponents"
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/Probe.qml loaded "/tmp/p6-components-probe/qmlroot/org/kde/latte/components/qmldir"
+qt.qml.import: locateLocalQmldir: org.kde.latte.components module's qmldir found at "/usr/lib64/qt6/qml/org/kde/latte/components/qmldir"
+qt.qml.import: addImplicitImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml
+qt.qml.import: addFileImport: file:///tmp/p6-components-probe/qmlroot/Probe.qml "." version "(latest)" as ""
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/Probe.qml "LatteComponents.ScrollArea"  =>  ""   QUrl("file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml")  TYPE/URL
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtQuick" version "(latest)" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml loaded ":/qt-project.org/imports/QtQuick/qmldir"
+qt.qml.import: loading dependent import "QtQml" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtQml" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml loaded ":/qt-project.org/imports/QtQml/qmldir"
+qt.qml.import: loading dependent import "QML" version 1.0 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QML" version "1.0" as ""
+qt.qml.import: loading dependent import "QtQml.Models" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtQml.Models" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml loaded ":/qt-project.org/imports/QtQml/Models/qmldir"
+qt.qml.import: loading dependent import "QtQml.WorkerScript" version 6.11 as ""
+qt.qml.import: addLibraryImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtQml.WorkerScript" version "6.11" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml loaded ":/qt-project.org/imports/QtQml/WorkerScript/qmldir"
+qt.qml.import: addImplicitImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml
+qt.qml.import: addFileImport: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "." version "(latest)" as ""
+qt.qml.import: importExtension: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml loaded "/tmp/p6-components-probe/qmlroot/org/kde/latte/components/qmldir"
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "MouseArea"  =>  "QQuickMouseArea"  TYPE
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "Timer"  =>  "QQmlTimer"  TYPE
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtObject"  =>  "QObject"  TYPE
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/org/kde/latte/components/ScrollArea.qml "QtObject"  =>  "QObject"  TYPE
+qt.qml.import: resolveType: file:///tmp/p6-components-probe/qmlroot/Probe.qml "Item"  =>  "QQuickItem"  TYPE
+compile_ms= 2 create_ms= 0 root_type= Probe_QMLTYPE_1 scrollarea_type= ScrollArea_QMLTYPE_0
