@@ -69,6 +69,8 @@ private Q_SLOTS:
     void scheduledDestructionHidesAndShowsAppletItem();
     void scheduledDestructionToleratesMissingLayouts();
     void repairSkipsAppletScheduledForDestruction();
+    void resolveAppletQuickItemStopsAtCyclicPropertyGraph();
+    void resolveAppletQuickItemFindsQuickItemThroughPropertyChain();
     void restoresAndSavesLegacyJustifyFromPersistedMap();
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
 };
@@ -285,6 +287,29 @@ void ContainmentLayoutUnitTest::repairSkipsAppletScheduledForDestruction()
     QCOMPARE(root.appletItemCreationCount(), 0);
     QVERIFY(!didRepair);
     QVERIFY(main.childItems().isEmpty());
+}
+
+void ContainmentLayoutUnitTest::resolveAppletQuickItemStopsAtCyclicPropertyGraph()
+{
+    QObject first;
+    QObject second;
+    first.setProperty("applet", QVariant::fromValue(static_cast<QObject *>(&second)));
+    second.setProperty("applet", QVariant::fromValue(static_cast<QObject *>(&first)));
+
+    Latte::Containment::LayoutManager manager;
+    QVERIFY(!manager.resolveAppletQuickItem(&first));
+}
+
+void ContainmentLayoutUnitTest::resolveAppletQuickItemFindsQuickItemThroughPropertyChain()
+{
+    QObject appletWrapper;
+    QObject backendApplet;
+    QQuickItem quickItem;
+    appletWrapper.setProperty("applet", QVariant::fromValue(static_cast<QObject *>(&backendApplet)));
+    backendApplet.setProperty("item", QVariant::fromValue(static_cast<QObject *>(&quickItem)));
+
+    Latte::Containment::LayoutManager manager;
+    QCOMPARE(manager.resolveAppletQuickItem(&appletWrapper), static_cast<QObject *>(&quickItem));
 }
 
 void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
