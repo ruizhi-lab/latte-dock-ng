@@ -5487,18 +5487,25 @@ void SourceContractTest::layoutScannersListOnlyFiles()
 {
     // The temporary directory of Apply lives in the layouts directory. The scanners of that directory must keep
     // listing files only, so a directory is never taken for a layout.
-    const QStringList scanners = {
-        QStringLiteral("/app/layouts/synchronizer.cpp"),
-        QStringLiteral("/app/layouts/importer.cpp"),
-    };
+    QFile importerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(importerFile.open(QFile::ReadOnly));
+    const QString importerSource = withoutComments(QString::fromUtf8(importerFile.readAll()));
+    const int availableLayoutsStart = importerSource.indexOf(QStringLiteral("QStringList Importer::availableLayouts()"));
+    QVERIFY(availableLayoutsStart >= 0);
+    const int availableLayoutsEnd = importerSource.indexOf(QStringLiteral("QStringList Importer::availableViewTemplates()"), availableLayoutsStart);
+    QVERIFY(availableLayoutsEnd > availableLayoutsStart);
+    const QString availableLayouts = importerSource.mid(availableLayoutsStart, availableLayoutsEnd - availableLayoutsStart);
+    QVERIFY(availableLayouts.contains(QStringLiteral("layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks)")));
 
-    for (const QString &path : scanners) {
-        QFile f(QStringLiteral(LATTE_SOURCE_DIR) + path);
-        QVERIFY2(f.open(QFile::ReadOnly), qPrintable(path));
-        const QString src = withoutComments(QString::fromUtf8(f.readAll()));
-
-        QVERIFY2(src.contains(QStringLiteral("layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks)")), qPrintable(path));
-    }
+    QFile synchronizerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/synchronizer.cpp"));
+    QVERIFY(synchronizerFile.open(QFile::ReadOnly));
+    const QString synchronizerSource = withoutComments(QString::fromUtf8(synchronizerFile.readAll()));
+    const int initLayoutsStart = synchronizerSource.indexOf(QStringLiteral("void Synchronizer::initLayouts()"));
+    QVERIFY(initLayoutsStart >= 0);
+    const int initLayoutsEnd = synchronizerSource.indexOf(QStringLiteral("void Synchronizer::onLayoutAdded("), initLayoutsStart);
+    QVERIFY(initLayoutsEnd > initLayoutsStart);
+    const QString initLayouts = synchronizerSource.mid(initLayoutsStart, initLayoutsEnd - initLayoutsStart);
+    QVERIFY(initLayouts.contains(QStringLiteral("layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks)")));
 }
 
 void SourceContractTest::uniqueNameExhaustionFallsBackToRandomSuffix()
