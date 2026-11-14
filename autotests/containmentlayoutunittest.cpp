@@ -26,9 +26,15 @@ class RestoreRoot : public QQuickItem
   public:
     Q_INVOKABLE QVariant createAppletItem(QVariant applet)
     {
+        ++m_appletItemCreationCount;
         auto *item = new QQuickItem(this);
         item->setProperty("backendAppletRef", applet);
         return QVariant::fromValue(item);
+    }
+
+    int appletItemCreationCount() const
+    {
+        return m_appletItemCreationCount;
     }
 
     Q_INVOKABLE QVariant createJustifySplitter()
@@ -45,6 +51,7 @@ class RestoreRoot : public QQuickItem
     }
 
 private:
+    int m_appletItemCreationCount{0};
     int m_justifySplitterCreationCount{0};
 };
 
@@ -61,6 +68,7 @@ private Q_SLOTS:
     void roundTripsMasqueradedIndexes();
     void scheduledDestructionHidesAndShowsAppletItem();
     void scheduledDestructionToleratesMissingLayouts();
+    void repairSkipsAppletScheduledForDestruction();
     void restoresAndSavesLegacyJustifyFromPersistedMap();
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
 };
@@ -246,6 +254,37 @@ void ContainmentLayoutUnitTest::scheduledDestructionToleratesMissingLayouts()
     manager.setAppletInScheduledDestruction(7, false);
     QVERIFY(!manager.appletsInScheduledDestruction().contains(7));
     QCOMPARE(scheduledSpy.count(), 2);
+}
+
+void ContainmentLayoutUnitTest::repairSkipsAppletScheduledForDestruction()
+{
+    TestConfig config;
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&config)));
+
+    QQuickItem applet;
+    applet.setProperty("id", 47);
+    applet.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&applet)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &applet }));
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    manager.setAppletInScheduledDestruction(47, true);
+    QCOMPARE(root.appletItemCreationCount(), 0);
+
+    const bool didRepair = manager.repairAppletContainers();
+    QCOMPARE(root.appletItemCreationCount(), 0);
+    QVERIFY(!didRepair);
+    QVERIFY(main.childItems().isEmpty());
 }
 
 void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
