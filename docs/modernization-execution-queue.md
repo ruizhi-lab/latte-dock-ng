@@ -177,8 +177,8 @@ subsequent T4d changes.
 
 - T4j: [startup screen fallback and drawing](modernization-results/T4j-screen-fallback.md)
   retains the configured screen through temporary startup fallback and merges
-  two equivalent drawing branches. Local validation and normal desktop retest
-  pass; a live unavailable-to-reconnected output transition remains untested.
+  two equivalent drawing branches. Local validation and desktop retesting pass,
+  including one live DP-3 disable, startup fallback and re-enable transition.
   Published as `e8ba4ad70`; CI run 43545267519 passed all 23 jobs. The
   branch-clone gate is not enabled.
 

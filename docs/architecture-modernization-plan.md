@@ -420,8 +420,9 @@ reduction is claimed without measurement.
 [Startup screen fallback and drawing follow-up](modernization-results/T4j-screen-fallback.md)
 preserves an explicit screen choice during temporary startup fallback and
 consolidates two equivalent drawing branches. Four local configurations and
-desktop retesting pass; an actual unavailable-to-reconnected screen transition
-remains untested. The branch-clone gate remains disabled.
+desktop retesting pass, including one live DP-3 disable, startup fallback and
+re-enable transition. Unknown connector mappings remain unverified. The
+branch-clone gate remains disabled.
 
 ## Git and rollback
 

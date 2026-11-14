@@ -25,7 +25,9 @@ clazy passed for the importer and naming implementation. QML syntax passed for
 comparison could not pass locally because the tool fingerprint differs from
 the reviewed baseline; its diagnostics were not classified as new or existing.
 The importer test links the project's existing Qt Gui dependency; no minimum
-version or external dependency changed. Remote CI is pending.
+version or external dependency changed. Published as `5ed12c722`,
+[CI run 43559497365](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43559497365)
+passed all 23 jobs.
 
 On 2026-11-14, the user confirmed that creating layouts with duplicate names in
 the settings dialog produced distinct names. That interaction uses the settings

@@ -27,8 +27,14 @@ after restarting the user-mode Debug build; the debug log contained no warnings
 or errors after this retest. The secondary dock was restored to its prior DP-3
 assignment after the earlier fallback. The preview issue was resolved by
 selecting the hover preview action following a settings reset, without code
-changes. The tests cover the resolver and source integration boundaries, not a
-live unavailable-to-reconnected QScreen/Plasma transition; that transition has
-not been observed for this fix. Published as `e8ba4ad70`,
+changes. Later on 2026-11-14, with the user's agreement, DP-3 was disabled
+before a user-mode Debug restart and then re-enabled. The log recorded the
+expected temporary fallback to DP-1 and the subsequent `setScreenToFollow()`
+for DP-3. The containment retained `lastScreen=11` and `onPrimary=false`;
+display geometry, scaling and rotation matched their prior values. The user
+confirmed that both docks and hover previews were normal after restoration.
+The only warning in that retest log was the expected unavailable-screen
+fallback. This verifies one live output-disable/re-enable scenario with a known
+connector; it does not cover an unknown connector mapping. Published as `e8ba4ad70`,
 [CI run 43545267519](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43545267519)
 passed all 23 jobs.
