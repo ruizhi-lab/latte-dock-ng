@@ -87,7 +87,7 @@
 <tr class="group"><td colspan="2">徽章</td></tr>
 <tr><td>工作通知 <span class="advanced">進階</span><small>Notifications from tasks</small></td><td>在工作圖示上顯示未讀通知數量。</td></tr>
 <tr><td>工作進度資訊 <span class="advanced">進階</span><small>Progress information for tasks</small></td><td>顯示進度徽章，例如 Dolphin 複製檔案時。</td></tr>
-<tr><td>工作的音訊播放 <span class="advanced">進階</span><small>Audio playing from tasks</small></td><td>為正在播放聲音的應用程式顯示音訊徽章。</td></tr>
+<tr><td>工作的音訊播放 <span class="advanced">進階</span><small>Audio playing from tasks</small></td><td>為正在播放聲音的應用程式顯示音訊徽章。優先依明確的桌面應用程式或應用程式識別碼配對。通用瀏覽器行程資訊不足以識別特定 PWA；無法確定歸屬的音訊串流不顯示徽章，以免在無關應用程式上提供音訊控制。獨立的 Electron 應用程式仍可依自身的音訊行程配對。 播放狀態與聲音活動用於及時隱藏已暫停的徽章，即使應用程式仍保留音訊連線。無法取得播放器狀態時，允許約一秒的短暫靜音緩衝。</td></tr>
 <tr><td>通知徽章使用醒目顏色 <span class="advanced">進階</span><small>Prominent color for notification badge</small></td><td>使用更醒目（通常是紅色）的通知徽章。需要先開啟「工作通知」。</td></tr>
 <tr><td>捲動音訊徽章時變更音量 <span class="advanced">進階</span><small>Change volume when scrolling audio badge</small></td><td>點擊音訊徽章可靜音/取消靜音，捲動滾輪可調整音量。需要先開啟「工作的音訊播放」。</td></tr>
 <tr class="group"><td colspan="2">互動</td></tr>

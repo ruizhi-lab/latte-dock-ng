@@ -118,7 +118,7 @@ Item {
 
             readonly property bool showsAudioBadge: root.showAudioBadge
                                                     && taskItem.hasAudioStream
-                                                    && (taskItem.playingAudio || taskItem.muted)
+                                                    && taskItem.playingAudio
                                                     && !taskItem.isSeparator
         }
     }

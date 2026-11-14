@@ -211,7 +211,7 @@ Item {
 
         property bool showAudio: (root.showAudioBadge
                                   && taskItem.hasAudioStream
-                                  && (taskItem.playingAudio || taskItem.muted))
+                                  && taskItem.playingAudio)
 
         Behavior on activateProgress {
             NumberAnimation { duration: 2 * taskItem.abilities.animations.speedFactor.current * taskItem.abilities.animations.duration.large }

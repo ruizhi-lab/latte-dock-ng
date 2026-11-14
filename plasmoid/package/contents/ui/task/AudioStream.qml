@@ -12,7 +12,7 @@ import org.kde.kirigami as Kirigami
 Item {
     id: audioStreamIconBox
 
-    readonly property bool activeAudioState: taskItem.playingAudio || taskItem.muted
+    readonly property bool activeAudioState: taskItem.playingAudio
     readonly property real indicatorScale: 1.2
     readonly property real iconBoxWidth: parent ? parent.width : 0
     readonly property real iconBoxHeight: parent ? parent.height : 0

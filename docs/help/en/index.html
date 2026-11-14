@@ -87,7 +87,7 @@
 <tr class="group"><td colspan="2">Badges</td></tr>
 <tr><td>Notifications from tasks <span class="advanced">Advanced</span></td><td>Show unread notification counts on task icons.</td></tr>
 <tr><td>Progress information for tasks <span class="advanced">Advanced</span></td><td>Show progress badges, for example while Dolphin copies files.</td></tr>
-<tr><td>Audio playing from tasks <span class="advanced">Advanced</span></td><td>Show an audio badge for applications that are playing sound.</td></tr>
+<tr><td>Audio playing from tasks <span class="advanced">Advanced</span></td><td>Show an audio badge for applications that are playing sound. Matching prefers explicit desktop/application identifiers. Generic browser process information is not sufficient to identify a particular PWA; ambiguous streams are left unassigned rather than giving unrelated applications audio controls. Independent Electron applications can still match their own audio process. Playback status and output activity hide paused streams even when the application keeps its audio connection open. Without player status, brief silence is tolerated for about one second.</td></tr>
 <tr><td>Prominent color for notification badge <span class="advanced">Advanced</span></td><td>Use a stronger, usually red notification badge. Requires Notifications from tasks.</td></tr>
 <tr><td>Change volume when scrolling audio badge <span class="advanced">Advanced</span></td><td>Click the audio badge to mute/unmute, or scroll over it to change volume. Requires Audio playing from tasks.</td></tr>
 <tr class="group"><td colspan="2">Interaction</td></tr>

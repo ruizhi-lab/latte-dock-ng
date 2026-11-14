@@ -7,29 +7,46 @@
 import QtQuick
 
 import org.kde.plasma.private.volume
+import "../code/AudioStreamMatch.js" as AudioStreamMatch
 
 QtObject {
     id: pulseAudio
 
     signal streamsChanged
 
-    // It's a JS object so we can do key lookup and don't need to take care of filtering duplicates.
-    property var pidMatches: ({})
-    property var pidMatchTimestamps: ({})
-    property var streamIndexes: ({})
-    property bool streamIndexesDirty: true
-    readonly property int pidMatchExpiryMs: 10 * 60 * 1000
-
-    // A task can temporarily match an audio stream through its PID or app id
-    // while its application name is not unique.  Keep that decision for a
-    // bounded period, then allow the name fallback again after the stream has
-    // disappeared.  Without expiry this cache grew for the entire session and
-    // could permanently suppress a valid match for a later application.
-    property Timer pidMatchCacheTimer: Timer {
-        interval: 60 * 1000
-        repeat: true
-        running: false
-        onTriggered: pulseAudio.prunePidMatches()
+    // The task model supplies all identities, including offscreen delegates.
+    // The audio loader owns this observer and the stream objects; no task item
+    // pointers or time-based ownership guesses survive model changes or unload.
+    property var taskModel: null
+    property var streamOwners: ({})
+    property bool streamOwnersDirty: true
+    property Timer streamOwnerRefreshTimer: Timer {
+        interval: 0
+        onTriggered: pulseAudio.streamsChanged()
+    }
+    function invalidateStreamOwners() {
+        streamOwnersDirty = true;
+        if (streamOwnerRefreshTimer) { streamOwnerRefreshTimer.restart(); }
+    }
+    property Instantiator taskIdentities: Instantiator {
+        model: pulseAudio.taskModel
+        delegate: QtObject {
+            id: taskIdentity
+            required property var model
+            readonly property bool isWindow: model.IsWindow === true || model.IsGroupParent === true
+            // Typed intermediates suppress unchanged role notifications; rebuilding
+            // object snapshots on every activation would repeatedly walk /proc.
+            readonly property int pid: Number(model.AppPid || 0)
+            readonly property string appId: String(model.AppId || "")
+            readonly property string appName: String(model.AppName || "")
+            readonly property string launcherName: String(model.LauncherUrlWithoutIcon || model.LauncherUrl || "")
+            readonly property var identity: ({pid: taskIdentity.pid, appId: taskIdentity.appId,
+                appName: taskIdentity.appName, launcherName: taskIdentity.launcherName})
+            onIdentityChanged: pulseAudio.invalidateStreamOwners()
+            onIsWindowChanged: pulseAudio.invalidateStreamOwners()
+        }
+        onObjectAdded: pulseAudio.invalidateStreamOwners()
+        onObjectRemoved: pulseAudio.invalidateStreamOwners()
     }
 
     property int maxVolumePercent: 125
@@ -42,264 +59,30 @@ QtObject {
         return Math.max(PulseAudio.MinimalVolume, Math.min(volume, maxVolumeValue));
     }
 
-    // Refresh the bounded cache entry while a task still has an audio stream.
-    function registerPidMatch(appName) {
-        pidMatchTimestamps[appName] = Date.now();
-        pidMatchCacheTimer.start();
-
-        if (!hasPidMatch(appName)) {
-            pidMatches[appName] = true;
-
-            // In case this match is new, notify that streams might have changed.
-            // This way we also catch the case when the non-playing instance
-            // shows up first.
-            // Only notify if we changed to avoid infinite recursion.
-            streamsChanged();
+    function isStreamAssigned(stream) {
+        for (var key in streamOwners) {
+            if (streamOwners[key].indexOf(stream) !== -1) { return true; }
         }
-    }
-
-    function prunePidMatches() {
-        var now = Date.now();
-        var changed = false;
-
-        for (var appName in pidMatchTimestamps) {
-            if (now - pidMatchTimestamps[appName] > pidMatchExpiryMs) {
-                delete pidMatchTimestamps[appName];
-                delete pidMatches[appName];
-                changed = true;
-            }
-        }
-
-        if (changed) {
-            streamsChanged();
-        }
-
-        if (Object.keys(pidMatchTimestamps).length === 0) {
-            pidMatchCacheTimer.stop();
-        }
-    }
-
-    function hasPidMatch(appName) {
-        if (pidMatches[appName] !== true) {
-            return false;
-        }
-
-        var timestamp = pidMatchTimestamps[appName];
-        if (timestamp === undefined || Date.now() - timestamp > pidMatchExpiryMs) {
-            delete pidMatches[appName];
-            delete pidMatchTimestamps[appName];
-            return false;
-        }
-
-        return true;
-    }
-
-    function normalizeId(value) {
-        if (!value || value === "") {
-            return "";
-        }
-
-        var normalized = String(value).toLowerCase();
-
-        var slash = normalized.lastIndexOf("/");
-        if (slash !== -1) {
-            normalized = normalized.substring(slash + 1);
-        }
-
-        var colon = normalized.lastIndexOf(":");
-        if (colon !== -1) {
-            normalized = normalized.substring(colon + 1);
-        }
-
-        if (normalized.endsWith(".desktop")) {
-            normalized = normalized.substring(0, normalized.length - 8);
-        }
-
-        // Reverse-DNS app ids such as org.mozilla.firefox or com.google.Chrome
-        // should be comparable with launcher ids like firefox / chrome.
-        var dot = normalized.lastIndexOf(".");
-        if (dot !== -1 && dot < (normalized.length - 1)) {
-            normalized = normalized.substring(dot + 1);
-        }
-
-        return normalized;
-    }
-
-    function equivalentId(left, right) {
-        if (!left || !right) {
-            return false;
-        }
-
-        if (left === right) {
-            return true;
-        }
-
-        // Handle distro-specific suffix variants such as foo vs foo-esr.
-        return left.startsWith(right + "-") || right.startsWith(left + "-");
-    }
-
-    function hasAncestorPid(streamPid, pid) {
-        var current = streamPid;
-        var depth = 0;
-
-        while (current > 1 && depth < 16) {
-            current = backend.parentPid(current);
-
-            if (current === pid) {
-                return true;
-            }
-
-            ++depth;
-        }
-
         return false;
     }
 
-    function addStreamToIndex(index, key, stream) {
-        if (!key) {
-            return;
-        }
-
-        if (!index[key]) {
-            index[key] = [];
-        }
-
-        index[key].push(stream);
-    }
-
-    function rebuildStreamIndexes() {
-        var indexes = {
-            pid: Object.create(null),
-            appId: Object.create(null),
-            portalAppId: Object.create(null),
-            appName: Object.create(null)
-        };
-
-        for (var i = 0, length = instantiator.count; i < length; ++i) {
-            var stream = instantiator.objectAt(i);
-            addStreamToIndex(indexes.pid, stream.pid > 0 ? String(stream.pid) : "", stream);
-            addStreamToIndex(indexes.appId, stream.appId, stream);
-            addStreamToIndex(indexes.portalAppId, stream.portalAppId, stream);
-            addStreamToIndex(indexes.appName, stream.appName ? stream.appName.toLowerCase() : "", stream);
-        }
-
-        streamIndexes = indexes;
-        streamIndexesDirty = false;
-    }
-
-    function ensureStreamIndexes() {
-        if (streamIndexesDirty) {
-            rebuildStreamIndexes();
-        }
-    }
-
-    function findStreams(key, value) {
-        ensureStreamIndexes();
-
-        var index = streamIndexes[key];
-        if (!index) {
-            return [];
-        }
-
-        var lookupKey = key === "appName" ? String(value).toLowerCase() : String(value);
-        return index[lookupKey] ? index[lookupKey].slice() : [];
-    }
-
-    function streamsForAppName(appName) {
-        return findStreams("appName", appName);
-    }
-
-    function streamsForAppId(appId) {
-        if (!appId || appId === "") {
-            return [];
-        }
-
-        // Portal app id is the most reliable match for sandboxed/portal clients.
-        var streams = findStreams("portalAppId", appId);
-
-        if (streams.length === 0) {
-            streams = findStreams("appId", appId);
-        }
-
-        return streams;
-    }
-
-    function streamsForPid(pid) {
-        if (pid <= 0) {
-            return [];
-        }
-
-        var streams = findStreams("pid", pid);
-
-        if (streams.length === 0) {
-            for (var i = 0, length = instantiator.count; i < length; ++i) {
-                var stream = instantiator.objectAt(i);
-
-                if (stream.parentPid === -1) {
-                    stream.parentPid = backend.parentPid(stream.pid);
-                }
-
-                if (stream.parentPid === pid || hasAncestorPid(stream.parentPid, pid)) {
-                    streams.push(stream);
-                }
+    function streamsForTask(appId, launcherName, appName, pid) {
+        if (streamOwnersDirty) {
+            var tasks = [];
+            var streams = [];
+            for (var i = 0; i < taskIdentities.count; ++i) {
+                var task = taskIdentities.objectAt(i);
+                if (task && task.isWindow) { tasks.push(task.identity); }
             }
-        }
-
-        return streams;
-    }
-
-    function streamsForAppIdentity(appId, launcherName, appName) {
-        var idCandidates = [];
-        var normalizedAppId = normalizeId(appId);
-        var normalizedLauncherName = normalizeId(launcherName);
-        var normalizedAppName = normalizeId(appName);
-
-        if (normalizedAppId !== "") {
-            idCandidates.push(normalizedAppId);
-        }
-
-        if (normalizedLauncherName !== "" && idCandidates.indexOf(normalizedLauncherName) === -1) {
-            idCandidates.push(normalizedLauncherName);
-        }
-
-        if (normalizedAppName !== "" && idCandidates.indexOf(normalizedAppName) === -1) {
-            idCandidates.push(normalizedAppName);
-        }
-
-        if (idCandidates.length === 0) {
-            return [];
-        }
-
-        var streams = [];
-
-        for (var i = 0, length = instantiator.count; i < length; ++i) {
-            var stream = instantiator.objectAt(i);
-            var streamCandidates = [
-                normalizeId(stream.appId),
-                normalizeId(stream.iconName),
-                normalizeId(stream.binaryName),
-                normalizeId(stream.appName)
-            ];
-
-            var matched = false;
-
-            for (var c = 0; c < idCandidates.length && !matched; ++c) {
-                var target = idCandidates[c];
-
-                for (var s = 0; s < streamCandidates.length; ++s) {
-                    if (equivalentId(target, streamCandidates[s])) {
-                        matched = true;
-                        break;
-                    }
-                }
+            for (var j = 0; j < instantiator.count; ++j) {
+                var stream = instantiator.objectAt(j);
+                if (stream) { streams.push(stream); }
             }
-
-            if (matched) {
-                streams.push(stream);
-            }
+            streamOwners = AudioStreamMatch.assign(tasks, streams, function(processId) { return backend.parentPid(processId); });
+            streamOwnersDirty = false;
         }
-
-        return streams;
+        var key = AudioStreamMatch.token({appId: appId, launcherName: launcherName, appName: appName, pid: pid});
+        return streamOwners[key] ? streamOwners[key].slice() : [];
     }
 
     // Prime the SinkModel (output devices) so the Plasma volume applet gets
@@ -323,25 +106,75 @@ QtObject {
         }
 
         delegate: QtObject {
-            readonly property int pid: Client ? Client.properties["application.process.id"] : 0
-            // Determined on demand.
-            property int parentPid: -1
-            readonly property string appName: (Client && Client.properties && Client.properties["application.name"] !== undefined)
-                                              ? String(Client.properties["application.name"]) : ""
-            readonly property string appId: (Client && Client.properties && Client.properties["application.id"] !== undefined)
-                                            ? String(Client.properties["application.id"]) : ""
-            readonly property string portalAppId: (Client && Client.properties && Client.properties["pipewire.access.portal.app_id"] !== undefined)
-                                                  ? String(Client.properties["pipewire.access.portal.app_id"]) : ""
-            readonly property string iconName: (Client && Client.properties && Client.properties["application.icon_name"] !== undefined)
-                                               ? String(Client.properties["application.icon_name"]) : ""
-            readonly property string binaryName: (Client && Client.properties && Client.properties["application.process.binary"] !== undefined)
-                                                 ? String(Client.properties["application.process.binary"]) : ""
+            id: streamInfo
+            // Older Plasma backends may omit per-stream Properties. Prefer
+            // them when available, falling back to the client's shared metadata.
+            readonly property var streamProperties: (typeof Properties !== "undefined" && Properties) ? Properties : ({})
+            function metadata(key) {
+                if (streamProperties[key] !== undefined && String(streamProperties[key]) !== "") {
+                    return String(streamProperties[key]);
+                }
+                return Client && Client.properties && Client.properties[key] !== undefined ? String(Client.properties[key]) : "";
+            }
+            readonly property int pid: Number(metadata("application.process.id"))
+            readonly property string appName: metadata("application.name")
+            readonly property string appId: metadata("application.id")
+            readonly property string portalAppId: metadata("pipewire.access.portal.app_id")
+            readonly property string desktopId: metadata("application.desktop")
+            readonly property string iconName: metadata("application.icon_name")
+            readonly property string binaryName: metadata("application.process.binary")
+            onPidChanged: pulseAudio.invalidateStreamOwners()
+            onAppNameChanged: pulseAudio.invalidateStreamOwners()
+            onAppIdChanged: pulseAudio.invalidateStreamOwners()
+            onPortalAppIdChanged: pulseAudio.invalidateStreamOwners()
+            onDesktopIdChanged: pulseAudio.invalidateStreamOwners()
+            onIconNameChanged: pulseAudio.invalidateStreamOwners()
+            onBinaryNameChanged: pulseAudio.invalidateStreamOwners()
             readonly property bool muted: Muted
             // whether there is nothing actually going on on that stream
             readonly property bool corked: Corked
 
             readonly property int volume: Math.round(pulseVolume / PulseAudio.NormalVolume * 100.0)
             readonly property int pulseVolume: Volume
+
+            readonly property real activityThreshold: 0.00001
+            property bool recentlyAudible: false
+            readonly property bool activityAvailable: activityMonitor.available
+            readonly property real peak: Math.max(0, activityMonitor.volume)
+            property Timer silenceTimer: Timer {
+                interval: 1000
+                onTriggered: streamInfo.recentlyAudible = false
+            }
+            function clearActivity() {
+                recentlyAudible = false;
+                silenceTimer.stop();
+            }
+            function updateActivity() {
+                if (corked || !activityMonitor.available) {
+                    clearActivity();
+                } else if (activityMonitor.volume > activityThreshold) {
+                    recentlyAudible = true;
+                    silenceTimer.stop();
+                } else if (recentlyAudible) {
+                    silenceTimer.restart();
+                }
+            }
+            // One native peak monitor per assigned active output stream, never
+            // per task window. Releasing target on cork/unload avoids keeping an
+            // idle device awake; this observes output peaks, not microphone input.
+            property VolumeMonitor activityMonitor: VolumeMonitor {
+                target: !streamInfo.corked && pulseAudio.isStreamAssigned(streamInfo)
+                        && typeof PulseObject !== "undefined" ? PulseObject : null
+                onVolumeChanged: streamInfo.updateActivity()
+                onAvailableChanged: { if (!available) { streamInfo.clearActivity(); } }
+                onTargetChanged: {
+                    // VolumeMonitor retains its previous sample across targets.
+                    // Clear it so a new/reused stream cannot inherit an old peak.
+                    volume = 0;
+                    streamInfo.clearActivity();
+                }
+            }
+            onCorkedChanged: { if (corked) { clearActivity(); } }
 
             function mute() {
                 Muted = true
@@ -362,12 +195,14 @@ QtObject {
         }
 
         onObjectAdded: {
-            pulseAudio.streamIndexesDirty = true;
-            pulseAudio.streamsChanged();
+            pulseAudio.invalidateStreamOwners();
         }
         onObjectRemoved: {
-            pulseAudio.streamIndexesDirty = true;
+            // Drop removed stream references synchronously, then refresh once
+            // more after the model has finished its removal notifications.
+            pulseAudio.streamOwnersDirty = true;
             pulseAudio.streamsChanged();
+            pulseAudio.invalidateStreamOwners();
         }
     }
 

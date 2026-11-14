@@ -7,6 +7,7 @@
 import QtQuick
 import QtQuick.Controls as QtControls
 import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.private.mpris as Mpris
 
 import org.kde.latte.core as LatteCore
 import org.kde.latte.private.tasks as LatteTasks
@@ -332,15 +333,28 @@ AbilityItem.BasicItem {
     ////// Audio streams //////
     property Item audioStreamOverlay
     property var audioStreams: []
-    readonly property bool hasAudioStream: audioStreams.length > 0
-                                        && !isSeparator
-    readonly property bool playingAudio: hasAudioStream && audioStreams.some(function (item) {
-        return !item.corked
-    })
-
-    readonly property bool muted: hasAudioStream && audioStreams.every(function (item) {
-        return item.muted
-    })
+    property QtObject audioPlayer: null
+    readonly property bool hasAudioStream: audioPlayback.hasStreams
+    readonly property bool playingAudio: audioPlayback.playing
+    readonly property bool muted: audioPlayback.muted
+    AudioPlaybackState {
+        id: audioPlayback
+        streams: taskItem.audioStreams
+        enabled: !taskItem.isSeparator
+        playerPlaying: taskItem.audioPlayer && taskItem.audioPlayer.playbackStatus === Mpris.PlaybackStatus.Playing
+        playerPaused: taskItem.audioPlayer && (taskItem.audioPlayer.playbackStatus === Mpris.PlaybackStatus.Paused
+                                              || taskItem.audioPlayer.playbackStatus === Mpris.PlaybackStatus.Stopped)
+    }
+    function updateAudioPlayer() {
+        audioPlayer = mpris2Source ? mpris2Source.playerForLauncherUrl(taskItem.launcherUrl, Math.max(0, taskItem.pid)) : null;
+    }
+    Connections {
+        target: mpris2Source
+        function onRowsInserted() { taskItem.updateAudioPlayer(); }
+        function onRowsRemoved() { taskItem.updateAudioPlayer(); }
+        function onModelReset() { taskItem.updateAudioPlayer(); }
+        function onDataChanged() { taskItem.updateAudioPlayer(); }
+    }
 
     readonly property int volume: {
         if (!hasAudioStream){
@@ -434,8 +448,9 @@ AbilityItem.BasicItem {
     onAppNameChanged: updateAudioStreams()
     onAppIdChanged: updateAudioStreams()
     onLauncherNameChanged: updateAudioStreams()
-    onPidChanged: updateAudioStreams()
+    onPidChanged: { updateAudioStreams(); updateAudioPlayer(); }
     onIsWindowChanged: updateAudioStreams()
+    onIsGroupParentChanged: updateAudioStreams()
 
     onCanPublishGeometriesChanged: {
         if (canPublishGeometries) {
@@ -496,7 +511,7 @@ AbilityItem.BasicItem {
         }
     }
 
-    onLauncherUrlChanged: updateBadge();
+    onLauncherUrlChanged: { updateBadge(); updateAudioPlayer(); }
 
     onShortcutRequestedActivate: {
         if (taskItem.isGroupParent) {
@@ -986,7 +1001,9 @@ AbilityItem.BasicItem {
 
 
     function updateAudioStreams() {
-        if (root.dragSource !== null) {
+        // Clear before the loader destroys stream objects; signal ordering can
+        // leave its previous item alive briefly after the badge option turns off.
+        if (!root.showAudioBadge || root.dragSource !== null) {
             audioStreams = [];
             return;
         }
@@ -997,33 +1014,10 @@ AbilityItem.BasicItem {
             return;
         }
 
-        // Check app id first for portal/sandboxed applications.
-        var streams = pa.streamsForAppId(taskItem.appId);
-
-        if (!streams.length) {
-            streams = pa.streamsForPid(taskItem.pid);
-        }
-
-        if (!streams.length) {
-            // We only want to fall back to appName matching if we never managed to map
-            // a PID to an audio stream window. Otherwise if you have two instances of
-            // an application, one playing and the other not, it will look up appName
-            // for the non-playing instance and erroneously show an indicator on both.
-            if (taskItem.appName.length > 0 && !pa.hasPidMatch(taskItem.appName)) {
-                streams = pa.streamsForAppName(taskItem.appName);
-            }
-        }
-
-        if (!streams.length) {
-            // Fallback for apps whose stream metadata does not match AppName exactly
-            // (for example Chrome/Chromium variants) or whose audio stream runs in
-            // deeper child processes.
-            streams = pa.streamsForAppIdentity(taskItem.appId, taskItem.launcherName, taskItem.appName);
-        }
-
-        if (streams.length && taskItem.appName.length > 0) {
-            pa.registerPidMatch(taskItem.appName);
-        }
+        // Matching is resolved against all running task identities. A shared
+        // browser process or name alone must not grant unrelated PWAs audio controls.
+        var streams = (taskItem.isWindow || taskItem.isGroupParent)
+                ? pa.streamsForTask(taskItem.appId, taskItem.launcherName, taskItem.appName, taskItem.pid) : [];
 
         // fix a binding loop concerning audiostreams, the audiostreams
         // should be updated only when they have changed
@@ -1199,6 +1193,7 @@ AbilityItem.BasicItem {
         }
 
         showWindowAnimation.showWindow();
+        updateAudioPlayer();
         updateAudioStreams();
     }
 

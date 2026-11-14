@@ -97,6 +97,9 @@ private Q_SLOTS:
     void globalMenuReflowsNeighboursSynchronously();
     void launchersGeometryRestoreSchedulingLoadsFromSource();
     void plasmaVolumeBootstrapLoadsFromSource();
+    void audioStreamsRequireUnambiguousOwnership();
+    void audioBadgesTrackPauseRatherThanConnectionLifetime();
+    void audioOwnershipTracksModelAndMetadataChanges();
     void taskMouseAreaAllClickActionsPresent();
     void taskPresentationFiltersPhantoms();
     void taskMouseAreaRegressionGuardsPresent();
@@ -783,6 +786,7 @@ singleton PreferredDevice 0.1 PreferredDevice.qml
 SinkModel 0.1 SinkModel.qml
 SinkInputModel 0.1 SinkInputModel.qml
 PulseObjectFilterModel 0.1 PulseObjectFilterModel.qml
+VolumeMonitor 0.1 VolumeMonitor.qml
 )"));
     QVERIFY(writeTextFile(modulePath + QStringLiteral("/PulseAudio.qml"), R"(
 pragma Singleton
@@ -817,11 +821,21 @@ ListModel {}
     QVERIFY(writeTextFile(modulePath + QStringLiteral("/PulseObjectFilterModel.qml"), R"(
 import QtQml.Models 2.15
 ListModel {
+    dynamicRoles: true
     property var filters
     property var sourceModel
 }
 )"));
 
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/VolumeMonitor.qml"), R"(
+import QtQml
+QtObject {
+    property var target: null
+    property real volume: 0
+    property bool monitorAvailable: true
+    readonly property bool available: target !== null && monitorAvailable
+}
+)"));
     engine.addImportPath(importRoot.path());
 }
 
@@ -2527,6 +2541,235 @@ void QmlSmokeTest::plasmaVolumeBootstrapLoadsFromSource()
     QCOMPARE(paFixTimer->property("interval").toInt(), 1000);
     QCOMPARE(paFixTimer->property("repeat").toBool(), true);
     QCOMPARE(paFixTimer->property("running").toBool(), true);
+}
+
+void QmlSmokeTest::audioBadgesTrackPauseRatherThanConnectionLifetime()
+{
+    QQmlEngine engine;
+    auto stream = createQmlObject(engine, R"(
+import QtQml
+QtObject {
+    property bool corked: false
+    property bool muted: false
+    property int volume: 100
+    property bool activityAvailable: true
+    property real peak: 0.2
+    property bool recentlyAudible: true
+}
+)", QUrl(QStringLiteral("playback-stream.qml")));
+    QVERIFY(stream);
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/AudioPlaybackState.qml")));
+    std::unique_ptr<QObject> state(component.createWithInitialProperties({
+        {QStringLiteral("streams"), QVariantList{QVariant::fromValue(stream.get())}}
+    }));
+    QVERIFY2(state, qPrintable(component.errorString()));
+    QCOMPARE(state->property("playing").toBool(), true);
+    state->setProperty("playerPaused", true);
+    QCOMPARE(state->property("playing").toBool(), true); // Other actual audio can continue in a browser.
+    stream->setProperty("peak", 0.0);
+    QCOMPARE(state->property("playing").toBool(), false); // Pause bypasses the silence grace.
+    state->setProperty("playerPaused", false);
+    QCOMPARE(state->property("playing").toBool(), true); // Unknown player gets a short silence grace.
+    stream->setProperty("recentlyAudible", false);
+    QCOMPARE(state->property("playing").toBool(), false);
+    state->setProperty("playerPlaying", true);
+    QCOMPARE(state->property("playing").toBool(), true); // A playing session can contain quiet passages.
+    stream->setProperty("corked", true);
+    QCOMPARE(state->property("playing").toBool(), false);
+    stream->setProperty("corked", false);
+    stream->setProperty("muted", true);
+    QCOMPARE(state->property("playing").toBool(), true);
+    state->setProperty("playerPlaying", false);
+    state->setProperty("playerPaused", true);
+    QCOMPARE(state->property("playing").toBool(), false); // A retained muted stream is not playback.
+    stream->setProperty("muted", false);
+    stream->setProperty("activityAvailable", false);
+    QCOMPARE(state->property("playing").toBool(), false);
+    state->setProperty("playerPaused", false);
+    QCOMPARE(state->property("playing").toBool(), true); // Corked fallback if monitoring is unavailable.
+    state->setProperty("enabled", false);
+    QCOMPARE(state->property("playing").toBool(), false);
+    state->setProperty("enabled", true);
+    state->setProperty("streams", QVariantList{});
+    QCOMPARE(state->property("playing").toBool(), false);
+}
+
+void
+QmlSmokeTest::audioStreamsRequireUnambiguousOwnership()
+{
+    QFile policy(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/code/AudioStreamMatch.js"));
+    QVERIFY(policy.open(QFile::ReadOnly));
+    QString source = QString::fromUtf8(policy.readAll());
+    source.remove(QStringLiteral(".pragma library"));
+    QQmlEngine engine;
+    auto result = engine.evaluate(source);
+    QVERIFY2(!result.isError(), qPrintable(result.toString()));
+    result = engine.evaluate(QStringLiteral(R"(
+(function() {
+    var chrome = {pid: 100, appId: "google-chrome", launcherName: "applications:google-chrome.desktop", appName: "Google Chrome"};
+    var music = {pid: 100, appId: "google-chrome", launcherName: "chrome-music123-Default.desktop", appName: "Google Chrome"};
+    var mail = {pid: 100, appId: "google-chrome", launcherName: "chrome-mail456-Default.desktop", appName: "Google Chrome"};
+    var peers = [chrome, music, mail];
+    var stream = {pid: 201, appId: "", appName: "Google Chrome", binaryName: "chrome"};
+    var calls = 0;
+    function parent(pid) { ++calls; return pid === 201 ? 200 : pid === 200 ? 100 : 0; }
+    function check(condition, message) { if (!condition) { throw new Error(message); } }
+    function count(map, task) { return (map[token(task)] || []).length; }
+    var map = assign(peers, [stream], parent);
+    check(count(map, chrome) === 1 && count(map, music) === 0 && count(map, mail) === 0, "generic browser stream leaked to a PWA");
+    check(count(assign([mail, music, chrome], [stream], parent), chrome) === 1, "task order affected ownership");
+    stream.appId = "com.google.Chrome";
+    check(count(assign(peers, [stream], parent), chrome) === 1, "reverse-DNS browser alias lost its badge");
+    stream.desktopId = music.launcherName;
+    map = assign(peers, [stream], parent);
+    check(count(map, chrome) === 0 && count(map, music) === 1 && count(map, mail) === 0, "explicit PWA desktop ID did not win");
+    stream.desktopId = "";
+    stream.portalAppId = mail.launcherName;
+    map = assign(peers, [stream], parent);
+    check(count(map, mail) === 1 && count(map, chrome) === 0, "portal ID did not win");
+    stream.portalAppId = "unrelated.desktop";
+    check(Object.keys(assign(peers, [stream], parent)).length === 0, "conflicting explicit identity fell back to PID");
+    stream = {pid: 201, appName: "Google Chrome", binaryName: "chrome"};
+    check(Object.keys(assign([music, mail], [stream], parent)).length === 0, "shared browser PID selected an arbitrary PWA");
+    check(Object.keys(assign([music], [stream], parent)).length === 0, "filtered-out browser left its stream on a lone PWA");
+    var pwaWithOwnAppId = {pid:100, appId:"chrome-owned-Default", launcherName:"chrome-owned-Default.desktop", appName:"Music"};
+    check(Object.keys(assign([pwaWithOwnAppId], [stream], parent)).length === 0, "PWA-specific AppId still inherited the shared browser process");
+    var standalone = {pid: 300, appId: "yesplaymusic", launcherName: "yesplaymusic.desktop", appName: "YesPlayMusic"};
+    map = assign([chrome, standalone], [stream], parent);
+    check(count(map, chrome) === 1 && count(map, standalone) === 0, "idle standalone music app got a browser badge");
+    var nativeStream = {pid: 301, binaryName: "electron", appName: "YesPlayMusic"};
+    function nativeParent(pid) { return pid === 301 ? 300 : 0; }
+    map = assign([chrome, standalone], [nativeStream], nativeParent);
+    check(count(map, standalone) === 1 && count(map, chrome) === 0, "native child process failed to match");
+    map = assign([chrome, standalone], [stream, nativeStream], function(pid) { return pid === 201 ? 100 : pid === 301 ? 300 : 0; });
+    check(count(map, chrome) === 1 && map[token(chrome)][0] === stream, "browser controls target the wrong stream");
+    check(count(map, standalone) === 1 && map[token(standalone)][0] === nativeStream, "music controls target the wrong stream");
+    var genericElectron = {pid: 300, appId: "google-chrome", launcherName: "yesplaymusic.desktop", appName: "Google Chrome"};
+    var genericElectronStream = {pid: 301, appName: "Google Chrome", binaryName: "chrome"};
+    map = assign([chrome, genericElectron], [stream, genericElectronStream], function(pid) { return pid === 201 ? 100 : pid === 301 ? 300 : 0; });
+    check(count(map, genericElectron) === 1 && map[token(genericElectron)][0] === genericElectronStream, "Electron's generic Chromium identity lost its own PID match");
+    check(count(map, chrome) === 1 && map[token(chrome)][0] === stream, "Electron audio leaked back to Chrome");
+    genericElectronStream.appId = "com.google.Chrome";
+    map = assign([chrome, genericElectron], [genericElectronStream], nativeParent);
+    check(count(map, genericElectron) === 1 && count(map, chrome) === 0, "generic Chromium stream appId overrode Electron's independent process");
+    check(count(assign([genericElectron], [stream], parent), genericElectron) === 0, "filtered-out Chrome leaked through Electron's generic name");
+    var other = {pid: 400, appId: "yesplaymusic", launcherName: "yesplaymusic.desktop", appName: "YesPlayMusic"};
+    nativeStream.appId = "yesplaymusic";
+    map = assign([standalone, other], [nativeStream], nativeParent);
+    check(count(map, standalone) === 1 && count(map, other) === 0, "another process of the same application got the stream");
+    check(!sameId("chrome-music123-Default", "chrome"), "PWA treated as a browser suffix variant");
+    check(sameId("org.mozilla.firefox", "firefox-esr"), "distribution suffix compatibility regressed");
+    check(!sameId("org.first.Player", "org.second.Player"), "distinct reverse-DNS IDs collapsed");
+    var a = {pid: 0, launcherName: "one.desktop", appName: "Shared"};
+    var b = {pid: 0, launcherName: "two.desktop", appName: "Shared"};
+    check(Object.keys(assign([a, b], [{appName: "Shared"}], parent)).length === 0, "ambiguous name fallback leaked");
+    check(count(assign([a], [{appName: "Shared"}], parent), a) === 1, "unique legacy name fallback regressed");
+    check(count(assign([a], [], parent), a) === 0, "removed stream remained assigned");
+    calls = 0;
+    assign([{pid: 999, launcherName: "app"}], [{pid: 800}], function(pid) { ++calls; return pid + 1; });
+    check(calls <= 16, "ancestor traversal was not bounded");
+    check(ancestry(800, function(pid) { return pid; }, Object.create(null)).length === 1, "cyclic parent chain was not bounded");
+    return true;
+})()
+)"));
+    QVERIFY2(!result.isError(), qPrintable(result.toString()));
+    QVERIFY(result.toBool());
+}
+
+void
+QmlSmokeTest::audioOwnershipTracksModelAndMetadataChanges()
+{
+    QTest::failOnWarning(QRegularExpression(QStringLiteral(".*(TypeError|ReferenceError|Cannot read property).*")));
+    QTemporaryDir imports;
+    QQmlEngine engine;
+    addFakePlasmaVolumeImport(engine, imports);
+    auto backend = createQmlObject(engine,
+                                   R"(
+import QtQml
+QtObject { function parentPid(pid) { return pid === 201 ? 100 : 0; } }
+)",
+                                   QUrl(QStringLiteral("audio-backend.qml")));
+    QVERIFY(backend);
+    engine.rootContext()->setContextProperty(QStringLiteral("backend"), backend.get());
+    auto tasks = createQmlObject(engine,
+                                 R"(
+import QtQml.Models
+ListModel { dynamicRoles: true }
+)",
+                                 QUrl(QStringLiteral("audio-tasks.qml")));
+    QVERIFY(tasks);
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_PULSEAUDIO_QML)));
+    std::unique_ptr<QObject> audio(component.create());
+    QVERIFY2(audio, qPrintable(component.errorString()));
+    QVERIFY(audio->setProperty("taskModel", QVariant::fromValue(tasks.get())));
+    auto *streams = audio->property("instantiator").value<QObject *>();
+    QVERIFY(streams);
+    auto *model = streams->property("model").value<QObject *>();
+    QVERIFY(model);
+    audio->property("paFixTimer").value<QObject *>()->setProperty("running", false);
+    engine.globalObject().setProperty(QStringLiteral("audio"), engine.newQObject(audio.get()));
+    engine.globalObject().setProperty(QStringLiteral("tasks"), engine.newQObject(tasks.get()));
+    engine.globalObject().setProperty(QStringLiteral("streams"), engine.newQObject(model));
+    const auto setup = engine.evaluate(QStringLiteral(R"(
+        tasks.append({AppPid:100, AppId:"google-chrome", AppName:"Google Chrome", LauncherUrlWithoutIcon:"google-chrome.desktop", IsWindow:true, IsGroupParent:false});
+        tasks.append({AppPid:100, AppId:"google-chrome", AppName:"Google Chrome", LauncherUrlWithoutIcon:"chrome-music-Default.desktop", IsWindow:true, IsGroupParent:false});
+        streams.append({Client:{properties:{"application.process.id":"201", "application.name":"Google Chrome", "application.process.binary":"chrome"}},
+            Properties:{}, PulseObject:{index:1}, Muted:false, Corked:false, Volume:65536});
+    )"));
+    QVERIFY2(!setup.isError(), qPrintable(setup.toString()));
+    QCoreApplication::processEvents();
+    auto count = [&engine](const QString &launcher) { return engine.evaluate(QStringLiteral("audio.streamsForTask('google-chrome', '%1', 'Google Chrome', 100).length").arg(launcher)).toInt(); };
+    QTRY_COMPARE(count(QStringLiteral("google-chrome")), 1);
+    QCOMPARE(count(QStringLiteral("chrome-music-Default")), 0);
+    auto activity = engine.evaluate(QStringLiteral("var info = audio.instantiator.objectAt(0); info.activityMonitor.volume = 0.2; info.recentlyAudible"));
+    QVERIFY2(!activity.isError(), qPrintable(activity.toString()));
+    QVERIFY(activity.toBool());
+    activity = engine.evaluate(QStringLiteral("info.activityMonitor.volume = 0; info.silenceTimer.running"));
+    QVERIFY(activity.toBool());
+    QTRY_VERIFY(!engine.evaluate(QStringLiteral("info.recentlyAudible")).toBool());
+    activity = engine.evaluate(QStringLiteral("info.activityMonitor.volume = 0.3; streams.setProperty(0, 'Corked', true)"));
+    QVERIFY2(!activity.isError(), qPrintable(activity.toString()));
+    QCoreApplication::processEvents();
+    QVERIFY(engine.evaluate(QStringLiteral("info.activityMonitor.target === null && !info.recentlyAudible && !info.silenceTimer.running")).toBool());
+    activity = engine.evaluate(QStringLiteral("streams.setProperty(0, 'Corked', false)"));
+    QVERIFY2(!activity.isError(), qPrintable(activity.toString()));
+    QCoreApplication::processEvents();
+    QVERIFY(engine.evaluate(QStringLiteral("!info.recentlyAudible && info.activityMonitor.volume === 0")).toBool());
+    auto update = engine.evaluate(QStringLiteral("streams.setProperty(0, 'Properties', {'application.desktop':'chrome-music-Default.desktop'})"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QCoreApplication::processEvents();
+    QTRY_COMPARE(count(QStringLiteral("chrome-music-Default")), 1);
+    QCOMPARE(count(QStringLiteral("google-chrome")), 0);
+    update = engine.evaluate(QStringLiteral(R"(
+        streams.append({Client:{properties:{"application.process.id":"201", "application.name":"Google Chrome", "application.process.binary":"chrome"}},
+            Properties:{}, Muted:false, Corked:false, Volume:65536});
+    )"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QCoreApplication::processEvents();
+    QCOMPARE(count(QStringLiteral("google-chrome")), 1);
+    QCOMPARE(count(QStringLiteral("chrome-music-Default")), 1);
+    update = engine.evaluate(QStringLiteral("audio.streamsForTask('google-chrome', 'chrome-music-Default', 'Google Chrome', 100)[0].mute(); streams.get(0).Muted && !streams.get(1).Muted"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QVERIFY(update.toBool());
+    update = engine.evaluate(
+      QStringLiteral("audio.streamsForTask('google-chrome', 'google-chrome', 'Google Chrome', 100)[0].increaseVolume(); streams.get(1).Volume > 65536 && streams.get(0).Volume === 65536"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QVERIFY(update.toBool());
+    update = engine.evaluate(QStringLiteral("streams.setProperty(0, 'Properties', {})"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QCoreApplication::processEvents();
+    QCOMPARE(count(QStringLiteral("chrome-music-Default")), 0);
+    QCOMPARE(count(QStringLiteral("google-chrome")), 2);
+    update = engine.evaluate(QStringLiteral("streams.clear()"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QCoreApplication::processEvents();
+    QCOMPARE(count(QStringLiteral("chrome-music-Default")), 0);
+    update = engine.evaluate(QStringLiteral("tasks.clear()"));
+    QVERIFY2(!update.isError(), qPrintable(update.toString()));
+    QCoreApplication::processEvents();
+    QCOMPARE(count(QStringLiteral("google-chrome")), 0);
+    audio.reset();
+    QCoreApplication::processEvents();
 }
 
 void QmlSmokeTest::taskPresentationFiltersPhantoms()

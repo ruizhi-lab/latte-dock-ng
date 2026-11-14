@@ -87,7 +87,7 @@
 <tr class="group"><td colspan="2">徽章</td></tr>
 <tr><td>任务通知 <span class="advanced">高级</span><small>Notifications from tasks</small></td><td>在任务图标上显示未读通知数量。</td></tr>
 <tr><td>任务进度信息 <span class="advanced">高级</span><small>Progress information for tasks</small></td><td>显示进度徽章，例如 Dolphin 复制文件时。</td></tr>
-<tr><td>任务音频播放状态 <span class="advanced">高级</span><small>Audio playing from tasks</small></td><td>为正在播放声音的应用显示音频徽章。</td></tr>
+<tr><td>任务音频播放状态 <span class="advanced">高级</span><small>Audio playing from tasks</small></td><td>为正在播放声音的应用显示音频徽章。优先根据明确的桌面应用或应用标识匹配。通用浏览器进程信息不足以识别具体 PWA；无法确定归属的音频流不显示角标，以免在无关应用上提供音频控制。独立的 Electron 应用仍可根据自身的音频进程匹配。 播放状态与声音活动用于及时隐藏已暂停的角标，即使应用仍保留音频连接。无法取得播放器状态时，允许约一秒的短暂静音缓冲。</td></tr>
 <tr><td>通知角标使用醒目颜色 <span class="advanced">高级</span><small>Prominent color for notification badge</small></td><td>使用更醒目（通常是红色）的通知徽章。需要先开启“任务通知”。</td></tr>
 <tr><td>滚动音频角标时更改音量 <span class="advanced">高级</span><small>Change volume when scrolling audio badge</small></td><td>单击音频徽章可静音/取消静音，滚动滚轮可调整音量。需要先开启“任务音频播放状态”。</td></tr>
 <tr class="group"><td colspan="2">交互</td></tr>

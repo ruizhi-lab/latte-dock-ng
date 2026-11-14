@@ -944,6 +944,7 @@ PlasmoidItem {
         id: pulseAudio
         source: "PulseAudio.qml"
         active: root.showAudioBadge
+        onLoaded: item.taskModel = tasksModel
     }
 
     TasksExtendedManager {
