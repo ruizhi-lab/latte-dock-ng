@@ -54,3 +54,19 @@ experiment must correct the harness and account for the compatibility error.
 P4 remains **no-go for resource measurement** until workload validity and
 task/filter parity are established. Debug instrumentation and preflight
 liveness are not Release A/B results and imply no CPU or memory savings.
+
+A scratch-only fail-closed getter experiment on Arch eliminated the missing
+method TypeError and observed the Folder widget's `FolderViewLayer` loader
+starting with readiness false. It did not verify the rendered file list or
+interaction: the model count was unavailable and a temporary QML observer had
+its own import error. No desktop containment was exercised. The scratch code
+used no Plasma 6.8-only C++ API, but it was not built against the 6.3 floor.
+No compatibility implementation was added to the production tree; the Folder
+error and full behavior remain open.
+
+As a possible warning-free synthetic alternative, the Arch Trash plugin's
+embedded metadata was inspected and did not declare a single-instance limit.
+That does not establish runtime support for two instances. A separate two-Trash
+preflight was not run: transferring the source archive and extracting it in the
+VM was rejected by automated approval review. No remote build or session was
+started for that attempt.
