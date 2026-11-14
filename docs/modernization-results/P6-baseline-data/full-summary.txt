@@ -1,0 +1,3 @@
+command=['cmake', '--build', '/tmp/p6-baseline-5e490945/build', '--parallel', '8']
+exit=0
+monotonic_seconds=46.853

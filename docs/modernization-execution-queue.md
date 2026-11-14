@@ -224,6 +224,10 @@ activated two per-applet trackers. It is not the historical Fedora layout;
 a Folder TypeError and harness warning remain unresolved, so it does not yet
 justify resource measurement or a shared-query implementation.
 
+P6's [scratch Release build preflight](modernization-results/P6-scratch-build-baseline.md)
+establishes a local build baseline only; it does not measure module-attributable
+runtime import cost or justify a build-system change.
+
 ## References
 
 - [Main plan and ledgers](architecture-modernization-plan.md)

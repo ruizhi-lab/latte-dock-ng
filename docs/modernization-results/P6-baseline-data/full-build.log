@@ -1,0 +1,253 @@
+[1/252] Copying lattecoreplugin qml sources into build dir
+[2/252] Copying lattecoreplugin qml resources into build dir
+[3/252] Copying lattecontainmentplugin qml sources into build dir
+[4/252] Copying lattecontainmentplugin qml resources into build dir
+[5/252] Copying latteprivateappplugin qml sources into build dir
+[6/252] Copying latteprivateappplugin qml resources into build dir
+[7/252] Copying lattetasksplugin qml sources into build dir
+[8/252] Copying lattetasksplugin qml resources into build dir
+[9/252] Populating .qmlls.ini file at /tmp/p6-baseline-5e490945/build/.qt/.qmlls.build.ini
+[10/252] Generating ts...
+[11/252] Automatic MOC for target latte-dock-ng-add-launcher
+[12/252] Automatic MOC for target latteLogging
+[13/252] Building CXX object app/CMakeFiles/latte-dock-ng-add-launcher.dir/latte-dock-ng-add-launcher_autogen/mocs_compilation.cpp.o
+[14/252] Building CXX object CMakeFiles/latteLogging.dir/latteLogging_autogen/mocs_compilation.cpp.o
+[15/252] Generating mo...
+[16/252] Automatic MOC for target latte-dock-ng-preview
+[17/252] Automatic MOC for target latte_packagestructure_indicator
+[18/252] Running rcc for resource preview_resources
+[19/252] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/latte-dock-ng-preview_autogen/mocs_compilation.cpp.o
+[20/252] Automatic MOC for target lattetasksplugin
+[21/252] Running AUTOMOC file extraction for target lattetasksplugin
+[22/252] Running rcc for resource qmake_org_kde_latte_private_tasks
+[23/252] Running moc --collect-json for target lattetasksplugin
+[24/252] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/.qt/rcc/qrc_preview_resources.cpp.o
+[25/252] Automatic QML type registration for target lattetasksplugin
+[26/252] Building CXX object CMakeFiles/latteLogging.dir/latte_debug.cpp.o
+[27/252] Linking CXX static library lib/liblatteLogging.a
+[28/252] Building CXX object app/CMakeFiles/latte-dock-ng-add-launcher.dir/launcherhelper.cpp.o
+[29/252] Automatic MOC for target lattecoreplugin
+[30/252] Automatic MOC for target latteprivateappplugin
+[31/252] Running AUTOMOC file extraction for target lattecoreplugin
+[32/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_LatteTasksPlugin.cpp.o
+[33/252] Running AUTOMOC file extraction for target latteprivateappplugin
+[34/252] Running moc --collect-json for target lattecoreplugin
+[35/252] Running moc --collect-json for target latteprivateappplugin
+[36/252] Automatic QML type registration for target lattecoreplugin
+Warning: dialog.h:25: PlasmaQuick::Dialog is used as base type but cannot be found.
+[37/252] Running rcc for resource qmake_org_kde_latte_core
+[38/252] Building CXX object app/packageplugins/indicator/CMakeFiles/latte_packagestructure_indicator.dir/indicatorpackage.cpp.o
+[39/252] Running rcc for resource qmake_org_kde_latte_private_app
+[40/252] Automatic QML type registration for target latteprivateappplugin
+[41/252] Automatic MOC for target lattecontainmentplugin
+[42/252] Running AUTOMOC file extraction for target lattecontainmentplugin
+[43/252] Building CXX object app/packageplugins/indicator/CMakeFiles/latte_packagestructure_indicator.dir/latte_packagestructure_indicator_autogen/mocs_compilation.cpp.o
+[44/252] Running rcc for resource qmake_org_kde_latte_private_containment
+[45/252] Running moc --collect-json for target lattecontainmentplugin
+[46/252] Automatic QML type registration for target lattecontainmentplugin
+[47/252] Automatic MOC for target plasma_containmentactions_lattecontextmenu
+[48/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_core.cpp.o
+[49/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_autogen/mocs_compilation.cpp.o
+[50/252] Building CXX object plasmoid/CMakeFiles/latte-dock-ng-preview.dir/preview/main.cpp.o
+[51/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/lattetasksplugin_qmltyperegistrations.cpp.o
+[52/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_LatteCorePlugin.cpp.o
+[53/252] Automatic MOC for target latte-dock-ng
+[54/252] Generating lattedockadaptor.cpp, lattedockadaptor.h
+[55/252] Generating wayland-kde-primary-output-v1-client-protocol.h
+[56/252] Generating wayland-kde-output-order-v1-client-protocol.h
+[57/252] Generating qwayland-kde-primary-output-v1.h
+[58/252] Generating qwayland-kde-output-order-v1.h
+[59/252] Generating moc_lattedockadaptor.cpp
+[60/252] Generating ui_actionsdialog.h
+[61/252] Generating ui_detailsdialog.h
+[62/252] Generating ui_exporttemplatedialog.h
+[63/252] Generating ui_screensdialog.h
+[64/252] Generating ui_settingsdialog.h
+[65/252] Generating ui_viewsdialog.h
+[66/252] Generating wayland-kde-primary-output-v1-protocol.c
+[67/252] Generating qwayland-kde-primary-output-v1.cpp
+[68/252] Generating wayland-kde-output-order-v1-protocol.c
+[69/252] Generating qwayland-kde-output-order-v1.cpp
+[70/252] Running rcc for resource paneltracker
+[71/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/quickwindowsystem.cpp.o
+[72/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/dialog.cpp.o
+[73/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/environment.cpp.o
+[74/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/tools.cpp.o
+[75/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/apptypes.cpp.o
+[76/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/iconitem.cpp.o
+[77/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_autogen/mocs_compilation.cpp.o
+[78/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/alternativeshelper.cpp.o
+[79/252] Building CXX object declarativeimports/core/CMakeFiles/lattecoreplugin.dir/lattecoreplugin_qmltyperegistrations.cpp.o
+[80/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/knscompat.cpp.o
+[81/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/infoview.cpp.o
+[82/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/declarativeimports/interfaces.cpp.o
+[83/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/primaryoutputwatcher.cpp.o
+[84/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/screenpool.cpp.o
+[85/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/activitydata.cpp.o
+[86/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/session/shutdownmonitor.cpp.o
+[87/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/appletdata.cpp.o
+[88/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/genericdata.cpp.o
+[89/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/errorinformationdata.cpp.o
+[90/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/errordata.cpp.o
+[91/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/genericbasictable.cpp.o
+[92/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/layoutcolordata.cpp.o
+[93/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/layouticondata.cpp.o
+[94/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/layoutdata.cpp.o
+[95/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/main.cpp.o
+[96/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/preferencesdata.cpp.o
+[97/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/layoutstable.cpp.o
+[98/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/screendata.cpp.o
+[99/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/uniqueidinfo.cpp.o
+[100/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/lattecorona.cpp.o
+[101/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/viewdata.cpp.o
+[102/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/generictable.cpp.o
+[103/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/data/viewstable.cpp.o
+[104/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layout/abstractlayout.cpp.o
+[105/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/latte-dock-ng_autogen/mocs_compilation.cpp.o
+[106/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/indicator/factory.cpp.o
+[107/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/layoutfilelock.cpp.o
+[108/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/appletids.cpp.o
+[109/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/importedcontainments.cpp.o
+[110/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layout/centrallayout.cpp.o
+[111/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/layoutfilemove.cpp.o
+[112/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/uniquelayoutname.cpp.o
+[113/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/package/lattepackage.cpp.o
+[114/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/syncedlaunchers.cpp.o
+[115/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/manager.cpp.o
+[116/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/importer.cpp.o
+[117/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layout/genericlayout.cpp.o
+[118/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/plasma/extended/panelbackground.cpp.o
+[119/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/synchronizer.cpp.o
+[120/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/plasma/extended/backgroundcache.cpp.o
+[121/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/plasma/extended/screenpool.cpp.o
+[122/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/handbook.cpp.o
+[123/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/autostart.cpp.o
+[124/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/layouts/storage.cpp.o
+[125/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/plasma/extended/theme.cpp.o
+[126/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/generichandler.cpp.o
+[127/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/genericdialog.cpp.o
+[128/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/plasma/extended/screengeometries.cpp.o
+[129/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/generictools.cpp.o
+[130/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/persistentmenu.cpp.o
+[131/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/genericviewtools.cpp.o
+[132/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/generic/layoutscombobox.cpp.o
+[133/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/actionsdialog/actionlistwidgetitem.cpp.o
+[134/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/universalsettings.cpp.o
+[135/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/actionsdialog/actionsdialog.cpp.o
+[136/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/actionsdialog/actionshandler.cpp.o
+[137/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/detailsdialog/schemescombobox.cpp.o
+[138/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/detailsdialog/delegates/schemecmbitemdelegate.cpp.o
+[139/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/detailsdialog/schemesmodel.cpp.o
+[140/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/detailsdialog/detailsdialog.cpp.o
+[141/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/exporttemplatedialog/appletsmodel.cpp.o
+[142/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/detailsdialog/detailshandler.cpp.o
+[143/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/exporttemplatedialog/delegates/normalcheckboxdelegate.cpp.o
+[144/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/exporttemplatedialog/exporttemplatedialog.cpp.o
+[145/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/screensdialog/screensmodel.cpp.o
+[146/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/screensdialog/delegates/checkboxdelegate.cpp.o
+[147/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/screensdialog/screensdialog.cpp.o
+[148/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/exporttemplatedialog/exporttemplatehandler.cpp.o
+[149/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/screensdialog/screenshandler.cpp.o
+[150/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/layoutsheaderview.cpp.o
+[151/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/layoutstableview.cpp.o
+[152/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/tabpreferenceshandler.cpp.o
+[153/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/templateskeeper.cpp.o
+[154/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/layoutsmodel.cpp.o
+[155/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/layoutscontroller.cpp.o
+[156/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/settingsdialog.cpp.o
+[157/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/delegates/backgrounddelegate.cpp.o
+[158/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/tablayoutshandler.cpp.o
+[159/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/delegates/activitiesdelegate.cpp.o
+[160/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/delegates/checkboxdelegate.cpp.o
+[161/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/delegates/layoutcmbitemdelegate.cpp.o
+[162/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/settingsdialog/delegates/layoutnamedelegate.cpp.o
+[163/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/viewstableview.cpp.o
+[164/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/viewsdialog.cpp.o
+[165/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/delegates/custommenuitemwidget.cpp.o
+[166/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/viewsmodel.cpp.o
+[167/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/viewshandler.cpp.o
+[168/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/delegates/namedelegate.cpp.o
+[169/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/viewscontroller.cpp.o
+[170/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/delegates/singleoptiondelegate.cpp.o
+[171/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/settings/viewsdialog/delegates/singletextdelegate.cpp.o
+[172/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/shortcuts/modifiertracker.cpp.o
+[173/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/templates/viewtemplatenames.cpp.o
+[174/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/shortcuts/shortcutstracker.cpp.o
+[175/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/tools/commontools.cpp.o
+[176/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/shortcuts/globalshortcuts.cpp.o
+[177/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/templates/templatesmanager.cpp.o
+[178/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/panelshadows.cpp.o
+[179/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/effects.cpp.o
+[180/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/eventssink.cpp.o
+[181/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/parabolic.cpp.o
+[182/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/clonedview.cpp.o
+[183/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/tasksmodel.cpp.o
+[184/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/positioner.cpp.o
+[185/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/originalview.cpp.o
+[186/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/helpers/floatinggapwindow.cpp.o
+[187/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/containmentinterface.cpp.o
+[188/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/helpers/screenedgeghostwindow.cpp.o
+[189/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/visibilitymanager.cpp.o
+[190/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/indicator/indicatorinfo.cpp.o
+[191/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/helpers/subwindow.cpp.o
+[192/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/indicator/indicatorresources.cpp.o
+[193/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/indicator/indicator.cpp.o
+[194/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/view.cpp.o
+[195/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/canvasconfigview.cpp.o
+[196/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/indicatoruimanager.cpp.o
+[197/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/viewsettingsfactory.cpp.o
+[198/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/widgetexplorerview.cpp.o
+[199/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/subconfigview.cpp.o
+[200/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/windowstracker/allscreenstracker.cpp.o
+[201/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/windowstracker/currentscreentracker.cpp.o
+[202/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/settings/primaryconfigview.cpp.o
+[203/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/view/windowstracker/windowstracker.cpp.o
+[204/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/schemecolors.cpp.o
+[205/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/windowinfowrap.cpp.o
+[206/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/abstractwindowinterface.cpp.o
+[207/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/plasmapaneltracker.cpp.o
+[208/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/trackedgeneralinfo.cpp.o
+[209/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tasktools.cpp.o
+[210/252] Building C object app/CMakeFiles/latte-dock-ng.dir/wayland-kde-primary-output-v1-protocol.c.o
+[211/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/lastactivewindow.cpp.o
+[212/252] Building C object app/CMakeFiles/latte-dock-ng.dir/wayland-kde-output-order-v1-protocol.c.o
+[213/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/trackedlayoutinfo.cpp.o
+[214/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/.qt/rcc/qrc_paneltracker.cpp.o
+[215/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/qwayland-kde-primary-output-v1.cpp.o
+[216/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/schemes.cpp.o
+[217/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/qwayland-kde-output-order-v1.cpp.o
+[218/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_app.cpp.o
+[219/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/trackedviewinfo.cpp.o
+[220/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/waylandinterface.cpp.o
+[221/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_LattePrivateAppPlugin.cpp.o
+[222/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_autogen/mocs_compilation.cpp.o
+[223/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/latteprivateappplugin_qmltyperegistrations.cpp.o
+[224/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/interfaces.cpp.o
+[225/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/__/plasma/extended/backgroundtracker.cpp.o
+[226/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/lattedockadaptor.cpp.o
+[227/252] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/plasma_containmentactions_lattecontextmenu_autogen/mocs_compilation.cpp.o
+[228/252] Building CXX object app/CMakeFiles/latte-dock-ng.dir/wm/tracker/windowstracker.cpp.o
+[229/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_containment.cpp.o
+[230/252] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/layoutmenuitemwidget.cpp.o
+[231/252] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/__/__/app/settings/generic/generictools.cpp.o
+[232/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/.qt/rcc/qrc_qmake_org_kde_latte_private_tasks.cpp.o
+[233/252] Building CXX object app/declarativeimports/CMakeFiles/latteprivateappplugin.dir/contextmenulayerquickitem.cpp.o
+[234/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_LatteContainmentPlugin.cpp.o
+[235/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/plugin/types.cpp.o
+[236/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_qmltyperegistrations.cpp.o
+[237/252] Linking CXX shared module qml/org/kde/latte/core/liblattecoreplugin.so
+[238/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/windowviewbackend.cpp.o
+[239/252] Linking CXX executable bin/latte-dock-ng-add-launcher
+[240/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/types.cpp.o
+[241/252] Linking CXX shared module bin/kf6/packagestructure/latte_indicator.so
+[242/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/lattecontainmentplugin_autogen/mocs_compilation.cpp.o
+[243/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/previewprocess.cpp.o
+[244/252] Building CXX object containmentactions/contextmenu/CMakeFiles/plasma_containmentactions_lattecontextmenu.dir/menu.cpp.o
+[245/252] Linking CXX shared module qml/org/kde/latte/private/app/liblatteprivateappplugin.so
+[246/252] Linking CXX executable bin/latte-dock-ng
+[247/252] Linking CXX executable bin/latte-dock-ng-preview
+[248/252] Linking CXX shared module bin/org.kde.latte.contextmenu.so
+[249/252] Building CXX object plasmoid/CMakeFiles/lattetasksplugin.dir/plugin/contextmenuactionsbackend.cpp.o
+[250/252] Linking CXX shared module qml/org/kde/latte/private/tasks/liblattetasksplugin.so
+[251/252] Building CXX object containment/CMakeFiles/lattecontainmentplugin.dir/plugin/layoutmanager.cpp.o
+[252/252] Linking CXX shared module qml/org/kde/latte/private/containment/liblattecontainmentplugin.so

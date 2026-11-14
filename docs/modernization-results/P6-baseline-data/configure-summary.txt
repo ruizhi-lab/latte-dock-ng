@@ -1,0 +1,3 @@
+command=['cmake', '-S', '/tmp/p6-baseline-5e490945/src', '-B', '/tmp/p6-baseline-5e490945/build', '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_INSTALL_PREFIX=/tmp/p6-baseline-5e490945/stage', '-DKDE_INSTALL_QMLDIR=/tmp/p6-baseline-5e490945/stage/lib/qt6/qml', '-DKDE_INSTALL_LIBDIR=lib64', '-DFETCHCONTENT_FULLY_DISCONNECTED=ON']
+exit=0
+monotonic_seconds=34.895
