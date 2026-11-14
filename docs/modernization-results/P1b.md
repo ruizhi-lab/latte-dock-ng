@@ -93,6 +93,15 @@ memory saving claim. Each Release run printed the VM's two Mesa EGL
 environment warning. The canonical user-mode Debug process was restored after
 the Release trials.
 
+The PSS values above compare the start of each sampling window. In the first
+pair, B already exceeded A by 144,763 KiB at that point; during the 7.5-second
+window B increased by 255 KiB and A by 1,364 KiB. The endpoint B−A difference
+was therefore 143,654 KiB. This locates the level difference before the window,
+but the records do not identify its cause or establish that the R5 session
+environment issue occurred in these runs. The raw samples do not include
+per-event timing or a time series, so neither an event-latency nor a memory
+savings conclusion follows from this observation.
+
 Title response latency was not measured: the fixture does not expose a
 trustworthy timestamp for the tracker receiving each title update. The field
 comparison unit test covers every non-display `WindowInfoWrap` field, and the
