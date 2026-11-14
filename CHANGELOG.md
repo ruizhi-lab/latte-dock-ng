@@ -1,3 +1,34 @@
+## [v1.3.3] - 2026-11-14
+
+This release corrects which applications receive the audio badge and when a
+paused application stops showing it, and hardens the startup screen fallback.
+
+### Fixed
+- Audio badges are matched to the application that actually owns the stream.
+  Matching prefers explicit desktop/application identifiers, so a generic
+  browser process no longer claims the audio of a PWA or of another profile;
+  ambiguous streams are left unassigned instead of exposing unrelated
+  applications' audio controls. Independent Electron applications still match
+  their own audio process.
+- A paused application stops counting as playing even while it keeps its audio
+  connection open. Playback status and output activity hide paused streams;
+  without player status, brief silence is tolerated for about one second. The
+  "Audio playing from tasks" guide text in English, Simplified Chinese and
+  Traditional Chinese describes the new matching and pause rules.
+- A dock that falls back to another screen at startup keeps its configured
+  preferred screen, so it returns there instead of staying on the fallback.
+- A popup whose size is odd is centered on its parent without the one-pixel
+  offset that the corrected integer-division step used to produce, including
+  at negative global coordinates.
+
+### Changed
+- Importing a layout whose name is already in use now resolves the collision
+  through one shared naming helper, so an import cannot silently overwrite or
+  duplicate an existing layout name. The check is covered by an autotest.
+- Code quality: the deep QML lint baseline was refreshed for the audio rewrite
+  (244 files, 7,014 visible occurrences); no category was promoted and no
+  warning was suppressed.
+
 ## [v1.3.2] - 2026-11-13
 
 This release adds the dock appearance options requested in
