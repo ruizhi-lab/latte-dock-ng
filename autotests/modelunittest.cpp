@@ -26,6 +26,8 @@ class ModelUnitTest : public QObject
 private Q_SLOTS:
     void initTestCase();
     void appletsModelInitializesDefaultsAndRoles();
+    void appletsModelDefaultsForNoPersonalDataPlugin_data();
+    void appletsModelDefaultsForNoPersonalDataPlugin();
     void appletsModelHandlesInvalidIndexesAndEmptyData();
     void appletsModelSelectionOperationsUpdateSelectedRows();
     void appletsModelDoesNotEmitWhenSelectionIsUnchanged();
@@ -120,6 +122,37 @@ void ModelUnitTest::appletsModelInitializesDefaultsAndRoles()
     QVERIFY(model.data(tasksIndex, Applets::SORTINGROLE).toString().startsWith(QStringLiteral("1000")));
     QCOMPARE(model.headerData(Applets::NAMECOLUMN, Qt::Horizontal, Qt::DisplayRole).toString(), QStringLiteral("Current Applets"));
     QVERIFY(model.headerData(Applets::NAMECOLUMN, Qt::Horizontal, Qt::FontRole).value<QFont>().bold());
+}
+
+void ModelUnitTest::appletsModelDefaultsForNoPersonalDataPlugin_data()
+{
+    QTest::addColumn<QString>("pluginId");
+    QTest::addColumn<bool>("expectedSelected");
+
+    QTest::newRow("separator") << QStringLiteral("org.kde.latte.separator") << true;
+    QTest::newRow("spacer") << QStringLiteral("org.kde.latte.spacer") << true;
+    QTest::newRow("latte-containment") << QStringLiteral("org.kde.latte.plasmoid") << true;
+    QTest::newRow("window-title") << QStringLiteral("org.kde.windowtitle") << true;
+    QTest::newRow("window-buttons") << QStringLiteral("org.kde.windowbuttons") << true;
+    QTest::newRow("window-app-menu") << QStringLiteral("org.kde.windowappmenu") << true;
+    QTest::newRow("margins-separator") << QStringLiteral("org.kde.plasma.marginsseparator") << true;
+    QTest::newRow("ordinary-applet") << QStringLiteral("org.kde.latte.tasks") << false;
+}
+
+void ModelUnitTest::appletsModelDefaultsForNoPersonalDataPlugin()
+{
+    QFETCH(QString, pluginId);
+    QFETCH(bool, expectedSelected);
+
+    AppletsTable applets;
+    applets << makeApplet(pluginId, QStringLiteral("Fixture applet"), QStringLiteral("fixture-icon"), QStringLiteral("Fixture description"));
+
+    Applets model(nullptr);
+    model.setData(applets);
+
+    const QModelIndex appletIndex = model.index(0, Applets::NAMECOLUMN);
+    QCOMPARE(model.data(appletIndex, Applets::SELECTEDROLE).toBool(), expectedSelected);
+    QCOMPARE(model.data(appletIndex, Qt::CheckStateRole).value<Qt::CheckState>(), expectedSelected ? Qt::Checked : Qt::Unchecked);
 }
 
 void ModelUnitTest::appletsModelHandlesInvalidIndexesAndEmptyData()
