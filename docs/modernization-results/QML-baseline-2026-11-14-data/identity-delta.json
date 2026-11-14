@@ -1,0 +1,104 @@
+{
+  "added": [
+    {
+      "category": "incompatible-type",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Cannot assign binding of type const QMetaObject to PulseAudioQt::VolumeObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"identity\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"isWindow\" not found on type \"QObject\"",
+      "severity": "warning"
+    }
+  ],
+  "removed": [
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"appId\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"appName\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"binaryName\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"iconName\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"parentPid\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"pid\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Member \"portalAppId\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "unqualified",
+      "count": 7,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "unqualified",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/AudioStream.qml",
+      "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "unqualified",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/ProgressOverlay.qml",
+      "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "unqualified",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/TaskIcon.qml",
+      "message": "Unqualified access",
+      "severity": "warning"
+    }
+  ]
+}

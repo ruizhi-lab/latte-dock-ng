@@ -1,0 +1,22 @@
+{
+  "clang-debug": {
+    "addedIdentities": 0,
+    "occurrences": 7014,
+    "removedIdentities": 0
+  },
+  "clang-release": {
+    "addedIdentities": 0,
+    "occurrences": 7014,
+    "removedIdentities": 0
+  },
+  "gcc-debug": {
+    "addedIdentities": 0,
+    "occurrences": 7014,
+    "removedIdentities": 0
+  },
+  "gcc-release": {
+    "addedIdentities": 0,
+    "occurrences": 7014,
+    "removedIdentities": 0
+  }
+}

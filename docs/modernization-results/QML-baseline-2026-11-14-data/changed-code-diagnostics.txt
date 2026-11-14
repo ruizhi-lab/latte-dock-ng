@@ -1,0 +1,211 @@
+# Raw qmllint diagnostics for the QML files whose normalized identity counts changed
+# (candidate report, GCC Release artifact of run 43603278974).
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:53:75 [warning] Member "NormalVolume" not found on type "PulseAudio"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:54:56 [warning] Member "NormalVolume" not found on type "PulseAudio"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:59:36 [warning] Member "MinimalVolume" not found on type "PulseAudio"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:75:34 [warning] Member "isWindow" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:75:62 [warning] Member "identity" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:81:97 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:45:32 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:46:32 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:112:91 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:112:105 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:117:24 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:117:34 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:117:55 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:117:101 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:126:27 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:127:31 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:128:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:129:35 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:130:33 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:131:32 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:132:34 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:133:43 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:135:44 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:137:79 [warning] Member "NormalVolume" not found on type "PulseAudio"
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:138:48 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:180:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:183:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:187:31 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:187:54 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:187:63 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:188:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:192:31 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:192:54 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:192:63 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:193:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:166:47 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:166:26 [warning] Cannot assign binding of type const QMetaObject to PulseAudioQt::VolumeObject
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:231:13 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:231:13 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:234:33 [warning] Type "Sink" of property "defaultSink" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:237:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:244:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:244:38 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/PulseAudio.qml:245:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:15:46 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:28:14 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:32:14 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:32:27 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:32:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:36:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:37:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:38:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:114:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:114:45 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:114:63 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:115:72 [warning] Member "layoutDirection" not found on type "QQmlApplication"
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:118:67 [warning] Member "layoutDirection" not found on type "QQmlApplication"
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:125:87 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:125:102 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:126:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:170:23 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:150:24 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:141:23 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:200:18 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:221:13 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:236:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:238:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:254:18 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:267:39 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/AudioStream.qml:297:59 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:17:72 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:25:16 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:40:24 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:31:24 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:56:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:56:39 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:56:92 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:57:39 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:57:88 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:58:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:58:60 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:65:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:65:52 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:65:95 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:66:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:67:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:68:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:76:32 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:76:70 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:79:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:81:45 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:81:89 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:81:118 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:84:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:84:70 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:86:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:90:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:92:45 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:92:83 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:95:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:95:77 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:98:22 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:102:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:102:51 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:103:28 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:106:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:106:53 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:106:83 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:116:54 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:117:57 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:117:87 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:117:131 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:119:53 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:120:56 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:121:56 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/ProgressOverlay.qml:122:57 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:27:94 [warning] Member "backgroundColor" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:27:112 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:28:88 [warning] Member "glowColor" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:28:100 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:32:61 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:41:51 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:42:84 [warning] Member "progressVisible" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:43:77 [warning] Member "progress" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:43:106 [warning] Member "progress" not found on type "QObject"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:46:47 [warning] Cannot assign binding of type QObject to QQuickItem
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:498:58 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:57:35 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:60:23 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:70:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:77:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:83:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:105:62 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:144:24 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:163:51 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:163:103 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:173:25 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:173:36 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:175:62 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:176:48 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:176:59 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:177:53 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:177:64 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:191:46 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:192:20 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:203:34 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:204:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:205:38 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:205:81 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:208:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:209:40 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:210:40 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:212:35 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:213:38 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:214:38 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:217:45 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:217:97 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:233:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:234:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:235:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:239:33 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:244:48 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:244:62 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:245:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:258:57 [warning] Member "layoutDirection" not found on type "QQmlApplication"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:258:96 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:263:37 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:266:30 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:266:55 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:291:36 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:278:36 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:345:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:346:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:346:51 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:352:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:353:26 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:357:25 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:376:20 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:379:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:381:22 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:414:18 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:416:22 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:422:41 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:422:93 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:448:17 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:449:18 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:452:39 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:453:42 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:455:47 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:455:83 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:456:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:457:50 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:457:79 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:461:32 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:476:9 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:478:30 [warning] Member "removingItem" not found on type "TaskAnimations.RemoveWindowFromGroupAnimation"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:479:31 [warning] Member "removingItem" not found on type "TaskAnimations.RemoveWindowFromGroupAnimation"
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:492:19 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:568:33 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:568:85 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:612:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:504:33 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:504:85 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:558:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:560:21 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:560:77 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:516:29 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:519:31 [warning] Unqualified access
+latte-dock-ng/plasmoid/package/contents/ui/task/TaskIcon.qml:543:29 [warning] Unqualified access

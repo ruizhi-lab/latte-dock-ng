@@ -3949,6 +3949,13 @@
       "severity": "warning"
     },
     {
+      "category": "incompatible-type",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "Cannot assign binding of type const QMetaObject to PulseAudioQt::VolumeObject",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
@@ -3964,56 +3971,21 @@
     },
     {
       "category": "missing-property",
-      "count": 2,
+      "count": 1,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"appId\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 3,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"appName\" not found on type \"QObject\"",
+      "message": "Member \"identity\" not found on type \"QObject\"",
       "severity": "warning"
     },
     {
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"binaryName\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"iconName\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 3,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"parentPid\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 3,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"pid\" not found on type \"QObject\"",
-      "severity": "warning"
-    },
-    {
-      "category": "missing-property",
-      "count": 1,
-      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
-      "message": "Member \"portalAppId\" not found on type \"QObject\"",
+      "message": "Member \"isWindow\" not found on type \"QObject\"",
       "severity": "warning"
     },
     {
       "category": "unqualified",
-      "count": 43,
+      "count": 36,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4356,14 +4328,14 @@
     },
     {
       "category": "unqualified",
-      "count": 25,
+      "count": 24,
       "file": "plasmoid/package/contents/ui/task/AudioStream.qml",
       "message": "Unqualified access",
       "severity": "warning"
     },
     {
       "category": "unqualified",
-      "count": 47,
+      "count": 46,
       "file": "plasmoid/package/contents/ui/task/ProgressOverlay.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -4426,7 +4398,7 @@
     },
     {
       "category": "unqualified",
-      "count": 85,
+      "count": 84,
       "file": "plasmoid/package/contents/ui/task/TaskIcon.qml",
       "message": "Unqualified access",
       "severity": "warning"
@@ -5181,6 +5153,7 @@
       "plasmoid/package/contents/ui/previews/ToolTipDelegate2.qml",
       "plasmoid/package/contents/ui/previews/ToolTipInstance.qml",
       "plasmoid/package/contents/ui/previews/ToolTipWindowMouseArea.qml",
+      "plasmoid/package/contents/ui/task/AudioPlaybackState.qml",
       "plasmoid/package/contents/ui/task/AudioStream.qml",
       "plasmoid/package/contents/ui/task/ProgressOverlay.qml",
       "plasmoid/package/contents/ui/task/SubWindows.qml",
@@ -5427,6 +5400,7 @@
       "plasmoid/package/contents/ui/previews/ToolTipDelegate2.qml": 0,
       "plasmoid/package/contents/ui/previews/ToolTipInstance.qml": 0,
       "plasmoid/package/contents/ui/previews/ToolTipWindowMouseArea.qml": 0,
+      "plasmoid/package/contents/ui/task/AudioPlaybackState.qml": 0,
       "plasmoid/package/contents/ui/task/AudioStream.qml": 0,
       "plasmoid/package/contents/ui/task/ProgressOverlay.qml": 0,
       "plasmoid/package/contents/ui/task/SubWindows.qml": 0,

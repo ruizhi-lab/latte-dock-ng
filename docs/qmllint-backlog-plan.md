@@ -1,9 +1,9 @@
 # QML lint backlog and baseline governance
 
-Initial inventory: 2026-09-30. Latest reviewed refresh: 2026-11-13.
+Initial inventory: 2026-09-30. Latest reviewed refresh: 2026-11-14.
 
 The reviewed machine baseline is [`qmllint-baseline.json`](qmllint-baseline.json).
-It records all 243 tracked QML files, the qmllint JSON revision, the tool and
+It records all 244 tracked QML files, the qmllint JSON revision, the tool and
 host fingerprint, import roots, successful process exit codes, and normalized
 diagnostic identities with multiplicities. The accepted fingerprint is
 qmllint 6.11.1 on Ubuntu 24.04 with the KDE Neon build stack, using the matching
@@ -110,3 +110,17 @@ CI reports (GCC Debug/Release and Clang Release) are byte-identical, cover all
 against the published refresh remains required; the old run's coverage failure
 is not reclassified as a pass. No category promotion or warning suppression
 was introduced.
+
+The 2026-11-14 [reviewed refresh](modernization-results/QML-baseline-2026-11-14.md)
+uses run 43603278974 for `f784986c7`. All four build jobs passed build, tests and
+sanitizers; only the baseline comparison failed, because
+`plasmoid/package/contents/ui/task/AudioPlaybackState.qml` joined deep-lint
+coverage. That new file has no diagnostics. Three added occurrences (two
+`missing-property` and one `incompatible-type`, all in the rewritten
+`PulseAudio.qml`) are qmllint inference limits on `Instantiator.objectAt()` and
+the guarded `PulseObject` volume binding; eleven identities (24 occurrences)
+were removed by the same audio refactor. Visible occurrences move from 7,035 to
+7,014. The four CI reports are byte-identical (SHA-256
+`2a566003a04ebd9329fa3d4bfd7582e8c8ead41255f5f1996df83e5e9e8cedcc`), cover all
+244 files with successful exits, and compare with zero additions or removals
+after acceptance. Fresh CI against this refresh remains required.
