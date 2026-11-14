@@ -66,7 +66,26 @@ error and full behavior remain open.
 
 As a possible warning-free synthetic alternative, the Arch Trash plugin's
 embedded metadata was inspected and did not declare a single-instance limit.
-That does not establish runtime support for two instances. A separate two-Trash
-preflight was not run: transferring the source archive and extracting it in the
-VM was rejected by automated approval review. No remote build or session was
-started for that attempt.
+That alone did not establish runtime support for two instances. An initial
+request to transfer and extract the source archive in the VM was rejected by
+automated approval review. After the user clarified that the VM is a dedicated
+test environment, the same operation was approved and the preflight ran.
+
+The later synthetic fixture used two real Trash instances (IDs 6 and 9) in one
+containment, with no manually injected tracked IDs or Folder applet. Its
+SHA-256 was `0b0a09fa82db4301b2326cb62a905aa7614b188535a760ae5cfb2ccef86aca25`.
+Both instances independently loaded tracker models and matched a controlled
+Dolphin window. The private session still emitted portal, SQL query and virtual
+graphics warnings, so this is not a clean performance baseline. No CPU or PSS
+measurement was performed. The SQL warnings have no recorded query or stack,
+and the log also says the KActivities service was not running. Both trackers
+matched the controlled window, but full activity, configuration and indicator
+state parity was not established.
+
+The first attempt shared the normal temporary lock path and exited before the
+test; the process used a private session bus and scratch HOME, and source review
+shows the lock-conflict path returns before applying import options. Its actual
+exit code and a pre-run active-layout hash were not captured. A subsequent run
+isolated `TMPDIR` as well as HOME, XDG paths, D-Bus and Wayland. One private
+D-Bus daemon from the first attempt required manual PID-verified cleanup; the
+active Dock remained running. The temporary diagnostic QML was not committed.

@@ -219,9 +219,9 @@ It exercises production layout logic through the configuration property map;
 disk-backed KConfig loading and live desktop interactions remain unverified.
 
 P4's [Arch synthetic preflight](modernization-results/P4-arch-synthetic-preflight.md)
-reached a private TaskManager session and, after adding a default Folder applet,
-activated two per-applet trackers. It is not the historical Fedora layout;
-a Folder TypeError and harness warning remain unresolved, so it does not yet
+reached a private TaskManager session and activated two per-applet trackers in
+both Folder/Trash and two-Trash synthetic layouts. These are not the historical
+Fedora layout; runtime environment warnings remain, and the runs do not yet
 justify resource measurement or a shared-query implementation.
 
 P6's [scratch Release build preflight](modernization-results/P6-scratch-build-baseline.md)
