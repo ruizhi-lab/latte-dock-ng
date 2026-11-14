@@ -4,6 +4,7 @@
 */
 
 #include "../app/layout/containmentscreenresolver.h"
+#include "../app/layout/initialviewscreenresolver.h"
 
 #include <QTest>
 
@@ -139,6 +140,23 @@ class ContainmentScreenResolverTest : public QObject
         QCOMPARE(viewReads, 1);
         QCOMPARE(fallbackReads, 1);
     }
+
+    void startupFallbackPreservesExplicitScreenForReconnect()
+    {
+        constexpr int preferredScreenId = 11;
+        constexpr int primaryScreenId = 12;
+
+        const auto startup = Latte::Layout::InitialViewScreenResolver::resolve(preferredScreenId, false, primaryScreenId);
+        QCOMPARE(startup.runtimeScreenId, primaryScreenId);
+        QCOMPARE(startup.preferredScreenId, preferredScreenId);
+        QVERIFY(startup.temporaryPrimaryFallback);
+
+        const auto reconnected = Latte::Layout::InitialViewScreenResolver::resolve(startup.preferredScreenId, true, primaryScreenId);
+        QCOMPARE(reconnected.runtimeScreenId, preferredScreenId);
+        QCOMPARE(reconnected.preferredScreenId, preferredScreenId);
+        QVERIFY(!reconnected.temporaryPrimaryFallback);
+    }
+
 };
 
 QTEST_GUILESS_MAIN(ContainmentScreenResolverTest)

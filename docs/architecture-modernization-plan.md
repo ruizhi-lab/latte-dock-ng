@@ -413,8 +413,15 @@ passed all 23 jobs in CI run 43481441747.
 [T4i](modernization-results/T4i-integer-division.md) preserves popup centering
 rounding and adds the fifty-fifth check. Both native LLVM gates, four
 zero-warning 64-test configurations, and the Arch Qt 6.12 gate pass. Actual
-Wayland popup placement was not re-observed for this slice; remote CI is
-pending. No performance reduction is claimed without measurement.
+Wayland popup placement was not re-observed for this slice. Published as
+`43bc885aa`, it passed all 23 jobs in CI run 43530811418. No performance
+reduction is claimed without measurement.
+
+[Startup screen fallback and drawing follow-up](modernization-results/T4j-screen-fallback.md)
+preserves an explicit screen choice during temporary startup fallback and
+consolidates two equivalent drawing branches. Four local configurations and
+desktop retesting pass; an actual unavailable-to-reconnected screen transition
+remains untested. The branch-clone gate remains disabled.
 
 ## Git and rollback
 

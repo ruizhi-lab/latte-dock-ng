@@ -12,4 +12,4 @@ The clang-tidy gate now includes `bugprone-integer-division` as its 55th check. 
 
 GCC and Clang Debug and Release builds had no compiler warnings and each passed 64/64 CTest targets. Focused clazy passed, as did the syntax check of 243 QML files and module metadata checks in all four builds. The native deep QML baseline was not rerun because the host Qt version differs from the CI baseline. [Validation evidence](T4i-data/validation-summary.json) and [Arch Qt 6.12 evidence](T4i-data/arch/README.md) record the results. The Arch core test passed the new cases with one unrelated desktop-only test skipped.
 
-The coordinate arithmetic and the PlasmaQuick placement route are preserved; actual Wayland popup placement was not re-observed for this slice. No performance reduction is claimed. Remote CI for this slice is pending.
+The coordinate arithmetic and the PlasmaQuick placement route are preserved; actual Wayland popup placement was not re-observed for this slice. No performance reduction is claimed. Published as `43bc885aa`, [CI run 43530811418](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43530811418) passed all 23 jobs.

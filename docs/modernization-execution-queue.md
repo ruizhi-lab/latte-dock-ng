@@ -172,7 +172,14 @@ subsequent T4d changes.
 - T4i: [integer-division gate](modernization-results/T4i-integer-division.md)
   preserves popup centering, adds the 55th check, and passes both native gates,
   four 64-test configurations, and the Arch Qt 6.12 gate and core test.
-  Wayland popup placement was not visually re-observed. Remote CI is pending.
+  Wayland popup placement was not visually re-observed. Published as
+  `43bc885aa`; CI run 43530811418 passed all 23 jobs.
+
+- T4j: [startup screen fallback and drawing](modernization-results/T4j-screen-fallback.md)
+  retains the configured screen through temporary startup fallback and merges
+  two equivalent drawing branches. Local validation and normal desktop retest
+  pass; a live unavailable-to-reconnected output transition remains untested.
+  The branch-clone gate is not enabled.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`

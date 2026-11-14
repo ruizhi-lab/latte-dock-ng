@@ -24,6 +24,8 @@ private Q_SLOTS:
     void screenMaxLengthUsesOddAspectLength();
     void screenDrawingReturnsAvailableInnerRect();
     void viewDrawingPaintsHorizontalAndVerticalEdges();
+    void viewDrawingKeepsLeftAndJustifyOrigins();
+    void viewDrawingKeepsTopAndJustifyOrigins();
     void horizontalDockScreenEdgeCornerPolicy();
     void verticalDockExternalPanelAvoidancePolicy();
     void verticalDockExternalPanelGeometryKeepsScreenThicknessAxis();
@@ -45,6 +47,33 @@ bool hasPaintedPixel(const QImage &image)
     }
 
     return false;
+}
+
+QRect paintedBounds(const QImage &image)
+{
+    int left = image.width();
+    int top = image.height();
+    int right = -1;
+    int bottom = -1;
+
+    for (int y = 0; y < image.height(); ++y) {
+        for (int x = 0; x < image.width(); ++x) {
+            if (qAlpha(image.pixel(x, y)) == 0) {
+                continue;
+            }
+
+            left = qMin(left, x);
+            top = qMin(top, y);
+            right = qMax(right, x);
+            bottom = qMax(bottom, y);
+        }
+    }
+
+    if (right < left || bottom < top) {
+        return QRect();
+    }
+
+    return QRect(QPoint(left, top), QPoint(right, bottom));
 }
 
 }
@@ -187,6 +216,74 @@ void ToolsUnitTest::viewDrawingPaintsHorizontalAndVerticalEdges()
     Latte::drawView(&verticalPainter, option, verticalView, QRect(10, 10, 100, 50));
     verticalPainter.end();
     QVERIFY(hasPaintedPixel(verticalImage));
+}
+
+void ToolsUnitTest::viewDrawingKeepsLeftAndJustifyOrigins()
+{
+    QStyleOption option;
+    option.state = QStyle::State_Enabled;
+    option.palette = QPalette();
+    const QRect availableScreenRect(10, 10, 100, 50);
+
+    Latte::Data::View leftView;
+    leftView.edge = Plasma::Types::BottomEdge;
+    leftView.alignment = Latte::Types::Left;
+    QImage leftImage(QSize(120, 80), QImage::Format_ARGB32_Premultiplied);
+    leftImage.fill(Qt::transparent);
+    QPainter leftPainter(&leftImage);
+    Latte::drawView(&leftPainter, option, leftView, availableScreenRect);
+    leftPainter.end();
+
+    Latte::Data::View justifyView;
+    justifyView.edge = Plasma::Types::BottomEdge;
+    justifyView.alignment = Latte::Types::Justify;
+    QImage justifyImage(QSize(120, 80), QImage::Format_ARGB32_Premultiplied);
+    justifyImage.fill(Qt::transparent);
+    QPainter justifyPainter(&justifyImage);
+    Latte::drawView(&justifyPainter, option, justifyView, availableScreenRect);
+    justifyPainter.end();
+
+    const QRect leftBounds = paintedBounds(leftImage);
+    const QRect justifyBounds = paintedBounds(justifyImage);
+    QVERIFY(leftBounds.isValid());
+    QVERIFY(justifyBounds.isValid());
+    QCOMPARE(justifyBounds.left(), leftBounds.left());
+    QCOMPARE(justifyBounds.top(), leftBounds.top());
+    QVERIFY(justifyBounds.right() > leftBounds.right());
+}
+
+void ToolsUnitTest::viewDrawingKeepsTopAndJustifyOrigins()
+{
+    QStyleOption option;
+    option.state = QStyle::State_Enabled;
+    option.palette = QPalette();
+    const QRect availableScreenRect(10, 10, 100, 50);
+
+    Latte::Data::View topView;
+    topView.edge = Plasma::Types::LeftEdge;
+    topView.alignment = Latte::Types::Top;
+    QImage topImage(QSize(120, 80), QImage::Format_ARGB32_Premultiplied);
+    topImage.fill(Qt::transparent);
+    QPainter topPainter(&topImage);
+    Latte::drawView(&topPainter, option, topView, availableScreenRect);
+    topPainter.end();
+
+    Latte::Data::View justifyView;
+    justifyView.edge = Plasma::Types::LeftEdge;
+    justifyView.alignment = Latte::Types::Justify;
+    QImage justifyImage(QSize(120, 80), QImage::Format_ARGB32_Premultiplied);
+    justifyImage.fill(Qt::transparent);
+    QPainter justifyPainter(&justifyImage);
+    Latte::drawView(&justifyPainter, option, justifyView, availableScreenRect);
+    justifyPainter.end();
+
+    const QRect topBounds = paintedBounds(topImage);
+    const QRect justifyBounds = paintedBounds(justifyImage);
+    QVERIFY(topBounds.isValid());
+    QVERIFY(justifyBounds.isValid());
+    QCOMPARE(justifyBounds.left(), topBounds.left());
+    QCOMPARE(justifyBounds.top(), topBounds.top());
+    QVERIFY(justifyBounds.bottom() > topBounds.bottom());
 }
 
 void ToolsUnitTest::horizontalDockScreenEdgeCornerPolicy()

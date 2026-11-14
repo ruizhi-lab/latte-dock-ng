@@ -94,6 +94,7 @@ public:
     int externalPanelRightMargin() const { return m_externalPanelMargins.right(); }
 
     void setScreenToFollow(QScreen *scr, bool updateScreenId = true);
+    void setPreferredScreenName(const QString &screenName);
     void setWindowOnActivities(const Latte::WindowSystem::WindowId &wid, const QStringList &activities);
 
     void reconsiderScreen();

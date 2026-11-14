@@ -401,6 +401,18 @@ void Positioner::setScreenToFollow(QScreen *scr, bool updateScreenId)
     Q_EMIT currentScreenChanged();
 }
 
+void Positioner::setPreferredScreenName(const QString &screenName)
+{
+    if (screenName.isEmpty()) {
+        return;
+    }
+
+    // Startup may expose a saved output ID before Qt has registered its QScreen.
+    // Keep the configured connector authoritative while the dock uses the primary
+    // screen temporarily, so reconsiderScreen() can move it when that output appears.
+    m_screenNameToFollow = screenName;
+}
+
 //! the main function which decides if this dock is at the
 //! correct screen
 void Positioner::reconsiderScreen()

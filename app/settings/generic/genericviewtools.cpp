@@ -62,26 +62,24 @@ void drawView(QPainter *painter, const QStyleOption &option, const Latte::Data::
     }
 
     if (view.isHorizontal()) {
-        if (view.alignment == Latte::Types::Left) {
+        // Justify keeps the full length computed above but shares Left's start.
+        if (view.alignment == Latte::Types::Left || view.alignment == Latte::Types::Justify) {
             x = availableScreenRect.x() + thick / 2;
         } else if (view.alignment == Latte::Types::Right) {
             x = availableScreenRect.x() + availableScreenRect.width() - length - 1;
         } else if (view.alignment == Latte::Types::Center) {
             int leftmargin = (availableScreenRect.width() / 2) - (length / 2);
             x = availableScreenRect.x() + leftmargin + 1;
-        } else if (view.alignment == Latte::Types::Justify) {
-            x = availableScreenRect.x() + thick / 2;
         }
     } else if (view.isVertical()) {
-        if (view.alignment == Latte::Types::Top) {
+        // Justify keeps the full length computed above but shares Top's start.
+        if (view.alignment == Latte::Types::Top || view.alignment == Latte::Types::Justify) {
             y = availableScreenRect.y() + thick / 2;
         } else if (view.alignment == Latte::Types::Bottom) {
             y = availableScreenRect.y() + availableScreenRect.height() - length - 1;
         } else if (view.alignment == Latte::Types::Center) {
             int topmargin = (availableScreenRect.height() / 2) - (length / 2);
             y = availableScreenRect.y() + topmargin + 1;
-        } else if (view.alignment == Latte::Types::Justify) {
-            y = availableScreenRect.y() + thick / 2;
         }
     }
 

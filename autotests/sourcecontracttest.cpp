@@ -381,6 +381,7 @@ private Q_SLOTS:
     void lattecoronaUnloadUsesCappedLiveListLoop();
     void lattecoronaScreenForContainmentHasDepthGuard();
     void genericLayoutScreenMappingUsesLazyAuthoritativeAdapters();
+    void genericLayoutTemporaryScreenFallbackKeepsPreferredOutput();
     void lattecoronaAlternativesCallbacksFollowTheirOwners();
     void originalViewCleanClonesDrainsFromLocalCopy();
     void layoutManagerResolveAppletQuickItemUsesVisitedSet();
@@ -5087,6 +5088,49 @@ void SourceContractTest::genericLayoutScreenMappingUsesLazyAuthoritativeAdapters
     QVERIFY(method.contains(QStringLiteral("m_corona->screenPool()->id(view->screen()->name())")));
     QVERIFY(method.contains(QStringLiteral("ContainmentScreenResolver::resolve(")));
     QVERIFY(method.contains(QStringLiteral("containmentLastScreen(containment)")));
+}
+
+void SourceContractTest::genericLayoutTemporaryScreenFallbackKeepsPreferredOutput()
+{
+    QFile layoutFile(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(layoutFile.open(QFile::ReadOnly));
+    const QString layoutSource = QString::fromUtf8(layoutFile.readAll());
+    const qsizetype addViewStart = layoutSource.indexOf(QStringLiteral("void GenericLayout::addView("));
+    QVERIFY(addViewStart >= 0);
+    const qsizetype addViewEnd = layoutSource.indexOf(QStringLiteral("\nvoid GenericLayout::"), addViewStart + 1);
+    QVERIFY(addViewEnd > addViewStart);
+    const QString addView = withoutComments(layoutSource.mid(addViewStart, addViewEnd - addViewStart));
+
+    const qsizetype fallbackStart = addView.indexOf(QStringLiteral("if (assignment.temporaryPrimaryFallback)"));
+    const qsizetype fallbackEnd = addView.indexOf(QStringLiteral("\n    Latte::View *latteView;"), fallbackStart);
+    QVERIFY(fallbackStart >= 0);
+    QVERIFY(fallbackEnd > fallbackStart);
+    const QString fallback = addView.mid(fallbackStart, fallbackEnd - fallbackStart);
+
+    QVERIFY(addView.contains(QStringLiteral("InitialViewScreenResolver::resolve(")));
+    QVERIFY(fallback.contains(QStringLiteral("preferredScreenToRestore = m_corona->screenPool()->connector(assignment.preferredScreenId);")));
+    QVERIFY(!fallback.contains(QStringLiteral("writeEntry(")));
+    QVERIFY(!fallback.contains(QStringLiteral("viewdata.onPrimary =")));
+    QVERIFY(!fallback.contains(QStringLiteral("viewdata.screen =")));
+    QVERIFY(addView.contains(QStringLiteral("setPreferredScreenName(preferredScreenToRestore)")));
+
+    QFile positionerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/positioner.cpp"));
+    QVERIFY(positionerFile.open(QFile::ReadOnly));
+    const QString positioner = withoutComments(QString::fromUtf8(positionerFile.readAll()));
+    const qsizetype setterStart = positioner.indexOf(QStringLiteral("void Positioner::setPreferredScreenName("));
+    QVERIFY(setterStart >= 0);
+    const qsizetype setterEnd = positioner.indexOf(QStringLiteral("\n}"), setterStart);
+    QVERIFY(setterEnd > setterStart);
+    QVERIFY(positioner.mid(setterStart, setterEnd - setterStart).contains(QStringLiteral("m_screenNameToFollow = screenName;")));
+
+    const qsizetype reconsiderStart = positioner.indexOf(QStringLiteral("void Positioner::reconsiderScreen()"));
+    const qsizetype reconsiderEnd = positioner.indexOf(QStringLiteral("\nvoid Positioner::onScreenChanged("), reconsiderStart);
+    QVERIFY(reconsiderStart >= 0);
+    QVERIFY(reconsiderEnd > reconsiderStart);
+    const QString reconsider = positioner.mid(reconsiderStart, reconsiderEnd - reconsiderStart);
+    QVERIFY(reconsider.contains(QStringLiteral("m_screenNameToFollow == scr->name()")));
+    QVERIFY(reconsider.contains(QStringLiteral("scr->name() == m_screenNameToFollow")));
+    QVERIFY(positioner.contains(QStringLiteral("connect(qGuiApp, &QGuiApplication::screenAdded, this, &Positioner::onScreenChanged)")));
 }
 
 void SourceContractTest::lattecoronaAlternativesCallbacksFollowTheirOwners()

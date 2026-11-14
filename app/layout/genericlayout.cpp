@@ -7,6 +7,7 @@
 #include <latte_debug.h>
 #include "genericlayout.h"
 #include "containmentscreenresolver.h"
+#include "initialviewscreenresolver.h"
 
 #include <algorithm>
 
@@ -857,6 +858,7 @@ void GenericLayout::addView(Plasma::Containment *containment)
     viewdata.screen = Layouts::Storage::self()->expectedViewScreenId(m_corona, viewdata);
 
     QString nextScreenName = m_corona->screenPool()->hasScreenId(viewdata.screen) ? m_corona->screenPool()->connector(viewdata.screen) : QString();
+    QString preferredScreenToRestore;
 
     qCDebug(latteLayout).noquote() << "Adding View:" << viewdata.id << "-"
                                    << "IsClonedFrom:" << viewdata.isClonedFrom
@@ -865,14 +867,14 @@ void GenericLayout::addView(Plasma::Containment *containment)
                                    << ", Edge:" << viewdata.edge;
 
     if (!viewdata.onPrimary && Layouts::Storage::isValid(viewdata.screen)) {
-        bool foundNextExplicitScreen{false};
+        QScreen *explicitScreen = m_corona->screenPool()->isScreenActive(viewdata.screen)
+                                      ? m_corona->screenPool()->screenForId(viewdata.screen)
+                                      : nullptr;
+        const auto assignment = InitialViewScreenResolver::resolve(viewdata.screen,
+                                                                   explicitScreen != nullptr,
+                                                                   m_corona->screenPool()->primaryScreenId());
 
-        if (m_corona->screenPool()->isScreenActive(viewdata.screen)) {
-            foundNextExplicitScreen = true;
-            nextScreen = m_corona->screenPool()->screenForId(viewdata.screen);
-        }
-
-        if (!foundNextExplicitScreen) {
+        if (assignment.temporaryPrimaryFallback) {
             QScreen *primaryScreen = m_corona->screenPool()->primaryScreen();
 
             if (!primaryScreen) {
@@ -884,12 +886,13 @@ void GenericLayout::addView(Plasma::Containment *containment)
                                  << "- Assigned screen is unavailable, falling back to primary screen ::"
                                  << nextScreenName;
 
-            containment->config().writeEntry(QStringLiteral("onPrimary"), true);
-            containment->config().writeEntry(QStringLiteral("lastScreen"), m_corona->screenPool()->primaryScreenId());
-
-            viewdata.onPrimary = true;
-            viewdata.screen = m_corona->screenPool()->primaryScreenId();
-            nextScreen = primaryScreen;
+            nextScreen = m_corona->screenPool()->screenForId(assignment.runtimeScreenId);
+            if (!nextScreen) {
+                nextScreen = primaryScreen;
+            }
+            preferredScreenToRestore = m_corona->screenPool()->connector(assignment.preferredScreenId);
+        } else {
+            nextScreen = explicitScreen;
         }
     }
 
@@ -907,6 +910,10 @@ void GenericLayout::addView(Plasma::Containment *containment)
 
         auto originalview = qobject_cast<Latte::OriginalView *>(view);
         latteView = new Latte::ClonedView(m_corona, originalview, nextScreen);
+    }
+
+    if (!preferredScreenToRestore.isEmpty()) {
+        latteView->positioner()->setPreferredScreenName(preferredScreenToRestore);
     }
 
     qCDebug(latteLayout).noquote() << "Adding View:" << viewdata.id << "- Passed ALL checks !!!";
