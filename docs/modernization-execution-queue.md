@@ -214,6 +214,10 @@ R8j remains closed at the user's decision. Its unrun 60-window experiment is
 not a scheduled task. A new memory investigation requires its own design and
 pre-registered verdict rule.
 
+A3 has a preliminary [legacy Justify restore/save fixture](modernization-results/A3-legacy-justify-fixture.md).
+It exercises production layout logic through the configuration property map;
+disk-backed KConfig loading and live desktop interactions remain unverified.
+
 ## References
 
 - [Main plan and ledgers](architecture-modernization-plan.md)
