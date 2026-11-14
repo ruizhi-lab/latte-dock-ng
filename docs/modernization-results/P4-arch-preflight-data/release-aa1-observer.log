@@ -1,0 +1,2 @@
+P4_EXTERNAL_TASKMANAGER_OBSERVER_START forceNegative=false
+P4_EXTERNAL_TASKMANAGER_WINDOW_READY {"elapsedMs":200,"activity":"f26d3554-c8a8-4fb9-97d8-27fa40c6ed1e","desktop":"1a979b1f-1e43-4f55-9030-cd07b6899c9a","screen":"0,0,1280,800","dolphinRows":[{"appId":"org.kde.dolphin","isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false}]}

@@ -51,7 +51,7 @@ depends on desktop and panel state that Latte does not own. Folder's widget
 loader does not use that readiness gate, but full Folder rendering and
 interaction were not verified. A future
 experiment must correct the harness and account for the compatibility error.
-P4 remains **no-go for resource measurement** until workload validity and
+P4 remains **no-go for comparative resource measurement** until workload validity and
 task/filter parity are established. Debug instrumentation and preflight
 liveness are not Release A/B results and imply no CPU or memory savings.
 
@@ -92,9 +92,31 @@ roles for its foreground, non-minimized state. This establishes that limited
 state parity for one instrumented Debug run, not minimized, activity-switch or
 full lifecycle parity. The private session logged an unavailable portal and
 virtual graphics warnings. It reported no SQL warnings in that run. No Release
-resource measurements were made. The [context comparison](P4-arch-preflight-data/context-validation.log)
+resource measurements were made in that diagnostic run. The [context comparison](P4-arch-preflight-data/context-validation.log)
 and [window role comparison](P4-arch-preflight-data/row-validation.log) record
 the validator results.
+
+One subsequent uninstrumented Release feasibility run used the same two-Trash
+fixture in a fresh private session. An independent TaskManager observer confirmed
+the controlled Dolphin window, then exited before a 20-second warmup and a
+30-second external `/proc` sampling window. The [31 one-second samples](P4-arch-preflight-data/release-aa1-samples.csv)
+showed no Dock CPU tick increase and PSS between 168,222 and 168,286 KiB. The
+[observer output](P4-arch-preflight-data/release-aa1-observer.log) records its
+window check. The Release binary SHA-256 was
+`1032b0f24498e881e372ca7fea924b22896ef5f3ef38fb03fd0f58295c7c879e`.
+Mesa/EGL and Zink diagnostics remained in the private virtual graphics stack.
+This single idle observation establishes only that the external sampling chain
+ran; it is not an A/A variability estimate, cannot verify both trackers inside
+the uninstrumented process, and does not establish a CPU or PSS saving.
+
+A subsequent bounded event-control pilot attempted to observe activation,
+minimization and restoration through an external TaskManager observer. The
+observer started, initially reported an empty activity and undefined desktop,
+then timed out without completing its three-stage check. The [observer log](P4-arch-preflight-data/release-event-pilot-observer.log)
+is retained. The run is no-go: it did not establish the event sequence or
+collect performance samples. The private processes were cleaned up, and the
+active Arch Dock PID remained unchanged. The cause of the observer timeout was
+not established.
 
 The first attempt shared the normal temporary lock path and exited before the
 test; the process used a private session bus and scratch HOME, and source review
