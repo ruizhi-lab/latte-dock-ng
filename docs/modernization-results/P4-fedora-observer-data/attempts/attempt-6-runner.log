@@ -1,0 +1,28 @@
+P4_PREFLIGHT original_AppletItem_sha256=d4a98dcb6abaf3f03b45282344b39dd005b178234e7c582fc099a1939aa1ddaa diagnostic_AppletItem_sha256=cab98f109d0a552eda3a9d656d3336abdf0e7e23e78e8c9c9f8b33b1dcf0eff1
+Running as unit: p4-fedora-preflight-20261116-r2.service
+P4_PREFLIGHT pids kwin=8543 activity=8558 dock=8603 dolphin=8629
+MESA: error: ZINK: failed to choose pdev
+[Warning : 9:50:27.444] - Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+[Warning : 9:50:28.384] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:50:28.388] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:50:28.394] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:50:28.397] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:50:28.398] - P4_TRACKER_LOADER {"appletId":3,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+[Warning : 9:50:28.477] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:50:28.481] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:50:28.481] - P4_TRACKER_LOADER {"appletId":4,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+[Warning : 9:50:29.072] - P4_TRACKER_SNAPSHOT {"appletId":3,"count":0,"activity":"e4cc15c3-9a53-4ccc-890a-9b174ba74c02","desktop":"cfc99af5-557d-4416-a7a6-4cd576ab6155","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[]}
+[Warning : 9:50:29.072] - P4_TRACKER_SNAPSHOT {"appletId":4,"count":0,"activity":"e4cc15c3-9a53-4ccc-890a-9b174ba74c02","desktop":"cfc99af5-557d-4416-a7a6-4cd576ab6155","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[]}
+[Warning : 9:50:35.632] - P4_TRACKER_SNAPSHOT {"appletId":3,"count":1,"activity":"e4cc15c3-9a53-4ccc-890a-9b174ba74c02","desktop":"cfc99af5-557d-4416-a7a6-4cd576ab6155","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[{"index":0,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{cb945855-9266-45fe-aeff-36d49e933751}"],"isWindow":true,"isStartup":false}]}
+[Warning : 9:50:35.632] - P4_TRACKER_SNAPSHOT {"appletId":4,"count":1,"activity":"e4cc15c3-9a53-4ccc-890a-9b174ba74c02","desktop":"cfc99af5-557d-4416-a7a6-4cd576ab6155","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[{"index":0,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{cb945855-9266-45fe-aeff-36d49e933751}"],"isWindow":true,"isStartup":false}]}
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+kwin_screencast: Failed to connect PipeWire context
+MESA: error: ZINK: failed to choose pdev
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+P4_NO_GO internal-tracker-rows-not-observed
+          Finished with result: exit-code
+Main processes terminated with: code=exited, status=20/n/a
+               Service runtime: 22.392s
+             CPU time consumed: 5.138s
+                   Memory peak: 483.4M (swap: 0B)

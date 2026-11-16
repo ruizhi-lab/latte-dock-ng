@@ -1,0 +1,6 @@
+Running as unit: p4-fedora-aa-6-20261116.service
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 1min 53.422s
+CPU time consumed: 7.660s
+Memory peak: 510.1M (swap: 0B)

@@ -1,0 +1,221 @@
+[Debug : 9:31:11.037] -  Indicator Package Loaded :::  "Plasma Tab Style"  [ "org.kde.latte.plasmatabstyle" ]  - [ "/tmp/T4k-fedora-20261116/prefix/share/latte/indicators/org.kde.latte.plasmatabstyle" ]
+[Debug : 9:31:11.038] -  Indicator Package Loaded :::  "Latte"  [ "org.kde.latte.default" ]  - [ "/tmp/T4k-fedora-20261116/prefix/share/latte/indicators/default" ]
+[Debug : 9:31:11.039] - "Latte"
+[Debug : 9:31:11.039] -  IMPORTER, STORAGE TEMP DIR :::  "/tmp/P4-fedora-20261116/session/tmp/lattedock-AhEVSG"
+[Debug : 9:31:11.041] -  Windows default color scheme ::  "/usr/share/color-schemes/BreezeLight.colors"
+[Debug : 9:31:11.044] - package is valid true
+[Debug : 9:31:11.044] - add connector... "Virtual-0"
+[Debug : 9:31:11.044] - Latte::Corona the package QJsonObject({"KPlugin":{"Authors":[{"Email":"ruizhi.zhong88@gmail.com","Name":"Ruizhi Zhong"}],"Description":"Shell provided for Latte Dock NG","Description[ar]":"صدفة موفرة لرصيف لاتيه","Description[az]":"Latte Dok paneli üçün nəzərdə tutulan üzlük","Description[ca@valencia]":"Intèrpret d'ordres proporcionat per Latte Dock","Description[ca]":"Intèrpret d'ordres proporcionat pel Latte Dock","Description[cs]":"Shell poskytovaný Latte Dock","Description[en_GB]":"Shell provided for Latte Dock NG","Description[eo]":"Ŝelo zorgis pri la Latte Doko","Description[es]":"Shell proporcionada para Latte Dock","Description[eu]":"«Latte Dock»erako emandako oskola (shell)","Description[fi]":"Latte-telakalle tarjottu käyttöliittymä","Description[fr]":"Interpréteur de commandes fourni pour le panneau de Latte","Description[gl]":"Intérprete de ordes fornecido para a doca Latte.","Description[he]":"מעטפת שמסופקת למעגן לאטה","Description[it]":"Shell fornita per Latte Dock","Description[ko]":"Latte 독용 셸","Description[nl]":"Shell geleverd voor de Latte Dock","Description[nn]":"Skal for Latte-dokk","Description[pl]":"Powłoka dla doku Latte","Description[pt]":"Consola oferecida para a área acoplável do Latte","Description[pt_BR]":"Shell fornecido pelo Latte Dock","Description[ro]":"Înveliș furnizat pentru Latte Dock","Description[ru]":"Оболочка для Latte Dock","Description[sk]":"Shell poskytovaný pre Latte Dock","Description[sl]":"Shell za Latte Dock","Description[sv]":"Skal tillhandahållet för Latte dockningsfönster","Description[tr]":"Latte Rıhtım için sağlanan kabuk","Description[uk]":"Оболонка панелі Латте","Description[zh_CN]":"用于 Latte 停靠栏的 Shell","Description[zh_TW]":"提供給 Latte Dock 用的 Shell","Id":"org.kde.latte.shell","License":"GPL-3.0","Name":"Latte Shell","Name[ar]":"صدفة لاتيه","Name[az]":"Latte Üzlüyü","Name[ca@valencia]":"Intèrpret d'ordres de Latte","Name[ca]":"Intèrpret d'ordres del Latte","Name[cs]":"Shell Latte","Name[da]":"Latte-skal","Name[de]":"Latte-Shell","Name[el]":"Κέλυφος Latte","Name[en_GB]":"Latte Shell","Name[eo]":"Laktoŝelo","Name[es]":"Consola de Latte","Name[et]":"Latte shell","Name[eu]":"Latte Shell-a","Name[fi]":"Latte-käyttöliittymä","Name[fr]":"Interpréteur de commandes pour Latte","Name[gl]":"Intérprete de ordes de Latte","Name[he]":"מעטפת לאטה","Name[id]":"Shell Latte","Name[it]":"shell Latte","Name[ka]":"Latte -ის გარსი","Name[ko]":"Latte 셸","Name[lt]":"Latte apvalkalas","Name[nl]":"Latte-shell","Name[nn]":"Latte-skal","Name[pl]":"Powłoka Latte","Name[pt]":"Consola do Latte","Name[pt_BR]":"Latte Shell","Name[ro]":"Înveliș Latte","Name[ru]":"Оболочка Latte","Name[sk]":"Latte Shell","Name[sl]":"Shell Latte","Name[sv]":"Latte skal","Name[tr]":"Latte Kabuk","Name[uk]":"Оболонка Латте","Name[zh_CN]":"Latte Shell","Name[zh_TW]":"Latte Shell","ServiceTypes":["Plasma/Shell"],"Website":"https://github.com/ruizhi-lab/latte-dock-ng"},"Keywords":"shell","Keywords[ar]":"الصدَفة","Keywords[az]":"üzlük","Keywords[ca@valencia]":"intèrpret d'ordres","Keywords[ca]":"intèrpret d'ordres","Keywords[cs]":"shell","Keywords[da]":"skal","Keywords[de]":"Shell","Keywords[el]":"κέλυφος","Keywords[en_GB]":"shell","Keywords[es]":"consola","Keywords[et]":"shell","Keywords[eu]":"shell","Keywords[fi]":"käyttöliittymä","Keywords[fr]":"interpréteur","Keywords[gl]":"intérprete de ordes","Keywords[ia]":"shell","Keywords[id]":"shell","Keywords[it]":"shell","Keywords[ko]":"셸","Keywords[lt]":"apvalkalas","Keywords[nl]":"shell","Keywords[nn]":"skal","Keywords[pl]":"powłoka","Keywords[pt]":"consola","Keywords[pt_BR]":"shell","Keywords[ru]":"оболочка","Keywords[sk]":"shell","Keywords[sl]":"shell","Keywords[sv]":"skal","Keywords[uk]":"оболонка","Keywords[x-test]":"xxshellxx","Keywords[zh_CN]":"shell","Keywords[zh_TW]":"shell","X-KDE-ParentApp":"latte-dock-ng"}) is valid!
+[Debug : 9:31:11.044] - Updating Latte Colors Script presence...
+[Debug : 9:31:11.045] - current plasma theme :::  "breeze-dark"
+[Debug : 9:31:11.045] - theme path :::  "/usr/share/plasma/desktoptheme/breeze-dark"
+[Debug : 9:31:11.045] - theme widgets path :::  "/usr/share/plasma/desktoptheme/default/widgets"
+[Debug : 9:31:11.045] - plasma theme original colors :::  "/usr/share/plasma/desktoptheme/breeze-dark/colors"
+[Debug : 9:31:11.046] - plasma theme default colors :::  "/tmp/P4-fedora-20261116/session/tmp/lattedock-ilnzcK/default.colors"
+[Debug : 9:31:11.049] - plasma theme reversed colors :::  "/tmp/P4-fedora-20261116/session/tmp/lattedock-ilnzcK/reversed.colors"
+[Debug : 9:31:11.049] - Plasma theme is dark...
+[Debug : 9:31:11.054] -   PLASMA THEME TOPLEFT SHADOW :: pixels :  256   transparent pixels 160  | HAS SHADOWS : true
+[Debug : 9:31:11.055] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:11.055] -  BOTTOM RIGHT CORNER MASK base line length ::  5
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.184314, 0, 0, 0)
+[Debug : 9:31:11.055] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:11.055] -  BOTTOM RIGHT CORNER MASK base line length ::  5
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.12549, 0, 0, 0)
+[Debug : 9:31:11.055] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:11.055] -  TOP LEFT CORNER MASK base line length ::  5
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:11.055] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.0666667, 0, 0, 0)
+[Debug : 9:31:11.056] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:11.056] -  TOP LEFT CORNER MASK base line length ::  5
+[Debug : 9:31:11.056] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:11.056] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:11.056] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.12549, 0, 0, 0)
+[Debug : 9:31:11.056] - PLASMA THEME MARGINS AREA :: 4 4 4 4
+[Info : 9:31:11.056] - KActivities service is not running, continuing startup with current Activities data.
+[Debug : 9:31:11.056] - Layout file to create object:  "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/.multiple-layouts_hidden.layout.latte"  with name:  ""
+[Debug : 9:31:11.056] - Layout file: "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/.multiple-layouts_hidden.layout.latte"
+[Debug : 9:31:11.056] - Layout name: ".multiple-layouts_hidden"
+[Debug : 9:31:11.056] -  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LAYOUTS::STORAGE, TEMP DIR :::  "/tmp/P4-fedora-20261116/session/tmp/lattedock-zwwXVA"
+[Debug : 9:31:11.056] - Layout file to create object:  "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/Default.layout.latte"  with name:  ""
+[Debug : 9:31:11.056] - Layout file: "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/Default.layout.latte"
+[Debug : 9:31:11.057] - Layout name: "Default"
+[Debug : 9:31:11.057] - Layout file to create object:  "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/Empty.layout.latte"  with name:  ""
+[Debug : 9:31:11.057] - Layout file: "/tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/templates/Empty.layout.latte"
+[Debug : 9:31:11.057] - Layout name: "Empty"
+[Debug : 9:31:11.057] - Universal Settings version :  1
+[Debug : 9:31:11.057] - Universal Settings version updated to :  2
+[Debug : 9:31:11.057] - adding layout :  ".multiple-layouts_hidden"  based on layout template: ".multiple-layouts_hidden"
+[Debug : 9:31:11.057] - Latte is loading  its layouts...
+[Debug : 9:31:11.058] - Layout file to create object:  "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"  with name:  ""
+[Debug : 9:31:11.058] - Layout file: "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"
+[Debug : 9:31:11.058] - Layout name: "P4 Fedora Fixture"
+[Debug : 9:31:11.058] -  >>>>> SWITCHING >>  "P4 Fedora Fixture"  __ from memory:  0  to memory:  -1
+[Warning : 9:31:11.058] - Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+[Debug : 9:31:11.059] - [perf-trace] hint-schedule
+[Debug : 9:31:11.059] -  KWIN SERVICE :: is available...
+[Debug : 9:31:11.059] - [perf-trace] hint-schedule
+[Debug : 9:31:11.374] - [perf-trace] hint-execute
+[Debug : 9:31:11.409] -  ... initializing layout in single mode :  "P4 Fedora Fixture"  -  "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"
+[Debug : 9:31:11.409] - Layout file to create object:  "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"  with name:  "P4 Fedora Fixture"
+[Debug : 9:31:11.409] - Layout file: "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"
+[Debug : 9:31:11.409] - Layout name: "P4 Fedora Fixture"
+[Debug : 9:31:11.409] -  -------------------------------------------------------------------- 
+[Debug : 9:31:11.409] -  -------------------------------------------------------------------- 
+[Debug : 9:31:11.409] - LOADING CORONA LAYOUT: "/tmp/P4-fedora-20261116/session/home/.config/latte/P4 Fedora Fixture.layout.latte"
+[Debug : 9:31:11.413] - abstract layout is saving... for layout: "P4 Fedora Fixture"
+[Debug : 9:31:11.414] - Layout :::::  "P4 Fedora Fixture"  added containments :::  0
+[Debug : 9:31:11.414] - Adding View: Called for layout: P4 Fedora Fixture with m_containments.size() :: 1
+[Debug : 9:31:11.414] - Adding View: 1 - Step 1...
+[Debug : 9:31:11.414] - Adding View: 1 - Step 2...
+[Debug : 9:31:11.414] - Adding View: 1 - Step 3...
+[Debug : 9:31:11.414] - Adding View: 1 - IsClonedFrom: -1 , NextScreen: 10 - Virtual-0 , OnPrimary: true , Edge: Plasma::Types::BottomEdge
+[Debug : 9:31:11.481] - dock view color scheme pinned :::  "/usr/share/color-schemes/BreezeLight.colors"
+[Debug : 9:31:11.481] - setScreenToFollow() called for screen: "Virtual-0"  update: true
+[Debug : 9:31:11.481] - adapting to screen...
+[Debug : 9:31:11.481] - setScreenToFollow() ended...
+[Debug : 9:31:11.481] - Adding View: 1 - Passed ALL checks !!!
+[Debug : 9:31:11.482] - immediateSyncGeometry() called...
+[Debug : 9:31:11.482] - transient desktop/floating location while updating panel position Plasma::Types::Desktop  containment location: Plasma::Types::Desktop
+[Debug : 9:31:11.482] - transient desktop/floating location while updating canvas geometry Plasma::Types::Desktop  containment location: Plasma::Types::Desktop
+[Debug : 9:31:11.482] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:11.482] - syncGeometry() calculations for edge:  Plasma::Types::Desktop
+[Debug : 9:31:11.482] - syncGeometry() ended...
+[Debug : 9:31:11.482] - SOURCE: QUrl("file:///tmp/T4k-fedora-20261116/prefix/share/plasma/shells/org.kde.latte.shell/contents/views/Panel.qml")
+[Debug : 9:31:11.482] - syncGeometry() called...
+[Debug : 9:31:11.483] - dock view c++ containment changed 1...
+[Debug : 9:31:11.483] - dock view c++ containment changed 2...
+[Debug : 9:31:11.483] - syncGeometry() called...
+[Debug : 9:31:11.483] - reconsiderScreen() called...
+[Debug : 9:31:11.483] -   Delayer  
+[Debug : 9:31:11.483] -       D, found screen:  "Virtual-0"
+[Debug : 9:31:11.483] - dock screen exists  :::  true
+[Debug : 9:31:11.483] - syncGeometry() called...
+[Debug : 9:31:11.483] - reconsiderScreen() ended...
+[Debug : 9:31:11.483] - WindowsTracker creating...
+[Debug : 9:31:11.483] - [perf-trace] hint-execute
+[Debug : 9:31:11.483] - VisibilityManager creating...
+[Debug : 9:31:11.483] -  -> Frame Extents ::  Plasma::Types::BottomEdge  __   extents ::  QMargins(0, 0, 0, 0)
+[Debug : 9:31:11.483] - Updating visibility mode to  ::::  Latte::Types::DodgeActive
+[Debug : 9:31:11.484] - wayland screen edge ghost window surface was created...
+[Debug : 9:31:11.496] - immediateSyncGeometry() called...
+[Debug : 9:31:11.496] - [perf-trace] hint-schedule
+[Debug : 9:31:11.496] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:11.496] - syncGeometry() calculations for edge:  Plasma::Types::BottomEdge
+[Debug : 9:31:11.496] - syncGeometry() ended...
+[Debug : 9:31:11.725] - syncGeometry() called...
+[Debug : 9:31:11.725] - 0
+[Debug : 9:31:11.725] - syncGeometry() called...
+[Debug : 9:31:11.725] - syncGeometry() called...
+[Debug : 9:31:11.725] - syncGeometry() called...
+[Warning : 9:31:11.998] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1678: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.002] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1414: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.008] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1678: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.011] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1414: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.012] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1678: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.083] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1678: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.087] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1414: TypeError: Cannot read property 'id' of null
+[Warning : 9:31:12.088] - file:///tmp/P4-fedora-20261116/session/home/.local/share/plasma/plasmoids/org.kde.latte.containment/contents/ui/applet/AppletItem.qml:1678: TypeError: Cannot read property 'id' of null
+[Debug : 9:31:12.09] - org.kde.sync containment appletsOrderChanged containment 1 screen "Virtual-0" order QList(2, 3, 4)
+[Debug : 9:31:12.109] - originalIconColors override id 3 from "user-trash-symbolic" to "user-trash"
+[Debug : 9:31:12.126] - originalIconColors override id 4 from "user-trash-symbolic" to "user-trash"
+[Debug : 9:31:12.127] - [perf-trace] hint-schedule
+[Debug : 9:31:12.145] - WAYLAND dock window surface was created...
+[Debug : 9:31:12.145] - immediateSyncGeometry() called...
+[Debug : 9:31:12.145] - [perf-trace] hint-schedule
+[Debug : 9:31:12.145] - [perf-trace] hint-schedule
+[Debug : 9:31:12.145] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:12.145] - syncGeometry() calculations for edge:  Plasma::Types::BottomEdge
+[Debug : 9:31:12.145] - syncGeometry() ended...
+[Debug : 9:31:12.148] - immediateSyncGeometry() called...
+[Debug : 9:31:12.148] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:12.148] - syncGeometry() calculations for edge:  Plasma::Types::BottomEdge
+[Debug : 9:31:12.148] - syncGeometry() ended...
+[Info : 9:31:12.252] - Latte Dock actual Qt Quick scene graph graphics API: OpenGL (GPU accelerated: true)
+[Debug : 9:31:12.508] - current plasma theme :::  "breeze-dark"
+[Debug : 9:31:12.508] - theme path :::  "/usr/share/plasma/desktoptheme/breeze-dark"
+[Debug : 9:31:12.508] - theme widgets path :::  "/usr/share/plasma/desktoptheme/default/widgets"
+[Debug : 9:31:12.508] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:12.508] -  BOTTOM RIGHT CORNER MASK base line length ::  5
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::TopEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.184314, 0, 0, 0)
+[Debug : 9:31:12.508] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:12.508] -  BOTTOM RIGHT CORNER MASK base line length ::  5
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:12.508] -  PLASMA THEME EXTENDED ::  Plasma::Types::LeftEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.12549, 0, 0, 0)
+[Debug : 9:31:12.509] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:12.509] -  TOP LEFT CORNER MASK base line length ::  5
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::BottomEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.0666667, 0, 0, 0)
+[Debug : 9:31:12.509] - PLASMA THEME, calculating roundness from mask...
+[Debug : 9:31:12.509] -  TOP LEFT CORNER MASK base line length ::  5
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | roundness: 4  center_max_opacity: 0.84706
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | padtop: 6  padleft: 6  padbottom: 6  padright: 6
+[Debug : 9:31:12.509] -  PLASMA THEME EXTENDED ::  Plasma::Types::RightEdge  | shadowsize: 10  shadowcolor: QColor(ARGB 0.12549, 0, 0, 0)
+[Debug : 9:31:12.509] - PLASMA THEME MARGINS AREA :: 4 4 4 4
+[Debug : 9:31:12.51] - DOCK VIEW FROM LAYOUT :::  "P4 Fedora Fixture"  - activities:  QList("{0}")
+[Debug : 9:31:12.511] - [perf-trace] hint-execute
+[Debug : 9:31:12.512] - badges based on position updated to ::  QList("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "z", "x", "c", "v", "b", "n", "m", ",", ".")
+[Debug : 9:31:12.512] - badges for applet shortcuts updated to ::  QHash()
+[Debug : 9:31:13.222] - [perf-trace] hint-schedule
+[Debug : 9:31:13.238] - [perf-trace] hint-schedule
+[Debug : 9:31:13.382] - org.kde.sync hasLatteTasks changed, count 1
+[Debug : 9:31:13.387] - org.kde.sync containment initializationCompleted containment 1 screen "Virtual-0" order QList(2, 3, 4) knownApplets QList(3, 4, 2)
+[Debug : 9:31:13.414] -  PLASMA STRUTS MANAGER :: checking availability....
+[Debug : 9:31:13.415] - PLASMA STRUTS MANAGER :: interface availability ::  false
+[Debug : 9:31:13.523] - [perf-trace] hint-execute
+[Debug : 9:31:13.684] - START of SyncLatteViewsToScreens ....
+[Debug : 9:31:13.684] - LAYOUT :::  "P4 Fedora Fixture"
+[Debug : 9:31:13.684] - screen count changed -+-+  1
+[Debug : 9:31:13.684] - PRIMARY SCREEN ::  "Virtual-0"
+[Debug : 9:31:13.684] - LATTEVIEWS MAP ::  QHash(("Virtual-0", QHash((Plasma::Types::BottomEdge, QList(1)))))
+[Debug : 9:31:13.684] - syncLatteViewsToScreens: view must consider its screen... for containment: 1  at screen: "Virtual-0"
+[Debug : 9:31:13.684] - reconsiderScreen() called...
+[Debug : 9:31:13.684] -   Delayer  
+[Debug : 9:31:13.684] -       D, found screen:  "Virtual-0"
+[Debug : 9:31:13.684] - dock screen exists  :::  true
+[Debug : 9:31:13.684] - syncGeometry() called...
+[Debug : 9:31:13.684] - reconsiderScreen() ended...
+[Debug : 9:31:13.684] - end of, syncLatteViewsToScreens ....
+[Debug : 9:31:13.843] - immediateSyncGeometry() called...
+[Debug : 9:31:13.843] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:13.843] - syncGeometry() calculations for edge:  Plasma::Types::BottomEdge
+[Debug : 9:31:13.843] - syncGeometry() ended...
+[Debug : 9:31:14.198] - [perf-trace] hint-schedule
+[Debug : 9:31:14.214] - [perf-trace] hint-schedule
+[Debug : 9:31:14.505] - [perf-trace] hint-execute
+[Debug : 9:31:14.518] - [perf-trace] hint-schedule
+[Debug : 9:31:14.807] - [perf-trace] hint-execute
+[Debug : 9:31:15.562] - syncGeometry() called...
+[Debug : 9:31:15.705] - immediateSyncGeometry() called...
+[Debug : 9:31:15.705] - [perf-trace] hint-schedule
+[Debug : 9:31:15.705] - syncGeometry() calculations for screen:  "Virtual-0"  _  QRect(0,0 1280x800)
+[Debug : 9:31:15.705] - syncGeometry() calculations for edge:  Plasma::Types::BottomEdge
+[Debug : 9:31:15.705] - syncGeometry() ended...
+[Debug : 9:31:15.945] - [perf-trace] hint-schedule
+[Debug : 9:31:16.231] - [perf-trace] hint-execute
+[Debug : 9:31:19.158] - [perf-trace] hint-schedule
+[Debug : 9:31:19.158] - [perf-trace] hint-execute
+[Debug : 9:31:19.473] - [perf-trace] hint-execute
+[Info : 9:31:30.882] - [shutdown] KSignalHandler received signal 15 → calling quit()
+[Info : 9:31:30.882] - [shutdown] session-ending flag set; fast teardown enabled.
+[Debug : 9:31:30.883] - Latte Corona - fast shutdown path for session logout.
+[Debug : 9:31:30.883] - "Layout - P4 Fedora Fixture : [unloadLatteViews]" containments :::  1  ,latteViews in memory :::  1  ,hidden latteViews in memory :::   0
+[Debug : 9:31:30.884] - dock view deleting...
+[Debug : 9:31:30.884] - VisibilityManager deleting...
+[Debug : 9:31:30.884] - WindowsTracker removing...
+[Warning : 9:31:30.893] - P4_TRACKER_LOADER id=undefined active=false indexer=false appIds=["org.kde.dolphin"]
+[Warning : 9:31:30.893] - P4_TRACKER_LOADER id=undefined active=false indexer=false appIds=["org.kde.dolphin"]
+[Debug : 9:31:30.894] - "Layout - P4 Fedora Fixture : [unloadContainments]" containments :::  1  ,latteViews in memory :::  0  ,hidden latteViews in memory :::   0
+[Debug : 9:31:30.901] - Layout  "P4 Fedora Fixture"  :: containment destroyed!!!!
+[Debug : 9:31:30.907] - Plasma Extended Screen Geometries :: Deleted...
+[Debug : 9:31:30.911] - Latte Corona - deleted...
+[Debug : 9:31:30.911] - Latte::QuickWindowSystem destructed
+[Warning : 9:31:30.966] - Failed to write to the pipe: Bad file descriptor.

@@ -1,0 +1,4 @@
+{"monotonic_ns": 61888381, "raw": "Failed to create wl_display (No such file or directory)"}
+{"monotonic_ns": 62902604, "qml": {"appId": "org.kde.dolphin", "event": "started", "phase": "waiting-readiness", "stageTimeoutMs": 500, "targetTitle": "P4-offscreen-no-window", "timeoutMs": 1000}}
+{"monotonic_ns": 63219023, "raw": "org.kde.plasma.libtaskmanager: Failed to determine whether virtual desktop navigation wrapping is enabled:  \"The name org.kde.KWin was not provided by any .service files\""}
+{"monotonic_ns": 1064430478, "qml": {"event": "result", "phase": "waiting-readiness", "reason": "context-timeout", "verdict": "invalid-readiness", "windowId": ""}}

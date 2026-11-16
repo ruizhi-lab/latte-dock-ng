@@ -118,6 +118,84 @@ collect performance samples. The private processes were cleaned up, and the
 active Arch Dock PID remained unchanged. The cause of the observer timeout was
 not established.
 
+#### Event-observer recovery pre-registration
+
+Before another pilot, treat QML loading as distinct from observer readiness.
+The retained pilot log contains only the all-zero activity UUID and an
+undefined desktop at startup, followed by the overall timeout; it does not
+show whether the models later became ready or whether any task-row transition
+occurred. The earlier context diagnostic reached valid contexts about 62 ms
+after its initial undefined desktop, so the pilot's initial values are invalid
+for sampling, but do not by themselves explain its later timeout.
+
+The repaired observer must fail closed unless the activity identity is a
+nonzero UUID, the desktop identity is defined and nonempty in the actual
+TaskManager API representation, screen geometry has positive dimensions, and
+the controlled Dolphin row is present with stable identity and expected
+initial roles. Do not assume the desktop identity uses UUID representation;
+reject its API's undefined/empty sentinel instead. Emit separate readiness,
+baseline-row and per-transition records with monotonic timestamps. The
+required sequence is the same row first active and not minimized, then
+minimized, then restored active and not minimized. A timeout before valid
+contexts is `invalid-readiness`; valid contexts with a missing/incorrect row
+or transition is `model-or-driver-failure`; only the complete sequence is
+`valid-sequence`. Any outcome other than `valid-sequence` invalidates the run
+and must prevent CPU/PSS sampling from being classified as performance
+evidence.
+
+No subsequent valid live event sequence, run identity or A/A estimate is
+recorded yet.
+For the first valid-sequence run, capture the exact source revision, Release
+executable SHA-256, executable path, PID and `/proc/<pid>/stat` start time
+before sampling; recheck executable and process start time at every interval
+to reject PID reuse or restart. Pre-register at least five same-build runs
+with the same fixture and event sequence as A/A repeatability. Use the common
+30-second settle/warmup and 60-second fixed sampling interval, preserving all
+samples and exclusions. Record load and KSycoca cache stability in each run.
+Accept the A/A batch as a variability characterization only if all five runs
+have `valid-sequence`, complete samples and stable process identity; otherwise
+record each failed run and retry it without selecting runs by their metric
+values. Report the observed spread without applying a new threshold or making
+an optimization decision. These runs can establish harness validity and
+baseline variability only; they cannot demonstrate a saving or justify a
+shared-query prototype.
+
+#### External observer recovery and offscreen no-go
+
+The earlier temporary observer source was not present in the local scratch
+files. A focused external TaskManager observer and launcher now live in
+[the P4 observer tools](P4-arch-preflight-data/tools/README.md). It requires an
+exact app ID and display title, stable `WinIdList` identity, nonzero ActivityInfo
+UUID, current desktop membership in the API's `desktopIds`, and positive screen
+geometry. It observes and drives activation, minimize, restore and reactivation
+through the supported TaskManager model calls. Only a complete ordered state
+sequence for the same window can return exit 0; readiness timeout and model or
+driver failure have separate nonzero exits.
+
+The focused Python checks passed: `py_compile` succeeded and unittest discovery
+ran 2 tests. The watchdog test killed a silent `qml6` stub at the Python
+runner's 3-second monotonic deadline and retained the timeout record in
+[`silent-child-timeout.jsonl`](P4-arch-preflight-data/tools/silent-child-timeout.jsonl).
+The actual QML observer also ran with Qt 6.11.3's installed TaskManager module
+in a private D-Bus session, `QT_QPA_PLATFORM=offscreen`, scratch HOME/XDG/TMPDIR,
+and `DISPLAY`/`WAYLAND_DISPLAY` unset. It imported and loaded successfully,
+then returned exit 20 with `invalid-readiness/context-timeout` after about
+1.03 seconds because that session intentionally had no KWin, desktop or target
+window. The captured output is
+[`offscreen-invalid-readiness.jsonl`](P4-arch-preflight-data/tools/offscreen-invalid-readiness.jsonl).
+This verifies the fail-closed QML readiness path and the runner's no-go exit;
+it does not validate live row matching or controller calls.
+
+The Arch VM was started for the next live check. Its DHCP lease was
+`192.168.122.100` at MAC `52:54:00:a7:c4:21`; scoped first-use SSH trust records
+ED25519 fingerprint
+`SHA256:Fh4+8afdqdTPKDMiETKkBdE33MXaJ1POC7Pny5hW/b4` in `/tmp/p4-arch-known_hosts`.
+SSH connections reached the VM, but authentication as `arch` and `ruizhi` was
+denied; no desktop or user configuration was changed. The correct guest account
+or key path remains unresolved. No valid three-stage live sequence, A/A data,
+or performance sample was collected. P4 remains no-go for comparative resource
+measurement and a shared-query implementation.
+
 The first attempt shared the normal temporary lock path and exited before the
 test; the process used a private session bus and scratch HOME, and source review
 shows the lock-conflict path returns before applying import options. Its actual

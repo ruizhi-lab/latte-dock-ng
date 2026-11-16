@@ -1,0 +1,24 @@
+P4_PREFLIGHT original_AppletItem_sha256=d4a98dcb6abaf3f03b45282344b39dd005b178234e7c582fc099a1939aa1ddaa diagnostic_AppletItem_sha256=b89674639a535eee91c6b95f719d6b514ff769167a45502a9a1fb1664f4267a2
+Running as unit: p4-fedora-preflight-20261116-r2.service
+P4_PREFLIGHT pids kwin=7637 activity=7652 dock=7697 dolphin=7730
+MESA: error: ZINK: failed to choose pdev
+[Warning : 9:40:39.067] - Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+[Warning : 9:40:40.014] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:40:40.017] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:40:40.024] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:40:40.027] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:40:40.028] - P4_TRACKER_LOADER {"appletId":3,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+[Warning : 9:40:40.099] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:40:40.103] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:40:40.104] - P4_TRACKER_LOADER {"appletId":4,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+kwin_screencast: Failed to connect PipeWire context
+MESA: error: ZINK: failed to choose pdev
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+P4_NO_GO internal-tracker-rows-not-observed
+          Finished with result: exit-code
+Main processes terminated with: code=exited, status=20/n/a
+               Service runtime: 22.320s
+             CPU time consumed: 5.098s
+                   Memory peak: 491.4M (swap: 0B)

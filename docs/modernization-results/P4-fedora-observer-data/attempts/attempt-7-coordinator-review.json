@@ -1,0 +1,9 @@
+{
+  "attempt": 7,
+  "launcher_exit": 1,
+  "recovered_internal_snapshot_matches_retained_rows": true,
+  "ordered_observer_sequence_valid": true,
+  "context_and_window_identity_match": true,
+  "performance_samples_accepted": false,
+  "limitation": "Original Latte log was overwritten by the attempt-7 snapshot selector; validation uses retained runner rows and observer events."
+}

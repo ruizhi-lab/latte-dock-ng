@@ -1,0 +1,16 @@
+{"monotonic_ns": 128686402, "raw": "MESA-EGL: warning: failed to get driver name for fd -1"}
+{"monotonic_ns": 129546798, "raw": "MESA-EGL: warning: MESA-LOADER: failed to retrieve device information"}
+{"monotonic_ns": 129640548, "raw": "MESA-EGL: warning: failed to get driver name for fd -1"}
+{"monotonic_ns": 176475505, "raw": "MESA: error: ZINK: failed to choose pdev"}
+{"monotonic_ns": 176722388, "raw": "MESA-EGL: warning: egl: failed to create dri2 screen"}
+{"monotonic_ns": 182520028, "qml": {"appId": "org.kde.dolphin", "event": "started", "phase": "waiting-readiness", "stageTimeoutMs": 3000, "targetTitle": "window-title \u2014 Dolphin", "timeoutMs": 12000}}
+{"monotonic_ns": 289994095, "qml": {"activityId": "55d5fe04-28ce-4e52-95c8-f23afacd9640", "activityReady": true, "desktopCount": 1, "desktopId": "3720716c-e63d-4e35-bb06-64bc054f7890", "desktopIds": ["3720716c-e63d-4e35-bb06-64bc054f7890"], "desktopReady": true, "event": "readiness", "phase": "waiting-window", "ready": true, "runningActivities": 1, "screen": [0, 0, 1280, 800], "screenReady": true}}
+{"monotonic_ns": 290593763, "qml": {"appId": "org.kde.dolphin", "event": "baseline-row", "isActive": true, "isMinimized": false, "isStartup": false, "isWindow": true, "phase": "waiting-window", "title": "window-title \u2014 Dolphin", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 290642412, "qml": {"event": "controller-activate", "phase": "waiting-active", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 390291732, "qml": {"appId": "org.kde.dolphin", "event": "observed-active", "isActive": true, "isMinimized": false, "isStartup": false, "isWindow": true, "phase": "waiting-minimized", "title": "window-title \u2014 Dolphin", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 390335264, "qml": {"event": "controller-minimize", "phase": "waiting-minimized", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 491006204, "qml": {"appId": "org.kde.dolphin", "event": "observed-minimized", "isActive": false, "isMinimized": true, "isStartup": false, "isWindow": true, "phase": "waiting-restored", "title": "window-title \u2014 Dolphin", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 491060549, "qml": {"event": "controller-restore", "phase": "waiting-restored", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 591050275, "qml": {"event": "controller-reactivate", "phase": "waiting-restored", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 690690707, "qml": {"appId": "org.kde.dolphin", "event": "observed-restored-active", "isActive": true, "isMinimized": false, "isStartup": false, "isWindow": true, "phase": "complete", "title": "window-title \u2014 Dolphin", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}
+{"monotonic_ns": 690731442, "qml": {"event": "result", "phase": "complete", "reason": "activation-minimize-restore-observed", "verdict": "valid-sequence", "windowId": "{4e2f44f6-8830-4e96-9f02-b54330c145b4}"}}

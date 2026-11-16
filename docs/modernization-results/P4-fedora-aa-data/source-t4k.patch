@@ -1,0 +1,111 @@
+diff --git a/app/declarativeimports/CMakeLists.txt b/app/declarativeimports/CMakeLists.txt
+index 4348ff8b4..bf1684d87 100644
+--- a/app/declarativeimports/CMakeLists.txt
++++ b/app/declarativeimports/CMakeLists.txt
+@@ -59,8 +59,15 @@ install(TARGETS latteprivateappplugin
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app)
+ install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/qmldir
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app)
++# Without this edge, CMake 4.5 cannot infer the generated metadata producer
++# and warns during install preparation. Keep the edge version-gated for CMake 3.20.
++set(_latte_private_app_qmltypes_build_depends)
++if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
++    list(APPEND _latte_private_app_qmltypes_build_depends BUILD_DEPENDS latteprivateappplugin)
++endif()
+ install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/latteprivateappplugin.qmltypes
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app
++        ${_latte_private_app_qmltypes_build_depends}
+         OPTIONAL)
+ 
+ if(LATTE_QT6_COMPAT_QMLDIR)
+@@ -69,5 +76,6 @@ if(LATTE_QT6_COMPAT_QMLDIR)
+             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/app)
+     install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/latteprivateappplugin.qmltypes
+             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/app
++            ${_latte_private_app_qmltypes_build_depends}
+             OPTIONAL)
+ endif()
+diff --git a/containment/CMakeLists.txt b/containment/CMakeLists.txt
+index f9b7e8796..6095ae2b4 100644
+--- a/containment/CMakeLists.txt
++++ b/containment/CMakeLists.txt
+@@ -48,9 +48,15 @@ target_include_directories(lattecontainmentplugin PRIVATE ${CMAKE_CURRENT_SOURCE
+ 
+ install(TARGETS lattecontainmentplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
+ install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
+-# Tooling data for qmllint/Qt Creator; generated together with the qmldir.
++# Without this edge, CMake 4.5 cannot infer the generated metadata producer
++# and warns during install preparation. Keep the edge version-gated for CMake 3.20.
++set(_latte_containment_qmltypes_build_depends)
++if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
++    list(APPEND _latte_containment_qmltypes_build_depends BUILD_DEPENDS lattecontainmentplugin)
++endif()
+ install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/lattecontainmentplugin.qmltypes
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment
++        ${_latte_containment_qmltypes_build_depends}
+         OPTIONAL)
+ 
+ if(LATTE_QT6_COMPAT_QMLDIR)
+@@ -58,5 +64,6 @@ if(LATTE_QT6_COMPAT_QMLDIR)
+     install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment)
+     install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/lattecontainmentplugin.qmltypes
+             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment
++            ${_latte_containment_qmltypes_build_depends}
+             OPTIONAL)
+ endif()
+diff --git a/declarativeimports/core/CMakeLists.txt b/declarativeimports/core/CMakeLists.txt
+index 5e133af32..b365af584 100644
+--- a/declarativeimports/core/CMakeLists.txt
++++ b/declarativeimports/core/CMakeLists.txt
+@@ -52,9 +52,15 @@ target_link_libraries(lattecoreplugin PRIVATE
+ install(TARGETS lattecoreplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)
+ 
+ install(FILES ${LATTE_CORE_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)
+-# Tooling data for qmllint/Qt Creator; generated together with the qmldir.
++# Without this edge, CMake 4.5 cannot infer the generated metadata producer
++# and warns during install preparation. Keep the edge version-gated for CMake 3.20.
++set(_latte_core_qmltypes_build_depends)
++if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
++    list(APPEND _latte_core_qmltypes_build_depends BUILD_DEPENDS lattecoreplugin)
++endif()
+ install(FILES ${LATTE_CORE_QML_BUILD_DIR}/lattecoreplugin.qmltypes
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core
++        ${_latte_core_qmltypes_build_depends}
+         OPTIONAL)
+ 
+ if(LATTE_QT6_COMPAT_QMLDIR)
+@@ -62,5 +68,6 @@ if(LATTE_QT6_COMPAT_QMLDIR)
+     install(FILES ${LATTE_CORE_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/core)
+     install(FILES ${LATTE_CORE_QML_BUILD_DIR}/lattecoreplugin.qmltypes
+             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/core
++            ${_latte_core_qmltypes_build_depends}
+             OPTIONAL)
+ endif()
+diff --git a/plasmoid/CMakeLists.txt b/plasmoid/CMakeLists.txt
+index f4467ea3c..e31949782 100644
+--- a/plasmoid/CMakeLists.txt
++++ b/plasmoid/CMakeLists.txt
+@@ -77,9 +77,15 @@ target_include_directories(lattetasksplugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
+ 
+ install(TARGETS lattetasksplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
+ install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
+-# Tooling data for qmllint/Qt Creator; generated together with the qmldir.
++# Without this edge, CMake 4.5 cannot infer the generated metadata producer
++# and warns during install preparation. Keep the edge version-gated for CMake 3.20.
++set(_latte_tasks_qmltypes_build_depends)
++if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
++    list(APPEND _latte_tasks_qmltypes_build_depends BUILD_DEPENDS lattetasksplugin)
++endif()
+ install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/lattetasksplugin.qmltypes
+         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks
++        ${_latte_tasks_qmltypes_build_depends}
+         OPTIONAL)
+ 
+ if(LATTE_QT6_COMPAT_QMLDIR)
+@@ -87,5 +93,6 @@ if(LATTE_QT6_COMPAT_QMLDIR)
+     install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
+     install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/lattetasksplugin.qmltypes
+             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks
++            ${_latte_tasks_qmltypes_build_depends}
+             OPTIONAL)
+ endif()

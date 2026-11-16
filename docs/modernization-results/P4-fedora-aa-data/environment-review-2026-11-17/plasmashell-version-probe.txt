@@ -1,0 +1,11 @@
+Command: plasmashell --version (bare SSH shell; no `DISPLAY` or
+`WAYLAND_DISPLAY` was provided).
+
+Shell result:
+`bash: line 2: 24305 Aborted (core dumped) plasmashell --version`
+
+No version string was printed. `coredumpctl info 24305` identifies PID 24305 as
+`/usr/bin/plasmashell`, signal 6 (ABRT), package
+`plasma-workspace/6.8.3-1.fc45`, build ID
+`84fab8fcdc7452a52cdb88f2e62716b2ba0dfffa`. This is not a Latte crash. The
+guest coredump was preserved.

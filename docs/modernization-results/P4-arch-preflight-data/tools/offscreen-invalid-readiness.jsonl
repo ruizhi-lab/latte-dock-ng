@@ -1,0 +1,3 @@
+{"monotonic_ns": 31996980, "qml": {"appId": "org.kde.dolphin", "event": "started", "phase": "waiting-readiness", "stageTimeoutMs": 500, "targetTitle": "P4-offscreen-no-window", "timeoutMs": 1000}}
+{"monotonic_ns": 32223985, "raw": "org.kde.plasma.libtaskmanager: Failed to determine whether virtual desktop navigation wrapping is enabled:  \"The name org.kde.KWin was not provided by any .service files\""}
+{"monotonic_ns": 1032684901, "qml": {"event": "result", "phase": "waiting-readiness", "reason": "context-timeout", "verdict": "invalid-readiness", "windowId": ""}}

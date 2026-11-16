@@ -1,0 +1,37 @@
+observed_at=2026-11-17 07:33:36 CST +0800
+boot_id=83dfbae7-e372-47c0-8c9a-a33ce45541cc
+uptime=81347.07 325305.02
+running_kernel=Linux 7.2.15-300.fc45.x86_64
+load=0.04 0.02 0.00 1/640 24702
+os_release=PRETTY_NAME="Fedora Linux 45 (KDE Plasma Desktop Edition)"
+rpm_relevant_versions_and_install_times
+plasma-workspace-6.8.3-1.fc45 install_epoch=1794837141 install_date=2026年11月16日 星期一 21时52分21秒
+plasma-workspace-libs-6.8.3-1.fc45 install_epoch=1794837126 install_date=2026年11月16日 星期一 21时52分06秒
+kwin-6.8.3-1.fc45 install_epoch=1794837137 install_date=2026年11月16日 星期一 21时52分17秒
+qt6-qtbase-common-6.11.2-3.fc45 install_epoch=1793795394 install_date=2026年11月04日 星期三 20时29分54秒
+qt6-qtbase-gui-6.11.2-3.fc45 install_epoch=1793795555 install_date=2026年11月04日 星期三 20时32分35秒
+qt6-qtdeclarative-6.11.2-3.fc45 install_epoch=1794837059 install_date=2026年11月16日 星期一 21时50分59秒
+plasma-breeze-qt6-6.8.3-1.fc45 install_epoch=1794837124 install_date=2026年11月16日 星期一 21时52分04秒
+dnf_history_transaction_21_relevant
+Transaction ID : 21
+Begin time     : 2026-11-16 13:50:48
+End time       : 2026-11-16 13:53:39
+  安装     kernel-0:7.3.3-300.fc45.x86_64                           User            updates
+  Upgrade  plasma-workspace-common-0:6.8.3-1.fc45.x86_64            Dependency      updates
+  Upgrade  plasma-workspace-devel-0:6.8.3-1.fc45.x86_64             User            updates
+  Upgrade  plasma-workspace-0:6.8.3-1.fc45.x86_64                   Group           updates
+  Upgrade  plasma-workspace-libs-0:6.8.3-1.fc45.x86_64              Dependency      updates
+  Upgrade  kwin-0:6.8.3-1.fc45.x86_64                               Group           updates
+  Upgrade  plasma-breeze-qt6-0:6.8.3-1.fc45.x86_64                  Dependency      updates
+  Upgrade  plasma-workspace-wallpapers-0:6.8.3-1.fc45.noarch        Group           updates
+  Upgrade  qt6-qtdeclarative-0:6.11.2-3.fc45.x86_64                 Dependency      updates
+  Upgrade  qt6-qtdeclarative-devel-0:6.11.2-3.fc45.x86_64           User            updates
+  Replaced kwin-0:6.8.2-2.fc45.x86_64                               Group           @System
+  Replaced plasma-breeze-qt6-0:6.8.2-1.fc45.x86_64                  Dependency      @System
+  Replaced plasma-workspace-0:6.8.2-1.fc45.x86_64                   Group           @System
+  Replaced plasma-workspace-common-0:6.8.2-1.fc45.x86_64            Dependency      @System
+  Replaced plasma-workspace-devel-0:6.8.2-1.fc45.x86_64             User            @System
+  Replaced plasma-workspace-libs-0:6.8.2-1.fc45.x86_64              Dependency      @System
+  Replaced plasma-workspace-wallpapers-0:6.8.2-1.fc45.noarch        Group           @System
+  Replaced qt6-qtdeclarative-0:6.11.2-2.fc45.x86_64                 Dependency      @System
+  Replaced qt6-qtdeclarative-devel-0:6.11.2-2.fc45.x86_64           User            @System

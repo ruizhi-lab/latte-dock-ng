@@ -1,0 +1,18 @@
+Started p4-fedora-aa-3-20261116.service - [systemd-run] /usr/bin/env -u DISPLAY -u WAYLAND_DISPLAY -u QT_QPA_PLATFORM HOME=/tmp/P4-fedora-20261116/aa-run-3/home XDG_CONFIG_HOME=/tmp/P4-fedora-20261116/aa-run-3/home/.config XDG_CACHE_HOME=/tmp/P4-fedora-20261116/aa-run-3/home/.cache XDG_DATA_HOME=/tmp/P4-fedora-20261116/aa-run-3/home/.local/share XDG_STATE_HOME=/tmp/P4-fedora-20261116/aa-run-3/home/.local/state XDG_DATA_DIRS=/tmp/T4k-fedora-20261116/prefix/share:/usr/local/share:/usr/share XDG_RUNTIME_DIR=/tmp/P4-fedora-20261116/aa-run-3/runtime TMPDIR=/tmp/P4-fedora-20261116/aa-run-3/tmp QML_IMPORT_PATH=/tmp/T4k-fedora-20261116/prefix/lib64/qt6/qml:/tmp/T4k-fedora-20261116/prefix/lib64/qml QT_PLUGIN_PATH=/tmp/T4k-fedora-20261116/prefix/lib64/plugins:/tmp/T4k-fedora-20261116/prefix/lib64/qt6/plugins "QT_LOGGING_RULES=latte*.debug=false;qml.debug=false" SOURCE_ARCHIVE=/tmp/T4k-fedora-20261116/source.tar.gz P4_RUN_ID=3 /usr/bin/dbus-run-session --config-file=/tmp/P4-fedora-20261116/aa-run-3/bus.conf -- /bin/bash /tmp/P4-fedora-20261116/aa-run-3/session.sh.
+Accepting client connections on sockets: QList("wayland-p4-aa")
+XKB: Multiple definitions of group 0 name in map 'basic'; Using 'Chinese', ignoring 'English (US)'
+XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+Failed to connect PipeWire context
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+qtvirtualkeyboard currently is not supported at client-side, use QT_IM_MODULES=qtvirtualkeyboard at compositor-side.
+Member contentWidth of the object PopupList_QMLTYPE_79 overrides a member of the base object. Consider renaming it or adding final or override specifier
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+Latte Dock requested Qt Quick OpenGL rendering
+Unknown class  ""  in session saved data!
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+Could not delete render time query because no context is current
+p4-fedora-aa-3-20261116.service: Consumed 7.332s CPU time over 1min 53.302s wall clock time, 506.3M memory peak.

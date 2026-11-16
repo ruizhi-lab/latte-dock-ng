@@ -1,0 +1,193 @@
+           PID: 24305 (plasmashell)
+           TID: 24305 (plasmashell)
+           UID: 1000 (fedora)
+           GID: 1000 (fedora)
+        Signal: 6 (ABRT) si_code: SI_TKILL
+     Timestamp: Tue 2026-11-17 07:27:58 CST (5min ago)
+  Command Line: plasmashell --version
+    Executable: /usr/bin/plasmashell
+ Control Group: /user.slice/user-1000.slice/session-205.scope
+          Unit: session-205.scope
+         Slice: user-1000.slice
+       Session: 205
+     Owner UID: 1000 (fedora)
+       Boot ID: 83dfbae7e37247c08c9aa33ce45541cc
+    Machine ID: ae3f4ccc738f41ba8f2259a9ea290d10
+      Hostname: fedora
+       Storage: /var/lib/systemd/coredump/core.plasmashell.1000.83dfbae7e37247c08c9aa33ce45541cc.24305.1794871678000000.zst (present)
+  Size on Disk: 1.3M
+       Package: plasma-workspace/6.8.3-1.fc45
+      build-id: 84fab8fcdc7452a52cdb88f2e62716b2ba0dfffa
+       Message: Process 24305 (plasmashell) of user 1000 dumped core.
+                
+                Module libuuid.so.1 from rpm util-linux-2.42.4-1.fc45.x86_64
+                Module libxcb-util.so.1 from rpm xcb-util-0.4.1-10.fc45.x86_64
+                Module libxkbcommon-x11.so.0 from rpm libxkbcommon-1.13.1-4.fc45.x86_64
+                Module libICE.so.6 from rpm libICE-1.1.2-5.fc45.x86_64
+                Module libSM.so.6 from rpm libSM-1.2.5-5.fc45.x86_64
+                Module libX11-xcb.so.1 from rpm libX11-1.8.13-3.fc45.x86_64
+                Module libxcb-xkb.so.1 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-xfixes.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-sync.so.1 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-shm.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-shape.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-render-util.so.0 from rpm xcb-util-renderutil-0.3.10-10.fc45.x86_64
+                Module libxcb-render.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-randr.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb-image.so.0 from rpm xcb-util-image-0.4.1-10.fc45.x86_64
+                Module libxcb-icccm.so.4 from rpm xcb-util-wm-0.4.2-10.fc45.x86_64
+                Module libxcb-cursor.so.0 from rpm xcb-util-cursor-0.1.6-3.fc45.x86_64
+                Module libQt6XcbQpa.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libqxcb.so from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libcbor.so.0.14 from rpm libcbor-0.14.0-3.fc45.x86_64
+                Module libcrypt.so.2 from rpm libxcrypt-4.5.2-4.fc45.x86_64
+                Module libfido2.so.1 from rpm libfido2-1.17.0-6.fc45.x86_64
+                Module libsasl2.so.3 from rpm cyrus-sasl-2.1.28-37.fc45.x86_64
+                Module libevent-2.1.so.7 from rpm libevent-2.1.13-1.fc45.x86_64
+                Module libunistring.so.5 from rpm libunistring-1.1-12.fc45.x86_64
+                Module libgmodule-2.0.so.0 from rpm glib2-2.90.1-1.fc45.x86_64
+                Module libpsl.so.5 from rpm libpsl-0.23.1-1.fc45.x86_64
+                Module libssh.so.4 from rpm libssh-0.12.2-1.fc45.x86_64
+                Module libidn2.so.0 from rpm libidn2-2.3.8-4.fc45.x86_64
+                Module libnghttp2.so.14 from rpm nghttp2-1.69.0-6.fc45.x86_64
+                Module libngtcp2.so.16 from rpm ngtcp2-1.22.1-3.fc45.x86_64
+                Module libngtcp2_crypto_ossl.so.0 from rpm ngtcp2-1.22.1-3.fc45.x86_64
+                Module libnghttp3.so.9 from rpm nghttp3-1.19.0-1.fc45.x86_64
+                Module libduktape.so.207 from rpm duktape-2.7.0-12.fc45.x86_64
+                Module libgio-2.0.so.0 from rpm glib2-2.90.1-1.fc45.x86_64
+                Module libcurl.so.4 from rpm curl-8.21.0-9.fc45.x86_64
+                Module libogg.so.0 from rpm libogg-1.3.6-4.fc45.x86_64
+                Module libvorbis.so.0 from rpm libvorbis-1.3.7-21.fc45.x86_64
+                Module libgobject-2.0.so.0 from rpm glib2-2.90.1-1.fc45.x86_64
+                Module libpxbackend-1.0.so from rpm libproxy-0.5.12-3.fc45.x86_64
+                Module libbrotlicommon.so.1 from rpm brotli-1.2.1-1.fc45.x86_64
+                Module libresolv.so.2 from rpm glibc-2.44-2.fc45.x86_64
+                Module libkeyutils.so.1 from rpm keyutils-1.6.3-8.fc45.x86_64
+                Module libkrb5support.so.0 from rpm krb5-1.22.2-11.fc45.x86_64
+                Module libcom_err.so.2 from rpm e2fsprogs-1.47.4-2.fc45.x86_64
+                Module libk5crypto.so.3 from rpm krb5-1.22.2-11.fc45.x86_64
+                Module libkrb5.so.3 from rpm krb5-1.22.2-11.fc45.x86_64
+                Module libltdl.so.7 from rpm libtool-2.5.4-11.fc45.x86_64
+                Module libtdb.so.1 from rpm libtdb-1.4.15-4.fc45.x86_64
+                Module libvorbisfile.so.3 from rpm libvorbis-1.3.7-21.fc45.x86_64
+                Module libKF6BreezeIcons.so.6 from rpm kf6-breeze-icons-6.32.0-1.fc45.x86_64
+                Module libKF6Codecs.so.6 from rpm kf6-kcodecs-6.32.0-1.fc45.x86_64
+                Module libQt6Concurrent.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libicudata.so.78 from rpm icu-78.3-9.fc45.x86_64
+                Module libgraphite2.so.3 from rpm graphite2-1.3.14-22.fc45.x86_64
+                Module libXext.so.6 from rpm libXext-1.3.6-6.fc45.x86_64
+                Module libpcre2-8.so.0 from rpm pcre2-10.49-1.fc45.x86_64
+                Module libxml2.so.16 from rpm libxml2-2.15.4-1.fc45.x86_64
+                Module libGLdispatch.so.0 from rpm libglvnd-1.7.0-10.fc45.x86_64
+                Module libimobiledevice-glue-1.0.so.0 from rpm libimobiledevice-glue-1.3.2-2.fc45.x86_64
+                Module libusbmuxd-2.0.so.7 from rpm libusbmuxd-2.1.1-2.fc45.x86_64
+                Module libssl.so.4 from rpm openssl-4.0.3-1.fc45.x86_64
+                Module libselinux.so.1 from rpm libselinux-3.11-5.fc45.x86_64
+                Module libblkid.so.1 from rpm util-linux-2.42.4-1.fc45.x86_64
+                Module libQt6QmlWorkerScript.so.6 from rpm qt6-qtdeclarative-6.11.2-3.fc45.x86_64
+                Module liblzma.so.5 from rpm xz-5.8.3-2.fc45.x86_64
+                Module libbz2.so.1 from rpm bzip2-1.0.8-24.fc45.x86_64
+                Module libproxy.so.1 from rpm libproxy-0.5.12-3.fc45.x86_64
+                Module libbrotlidec.so.1 from rpm brotli-1.2.1-1.fc45.x86_64
+                Module libgssapi_krb5.so.2 from rpm krb5-1.22.2-11.fc45.x86_64
+                Module libKF6IconThemes.so.6 from rpm kf6-kiconthemes-6.32.0-1.fc45.x86_64
+                Module libKF6IconWidgets.so.6 from rpm kf6-kiconthemes-6.32.0-1.fc45.x86_64
+                Module libKF6Completion.so.6 from rpm kf6-kcompletion-6.32.0-1.fc45.x86_64
+                Module libKF6JobWidgets.so.6 from rpm kf6-kjobwidgets-6.32.0-1.fc45.x86_64
+                Module libKF6KIOGui.so.6 from rpm kf6-kio-6.32.0-1.fc45.x86_64
+                Module ld-linux-x86-64.so.2 from rpm glibc-2.44-2.fc45.x86_64
+                Module libzstd.so.1 from rpm zstd-1.5.7-6.fc45.x86_64
+                Module libcrypto.so.4 from rpm openssl-4.0.3-1.fc45.x86_64
+                Module libpcre2-16.so.0 from rpm pcre2-10.49-1.fc45.x86_64
+                Module libb2.so.1 from rpm libb2-0.98.1-16.fc45.x86_64
+                Module libdouble-conversion.so.3 from rpm double-conversion-3.4.0-4.fc45.x86_64
+                Module libsystemd.so.0 from rpm systemd-262.1-1.fc45.x86_64
+                Module libicuuc.so.78 from rpm icu-78.3-9.fc45.x86_64
+                Module libicui18n.so.78 from rpm icu-78.3-9.fc45.x86_64
+                Module libdbus-1.so.3 from rpm dbus-1.16.4-2.fc45.x86_64
+                Module libz.so.1 from rpm zlib-ng-2.3.3-6.fc45.x86_64
+                Module libfreetype.so.6 from rpm freetype-2.14.3-3.fc45.x86_64
+                Module libharfbuzz.so.0 from rpm harfbuzz-15.0.0-2.fc45.x86_64
+                Module libpng16.so.16 from rpm libpng-1.6.59-1.fc45.x86_64
+                Module libOpenGL.so.0 from rpm libglvnd-1.7.0-10.fc45.x86_64
+                Module libGLX.so.0 from rpm libglvnd-1.7.0-10.fc45.x86_64
+                Module libglib-2.0.so.0 from rpm glib2-2.90.1-1.fc45.x86_64
+                Module libfontconfig.so.1 from rpm fontconfig-2.18.3-2.fc45.x86_64
+                Module libEGL.so.1 from rpm libglvnd-1.7.0-10.fc45.x86_64
+                Module libxkbcommon.so.0 from rpm libxkbcommon-1.13.1-4.fc45.x86_64
+                Module libwayland-cursor.so.0 from rpm wayland-1.26.0-3.fc45.x86_64
+                Module libxcb-keysyms.so.1 from rpm xcb-util-keysyms-0.4.1-10.fc45.x86_64
+                Module libXfixes.so.3 from rpm libXfixes-6.0.1-8.fc45.x86_64
+                Module libxcb-res.so.0 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libxcb.so.1 from rpm libxcb-1.17.0-8.fc45.x86_64
+                Module libplist-2.0.so.4 from rpm libplist-2.7.0-4.fc45.x86_64
+                Module libimobiledevice-1.0.so.6 from rpm libimobiledevice-1.4.0-7.fc45.x86_64
+                Module libmount.so.1 from rpm util-linux-2.42.4-1.fc45.x86_64
+                Module libudev.so.1 from rpm systemd-262.1-1.fc45.x86_64
+                Module libQt6Xml.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libX11.so.6 from rpm libX11-1.8.13-3.fc45.x86_64
+                Module libQt6OpenGL.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libQt6QmlModels.so.6 from rpm qt6-qtdeclarative-6.11.2-3.fc45.x86_64
+                Module libQt6QmlMeta.so.6 from rpm qt6-qtdeclarative-6.11.2-3.fc45.x86_64
+                Module libQt6Svg.so.6 from rpm qt6-qtsvg-6.11.2-1.fc45.x86_64
+                Module libKF6Archive.so.6 from rpm kf6-karchive-6.32.0-1.fc45.x86_64
+                Module libKF6ColorScheme.so.6 from rpm kf6-kcolorscheme-6.32.0-1.fc45.x86_64
+                Module libQt6Network.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libffi.so.8 from rpm libffi-3.5.2-3.fc45.x86_64
+                Module libXau.so.6 from rpm libXau-1.0.12-5.fc45.x86_64
+                Module libKF6WidgetsAddons.so.6 from rpm kf6-kwidgetsaddons-6.32.0-1.fc45.x86_64
+                Module libKF6GuiAddons.so.6 from rpm kf6-kguiaddons-6.32.0-1.fc45.x86_64
+                Module libKF6Notifications.so.6 from rpm kf6-knotifications-6.32.0-1.fc45.x86_64
+                Module libKF6KIOCore.so.6 from rpm kf6-kio-6.32.0-1.fc45.x86_64
+                Module libKF6KIOWidgets.so.6 from rpm kf6-kio-6.32.0-1.fc45.x86_64
+                Module libc.so.6 from rpm glibc-2.44-2.fc45.x86_64
+                Module libm.so.6 from rpm glibc-2.44-2.fc45.x86_64
+                Module libQt6Core.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libQt6DBus.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libQt6Gui.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libQt6WaylandClient.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libKF6WindowSystem.so.6 from rpm kf6-kwindowsystem-6.32.0-1.fc45.x86_64
+                Module libKF6CoreAddons.so.6 from rpm kf6-kcoreaddons-6.32.0-1.fc45.x86_64
+                Module libKF6ConfigCore.so.6 from rpm kf6-kconfig-6.32.0-1.fc45.x86_64
+                Module libKF6Service.so.6 from rpm kf6-kservice-6.32.0-1.fc45.x86_64
+                Module libKF6I18n.so.6 from rpm kf6-ki18n-6.32.0-1.fc45.x86_64
+                Module libQt6Qml.so.6 from rpm qt6-qtdeclarative-6.11.2-3.fc45.x86_64
+                Module libQt6Widgets.so.6 from rpm qt6-qtbase-6.11.2-3.fc45.x86_64
+                Module libKF6ConfigGui.so.6 from rpm kf6-kconfig-6.32.0-1.fc45.x86_64
+                Module libKF6Solid.so.6 from rpm kf6-solid-6.32.0-1.fc45.x86_64
+                Module libKF6Crash.so.6 from rpm kf6-kcrash-6.32.0-1.fc45.x86_64
+                Module libQt6Quick.so.6 from rpm qt6-qtdeclarative-6.11.2-3.fc45.x86_64
+                Module libKF6ConfigQml.so.6 from rpm kf6-kconfig-6.32.0-1.fc45.x86_64
+                Module libPlasmaActivities.so.7 from rpm plasma-activities-6.8.3-1.fc45.x86_64
+                Module libKF6Svg.so.6 from rpm kf6-ksvg-6.32.0-1.fc45.x86_64
+                Module libKF6Package.so.6 from rpm kf6-kpackage-6.32.0-1.fc45.x86_64
+                Module libKF6GlobalAccel.so.6 from rpm kf6-kglobalaccel-6.32.0-1.fc45.x86_64
+                Module libPlasma.so.8 from rpm libplasma-6.8.3-1.fc45.x86_64
+                Module libKF6I18nQml.so.6 from rpm kf6-ki18n-6.32.0-1.fc45.x86_64
+                Module libKF6UserFeedbackCore.so.6 from rpm kf6-kuserfeedback-6.32.0-1.fc45.x86_64
+                Module libwayland-client.so.0 from rpm wayland-1.26.0-3.fc45.x86_64
+                Module libkworkspace6.so.6 from rpm plasma-workspace-6.8.3-1.fc45.x86_64
+                Module libPlasmaQuick.so.8 from rpm libplasma-6.8.3-1.fc45.x86_64
+                Module libKWaylandClient.so.6 from rpm kwayland-6.8.3-1.fc45.x86_64
+                Module libLayerShellQtInterface.so.6 from rpm layer-shell-qt-6.8.3-1.fc45.x86_64
+                Module libKF6StatusNotifierItem.so.6 from rpm kf6-kstatusnotifieritem-6.32.0-1.fc45.x86_64
+                Module libKF6DBusAddons.so.6 from rpm kf6-kdbusaddons-6.32.0-1.fc45.x86_64
+                Module plasmashell from rpm plasma-workspace-6.8.3-1.fc45.x86_64
+                Stack trace of thread 24305:
+                #0  0x00007f53516f1cec __pthread_kill_implementation (libc.so.6 + 0xefcec)
+                #1  0x00007f5351695f4e raise (libc.so.6 + 0x93f4e)
+                #2  0x00007f535167d43f abort (libc.so.6 + 0x7b43f)
+                #3  0x00007f5351e944ee _Z6qAbortv (libQt6Core.so.6 + 0x2944ee)
+                #4  0x00007f5351ef06b1 _ZL10qt_message9QtMsgTypeRK18QMessageLogContextPKcP13__va_list_tag (libQt6Core.so.6 + 0x2f06b1)
+                #5  0x00007f5351e95c95 _ZNK14QMessageLogger5fatalEPKcz (libQt6Core.so.6 + 0x295c95)
+                #6  0x00007f535288a6c9 _ZL13init_platformRK7QStringS1_S1_RiPPc.cold (libQt6Gui.so.6 + 0x28a6c9)
+                #7  0x00007f535295230d _ZN22QGuiApplicationPrivate25createPlatformIntegrationEv (libQt6Gui.so.6 + 0x35230d)
+                #8  0x00007f5352952f78 _ZN22QGuiApplicationPrivate21createEventDispatcherEv (libQt6Gui.so.6 + 0x352f78)
+                #9  0x00007f5351f8cdd5 _ZN23QCoreApplicationPrivate4initEv (libQt6Core.so.6 + 0x38cdd5)
+                #10 0x00007f5352957186 _ZN22QGuiApplicationPrivate4initEv (libQt6Gui.so.6 + 0x357186)
+                #11 0x00007f5353ef5b15 _ZN19QApplicationPrivate4initEv (libQt6Widgets.so.6 + 0x2f5b15)
+                #12 0x000055acb4d64501 main (plasmashell + 0x4b501)
+                #13 0x00007f535167f301 __libc_start_call_main (libc.so.6 + 0x7d301)
+                #14 0x00007f535167f418 __libc_start_main@@GLIBC_2.34 (libc.so.6 + 0x7d418)
+                #15 0x000055acb4d676c5 _start (plasmashell + 0x4e6c5)
+                ELF object binary architecture: AMD x86-64

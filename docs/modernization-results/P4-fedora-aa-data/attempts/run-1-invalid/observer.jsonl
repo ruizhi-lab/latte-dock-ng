@@ -1,0 +1,5 @@
+{"monotonic_ns": 105506798, "raw": "MESA-EGL: warning: failed to get driver name for fd -1"}
+{"monotonic_ns": 106328404, "raw": "MESA-EGL: warning: MESA-LOADER: failed to retrieve device information"}
+{"monotonic_ns": 106350558, "raw": "MESA-EGL: warning: failed to get driver name for fd -1"}
+{"monotonic_ns": 134905454, "raw": "MESA: error: ZINK: failed to choose pdev"}
+{"monotonic_ns": 135154107, "raw": "MESA-EGL: warning: egl: failed to create dri2 screen"}

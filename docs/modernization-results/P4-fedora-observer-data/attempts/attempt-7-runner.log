@@ -1,0 +1,39 @@
+P4_PREFLIGHT original_AppletItem_sha256=d4a98dcb6abaf3f03b45282344b39dd005b178234e7c582fc099a1939aa1ddaa diagnostic_AppletItem_sha256=5e67e2bb43a366887e82968b8804692ec86fc4254e637adca632e075e09c4c8c
+Running as unit: p4-fedora-preflight-20261116-r2.service
+P4_PREFLIGHT pids kwin=9445 activity=9460 dock=9505 dolphin=9531
+MESA: error: ZINK: failed to choose pdev
+[Warning : 9:55:08.317] - Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+[Warning : 9:55:09.259] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:55:09.263] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:55:09.269] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:55:09.272] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:55:09.273] - P4_TRACKER_LOADER {"appletId":3,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+[Warning : 9:55:09.345] - P4_TRACKER_LOADER {"appletId":-1,"active":false,"indexer":false,"appIds":[]}
+[Warning : 9:55:09.349] - P4_APPLET_ROOT {"appletId":-1,"tracked":[],"loaderActive":false,"indexer":false}
+[Warning : 9:55:09.35] - P4_TRACKER_LOADER {"appletId":4,"active":true,"indexer":false,"appIds":["org.kde.dolphin"]}
+[Warning : 9:55:09.939] - P4_TRACKER_SNAPSHOT {"appletId":3,"count":0,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[]}
+[Warning : 9:55:09.939] - P4_TRACKER_SNAPSHOT {"appletId":4,"count":0,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[]}
+[Warning : 9:55:16.515] - P4_TRACKER_SNAPSHOT {"appletId":3,"count":1,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[{"index":0,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{40390fef-6a48-4e95-8a0c-a7c58ba133c7}"],"isWindow":true,"isStartup":false}]}
+[Warning : 9:55:16.516] - P4_TRACKER_ROW {"appletId":3,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{40390fef-6a48-4e95-8a0c-a7c58ba133c7}"],"isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800}}
+[Warning : 9:55:16.516] - P4_TRACKER_SNAPSHOT {"appletId":4,"count":1,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800},"rows":[{"index":0,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{40390fef-6a48-4e95-8a0c-a7c58ba133c7}"],"isWindow":true,"isStartup":false}]}
+[Warning : 9:55:16.516] - P4_TRACKER_ROW {"appletId":4,"appId":"org.kde.dolphin","title":"window-title — Dolphin","winIdList":["{40390fef-6a48-4e95-8a0c-a7c58ba133c7}"],"isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false,"activity":"001ae12e-5844-455a-afce-ce4f90a24c58","desktop":"937169d2-f4d9-49c0-9251-66205a1119d2","screen":{"x":0,"y":0,"width":1280,"height":800}}
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+kwin_screencast: Failed to connect PipeWire context
+MESA: error: ZINK: failed to choose pdev
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+P4_PREFLIGHT observer_exit=0
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+  File "/usr/lib64/python3.15/pathlib/__init__.py", line 986, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.15/pathlib/__init__.py", line 970, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/P4-fedora-20261116/session/internal-parity.json'
+          Finished with result: exit-code
+Main processes terminated with: code=exited, status=1/FAILURE
+               Service runtime: 23.184s
+             CPU time consumed: 5.843s
+                   Memory peak: 507.8M (swap: 0B)

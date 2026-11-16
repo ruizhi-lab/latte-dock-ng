@@ -1,0 +1,16 @@
+Accepting client connections on sockets: QList("wayland-p4")
+kwin_xkbcommon: XKB: Multiple definitions of group 0 name in map 'basic'; Using 'Chinese', ignoring 'English (US)'
+kwin_xkbcommon: XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+kwin_xkbcommon: XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+kwin_xkbcommon: XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+kwin_xkbcommon: XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+kwin_xkbcommon: XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+kwin_screencast: Failed to connect PipeWire context
+qt.qpa.wayland: qtvirtualkeyboard currently is not supported at client-side, use QT_IM_MODULES=qtvirtualkeyboard at compositor-side.
+qt.qml.propertyCache.append: Member contentWidth of the object PopupList_QMLTYPE_75 overrides a member of the base object. Consider renaming it or adding final or override specifier
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: MESA-LOADER: failed to retrieve device information
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA: error: ZINK: failed to choose pdev
+MESA-EGL: warning: egl: failed to create dri2 screen
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")

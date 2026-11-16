@@ -1,0 +1,31 @@
+Started p4-fedora-aa-1-20261116.service - [systemd-run] /usr/bin/env -u DISPLAY -u WAYLAND_DISPLAY -u QT_QPA_PLATFORM HOME=/tmp/P4-fedora-20261116/aa-run-1/home XDG_CONFIG_HOME=/tmp/P4-fedora-20261116/aa-run-1/home/.config XDG_CACHE_HOME=/tmp/P4-fedora-20261116/aa-run-1/home/.cache XDG_DATA_HOME=/tmp/P4-fedora-20261116/aa-run-1/home/.local/share XDG_STATE_HOME=/tmp/P4-fedora-20261116/aa-run-1/home/.local/state XDG_DATA_DIRS=/tmp/T4k-fedora-20261116/prefix/share:/usr/local/share:/usr/share XDG_RUNTIME_DIR=/tmp/P4-fedora-20261116/aa-run-1/runtime TMPDIR=/tmp/P4-fedora-20261116/aa-run-1/tmp QML_IMPORT_PATH=/tmp/T4k-fedora-20261116/prefix/lib64/qt6/qml:/tmp/T4k-fedora-20261116/prefix/lib64/qml QT_PLUGIN_PATH=/tmp/T4k-fedora-20261116/prefix/lib64/plugins:/tmp/T4k-fedora-20261116/prefix/lib64/qt6/plugins "QT_LOGGING_RULES=latte*.debug=false;qml.debug=false" SOURCE_ARCHIVE=/tmp/T4k-fedora-20261116/source.tar.gz P4_RUN_ID=1 /usr/bin/dbus-run-session --config-file=/tmp/P4-fedora-20261116/aa-run-1/bus.conf -- /bin/bash /tmp/P4-fedora-20261116/aa-run-1/session.sh.
+Accepting client connections on sockets: QList("wayland-p4-aa")
+XKB: Multiple definitions of group 0 name in map 'basic'; Using 'Chinese', ignoring 'English (US)'
+XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+Failed to connect PipeWire context
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+qtvirtualkeyboard currently is not supported at client-side, use QT_IM_MODULES=qtvirtualkeyboard at compositor-side.
+Member contentWidth of the object PopupList_QMLTYPE_45 overrides a member of the base object. Consider renaming it or adding final or override specifier
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+Latte Dock requested Qt Quick OpenGL rendering
+Unknown class  ""  in session saved data!
+Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.ServiceUnknown", "The name org.freedesktop.portal.Desktop was not provided by any .service files")
+P4_EVENT {"event":"started","phase":"waiting-readiness","appId":"org.kde.dolphin","targetTitle":"window-title — Dolphin","timeoutMs":12000,"stageTimeoutMs":3000}
+P4_EVENT {"event":"readiness","phase":"waiting-window","ready":true,"activityReady":true,"activityId":"69219e0b-d7f6-4dbe-a369-88f91d2794bd","runningActivities":1,"desktopReady":true,"desktopId":"5a65e203-22c2-4d5d-82ab-a44f49eda707","desktopCount":1,"desktopIds":["5a65e203-22c2-4d5d-82ab-a44f49eda707"],"screenReady":true,"screen":[0,0,1280,800]}
+P4_EVENT {"event":"baseline-row","phase":"waiting-window","appId":"org.kde.dolphin","title":"window-title — Dolphin","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}","isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false}
+P4_EVENT {"event":"controller-activate","phase":"waiting-active","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}"}
+P4_EVENT {"event":"observed-active","phase":"waiting-minimized","appId":"org.kde.dolphin","title":"window-title — Dolphin","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}","isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false}
+P4_EVENT {"event":"controller-minimize","phase":"waiting-minimized","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}"}
+P4_EVENT {"event":"observed-minimized","phase":"waiting-restored","appId":"org.kde.dolphin","title":"window-title — Dolphin","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}","isWindow":true,"isStartup":false,"isActive":false,"isMinimized":true}
+P4_EVENT {"event":"controller-restore","phase":"waiting-restored","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}"}
+P4_EVENT {"event":"controller-reactivate","phase":"waiting-restored","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}"}
+P4_EVENT {"event":"observed-restored-active","phase":"complete","appId":"org.kde.dolphin","title":"window-title — Dolphin","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}","isWindow":true,"isStartup":false,"isActive":true,"isMinimized":false}
+P4_EVENT {"event":"result","phase":"complete","verdict":"valid-sequence","reason":"activation-minimize-restore-observed","windowId":"{2f155bfd-fe9f-4bf5-af1e-0f1397ac6af4}"}
+Could not delete render time query because no context is current
+p4-fedora-aa-1-20261116.service: Main process exited, code=exited, status=72/OSFILE
+p4-fedora-aa-1-20261116.service: Failed with result 'exit-code'.
+p4-fedora-aa-1-20261116.service: Consumed 5.690s CPU time over 23.192s wall clock time, 504.9M memory peak.

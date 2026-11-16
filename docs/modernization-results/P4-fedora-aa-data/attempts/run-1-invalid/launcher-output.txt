@@ -1,0 +1,7 @@
+Running as unit: p4-fedora-aa-1-20261116.service
+Observer exited without a final verdict; no performance sample is valid.
+Finished with result: exit-code
+Main processes terminated with: code=exited, status=72/OSFILE
+Service runtime: 23.192s
+CPU time consumed: 5.690s
+Memory peak: 504.9M (swap: 0B)

@@ -1,0 +1,2 @@
+dbus-daemon[11483]: [session uid=1000 pid=11483 pidfd=5] Activating service name='org.kde.ActivityManager' requested by ':1.0' (uid=1000 pid=11485 comm="/usr/lib64/qt6/bin/qml /tmp/P4-fedora-20261116/too" label="unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023")
+dbus-daemon[11483]: [session uid=1000 pid=11483 pidfd=5] Successfully activated service 'org.kde.ActivityManager'
