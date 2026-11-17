@@ -1,9 +1,10 @@
 # P3a: Edge-layout refresh evaluation
 
-Status: Deferred after early re-evaluation. The current implementation still
-has no trustworthy readiness signal that can safely stop the bounded repair
-timer early. No runtime behavior was changed and no reduction in layout or
-geometry-publication work is claimed.
+Status: Deferred. A private Fedora session now verifies the loaded task QML
+source and observes edge-triggered refresh passes. The production publication
+path still has no trustworthy readiness signal that can safely stop the
+bounded repair timer early. No runtime behavior was changed and no reduction
+in layout or geometry-publication work is claimed.
 
 Recorded main baseline: `e3ef1ddf001aa032cffa62db21cfd97196174746`.
 Implementation branch: `codex/modernization-m0-baseline`.
@@ -138,5 +139,33 @@ layout SHA-256 matches its pre-test value:
 `ed6ade8626fe13cd10e93233e51cd83247faa838975d1f4c74e20b5d11e408ec`.
 The user-mode Debug Dock was relaunched and its fresh log contains only the
 previously observed VM EGL warnings and normal startup information. P3a stays
-Deferred until there is both an observable latest-generation readiness
-contract and a validated way to record the refresh path.
+Deferred until the production path can report latest-generation geometry
+readiness; the refresh path observability gap was closed by the isolated probe
+below.
+
+## Isolated Fedora private-session probe — 2026-11-17
+
+The later probe resolves the earlier missing-marker uncertainty. A private
+HOME, XDG tree, runtime directory, session bus, QML cache and nested virtual
+KWin were used on Fedora 45. The temporary overlay ran the task QML markers
+and a containment Timer driver that called the same
+`Positioner::setNextLocation()` entry point used by the Dock edge buttons. It
+requested TopEdge (Plasma enum value 3) and then BottomEdge (value 4). The
+normal desktop, layout, user configuration and system install were not used.
+
+The task QML emitted `P3A_SOURCE_LOADED` with a `file:///tmp/P3a-private-…/home`
+URL identifying the private overlay. Both transitions then logged, in order,
+the driver request, `locationChanged` with the requested edge value, and
+`refreshTaskLayoutPass(reason=locationChanged, pass=0)`. Each transition also
+produced passes 1 through 8 at the existing 120 ms interval. Latte's geometry
+logs and view map showed TopEdge after the first move and BottomEdge after the
+second. This verifies source selection and marker routing, and confirms that
+this relocation route reaches the existing handler. It does not establish
+geometry-publication acceptance by TaskManager/KWin or a convergence condition.
+
+The report, marker observations, tool details and limitations are recorded in
+[`P3a-data/README.md`](P3a-data/README.md). The runner and instrumenter live in
+[`P3a-data/tools`](P3a-data/tools/). Their temporary overlays are hash-checked;
+the installed task and containment QML hashes matched the workspace sources
+before and after the run. The probe was diagnostic only: no readiness signal,
+timer change, performance measurement or optimization is claimed.
