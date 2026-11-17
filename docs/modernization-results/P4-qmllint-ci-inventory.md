@@ -6,8 +6,8 @@ Build workflow run [43983748060](https://github.com/ruizhi-lab/latte-dock-ng/act
 used commit `ebb736602c4f5f529a127784c29720f762c59007`. GCC Debug, GCC Release,
 and Clang Release builds and tests completed before Deep QML lint failed with
 `QML file coverage changed; baseline comparison is not comparable`. Its syntax
-lint job reported success, but that was a false pass: in a later run, job
-`133706545501` logged `scripts/qmllint.sh: line51: git: command not found`
+lint job reported success, but that was a false pass: job `133706545501`
+in that run logged `scripts/qmllint.sh: line51: git: command not found`
 followed by `qmllint: no QML files found`, then exited successfully. Bash
 process substitution had hidden the inventory command's failure, leaving an
 empty file list. The helper now returns failure directly and the caller checks
@@ -25,8 +25,18 @@ existing archive/origin fallback and apt retry behavior. It retains its
 original `python3`, `qt6-declarative-dev`, and `qt6-declarative-dev-tools`
 packages, adding Git and the supported Qt source. A negative syntax fixture
 runs before the full inventory scan to prove the gate still rejects invalid
-QML. The Clang Release build, tests, and Deep QML lint in that run passed; the
-only failed job was the independent QML lint job.
+QML. The Clang Release build, tests, and Deep QML lint in that run passed; at
+the time of review, the independent QML lint job was the only completed failure.
+
+The next run, [44072069285](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44072069285),
+installed the supported Qt tools and passed the malformed-QML check, but its
+full source step failed with `fatal: detected dubious ownership in repository`
+at `/__w/latte-dock-ng/latte-dock-ng`. The checkout action's safe-directory
+setting was written under a temporary HOME and was unavailable to the later
+job step's HOME. The job now adds a safe-directory exception for only
+`$GITHUB_WORKSPACE` inside the container before inventory lookup, matching the
+build jobs' existing fix. The negative fixture runs first and uses an explicit
+file path, so it correctly does not access Git.
 
 The subsequent [Build run 43986024054](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43986024054)
 for `ee25b5662` also reported Deep QML lint failures in all four compiler/mode
@@ -126,6 +136,16 @@ The baseline itself is unchanged.
 - The existing `latte-r2c-clazy:noble` image provides Qt 6.11.1. In that
   container, the full 244-file script passed, and a separate malformed QML
   fixture failed with the expected syntax diagnostic.
+- Reproduced the CI ownership mismatch in that image as UID 1000 against the
+  root-owned, read-only checkout: `git ls-files` failed with `detected dubious
+  ownership` before configuration. After adding only
+  `git config --global --add safe.directory "$GITHUB_WORKSPACE"`, the helper
+  enumerated 244 files, the full lint passed, and the malformed syntax fixture
+  failed. The global exception is inside the disposable container and names
+  only the current checkout.
+  The coordinator independently reproduced the same failure and scoped fix
+  using the rootless Neon container with a different container UID, then
+  confirmed the real 244-file Qt 6.11.1 scan passed and malformed QML failed.
 - `scripts/qmllint-deep.sh build/modernization/gcc-debug`: linted all 244 files,
   checked modules/imports, then failed only at baseline comparison because the
   local tool fingerprint is qmllint 6.11.3 rather than the reviewed 6.11.1.

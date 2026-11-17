@@ -313,6 +313,11 @@ jobs:
 
       - uses: actions/checkout@v5
 
+      # The checkout is owned by the host runner but lint runs inside the job
+      # container; trust only this workspace before using git ls-files.
+      - name: Trust workspace for Git file discovery
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       # Use KDE Neon Qt 6.11: Ubuntu 24.04's Qt 6.4 is below the project floor
       # and treats newer source warning directives as unknown-category errors.
       # The script suppresses analyzer warnings while retaining syntax errors.
