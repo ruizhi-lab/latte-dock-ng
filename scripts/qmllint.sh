@@ -30,19 +30,24 @@ if [[ -z "$qmllint" ]]; then
     exit 1
 fi
 
-# Deterministic run: ignore any .qmllint.ini in the tree and let warnings
-# never influence the exit code (-1 = unlimited, non-failing).
-args=(--ignore-settings --max-warnings -1)
+# Deterministic run: ignore any .qmllint.ini in the tree. Newer qmllint
+# versions support an unlimited warning count. Older tools can still report
+# unsupported source directives; CI uses a supported Qt version.
+help_output="$("$qmllint" --help-all 2>/dev/null || true)"
+args=(--ignore-settings)
+if grep -Eq '(^|[[:space:]])--max-warnings([[:space:]]|$)' <<< "$help_output"; then
+    args+=(--max-warnings -1)
+fi
 
 # Disable every analyzer warning category, including built-in plugin
-# categories such as Quick.anchor-combinations (hence the case-insensitive
-# pattern). Parse the list from --help-all so the script keeps working
-# across Qt minor versions. If the parse ever yields nothing, the gate still
-# works (just noisier). NOTE: do NOT use "-D all" — disabling all plugins
-# also disables the core syntax verifier, silently neutering the gate.
+# categories such as Quick.anchor-combinations. Parse the list from --help-all
+# so the script keeps working across Qt minor versions. If the parse ever
+# yields nothing, the gate still works (just noisier). Do not use "-D all": it
+# disables every plugin, including the core syntax verifier, silently
+# neutering the gate.
 while read -r category; do
     args+=("$category" disable)
-done < <("$qmllint" --help-all 2>/dev/null | awk '/^[[:space:]]+--[a-zA-Z.-]+ <level>/ {print $1}')
+done < <(printf '%s\n' "$help_output" | awk '/^[[:space:]]+--[a-zA-Z.-]+ <level>/ {print $1}')
 
 # Collect tracked QML sources only (build trees and untracked files excluded).
 if [[ $# -gt 0 ]]; then

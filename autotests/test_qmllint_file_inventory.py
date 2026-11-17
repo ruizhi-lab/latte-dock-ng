@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 
@@ -61,6 +63,21 @@ def main() -> int:
         )
         if failure.returncode == 0:
             raise AssertionError("qmllint-files.sh accepted a non-Git root")
+
+        bash = shutil.which("bash")
+        if bash is None:
+            raise RuntimeError("cannot test missing-Git behavior: Bash is unavailable")
+
+        no_git_environment = os.environ.copy()
+        no_git_environment["PATH"] = ""
+        missing_git = subprocess.run(
+            [bash, str(INVENTORY_SCRIPT), str(root)],
+            capture_output=True,
+            text=True,
+            env=no_git_environment,
+        )
+        if missing_git.returncode == 0:
+            raise AssertionError("qmllint-files.sh accepted a missing Git executable")
 
     print("QML lint inventory: PASS (tracked non-result QML retained; archived result copies excluded)")
     return 0

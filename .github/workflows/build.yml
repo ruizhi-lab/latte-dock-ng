@@ -260,15 +260,76 @@ jobs:
     container:
       image: ubuntu:24.04
     steps:
-      - name: Install qmllint
+      - name: Install Git and KDE Neon repository
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends python3 qt6-declarative-dev qt6-declarative-dev-tools
+          # Git must be installed before checkout; without it actions/checkout
+          # can fall back to a REST archive, but QML inventory needs git ls-files.
+          apt-get install -y --no-install-recommends ca-certificates wget gnupg git
+          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
+          neon_try() {
+            wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc "https://$1/public.key" || return 1
+            echo "deb https://$1/user noble main" > /etc/apt/sources.list.d/neon.list
+            apt-get update --error-on=any
+          }
+          neon_host=
+          for host in archive.neon.kde.org origin.archive.neon.kde.org; do
+            for attempt in 1 2 3; do
+              if neon_try "$host"; then
+                neon_host="$host"
+                break 2
+              fi
+              echo "KDE Neon through $host failed (attempt $attempt of 3)"
+              [ "$attempt" = 3 ] || sleep $((attempt * 10))
+            done
+          done
+          if [ -z "$neon_host" ]; then
+            echo "::error::The KDE Neon repository could not be reached through archive.neon.kde.org or origin.archive.neon.kde.org"
+            exit 1
+          fi
+          echo "KDE Neon repository: $neon_host"
+          cat > /usr/local/bin/apt-install-retry <<'EOF'
+          #!/bin/sh
+          attempt=1
+          while :; do
+            if apt-get install -y --no-install-recommends "$@"; then
+              exit 0
+            fi
+            if [ "$attempt" -ge 5 ]; then
+              echo "::error::apt-get install failed after $attempt attempts"
+              exit 1
+            fi
+            delay=$((attempt * 30))
+            echo "apt-get install failed (attempt $attempt of 5); refreshing indexes in $delay s"
+            sleep "$delay"
+            apt-get update || true
+            attempt=$((attempt + 1))
+          done
+          EOF
+          chmod +x /usr/local/bin/apt-install-retry
+
+      - name: Install supported qmllint
+        run: apt-install-retry python3 qt6-declarative-dev qt6-declarative-dev-tools
 
       - uses: actions/checkout@v5
 
-      # Syntax-error gate over every tracked QML file (scripts/qmllint.sh
-      # disables all analyzer warnings; only errors fail the run).
+      # Use KDE Neon Qt 6.11: Ubuntu 24.04's Qt 6.4 is below the project floor
+      # and treats newer source warning directives as unknown-category errors.
+      # The script suppresses analyzer warnings while retaining syntax errors.
+      - name: Verify QML syntax gate rejects malformed input
+        shell: bash
+        run: |
+          set -euo pipefail
+          invalid_qml="$(mktemp --suffix=.qml)"
+          trap 'rm -f "$invalid_qml"' EXIT
+          printf 'Item { broken: }\n' > "$invalid_qml"
+          if ./scripts/qmllint.sh "$invalid_qml"; then
+            echo "qmllint accepted an invalid QML syntax fixture" >&2
+            exit 1
+          fi
+
+      # Syntax-error gate over every tracked QML file; all analyzer warning
+      # categories are disabled, while syntax errors still fail the run.
       - name: Lint QML sources
         run: ./scripts/qmllint.sh
 

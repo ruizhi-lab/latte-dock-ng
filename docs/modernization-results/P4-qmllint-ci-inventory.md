@@ -5,9 +5,28 @@
 Build workflow run [43983748060](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43983748060)
 used commit `ebb736602c4f5f529a127784c29720f762c59007`. GCC Debug, GCC Release,
 and Clang Release builds and tests completed before Deep QML lint failed with
-`QML file coverage changed; baseline comparison is not comparable`. The
-separate syntax-only QML lint job passed. Clang Debug was cancelled after the
-other matrix failures.
+`QML file coverage changed; baseline comparison is not comparable`. Its syntax
+lint job reported success, but that was a false pass: in a later run, job
+`133706545501` logged `scripts/qmllint.sh: line51: git: command not found`
+followed by `qmllint: no QML files found`, then exited successfully. Bash
+process substitution had hidden the inventory command's failure, leaving an
+empty file list. The helper now returns failure directly and the caller checks
+it before linting.
+
+Follow-up run [43988699624](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43988699624)
+failed QML lint job `133723612140` with
+`scripts/qmllint-files.sh: line 14: git: command not found`. The job now installs
+Git before `actions/checkout`, so checkout uses the Git client instead of
+silently falling back to a REST archive. Its stock Ubuntu Qt 6.4.2 was also
+below the project minimum and emitted unknown-category warnings for newer
+source directives. The job now installs `qt6-declarative-dev-tools` from the
+same KDE Neon `user noble` repository as the supported build jobs, with the
+existing archive/origin fallback and apt retry behavior. It retains its
+original `python3`, `qt6-declarative-dev`, and `qt6-declarative-dev-tools`
+packages, adding Git and the supported Qt source. A negative syntax fixture
+runs before the full inventory scan to prove the gate still rejects invalid
+QML. The Clang Release build, tests, and Deep QML lint in that run passed; the
+only failed job was the independent QML lint job.
 
 The subsequent [Build run 43986024054](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43986024054)
 for `ee25b5662` also reported Deep QML lint failures in all four compiler/mode
@@ -41,8 +60,10 @@ hidden an inventory error rather than reviewed a comparable production run.
 
 Both lint scripts now call the Bash helper `scripts/qmllint-files.sh` for their
 default tracked QML inventory. This keeps the syntax-only gate's dependency set
-at Bash, Git, and qmllint; it does not add Python to that job. The helper
-excludes only `docs/modernization-results/`, the repository's archived run
+at Bash, Git, and qmllint; it does not add Python to that job. The syntax lint
+job explicitly installs Git before checkout, because `actions/checkout` may
+use a REST archive without Git and the inventory requires a real Git checkout.
+The helper excludes only `docs/modernization-results/`, the repository's archived run
 evidence, while retaining production QML, autotest QML, and every other tracked
 QML path. The syntax script's explicit file arguments still lint exactly the
 requested paths. The canonical P4 observer remains covered by its documented
@@ -61,6 +82,9 @@ The baseline itself is unchanged.
 ## Validation and limits
 
 - `python3 autotests/test_qmllint_file_inventory.py`: passed.
+- Inventory test confirms the helper fails for a non-Git root and when Git is
+  absent from `PATH`; it resolves Bash before clearing `PATH`, so this boundary
+  check also works in Nix environments without `/bin/bash`.
 - `python3 autotests/test_qmllint_baseline.py`: 19 tests passed.
 - GCC Debug and Clang Debug reconfigured and built successfully; no compiler
   warnings appeared in either build output. Commands were
@@ -89,6 +113,19 @@ The baseline itself is unchanged.
 - `bash -n scripts/qmllint.sh scripts/qmllint-deep.sh scripts/qmllint-files.sh`:
   passed.
 - `scripts/qmllint.sh`: passed on local qmllint 6.11.3 over 244 files.
+- The script adds `--max-warnings -1` only when advertised by `qmllint
+  --help-all`; Qt 6.4.2 does not provide this option.
+- In a disposable Ubuntu 24.04 container with stock Qt 6.4.2 and Git, the
+  script discovered 244 files, the missing-Git helper probe failed as
+  required, and an injected syntax error returned nonzero. The full scan on
+  6.4.2 also returned nonzero on unknown-category warnings for newer source
+  directives (`property-override`, `prefixed-import-type`, `missing-property`,
+  `missing-type`). That tool's help has no safe option to ignore these
+  directives while retaining syntax errors (`--silent` suppresses syntax
+  errors), which is why CI now selects the project's supported KDE Neon Qt.
+- The existing `latte-r2c-clazy:noble` image provides Qt 6.11.1. In that
+  container, the full 244-file script passed, and a separate malformed QML
+  fixture failed with the expected syntax diagnostic.
 - `scripts/qmllint-deep.sh build/modernization/gcc-debug`: linted all 244 files,
   checked modules/imports, then failed only at baseline comparison because the
   local tool fingerprint is qmllint 6.11.3 rather than the reviewed 6.11.1.
