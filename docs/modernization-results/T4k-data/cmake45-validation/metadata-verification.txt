@@ -1,0 +1,9 @@
+OK root=lib64/qml module=org/kde/latte/core typeinfo_bytes=17661 plugin_bytes=241944
+OK root=lib64/qml module=org/kde/latte/private/app typeinfo_bytes=6013 plugin_bytes=184032
+OK root=lib64/qml module=org/kde/latte/private/containment typeinfo_bytes=14755 plugin_bytes=317720
+OK root=lib64/qml module=org/kde/latte/private/tasks typeinfo_bytes=5562 plugin_bytes=188400
+OK root=lib64/qt6/qml module=org/kde/latte/core typeinfo_bytes=17661 plugin_bytes=241944
+OK root=lib64/qt6/qml module=org/kde/latte/private/app typeinfo_bytes=6013 plugin_bytes=184032
+OK root=lib64/qt6/qml module=org/kde/latte/private/containment typeinfo_bytes=14755 plugin_bytes=317720
+OK root=lib64/qt6/qml module=org/kde/latte/private/tasks typeinfo_bytes=5562 plugin_bytes=188400
+VERIFIED_4_MODULES_IN_2_ROOTS

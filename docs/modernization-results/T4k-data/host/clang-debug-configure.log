@@ -1,0 +1,22 @@
+-- LayerShellQt::Window::setScreen detected — enabled
+-- LayerShellQt::Window::setDesiredSize detected — enabled
+-- LayerShellQt::Window::setActivateOnShow detected — enabled
+-- Found Wayland: /usr/lib64/libwayland-client.so;/usr/lib64/libwayland-server.so;/usr/lib64/libwayland-cursor.so;/usr/lib64/libwayland-egl.so (found version "1.26.0")
+-- Found Wayland: /usr/lib64/libwayland-client.so;/usr/lib64/libwayland-server.so;/usr/lib64/libwayland-cursor.so;/usr/lib64/libwayland-egl.so (found version "1.26.0") found components: Client
+-- KF6 VERSION : 6.31.0
+-- LibTaskManager VERSION : 6.7.6
+-- No explicit KQuickAddons link target is exported by this KF6 build.
+-- No explicit KDeclarative link target is exported by this KF6 build.
+-- Resolved KDeclarative target: 
+-- Resolved QuickAddons target: 
+-- Resolved NewStuff target: KF6::NewStuffWidgets
+-- Resolved KWayland client target: Plasma::KWaylandClient
+-- Resolved KConfigQml target: KF6::ConfigQml
+-- Resolved KSvg target: KF6::Svg
+-- Installing compat taskmanager QML module to /usr/lib64/qt6/qml/org/kde/latte/compat/taskmanager
+-- Found qmllint: /usr/lib64/qt6/bin/qmllint
+-- Enabling QML debugging and profiling
+-- Strict compiler warnings enabled for 66 first-party compile targets
+-- Configuring done (1.4s)
+-- Generating done (0.8s)
+-- Build files have been written to: /data/projects/latte-dock-ng/build/modernization/clang-debug

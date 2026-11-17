@@ -194,6 +194,29 @@ subsequent T4d changes.
   without suppressing them or raising the existing CMake floor.
   [Evidence](modernization-results/T4h-data/arch/cmake45/install-prep-qmltypes.md).
 
+## Continuation (2026-11-16–17)
+
+The continuation started from `main` at `0a6974f5cd1b13116764a2320e3d882674f5fed3`
+with a clean working tree. Workers use `gpt-6-luna` with `medium` reasoning;
+the coordinator owns integration and review. On 2026-11-17 the user explicitly
+authorized commit and push after each completed task unless manual validation
+is required; this does not authorize a release or tag.
+
+- P4 A/A baseline: **Complete as a measurement slice**, published in
+  `ebb736602`. Five same-build Fedora Plasma/KWin 6.8.3 runs passed the
+  observer, identity, cache and artifact gates. The earlier 6.8.2 runs remain
+  separate after an intervening package upgrade. The [baseline](modernization-results/P4-fedora-aa-baseline.md)
+  records raw data, limitations and the resolution of zero whole CPU ticks;
+  it establishes no saving and does not complete the deferred P4 optimization.
+  Build CI for `ebb736602` is tracked separately.
+- T4k: [QML metadata producer dependencies](modernization-results/T4k-qmltypes-install-dependencies.md)
+  are **Complete**: clean genuine CMake 4.5/GCC on Fedora and CMake 4.5/Clang
+  on the host passed Release install preparation and both-root staged metadata
+  checks, independently reviewed by the coordinator. GCC/Clang Debug builds
+  on CMake 4.3.4 each passed 64/64 tests with zero compiler diagnostics. Host
+  QML tooling diagnostics remain recorded; no Release CTest or desktop retest
+  is claimed for this build/install-only slice.
+
 ## Later waves
 
 | Task group | Separate slices | Entry condition |

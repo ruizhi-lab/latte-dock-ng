@@ -1,0 +1,15 @@
+GCC Debug CTest setup attempts
+
+1. Command: ctest --test-dir build/modernization/gcc-debug --output-on-failure
+   Result: did not complete; stalled at qmlsmoketest without a private session
+   bus and was interrupted with exit 130. No pass is claimed.
+
+2. Command: dbus-run-session -- ctest --test-dir
+   build/modernization/gcc-debug --output-on-failure
+   Result: sandbox denied binding /tmp/dbus-...; dbus-run-session exited 127
+   before CTest started. No test result is claimed.
+
+3. Command: dbus-run-session -- ctest --test-dir
+   build/modernization/gcc-debug --output-on-failure
+   Result: rerun with approved sandbox escalation; exit 0, 64/64 passed in
+   36.94 seconds. See gcc-debug-ctest.log.

@@ -424,6 +424,26 @@ desktop retesting pass, including one live DP-3 disable, startup fallback and
 re-enable transition. Unknown connector mappings remain unverified. The
 branch-clone gate remains disabled.
 
+[T4k QML metadata install dependencies](modernization-results/T4k-qmltypes-install-dependencies.md)
+declares four metadata producers for CMake 4.5 install preparation while
+retaining older CMake syntax and both QML roots. Fedora CMake 4.5/GCC clean
+installation preparation and staged installation passed; host GCC/Clang Debug
+builds on CMake 4.3.4 each passed 64/64 tests with zero compiler diagnostics.
+Genuine CMake 4.5 clean Release installation preparation and both-root
+staged installation also passed with host Clang. The coordinator reviewed
+both logs and independently verified all eight installed module/root pairs
+in each environment. The host QML tooling diagnostics are retained in the
+report; no Release CTest or desktop retest is claimed.
+
+The P4 [Fedora A/A baseline](modernization-results/P4-fedora-aa-baseline.md)
+was published in `ebb736602`: five same-build Plasma/KWin 6.8.3 runs have
+stable process, cache and artifact identities. Earlier 6.8.2 runs remain
+separate because of an intervening package update. Each new run recorded zero
+whole CPU ticks at 100 Hz over about 60 seconds; that is below measurement
+resolution, not a measured saving. Dock visibility was not established. The
+P4 shared-query optimization remains Deferred pending a justified comparison
+and reviewed ownership design; the baseline does not establish an A/B benefit.
+
 ## Git and rollback
 
 On main, editing/testing is allowed within the requested batch; committing and

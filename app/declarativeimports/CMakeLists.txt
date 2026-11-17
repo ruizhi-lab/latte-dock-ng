@@ -59,8 +59,15 @@ install(TARGETS latteprivateappplugin
         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app)
 install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/qmldir
         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app)
+# Without this edge, CMake 4.5 cannot infer the generated metadata producer
+# and warns during install preparation. Keep the edge version-gated for CMake 3.20.
+set(_latte_private_app_qmltypes_build_depends)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
+    list(APPEND _latte_private_app_qmltypes_build_depends BUILD_DEPENDS latteprivateappplugin)
+endif()
 install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/latteprivateappplugin.qmltypes
         DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/app
+        ${_latte_private_app_qmltypes_build_depends}
         OPTIONAL)
 
 if(LATTE_QT6_COMPAT_QMLDIR)
@@ -69,5 +76,6 @@ if(LATTE_QT6_COMPAT_QMLDIR)
             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/app)
     install(FILES ${LATTE_PRIVATE_APP_QML_BUILD_DIR}/latteprivateappplugin.qmltypes
             DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/app
+            ${_latte_private_app_qmltypes_build_depends}
             OPTIONAL)
 endif()
