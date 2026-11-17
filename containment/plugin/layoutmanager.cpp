@@ -166,6 +166,11 @@ LayoutManager::LayoutManager(QObject *parent)
     });
 }
 
+LayoutManager::~LayoutManager()
+{
+    QObject::disconnect(m_rootDestroyedConnection);
+}
+
 bool LayoutManager::hasRestoredApplets() const
 {
     return m_hasRestoredApplets;
@@ -336,7 +341,25 @@ void LayoutManager::setRootItem(QQuickItem *root)
         return;
     }
 
+    QObject::disconnect(m_rootDestroyedConnection);
+    m_rootDestroyedConnection = QMetaObject::Connection();
     m_rootItem = root;
+    const quint64 rootGeneration = ++m_rootGeneration;
+
+    if (root) {
+        // The QML root can die before this manager during reload. The generation
+        // guard keeps a queued destruction callback from clearing a replacement.
+        m_rootDestroyedConnection = connect(root, &QObject::destroyed, this, [this, rootGeneration]() {
+            if (rootGeneration != m_rootGeneration) {
+                return;
+            }
+
+            m_rootItem = nullptr;
+            m_rootDestroyedConnection = QMetaObject::Connection();
+            Q_EMIT rootItemChanged();
+        });
+    }
+
     Q_EMIT rootItemChanged();
 }
 
@@ -1027,19 +1050,53 @@ int LayoutManager::configuredAppletCount() const
 
 void LayoutManager::onRootItemChanged()
 {
+    m_warnedRootInvocationFailures.clear();
+
     if (!m_rootItem) {
+        m_createAppletItemMethod = QMetaMethod();
+        m_createJustifySplitterMethod = QMetaMethod();
+        m_initAppletContainerMethod = QMetaMethod();
         return;
     }
 
     auto rootMetaObject = m_rootItem->metaObject();
     int createAppletItemIndex = rootMetaObject->indexOfMethod("createAppletItem(QVariant)");
-    m_createAppletItemMethod = rootMetaObject->method(createAppletItemIndex);
+    if (createAppletItemIndex < 0) {
+        qCWarning(latteContainment) << "Containment root is missing required function createAppletItem(QVariant)";
+        m_createAppletItemMethod = QMetaMethod();
+    } else {
+        m_createAppletItemMethod = rootMetaObject->method(createAppletItemIndex);
+    }
 
     int createJustifySplitterIndex = rootMetaObject->indexOfMethod("createJustifySplitter()");
-    m_createJustifySplitterMethod = rootMetaObject->method(createJustifySplitterIndex);
+    if (createJustifySplitterIndex < 0) {
+        qCWarning(latteContainment) << "Containment root is missing required function createJustifySplitter()";
+        m_createJustifySplitterMethod = QMetaMethod();
+    } else {
+        m_createJustifySplitterMethod = rootMetaObject->method(createJustifySplitterIndex);
+    }
 
     int initAppletContainerIndex = rootMetaObject->indexOfMethod("initAppletContainer(QVariant,QVariant)");
-    m_initAppletContainerMethod = rootMetaObject->method(initAppletContainerIndex);
+    if (initAppletContainerIndex < 0) {
+        qCWarning(latteContainment) << "Containment root is missing required function initAppletContainer(QVariant,QVariant)";
+        m_initAppletContainerMethod = QMetaMethod();
+    } else {
+        m_initAppletContainerMethod = rootMetaObject->method(initAppletContainerIndex);
+    }
+}
+
+void LayoutManager::warnRootInvocationFailureOnce(const QMetaMethod &method, const char *functionName)
+{
+    // Restore retries can reach the same failed dispatch every 150 ms. Keep
+    // one warning per cached method and root generation to avoid a log storm.
+    const QByteArray methodSignature = method.methodSignature();
+
+    if (m_warnedRootInvocationFailures.contains(methodSignature)) {
+        return;
+    }
+
+    m_warnedRootInvocationFailures.insert(methodSignature);
+    qCWarning(latteContainment) << "Failed to invoke containment root function" << functionName;
 }
 
 bool LayoutManager::isValidApplet(const int &id)
@@ -1229,7 +1286,9 @@ void LayoutManager::restore()
 
             QVariant appletItemVariant;
             QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
-            m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
+            if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+                warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+            }
             QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
 
             if (!appletItem) {
@@ -1247,7 +1306,9 @@ void LayoutManager::restore()
         for (int i = 0; i < orderedApplets.count(); ++i) {
             if (orderedApplets[i] == nullptr) {
                 QVariant splitterItemVariant;
-                m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant));
+                if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant))) {
+                    warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
+                }
                 QQuickItem *splitterItem = splitterItemVariant.value<QQuickItem *>();
 
                 if (parentlayout == m_startLayout) {
@@ -1265,7 +1326,9 @@ void LayoutManager::restore()
 
             QVariant appletItemVariant;
             QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
-            m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
+            if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+                warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+            }
             QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
 
             if (!appletItem) {
@@ -2061,9 +2124,9 @@ bool LayoutManager::repairAppletContainers()
                 QVariant appletVariant;
                 appletVariant.setValue(applet);
 
-                m_initAppletContainerMethod.invoke(m_rootItem,
-                                                   Q_ARG(QVariant, appletContainerVariant),
-                                                   Q_ARG(QVariant, appletVariant));
+                if (m_initAppletContainerMethod.isValid() && !m_initAppletContainerMethod.invoke(m_rootItem, Q_ARG(QVariant, appletContainerVariant), Q_ARG(QVariant, appletVariant))) {
+                    warnRootInvocationFailureOnce(m_initAppletContainerMethod, "initAppletContainer(QVariant,QVariant)");
+                }
             }
 
             continue;
@@ -2203,7 +2266,9 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
     QVariant appletVariant;
     QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
     appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
-    m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
+    if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+        warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+    }
     QQuickItem *aitem = appletItemVariant.value<QQuickItem *>();
 
     if (!aitem) {
@@ -2289,7 +2354,9 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
         QVariant appletVariant;
         QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
         appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
-        m_initAppletContainerMethod.invoke(m_rootItem, Q_ARG(QVariant, appletContainerVariant), Q_ARG(QVariant, appletVariant));
+        if (m_initAppletContainerMethod.isValid() && !m_initAppletContainerMethod.invoke(m_rootItem, Q_ARG(QVariant, appletContainerVariant), Q_ARG(QVariant, appletVariant))) {
+            warnRootInvocationFailureOnce(m_initAppletContainerMethod, "initAppletContainer(QVariant,QVariant)");
+        }
         setAppletInScheduledDestruction(id, false);
         return;
     }
@@ -2298,7 +2365,9 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
     QVariant appletVariant;
     QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
     appletVariant.setValue(resolvedApplet ? resolvedApplet : applet);
-    m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant));
+    if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+        warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+    }
     QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
 
     if (!appletItem) {
@@ -2628,7 +2697,9 @@ void LayoutManager::addJustifySplittersInMainLayout()
 
     //! First Splitter
     QVariant splitterItemVariant;
-    m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant));
+    if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant))) {
+        warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
+    }
     QQuickItem *splitterItem = splitterItemVariant.value<QQuickItem *>();
 
     if (!splitterItem) {
@@ -2658,7 +2729,9 @@ void LayoutManager::addJustifySplittersInMainLayout()
 
     //! Second Splitter
     QVariant splitterItemVariant2;
-    m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant2));
+    if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant2))) {
+        warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
+    }
     QQuickItem *splitterItem2 = splitterItemVariant2.value<QQuickItem *>();
 
     if (!splitterItem2) {

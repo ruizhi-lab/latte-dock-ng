@@ -57,6 +57,7 @@ public:
     static const int JUSTIFYSPLITTERID = -10;
 
     LayoutManager(QObject *parent = nullptr);
+    ~LayoutManager() override;
 
     bool hasRestoredApplets() const;
 
@@ -214,6 +215,8 @@ private:
     QString toStr(const QList<int> &list);
 
 private:
+    void warnRootInvocationFailureOnce(const QMetaMethod &method, const char *functionName);
+
     //! This is needed in order to overcome plasma frameworks limitations and instead of adding dropped widgets
     //! based on coordinates, to be able to add them directly at the correct index
     static const int MASQUERADEDINDEXTOPOINTBASE = -23456;
@@ -231,6 +234,7 @@ private:
     //! during a containment reload or teardown. QPointer makes late timers
     //! and signals see null instead of a dangling object.
     QPointer<QQuickItem> m_rootItem;
+    QMetaObject::Connection m_rootDestroyedConnection;
     QPointer<QQuickItem> m_dndSpacer;
 
     QPointer<QQuickItem> m_mainLayout;
@@ -247,6 +251,8 @@ private:
     QMetaMethod m_createAppletItemMethod;
     QMetaMethod m_createJustifySplitterMethod;
     QMetaMethod m_initAppletContainerMethod;
+    QSet<QByteArray> m_warnedRootInvocationFailures;
+    quint64 m_rootGeneration{0};
 
     bool m_hasRestoredApplets{false};
     int m_restoreRetryCount{0};

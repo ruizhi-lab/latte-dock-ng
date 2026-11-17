@@ -7,6 +7,7 @@
 
 #include <QQuickItem>
 #include <QQmlPropertyMap>
+#include <QRegularExpression>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -45,6 +46,13 @@ class RestoreRoot : public QQuickItem
         return QVariant::fromValue(item);
     }
 
+    Q_INVOKABLE void initAppletContainer(QVariant container, QVariant applet)
+    {
+        if (auto *item = container.value<QQuickItem *>()) {
+            item->setProperty("applet", applet);
+        }
+    }
+
     int justifySplitterCreationCount() const
     {
         return m_justifySplitterCreationCount;
@@ -53,6 +61,32 @@ class RestoreRoot : public QQuickItem
 private:
     int m_appletItemCreationCount{0};
     int m_justifySplitterCreationCount{0};
+};
+
+class MissingInitRoot : public QQuickItem
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE QVariant createAppletItem(QVariant applet)
+    {
+        auto *item = new QQuickItem(this);
+        item->setProperty("backendAppletRef", applet);
+        return QVariant::fromValue(item);
+    }
+};
+
+class MissingCreateRoot : public QQuickItem
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE QVariant createJustifySplitter()
+    {
+        return QVariant::fromValue(new QQuickItem(this));
+    }
+
+    Q_INVOKABLE void initAppletContainer(QVariant, QVariant)
+    {
+    }
 };
 
 class ContainmentLayoutUnitTest : public QObject
@@ -73,7 +107,132 @@ private Q_SLOTS:
     void resolveAppletQuickItemFindsQuickItemThroughPropertyChain();
     void restoresAndSavesLegacyJustifyFromPersistedMap();
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
+    void warnsWhenContainmentRootMethodsAreMissing();
+    void restoreWarnsWhenCreateAppletItemIsMissing();
+    void warnsOnceForMissingInitMethodDuringRepair();
+    void rootDestructionClearsMethodsAndReplacementRebinds();
+    void managerDestructionDisconnectsChildRootCallback();
 };
+
+void
+ContainmentLayoutUnitTest::warnsWhenContainmentRootMethodsAreMissing()
+{
+    QQuickItem root;
+    Latte::Containment::LayoutManager manager;
+
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createAppletItem\\(QVariant\\).*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createJustifySplitter\\(\\).*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function initAppletContainer\\(QVariant,QVariant\\).*")));
+    manager.setRootItem(&root);
+}
+
+void
+ContainmentLayoutUnitTest::warnsOnceForMissingInitMethodDuringRepair()
+{
+    TestConfig config;
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&config)));
+
+    QQuickItem applet;
+    applet.setProperty("id", 47);
+    applet.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&applet)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &applet }));
+
+    MissingInitRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createJustifySplitter\\(\\).*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function initAppletContainer\\(QVariant,QVariant\\).*")));
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    QVERIFY(manager.repairAppletContainers());
+    QVERIFY(manager.repairAppletContainers());
+}
+
+void
+ContainmentLayoutUnitTest::restoreWarnsWhenCreateAppletItemIsMissing()
+{
+    TestConfig config;
+    config.insert(QStringLiteral("appletOrder"), QStringLiteral("44"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&config)));
+
+    QQuickItem applet;
+    applet.setProperty("id", 44);
+    applet.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&applet)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &applet }));
+
+    MissingCreateRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createAppletItem\\(QVariant\\).*")));
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    manager.restore();
+
+    QVERIFY(!manager.hasRestoredApplets());
+    QCOMPARE(config.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44"));
+    QVERIFY(main.childItems().isEmpty());
+}
+
+void
+ContainmentLayoutUnitTest::rootDestructionClearsMethodsAndReplacementRebinds()
+{
+    TestConfig config;
+    config.insert(QStringLiteral("appletOrder"), QStringLiteral("44"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&config)));
+
+    QQuickItem applet;
+    applet.setProperty("id", 44);
+    applet.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&applet)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &applet }));
+
+    auto *root = new RestoreRoot;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    QSignalSpy rootChangedSpy(&manager, &Latte::Containment::LayoutManager::rootItemChanged);
+    delete root;
+    QVERIFY(manager.rootItem() == nullptr);
+    QCOMPARE(rootChangedSpy.count(), 1);
+
+    RestoreRoot replacement;
+    manager.setRootItem(&replacement);
+    manager.restore();
+    QCOMPARE(replacement.appletItemCreationCount(), 1);
+}
+
+void
+ContainmentLayoutUnitTest::managerDestructionDisconnectsChildRootCallback()
+{
+    auto *manager = new Latte::Containment::LayoutManager;
+    auto *root = new RestoreRoot;
+    root->setParent(manager);
+    manager->setRootItem(root);
+    QSignalSpy destroyedSpy(root, &QObject::destroyed);
+
+    delete manager;
+
+    QCOMPARE(destroyedSpy.count(), 1);
+}
 
 void
 ContainmentLayoutUnitTest::independentCopyWaitsForLateApplet_data()
