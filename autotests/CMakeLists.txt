@@ -1156,6 +1156,9 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME qmllintbaselinetest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_baseline.py)
     set_property(TEST qmllintbaselinetest PROPERTY TIMEOUT 30)
+    add_test(NAME qmllintfileinventorytest
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qmllint_file_inventory.py)
+    set_property(TEST qmllintfileinventorytest PROPERTY TIMEOUT 30)
     add_test(NAME handbookdocumenttest
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_handbook.py)
     set_property(TEST handbookdocumenttest PROPERTY TIMEOUT 30)

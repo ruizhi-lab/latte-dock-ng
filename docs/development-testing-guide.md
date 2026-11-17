@@ -123,6 +123,10 @@ The latter records raw JSON chunks, stderr, complete file coverage and process
 exit codes under the selected build directory. It checks each generated Latte
 `qmldir` against its declared plugin library and typeinfo file, and compares
 diagnostics with the reviewed baseline when fingerprints match.
+Both checks use the same Git-tracked QML inventory, excluding archived run
+evidence under `docs/modernization-results/`; explicit syntax-check file
+arguments remain available. Git is also required by the inventory autotest,
+which creates an isolated temporary repository.
 
 ```bash
 bash scripts/qmllint.sh

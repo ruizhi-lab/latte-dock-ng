@@ -48,6 +48,10 @@
               export QT_QUICK_BACKEND=software
             '';
             buildInputs = testInputs;
+            # The QML inventory test creates a temporary Git repository and
+            # exercises the same git ls-files query as the lint scripts. Keep
+            # Git available only to the check phase, not the runtime closure.
+            nativeCheckInputs = (old.nativeCheckInputs or [ ]) ++ [ pkgs.git ];
             doCheck = true;
             buildPhase = ''
               runHook preBuild

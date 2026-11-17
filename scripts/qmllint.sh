@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Lint every tracked QML file in the repository.
+# Lint every tracked source and test QML file, excluding archived result copies.
 #
 # Gate policy: fail on QML *errors* only (syntax errors and anything qmllint
 # promotes to error level). Every analyzer warning category is disabled so the
@@ -9,7 +9,7 @@
 # exactly the regression class this gate exists to catch.
 #
 # Usage: scripts/qmllint.sh [file.qml ...]
-#        With no arguments, all git-tracked *.qml files are linted.
+#        With no arguments, the shared tracked-QML inventory is linted.
 
 set -uo pipefail
 
@@ -48,7 +48,15 @@ done < <("$qmllint" --help-all 2>/dev/null | awk '/^[[:space:]]+--[a-zA-Z.-]+ <l
 if [[ $# -gt 0 ]]; then
     files=("$@")
 else
-    mapfile -t files < <(git ls-files '*.qml')
+    if ! file_list="$("$root/scripts/qmllint-files.sh" "$root")"; then
+        echo "error: cannot discover tracked QML files" >&2
+        exit 1
+    fi
+    if [[ -n "$file_list" ]]; then
+        mapfile -t files <<< "$file_list"
+    else
+        files=()
+    fi
 fi
 if [[ ${#files[@]} -eq 0 ]]; then
     echo "qmllint: no QML files found"

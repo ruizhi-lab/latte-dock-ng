@@ -33,7 +33,15 @@ ln -sfn "$root/declarativeimports/abilities" "$stage/org/kde/latte/abilities"
 ln -sfn "$root/declarativeimports/components" "$stage/org/kde/latte/components"
 ln -sfn "$root/compat/qml/org/kde/latte/compat/taskmanager" "$stage/org/kde/latte/compat/taskmanager"
 
-mapfile -t files < <(git -C "$root" ls-files '*.qml')
+if ! file_list="$("$root/scripts/qmllint-files.sh" "$root")"; then
+    echo "error: cannot discover tracked QML files" >&2
+    exit 1
+fi
+if [[ -n "$file_list" ]]; then
+    mapfile -t files <<< "$file_list"
+else
+    files=()
+fi
 if [[ ${#files[@]} -eq 0 ]]; then
     echo "qmllint-deep: no QML files found" >&2
     exit 1

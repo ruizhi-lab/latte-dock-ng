@@ -217,6 +217,15 @@ is required; this does not authorize a release or tag.
   QML tooling diagnostics remain recorded; no Release CTest or desktop retest
   is claimed for this build/install-only slice.
 
+Post-publication CI repair: the P4 evidence commit introduced 11 archived
+`.qml` copies under `docs/modernization-results/`, which expanded both lint
+inventories and caused Deep QML lint to reject its 244-file baseline. The
+[repair record](modernization-results/P4-qmllint-ci-inventory.md) documents a
+shared inventory helper that excludes only that archive subtree, keeps the
+baseline unchanged, and adds an isolated Git inventory test. Host GCC and Clang
+Debug each pass 65/65 tests; the Nix check and CI-version deep lint require the
+post-push Build workflow. No desktop behavior changed.
+
 ## Later waves
 
 | Task group | Separate slices | Entry condition |
