@@ -4,6 +4,7 @@
 */
 
 #include "layoutmanager.h"
+#include "../app/view/layoutmanagerapidispatcher.h"
 
 #include <QQuickItem>
 #include <QQmlPropertyMap>
@@ -89,6 +90,72 @@ public:
     }
 };
 
+// Simulates a containment plugin loaded from an installation root that predates
+// LayoutManagerApi but still implements the established QObject contract.
+class LegacyLayoutManagerObject : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QQuickItem *rootItem READ rootItem WRITE setRootItem)
+    Q_PROPERTY(QQuickItem *dndSpacerItem READ dndSpacerItem WRITE setDndSpacerItem)
+    Q_PROPERTY(QList<int> order READ order WRITE setOrder)
+    Q_PROPERTY(QList<int> lockedZoomApplets READ lockedZoomApplets WRITE setLockedZoomApplets)
+    Q_PROPERTY(QList<int> userBlocksColorizingApplets READ userBlocksColorizingApplets WRITE setUserBlocksColorizingApplets)
+
+public:
+    QQuickItem *rootItem() const { return m_rootItem; }
+    void setRootItem(QQuickItem *item) { m_rootItem = item; }
+    QQuickItem *dndSpacerItem() const { return m_dndSpacerItem; }
+    void setDndSpacerItem(QQuickItem *item) { m_dndSpacerItem = item; }
+    QList<int> order() const { return m_order; }
+    void setOrder(const QList<int> &value) { m_order = value; }
+    QList<int> lockedZoomApplets() const { return m_lockedZoomApplets; }
+    void setLockedZoomApplets(const QList<int> &value) { m_lockedZoomApplets = value; }
+    QList<int> userBlocksColorizingApplets() const { return m_userBlocksColorizingApplets; }
+    void setUserBlocksColorizingApplets(const QList<int> &value) { m_userBlocksColorizingApplets = value; }
+
+    Q_INVOKABLE void setOption(int appletId, const QString &property, const QVariant &value)
+    {
+        lastAppletId = appletId;
+        lastOption = property;
+        lastOptionValue = value;
+        if (property == QStringLiteral("userBlocksColorizing")) {
+            m_userBlocksColorizingApplets = value.toBool() ? QList<int>{appletId} : QList<int>{};
+        }
+    }
+    Q_INVOKABLE void addAppletItem(QObject *applet, int index) { lastApplet = applet; lastIndex = index; ++addCount; }
+    Q_INVOKABLE void removeAppletItem(QObject *) { ++removeCount; }
+    Q_INVOKABLE void hideAppletItem(QObject *) { ++hideCount; }
+    Q_INVOKABLE void showAppletItem(QObject *) { ++showCount; }
+    Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, int x, int y) { lastItem = item; lastX = x; lastY = y; }
+    Q_INVOKABLE int dndSpacerIndex() { return 4; }
+    Q_INVOKABLE void requestAppletsOrder(const QList<int> &value) { m_order = value; }
+    Q_INVOKABLE void requestAppletsInLockedZoom(const QList<int> &value) { m_lockedZoomApplets = value; }
+    Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &value) { m_userBlocksColorizingApplets = value; }
+    Q_INVOKABLE void setAppletInScheduledDestruction(int id, bool enabled) { lastScheduledId = id; lastScheduled = enabled; }
+
+    int addCount{0};
+    int removeCount{0};
+    int hideCount{0};
+    int showCount{0};
+    int lastIndex{-1};
+    int lastX{-1};
+    int lastY{-1};
+    int lastAppletId{-1};
+    int lastScheduledId{-1};
+    bool lastScheduled{false};
+    QString lastOption;
+    QVariant lastOptionValue;
+    QObject *lastApplet{nullptr};
+    QQuickItem *lastItem{nullptr};
+
+private:
+    QQuickItem *m_rootItem{nullptr};
+    QQuickItem *m_dndSpacerItem{nullptr};
+    QList<int> m_order;
+    QList<int> m_lockedZoomApplets;
+    QList<int> m_userBlocksColorizingApplets;
+};
+
 class ContainmentLayoutUnitTest : public QObject
 {
     Q_OBJECT
@@ -112,7 +179,82 @@ private Q_SLOTS:
     void warnsOnceForMissingInitMethodDuringRepair();
     void rootDestructionClearsMethodsAndReplacementRebinds();
     void managerDestructionDisconnectsChildRootCallback();
+    void dispatcherUsesLegacyQObjectContractAndTracksLifetime();
+    void dispatcherPrefersTypedInterface();
 };
+
+void
+ContainmentLayoutUnitTest::dispatcherUsesLegacyQObjectContractAndTracksLifetime()
+{
+    Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+    auto *legacy = new LegacyLayoutManagerObject;
+    QQuickItem root;
+    QQuickItem spacer;
+    legacy->setRootItem(&root);
+    legacy->setDndSpacerItem(&spacer);
+    legacy->setOrder({31, 37});
+    legacy->setLockedZoomApplets({31});
+    legacy->setUserBlocksColorizingApplets({37});
+
+    QVERIFY(!qobject_cast<Latte::Containment::LayoutManagerApi *>(legacy));
+    dispatcher.setObject(legacy);
+    QCOMPARE(dispatcher.rootItem(), &root);
+    QCOMPARE(dispatcher.dndSpacer(), &spacer);
+    QCOMPARE(dispatcher.order(), QList<int>({31, 37}));
+    QCOMPARE(dispatcher.lockedZoomApplets(), QList<int>({31}));
+    QCOMPARE(dispatcher.userBlocksColorizingApplets(), QList<int>({37}));
+
+    QObject applet;
+    dispatcher.addAppletItem(&applet, 2);
+    QCOMPARE(legacy->addCount, 1);
+    QCOMPARE(legacy->lastApplet, &applet);
+    QCOMPARE(legacy->lastIndex, 2);
+    dispatcher.setOption(37, QStringLiteral("userBlocksColorizing"), false);
+    QCOMPARE(legacy->lastAppletId, 37);
+    QCOMPARE(legacy->userBlocksColorizingApplets(), QList<int>{});
+    dispatcher.requestAppletsOrder({41, 43});
+    QCOMPARE(dispatcher.order(), QList<int>({41, 43}));
+    dispatcher.requestAppletsInLockedZoom({41});
+    QCOMPARE(dispatcher.lockedZoomApplets(), QList<int>({41}));
+    dispatcher.requestAppletsDisabledColoring({43});
+    QCOMPARE(dispatcher.userBlocksColorizingApplets(), QList<int>({43}));
+    dispatcher.insertAtCoordinates(&spacer, 8, 13);
+    QCOMPARE(legacy->lastItem, &spacer);
+    QCOMPARE(legacy->lastX, 8);
+    QCOMPARE(legacy->lastY, 13);
+    QCOMPARE(dispatcher.dndSpacerIndex(), 4);
+    dispatcher.hideAppletItem(&applet);
+    dispatcher.showAppletItem(&applet);
+    dispatcher.removeAppletItem(&applet);
+    dispatcher.setAppletInScheduledDestruction(43, true);
+    QCOMPARE(legacy->hideCount, 1);
+    QCOMPARE(legacy->showCount, 1);
+    QCOMPARE(legacy->removeCount, 1);
+    QCOMPARE(legacy->lastScheduledId, 43);
+    QVERIFY(legacy->lastScheduled);
+
+    delete legacy;
+    QVERIFY(!dispatcher.object());
+    QVERIFY(!dispatcher.rootItem());
+    QVERIFY(dispatcher.order().isEmpty());
+    LegacyLayoutManagerObject replacementObject;
+    dispatcher.setObject(&replacementObject);
+    QCOMPARE(dispatcher.order(), QList<int>{});
+    replacementObject.setOrder({53});
+    QCOMPARE(dispatcher.order(), QList<int>{53});
+}
+
+void
+ContainmentLayoutUnitTest::dispatcherPrefersTypedInterface()
+{
+    Latte::Containment::LayoutManager manager;
+    Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+    dispatcher.setObject(&manager);
+
+    QVERIFY(qobject_cast<Latte::Containment::LayoutManagerApi *>(&manager));
+    dispatcher.requestAppletsOrder({59, 61});
+    QCOMPARE(dispatcher.order(), QList<int>({59, 61}));
+}
 
 void
 ContainmentLayoutUnitTest::warnsWhenContainmentRootMethodsAreMissing()

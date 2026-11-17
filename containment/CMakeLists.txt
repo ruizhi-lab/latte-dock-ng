@@ -6,6 +6,7 @@ set(containment_SRCS
     plugin/lattetypes.h
     plugin/types.cpp
     plugin/types.h
+    plugin/layoutmanagerapi.h
     plugin/layoutmanager.cpp
     plugin/layoutmanager.h
 )

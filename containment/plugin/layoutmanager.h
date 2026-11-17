@@ -18,6 +18,9 @@
 #include <QVariant>
 #include <QtQml/qqmlregistration.h>
 
+// local
+#include "layoutmanagerapi.h"
+
 // Plasma
 // Full definition needed: moc's metatype helpers require the return type of
 // containmentObject() to be complete.
@@ -26,10 +29,11 @@
 namespace Latte {
 namespace Containment {
 
-class LayoutManager : public QObject
+class LayoutManager : public QObject, public LayoutManagerApi
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(LayoutManager)
+    Q_INTERFACES(Latte::Containment::LayoutManagerApi)
     Q_PROPERTY(QObject *plasmoidObj READ plasmoid() WRITE setPlasmoid NOTIFY plasmoidChanged)
 
     Q_PROPERTY(QQuickItem *rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
@@ -64,15 +68,15 @@ public:
     int splitterPosition() const;
     int splitterPosition2() const;
     QList<int> appletOrder() const;
-    QList<int> lockedZoomApplets() const;
-    QList<int> order() const;
-    QList<int> userBlocksColorizingApplets() const;
+    QList<int> lockedZoomApplets() const override;
+    QList<int> order() const override;
+    QList<int> userBlocksColorizingApplets() const override;
     QList<int> appletsInScheduledDestruction() const;
 
     QObject *plasmoid() const;
     void setPlasmoid(QObject *plasmoid);
 
-    QQuickItem *rootItem() const;
+    QQuickItem *rootItem() const override;
     void setRootItem(QQuickItem *root);
 
     QQuickItem *mainLayout() const;
@@ -84,7 +88,7 @@ public:
     QQuickItem *endLayout() const;
     void setEndLayout(QQuickItem *end);
 
-    QQuickItem *dndSpacer() const;
+    QQuickItem *dndSpacer() const override;
     void setDndSpacer(QQuickItem *dnd);
 
     QQuickItem *metrics() const;
@@ -94,37 +98,37 @@ public Q_SLOTS:
     Q_INVOKABLE void restore();
     Q_INVOKABLE void save();
     Q_INVOKABLE void saveOptions();
-    Q_INVOKABLE void setOption(const int &appletId, const QString &property, const QVariant &value);
+    Q_INVOKABLE void setOption(const int &appletId, const QString &property, const QVariant &value) override;
 
     Q_INVOKABLE void addAppletItem(QObject *applet, int x, int y);
-    Q_INVOKABLE void addAppletItem(QObject *applet, int index);
-    Q_INVOKABLE void removeAppletItem(QObject *applet);
-    Q_INVOKABLE void hideAppletItem(QObject *applet);
-    Q_INVOKABLE void showAppletItem(QObject *applet);
+    Q_INVOKABLE void addAppletItem(QObject *applet, int index) override;
+    Q_INVOKABLE void removeAppletItem(QObject *applet) override;
+    Q_INVOKABLE void hideAppletItem(QObject *applet) override;
+    Q_INVOKABLE void showAppletItem(QObject *applet) override;
 
     Q_INVOKABLE void addJustifySplittersInMainLayout();
     Q_INVOKABLE void moveAppletsBasedOnJustifyAlignment();
     Q_INVOKABLE void joinLayoutsToMainLayout();
     Q_INVOKABLE void insertBefore(QQuickItem *hoveredItem, QQuickItem *item);
     Q_INVOKABLE void insertAfter(QQuickItem *hoveredItem, QQuickItem *item);
-    Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, const int &x, const int &y);
+    Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, const int &x, const int &y) override;
     Q_INVOKABLE bool repairAppletContainers();
     Q_INVOKABLE QObject *resolveAppletQuickItem(QObject *applet) const;
     Q_INVOKABLE int appletId(QObject *applet) const;
     Q_INVOKABLE QString appletIcon(QObject *applet) const;
     Q_INVOKABLE QString appletIconPath(QObject *applet) const;
 
-    Q_INVOKABLE int dndSpacerIndex();
+    Q_INVOKABLE int dndSpacerIndex() override;
     Q_INVOKABLE int defaultInsertionIndex() const;
 
     Q_INVOKABLE bool isMasqueradedIndex(const int &x, const int &y);
     Q_INVOKABLE int masquearadedIndex(const int &x, const int &y);
     Q_INVOKABLE QPoint indexToMasquearadedPoint(const int &index);
 
-    Q_INVOKABLE void requestAppletsOrder(const QList<int> &order);
-    Q_INVOKABLE void requestAppletsInLockedZoom(const QList<int> &applets);
-    Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &applets);
-    Q_INVOKABLE void setAppletInScheduledDestruction(const int &id, const bool &enabled);
+    Q_INVOKABLE void requestAppletsOrder(const QList<int> &order) override;
+    Q_INVOKABLE void requestAppletsInLockedZoom(const QList<int> &applets) override;
+    Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &applets) override;
+    Q_INVOKABLE void setAppletInScheduledDestruction(const int &id, const bool &enabled) override;
 
 
 Q_SIGNALS:
