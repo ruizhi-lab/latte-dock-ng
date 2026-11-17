@@ -5593,7 +5593,7 @@ void SourceContractTest::positionShortcutHostLookupIsRecursiveAndResettable()
     QVERIFY(sourceFile.open(QFile::ReadOnly));
     const QString source = QString::fromUtf8(sourceFile.readAll());
     QVERIFY(source.contains(QStringLiteral("findQuickItemByObjectName(searchRoot")));
-    QVERIFY(source.contains(QStringLiteral("m_layoutManager->property(\"rootItem\")")));
+    QVERIFY(source.contains(QStringLiteral("m_layoutManagerDispatcher.rootItem()")));
     QVERIFY(source.contains(QStringLiteral("clearShortcutsHost();")));
     QVERIFY(source.contains(QStringLiteral("m_shortcutsHostDestroyedConnection")));
 

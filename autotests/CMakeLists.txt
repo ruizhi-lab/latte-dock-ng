@@ -804,6 +804,7 @@ target_compile_definitions(pluginregistrationunittest PRIVATE
 target_link_libraries(pluginregistrationunittest
     Qt6::Core
     Qt6::Qml
+    Qt6::Quick
     Qt6::Test
 )
 

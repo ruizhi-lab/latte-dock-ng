@@ -1557,8 +1557,8 @@ void View::updatePlasmoidDrag()
         return;
     }
 
-    QObject *lm = m_interface->layoutManager();
-    QQuickItem *dndSpacer = lm->property("dndSpacerItem").value<QQuickItem *>();
+    auto *lm = m_interface->layoutManagerDispatcher();
+    QQuickItem *dndSpacer = lm->dndSpacer();
 
     if (!dndSpacer) {
         return;
@@ -1569,15 +1569,12 @@ void View::updatePlasmoidDrag()
     dndSpacer->setOpacity(1.0);
 
     // Map from window coords to rootItem coords for accurate positioning
-    QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
+    QQuickItem *rootItem = lm->rootItem();
     QPointF mappedPos = (rootItem && contentItem())
                         ? rootItem->mapFromItem(contentItem(), m_lastPlasmoidDragPos)
                         : m_lastPlasmoidDragPos;
 
-    QMetaObject::invokeMethod(lm, "insertAtCoordinates",
-                              Q_ARG(QQuickItem*, dndSpacer),
-                              Q_ARG(int, (int)mappedPos.x()),
-                              Q_ARG(int, (int)mappedPos.y()));
+    lm->insertAtCoordinates(dndSpacer, static_cast<int>(mappedPos.x()), static_cast<int>(mappedPos.y()));
 }
 
 void View::handlePlasmoidDrop(QDropEvent *de)
@@ -1601,22 +1598,19 @@ void View::handlePlasmoidDrop(QDropEvent *de)
     int dndIndex = -1;
 
     if (m_interface->layoutManager()) {
-        QObject *lm = m_interface->layoutManager();
-        QQuickItem *dndSpacer = lm->property("dndSpacerItem").value<QQuickItem *>();
+        auto *lm = m_interface->layoutManagerDispatcher();
+        QQuickItem *dndSpacer = lm->dndSpacer();
 
         if (dndSpacer) {
             // Map from window coords to rootItem coords for accurate positioning
-            QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
+            QQuickItem *rootItem = lm->rootItem();
             QPointF mappedPos = (rootItem && contentItem())
                                 ? rootItem->mapFromItem(contentItem(), QPointF(eventx, eventy))
                                 : QPointF(eventx, eventy);
 
-            QMetaObject::invokeMethod(lm, "insertAtCoordinates",
-                                      Q_ARG(QQuickItem*, dndSpacer),
-                                      Q_ARG(int, (int)mappedPos.x()),
-                                      Q_ARG(int, (int)mappedPos.y()));
+            lm->insertAtCoordinates(dndSpacer, static_cast<int>(mappedPos.x()), static_cast<int>(mappedPos.y()));
 
-            QMetaObject::invokeMethod(lm, "dndSpacerIndex", Q_RETURN_ARG(int, dndIndex));
+            dndIndex = lm->dndSpacerIndex();
 
             // Reset dndSpacer — we will insert via addAppletItem(index) directly
             dndSpacer->setOpacity(0.0);
@@ -1654,12 +1648,12 @@ void View::cleanupDndSpacer()
         return;
     }
 
-    QObject *lm = m_interface->layoutManager();
-    QQuickItem *dndSpacer = lm->property("dndSpacerItem").value<QQuickItem *>();
+    auto *lm = m_interface->layoutManagerDispatcher();
+    QQuickItem *dndSpacer = lm->dndSpacer();
 
     if (dndSpacer) {
         dndSpacer->setOpacity(0.0);
-        QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
+        QQuickItem *rootItem = lm->rootItem();
 
         if (rootItem) {
             dndSpacer->setParentItem(rootItem);

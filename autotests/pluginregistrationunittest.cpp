@@ -6,11 +6,17 @@
 // Qt
 #include <QDir>
 #include <QFileInfo>
+#include <QPointer>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QTemporaryDir>
 #include <QtQml/qqml.h>
 #include <QTest>
+
+#include <memory>
+
+// local
+#include "../app/view/layoutmanagerapidispatcher.h"
 
 class PluginRegistrationUnitTest : public QObject
 {
@@ -48,7 +54,7 @@ void PluginRegistrationUnitTest::containmentPluginRegistersTypes()
                           "import org.kde.latte.private.containment\n"
                           "QtObject {\n"
                           "    readonly property int scroll: types.ScrollNone\n"
-                          "    property LayoutManager layout\n"
+                          "    property LayoutManager manager: LayoutManager {}\n"
                           "}\n"),
                       QUrl(QStringLiteral("qrc:/containmentpluginregistrationtest.qml")));
     if (component.isError()) {
@@ -61,6 +67,22 @@ void PluginRegistrationUnitTest::containmentPluginRegistersTypes()
     // The probe above is the authoritative check for the Types gadget:
     // declaratively registered gadgets may not be visible through
     // qmlTypeId's revision lookup, but must resolve in real QML.
+
+    std::unique_ptr<QObject> root(component.create());
+    QVERIFY2(root, qPrintable(component.errorString()));
+    QPointer<QObject> manager = root->property("manager").value<QObject *>();
+    QVERIFY(manager);
+    auto *api = qobject_cast<Latte::Containment::LayoutManagerApi *>(manager.data());
+    QVERIFY(api);
+
+    Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+    dispatcher.setObject(manager.data());
+    dispatcher.requestAppletsOrder({71, 73});
+    QCOMPARE(dispatcher.order(), QList<int>({71, 73}));
+
+    root.reset();
+    QVERIFY(manager.isNull());
+    QVERIFY(dispatcher.order().isEmpty());
 }
 
 QTEST_GUILESS_MAIN(PluginRegistrationUnitTest)

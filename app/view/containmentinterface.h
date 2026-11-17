@@ -8,6 +8,7 @@
 
 // local
 #include "tasksmodel.h"
+#include "layoutmanagerapidispatcher.h"
 
 // Qt
 #include <QHash>
@@ -107,6 +108,7 @@ public:
     void setPlasmoid(QObject *plasmoid);
 
     QObject *layoutManager() const;
+    LayoutManagerApiDispatcher *layoutManagerDispatcher();
     void setLayoutManager(QObject *manager);
 
     QAbstractListModel *latteTasksModel() const;
@@ -227,7 +229,10 @@ private:
 
     //!follow containment plasmoid
     QPointer<QObject> m_plasmoid;
+    //! Keep the QObject handle for QML property exposure and meta-property notify
+    //! connections; API calls go through the dispatcher, which guards legacy plugin roots.
     QPointer<QObject> m_layoutManager;
+    LayoutManagerApiDispatcher m_layoutManagerDispatcher;
     QPointer<QQmlPropertyMap> m_configuration;
 
     //!keep record of applet ids and avoid crashes when trying to access ids for already destroyed applets

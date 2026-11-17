@@ -455,7 +455,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
     if (m_latteView->extendedInterface()) {
         if (QPointer<QObject> layoutMgr = m_latteView->extendedInterface()->layoutManager()) {
             const int appletId = static_cast<int>(applet->id());
-            const QList<int> disabledColoring = layoutMgr->property("userBlocksColorizingApplets").value<QList<int>>();
+            const QList<int> disabledColoring = m_latteView->extendedInterface()->layoutManagerDispatcher()->userBlocksColorizingApplets();
 
             QAction *keepOriginalColorsAction = desktopMenu->addAction(i18nc("@action:inmenu use the icon theme's original colors instead of Latte's colorization", "Use Icon Theme Colors"));
             keepOriginalColorsAction->setIcon(QIcon::fromTheme(QStringLiteral("preferences-desktop-theme")));
@@ -463,12 +463,9 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
             keepOriginalColorsAction->setChecked(disabledColoring.contains(appletId));
 
             connect(keepOriginalColorsAction, &QAction::triggered, this, [layoutMgr, appletId](bool checked) {
-                QMetaObject::invokeMethod(layoutMgr,
-                                          "setOption",
-                                          Qt::DirectConnection,
-                                          Q_ARG(int, appletId),
-                                          Q_ARG(QString, QStringLiteral("userBlocksColorizing")),
-                                          Q_ARG(QVariant, checked));
+                Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+                dispatcher.setObject(layoutMgr.data());
+                dispatcher.setOption(appletId, QStringLiteral("userBlocksColorizing"), checked);
             });
         }
     }
@@ -542,10 +539,9 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                     return;
                 }
 
-                QMetaObject::invokeMethod(layoutMgr,
-                                          "hideAppletItem",
-                                          Qt::DirectConnection,
-                                          Q_ARG(QObject*, applet));
+                Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+                dispatcher.setObject(layoutMgr.data());
+                dispatcher.hideAppletItem(applet);
                 // Both connections clean each other up via the shared pointers.
                 auto undoConn = std::make_shared<QMetaObject::Connection>();
                 auto destroyConn = std::make_shared<QMetaObject::Connection>();
@@ -556,10 +552,9 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                                              [applet, layoutMgr, undoConn, destroyConn](bool destroyed)
                 {
                     if (!destroyed && layoutMgr) {
-                        QMetaObject::invokeMethod(layoutMgr,
-                                                  "showAppletItem",
-                                                  Qt::DirectConnection,
-                                                  Q_ARG(QObject*, applet));
+                        Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+                        dispatcher.setObject(layoutMgr.data());
+                        dispatcher.showAppletItem(applet);
                     }
 
                     QObject::disconnect(*undoConn);
@@ -571,10 +566,9 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                                                 [applet, layoutMgr, undoConn, destroyConn]()
                 {
                     if (layoutMgr) {
-                        QMetaObject::invokeMethod(layoutMgr,
-                                                  "removeAppletItem",
-                                                  Qt::DirectConnection,
-                                                  Q_ARG(QObject*, applet));
+                        Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+                        dispatcher.setObject(layoutMgr.data());
+                        dispatcher.removeAppletItem(applet);
                     }
 
                     QObject::disconnect(*undoConn);
