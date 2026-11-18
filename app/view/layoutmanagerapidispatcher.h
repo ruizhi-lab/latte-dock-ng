@@ -79,7 +79,7 @@ class LayoutManagerApiDispatcher final
         if (auto *api = typedApi()) {
             api->addAppletItem(applet, index);
         } else if (m_object) {
-            QMetaObject::invokeMethod(m_object, "addAppletItem", Qt::DirectConnection, Q_ARG(QObject *, applet), Q_ARG(int, index));
+            QMetaObject::invokeMethod(m_object, "addAppletItem", Qt::DirectConnection, Q_ARG(QObject*, applet), Q_ARG(int, index));
         }
     }
 
@@ -88,7 +88,7 @@ class LayoutManagerApiDispatcher final
         if (auto *api = typedApi()) {
             api->removeAppletItem(applet);
         } else if (m_object) {
-            QMetaObject::invokeMethod(m_object, "removeAppletItem", Qt::DirectConnection, Q_ARG(QObject *, applet));
+            QMetaObject::invokeMethod(m_object, "removeAppletItem", Qt::DirectConnection, Q_ARG(QObject*, applet));
         }
     }
 
@@ -97,7 +97,7 @@ class LayoutManagerApiDispatcher final
         if (auto *api = typedApi()) {
             api->hideAppletItem(applet);
         } else if (m_object) {
-            QMetaObject::invokeMethod(m_object, "hideAppletItem", Qt::DirectConnection, Q_ARG(QObject *, applet));
+            QMetaObject::invokeMethod(m_object, "hideAppletItem", Qt::DirectConnection, Q_ARG(QObject*, applet));
         }
     }
 
@@ -106,7 +106,7 @@ class LayoutManagerApiDispatcher final
         if (auto *api = typedApi()) {
             api->showAppletItem(applet);
         } else if (m_object) {
-            QMetaObject::invokeMethod(m_object, "showAppletItem", Qt::DirectConnection, Q_ARG(QObject *, applet));
+            QMetaObject::invokeMethod(m_object, "showAppletItem", Qt::DirectConnection, Q_ARG(QObject*, applet));
         }
     }
 
@@ -115,7 +115,7 @@ class LayoutManagerApiDispatcher final
         if (auto *api = typedApi()) {
             api->insertAtCoordinates(item, x, y);
         } else if (m_object) {
-            QMetaObject::invokeMethod(m_object, "insertAtCoordinates", Qt::DirectConnection, Q_ARG(QQuickItem *, item), Q_ARG(int, x), Q_ARG(int, y));
+            QMetaObject::invokeMethod(m_object, "insertAtCoordinates", Qt::DirectConnection, Q_ARG(QQuickItem*, item), Q_ARG(int, x), Q_ARG(int, y));
         }
     }
 
