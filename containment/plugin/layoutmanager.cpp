@@ -1732,32 +1732,11 @@ QQuickItem *LayoutManager::appletItem(const int &id)
 
 int LayoutManager::dndSpacerIndex()
 {
-    if (m_dndSpacer->parentItem() != m_startLayout
-        && m_dndSpacer->parentItem() != m_mainLayout
-        && m_dndSpacer->parentItem() != m_endLayout) {
+    if (m_dndSpacer->parentItem() != m_mainLayout) {
         return -1;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-    const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     int index = -1;
-
-    if (useJustifySplitters) {
-        for (int i = 0; i < m_startLayout->childItems().count(); ++i) {
-            QQuickItem *item = m_startLayout->childItems().at(i);
-            bool isparabolicspacer = item->property("isParabolicEdgeSpacer").toBool();
-
-            if (isparabolicspacer) {
-                continue;
-            }
-
-            index++;
-
-            if (item == m_dndSpacer) {
-                return index;
-            }
-        }
-    }
 
     for (int i = 0; i < m_mainLayout->childItems().count(); ++i) {
         QQuickItem *item = m_mainLayout->childItems().at(i);
@@ -1771,23 +1750,6 @@ int LayoutManager::dndSpacerIndex()
 
         if (item == m_dndSpacer) {
             return index;
-        }
-    }
-
-    if (useJustifySplitters) {
-        for (int i = 0; i < m_endLayout->childItems().count(); ++i) {
-            QQuickItem *item = m_endLayout->childItems().at(i);
-            bool isparabolicspacer = item->property("isParabolicEdgeSpacer").toBool();
-
-            if (isparabolicspacer) {
-                continue;
-            }
-
-            index++;
-
-            if (item == m_dndSpacer) {
-                return index;
-            }
         }
     }
 
@@ -1891,26 +1853,11 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
         return;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-    const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
-
     bool result{false};
 
-    if (useJustifySplitters) {
-        QPointF startPos = m_startLayout->mapFromItem(m_rootItem, QPointF(x, y));
-        result = insertAtLayoutCoordinates(m_startLayout, item, startPos.x(), startPos.y());
-
-        if (!result) {
-            QPointF endPos = m_endLayout->mapFromItem(m_rootItem, QPointF(x, y));
-            result = insertAtLayoutCoordinates(m_endLayout, item, endPos.x(), endPos.y());
-        }
-    }
-
-    if (!result) {
-        QPointF mainPos = m_mainLayout->mapFromItem(m_rootItem, QPointF(x, y));
-        //! in javascript direct insertAtCoordinates was usedd ???
-        result = insertAtLayoutCoordinates(m_mainLayout, item, mainPos.x(), mainPos.y());
-    }
+    QPointF mainPos = m_mainLayout->mapFromItem(m_rootItem, QPointF(x, y));
+    //! in javascript direct insertAtCoordinates was usedd ???
+    result = insertAtLayoutCoordinates(m_mainLayout, item, mainPos.x(), mainPos.y());
 
     if (result) {
         return;
@@ -1919,39 +1866,15 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
     //! item was not added because it does not hover any of the layouts and layout items
     //! so the place that will be added is specified by the distance of the item from the layouts
 
-    QPointF startrelpos = m_startLayout->mapFromItem(m_rootItem, QPointF(x, y));
-    QPointF endrelpos = m_endLayout->mapFromItem(m_rootItem, QPointF(x, y));
     QPointF mainrelpos = m_mainLayout->mapFromItem(m_rootItem, QPointF(x, y));
 
-    int starttaildistance = distanceFromTail(m_startLayout, startrelpos);
-    int startheaddistance = distanceFromHead(m_startLayout, startrelpos);
-    int maintaildistance = distanceFromTail(m_mainLayout, mainrelpos);
-    int mainheaddistance = distanceFromHead(m_mainLayout, mainrelpos);
-    int endtaildistance = distanceFromTail(m_endLayout, endrelpos);
-    int endheaddistance = distanceFromHead(m_endLayout, endrelpos);
+    const int maintaildistance = distanceFromTail(m_mainLayout, mainrelpos);
+    const int mainheaddistance = distanceFromHead(m_mainLayout, mainrelpos);
 
-    int startdistance = qMin(starttaildistance, startheaddistance);
-    int maindistance = qMin(maintaildistance, mainheaddistance);
-    int enddistance = qMin(endtaildistance, endheaddistance);
-
-    if (!useJustifySplitters || (maindistance < startdistance && maindistance < enddistance)) {
-        if (maintaildistance <= mainheaddistance) {
-            insertAtLayoutTail(m_mainLayout, item);
-        } else {
-            insertAtLayoutHead(m_mainLayout, item);
-        }
-    } else if (startdistance < maindistance && startdistance < enddistance) {
-        if (maintaildistance <= mainheaddistance) {
-            insertAtLayoutTail(m_startLayout, item);
-        } else {
-            insertAtLayoutHead(m_startLayout, item);
-        }
+    if (maintaildistance <= mainheaddistance) {
+        insertAtLayoutTail(m_mainLayout, item);
     } else {
-        if (endtaildistance <= endheaddistance) {
-            insertAtLayoutTail(m_endLayout, item);
-        } else {
-            insertAtLayoutHead(m_endLayout, item);
-        }
+        insertAtLayoutHead(m_mainLayout, item);
     }
 }
 

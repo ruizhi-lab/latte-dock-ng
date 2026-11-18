@@ -174,6 +174,8 @@ private Q_SLOTS:
     void resolveAppletQuickItemFindsQuickItemThroughPropertyChain();
     void restoresAndSavesLegacyJustifyFromPersistedMap();
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
+    void dndSpacerIndexUsesMainLayoutAndSkipsParabolicSpacers();
+    void insertAtCoordinatesUsesMainLayoutForJustify();
     void warnsWhenContainmentRootMethodsAreMissing();
     void restoreWarnsWhenCreateAppletItemIsMissing();
     void warnsOnceForMissingInitMethodDuringRepair();
@@ -704,6 +706,87 @@ void ContainmentLayoutUnitTest::joinsLegacyJustifyLayoutsThroughProductionEntryP
     QVERIFY(start.childItems().isEmpty());
     QVERIFY(end.childItems().isEmpty());
     QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &startApplet, &mainApplet, &endApplet }));
+}
+
+void ContainmentLayoutUnitTest::dndSpacerIndexUsesMainLayoutAndSkipsParabolicSpacers()
+{
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QQuickItem startApplet;
+    QQuickItem firstApplet;
+    QQuickItem parabolicSpacer;
+    QQuickItem spacer;
+    QQuickItem secondApplet;
+    startApplet.setParentItem(&start);
+    firstApplet.setParentItem(&main);
+    parabolicSpacer.setParentItem(&main);
+    spacer.setParentItem(&main);
+    secondApplet.setParentItem(&main);
+    parabolicSpacer.setProperty("isParabolicEdgeSpacer", true);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setDndSpacer(&spacer);
+
+    QCOMPARE(manager.dndSpacerIndex(), 1);
+
+    spacer.setParentItem(&start);
+    QCOMPARE(manager.dndSpacerIndex(), -1);
+}
+
+void ContainmentLayoutUnitTest::insertAtCoordinatesUsesMainLayoutForJustify()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("formFactor", 0);
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QQuickItem root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    root.setWidth(300);
+    root.setHeight(50);
+    start.setParentItem(&root);
+    start.setWidth(100);
+    start.setHeight(50);
+    main.setParentItem(&root);
+    main.setX(100);
+    main.setWidth(100);
+    main.setHeight(50);
+    end.setParentItem(&root);
+    end.setX(200);
+    end.setWidth(100);
+    end.setHeight(50);
+
+    QQuickItem existingApplet;
+    existingApplet.setWidth(30);
+    existingApplet.setHeight(50);
+    existingApplet.setParentItem(&main);
+    QQuickItem draggedItem;
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    manager.insertAtCoordinates(&draggedItem, 105, 25);
+
+    QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &draggedItem, &existingApplet }));
+    QVERIFY(start.childItems().isEmpty());
+    QVERIFY(end.childItems().isEmpty());
+
+    QQuickItem fallbackHeadItem;
+    manager.insertAtCoordinates(&fallbackHeadItem, 205, 25);
+
+    QCOMPARE(main.childItems().last(), &fallbackHeadItem);
+    QVERIFY(end.childItems().isEmpty());
 }
 
 
