@@ -1778,22 +1778,11 @@ void LayoutManager::requestAppletsOrder(const QList<int> &order)
         updateOrder();
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-    const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
-    QQuickItem *nextlayout = useJustifySplitters ? m_startLayout : m_mainLayout;
+    const auto alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     QQuickItem *previousitem = nullptr;
 
-    int addedsplitters{0};
-
     for (int i = 0; i < order.count(); ++i) {
-        QQuickItem *currentitem = nullptr;
-
-        if (!useJustifySplitters || order[i] != JUSTIFYSPLITTERID) {
-            currentitem = appletItem(order[i]);
-        } else if (useJustifySplitters && order[i] == JUSTIFYSPLITTERID) {
-            currentitem = addedsplitters == 0 ? firstSplitter() : lastSplitter();
-            addedsplitters++;
-        }
+        QQuickItem *currentitem = appletItem(order[i]);
 
         // Newly created applets can be missing momentarily; do not reset the
         // anchor item, otherwise later items drift to wrong boundaries.
@@ -1804,20 +1793,13 @@ void LayoutManager::requestAppletsOrder(const QList<int> &order)
         if (previousitem) {
             insertAfter(previousitem, currentitem);
         } else {
-            insertAtLayoutTail(nextlayout, currentitem);
+            insertAtLayoutTail(m_mainLayout, currentitem);
         }
 
         previousitem = currentitem;
-
-        if (useJustifySplitters && order[i] == JUSTIFYSPLITTERID) {
-            nextlayout = addedsplitters == 1 ? m_mainLayout : m_endLayout;
-        }
     }
 
-    if (useJustifySplitters) {
-        moveAppletsBasedOnJustifyAlignment();
-        save();
-    } else if (alignment == Latte::Types::Justify) {
+    if (alignment == Latte::Types::Justify) {
         joinLayoutsToMainLayout();
         save();
     }
@@ -2073,8 +2055,6 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         index = m_appletRemovalIndexes.take(id);
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-    const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     QVariant appletItemVariant;
     QVariant appletVariant;
     QObject *resolvedApplet = resolveAppletQuickItemObject(applet);
@@ -2099,29 +2079,13 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
     if (index >= m_order.count()) {
         // do nothing it should be added at the end
     } else {
-        if (useJustifySplitters && m_order[index] == JUSTIFYSPLITTERID) {
-            if (index < m_splitterPosition2 - 1) {
-                previousItem = firstSplitter();
-            } else {
-                previousItem = lastSplitter();
-            }
-        } else {
-            previousItem = appletItem(m_order[index]);
-        }
+        previousItem = appletItem(m_order[index]);
     }
 
     if (previousItem) {
         insertBefore(previousItem, aitem);
     } else {
-        if (useJustifySplitters) {
-            insertAtLayoutHead(m_endLayout, aitem);
-        } else {
-            insertAtLayoutHead(m_mainLayout, aitem);
-        }
-    }
-
-    if (useJustifySplitters) {
-        moveAppletsBasedOnJustifyAlignment();
+        insertAtLayoutHead(m_mainLayout, aitem);
     }
 
     save();

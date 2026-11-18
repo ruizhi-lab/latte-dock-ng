@@ -176,6 +176,8 @@ private Q_SLOTS:
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
     void dndSpacerIndexUsesMainLayoutAndSkipsParabolicSpacers();
     void insertAtCoordinatesUsesMainLayoutForJustify();
+    void requestAppletsOrderMaintainsSideAppletOrderInJustify();
+    void addAppletItemByIndexUsesMainLayoutInJustify();
     void warnsWhenContainmentRootMethodsAreMissing();
     void restoreWarnsWhenCreateAppletItemIsMissing();
     void warnsOnceForMissingInitMethodDuringRepair();
@@ -787,6 +789,91 @@ void ContainmentLayoutUnitTest::insertAtCoordinatesUsesMainLayoutForJustify()
 
     QCOMPARE(main.childItems().last(), &fallbackHeadItem);
     QVERIFY(end.childItems().isEmpty());
+}
+
+void ContainmentLayoutUnitTest::requestAppletsOrderMaintainsSideAppletOrderInJustify()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QObject firstBackend;
+    firstBackend.setProperty("id", 1);
+    QObject mainBackend;
+    mainBackend.setProperty("id", 2);
+    QObject lastBackend;
+    lastBackend.setProperty("id", 3);
+
+    QQuickItem root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QQuickItem first;
+    first.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&firstBackend)));
+    first.setParentItem(&start);
+    QQuickItem middle;
+    middle.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&mainBackend)));
+    middle.setParentItem(&main);
+    QQuickItem last;
+    last.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&lastBackend)));
+    last.setParentItem(&end);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    manager.requestAppletsOrder(QList<int>{ 3, 1, 2 });
+
+    QVERIFY(start.childItems().isEmpty());
+    QVERIFY(end.childItems().isEmpty());
+    QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &last, &first, &middle }));
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("3;1;2"));
+}
+
+void ContainmentLayoutUnitTest::addAppletItemByIndexUsesMainLayoutInJustify()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QObject firstBackend;
+    firstBackend.setProperty("id", 10);
+    QObject lastBackend;
+    lastBackend.setProperty("id", 20);
+    QObject newBackend;
+    newBackend.setProperty("id", 15);
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QQuickItem first;
+    first.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&firstBackend)));
+    first.setParentItem(&main);
+    QQuickItem last;
+    last.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&lastBackend)));
+    last.setParentItem(&main);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    manager.requestAppletsOrder(QList<int>{ 10, 20 });
+
+    manager.addAppletItem(&newBackend, 1);
+
+    QCOMPARE(main.childItems().count(), 3);
+    QCOMPARE(main.childItems().at(0), &first);
+    QCOMPARE(main.childItems().at(2), &last);
+    QCOMPARE(main.childItems().at(1)->property("backendAppletRef").value<QObject *>(), static_cast<QObject *>(&newBackend));
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("10;15;20"));
 }
 
 
