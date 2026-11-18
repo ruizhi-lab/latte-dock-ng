@@ -619,7 +619,7 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     // deliberately does not claim to cover the Plasma-to-KConfig disk reader.
     TestConfig configuration;
     configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
-    configuration.insert(QStringLiteral("appletOrder"), QStringLiteral("44;46;45"));
+    configuration.insert(QStringLiteral("appletOrder"), QStringLiteral("44;-1;46;-1;45"));
     configuration.insert(QStringLiteral("splitterPosition"), 2);
     configuration.insert(QStringLiteral("splitterPosition2"), 4);
 
@@ -658,6 +658,7 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     QCOMPARE(manager.order(), (QList<int>{ 44, 46, 45 }));
     QCOMPARE(manager.splitterPosition(), 2);
     QCOMPARE(manager.splitterPosition2(), 4);
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;46;45"));
 
     QList<int> restoredAppletIds;
     for (QQuickItem *item : main.childItems()) {

@@ -1181,46 +1181,6 @@ void LayoutManager::restore()
         }
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-    const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
-    int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
-    int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
-
-    if (useJustifySplitters) {
-        const int appletsCount = appletIdsOrder.count();
-
-        auto recalculateSplitters = [appletsCount](int &first, int &second) {
-            if (appletsCount <= 2) {
-                first = 1;
-                second = appletsCount + 1;
-                return;
-            }
-
-            first = qBound(2, appletsCount / 2, appletsCount - 1);
-            const int suggestedSecond = first + qMax(2, ((appletsCount - first + 1) / 2));
-            second = qBound(first + 1, suggestedSecond, appletsCount + 1);
-        };
-
-        const bool invalidSplitters = (splitterPosition < 1)
-                                      || (splitterPosition2 <= splitterPosition)
-                                      || (splitterPosition >= appletsCount)
-                                      || (splitterPosition2 > appletsCount + 1);
-
-        if (invalidSplitters) {
-            recalculateSplitters(splitterPosition, splitterPosition2);
-            writeConfigValue(QStringLiteral("splitterPosition"), splitterPosition);
-            writeConfigValue(QStringLiteral("splitterPosition2"), splitterPosition2);
-        }
-
-        if (splitterPosition != -1 && splitterPosition2 != -1) {
-            appletIdsOrder.insert(splitterPosition - 1, -1);
-            appletIdsOrder.insert(splitterPosition2 - 1, -1);
-        } else {
-            appletIdsOrder.insert(0, -1);
-            appletIdsOrder << -1;
-        }
-    }
-
     QList<int> invalidApplets;
 
     //! track invalid applets, meaning applets that have not be loaded properly
@@ -1269,68 +1229,26 @@ void LayoutManager::restore()
 
     bool appletContainerCreationFailed{false};
 
-    if (!useJustifySplitters) {
-        for (int i = 0; i < orderedApplets.count(); ++i) {
-            if (orderedApplets[i] == nullptr) {
-                continue;
-            }
-
-            QVariant appletItemVariant;
-            QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
-            if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
-                warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
-            }
-            QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
-
-            if (!appletItem) {
-                appletContainerCreationFailed = true;
-                qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
-                                          << appletId(orderedApplets[i]);
-                continue;
-            }
-
-            appletItem->setParentItem(m_mainLayout);
+    for (int i = 0; i < orderedApplets.count(); ++i) {
+        if (orderedApplets[i] == nullptr) {
+            continue;
         }
-    } else {
-        QQuickItem *parentlayout = m_startLayout;
 
-        for (int i = 0; i < orderedApplets.count(); ++i) {
-            if (orderedApplets[i] == nullptr) {
-                QVariant splitterItemVariant;
-                if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant))) {
-                    warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
-                }
-                QQuickItem *splitterItem = splitterItemVariant.value<QQuickItem *>();
-
-                if (parentlayout == m_startLayout) {
-                    //! first splitter as last child in startlayout
-                    splitterItem->setParentItem(parentlayout);
-                    parentlayout = m_mainLayout;
-                } else if (parentlayout == m_mainLayout) {
-                    //! second splitter as first child in endlayout
-                    parentlayout = m_endLayout;
-                    splitterItem->setParentItem(parentlayout);
-                }
-
-                continue;
-            }
-
-            QVariant appletItemVariant;
-            QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
-            if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
-                warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
-            }
-            QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
-
-            if (!appletItem) {
-                appletContainerCreationFailed = true;
-                qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
-                                          << appletId(orderedApplets[i]);
-                continue;
-            }
-
-            appletItem->setParentItem(parentlayout);
+        QVariant appletItemVariant;
+        QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
+        if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+            warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
         }
+        QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
+
+        if (!appletItem) {
+            appletContainerCreationFailed = true;
+            qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
+                                      << appletId(orderedApplets[i]);
+            continue;
+        }
+
+        appletItem->setParentItem(m_mainLayout);
     }
 
     if (appletContainerCreationFailed) {
