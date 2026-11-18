@@ -39,14 +39,6 @@ class RestoreRoot : public QQuickItem
         return m_appletItemCreationCount;
     }
 
-    Q_INVOKABLE QVariant createJustifySplitter()
-    {
-        ++m_justifySplitterCreationCount;
-        auto *item = new QQuickItem(this);
-        item->setProperty("isInternalViewSplitter", true);
-        return QVariant::fromValue(item);
-    }
-
     Q_INVOKABLE void initAppletContainer(QVariant container, QVariant applet)
     {
         if (auto *item = container.value<QQuickItem *>()) {
@@ -54,14 +46,8 @@ class RestoreRoot : public QQuickItem
         }
     }
 
-    int justifySplitterCreationCount() const
-    {
-        return m_justifySplitterCreationCount;
-    }
-
 private:
     int m_appletItemCreationCount{0};
-    int m_justifySplitterCreationCount{0};
 };
 
 class MissingInitRoot : public QQuickItem
@@ -80,11 +66,6 @@ class MissingCreateRoot : public QQuickItem
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QVariant createJustifySplitter()
-    {
-        return QVariant::fromValue(new QQuickItem(this));
-    }
-
     Q_INVOKABLE void initAppletContainer(QVariant, QVariant)
     {
     }
@@ -267,7 +248,6 @@ ContainmentLayoutUnitTest::warnsWhenContainmentRootMethodsAreMissing()
     Latte::Containment::LayoutManager manager;
 
     QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createAppletItem\\(QVariant\\).*")));
-    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createJustifySplitter\\(\\).*")));
     QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function initAppletContainer\\(QVariant,QVariant\\).*")));
     manager.setRootItem(&root);
 }
@@ -289,7 +269,6 @@ ContainmentLayoutUnitTest::warnsOnceForMissingInitMethodDuringRepair()
     QQuickItem main;
     QQuickItem end;
     Latte::Containment::LayoutManager manager;
-    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function createJustifySplitter\\(\\).*")));
     QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing required function initAppletContainer\\(QVariant,QVariant\\).*")));
     manager.setRootItem(&root);
     manager.setStartLayout(&start);
@@ -654,7 +633,6 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
 
     manager.restore();
 
-    QCOMPARE(root.justifySplitterCreationCount(), 0);
     QVERIFY(start.childItems().isEmpty());
     QCOMPARE(main.childItems().count(), 3);
     QVERIFY(end.childItems().isEmpty());
@@ -704,7 +682,6 @@ void ContainmentLayoutUnitTest::joinsLegacyJustifyLayoutsThroughProductionEntryP
     manager.setPlasmoid(&plasmoid);
     manager.addJustifySplittersInMainLayout();
 
-    QCOMPARE(root.justifySplitterCreationCount(), 0);
     QVERIFY(start.childItems().isEmpty());
     QVERIFY(end.childItems().isEmpty());
     QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &startApplet, &mainApplet, &endApplet }));

@@ -1045,7 +1045,6 @@ void LayoutManager::onRootItemChanged()
 
     if (!m_rootItem) {
         m_createAppletItemMethod = QMetaMethod();
-        m_createJustifySplitterMethod = QMetaMethod();
         m_initAppletContainerMethod = QMetaMethod();
         return;
     }
@@ -1057,14 +1056,6 @@ void LayoutManager::onRootItemChanged()
         m_createAppletItemMethod = QMetaMethod();
     } else {
         m_createAppletItemMethod = rootMetaObject->method(createAppletItemIndex);
-    }
-
-    int createJustifySplitterIndex = rootMetaObject->indexOfMethod("createJustifySplitter()");
-    if (createJustifySplitterIndex < 0) {
-        qCWarning(latteContainment) << "Containment root is missing required function createJustifySplitter()";
-        m_createJustifySplitterMethod = QMetaMethod();
-    } else {
-        m_createJustifySplitterMethod = rootMetaObject->method(createJustifySplitterIndex);
     }
 
     int initAppletContainerIndex = rootMetaObject->indexOfMethod("initAppletContainer(QVariant,QVariant)");
@@ -1609,70 +1600,6 @@ bool LayoutManager::insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *it
     }
 
     return false;
-}
-
-QQuickItem *LayoutManager::firstSplitter()
-{
-    for (int i = 0; i < m_startLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_startLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    for (int i = 0; i < m_mainLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_mainLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    for (int i = 0; i < m_endLayout->childItems().count(); ++i) {
-        QQuickItem *item = m_endLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    return nullptr;
-}
-
-QQuickItem *LayoutManager::lastSplitter()
-{
-    for (int i = m_endLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_endLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    for (int i = m_mainLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_mainLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    for (int i = m_endLayout->childItems().count() - 1; i >= 0; --i) {
-        QQuickItem *item = m_endLayout->childItems().at(i);
-        bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
-
-        if (isInternalSplitter) {
-            return item;
-        }
-    }
-
-    return nullptr;
 }
 
 QQuickItem *LayoutManager::appletItemInLayout(QQuickItem *layout, const int &id)
@@ -2357,118 +2284,7 @@ void LayoutManager::addJustifySplittersInMainLayout()
         return;
     }
 
-    if (!usesLegacyJustifySplitters()) {
-        joinLayoutsToMainLayout();
-        return;
-    }
-
-    destroyJustifySplitters();
-
-    int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
-    int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
-    int appletsCount = m_mainLayout->childItems().count() - 2; // exclude parabolic spacers
-
-    if (appletsCount <= 0 && (m_startLayout->childItems().count() > 0 || m_endLayout->childItems().count() > 0)) {
-        joinLayoutsToMainLayout();
-        appletsCount = m_mainLayout->childItems().count() - 2;
-    }
-
-    if (appletsCount <= 0) {
-        qWarning() << "org.kde.latte ::: addJustifySplittersInMainLayout skipped for empty main layout";
-        return;
-    }
-
-    auto recalculateSplitters = [appletsCount](int &first, int &second) {
-        if (appletsCount <= 2) {
-            first = 1;
-            second = appletsCount + 1;
-            return;
-        }
-
-        first = qBound(2, appletsCount / 2, appletsCount - 1);
-        const int suggestedSecond = first + qMax(2, ((appletsCount - first + 1) / 2));
-        second = qBound(first + 1, suggestedSecond, appletsCount + 1);
-    };
-
-    const bool invalidSplitters = (splitterPosition < 1)
-                                  || (splitterPosition2 <= splitterPosition)
-                                  || (splitterPosition >= appletsCount)
-                                  || (splitterPosition2 > appletsCount + 1);
-
-    if (invalidSplitters) {
-        recalculateSplitters(splitterPosition, splitterPosition2);
-        setSplitterPosition(splitterPosition);
-        setSplitterPosition2(splitterPosition2);
-        writeConfigValue(QStringLiteral("splitterPosition"), splitterPosition);
-        writeConfigValue(QStringLiteral("splitterPosition2"), splitterPosition2);
-    }
-
-    int splitterIndex = (splitterPosition >= 1 ? splitterPosition - 1 : -1);
-    int splitterIndex2 = (splitterPosition2 >= 1 ? splitterPosition2 - 1 : -1);
-
-    //! First Splitter
-    QVariant splitterItemVariant;
-    if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant))) {
-        warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
-    }
-    QQuickItem *splitterItem = splitterItemVariant.value<QQuickItem *>();
-
-    if (!splitterItem) {
-        qWarning() << "org.kde.latte ::: addJustifySplittersInMainLayout failed to create first splitter";
-        return;
-    }
-
-    int size = m_mainLayout->childItems().count() - 2; //we need to remove parabolic spacers
-
-    splitterItem->setParentItem(m_mainLayout);
-
-    if (size > 0 && splitterIndex >= 0) {
-        bool atend = (splitterIndex >= size);
-        int validindex = (atend ? size - 1 : splitterIndex) + 1; //we need to take into account first parabolic spacer
-        QQuickItem *currentitem = m_mainLayout->childItems().at(validindex);
-
-        if (atend) {
-            splitterItem->stackAfter(currentitem);
-        } else {
-            splitterItem->stackBefore(currentitem);
-        }
-    } else if (size > 0) {
-        //! add in first position
-        QQuickItem *currentitem = m_mainLayout->childItems().at(0);
-        splitterItem->stackBefore(currentitem);
-    }
-
-    //! Second Splitter
-    QVariant splitterItemVariant2;
-    if (m_createJustifySplitterMethod.isValid() && !m_createJustifySplitterMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, splitterItemVariant2))) {
-        warnRootInvocationFailureOnce(m_createJustifySplitterMethod, "createJustifySplitter()");
-    }
-    QQuickItem *splitterItem2 = splitterItemVariant2.value<QQuickItem *>();
-
-    if (!splitterItem2) {
-        qWarning() << "org.kde.latte ::: addJustifySplittersInMainLayout failed to create second splitter";
-        return;
-    }
-
-    int size2 = m_mainLayout->childItems().count() - 2; //we need to remove parabolic spacers
-
-    splitterItem2->setParentItem(m_mainLayout);
-
-    if (size2 > 0 && splitterIndex2 >= 0) {
-        bool atend = (splitterIndex2 >= size2);
-        int validindex2 = (atend ? size2 - 1 : splitterIndex2) + 1; //we need to take into account first parabolic spacer
-        QQuickItem *currentitem2 = m_mainLayout->childItems().at(validindex2);
-
-        if (atend) {
-            splitterItem2->stackAfter(currentitem2);
-        } else {
-            splitterItem2->stackBefore(currentitem2);
-        }
-    } else if (size2 > 1) {
-        //! add in last position
-        QQuickItem *currentitem2 = m_mainLayout->childItems().at(size2 - 1 + 1); // we need to take into account first parabolic spacer
-        splitterItem2->stackAfter(currentitem2);
-    }
+    joinLayoutsToMainLayout();
 }
 
 void LayoutManager::destroyJustifySplitters()
@@ -2550,52 +2366,7 @@ void LayoutManager::joinLayoutsToMainLayout()
 
 void LayoutManager::moveAppletsBasedOnJustifyAlignment()
 {
-    if (!m_startLayout || !m_mainLayout || !m_endLayout) {
-        return;
-    }
-
-    if (!usesLegacyJustifySplitters()) {
-        joinLayoutsToMainLayout();
-        return;
-    }
-
-    reorderParabolicSpacers();
-
-    QList<QQuickItem *> appletlist;
-
-    appletlist << m_startLayout->childItems();
-    appletlist << m_mainLayout->childItems();
-    appletlist << m_endLayout->childItems();
-
-    bool firstSplitterFound{false};
-    bool secondSplitterFound{false};
-    int splitter1{-1};
-    int splitter2{-1};
-
-    for (int i = 0; i < appletlist.count(); ++i) {
-        bool issplitter = appletlist[i]->property("isInternalViewSplitter").toBool();
-
-        if (!firstSplitterFound) {
-            this->insertAtLayoutIndex(m_startLayout, appletlist[i], i);
-
-            if (issplitter) {
-                firstSplitterFound = true;
-                splitter1 = i;
-            }
-        } else if (firstSplitterFound && !secondSplitterFound) {
-            if (issplitter) {
-                secondSplitterFound = true;
-                splitter2 = i;
-                this->insertAtLayoutTail(m_endLayout, appletlist[i]);
-            } else {
-                this->insertAtLayoutIndex(m_mainLayout, appletlist[i], i - splitter1);
-            }
-        } else if (firstSplitterFound && secondSplitterFound) {
-            this->insertAtLayoutIndex(m_endLayout, appletlist[i], i - splitter2);
-        }
-    }
-
-    reorderParabolicSpacers();
+    joinLayoutsToMainLayout();
 }
 
 QList<int> LayoutManager::toIntList(const QString &serialized)

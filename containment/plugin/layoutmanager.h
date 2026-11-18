@@ -52,7 +52,7 @@ class LayoutManager : public QObject, public LayoutManagerApi
     Q_PROPERTY(int splitterPosition READ splitterPosition NOTIFY splitterPositionChanged)
     Q_PROPERTY(int splitterPosition2 READ splitterPosition2 NOTIFY splitterPosition2Changed)
     Q_PROPERTY(QList<int> appletOrder READ appletOrder NOTIFY appletOrderChanged)
-    Q_PROPERTY(QList<int> order READ order NOTIFY orderChanged) //includes also splitters
+    Q_PROPERTY(QList<int> order READ order NOTIFY orderChanged)
     Q_PROPERTY(QList<int> lockedZoomApplets READ lockedZoomApplets NOTIFY lockedZoomAppletsChanged)
     Q_PROPERTY(QList<int> userBlocksColorizingApplets READ userBlocksColorizingApplets NOTIFY userBlocksColorizingAppletsChanged)
     Q_PROPERTY(QList<int> appletsInScheduledDestruction READ appletsInScheduledDestruction NOTIFY appletsInScheduledDestructionChanged)
@@ -207,8 +207,6 @@ private:
     int distanceFromTail(QQuickItem *layout, QPointF pos) const;
     int distanceFromHead(QQuickItem *layout, QPointF pos) const;
 
-    QQuickItem *firstSplitter();
-    QQuickItem *lastSplitter();
     QQuickItem *appletItem(const int &id);
     QQuickItem *appletItemInLayout(QQuickItem *layout, const int &id);
 
@@ -250,7 +248,6 @@ private:
     QHash<int, QQuickItem *> m_appletsInScheduledDestruction;
 
     QMetaMethod m_createAppletItemMethod;
-    QMetaMethod m_createJustifySplitterMethod;
     QMetaMethod m_initAppletContainerMethod;
     QSet<QByteArray> m_warnedRootInvocationFailures;
     quint64 m_rootGeneration{0};

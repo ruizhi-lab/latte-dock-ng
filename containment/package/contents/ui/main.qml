@@ -940,6 +940,8 @@ ContainmentItem {
         return true;
     }
 
+    // Older separately installed containment plugins may still call this root
+    // factory during a mixed upgrade; the current LayoutManager no longer uses it.
     function createJustifySplitter() {
         var splitter = appletItemComponent.createObject(root);
         splitter.internalSplitterId = internalViewSplittersCount()+1;
