@@ -1351,8 +1351,6 @@ void LayoutManager::save()
     }
 
     auto collectLayoutAppletIds = [this](QQuickItem * layout, QList<int> &appletIds) {
-        int childCount = 0;
-
         for (int i = 0; i < layout->childItems().count(); ++i) {
             QQuickItem *item = layout->childItems().at(i);
             bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
@@ -1379,19 +1377,15 @@ void LayoutManager::save()
                 }
 
                 if (id > 0) {
-                    childCount++;
                     appletIds << id;
                 }
             }
         }
-
-        return childCount;
     };
 
-    int startChilds = collectLayoutAppletIds(m_startLayout, appletIds);
-    int mainChilds  = collectLayoutAppletIds(m_mainLayout,  appletIds);
-    int endChilds   = collectLayoutAppletIds(m_endLayout,   appletIds);
-    Q_UNUSED(endChilds);
+    collectLayoutAppletIds(m_startLayout, appletIds);
+    collectLayoutAppletIds(m_mainLayout, appletIds);
+    collectLayoutAppletIds(m_endLayout, appletIds);
 
     const QList<int> dedupedAppletIds = dedupeAppletIdsPreserveSplitters(appletIds);
 
@@ -1401,23 +1395,10 @@ void LayoutManager::save()
         appletIds = dedupedAppletIds;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-
-    if (alignment == Latte::Types::Justify && usesLegacyJustifySplitters()) {
-        setSplitterPosition(startChilds + 1);
-        setSplitterPosition2(startChilds + 1 + mainChilds + 1);
-    } else {
-        int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
-        int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
-
-        setSplitterPosition(splitterPosition);
-        setSplitterPosition2(splitterPosition2);
-    }
-
-    //! are not writing in config file for some cases mentioned in class header so they are not used
-    //(*m_configuration)["splitterPosition"] = QVariant(startChilds + 1);
-    //(*m_configuration)["splitterPosition2"] = QVariant(startChilds + 1 + mainChilds + 1);
-    //(*m_configuration)["appletOrder"] = appletIds.join(QLatin1Char(';'));
+    // Keep persisted splitter positions as the compatibility source of truth;
+    // deriving them from the single applet flow would overwrite old layout state.
+    setSplitterPosition(readConfigValue(QStringLiteral("splitterPosition"), -1).toInt());
+    setSplitterPosition2(readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt());
 
     setAppletOrder(appletIds);
 
