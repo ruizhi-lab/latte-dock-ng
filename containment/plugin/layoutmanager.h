@@ -199,9 +199,6 @@ private:
     void setLockedZoomApplets(const QList<int> &applets);
     void setUserBlocksColorizingApplets(const QList<int> &applets);
 
-    void reorderSplitterInStartLayout();
-    void reorderSplitterInEndLayout();
-
     bool isJustifySplitter(const QQuickItem *item) const;
     bool isValidApplet(const int &id);
     bool insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *item, int x, int y);

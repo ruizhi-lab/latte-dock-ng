@@ -2371,15 +2371,7 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
         || m_dndSpacer->parentItem() == m_startLayout
         || m_dndSpacer->parentItem() == m_endLayout) {
         insertBefore(m_dndSpacer, appletItem);
-
-        QQuickItem *currentlayout = m_dndSpacer->parentItem();
         m_dndSpacer->setParentItem(m_rootItem);
-
-        if (currentlayout == m_startLayout) {
-            reorderSplitterInStartLayout();
-        } else if (currentlayout == m_endLayout) {
-            reorderSplitterInEndLayout();
-        }
     } else if (x >= 0 && y >= 0) {
         // If the provided position is valid, use it.
         insertAtCoordinates(appletItem, x, y);
@@ -2570,64 +2562,6 @@ void LayoutManager::destroyAppletContainer(QObject *applet)
 
     if (destroyed) {
         save();
-    }
-}
-
-void LayoutManager::reorderSplitterInStartLayout()
-{
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-
-    if (alignment != Latte::Types::Justify || !usesLegacyJustifySplitters()) {
-        return;
-    }
-
-    int size = m_startLayout->childItems().count();
-
-    if (size > 0) {
-        QQuickItem *splitter{nullptr};
-
-        for (int i = 0; i < size; ++i) {
-            QQuickItem *item = m_startLayout->childItems().at(i);
-            bool issplitter = item->property("isInternalViewSplitter").toBool();
-
-            if (issplitter && i < size - 1) {
-                splitter = item;
-                break;
-            }
-        }
-
-        if (splitter) {
-            insertAfter(m_startLayout->childItems().at(size - 1), splitter);
-        }
-    }
-}
-
-void LayoutManager::reorderSplitterInEndLayout()
-{
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-
-    if (alignment != Latte::Types::Justify || !usesLegacyJustifySplitters()) {
-        return;
-    }
-
-    int size = m_endLayout->childItems().count();
-
-    if (size > 0) {
-        QQuickItem *splitter{nullptr};
-
-        for (int i = 0; i < size; ++i) {
-            QQuickItem *item = m_endLayout->childItems().at(i);
-            bool issplitter = item->property("isInternalViewSplitter").toBool();
-
-            if (issplitter && i != 0) {
-                splitter = item;
-                break;
-            }
-        }
-
-        if (splitter) {
-            insertBefore(m_endLayout->childItems().at(0), splitter);
-        }
     }
 }
 
