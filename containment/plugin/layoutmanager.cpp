@@ -440,16 +440,7 @@ void LayoutManager::setMetrics(QQuickItem *metrics)
 
 void LayoutManager::updateOrder()
 {
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
-
-    auto nextorder = m_appletOrder;
-
-    if (alignment == Latte::Types::Justify && usesLegacyJustifySplitters()) {
-        nextorder.insert(m_splitterPosition - 1, JUSTIFYSPLITTERID);
-        nextorder.insert(m_splitterPosition2 - 1, JUSTIFYSPLITTERID);
-    }
-
-    setOrder(nextorder);
+    setOrder(m_appletOrder);
 }
 
 void LayoutManager::rememberAppletRemovalIndex(const int &id)
