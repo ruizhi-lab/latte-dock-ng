@@ -1,3 +1,28 @@
+## [v1.3.4] - 2026-11-19
+
+This release fixes dock geometry on multi-monitor Wayland setups and keeps the
+dock length stable while tasks are replaced.
+
+### Fixed
+- A dock on a secondary screen keeps its Wayland strut and layer-shell
+  binding on the screen it is assigned to. A transient window screen change no
+  longer stacks reserved space onto another monitor, which had pushed other
+  windows away from the primary screen edge.
+- The dock keeps its length while a launcher or window row is replaced. The
+  incoming row takes over the outgoing row's layout slot and separator spacing
+  instead of collapsing the dock and letting it grow back, so launchers no
+  longer jump or flicker when a window opens or closes.
+- A hidden spacer keeps its separator gap while the indexer publishes the
+  neighbouring indexes in stages, and a row that hands off to a replacement row
+  keeps that gap until the handoff completes.
+
+### Changed
+- Code quality: the deep QML lint baseline accepted one reviewed count in
+  `RealRemovalAnimation.qml` and the spacer bindings now resolve the
+  component's own properties through its id. Unreachable legacy splitter
+  insertion, reorder, restoration and save branches were removed, and the
+  containment layout manager interface is typed.
+
 ## [v1.3.3] - 2026-11-14
 
 This release corrects which applications receive the audio badge and when a
