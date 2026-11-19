@@ -33,29 +33,34 @@ Item{
     property real settledSeparatorSpace: 0
     readonly property bool retainingSeparatorSpace: itemIndex < 0 && abilityItem.keepSeparatorSpacingOnRemoval
 
+    // This component's own properties are referenced through "hiddenSpacer."
+    // inside the Binding expressions below. The unqualified spellings are
+    // resolved only through the surrounding context, which qmllint reports as
+    // unqualified accesses and the reviewed baseline would then grow for
+    // properties this file declares itself.
     Binding {
         target: hiddenSpacer
         property: "settledSeparatorSpace"
         // Indexer publishes the neighbouring indexes in stages. Keep the
         // previous separator space through settling and through a row handoff.
-        when: !retainingSeparatorSpace && (itemIndex < 0 || !hiddenSizeDelayer.running)
+        when: !hiddenSpacer.retainingSeparatorSpace && (itemIndex < 0 || !hiddenSizeDelayer.running)
         restoreMode: Binding.RestoreNone
-        value: itemIndex < 0 ? 0 : separatorSpace
+        value: itemIndex < 0 ? 0 : hiddenSpacer.separatorSpace
     }
 
     Binding {
         target: hiddenSpacer
         property: "nHiddenSize"
         value: {
-            if (abilityItem.isHidden || (itemIndex < 0 && !retainingSeparatorSpace)) {
+            if (abilityItem.isHidden || (itemIndex < 0 && !hiddenSpacer.retainingSeparatorSpace)) {
                 return 0;
             }
             if (itemIndex < 0) {
-                return settledSeparatorSpace;
+                return hiddenSpacer.settledSeparatorSpace;
             }
             const scaleLength = abilityItem.parabolicItem.isUpdatingOnlySpacers
-                              ? abilityItem.abilities.metrics.iconSize : maxSize;
-            return settledSeparatorSpace + Math.max(0, nScale) * scaleLength;
+                              ? abilityItem.abilities.metrics.iconSize : hiddenSpacer.maxSize;
+            return hiddenSpacer.settledSeparatorSpace + Math.max(0, hiddenSpacer.nScale) * scaleLength;
         }
     }
 

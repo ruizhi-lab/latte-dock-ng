@@ -4503,7 +4503,7 @@
     },
     {
       "category": "unqualified",
-      "count": 40,
+      "count": 41,
       "file": "plasmoid/package/contents/ui/task/animations/RealRemovalAnimation.qml",
       "message": "Unqualified access",
       "severity": "warning"

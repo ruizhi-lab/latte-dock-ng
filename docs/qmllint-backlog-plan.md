@@ -124,3 +124,19 @@ were removed by the same audio refactor. Visible occurrences move from 7,035 to
 `2a566003a04ebd9329fa3d4bfd7582e8c8ead41255f5f1996df83e5e9e8cedcc`), cover all
 244 files with successful exits, and compare with zero additions or removals
 after acceptance. Fresh CI against this refresh remains required.
+
+The 2026-11-19 [reviewed refresh](modernization-results/QML-baseline-2026-11-19.md)
+records one count change and one source correction. The task row-replacement
+work raised
+`plasmoid/package/contents/ui/task/animations/RealRemovalAnimation.qml`
+`unqualified` from 40 to 41: the `enabledAnimation` guard needs one more
+reference to the containing-context `taskItem`, and every bare reference is
+counted. The separator-retention work had raised
+`declarativeimports/abilities/items/basicitem/HiddenSpacer.qml` from 44 to 47 by
+reading five properties that the file itself declares without qualification
+inside its own `Binding` expressions; those reads now use the `hiddenSpacer` id
+that the file already used elsewhere, and the file drops to 40 with unchanged
+behaviour. Only the `RealRemovalAnimation.qml` count changed in the machine
+baseline, at an unchanged tool/environment fingerprint and an unchanged
+244-file inventory. Fresh CI against this refresh remains required, because the
+author's host runs qmllint 6.11.3 rather than the reviewed 6.11.1.
