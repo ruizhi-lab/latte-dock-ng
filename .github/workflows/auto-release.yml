@@ -52,7 +52,12 @@ jobs:
             const version = candidate.version;
             if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version) ||
                 candidate.source_sha !== sourceSha || candidate.build_run_id !== String(buildRunId) ||
-                Object.keys(candidate.packages ?? {}).length !== 7) {
+                // Six packages means Mageia is absent, which the release
+                // tolerates while Cauldron cannot install its own Qt tooling.
+                // release-version.py already rejected any other missing
+                // distribution, so only the count range is checked here.
+                Object.keys(candidate.packages ?? {}).length < 6 ||
+                Object.keys(candidate.packages ?? {}).length > 7) {
               core.setFailed("Candidate identity does not match the successful Build run.");
               return;
             }

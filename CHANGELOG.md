@@ -22,6 +22,12 @@ dock length stable while tasks are replaced.
   component's own properties through its id. Unreachable legacy splitter
   insertion, reorder, restoration and save branches were removed, and the
   containment layout manager interface is typed.
+- Mageia is not covered by this release's package validation. Mageia Cauldron
+  currently ships `qttools6` compiled against LLVM 22.1 sonames while offering
+  only LLVM 23.1, so its own Qt tooling cannot install and the distro cannot
+  build the package. Fedora, openSUSE, Arch, Ubuntu, Debian 13 and Debian
+  testing were all built, installed and verified. Mageia validation returns as
+  soon as Cauldron rebuilds its Qt tooling.
 
 ## [v1.3.3] - 2026-11-14
 

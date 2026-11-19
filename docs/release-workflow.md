@@ -248,6 +248,19 @@ workaround with a removal condition: restore the gate, by deleting those two
 current LLVM. The alternative, excluding Mageia from the matrix, would have
 hidden the failure instead of keeping it visible.
 
+The candidate check had to change with it. `package_hashes()` in
+`scripts/release-version.py` previously required exactly seven native packages,
+so a missing Mageia package failed even after its job stopped gating. It now
+matches each distribution's packaged file name against
+`DISTRO_PACKAGE_PATTERNS` and skips the ones listed in
+`TOLERATED_ABSENT_DISTROS`, which currently holds only `mageia`. Any other
+missing distribution still fails, and the check names it, so one distribution
+cannot stand in for another. `test_release_version.py` pins both directions:
+six packages without Mageia pass, and dropping any supported distribution
+fails. Releasing the gate means removing `mageia` from
+`TOLERATED_ABSENT_DISTROS`; the release notes for such a release must state
+that Mageia was not validated.
+
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
 bump stay linked to soname 7, so Fedora 44, openSUSE Tumbleweed and Arch users
