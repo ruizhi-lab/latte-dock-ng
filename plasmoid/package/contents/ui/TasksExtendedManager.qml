@@ -60,9 +60,33 @@ Item {
     // own removal animation completes. Restrict this to adjacent, same-identity
     // launcher/task rows so grouped or multiple-window tasks keep their normal
     // independent geometry and animation.
-    function isAdjacentTaskRowReplacement(incoming, outgoing, launcherIsPinned) {
-        if (!launcherIsPinned || !incoming || !outgoing || incoming === outgoing
+    // The live delegate is authoritative during LibTaskManager's transition:
+    // serialized launcherList membership can temporarily fail to match the
+    // URL of a still-visible pinned row, so match the actual opposite-role
+    // delegate and its identity instead of that transient list snapshot.
+    function findAdjacentTaskRowReplacement(incoming, candidates) {
+        if (!incoming || !candidates) {
+            return null;
+        }
+
+        for (var i = 0; i < candidates.length; ++i) {
+            var candidate = candidates[i];
+            if (!candidate || candidate === incoming || candidate.objectName !== "TaskItem") {
+                continue;
+            }
+
+            if (isAdjacentTaskRowReplacement(incoming, candidate)) {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    function isAdjacentTaskRowReplacement(incoming, outgoing) {
+        if (!incoming || !outgoing || incoming === outgoing
                 || incoming.isGroupParent || outgoing.isGroupParent
+                || incoming.isSeparator || outgoing.isSeparator
                 || incoming.windowsCount > 1 || outgoing.windowsCount > 1
                 || incoming.itemIndex < 0 || outgoing.itemIndex >= 0) {
             return false;
@@ -88,8 +112,8 @@ Item {
         return outgoingIndex >= 0 && Math.abs(incoming.itemIndex - outgoingIndex) <= 1;
     }
 
-    function holdTaskRowForReplacement(incoming, outgoing, launcherIsPinned) {
-        if (!isAdjacentTaskRowReplacement(incoming, outgoing, launcherIsPinned)
+    function holdTaskRowForReplacement(incoming, outgoing) {
+        if (!isAdjacentTaskRowReplacement(incoming, outgoing)
                 || outgoing.taskRowReplacementSuccessor || incoming.waitingForTaskRowReplacement) {
             return false;
         }

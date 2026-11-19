@@ -2289,6 +2289,17 @@ ListView {
 
 void QmlSmokeTest::taskRowReplacementHandoffUsesOutgoingGeometry()
 {
+    QFile mainQml(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(mainQml.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainQml.readAll());
+    const int replacementResolver = mainSource.indexOf(QStringLiteral("function outgoingTaskRowReplacement("));
+    QVERIFY(replacementResolver >= 0);
+    const int replacementResolverEnd = mainSource.indexOf(QStringLiteral("\n    function "), replacementResolver + 1);
+    QVERIFY(replacementResolverEnd > replacementResolver);
+    const QString resolverSource = mainSource.mid(replacementResolver, replacementResolverEnd - replacementResolver);
+    QVERIFY(resolverSource.contains(QStringLiteral("findAdjacentTaskRowReplacement")));
+    QVERIFY(!resolverSource.contains(QStringLiteral("launcherExists")));
+
     QQmlEngine engine;
     TaskRowAppletAbilitiesStub appletAbilities;
     engine.rootContext()->setContextProperty(QStringLiteral("appletAbilities"), &appletAbilities);
@@ -2308,7 +2319,7 @@ Item {
     property alias incoming: incoming
     property alias outgoing: outgoing
     property alias wrongOutgoing: wrongOutgoing
-    property bool pinned: true
+    property var serializedLauncherList: []
     Tasks.TasksExtendedManager { id: manager }
     Item {
         id: incoming
@@ -2318,6 +2329,7 @@ Item {
         property bool isWindow: true
         property bool isStartup: false
         property bool isGroupParent: false
+        property bool isSeparator: false
         property int windowsCount: 1
         property int itemIndex: 4
         property int lastValidIndex: 4
@@ -2342,12 +2354,14 @@ Item {
     }
     Item {
         id: outgoing
+        objectName: "TaskItem"
         property string launcherUrl: "applications:ghostty.desktop"
         property string launcherUrlWithIcon: "applications:ghostty.desktop"
         property bool isLauncher: true
         property bool isWindow: false
         property bool isStartup: false
         property bool isGroupParent: false
+        property bool isSeparator: false
         property int windowsCount: 1
         property int itemIndex: -1
         property int lastValidIndex: 4
@@ -2362,15 +2376,21 @@ Item {
             incoming.parabolicItem.opacity = 1;
         }
     }
+    function findOutgoing() {
+        return manager.findAdjacentTaskRowReplacement(incoming, [incoming, outgoing]);
+    }
     function beginHandoff() {
-        return manager.holdTaskRowForReplacement(incoming, outgoing, pinned);
+        var candidate = findOutgoing();
+        return candidate && manager.holdTaskRowForReplacement(incoming, candidate);
     }
     function beginCloseHandoff() {
+        serializedLauncherList = undefined;
         incoming.isLauncher = true;
         incoming.isWindow = false;
         outgoing.isLauncher = false;
         outgoing.isWindow = true;
-        return manager.holdTaskRowForReplacement(incoming, outgoing, pinned);
+        var candidate = findOutgoing();
+        return candidate && manager.holdTaskRowForReplacement(incoming, candidate);
     }
     function restoreOpenHandoff() {
         incoming.isLauncher = false;
@@ -2396,6 +2416,7 @@ Item {
     QVERIFY(outgoing);
     QVERIFY(wrongOutgoing);
     QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+    QCOMPARE(object->property("serializedLauncherList").toStringList().size(), 0);
 
     QVariant accepted;
     QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
@@ -2419,6 +2440,7 @@ Item {
 
     QVERIFY(QMetaObject::invokeMethod(object.get(), "beginCloseHandoff", Q_RETURN_ARG(QVariant, accepted)));
     QVERIFY(accepted.toBool());
+    QVERIFY(!object->property("serializedLauncherList").isValid());
     QCOMPARE(incoming->property("rowLength").toReal(), 0.0);
     QVERIFY(QMetaObject::invokeMethod(object.get(), "releaseHandoff", Q_RETURN_ARG(QVariant, accepted)));
     QVERIFY(accepted.toBool());
@@ -2436,10 +2458,17 @@ Item {
     QVERIFY(!accepted.toBool());
     QVERIFY(outgoing->setProperty("lastValidIndex", 4));
 
-    QVERIFY(object->setProperty("pinned", false));
+    QVERIFY(outgoing->setProperty("launcherUrl", QStringLiteral("applications:other.desktop")));
+    QVERIFY(outgoing->setProperty("launcherUrlWithIcon", QStringLiteral("applications:other.desktop")));
     QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
     QVERIFY(!accepted.toBool());
-    QVERIFY(object->setProperty("pinned", true));
+    QVERIFY(outgoing->setProperty("launcherUrl", QStringLiteral("applications:ghostty.desktop")));
+    QVERIFY(outgoing->setProperty("launcherUrlWithIcon", QStringLiteral("applications:ghostty.desktop")));
+
+    QVERIFY(outgoing->setProperty("isSeparator", true));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QVERIFY(outgoing->setProperty("isSeparator", false));
 
     QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
     QVERIFY(accepted.toBool());
@@ -2527,6 +2556,7 @@ Item {
             property bool isWindow: false
             property bool isStartup: false
             property bool isGroupParent: false
+            property bool isSeparator: false
             property int windowsCount: 1
             property int itemIndex: index
             property int lastValidIndex: index >= 0 ? index : 1
@@ -2565,7 +2595,7 @@ Item {
                         if (candidate !== row && candidate.launcherUrl === launcherUrl && candidate.isLauncher !== isLauncher
                                 && candidate.itemIndex < 0) {
                             view.replacementMatches++;
-                            if (manager.holdTaskRowForReplacement(row, candidate, true)) {
+                            if (manager.holdTaskRowForReplacement(row, candidate)) {
                                 view.replacementHolds++;
                             }
                             break;

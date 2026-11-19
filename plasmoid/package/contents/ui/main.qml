@@ -481,20 +481,11 @@ PlasmoidItem {
     }
 
     function outgoingTaskRowReplacement(incomingTask) {
-        if (!incomingTask || !launcherExists(incomingTask.launcherUrl)) {
+        if (!incomingTask) {
             return null;
         }
 
-        var tasks = icList.contentItem.children;
-        for (var i = 0; i < tasks.length; ++i) {
-            var candidate = tasks[i];
-            if (candidate && candidate !== incomingTask && candidate.objectName === "TaskItem"
-                    && _tasksExtendedManager.isAdjacentTaskRowReplacement(incomingTask, candidate, true)) {
-                return candidate;
-            }
-        }
-
-        return null;
+        return _tasksExtendedManager.findAdjacentTaskRowReplacement(incomingTask, icList.contentItem.children);
     }
 
     function isFilterableActivityId(activityId) {

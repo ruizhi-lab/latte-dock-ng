@@ -1016,7 +1016,7 @@ AbilityItem.BasicItem {
             return;
         }
 
-        tasksExtendedManager.holdTaskRowForReplacement(taskItem, outgoing, true);
+        tasksExtendedManager.holdTaskRowForReplacement(taskItem, outgoing);
     }
 
     function scheduleTaskRowReplacementAnimation() {
