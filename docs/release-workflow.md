@@ -221,6 +221,24 @@ removes the pool files of a package version when it publishes the next one.
 under `/bin/sh` and `dash`. If Neon stays unreachable for longer than the
 attempts last, rerun the failed jobs later instead of changing the project.
 
+On 2026-11-19, `Build` run
+[`44575446051`](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44575446051)
+(the `ver=1.3.4` release candidate) failed both Mageia jobs while building the
+packaging image, with every other job green. dnf reported
+`nothing provides libLLVM.so.22.1 / libclang.so.22.1 / libclang-cpp.so.22.1
+needed by qttools6-6.11.1-1.mga11.x86_64`. Cauldron has moved LLVM and clang to
+23.1 (`lib64llvm23.1-23.1.6-1.mga11`, `clang-23.1.6-1.mga11`) and ships no
+package that provides the 22.1 sonames, while `qttools6` is still built against
+them, so Cauldron cannot install its own Qt tooling. This is a Cauldron
+packaging inconsistency rather than a mirror sync failure: the retry helper
+matches only 404 and unusable-metadata messages, so it exits immediately on a
+`nothing provides` failure and the log shows no retry attempt. Nothing in the
+project can resolve it, and the image never reaches the source. Because
+`release-candidate-metadata` needs `install-verify` and `package-install-verify`
+without `if: always()`, this blocks the candidate record and therefore the
+automatic release. Rerun the failed jobs once Cauldron rebuilds `qttools6`
+against LLVM 23.1; do not change the project for it.
+
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
 bump stay linked to soname 7, so Fedora 44, openSUSE Tumbleweed and Arch users
