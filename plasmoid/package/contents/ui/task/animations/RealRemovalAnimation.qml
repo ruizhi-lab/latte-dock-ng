@@ -32,7 +32,10 @@ SequentialAnimation {
                                && !taskItem.isStartup
                                && LatteCore.WindowSystem.compositingActive)
 
+    // A matched successor takes over this slot at the end of removal.
+    // Sliding it to zero first would shrink the dock before the handoff.
     property bool enabledAnimation: (animation1 || animation4)
+                                    && !taskItem.taskRowReplacementSuccessor
                                     && root.newWindowSlidingEnabled
                                     && !taskItem.inBouncingAnimation
                                     && !taskItem.isSeparator

@@ -64,7 +64,7 @@ Item {
     // serialized launcherList membership can temporarily fail to match the
     // URL of a still-visible pinned row, so match the actual opposite-role
     // delegate and its identity instead of that transient list snapshot.
-    function findAdjacentTaskRowReplacement(incoming, candidates) {
+    function findAdjacentTaskRowReplacement(incoming, candidates, includeLiveRows) {
         if (!incoming || !candidates) {
             return null;
         }
@@ -75,7 +75,7 @@ Item {
                 continue;
             }
 
-            if (isAdjacentTaskRowReplacement(incoming, candidate)) {
+            if (isAdjacentTaskRowReplacement(incoming, candidate, includeLiveRows)) {
                 return candidate;
             }
         }
@@ -83,12 +83,12 @@ Item {
         return null;
     }
 
-    function isAdjacentTaskRowReplacement(incoming, outgoing) {
+    function isAdjacentTaskRowReplacement(incoming, outgoing, includeLiveRows) {
         if (!incoming || !outgoing || incoming === outgoing
                 || incoming.isGroupParent || outgoing.isGroupParent
                 || incoming.isSeparator || outgoing.isSeparator
                 || incoming.windowsCount > 1 || outgoing.windowsCount > 1
-                || incoming.itemIndex < 0 || outgoing.itemIndex >= 0) {
+                || incoming.itemIndex < 0 || (!includeLiveRows && outgoing.itemIndex >= 0)) {
             return false;
         }
 
@@ -108,7 +108,7 @@ Item {
             return false;
         }
 
-        var outgoingIndex = outgoing.lastValidIndex;
+        var outgoingIndex = outgoing.itemIndex >= 0 ? outgoing.itemIndex : outgoing.previousModelIndex;
         return outgoingIndex >= 0 && Math.abs(incoming.itemIndex - outgoingIndex) <= 1;
     }
 
@@ -142,7 +142,7 @@ Item {
         // zero-interval defer, so its final frame is safe for an atomic slot
         // handoff. Other callers (index cancellation/destruction) still defer.
         if (removalAnimationFinished) {
-            incoming.resumeTaskRowReplacementAnimation();
+            incoming.resumeTaskRowReplacementAnimation(true);
         } else {
             incoming.scheduleTaskRowReplacementAnimation();
         }

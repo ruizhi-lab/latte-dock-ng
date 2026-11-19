@@ -21,7 +21,15 @@ AbilityItem.BasicItem {
     visible: false
     objectName: "TaskItem"
 
-    isHidden: !visible || isForcedHidden
+    isHidden: !visible || isForcedHidden || !occupiesLayoutSlot
+    // A staged row must exclude its separator and parabolic spacers as well
+    // as its icon, otherwise ListView still counts it in the dock length.
+    occupiesLayoutSlot: !waitingForTaskRowReplacement && !checkingTaskRowReplacement
+
+    // Keep the last settled separator gap until removal can determine whether
+    // a replacement owns this slot. Ordinary removals release it when they start.
+    keepSeparatorSpacingOnRemoval: previousModelIndex >= 0
+                                   && (!inRemoveStage || taskRowReplacementSuccessor !== null)
 
     isHiddenSpacerForcedShow: taskItem.inAttentionBuiltinAnimation
     isHiddenSpacerAnimated: showWindowAnimation.running
@@ -211,6 +219,8 @@ AbilityItem.BasicItem {
     property Item taskRowReplacementSuccessor: null
     property Item pendingTaskRowReplacementOutgoing: null
     property bool waitingForTaskRowReplacement: false
+    property bool checkingTaskRowReplacement: false
+    property int previousModelIndex: -1
     property bool hasShownLauncher:  (taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrl)
                                       || taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrlWithIcon))
                                      && !root.inActivityChange /*update trigger when changing current activity*/
@@ -464,6 +474,7 @@ AbilityItem.BasicItem {
 
     onItemIndexChanged: {
         if (itemIndex>=0) {
+            previousModelIndex = itemIndex;
             lastValidTimer.start();
 
             // A ListView removal can be cancelled by a same-row model update.
@@ -1023,14 +1034,15 @@ AbilityItem.BasicItem {
         taskRowReplacementShowTimer.restart();
     }
 
-    function resumeTaskRowReplacementAnimation() {
-        if (!waitingForTaskRowReplacement) {
-            showWindowAnimation.showWindow();
+    function resumeTaskRowReplacementAnimation(replacesRow) {
+        if (!waitingForTaskRowReplacement && itemIndex >= 0) {
+            showWindowAnimation.showWindow(replacesRow);
         }
     }
 
     function releaseTaskRowReplacementAtRemovalEnd() {
         if (taskRowReplacementSuccessor && tasksExtendedManager) {
+            taskRowReplacementSuccessor.inheritSeparatorSpacing(taskItem);
             tasksExtendedManager.releaseTaskRowReplacement(taskRowReplacementSuccessor, taskItem, true);
         }
     }
@@ -1228,9 +1240,17 @@ AbilityItem.BasicItem {
             visible = true;
         }
 
+        previousModelIndex = itemIndex;
         holdForTaskRowReplacement();
         if (!waitingForTaskRowReplacement) {
-            showWindowAnimation.showWindow();
+            // ListView can complete the inserted delegate before invalidating
+            // the outgoing index. Retry after this model update has unwound.
+            if (root.outgoingTaskRowReplacement(taskItem, true)) {
+                checkingTaskRowReplacement = true;
+                scheduleTaskRowReplacementAnimation();
+            } else {
+                showWindowAnimation.showWindow();
+            }
         }
         updateAudioPlayer();
         updateAudioStreams();
@@ -1296,9 +1316,11 @@ AbilityItem.BasicItem {
         interval: 0
         repeat: false
         onTriggered: {
-            if (!waitingForTaskRowReplacement) {
-                showWindowAnimation.showWindow();
+            if (checkingTaskRowReplacement) {
+                holdForTaskRowReplacement();
+                checkingTaskRowReplacement = false;
             }
+            resumeTaskRowReplacementAnimation(false);
         }
     }
 

@@ -2107,6 +2107,7 @@ Item {
         property bool headItemIsVisibleSeparator: false
         property bool isSeparator: false
         property bool isHidden: false
+        property bool keepSeparatorSpacingOnRemoval: false
         property bool isHiddenSpacerForcedShow: false
         property bool containsMouse: false
         property bool isHorizontal: true
@@ -2147,6 +2148,24 @@ Item {
     QCOMPARE(spacer->property("width").toReal(), 0.0);
     QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 2.0, 250);
     QTRY_COMPARE(spacer->property("width").toReal(), 2.0);
+
+    // A pinned task replacement retains the outgoing gap while its index
+    // is invalid, then seeds the incoming gap until that row's indexes settle.
+    QVERIFY(abilityItem->setProperty("keepSeparatorSpacingOnRemoval", true));
+    QVERIFY(host->setProperty("itemIndex", -1));
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", false));
+    QCOMPARE(spacer->property("nHiddenSize").toReal(), 2.0);
+    std::unique_ptr<QObject> incomingSpacer(spacerComponent.create(&context));
+    QVERIFY(incomingSpacer);
+    QVERIFY(QMetaObject::invokeMethod(incomingSpacer.get(), "inheritSeparatorSpace", Q_ARG(QVariant, QVariant::fromValue(spacer.get()))));
+    QCOMPARE(incomingSpacer->property("settledSeparatorSpace").toReal(), 2.0);
+    QVERIFY(host->setProperty("itemIndex", 1));
+    QCOMPARE(incomingSpacer->property("nHiddenSize").toReal(), 2.0);
+    QTRY_COMPARE_WITH_TIMEOUT(incomingSpacer->property("nHiddenSize").toReal(), 0.0, 250);
+    QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 0.0, 250);
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", true));
+    QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 2.0, 250);
+    QVERIFY(abilityItem->setProperty("keepSeparatorSpacingOnRemoval", false));
 
     // An invalid delegate index releases its slot even if the settle timer is
     // running, matching the prior immediate departure behavior.
@@ -2332,7 +2351,7 @@ Item {
         property bool isSeparator: false
         property int windowsCount: 1
         property int itemIndex: 4
-        property int lastValidIndex: 4
+        property int previousModelIndex: 4
         property Item pendingTaskRowReplacementOutgoing: null
         property bool waitingForTaskRowReplacement: false
         property int scheduledResumes: 0
@@ -2364,7 +2383,7 @@ Item {
         property bool isSeparator: false
         property int windowsCount: 1
         property int itemIndex: -1
-        property int lastValidIndex: 4
+        property int previousModelIndex: 4
         property Item taskRowReplacementSuccessor: null
     }
     Item { id: wrongOutgoing }
@@ -2453,10 +2472,10 @@ Item {
     QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
 
     QVERIFY(outgoing->setProperty("isGroupParent", false));
-    QVERIFY(outgoing->setProperty("lastValidIndex", 0));
+    QVERIFY(outgoing->setProperty("previousModelIndex", 0));
     QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
     QVERIFY(!accepted.toBool());
-    QVERIFY(outgoing->setProperty("lastValidIndex", 4));
+    QVERIFY(outgoing->setProperty("previousModelIndex", 4));
 
     QVERIFY(outgoing->setProperty("launcherUrl", QStringLiteral("applications:other.desktop")));
     QVERIFY(outgoing->setProperty("launcherUrlWithIcon", QStringLiteral("applications:other.desktop")));
@@ -2502,7 +2521,6 @@ Item {
     property int openCalls: 0
     property alias view: view
     property alias handoffs: view.handoffs
-    property bool insertLauncher: false
     property QtObject appletAbilities: QtObject {
         property QtObject launchers: QtObject {
             signal launcherInRemoving(string launcherUrl)
@@ -2514,11 +2532,7 @@ Item {
         id: insertRow
         interval: 20
         onTriggered: {
-            if (root.insertLauncher) {
-                view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: true, isWindow: false, isStartup: false });
-            } else {
-                view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: false, isWindow: true, isStartup: false });
-            }
+            view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: false, isWindow: true, isStartup: false });
         }
     }
     Tasks.TasksExtendedManager { id: manager }
@@ -2550,6 +2564,7 @@ Item {
         }
         delegate: Item {
             id: row
+            objectName: "TaskItem"
             property string launcherUrl: ""
             property string launcherUrlWithIcon: launcherUrl
             property bool isLauncher: false
@@ -2559,7 +2574,12 @@ Item {
             property bool isSeparator: false
             property int windowsCount: 1
             property int itemIndex: index
-            property int lastValidIndex: index >= 0 ? index : 1
+            property int previousModelIndex: -1
+            onItemIndexChanged: {
+                if (itemIndex >= 0) {
+                    previousModelIndex = itemIndex;
+                }
+            }
             property Item pendingTaskRowReplacementOutgoing: null
             property bool waitingForTaskRowReplacement: false
             property Item taskRowReplacementSuccessor: null
@@ -2569,7 +2589,9 @@ Item {
                 property real zoomThickness: 1
                 property real opacity: 1
             }
-            width: 74 * parabolicItem.zoomLength
+            property bool checkingReplacement: false
+            // Model an icon with separator spacing independent of icon zoom.
+            width: waitingForTaskRowReplacement || checkingReplacement ? 0 : 70 * parabolicItem.zoomLength + 4
             height: 60
             function scheduleTaskRowReplacementAnimation() {
                 if (!waitingForTaskRowReplacement) {
@@ -2588,19 +2610,20 @@ Item {
                 }
             }
             function findReplacement() {
-                if ((isWindow || isStartup || isLauncher) && launcherUrl === "applications:ghostty.desktop") {
-                    const delegates = view.contentItem.children;
-                    for (let i = 0; i < delegates.length; ++i) {
-                        const candidate = delegates[i];
-                        if (candidate !== row && candidate.launcherUrl === launcherUrl && candidate.isLauncher !== isLauncher
-                                && candidate.itemIndex < 0) {
-                            view.replacementMatches++;
-                            if (manager.holdTaskRowForReplacement(row, candidate)) {
-                                view.replacementHolds++;
-                            }
-                            break;
-                        }
+                const candidate = manager.findAdjacentTaskRowReplacement(row, view.contentItem.children);
+                if (candidate) {
+                    view.replacementMatches++;
+                    if (manager.holdTaskRowForReplacement(row, candidate)) {
+                        view.replacementHolds++;
                     }
+                }
+            }
+            Timer {
+                id: retryReplacement
+                interval: 0
+                onTriggered: {
+                    row.findReplacement();
+                    row.checkingReplacement = false;
                 }
             }
             Component.onCompleted: {
@@ -2611,7 +2634,13 @@ Item {
                 if (isLauncher && launcherUrl === "applications:ghostty.desktop") {
                     view.initialGhostReady++;
                 }
+                previousModelIndex = itemIndex;
                 row.findReplacement();
+                if (!waitingForTaskRowReplacement
+                        && manager.findAdjacentTaskRowReplacement(row, view.contentItem.children, true)) {
+                    checkingReplacement = true;
+                    retryReplacement.start();
+                }
             }
             Animations.RemovalScheduler { id: scheduler; task: row; animation: removal }
             SequentialAnimation {
@@ -2640,13 +2669,12 @@ Item {
     function openWindow() {
         root.openCalls++;
         view.model.remove(1);
-        root.insertLauncher = false;
         insertRow.start();
     }
     function closeWindow() {
-        view.model.remove(1);
-        root.insertLauncher = true;
-        insertRow.start();
+        view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: true, isWindow: false, isStartup: false });
+        view.forceLayout();
+        view.model.remove(2);
     }
 }
 )").arg(QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui")).toString(),

@@ -28,7 +28,7 @@ Item{
     anchors.right: (parent && abilityItem.location === PlasmaCore.Types.RightEdge) ? parent.right : undefined
 
     width: {
-        if (!visible)
+        if (!visible || !occupiesLayoutSlot)
             return 0;
 
         if (isSeparator) {
@@ -51,7 +51,7 @@ Item{
     }
 
     height: {
-        if (!visible)
+        if (!visible || !occupiesLayoutSlot)
             return 0;
 
         if (isSeparator) {
@@ -78,6 +78,16 @@ Item{
     property bool isHiddenSpacerAnimated: true
     property bool isHiddenSpacerForcedShow: false
 
+    property bool occupiesLayoutSlot: true
+    property bool keepSeparatorSpacingOnRemoval: false
+
+    readonly property alias leftSpacer: hiddenSpacerLeft
+    readonly property alias rightSpacer: hiddenSpacerRight
+
+    function inheritSeparatorSpacing(previousItem) {
+        hiddenSpacerLeft.inheritSeparatorSpace(previousItem.leftSpacer);
+        hiddenSpacerRight.inheritSeparatorSpace(previousItem.rightSpacer);
+    }
     property bool isHidden: false
     property bool isSeparator: false
     property bool isSeparatorInRealLength: false

@@ -30,23 +30,38 @@ Item{
 
     readonly property int maxSize: Math.max(0,Math.ceil(0.55*abilityItem.abilities.metrics.iconSize) - abilityItem.abilities.metrics.totals.lengthEdges)
 
-    Binding{
+    property real settledSeparatorSpace: 0
+    readonly property bool retainingSeparatorSpace: itemIndex < 0 && abilityItem.keepSeparatorSpacingOnRemoval
+
+    Binding {
+        target: hiddenSpacer
+        property: "settledSeparatorSpace"
+        // Indexer publishes the neighbouring indexes in stages. Keep the
+        // previous separator space through settling and through a row handoff.
+        when: !retainingSeparatorSpace && (itemIndex < 0 || !hiddenSizeDelayer.running)
+        restoreMode: Binding.RestoreNone
+        value: itemIndex < 0 ? 0 : separatorSpace
+    }
+
+    Binding {
         target: hiddenSpacer
         property: "nHiddenSize"
-        when: itemIndex < 0 || !hiddenSizeDelayer.running //! helps to solve BUGLOCALREF: #1
-        // Pausing this binding for the separator settling timer must retain the
-        // last layout slot; restoring the initial zero briefly collapses rows
-        // while Indexer publishes its related separator state in stages.
-        restoreMode: Binding.RestoreNone
         value: {
-            if (itemIndex < 0 || abilityItem.isHidden) {
+            if (abilityItem.isHidden || (itemIndex < 0 && !retainingSeparatorSpace)) {
                 return 0;
-            } else if (!abilityItem.parabolicItem.isUpdatingOnlySpacers) {
-                return (nScale > 0) ? (maxSize * nScale) + separatorSpace : separatorSpace;
-            } else {
-                return (nScale > 0) ? (abilityItem.abilities.metrics.iconSize * nScale) + separatorSpace : separatorSpace;
             }
+            if (itemIndex < 0) {
+                return settledSeparatorSpace;
+            }
+            const scaleLength = abilityItem.parabolicItem.isUpdatingOnlySpacers
+                              ? abilityItem.abilities.metrics.iconSize : maxSize;
+            return settledSeparatorSpace + Math.max(0, nScale) * scaleLength;
         }
+    }
+
+    function inheritSeparatorSpace(previousSpacer) {
+        hiddenSizeDelayer.restart();
+        settledSeparatorSpace = previousSpacer.settledSeparatorSpace;
     }
 
     Connections{

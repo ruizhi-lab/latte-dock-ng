@@ -95,7 +95,7 @@ SequentialAnimation{
         }
     }
 
-    function execute(){
+    function execute(replacesRow){
         //trying to fix the ListView nasty behavior
         //during the removal the anchoring for ListView children changes a lot
         if (isWindow){
@@ -159,7 +159,9 @@ SequentialAnimation{
             taskItem.parabolicItem.zoom = 1;
             taskItem.parabolicItem.opacity = 1;
             taskItem.inAnimation = false;
-        } else if (( animation2 || animation3 || animation6 || isForcedHidden)
+        // The outgoing delegate already occupied this slot. A transient
+        // launcher lookup must not turn the handoff into a slide from zero.
+        } else if (!replacesRow && ( animation2 || animation3 || animation6 || isForcedHidden)
                    && (taskItem.abilities.animations.speedFactor.current !== 0) && !launcherIsAlreadyShown){
             isForcedHidden = false;
             taskItem.visible = true;
@@ -187,8 +189,8 @@ SequentialAnimation{
         }
     }
 
-    function showWindow(){
-        execute();
+    function showWindow(replacesRow){
+        execute(replacesRow);
     }
 
     function keepFrozenZoomForCurrentTask() {
