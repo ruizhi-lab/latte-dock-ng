@@ -33,9 +33,13 @@ Item{
     Binding{
         target: hiddenSpacer
         property: "nHiddenSize"
-        when: !hiddenSizeDelayer.running && itemIndex > -1 //! helps to solve BUGLOCALREF: #1
+        when: itemIndex < 0 || !hiddenSizeDelayer.running //! helps to solve BUGLOCALREF: #1
+        // Pausing this binding for the separator settling timer must retain the
+        // last layout slot; restoring the initial zero briefly collapses rows
+        // while Indexer publishes its related separator state in stages.
+        restoreMode: Binding.RestoreNone
         value: {
-            if (abilityItem.isHidden) {
+            if (itemIndex < 0 || abilityItem.isHidden) {
                 return 0;
             } else if (!abilityItem.parabolicItem.isUpdatingOnlySpacers) {
                 return (nScale > 0) ? (maxSize * nScale) + separatorSpace : separatorSpace;

@@ -88,6 +88,7 @@ private Q_SLOTS:
     void appletAlternativesDialogResolvesOutsidePlasmashell();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void parabolicItemZoomRecoveryLoadsFromSource();
+    void hiddenSpacerRetainsSlotWhileSeparatorStateSettles();
     void taskRemovalDefersGeometryFeedback_data();
     void taskRemovalDefersGeometryFeedback();
     void taskRowReplacementHandoffUsesOutgoingGeometry();
@@ -2072,6 +2073,88 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
     QVERIFY(!object->property("isZoomed").toBool());
     QCOMPARE(abilityItem.needBothAxisRemoveCount(), removedBefore + 1);
     QVERIFY(abilityItem.needBothAxisAddCount() > 0);
+}
+
+void QmlSmokeTest::hiddenSpacerRetainsSlotWhileSeparatorStateSettles()
+{
+    QTemporaryDir importRoot;
+    QQmlEngine engine;
+    addLatteCoreImport(engine, importRoot);
+    addFakePlasmaCoreImport(engine, importRoot);
+
+    auto host = createQmlObject(engine, R"(
+import QtQuick
+import org.kde.plasma.core as PlasmaCore
+Item {
+    property QtObject abilityItem: QtObject {
+        property QtObject parabolicItem: QtObject {
+            property int width: 48
+            property bool isUpdatingOnlySpacers: false
+        }
+        property QtObject abilities: QtObject {
+            property QtObject parabolic: QtObject { property bool isEnabled: true }
+            property QtObject metrics: QtObject {
+                property int iconSize: 48
+                property QtObject totals: QtObject { property int lengthEdges: 0 }
+            }
+            property QtObject indexer: QtObject {
+                property int lastVisibleItemIndex: 1
+                property var separators: []
+            }
+            property QtObject debug: QtObject { property bool spacersEnabled: false }
+        }
+        property bool tailItemIsVisibleSeparator: true
+        property bool headItemIsVisibleSeparator: false
+        property bool isSeparator: false
+        property bool isHidden: false
+        property bool isHiddenSpacerForcedShow: false
+        property bool containsMouse: false
+        property bool isHorizontal: true
+        property bool isHiddenSpacerAnimated: false
+        property int animationTime: 0
+    }
+    property QtObject plasmoid: QtObject { property int formFactor: PlasmaCore.Types.Horizontal }
+    property int itemIndex: 1
+    property int index: 1
+}
+)", QUrl(QStringLiteral("qrc:/hidden-spacer-host.qml")));
+    QVERIFY(host);
+
+    QQmlContext context(engine.rootContext());
+    context.setContextObject(host.get());
+    QQmlComponent spacerComponent(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_HIDDEN_SPACER_QML)));
+    std::unique_ptr<QObject> spacer(spacerComponent.create(&context));
+    if (!spacer) {
+        qWarning() << spacerComponent.errors();
+    }
+    QVERIFY(spacer);
+
+    auto *abilityItem = host->property("abilityItem").value<QObject *>();
+    QVERIFY(abilityItem);
+    QTRY_COMPARE(spacer->property("nHiddenSize").toReal(), 2.0);
+    QTRY_COMPARE(spacer->property("width").toReal(), 2.0);
+
+    // Indexer publishes separator/hidden changes separately. During the
+    // 32ms loop-breaking pause, the slot must retain its last settled width.
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", false));
+    QCOMPARE(spacer->property("nHiddenSize").toReal(), 2.0);
+    QCOMPARE(spacer->property("width").toReal(), 2.0);
+    QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 0.0, 250);
+    QTRY_COMPARE(spacer->property("width").toReal(), 0.0);
+
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", true));
+    QCOMPARE(spacer->property("nHiddenSize").toReal(), 0.0);
+    QCOMPARE(spacer->property("width").toReal(), 0.0);
+    QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 2.0, 250);
+    QTRY_COMPARE(spacer->property("width").toReal(), 2.0);
+
+    // An invalid delegate index releases its slot even if the settle timer is
+    // running, matching the prior immediate departure behavior.
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", false));
+    QCOMPARE(spacer->property("nHiddenSize").toReal(), 2.0);
+    QVERIFY(host->setProperty("itemIndex", -1));
+    QCOMPARE(spacer->property("nHiddenSize").toReal(), 0.0);
+    QCOMPARE(spacer->property("width").toReal(), 0.0);
 }
 
 void
