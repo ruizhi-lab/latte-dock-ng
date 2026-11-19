@@ -235,9 +235,18 @@ matches only 404 and unusable-metadata messages, so it exits immediately on a
 `nothing provides` failure and the log shows no retry attempt. Nothing in the
 project can resolve it, and the image never reaches the source. Because
 `release-candidate-metadata` needs `install-verify` and `package-install-verify`
-without `if: always()`, this blocks the candidate record and therefore the
-automatic release. Rerun the failed jobs once Cauldron rebuilds `qttools6`
-against LLVM 23.1; do not change the project for it.
+without `if: always()`, this blocked the candidate record and therefore the
+automatic release.
+
+The maintainer chose to release without the Cauldron gate until Cauldron fixes
+itself, so both Mageia matrix legs now carry
+`continue-on-error: ${{ matrix.distro == 'mageia' }}`. The leg still runs and
+still shows its result, but a failure there no longer blocks the candidate
+record; the other distributions keep their gates unchanged. This is a temporary
+workaround with a removal condition: restore the gate, by deleting those two
+`continue-on-error` lines, once Cauldron ships a `qttools6` built against its
+current LLVM. The alternative, excluding Mageia from the matrix, would have
+hidden the failure instead of keeping it visible.
 
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
