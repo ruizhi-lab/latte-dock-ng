@@ -208,6 +208,9 @@ AbilityItem.BasicItem {
     property bool isGroupParent: (IsGroupParent === true) ? true : false
     property bool isForcedHidden: false
     property bool isLauncher: (IsLauncher === true) ? true : false
+    property Item taskRowReplacementSuccessor: null
+    property Item pendingTaskRowReplacementOutgoing: null
+    property bool waitingForTaskRowReplacement: false
     property bool hasShownLauncher:  (taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrl)
                                       || taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrlWithIcon))
                                      && !root.inActivityChange /*update trigger when changing current activity*/
@@ -462,6 +465,14 @@ AbilityItem.BasicItem {
     onItemIndexChanged: {
         if (itemIndex>=0) {
             lastValidTimer.start();
+
+            // A ListView removal can be cancelled by a same-row model update.
+            // Release only the exact successor held by this delegate; the new
+            // row then resumes its own ShowWindowAnimation.
+            if (taskRowReplacementSuccessor && tasksExtendedManager) {
+                var successor = taskRowReplacementSuccessor;
+                tasksExtendedManager.releaseTaskRowReplacement(successor, taskItem);
+            }
         }
     }
 
@@ -999,6 +1010,31 @@ AbilityItem.BasicItem {
         }
     }
 
+    function holdForTaskRowReplacement() {
+        var outgoing = root.outgoingTaskRowReplacement(taskItem);
+        if (!outgoing) {
+            return;
+        }
+
+        tasksExtendedManager.holdTaskRowForReplacement(taskItem, outgoing, true);
+    }
+
+    function scheduleTaskRowReplacementAnimation() {
+        taskRowReplacementShowTimer.restart();
+    }
+
+    function resumeTaskRowReplacementAnimation() {
+        if (!waitingForTaskRowReplacement) {
+            showWindowAnimation.showWindow();
+        }
+    }
+
+    function releaseTaskRowReplacementAtRemovalEnd() {
+        if (taskRowReplacementSuccessor && tasksExtendedManager) {
+            tasksExtendedManager.releaseTaskRowReplacement(taskRowReplacementSuccessor, taskItem, true);
+        }
+    }
+
 
     function updateAudioStreams() {
         // Clear before the loader destroys stream objects; signal ordering can
@@ -1192,12 +1228,20 @@ AbilityItem.BasicItem {
             visible = true;
         }
 
-        showWindowAnimation.showWindow();
+        holdForTaskRowReplacement();
+        if (!waitingForTaskRowReplacement) {
+            showWindowAnimation.showWindow();
+        }
         updateAudioPlayer();
         updateAudioStreams();
     }
 
     Component.onDestruction: {
+        if (taskRowReplacementSuccessor && tasksExtendedManager) {
+            var successor = taskRowReplacementSuccessor;
+            tasksExtendedManager.releaseTaskRowReplacement(successor, taskItem);
+        }
+
         // The root owns the preview selection, but this delegate owns its QML
         // functions. Release it before its context disappears; otherwise the
         // root's frame callback can invoke a function in an invalid context.
@@ -1244,6 +1288,19 @@ AbilityItem.BasicItem {
 
     ///Item's Removal Animation
     TaskAnimations.RealRemovalAnimation{ id: taskRealRemovalAnimation }
+
+    // Defer a row handoff past the outgoing ListView teardown so the new row's
+    // animation cannot write its size while that model update is still unwinding.
+    Timer {
+        id: taskRowReplacementShowTimer
+        interval: 0
+        repeat: false
+        onTriggered: {
+            if (!waitingForTaskRowReplacement) {
+                showWindowAnimation.showWindow();
+            }
+        }
+    }
 
     TaskAnimations.RemovalScheduler {
         id: removalScheduler

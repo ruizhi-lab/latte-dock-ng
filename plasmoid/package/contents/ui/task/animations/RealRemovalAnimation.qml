@@ -221,5 +221,9 @@ SequentialAnimation {
     PropertyAction { target: taskItem; property: "inAddRemoveAnimation"; value: false }
     PropertyAction { target: taskItem; property: "inRemoveStage"; value: false }
 
+    ScriptAction {
+        script: taskItem.releaseTaskRowReplacementAtRemovalEnd()
+    }
+
     PropertyAction { target: taskItem; property: "ListView.delayRemove"; value: false }
 }

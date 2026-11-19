@@ -51,9 +51,79 @@ Item {
     property int launchersToBeRemovedCount: 0 //is used to update instantly relevant bindings
 
     signal waitingLauncherRemoved(string launch);
-
-
     /////////// FUNCTIONALITY ////////////////////
+
+    // LibTaskManager can briefly insert a window/startup delegate before the
+    // matching pinned launcher delegate finishes removal (and does the reverse
+    // on close). Keep only the incoming row out of the layout during that
+    // handoff; the outgoing delegate remains the authoritative visual until its
+    // own removal animation completes. Restrict this to adjacent, same-identity
+    // launcher/task rows so grouped or multiple-window tasks keep their normal
+    // independent geometry and animation.
+    function isAdjacentTaskRowReplacement(incoming, outgoing, launcherIsPinned) {
+        if (!launcherIsPinned || !incoming || !outgoing || incoming === outgoing
+                || incoming.isGroupParent || outgoing.isGroupParent
+                || incoming.windowsCount > 1 || outgoing.windowsCount > 1
+                || incoming.itemIndex < 0 || outgoing.itemIndex >= 0) {
+            return false;
+        }
+
+        var sameLauncher = (incoming.launcherUrl !== ""
+                            && incoming.launcherUrl === outgoing.launcherUrl)
+                || (incoming.launcherUrlWithIcon !== ""
+                    && incoming.launcherUrlWithIcon === outgoing.launcherUrlWithIcon);
+        if (!sameLauncher) {
+            return false;
+        }
+
+        var incomingIsTask = incoming.isWindow || incoming.isStartup;
+        var outgoingIsTask = outgoing.isWindow || outgoing.isStartup;
+        var isLauncherToTask = outgoing.isLauncher && incomingIsTask;
+        var isTaskToLauncher = incoming.isLauncher && outgoingIsTask;
+        if (!isLauncherToTask && !isTaskToLauncher) {
+            return false;
+        }
+
+        var outgoingIndex = outgoing.lastValidIndex;
+        return outgoingIndex >= 0 && Math.abs(incoming.itemIndex - outgoingIndex) <= 1;
+    }
+
+    function holdTaskRowForReplacement(incoming, outgoing, launcherIsPinned) {
+        if (!isAdjacentTaskRowReplacement(incoming, outgoing, launcherIsPinned)
+                || outgoing.taskRowReplacementSuccessor || incoming.waitingForTaskRowReplacement) {
+            return false;
+        }
+
+        incoming.pendingTaskRowReplacementOutgoing = outgoing;
+        incoming.waitingForTaskRowReplacement = true;
+        outgoing.taskRowReplacementSuccessor = incoming;
+        incoming.parabolicItem.zoomLength = 0;
+        incoming.parabolicItem.zoomThickness = 0;
+        incoming.parabolicItem.opacity = 0;
+        return true;
+    }
+
+    function releaseTaskRowReplacement(incoming, outgoing, removalAnimationFinished) {
+        if (!incoming || !outgoing || incoming.pendingTaskRowReplacementOutgoing !== outgoing) {
+            return false;
+        }
+
+        incoming.pendingTaskRowReplacementOutgoing = null;
+        incoming.waitingForTaskRowReplacement = false;
+        if (outgoing.taskRowReplacementSuccessor === incoming) {
+            outgoing.taskRowReplacementSuccessor = null;
+        }
+
+        // The removal animation has already passed the RemovalScheduler's
+        // zero-interval defer, so its final frame is safe for an atomic slot
+        // handoff. Other callers (index cancellation/destruction) still defer.
+        if (removalAnimationFinished) {
+            incoming.resumeTaskRowReplacementAnimation();
+        } else {
+            incoming.scheduleTaskRowReplacementAnimation();
+        }
+        return true;
+    }
 
 
     /// WAITING LAUNCHERS

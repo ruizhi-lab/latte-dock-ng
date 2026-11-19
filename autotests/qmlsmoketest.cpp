@@ -90,6 +90,8 @@ private Q_SLOTS:
     void parabolicItemZoomRecoveryLoadsFromSource();
     void taskRemovalDefersGeometryFeedback_data();
     void taskRemovalDefersGeometryFeedback();
+    void taskRowReplacementHandoffUsesOutgoingGeometry();
+    void taskRowReplacementHandoffPreservesListViewSlot();
     void compactAppletPopupSizingLoadsFromSource();
     void globalMenuBackendStatusTransitionsLoadFromSource();
     void globalMenuBackendStatusTransitionsLoadFromSource_data();
@@ -164,6 +166,30 @@ public:
 private:
     int m_addCount{0};
     int m_removeCount{0};
+};
+
+class TaskRowLauncherSignalsStub : public QObject
+{
+    Q_OBJECT
+
+Q_SIGNALS:
+    void launcherInRemoving(const QString &launcherUrl);
+    void launcherInAdding(const QString &launcherUrl);
+    void launcherInMoving(const QString &launcherUrl, int position);
+};
+
+class TaskRowAppletAbilitiesStub : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QObject *launchers READ launchers CONSTANT)
+
+public:
+    QObject *launchers() {
+        return &m_launchers;
+    }
+
+private:
+    TaskRowLauncherSignalsStub m_launchers;
 };
 
 class ParabolicAbilityStub : public QObject
@@ -2174,6 +2200,392 @@ ListView {
         QTRY_COMPARE(object->property("destructions").toInt(), 1);
         QCOMPARE(object->property("starts").toInt(), 1);
         QCOMPARE(events.addCount(), 1);
+    }
+    QVERIFY2(warnings.isEmpty(), qPrintable(warnings.join(QLatin1Char('\n'))));
+}
+
+void QmlSmokeTest::taskRowReplacementHandoffUsesOutgoingGeometry()
+{
+    QQmlEngine engine;
+    TaskRowAppletAbilitiesStub appletAbilities;
+    engine.rootContext()->setContextProperty(QStringLiteral("appletAbilities"), &appletAbilities);
+    QStringList warnings;
+    connect(&engine, &QQmlEngine::warnings, &engine, [&warnings](const QList<QQmlError> &errors) {
+        for (const QQmlError &error : errors) {
+            warnings.append(error.toString());
+        }
+    });
+
+    const QByteArray source = QStringLiteral(R"(
+import QtQuick
+import "%1" as Tasks
+Item {
+    id: testRoot
+    width: 400; height: 100
+    property alias incoming: incoming
+    property alias outgoing: outgoing
+    property alias wrongOutgoing: wrongOutgoing
+    property bool pinned: true
+    Tasks.TasksExtendedManager { id: manager }
+    Item {
+        id: incoming
+        property string launcherUrl: "applications:ghostty.desktop"
+        property string launcherUrlWithIcon: "applications:ghostty.desktop"
+        property bool isLauncher: false
+        property bool isWindow: true
+        property bool isStartup: false
+        property bool isGroupParent: false
+        property int windowsCount: 1
+        property int itemIndex: 4
+        property int lastValidIndex: 4
+        property Item pendingTaskRowReplacementOutgoing: null
+        property bool waitingForTaskRowReplacement: false
+        property int scheduledResumes: 0
+        property int synchronousResumes: 0
+        property QtObject parabolicItem: QtObject {
+            property real zoomLength: 1
+            property real zoomThickness: 1
+            property real opacity: 1
+        }
+        property real rowLength: 74 * parabolicItem.zoomLength
+        function scheduleTaskRowReplacementAnimation() {
+            scheduledResumes++;
+            showWindowAnimation.showWindow();
+        }
+        function resumeTaskRowReplacementAnimation() {
+            synchronousResumes++;
+            showWindowAnimation.showWindow();
+        }
+    }
+    Item {
+        id: outgoing
+        property string launcherUrl: "applications:ghostty.desktop"
+        property string launcherUrlWithIcon: "applications:ghostty.desktop"
+        property bool isLauncher: true
+        property bool isWindow: false
+        property bool isStartup: false
+        property bool isGroupParent: false
+        property int windowsCount: 1
+        property int itemIndex: -1
+        property int lastValidIndex: 4
+        property Item taskRowReplacementSuccessor: null
+    }
+    Item { id: wrongOutgoing }
+    QtObject {
+        id: showWindowAnimation
+        function showWindow() {
+            incoming.parabolicItem.zoomLength = 1;
+            incoming.parabolicItem.zoomThickness = 1;
+            incoming.parabolicItem.opacity = 1;
+        }
+    }
+    function beginHandoff() {
+        return manager.holdTaskRowForReplacement(incoming, outgoing, pinned);
+    }
+    function beginCloseHandoff() {
+        incoming.isLauncher = true;
+        incoming.isWindow = false;
+        outgoing.isLauncher = false;
+        outgoing.isWindow = true;
+        return manager.holdTaskRowForReplacement(incoming, outgoing, pinned);
+    }
+    function restoreOpenHandoff() {
+        incoming.isLauncher = false;
+        incoming.isWindow = true;
+        outgoing.isLauncher = true;
+        outgoing.isWindow = false;
+    }
+    function releaseHandoff() {
+        return manager.releaseTaskRowReplacement(incoming, outgoing, true);
+    }
+    function releaseWrongHandoff() {
+        return manager.releaseTaskRowReplacement(incoming, wrongOutgoing);
+    }
+}
+)").arg(QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui")).toString()).toUtf8();
+
+    auto object = createQmlObject(engine, source, QUrl(QStringLiteral("qrc:/task-row-handoff.qml")));
+    QVERIFY(object);
+    QObject *incoming = object->property("incoming").value<QObject *>();
+    QObject *outgoing = object->property("outgoing").value<QObject *>();
+    QObject *wrongOutgoing = object->property("wrongOutgoing").value<QObject *>();
+    QVERIFY(incoming);
+    QVERIFY(outgoing);
+    QVERIFY(wrongOutgoing);
+    QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+
+    QVariant accepted;
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 0.0);
+    QObject *parabolicItem = incoming->property("parabolicItem").value<QObject *>();
+    QVERIFY(parabolicItem);
+    QCOMPARE(parabolicItem->property("opacity").toReal(), 0.0);
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "releaseWrongHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 0.0);
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "releaseHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+    QCOMPARE(parabolicItem->property("opacity").toReal(), 1.0);
+    QCOMPARE(incoming->property("synchronousResumes").toInt(), 1);
+    QCOMPARE(incoming->property("scheduledResumes").toInt(), 0);
+    QVERIFY(!incoming->property("waitingForTaskRowReplacement").toBool());
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginCloseHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 0.0);
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "releaseHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "restoreOpenHandoff"));
+
+    QVERIFY(outgoing->setProperty("isGroupParent", true));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+
+    QVERIFY(outgoing->setProperty("isGroupParent", false));
+    QVERIFY(outgoing->setProperty("lastValidIndex", 0));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QVERIFY(outgoing->setProperty("lastValidIndex", 4));
+
+    QVERIFY(object->setProperty("pinned", false));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QVERIFY(object->setProperty("pinned", true));
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QVERIFY(incoming->setProperty("windowsCount", 2));
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "releaseHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(accepted.toBool());
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "beginHandoff", Q_RETURN_ARG(QVariant, accepted)));
+    QVERIFY(!accepted.toBool());
+    QCOMPARE(incoming->property("rowLength").toReal(), 74.0);
+    QVERIFY2(warnings.isEmpty(), qPrintable(warnings.join(QLatin1Char('\n'))));
+}
+
+void QmlSmokeTest::taskRowReplacementHandoffPreservesListViewSlot()
+{
+    QQuickView quickView;
+    quickView.resize(600, 100);
+    QStringList warnings;
+    connect(quickView.engine(), &QQmlEngine::warnings, &quickView, [&warnings](const QList<QQmlError> &errors) {
+        for (const QQmlError &error : errors) {
+            warnings.append(error.toString());
+        }
+    });
+
+    const QByteArray source = QStringLiteral(R"(
+import QtQuick
+import "%1" as Tasks
+import "%2" as Animations
+Item {
+    id: root
+    width: 600; height: 100
+    property int openCalls: 0
+    property alias view: view
+    property alias handoffs: view.handoffs
+    property bool insertLauncher: false
+    property QtObject appletAbilities: QtObject {
+        property QtObject launchers: QtObject {
+            signal launcherInRemoving(string launcherUrl)
+            signal launcherInAdding(string launcherUrl)
+            signal launcherInMoving(string launcherUrl, int position)
+        }
+    }
+    Timer {
+        id: insertRow
+        interval: 20
+        onTriggered: {
+            if (root.insertLauncher) {
+                view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: true, isWindow: false, isStartup: false });
+            } else {
+                view.model.insert(1, { launcherUrl: "applications:ghostty.desktop", isLauncher: false, isWindow: true, isStartup: false });
+            }
+        }
+    }
+    Tasks.TasksExtendedManager { id: manager }
+    ListView {
+        id: view
+        width: 600; height: 80
+        orientation: ListView.Horizontal
+        property int handoffs: 0
+        property int replacementMatches: 0
+        property int replacementHolds: 0
+        property int removalEvents: 0
+        property int initialGhostReady: 0
+        property real handoffContentWidth: 0
+        function ghostRowWidths() {
+            const widths = [];
+            const delegates = contentItem.children;
+            for (let i = 0; i < delegates.length; ++i) {
+                if (delegates[i].launcherUrl === "applications:ghostty.desktop") {
+                    widths.push(delegates[i].width);
+                }
+            }
+            return widths;
+        }
+        model: ListModel {
+            id: entries
+            ListElement { launcherUrl: "applications:first.desktop"; isLauncher: true; isWindow: false; isStartup: false }
+            ListElement { launcherUrl: "applications:ghostty.desktop"; isLauncher: true; isWindow: false; isStartup: false }
+            ListElement { launcherUrl: "applications:last.desktop"; isLauncher: true; isWindow: false; isStartup: false }
+        }
+        delegate: Item {
+            id: row
+            property string launcherUrl: ""
+            property string launcherUrlWithIcon: launcherUrl
+            property bool isLauncher: false
+            property bool isWindow: false
+            property bool isStartup: false
+            property bool isGroupParent: false
+            property int windowsCount: 1
+            property int itemIndex: index
+            property int lastValidIndex: index >= 0 ? index : 1
+            property Item pendingTaskRowReplacementOutgoing: null
+            property bool waitingForTaskRowReplacement: false
+            property Item taskRowReplacementSuccessor: null
+            property int showCalls: 0
+            property QtObject parabolicItem: QtObject {
+                property real zoomLength: 1
+                property real zoomThickness: 1
+                property real opacity: 1
+            }
+            width: 74 * parabolicItem.zoomLength
+            height: 60
+            function scheduleTaskRowReplacementAnimation() {
+                if (!waitingForTaskRowReplacement) {
+                    parabolicItem.zoomLength = 1;
+                    parabolicItem.zoomThickness = 1;
+                    parabolicItem.opacity = 1;
+                    showCalls++;
+                }
+            }
+            function resumeTaskRowReplacementAnimation() {
+                if (!waitingForTaskRowReplacement) {
+                    parabolicItem.zoomLength = 1;
+                    parabolicItem.zoomThickness = 1;
+                    parabolicItem.opacity = 1;
+                    showCalls++;
+                }
+            }
+            function findReplacement() {
+                if ((isWindow || isStartup || isLauncher) && launcherUrl === "applications:ghostty.desktop") {
+                    const delegates = view.contentItem.children;
+                    for (let i = 0; i < delegates.length; ++i) {
+                        const candidate = delegates[i];
+                        if (candidate !== row && candidate.launcherUrl === launcherUrl && candidate.isLauncher !== isLauncher
+                                && candidate.itemIndex < 0) {
+                            view.replacementMatches++;
+                            if (manager.holdTaskRowForReplacement(row, candidate, true)) {
+                                view.replacementHolds++;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            Component.onCompleted: {
+                launcherUrl = model.launcherUrl;
+                isLauncher = model.isLauncher;
+                isWindow = model.isWindow;
+                isStartup = model.isStartup;
+                if (isLauncher && launcherUrl === "applications:ghostty.desktop") {
+                    view.initialGhostReady++;
+                }
+                row.findReplacement();
+            }
+            Animations.RemovalScheduler { id: scheduler; task: row; animation: removal }
+            SequentialAnimation {
+                id: removal
+                // Hold the old slot until the replacement is ready, then
+                // model the production instant replacement removal.
+                PauseAnimation { duration: 100 }
+                PropertyAction { target: row.parabolicItem; property: "zoomLength"; value: 0 }
+                ScriptAction {
+                    script: {
+                        if (row.taskRowReplacementSuccessor) {
+                            manager.releaseTaskRowReplacement(row.taskRowReplacementSuccessor, row, true);
+                            view.handoffs++;
+                            view.handoffContentWidth = view.contentWidth;
+                        }
+                    }
+                }
+                PropertyAction { target: row; property: "ListView.delayRemove"; value: false }
+            }
+            ListView.onRemove: {
+                view.removalEvents++;
+                scheduler.schedule();
+            }
+        }
+    }
+    function openWindow() {
+        root.openCalls++;
+        view.model.remove(1);
+        root.insertLauncher = false;
+        insertRow.start();
+    }
+    function closeWindow() {
+        view.model.remove(1);
+        root.insertLauncher = true;
+        insertRow.start();
+    }
+}
+)").arg(QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui")).toString(),
+         QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/animations")).toString()).toUtf8();
+
+    QTemporaryDir fixtureDirectory;
+    QVERIFY(fixtureDirectory.isValid());
+    QFile fixtureFile(fixtureDirectory.filePath(QStringLiteral("task-row-listview-handoff.qml")));
+    QVERIFY(fixtureFile.open(QIODevice::WriteOnly));
+    QCOMPARE(fixtureFile.write(source), source.size());
+    fixtureFile.close();
+    quickView.setSource(QUrl::fromLocalFile(fixtureFile.fileName()));
+    QCOMPARE(quickView.status(), QQuickView::Ready);
+    quickView.show();
+    QTRY_VERIFY(quickView.rootObject());
+    QObject *rootObject = quickView.rootObject();
+    QObject *view = rootObject->property("view").value<QObject *>();
+    QVERIFY(view);
+    QTRY_COMPARE(view->property("initialGhostReady").toInt(), 1);
+    QCOMPARE(view->property("contentWidth").toReal(), 222.0);
+
+    QVector<qreal> frameContentWidths;
+    QVector<QVariantList> frameGhostWidths;
+    connect(&quickView, &QQuickWindow::frameSwapped, &quickView, [&] {
+        frameContentWidths.append(view->property("contentWidth").toReal());
+        QVariant widths;
+        if (QMetaObject::invokeMethod(view, "ghostRowWidths", Q_RETURN_ARG(QVariant, widths))) {
+            frameGhostWidths.append(widths.toList());
+        }
+    });
+
+    QVERIFY(QMetaObject::invokeMethod(rootObject, "openWindow"));
+    QTRY_COMPARE(view->property("handoffs").toInt(), 1);
+    QCOMPARE(view->property("removalEvents").toInt(), 1);
+    QCOMPARE(view->property("replacementMatches").toInt(), 1);
+    QCOMPARE(view->property("replacementHolds").toInt(), 1);
+    QCOMPARE(view->property("handoffs").toInt(), 1);
+    QTRY_COMPARE(view->property("contentWidth").toReal(), 222.0);
+
+    QVERIFY(QMetaObject::invokeMethod(rootObject, "closeWindow"));
+    QTRY_COMPARE(view->property("handoffs").toInt(), 2);
+    QTRY_COMPARE(view->property("contentWidth").toReal(), 222.0);
+    QTest::qWait(50);
+    QVERIFY(frameContentWidths.size() > 4);
+    QCOMPARE(frameGhostWidths.size(), frameContentWidths.size());
+    for (qsizetype frame = 0; frame < frameContentWidths.size(); ++frame) {
+        QCOMPARE(frameContentWidths.at(frame), 222.0);
+        int positiveGhostRows = 0;
+        for (const QVariant &width : frameGhostWidths.at(frame)) {
+            positiveGhostRows += width.toReal() > 0.5 ? 1 : 0;
+        }
+        QCOMPARE(positiveGhostRows, 1);
     }
     QVERIFY2(warnings.isEmpty(), qPrintable(warnings.join(QLatin1Char('\n'))));
 }
