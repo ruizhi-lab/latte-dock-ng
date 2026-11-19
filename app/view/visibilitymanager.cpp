@@ -227,7 +227,9 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
 
     int base{0};
 
+    m_timerBlockStrutsUpdate.stop();
     m_publishedStruts = QRect();
+    m_publishedStrutsScreen.clear();
 
     if (m_mode == Types::AlwaysVisible) {
         //! remove struts for old always visible mode
@@ -282,6 +284,8 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
             m_connections[base + 4] = connect(m_latteView, &Latte::View::activitiesChanged, this, [this]() {
                 updateStrutsBasedOnLayoutsAndActivities(true);
             });
+
+            m_connections[base + 5] = connect(m_latteView, &Latte::View::screenGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
 
             raiseView(true);
             break;
@@ -407,20 +411,28 @@ void VisibilityManager::updateStrutsBasedOnLayoutsAndActivities(bool forceUpdate
                                         && m_latteView->layout() && !m_latteView->positioner()->inRelocationAnimation()
                                         && m_latteView->layout()->isCurrent());
 
-    if (m_strutsThickness > 0 && canSetStrut() && (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout || inMultipleLayoutsAndCurrent)) {
-        QRect computedStruts = acceptableStruts();
+    // The positioner owns the intended output. On Wayland, a surface spanning
+    // a fractional boundary can temporarily report its neighbour via QWindow.
+    // Publishing from that screen stacks both struts on the same output.
+    auto *screen = m_latteView->positioner()->screenToFollow();
 
-        if (m_publishedStruts != computedStruts || forceUpdate) {
+    if (screen && m_strutsThickness > 0 && canSetStrut() && (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout || inMultipleLayoutsAndCurrent)) {
+        const QRect computedStruts = acceptableStruts(screen->geometry());
+        const QString screenName = screen->name();
+
+        if (m_publishedStruts != computedStruts || m_publishedStrutsScreen != screenName || forceUpdate) {
             //! Force update is needed when very important events happen in DE and there is a chance
             //! that previously even though struts where sent the DE did not accept them.
             //! Such a case is when STOPPING an Activity and windows faulty become invisible even
             //! though they should not. In such case setting struts when the windows are hidden
             //! the struts do not take any effect
             m_publishedStruts = computedStruts;
-            m_wm->setViewStruts(*m_latteView, m_publishedStruts, m_latteView->location());
+            m_publishedStrutsScreen = screenName;
+            m_wm->setViewStruts(*m_latteView, *screen, m_publishedStruts, m_latteView->location());
         }
     } else {
         m_publishedStruts = QRect();
+        m_publishedStrutsScreen.clear();
         m_wm->removeViewStruts(*m_latteView);
     }
 }
@@ -435,30 +447,30 @@ bool VisibilityManager::canSetStrut() const
     return true;
 }
 
-QRect VisibilityManager::acceptableStruts()
+QRect VisibilityManager::acceptableStruts(const QRect &screenGeometry) const
 {
     QRect calcs;
 
     switch (m_latteView->location()) {
         case Plasma::Types::TopEdge: {
-            calcs = QRect(m_latteView->x(), m_latteView->screenGeometry().top(), m_latteView->width(), m_strutsThickness);
+            calcs = QRect(screenGeometry.x(), screenGeometry.top(), screenGeometry.width(), m_strutsThickness);
             break;
         }
 
         case Plasma::Types::BottomEdge: {
-            int y = m_latteView->screenGeometry().bottom() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
-            calcs = QRect(m_latteView->x(), y, m_latteView->width(), m_strutsThickness);
+            int y = screenGeometry.bottom() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
+            calcs = QRect(screenGeometry.x(), y, screenGeometry.width(), m_strutsThickness);
             break;
         }
 
         case Plasma::Types::LeftEdge: {
-            calcs = QRect(m_latteView->screenGeometry().left(), m_latteView->y(), m_strutsThickness, m_latteView->height());
+            calcs = QRect(screenGeometry.left(), screenGeometry.y(), m_strutsThickness, screenGeometry.height());
             break;
         }
 
         case Plasma::Types::RightEdge: {
-            int x = m_latteView->screenGeometry().right() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
-            calcs = QRect(x, m_latteView->y(), m_strutsThickness, m_latteView->height());
+            int x = screenGeometry.right() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
+            calcs = QRect(x, screenGeometry.y(), m_strutsThickness, screenGeometry.height());
             break;
         }
 

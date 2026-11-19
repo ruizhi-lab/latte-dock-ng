@@ -64,6 +64,7 @@ public:
 
     int currentScreenId() const;
     QString currentScreenName() const;
+    QScreen *screenToFollow() const;
 
     int slideOffset() const;
     void setSlideOffset(int offset);

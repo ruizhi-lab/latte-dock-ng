@@ -943,6 +943,14 @@ void SourceContractTest::waylandStrutGhostWindowBindsLayerShellScreen()
     QVERIFY(qwindowScreen >= 0);
     QVERIFY(layerWindow > qwindowScreen);
     QVERIFY(layerScreen > layerWindow);
+
+    QFile visibilitySource(QStringLiteral(LATTE_SOURCE_DIR "/app/view/visibilitymanager.cpp"));
+    QVERIFY(visibilitySource.open(QFile::ReadOnly));
+    const QString visibility = QString::fromUtf8(visibilitySource.readAll());
+    QVERIFY(visibility.contains(QStringLiteral("m_latteView->positioner()->screenToFollow()")));
+    QVERIFY(visibility.contains(QStringLiteral("acceptableStruts(screen->geometry())")));
+    QVERIFY(visibility.contains(QStringLiteral("setViewStruts(*m_latteView, *screen,")));
+    QVERIFY(source.contains(QStringLiteral("w->configure(location, rect, &screen)")));
 }
 
 void SourceContractTest::launchersRestoreContractMovedToQmlSmokeTest()

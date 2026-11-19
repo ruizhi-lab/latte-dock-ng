@@ -208,7 +208,7 @@ private:
 
     bool windowContainsMouse();
 
-    QRect acceptableStruts();
+    QRect acceptableStruts(const QRect &screenGeometry) const;
 
 private Q_SLOTS:
     void dodgeAllWindows();
@@ -262,6 +262,7 @@ private:
     BlockHidingEvents m_blockHidingEvents;
 
     QRect m_publishedStruts;
+    QString m_publishedStrutsScreen;
     QRect m_lastMask;
 
     //! KWin Edges

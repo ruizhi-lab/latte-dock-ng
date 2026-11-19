@@ -540,11 +540,11 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
     }
 }
 
-void WaylandInterface::setViewStruts(QWindow &view, const QRect &rect, Plasma::Types::Location location)
+void WaylandInterface::setViewStruts(QWindow &view, QScreen &screen, const QRect &rect, Plasma::Types::Location location)
 {
     //! Cache check: skip expensive GhostWindow (QQuickView + LayerShell
     //! surface) recreate when strut parameters are unchanged.
-    const QString screenName = view.screen() ? view.screen()->name() : QString();
+    const QString screenName = screen.name();
     auto it = m_strutCache.find(&view);
 
     if (it != m_strutCache.end()
@@ -569,7 +569,7 @@ void WaylandInterface::setViewStruts(QWindow &view, const QRect &rect, Plasma::T
     //! In Plasma 6, PanelBehavior is deprecated and ignored by KWin.
     //! Struts are now set via the zwlr_layer_shell_v1 protocol using
     //! exclusive_zone (provided by LayerShellQt).
-    w->configure(location, rect, view.screen());
+    w->configure(location, rect, &screen);
 }
 
 void WaylandInterface::switchToNextVirtualDesktop()

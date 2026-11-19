@@ -279,6 +279,11 @@ QString Positioner::currentScreenName() const
     return m_screenNameToFollow;
 }
 
+QScreen *Positioner::screenToFollow() const
+{
+    return m_screenToFollow;
+}
+
 WindowSystem::AbstractWindowInterface::Slide Positioner::slideLocation(Plasma::Types::Location location)
 {
     auto slideedge = WindowSystem::AbstractWindowInterface::Slide::None;
