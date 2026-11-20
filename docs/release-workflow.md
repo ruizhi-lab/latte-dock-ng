@@ -238,38 +238,34 @@ project can resolve it, and the image never reaches the source. Because
 without `if: always()`, this blocked the candidate record and therefore the
 automatic release.
 
-The maintainer chose to release without the Cauldron gate until Cauldron fixes
-itself, so both Mageia matrix legs now carry
-`continue-on-error: ${{ matrix.distro == 'mageia' }}`. The leg still runs and
-still shows its result, but a failure there no longer blocks the candidate
-record; the other distributions keep their gates unchanged. This is a temporary
-workaround with a removal condition: restore the gate, by deleting those two
-`continue-on-error` lines, once Cauldron ships a `qttools6` built against its
-current LLVM. The alternative, excluding Mageia from the matrix, would have
-hidden the failure instead of keeping it visible.
+Cauldron fixed this during the release: the next push build (run `44671635390`)
+reported both Mageia jobs as `success`, because `qttools6` was rebuilt against
+the LLVM 23.1 sonames. The temporary tolerance has therefore been removed:
 
-The candidate check had to change with it. `package_hashes()` in
-`scripts/release-version.py` previously required exactly seven native packages,
-so a missing Mageia package failed even after its job stopped gating. It now
-matches each distribution's packaged file name against
-`DISTRO_PACKAGE_PATTERNS` and skips the ones listed in
-`TOLERATED_ABSENT_DISTROS`, which currently holds only `mageia`. Any other
-missing distribution still fails, and the check names it, so one distribution
-cannot stand in for another. `test_release_version.py` pins both directions:
-six packages without Mageia pass, and dropping any supported distribution
-fails. Releasing the gate means removing `mageia` from
-`TOLERATED_ABSENT_DISTROS`; the release notes for such a release must state
-that Mageia was not validated.
+- Both Mageia matrix legs no longer carry `continue-on-error`, so a Mageia
+  failure blocks the candidate record again like every other distribution.
+- `TOLERATED_ABSENT_DISTROS` in `scripts/release-version.py` is empty. The check
+  still matches each distribution's packaged file name against
+  `DISTRO_PACKAGE_PATTERNS` instead of counting packages, so one distribution
+  can never stand in for another, and a missing one is named in the error.
+- `test_metadata_requires_every_supported_distribution` requires all seven
+  distributions and asserts that dropping each one individually fails.
+- `auto-release.yml` requires exactly seven packages again.
 
-`Release` had the same assumption in its own `Verify release asset set` step,
-`test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 7`, which failed
-`Create Release from validated packages` after the tag already existed. That
-step now runs the same `release-version.py verify` as `main-validation`, so a
-single distribution-aware check decides the question in both places. It also
-checks out the source and downloads `release-candidate-metadata`, because the
-verifier is a repository script and needs the recorded candidate. Keep package
-set validation in that one script: a fourth hardcoded count would break the
-release the same way.
+`TOLERATED_ABSENT_DISTROS` remains the single place to record a documented
+upstream fault. If a distribution genuinely cannot build, add it there, note
+the fault and its removal condition in this section, and state in the release
+notes that the distribution was not validated. Remove it as soon as the fault
+clears; the entry must not outlive the cause.
+
+While the gate was relaxed, `Release` also failed on its own hardcoded count,
+`test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 7`, after the tag already
+existed. That step now runs the same `release-version.py verify` as
+`main-validation`, so one distribution-aware check decides the question in both
+places. It also checks out the source and downloads
+`release-candidate-metadata`, because the verifier is a repository script and
+needs the recorded candidate. Keep package set validation in that one script: a
+hardcoded count would break the release the same way again.
 
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that

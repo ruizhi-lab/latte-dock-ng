@@ -103,40 +103,39 @@ class ReleaseVersionTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
 
     def test_metadata_requires_every_supported_distribution(self):
-        """Mageia may be absent while Cauldron is broken; the others may not."""
+        """Every supported distribution must contribute its own package."""
         required = {
             "arch": "latte-dock-ng-1.2.56-1-x86_64.pkg.tar.zst",
             "fedora": "latte-dock-ng-1.2.56-1-x86_64-fedora.rpm",
             "opensuse": "latte-dock-ng-1.2.56-1-x86_64-opensuse.rpm",
+            "mageia": "latte-dock-ng-1.2.56-1-x86_64-mageia.rpm",
             "debian13": "latte-dock-ng_1.2.56-1+deb13u1_amd64.deb",
             "debian-testing": "latte-dock-ng_1.2.56-1_amd64.deb",
             "ubuntu": "latte-dock-ng_1.2.56-1ubuntu1_amd64.deb",
         }
-        mageia = "latte-dock-ng-1.2.56-1-x86_64-mageia.rpm"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             record = root / "candidate.json"
             packages = root / "dist"
             packages.mkdir()
-            for name in list(required.values()) + [mageia]:
+            for name in required.values():
                 (packages / name).write_bytes(name.encode())
             args = ["--version", "1.2.56", "--sha", "a" * 40, "--run-id", "123",
                     "--packages", str(packages), "--file", str(record)]
             subprocess.run([sys.executable, str(SCRIPT), "metadata", *args], check=True)
-
-            # Without Mageia the candidate is still valid: Cauldron cannot build.
-            (packages / mageia).unlink()
-            subprocess.run([sys.executable, str(SCRIPT), "metadata", *args], check=True)
             data = json.loads(record.read_text())
-            self.assertNotIn(mageia, data["packages"])
-            self.assertEqual(len(data["packages"]), 6)
+            self.assertEqual(len(data["packages"]), 7)
 
-            # Losing a supported distribution must still fail, even when another
-            # package of the same format is present.
-            (packages / required["fedora"]).unlink()
-            result = subprocess.run([sys.executable, str(SCRIPT), "metadata", *args], capture_output=True)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("fedora", result.stderr.decode())
+            # Every distribution is required, including Mageia now that
+            # Cauldron builds it again. A missing one must be named, even when
+            # another package of the same format is still present.
+            for distro, name in required.items():
+                (packages / name).unlink()
+                result = subprocess.run([sys.executable, str(SCRIPT), "metadata", *args],
+                                        capture_output=True)
+                self.assertNotEqual(result.returncode, 0, distro)
+                self.assertIn(distro, result.stderr.decode())
+                (packages / name).write_bytes(name.encode())
 
     def test_gentoo_manifest_tracks_final_archive_and_current_package_files(self):
         with tempfile.TemporaryDirectory() as directory:

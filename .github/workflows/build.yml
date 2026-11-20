@@ -344,13 +344,6 @@ jobs:
       LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: Install verify (${{ matrix.distro }})
     runs-on: ubuntu-24.04
-    # Cauldron currently ships qttools6 built against LLVM 22.1 sonames while
-    # providing only lib64llvm23.1, so its own Qt tooling cannot install. That
-    # is an upstream packaging fault, not a project failure: keep the job
-    # visible but let it run without gating the candidate. Remove this gate
-    # once Cauldron rebuilds qttools6 against its current LLVM (see
-    # docs/release-workflow.md, 2026-11-19).
-    continue-on-error: ${{ matrix.distro == 'mageia' }}
     strategy:
       fail-fast: false
       matrix:
@@ -417,9 +410,6 @@ jobs:
       LATTE_RELEASE_VERSION: ${{ needs.release-input.outputs.version }}
     name: Package install verify (${{ matrix.distro }})
     runs-on: ubuntu-24.04
-    # Same Cauldron Qt/LLVM breakage as install-verify above; see
-    # docs/release-workflow.md (2026-11-19) before restoring the gate.
-    continue-on-error: ${{ matrix.distro == 'mageia' }}
     strategy:
       fail-fast: false
       matrix:

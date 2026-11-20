@@ -53,10 +53,12 @@ DISTRO_PACKAGE_PATTERNS = {
     "debian-testing": r"latte-dock-ng_.*-1_amd64\.deb",
     "ubuntu": r"latte-dock-ng_.*ubuntu1_amd64\.deb",
 }
-# Cauldron ships qttools6 built against LLVM sonames it no longer provides, so
-# its leg cannot produce a package; see docs/release-workflow.md (2026-11-19).
-# Empty this set when Cauldron recovers, which restores the full requirement.
-TOLERATED_ABSENT_DISTROS = frozenset({"mageia"})
+# Cauldron temporarily shipped qttools6 built against LLVM sonames it no longer
+# provided, which stopped the Mageia leg from producing a package. Cauldron has
+# since recovered and both Mageia jobs build and verify the package, so the full
+# distribution set is required again. Add a name here only for a documented
+# upstream fault, and remove it as soon as that fault clears.
+TOLERATED_ABSENT_DISTROS = frozenset()
 
 
 def package_hashes(directory):
