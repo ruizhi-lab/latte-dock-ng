@@ -302,6 +302,26 @@ void LayoutManager::setAppletInScheduledDestruction(const int &id, const bool &e
     }
 }
 
+void LayoutManager::expectAppletInsertionAt(const int index)
+{
+    //! A negative index is the requester's "drop the request" form: a creation
+    //! that never reports an applet must not leave a stale position behind for
+    //! the next one. See LayoutManagerApi for the token lifetime.
+    m_pendingInsertionIndex = index;
+}
+
+int LayoutManager::takeAppletInsertionIndex()
+{
+    const int index = m_pendingInsertionIndex;
+    m_pendingInsertionIndex = -1;
+    return index;
+}
+
+void LayoutManager::expectSkipSpacerReorderOnce()
+{
+    m_skipSpacerReorderOnce = true;
+}
+
 
 QObject *LayoutManager::plasmoid() const
 {
@@ -1330,15 +1350,16 @@ void LayoutManager::save()
 
 
     // When a separator is being created programmatically (signalled by
-    // _latte_skipSpacerReorder), skip reorderParabolicSpacers().  It
+    // expectSkipSpacerReorderOnce()), skip reorderParabolicSpacers().  It
     // moves the parabolic edge spacers which forces a second Grid
     // recalculation within addAppletItem, causing visible icon oscillation.
-    const bool skipSpacerReorder = property("_latte_skipSpacerReorder").toBool();
+    // The flag is one-shot: the first save() after the request consumes it,
+    // so an unrelated later save still reorders the spacers.
+    const bool skipSpacerReorder = m_skipSpacerReorderOnce;
+    m_skipSpacerReorderOnce = false;
 
     if (!skipSpacerReorder) {
         reorderParabolicSpacers();
-    } else {
-        setProperty("_latte_skipSpacerReorder", QVariant());
     }
 
     auto collectLayoutAppletIds = [this](QQuickItem * layout, QList<int> &appletIds) {
@@ -1958,16 +1979,15 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
     //! the default as soon as a fresh trash applet is dropped into the dock.
     applyTrashKeepOriginalColorsDefault(applet, id);
 
-    // Check for a pending insertion index set by View::handlePlasmoidDrop.
-    // The QML Containment.onAppletAdded handler resolves to this overload
-    // (not the (x,y) overload) because the signal passes a QRectF, not (int,int).
-    // We override the index here to achieve position-aware insertion.
-    QVariant pendingIndex = property("_latte_pendingInsertionIndex");
+    // A one-shot insertion request from the application (drop handling,
+    // programmatic separator creation or ContainmentInterface::onAppletAdded)
+    // overrides the index. The QML Containment.onAppletAdded handler resolves
+    // to this overload (not the (x,y) overload) because the signal passes a
+    // QRectF, not (int,int). Taking the token consumes it.
+    const int pendingIndex = takeAppletInsertionIndex();
 
-    if (pendingIndex.isValid()) {
-        int realIndex = pendingIndex.toInt();
-        setProperty("_latte_pendingInsertionIndex", QVariant()); // clear
-        index = realIndex;
+    if (pendingIndex >= 0) {
+        index = pendingIndex;
     }
 
     if (!m_startLayout || !m_mainLayout || !m_endLayout || index < 0) {
@@ -2030,15 +2050,13 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
         return;
     }
 
-    // Check for a pending insertion index set by View::handlePlasmoidDrop.
-    // When set, this overrides the (x,y) from the Plasma signal (which are
-    // always default 0,0 when createApplet() is called without coordinates).
-    QVariant pendingIndex = property("_latte_pendingInsertionIndex");
+    // A one-shot insertion request from the application overrides the (x,y)
+    // from the Plasma signal, which are always default 0,0 when createApplet()
+    // is called without coordinates. Taking the token consumes it.
+    const int pendingIndex = takeAppletInsertionIndex();
 
-    if (pendingIndex.isValid()) {
-        int index = pendingIndex.toInt();
-        setProperty("_latte_pendingInsertionIndex", QVariant()); // clear
-        addAppletItem(applet, index);
+    if (pendingIndex >= 0) {
+        addAppletItem(applet, pendingIndex);
         return;
     }
 

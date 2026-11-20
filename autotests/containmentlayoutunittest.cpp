@@ -34,6 +34,21 @@ class RestoreRoot : public QQuickItem
         return QVariant::fromValue(item);
     }
 
+    //! Mirrors Containment.onAppletAdded in main.qml: consume the one-shot
+    //! insertion request and add the applet at that index when one is set.
+    int addAppletAtRequestedIndex(Latte::Containment::LayoutManager &manager, QObject *applet)
+    {
+        const int indexPath = manager.takeAppletInsertionIndex();
+
+        if (indexPath >= 0) {
+            manager.addAppletItem(applet, indexPath);
+        } else {
+            manager.addAppletItem(applet, manager.defaultInsertionIndex());
+        }
+
+        return indexPath;
+    }
+
     int appletItemCreationCount() const
     {
         return m_appletItemCreationCount;
@@ -114,6 +129,18 @@ public:
     Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &value) { m_userBlocksColorizingApplets = value; }
     Q_INVOKABLE void setAppletInScheduledDestruction(int id, bool enabled) { lastScheduledId = id; lastScheduled = enabled; }
 
+    //! The pre-S4 contract kept the one-shot insertion protocol in dynamic
+    //! properties, so the legacy dispatcher path must still reach it.
+    int pendingInsertionIndex() const
+    {
+        const QVariant pendingIndex = property("_latte_pendingInsertionIndex");
+        return pendingIndex.isValid() ? pendingIndex.toInt() : -1;
+    }
+    bool skipSpacerReorderRequested() const
+    {
+        return property("_latte_skipSpacerReorder").toBool();
+    }
+
     int addCount{0};
     int removeCount{0};
     int hideCount{0};
@@ -166,6 +193,9 @@ private Q_SLOTS:
     void managerDestructionDisconnectsChildRootCallback();
     void dispatcherUsesLegacyQObjectContractAndTracksLifetime();
     void dispatcherPrefersTypedInterface();
+    void insertionRequestIsConsumedOnce();
+    void droppedInsertionRequestDoesNotDisplaceNextApplet();
+    void skipSpacerReorderRequestIsConsumedByOneSave();
 };
 
 void
@@ -217,6 +247,19 @@ ContainmentLayoutUnitTest::dispatcherUsesLegacyQObjectContractAndTracksLifetime(
     QCOMPARE(legacy->removeCount, 1);
     QCOMPARE(legacy->lastScheduledId, 43);
     QVERIFY(legacy->lastScheduled);
+
+    // The one-shot protocol still reaches a plugin that only publishes the
+    // older dynamic properties, and a dropped request leaves nothing behind.
+    dispatcher.expectAppletInsertionAt(6);
+    QCOMPARE(legacy->pendingInsertionIndex(), 6);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), 6);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), -1);
+    dispatcher.expectAppletInsertionAt(2);
+    dispatcher.expectAppletInsertionAt(-1);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), -1);
+    QVERIFY(!legacy->skipSpacerReorderRequested());
+    dispatcher.expectSkipSpacerReorderOnce();
+    QVERIFY(legacy->skipSpacerReorderRequested());
 
     delete legacy;
     QVERIFY(!dispatcher.object());
@@ -854,6 +897,128 @@ void ContainmentLayoutUnitTest::addAppletItemByIndexUsesMainLayoutInJustify()
 }
 
 
+
+void ContainmentLayoutUnitTest::insertionRequestIsConsumedOnce()
+{
+    Latte::Containment::LayoutManager manager;
+    Latte::ViewPart::LayoutManagerApiDispatcher dispatcher;
+    dispatcher.setObject(&manager);
+
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), -1);
+
+    dispatcher.expectAppletInsertionAt(3);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), 3);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), -1);
+
+    // A second request replaces the first one instead of queueing behind it:
+    // the protocol describes the next creation only.
+    dispatcher.expectAppletInsertionAt(1);
+    dispatcher.expectAppletInsertionAt(5);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), 5);
+    QCOMPARE(dispatcher.takeAppletInsertionIndex(), -1);
+}
+
+void ContainmentLayoutUnitTest::droppedInsertionRequestDoesNotDisplaceNextApplet()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QObject firstBackend;
+    firstBackend.setProperty("id", 10);
+    QObject secondBackend;
+    secondBackend.setProperty("id", 20);
+    QObject lateBackend;
+    lateBackend.setProperty("id", 30);
+    QObject failedDropBackend;
+    failedDropBackend.setProperty("id", 40);
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QQuickItem first;
+    first.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&firstBackend)));
+    first.setParentItem(&main);
+    QQuickItem second;
+    second.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&secondBackend)));
+    second.setParentItem(&main);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    manager.requestAppletsOrder(QList<int>{ 10, 20 });
+
+    // A drop registers index 1 but reports no created applet, so the requester
+    // drops the request. The next applet must not inherit that stale slot.
+    manager.expectAppletInsertionAt(1);
+    manager.expectAppletInsertionAt(-1);
+    QCOMPARE(manager.takeAppletInsertionIndex(), -1);
+
+    QCOMPARE(root.addAppletAtRequestedIndex(manager, &failedDropBackend), -1);
+    QCOMPARE(main.childItems().count(), 3);
+    QCOMPARE(main.childItems().last()->property("backendAppletRef").value<QObject *>(), static_cast<QObject *>(&failedDropBackend));
+
+    // A registered request still wins over the default insertion index.
+    manager.expectAppletInsertionAt(1);
+    QCOMPARE(root.addAppletAtRequestedIndex(manager, &lateBackend), 1);
+    QCOMPARE(main.childItems().at(1)->property("backendAppletRef").value<QObject *>(), static_cast<QObject *>(&lateBackend));
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("10;30;20;40"));
+}
+
+void ContainmentLayoutUnitTest::skipSpacerReorderRequestIsConsumedByOneSave()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    // reorderParabolicSpacers() moves these to the layout tail and head, so
+    // their positions show whether a save() ran it.
+    QQuickItem frontSpacer;
+    QQuickItem rearSpacer;
+    frontSpacer.setProperty("isParabolicEdgeSpacer", true);
+    rearSpacer.setProperty("isParabolicEdgeSpacer", true);
+    frontSpacer.setParentItem(&main);
+    rearSpacer.setParentItem(&main);
+    QQuickItem applet;
+    applet.setParentItem(&main);
+    main.setProperty("startParabolicSpacer", QVariant::fromValue(static_cast<QQuickItem *>(&frontSpacer)));
+    main.setProperty("endParabolicSpacer", QVariant::fromValue(static_cast<QQuickItem *>(&rearSpacer)));
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    // Without a request the spacers are reordered by the first save().
+    manager.save();
+    QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &frontSpacer, &applet, &rearSpacer }));
+    QCOMPARE(main.childItems().last(), &rearSpacer);
+
+    frontSpacer.setParentItem(&main);
+    rearSpacer.setParentItem(&main);
+    QQuickItem secondApplet;
+    secondApplet.setParentItem(&main);
+
+    // The request suppresses exactly one save(); the next save() reorders again.
+    manager.expectSkipSpacerReorderOnce();
+    manager.save();
+    QCOMPARE(main.childItems().last(), &secondApplet);
+    manager.save();
+    QCOMPARE(main.childItems().first(), &frontSpacer);
+    QCOMPARE(main.childItems().last(), &rearSpacer);
+}
 
 QTEST_MAIN(ContainmentLayoutUnitTest)
 

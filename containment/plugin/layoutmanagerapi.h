@@ -39,11 +39,24 @@ class LayoutManagerApi
     virtual void requestAppletsInLockedZoom(const QList<int> &applets) = 0;
     virtual void requestAppletsDisabledColoring(const QList<int> &applets) = 0;
     virtual void setAppletInScheduledDestruction(const int &id, const bool &enabled) = 0;
+
+    //! One-shot request from the application around a synchronous applet
+    //! creation. The manager owns the token from the expect call until the
+    //! matching take in addAppletItem(), or until the caller drops it with the
+    //! negative overload, so a creation that never reports an applet cannot
+    //! leave the next applet at a stale index.
+    //!
+    //! These three members were added in IID 1.1. The dispatcher resolves the
+    //! interface on every call, so a still-installed 1.0 plugin simply does not
+    //! answer to the current IID and takes the legacy property fallback.
+    virtual void expectAppletInsertionAt(const int index) = 0;
+    virtual int takeAppletInsertionIndex() = 0;
+    virtual void expectSkipSpacerReorderOnce() = 0;
 };
 
 }
 
-#define LatteContainmentLayoutManagerApi_iid "org.kde.latte.containment.LayoutManagerApi/1.0"
+#define LatteContainmentLayoutManagerApi_iid "org.kde.latte.containment.LayoutManagerApi/1.1"
 Q_DECLARE_INTERFACE(Latte::Containment::LayoutManagerApi, LatteContainmentLayoutManagerApi_iid)
 
 #endif // CONTAINMENTLAYOUTMANAGERAPI_H

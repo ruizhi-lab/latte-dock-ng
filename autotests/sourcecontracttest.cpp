@@ -424,6 +424,8 @@ private Q_SLOTS:
     void pointerWindowTrackerRemovesDestroyedWindows();
     void visibilityManagerBlockerWrappersDelegateTransitions();
 
+    void insertionRequestIsATypedOneShotProtocol();
+
     // Meta hold on Wayland
     void metaHoldPreferenceIsAnOptInThatTheDialogDoesNotForce();
     void shortcutBadgeShadowEffectsAnchorToTheirLoader();
@@ -5602,6 +5604,9 @@ void SourceContractTest::positionShortcutHostLookupIsRecursiveAndResettable()
     const QString source = QString::fromUtf8(sourceFile.readAll());
     QVERIFY(source.contains(QStringLiteral("findQuickItemByObjectName(searchRoot")));
     QVERIFY(source.contains(QStringLiteral("m_layoutManagerDispatcher.rootItem()")));
+    // The containment plugin is not linked in, so the shortcut-host root must
+    // come from the typed dispatcher rather than a name-based property() read.
+    QVERIFY(!source.contains(QStringLiteral("m_layoutManager->property(")));
     QVERIFY(source.contains(QStringLiteral("clearShortcutsHost();")));
     QVERIFY(source.contains(QStringLiteral("m_shortcutsHostDestroyedConnection")));
 
@@ -6488,3 +6493,46 @@ void SourceContractTest::parabolicIconsKeepStableRasterAndSuspendInvisibleEffect
 QTEST_MAIN(SourceContractTest)
 
 #include "sourcecontracttest.moc"
+
+//! The one-shot insertion protocol replaced a pair of dynamic properties that
+//! spanned C++ and QML. A silent regression here places dropped widgets and
+//! separators at a stale index, so pin both ends: the manager keeps the token
+//! in private state, the application reaches it only through the dispatcher,
+//! and QML consumes it through the typed invokable.
+void SourceContractTest::insertionRequestIsATypedOneShotProtocol()
+{
+    QFile apiFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanagerapi.h"));
+    QVERIFY(apiFile.open(QFile::ReadOnly));
+    const QString apiSource = QString::fromUtf8(apiFile.readAll());
+    QVERIFY(apiSource.contains(QStringLiteral("virtual void expectAppletInsertionAt(const int index) = 0;")));
+    QVERIFY(apiSource.contains(QStringLiteral("virtual int takeAppletInsertionIndex() = 0;")));
+    QVERIFY(apiSource.contains(QStringLiteral("virtual void expectSkipSpacerReorderOnce() = 0;")));
+
+    QFile managerFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(managerFile.open(QFile::ReadOnly));
+    const QString managerSource = QString::fromUtf8(managerFile.readAll());
+    QVERIFY(managerSource.contains(QStringLiteral("int LayoutManager::takeAppletInsertionIndex()")));
+    QVERIFY(managerSource.contains(QStringLiteral("const bool skipSpacerReorder = m_skipSpacerReorderOnce;")));
+    QVERIFY(!managerSource.contains(QStringLiteral("_latte_pendingInsertionIndex")));
+    QVERIFY(!managerSource.contains(QStringLiteral("_latte_skipSpacerReorder")));
+
+    // Only the dispatcher may still speak the legacy dynamic-property protocol,
+    // and only for a plugin from another installation root.
+    QFile dispatcherFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/layoutmanagerapidispatcher.h"));
+    QVERIFY(dispatcherFile.open(QFile::ReadOnly));
+    QVERIFY(QString::fromUtf8(dispatcherFile.readAll()).contains(QStringLiteral("_latte_pendingInsertionIndex")));
+
+    for (const char *relativePath : { "/app/view/containmentinterface.cpp", "/app/view/view.cpp" }) {
+        QFile callerFile(QStringLiteral(LATTE_SOURCE_DIR) + QLatin1String(relativePath));
+        QVERIFY2(callerFile.open(QFile::ReadOnly), relativePath);
+        const QString callerSource = QString::fromUtf8(callerFile.readAll());
+        QVERIFY2(!callerSource.contains(QStringLiteral("_latte_pendingInsertionIndex")), relativePath);
+        QVERIFY2(!callerSource.contains(QStringLiteral("_latte_skipSpacerReorder")), relativePath);
+    }
+
+    QFile containmentQml(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/main.qml"));
+    QVERIFY(containmentQml.open(QFile::ReadOnly));
+    const QString containmentSource = QString::fromUtf8(containmentQml.readAll());
+    QVERIFY(containmentSource.contains(QStringLiteral("fastLayoutManager.takeAppletInsertionIndex()")));
+    QVERIFY(!containmentSource.contains(QStringLiteral("fastLayoutManager._latte_pendingInsertionIndex")));
+}

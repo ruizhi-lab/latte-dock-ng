@@ -1075,18 +1075,26 @@ void ContainmentInterface::addApplet(const QString &pluginId)
         return;
     }
 
-    // Calculate the default insertion index and set it BEFORE creating the
+    // Calculate the default insertion index and register it BEFORE creating the
     // applet so the QML handler's addAppletItem call places it correctly.
     if (m_layoutManager) {
         QList<int> order = m_layoutManagerDispatcher.order();
         if (!order.isEmpty()) {
             int defaultIndex = calculateDefaultAppletInsertionIndex(order);
-            m_layoutManager->setProperty("_latte_pendingInsertionIndex", defaultIndex);
+            m_layoutManagerDispatcher.expectAppletInsertionAt(defaultIndex);
         }
     }
 
     suppressNextAppletCreatedSignal();
     Plasma::Applet *createdApplet = m_view->containment()->createApplet(pluginId);
+
+    //! Plasma reports success synchronously, but no applet means no addAppletItem
+    //! call consumed the request; dropping it keeps the next applet from landing
+    //! on this stale index.
+    if (!createdApplet) {
+        m_layoutManagerDispatcher.expectAppletInsertionAt(-1);
+    }
+
     qCDebug(latteView) << "org.kde.sync containment createApplet(plugin) result"
                        << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
                        << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
@@ -1203,7 +1211,7 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
 
     const QStringList separatorPlugins{ QLatin1String(Latte::PluginId::kSeparator) };
 
-    //! Set pending insertion index so that onAppletAdded (fired synchronously
+    //! Register the insertion request so that onAppletAdded (fired synchronously
     //! during createApplet) places the separator at the correct target position
     //! immediately, avoiding the default "end of left-side widgets" fallback
     //! and the jitter from multiple asynchronous setAppletsOrder repositionings.
@@ -1213,8 +1221,8 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     //! Grid recalculation within addAppletItem, producing the visible
     //! back-and-forth icon oscillation perceived as jitter.
     if (m_layoutManager) {
-        m_layoutManager->setProperty("_latte_pendingInsertionIndex", targetIndex);
-        m_layoutManager->setProperty("_latte_skipSpacerReorder", true);
+        m_layoutManagerDispatcher.expectAppletInsertionAt(targetIndex);
+        m_layoutManagerDispatcher.expectSkipSpacerReorderOnce();
     }
 
     Plasma::Applet *separatorApplet{nullptr};
@@ -1232,12 +1240,12 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
         }
     }
 
-    // Clear the pending index and spacer-reorder suppression if they were
-    // not consumed (e.g. applet creation raced or a different code path
-    // cleared them already).
+    // Drop the insertion request if no creation consumed it (e.g. the plugin
+    // rejected the separator plugin). The manager's spacer suppression stays
+    // set until the next save() consumes it, which is the documented one-shot
+    // behaviour and cannot outlive the operation's own save().
     if (m_layoutManager) {
-        m_layoutManager->setProperty("_latte_pendingInsertionIndex", QVariant());
-        m_layoutManager->setProperty("_latte_skipSpacerReorder", QVariant());
+        m_layoutManagerDispatcher.expectAppletInsertionAt(-1);
     }
 
     if (!separatorApplet) {
@@ -1263,7 +1271,7 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     m_cleaningSeparatorApplets = true;
 
     //! Apply the new order once after a brief delay to give the separator
-    //! QQuickItem (placed by addAppletItem via _latte_pendingInsertionIndex)
+    //! QQuickItem (placed by addAppletItem through the insertion request)
     //! time to initialize, then persist to config.
     QTimer::singleShot(30, this, [this, newOrder]() {
         setAppletsOrder(newOrder);
@@ -2259,19 +2267,16 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         return;
     }
 
-    // Check for a pending insertion index set by View::handlePlasmoidDrop.
+    // Check for an insertion request registered by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler cannot match the Plasma 6
     // signal signature (appletAdded(Plasma::Applet*, const QRectF&) vs the
     // expected (applet, int, int)), so we handle position-aware insertion
     // here in C++ instead.
     if (m_layoutManager) {
-        QVariant pendingIndex = m_layoutManager->property("_latte_pendingInsertionIndex");
+        const int pendingIndex = m_layoutManagerDispatcher.takeAppletInsertionIndex();
 
-        if (pendingIndex.isValid()) {
-            int index = pendingIndex.toInt();
-            m_layoutManager->setProperty("_latte_pendingInsertionIndex", QVariant()); // clear
-
-            m_layoutManagerDispatcher.addAppletItem(applet, index);
+        if (pendingIndex >= 0) {
+            m_layoutManagerDispatcher.addAppletItem(applet, pendingIndex);
         } else {
             // No drag-drop index. The QML handler never fires in Plasma 6,
             // so we must create the container ourselves here. Place new

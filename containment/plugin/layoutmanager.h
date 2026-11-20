@@ -130,6 +130,12 @@ public Q_SLOTS:
     Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &applets) override;
     Q_INVOKABLE void setAppletInScheduledDestruction(const int &id, const bool &enabled) override;
 
+    //! One-shot insertion protocol; see LayoutManagerApi for the lifetime rule.
+    //! The negative expect overload clears an unconsumed request.
+    void expectAppletInsertionAt(const int index) override;
+    int takeAppletInsertionIndex() override;
+    void expectSkipSpacerReorderOnce() override;
+
 
 Q_SIGNALS:
     void appletOrderChanged();
@@ -259,6 +265,18 @@ private:
     //! first QString is the option in AppletItem
     //! second QString is how the option is stored in
     QHash<QString, QString> m_option;
+
+    //! Pending one-shot insertion request. A non-negative value is the index an
+    //! applet created by the next addAppletItem() call must use instead of the
+    //! index or (x,y) the caller passes; -1 means no request. It is consumed by
+    //! the first addAppletItem() dispatch and cleared when the requester drops
+    //! it, so a creation that never reports an applet cannot displace a later
+    //! applet to a stale position.
+    int m_pendingInsertionIndex{-1};
+
+    //! Set while a programmatic separator creation runs. save() must skip
+    //! reorderParabolicSpacers() once while it is set and then clear it.
+    bool m_skipSpacerReorderOnce{false};
 };
 }
 }

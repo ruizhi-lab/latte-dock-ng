@@ -240,7 +240,7 @@ post-push Build workflow. No desktop behavior changed.
 | P4 | Shared task-query evaluation, then a bounded implementation if justified | Paired Release work and CPU/PSS evidence, accepted ownership design |
 | P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
 | P6 | Module cold/warm measurement and override-safe build prototype | Demonstrated module-specific Release cost |
-| M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design; documents alone are not implementation |
+| M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design; documents alone are not implementation. For R6 the remaining LayoutManager slices are S5 (needs the drag profile), S6 and S7; S1–S4 are implemented |
 
 R8j remains closed at the user's decision. Its unrun 60-window experiment is
 not a scheduled task. A new memory investigation requires its own design and
@@ -259,6 +259,30 @@ justify resource measurement or a shared-query implementation.
 P6's [scratch Release build preflight](modernization-results/P6-scratch-build-baseline.md)
 establishes a local build baseline only; it does not measure module-attributable
 runtime import cost or justify a build-system change.
+
+## R6 LayoutManager continuation (2026-11-20)
+
+S3 was already accepted when the execution queue was written; the next named
+action was S4.
+
+- R6-S4: [typed one-shot insertion protocol](modernization-results/R6-layoutmanager-s4.md)
+  replaces `_latte_pendingInsertionIndex` and `_latte_skipSpacerReorder` with
+  typed `LayoutManagerApi` members (IID `.../1.1`) owned by the manager and
+  written only through `LayoutManagerApiDispatcher`; the dispatcher keeps the
+  dynamic-property fallback for a pre-S4 plugin, and both creation sites drop
+  an unconsumed request, closing the stale-index hazard in the
+  [design](modernization-results/R6-layoutmanager-design.md#-family-4-name-channels-in-both-directions-dynamic-properties-and-qml-binding--property-).
+  QML, registered names and persisted keys are unchanged. **Complete except**
+  the user's desktop interaction retest (design §7.4) and the clazy and
+  clang-tidy gates: `clazy-standalone` is not installed on this host, so
+  `scripts/test-clazy.py` aborts and neither gate ran here. GCC and Clang Debug
+  full builds have zero compiler warnings and pass 65/65 CTest each; the
+  qmllint errors-only gate is clean on 244 files; a user-mode Debug startup
+  logged both containment orders with no warning or error entries.
+- Next action: the user runs the S4 desktop retest; the published CI run then
+  owns the clazy/clang-tidy gates. S5 (typed QML pushes for the drag path)
+  stays blocked on the profile named in design §9 — no measurement exists, so
+  it is not the next automatic slice. S6 and S7 are not selected.
 
 ## References
 

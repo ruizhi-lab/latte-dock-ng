@@ -18,6 +18,10 @@ namespace Latte::ViewPart {
 //! installation root. The guarded QObject is the lifetime authority; the
 //! interface is resolved for each call so destruction or replacement cannot
 //! leave a cached plugin pointer behind.
+//!
+//! This dispatcher is the only writer of the one-shot insertion protocol: the
+//! typed manager keeps the token in private state and the legacy fallback uses
+//! the older dynamic property names. No other application code sets those names.
 class LayoutManagerApiDispatcher final
 {
   public:
@@ -164,6 +168,41 @@ class LayoutManagerApiDispatcher final
             api->setAppletInScheduledDestruction(id, enabled);
         } else if (m_object) {
             QMetaObject::invokeMethod(m_object, "setAppletInScheduledDestruction", Qt::DirectConnection, Q_ARG(int, id), Q_ARG(bool, enabled));
+        }
+    }
+
+    //! One-shot insertion protocol. A plugin without the typed interface still
+    //! publishes the older dynamic-property channel, so the fallback keeps the
+    //! previous behaviour instead of silently dropping the request. A negative
+    //! index drops an unconsumed request.
+    void expectAppletInsertionAt(const int index) const
+    {
+        if (auto *api = typedApi()) {
+            api->expectAppletInsertionAt(index);
+        } else if (m_object) {
+            m_object->setProperty("_latte_pendingInsertionIndex", index >= 0 ? QVariant(index) : QVariant());
+        }
+    }
+
+    int takeAppletInsertionIndex() const
+    {
+        if (auto *api = typedApi()) {
+            return api->takeAppletInsertionIndex();
+        }
+        if (!m_object) {
+            return -1;
+        }
+        const QVariant pendingIndex = m_object->property("_latte_pendingInsertionIndex");
+        m_object->setProperty("_latte_pendingInsertionIndex", QVariant());
+        return pendingIndex.isValid() ? pendingIndex.toInt() : -1;
+    }
+
+    void expectSkipSpacerReorderOnce() const
+    {
+        if (auto *api = typedApi()) {
+            api->expectSkipSpacerReorderOnce();
+        } else if (m_object) {
+            m_object->setProperty("_latte_skipSpacerReorder", true);
         }
     }
 

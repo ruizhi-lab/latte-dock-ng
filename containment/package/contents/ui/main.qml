@@ -760,12 +760,12 @@ ContainmentItem {
     }
 
     Containment.onAppletAdded: function(applet, geometryHint) {
-        // C++ drag-drop path sets _latte_pendingInsertionIndex before
-        // creating the applet.  Use it when present.
-        var pendingIndex = fastLayoutManager._latte_pendingInsertionIndex;
-        if (pendingIndex !== undefined && pendingIndex >= 0) {
+        // The C++ drag-drop and separator paths register a one-shot insertion
+        // request before creating the applet. Taking it consumes it, so this
+        // handler never has to write manager state back.
+        var pendingIndex = fastLayoutManager.takeAppletInsertionIndex();
+        if (pendingIndex >= 0) {
             fastLayoutManager.addAppletItem(applet, pendingIndex);
-            fastLayoutManager._latte_pendingInsertionIndex = undefined;
         } else {
             // Plasma 6: signal is appletAdded(Plasma::Applet*, const QRectF&).
             // The geometry hint is not used because Latte determines the
