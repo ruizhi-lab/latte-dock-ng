@@ -309,8 +309,23 @@ action was S4.
   changed. GCC/Clang Debug: zero compiler warnings, 65/65 CTest each; qmllint
   gate OK; a user-mode Debug run logged 0 role warnings. The typed base class
   itself is not started.
-- Next action: S7 is the only remaining R6 candidate and is not selected;
-  nothing in this queue is blocked on the user.
+- R6-S7: [evaluated, not started](modernization-results/R6-layoutmanager-s7-evaluation.md).
+  Moving the creation functions to C++ does not remove the QML-engine boundary:
+  their bodies own a `Qt.binding()` over `status`, `isHidden` and
+  `keepVisibleOnHiddenStatus`, where `status` is itself resolved dynamically, and
+  a per-container retry timer whose path no autotest covers. The opacity-based
+  visibility is deliberate. The functions are also a compatibility surface for
+  separately installed plugins.
+- R6-S8: [measured, not implemented](modernization-results/R6-layoutmanager-s8-evaluation.md).
+  This is the repository's only per-pointer-move named call, so it was worth
+  measuring: over 7831 hover samples `indexOfMethod()` costs 1.11 µs and
+  `method()` 0.055 µs against a 196 µs invocation (0.59 %). Caching the method
+  would save ~1.2 µs of a 16.7 ms frame, below noise. The remaining 196 µs is the
+  QML parabolic computation, a separate candidate.
+- Next action: this round of R6 is closed on evidence — S1–S4 implemented, S6
+  shipped as diagnostics, S5/S7/S8 recorded as measured or assessed negatives.
+  Nothing in this queue is blocked on the user. A future slice needs its own
+  accepted design and, for the parabolic computation, a Release profile.
 
 ## References
 

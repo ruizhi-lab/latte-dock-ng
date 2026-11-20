@@ -386,11 +386,20 @@ original proposal, not as pending work.
 - **Tests:** `containmentlayoutunittest` setters; a `QQmlComponent` test of the bindings is possible but not verified.
 - **Desktop retest:** change alignment while dragging a plasmoid and an applet.
 
-### 7.6 Later slices (not started)
+### 7.6 Later slices (evaluated 2026-11-20; none implemented)
 
 - **S6, typed layout-item base type (large, after S3):** a C++ `QQuickItem` base for layout slots with typed `isInternalViewSplitter`, `isParabolicEdgeSpacer`, `backendAppletRef` and `applet`. `AppletItem.qml` and `layouts/ParabolicEdgeSpacer.qml` derive from it. The QML root type changes, so review the 60 `qmllint` baseline entries for `AppletItem.qml` and check bindings and performance.
-- **S7, creation path in C++ (large, last):** replace `createAppletItem` and `initAppletContainer` with C++ creation from a typed `QQmlComponent*`, the C++ resolver, and a C++ retry timer in place of `Qt.createQmlObject` (`main.qml:813-833`). The opacity-based visibility (`main.qml:821-826`, `:838-843`) must be kept; the repository calls it deliberate (`docs/architecture-modernization-plan.md:122-124`).
-- **S8, conditional: parabolic per-event invocation.** Cache the `QMetaMethod` per item (`parabolic.cpp:72`, `:114`, `:211`) only if the profile in section 9 shows the lookups matter.
+- **S7, creation path in C++ (large, last) — evaluated, not started:** see
+  [the S7 record](R6-layoutmanager-s7-evaluation.md). The bodies that would move
+  own a `Qt.binding()` over dynamically resolved state plus a per-container retry
+  timer with no autotest coverage, so the slice is not the mechanical refactor the
+  name suggests.
+- **S7 (original wording):** replace `createAppletItem` and `initAppletContainer` with C++ creation from a typed `QQmlComponent*`, the C++ resolver, and a C++ retry timer in place of `Qt.createQmlObject` (`main.qml:813-833`). The opacity-based visibility (`main.qml:821-826`, `:838-843`) must be kept; the repository calls it deliberate (`docs/architecture-modernization-plan.md:122-124`).
+- **S8, conditional: parabolic per-event invocation — measured, closed.** Cache the
+  `QMetaMethod` per item (`parabolic.cpp:72`, `:114`, `:211`) only if the profile
+  shows the lookups matter. They do not: over 7831 hover samples the lookup is
+  0.59 % of a 196 µs invocation. See
+  [the S8 record](R6-layoutmanager-s8-evaluation.md).
 
 ### 7.7 Desktop retest list for S2 to S4 (run by the user, per AGENTS.md)
 
