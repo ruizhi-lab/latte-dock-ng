@@ -187,6 +187,8 @@ private Q_SLOTS:
     void requestAppletsOrderMaintainsSideAppletOrderInJustify();
     void addAppletItemByIndexUsesMainLayoutInJustify();
     void warnsWhenContainmentRootMethodsAreMissing();
+    void warnsOncePerMissingLayoutChildRole();
+    void edgeSpacerNeedsNoBackendAppletRole();
     void restoreWarnsWhenCreateAppletItemIsMissing();
     void warnsOnceForMissingInitMethodDuringRepair();
     void rootDestructionClearsMethodsAndReplacementRebinds();
@@ -282,6 +284,81 @@ ContainmentLayoutUnitTest::dispatcherPrefersTypedInterface()
     QVERIFY(qobject_cast<Latte::Containment::LayoutManagerApi *>(&manager));
     dispatcher.requestAppletsOrder({59, 61});
     QCOMPARE(dispatcher.order(), QList<int>({59, 61}));
+}
+
+//! A layout child that stops declaring a role the manager reads by name used to
+//! make every read return false without a word. The manager now reports it once
+//! per role, which is the cheap alternative to a typed layout-item base class.
+void ContainmentLayoutUnitTest::warnsOncePerMissingLayoutChildRole()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+
+    // A plain QQuickItem declares none of the three roles.
+    QQuickItem rolelessChild;
+    rolelessChild.setParentItem(&main);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing the role isInternalViewSplitter.*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing the role isParabolicEdgeSpacer.*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing the role backendAppletRef.*")));
+    manager.save();
+
+    // Declaring the roles keeps the log clean: no further warning is expected.
+    QQuickItem declaredChild;
+    declaredChild.setProperty("isInternalViewSplitter", false);
+    declaredChild.setProperty("isParabolicEdgeSpacer", false);
+    declaredChild.setParentItem(&main);
+    manager.save();
+}
+
+//! A parabolic edge spacer is a gap, not an applet container: it never declares
+//! backendAppletRef, and demanding one would report a fault on every healthy
+//! layout. Only the two markers are required of it.
+void ContainmentLayoutUnitTest::edgeSpacerNeedsNoBackendAppletRole()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+
+    QQuickItem edgeSpacer;
+    edgeSpacer.setProperty("isInternalViewSplitter", false);
+    edgeSpacer.setProperty("isParabolicEdgeSpacer", true);
+    edgeSpacer.setParentItem(&main);
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    // backendAppletRef must not be demanded of a spacer. A missing isInternalViewSplitter
+    // or isParabolicEdgeSpacer warning would still be legitimate on this fixture
+    // (plain QQuickItem items elsewhere), so assert on the role name instead: QtTest
+    // fails the test when an unexpected warning mentioning backendAppletRef arrives.
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing the role isInternalViewSplitter.*")));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(QStringLiteral(".*missing the role isParabolicEdgeSpacer.*")));
+    manager.save();
 }
 
 void

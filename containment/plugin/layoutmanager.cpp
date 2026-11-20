@@ -1309,6 +1309,44 @@ void LayoutManager::restoreOption(const QString &option)
     }
 }
 
+void LayoutManager::warnLayoutChildRoleMissingOnce(const QMetaObject *metaObject, const char *propertyName)
+{
+    if (!metaObject || m_warnedLayoutChildRoles.contains(QByteArray(propertyName))) {
+        return;
+    }
+
+    m_warnedLayoutChildRoles.insert(QByteArray(propertyName));
+    qCWarning(latteContainment) << "Layout child item is missing the role" << propertyName
+                                << "read by the containment manager; reads of it now silently return false. Which layout "
+                                   "class was inspected:" << metaObject->className();
+}
+
+void LayoutManager::noteLayoutChildRoles(const QQuickItem *item)
+{
+    //! Only local QML layout children are required to declare these; Plasma-owned
+    //! applet Quick items use their own API and are skipped.
+    if (!item || !item->metaObject()->inherits(&QQuickItem::staticMetaObject)) {
+        return;
+    }
+
+    //! The parabolic edge spacer is a gap, not an applet container: it never had a
+    //! backendAppletRef, so requiring one would report a fault on every normal
+    //! layout. Each role is checked only on the classes that carry it.
+    const bool isEdgeSpacer = item->property("isParabolicEdgeSpacer").toBool();
+
+    for (const char *role : { "isInternalViewSplitter", "isParabolicEdgeSpacer", "backendAppletRef" }) {
+        //! A spacer declares the two markers only; an applet container declares
+        //! backendAppletRef as well.
+        if (isEdgeSpacer && qstrcmp(role, "backendAppletRef") == 0) {
+            continue;
+        }
+
+        if (item->metaObject()->indexOfProperty(role) < 0) {
+            warnLayoutChildRoleMissingOnce(item->metaObject(), role);
+        }
+    }
+}
+
 bool LayoutManager::isJustifySplitter(const QQuickItem *item) const
 {
     return item && (item->property("isInternalViewSplitter").toBool() == true);
@@ -1365,6 +1403,9 @@ void LayoutManager::save()
     auto collectLayoutAppletIds = [this](QQuickItem * layout, QList<int> &appletIds) {
         for (int i = 0; i < layout->childItems().count(); ++i) {
             QQuickItem *item = layout->childItems().at(i);
+            //! First contact with each layout class: report a role it stopped
+            //! declaring, instead of reading false for the rest of the session.
+            noteLayoutChildRoles(item);
             bool isInternalSplitter = item->property("isInternalViewSplitter").toBool();
             bool isParabolicEdgeSpacer = item->property("isParabolicEdgeSpacer").toBool();
 

@@ -369,9 +369,19 @@ Option 1 keeps the module layout, adds one interface, and lets each slice ship o
 - **Tests:** `containmentlayoutunittest` cases: a token is taken once; the skip flag is consumed by one `save()`; `addAppletItem(applet, -1)` uses the token when present.
 - **Desktop retest:** add a separator; drop a Widget Explorer entry at a position; drop launchers and files on the dock; repeat after a restart.
 
-### 7.5 S5: typed QML pushes for the drag path (start only after the profile in section 9)
+### 7.5 S5: typed QML pushes for the drag path (evaluated, not implemented)
 
-- **Change:** add typed `Q_PROPERTY` values with `NOTIFY` to `LayoutManager`: `viewAlignment` (int), `formFactor` (int), `viewObject` (`QObject *`, the `myView` item), and the layout spacing. Bind them in `main.qml:1202-1215`. Use them in `readConfigValue()` (`layoutmanager.cpp:471-500`) and `insertAtLayoutCoordinates()` (`:1593-1596`). Keep the configuration fallback and `alignmentFromVariant()` for unset values. The configured `alignment` is `Int` (`containment/package/contents/config/main.xml:8`), so the string branch is defensive.
+**Evaluated on 2026-11-20 and closed: the premise below does not hold.**
+`insertAtLayoutCoordinates()` contains no `readConfigValue()` call, and
+`readConfigValue("alignment")` is reached only from `requestAppletsOrder()`, so an
+applet drag — which sorts through `AppletItem.qml`'s `insertBefore()`/`insertAfter()`
+— never executes either access group this slice would type. A temporary probe
+recorded six event-driven alignment reads (median 5.71 µs) and zero samples on the
+insertion path. See [the S5 record](R6-layoutmanager-s5-evaluation.md) for the
+measurements and the corrected hot-path analysis. The plan below is kept as the
+original proposal, not as pending work.
+
+- **Change (proposed, not done):** add typed `Q_PROPERTY` values with `NOTIFY` to `LayoutManager`: `viewAlignment` (int), `formFactor` (int), `viewObject` (`QObject *`, the `myView` item), and the layout spacing. Bind them in `main.qml:1202-1215`. Use them in `readConfigValue()` (`layoutmanager.cpp:471-500`) and `insertAtLayoutCoordinates()` (`:1593-1596`). Keep the configuration fallback and `alignmentFromVariant()` for unset values. The configured `alignment` is `Int` (`containment/package/contents/config/main.xml:8`), so the string branch is defensive.
 - **Constraint:** the live-first order in `readConfigValue()` is deliberate; the comment at `layoutmanager.cpp:474-476` says KConfig can still hold the previous value during an alignment switch. The typed value must keep that order.
 - **Tests:** `containmentlayoutunittest` setters; a `QQmlComponent` test of the bindings is possible but not verified.
 - **Desktop retest:** change alignment while dragging a plasmoid and an applet.

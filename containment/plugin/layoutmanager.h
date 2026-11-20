@@ -222,6 +222,18 @@ private:
 private:
     void warnRootInvocationFailureOnce(const QMetaMethod &method, const char *functionName);
 
+    //! A layout-child role the manager reads by name (isInternalViewSplitter,
+    //! isParabolicEdgeSpacer, backendAppletRef) is declared in the containment QML.
+    //! A rename turns every read into QVariant() -> false without a single line of
+    //! output, so a broken layout silently keeps working with wrong answers.
+    //! Report the absence once per name instead: it costs nothing at run time and
+    //! needs no QML root-type change. `applet` is deliberately excluded because
+    //! Plasma supplies it on backend applet objects rather than in this package.
+    void warnLayoutChildRoleMissingOnce(const QMetaObject *metaObject, const char *propertyName);
+    void noteLayoutChildRoles(const QQuickItem *item);
+
+    QSet<QByteArray> m_warnedLayoutChildRoles;
+
     //! This is needed in order to overcome plasma frameworks limitations and instead of adding dropped widgets
     //! based on coordinates, to be able to add them directly at the correct index
     static const int MASQUERADEDINDEXTOPOINTBASE = -23456;

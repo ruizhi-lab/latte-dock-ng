@@ -279,10 +279,38 @@ action was S4.
   full builds have zero compiler warnings and pass 65/65 CTest each; the
   qmllint errors-only gate is clean on 244 files; a user-mode Debug startup
   logged both containment orders with no warning or error entries.
+- R6-S5: [measured, not implemented](modernization-results/R6-layoutmanager-s5-evaluation.md).
+  The slice was gated on a drag profile. The profile disproves its premise:
+  `insertAtLayoutCoordinates()` contains no `readConfigValue()` call, and
+  `readConfigValue("alignment")` is reached only from `requestAppletsOrder()`,
+  which an applet drag never runs (`AppletItem.qml` sorts with
+  `insertBefore()`/`insertAfter()`). A temporary probe collected six
+  event-driven alignment-read samples (median 5.71 µs) and **zero** samples of
+  the insertion-path reads. Probe removed, user installation uninstalled, no
+  source change: **S5 is closed as unjustified**.
 - Next action: the user runs the S4 desktop retest; the published CI run then
-  owns the clazy/clang-tidy gates. S5 (typed QML pushes for the drag path)
-  stays blocked on the profile named in design §9 — no measurement exists, so
-  it is not the next automatic slice. S6 and S7 are not selected.
+  owns the clazy/clang-tidy gates. The per-drag name calls the profile did find
+  (`insertBefore`/`insertAfter`, `createAppletItem`, `initAppletContainer`)
+  belong to S7, not S5.
+- R6-S6: [evaluated, not recommended as written](modernization-results/R6-layoutmanager-s6-evaluation.md).
+  The sixteen name-based layout-child reads all sit in structural functions, so
+  the slice has no performance case either; its value is type safety. It costs a
+  new registered QML type, both root types (`AppletItem.qml` at 2077 lines and
+  `layouts/ParabolicEdgeSpacer.qml`) and all 60 qmllint baseline entries for
+  `AppletItem.qml`. The same defect class — a renamed property silently reading
+  as false — can be closed with missing-property diagnostics in the manager, the
+  shape S1 already used for the root functions, without changing any QML.
+- R6-S6 (implemented as diagnostics): `LayoutManager::noteLayoutChildRoles()`
+  reports once per role a layout child stops declaring, using the same shape S1
+  used for the root functions. A first draft demanded every role of every child
+  and produced two false warnings on a real desktop, because a parabolic edge
+  spacer never has `backendAppletRef`; the role list is now per class and
+  `edgeSpacerNeedsNoBackendAppletRole` pins it. No QML and no qmllint baseline
+  changed. GCC/Clang Debug: zero compiler warnings, 65/65 CTest each; qmllint
+  gate OK; a user-mode Debug run logged 0 role warnings. The typed base class
+  itself is not started.
+- Next action: S7 is the only remaining R6 candidate and is not selected;
+  nothing in this queue is blocked on the user.
 
 ## References
 
