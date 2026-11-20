@@ -309,6 +309,11 @@ jobs:
       actions: read
       contents: write
     steps:
+      # The asset verifier is a repository script, so the source must be present.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+
       - name: Download packages from the successful pre-release gate
         uses: actions/download-artifact@v7
         with:
@@ -318,10 +323,31 @@ jobs:
           merge-multiple: true
           path: dist
 
+      # The asset verifier compares the published set against the recorded
+      # candidate, so the record is needed in this job as well.
+      - name: Download candidate identity
+        uses: actions/download-artifact@v7
+        with:
+          name: release-candidate-metadata
+          run-id: ${{ needs.main-validation.outputs.build_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: release-metadata
+
       - name: Verify release asset set
         run: |
-          test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 7
+          # Count alone would accept a set where one distribution replaced
+          # another, and Mageia is legitimately absent while Cauldron cannot
+          # build. Reuse the distribution-aware check from the validation
+          # script instead of hardcoding a package count here.
+          python3 scripts/release-version.py verify \
+            --version "${RELEASE_TAG#v}" --sha "$SOURCE_SHA" \
+            --run-id "$BUILD_RUN_ID" --packages dist \
+            --file release-metadata/release-candidate.json
           ls -la dist/
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+          BUILD_RUN_ID: ${{ needs.main-validation.outputs.build_run_id }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3

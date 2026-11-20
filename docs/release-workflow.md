@@ -261,6 +261,16 @@ fails. Releasing the gate means removing `mageia` from
 `TOLERATED_ABSENT_DISTROS`; the release notes for such a release must state
 that Mageia was not validated.
 
+`Release` had the same assumption in its own `Verify release asset set` step,
+`test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 7`, which failed
+`Create Release from validated packages` after the tag already existed. That
+step now runs the same `release-version.py verify` as `main-validation`, so a
+single distribution-aware check decides the question in both places. It also
+checks out the source and downloads `release-candidate-metadata`, because the
+verifier is a repository script and needs the recorded candidate. Keep package
+set validation in that one script: a fourth hardcoded count would break the
+release the same way.
+
 On 2026-11-03, Plasma 6.8.2 reached the supported targets and bumped
 `libPlasma`/`libPlasmaQuick` from soname 7 to 8. Packages published before that
 bump stay linked to soname 7, so Fedora 44, openSUSE Tumbleweed and Arch users
