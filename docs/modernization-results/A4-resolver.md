@@ -167,3 +167,41 @@ pending; the isolated production policy tests and adapter contracts are narrower
 evidence. This local acceptance snapshot preceded the user's authorized
 commit/push of `803cce3d9`; remote CI is tracked separately from the
 subsequent [T3 expansion](T3.md).
+
+## A4 completion: primary-not-zero and nested containment (2026-11-20)
+
+The two cases this record left pending are now covered, by making the untested
+parts of the chain testable rather than by building an app-sized fixture.
+
+**Nested containment.** `Corona::screenForContainment()` carried the parent-applet
+walk as an inline loop with a `depth < 16` guard that no test could reach. The walk
+now lives in `Latte::Layout::NestingContainmentResolver`
+(`app/layout/containmentscreenresolver.h`) next to the existing
+`ContainmentScreenResolver`, and Corona calls it. Extracting it exposed a real
+defect in the first draft: `outermost()` returned the `nullptr` that ended the
+walk instead of the outermost containment, which would have dropped a nested
+applet's dock to "unknown". `exceedsDepth()` keeps the previous -1 answer for a
+chain deeper than the guard, and a cyclic parent graph now terminates instead of
+recursing.
+
+**Primary not zero.** The populated fixture used connector 0 for the primary, so a
+resolver that hard-coded a zero primary could not be distinguished from a correct
+one. `primaryScreenIdIsNotAssumedToBeZero` sets the primary connector to 3 and
+requires the pending `onPrimary` update to follow it, counts the primary read, and
+separately checks that without a Corona the pending screen is used verbatim even
+when it is 0.
+
+`containmentscreenresolvertest` grows from 9 to 12 cases. Two mutations were run
+and both are caught: returning `nullptr` from `outermost()` fails the nested case,
+and raising `MAXDEPTH` above 16 fails the depth case — the latter only because the
+test pins the literal 16 instead of comparing against the constant, which would
+have passed for any cap.
+
+`sourcecontracttest::lattecoronaScreenForContainmentHasDepthGuard` now pins that
+Corona goes through the resolver and that the guard constant lives there, instead
+of matching the removed inline `depth < 16` text.
+
+GCC and Clang Debug: zero compiler warnings, 65/65 CTest each; `qmllint` gate OK
+on 244 files. A physical two-output retest was not run for this change; the
+behaviour it exercises is unchanged in kind from the inline loop, and R7's hotplug
+evidence remains the separate desktop record.

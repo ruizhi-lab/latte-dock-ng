@@ -5073,9 +5073,19 @@ void SourceContractTest::lattecoronaScreenForContainmentHasDepthGuard()
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
-    // screenForContainment parent-applet chain walk must be
-    // depth-limited (max 16 hops) instead of unbounded recursion.
-    QVERIFY(src.contains(QStringLiteral("depth < 16")));
+    // The parent-applet chain walk must stay depth-limited and must go through
+    // the tested policy instead of an inline loop: the depth guard now lives in
+    // NestingContainmentResolver, and excluding it from Corona would let a cyclic
+    // parent graph recurse without bound again.
+    QVERIFY(src.contains(QStringLiteral("NestingContainmentResolver::exceedsDepth(cont, parentContainment)")));
+    QVERIFY(src.contains(QStringLiteral("NestingContainmentResolver::outermost(cont, parentContainment)")));
+    QVERIFY(!src.contains(QStringLiteral("depth < 16")));
+
+    QFile resolver(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/containmentscreenresolver.h"));
+    QVERIFY(resolver.open(QFile::ReadOnly));
+    const QString resolverSource = QString::fromUtf8(resolver.readAll());
+    QVERIFY(resolverSource.contains(QStringLiteral("static constexpr int MAXDEPTH = 16;")));
+    QVERIFY(resolverSource.contains(QStringLiteral("depth < MAXDEPTH")));
 }
 
 void SourceContractTest::genericLayoutScreenMappingUsesLazyAuthoritativeAdapters()

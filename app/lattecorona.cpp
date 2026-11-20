@@ -18,6 +18,7 @@
 #include "data/layouticondata.h"
 #include "indicator/factory.h"
 #include "layout/abstractlayout.h"
+#include "layout/containmentscreenresolver.h"
 #include "layout/centrallayout.h"
 #include "layout/genericlayout.h"
 #include "layouts/appletids.h"
@@ -1247,20 +1248,26 @@ int Corona::screenForContainment(const Plasma::Containment *containment) const
     // Plasma's persisted last screen is the fallback during startup or teardown.
 
     //case in which this containment is child of an applet, hello systray :)
+    // The walk itself is a pure policy step in NestingContainmentResolver so it
+    // can be tested without building a Corona; see the A4 records.
     if (Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent())) {
         if (Plasma::Containment *cont = parentApplet->containment()) {
-            // Walk parent containment chain with a depth guard.
-            const Plasma::Containment *walker = cont;
-
-            for (int depth = 0; depth < 16 && walker; ++depth) {
+            auto parentContainment = [](Plasma::Containment *walker) -> Plasma::Containment * {
                 if (Plasma::Applet *a = qobject_cast<Plasma::Applet *>(walker->parent())) {
-                    walker = a->containment();
-                } else {
-                    break;
+                    return a->containment();
                 }
+
+                return nullptr;
+            };
+
+            //! A chain deeper than the guard is unresolvable rather than
+            //! partially resolved; the previous inline walk answered -1 there.
+            if (Layout::NestingContainmentResolver::exceedsDepth(cont, parentContainment)) {
+                return -1;
             }
 
-            return walker ? screenForContainment(walker) : -1;
+            Plasma::Containment *outermost = Layout::NestingContainmentResolver::outermost(cont, parentContainment);
+            return outermost ? screenForContainment(outermost) : -1;
         } else {
             return -1;
         }
