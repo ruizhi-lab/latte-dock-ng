@@ -322,6 +322,15 @@ action was S4.
   `method()` 0.055 µs against a 196 µs invocation (0.59 %). Caching the method
   would save ~1.2 µs of a 16.7 ms frame, below noise. The remaining 196 µs is the
   QML parabolic computation, a separate candidate.
+- Parabolic computation (candidate, now measured): 196 µs p50 on Debug versus
+  184 µs p50 on Release across 958 samples each. A 6 % gap means the cost is QML
+  interpretation and JavaScript allocation, not compiled arithmetic, so a C++
+  port of `applyParabolicEffect()` would not reach it and would cross the same
+  engine boundary S7 rejected. Closed as unjustified; a future attempt must
+  reduce per-move work instead. During this measurement a Release binary was run
+  against the Debug `dev-env.sh` QML overlay, which broke window previews until
+  the packaged dock was restored; the record documents that and the leftover
+  state it created.
 - Next action: this round of R6 is closed on evidence — S1–S4 implemented, S6
   shipped as diagnostics, S5/S7/S8 recorded as measured or assessed negatives.
   Nothing in this queue is blocked on the user. A future slice needs its own
