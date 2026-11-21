@@ -83,7 +83,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "misc-uniqueptr-reset-release",
     "misc-unused-alias-decls",
     "performance-avoid-endl",
-    "performance-faster-string-find",
+    "performance-prefer-single-char-overloads",
     "performance-for-range-copy",
     "performance-implicit-conversion-in-loop",
     "performance-inefficient-algorithm",
@@ -97,6 +97,18 @@ GATED_CHECKS: tuple[str, ...] = (
 
 # One translation unit must finish well inside this; a hung clang-tidy fails the gate.
 TRANSLATION_UNIT_TIMEOUT = 900
+
+# Checks that one clang-tidy release deprecated in favour of a renamed successor, mapped to that
+# successor. LLVM 23 deprecates `performance-faster-string-find` and emits a clang-tidy-config
+# diagnostic, which `WarningsAsErrors: '*'` turns into a failure before any source is analyzed;
+# LLVM 18 and 22 do not know the successor at all. Neither name can therefore sit in GATED_CHECKS
+# as a fixed spelling. The gate keeps the successor name in .clang-tidy (the direction the tool is
+# going) and substitutes the working name when the installed tool lacks the successor, so one
+# configuration serves every supported release. The pair has the same trigger and message on the
+# same fixture; performance/tests/faster-string-find keeps both spellings.
+RENAMED_CHECKS: dict[str, str] = {
+    "performance-prefer-single-char-overloads": "performance-faster-string-find",
+}
 
 # "<file>:<line>:<column>: <severity>: <text> [<checks>]". WarningsAsErrors promotes a finding to
 # an error and adds "-warnings-as-errors" to the bracket list; that marker is not a check name.
@@ -154,22 +166,52 @@ def run(command: list[str], *, label: str) -> str:
     return result.stdout + result.stderr
 
 
-def enabled_checks(clang_tidy: str) -> list[str]:
+def enabled_checks(clang_tidy: str, config: Path = CONFIG) -> list[str]:
     """The checks CONFIG enables. --config-file is explicit, so no .clang-tidy is discovered."""
-    output = run([clang_tidy, f"--config-file={CONFIG}", "--list-checks"], label="clang-tidy check listing")
+    output = run([clang_tidy, f"--config-file={config}", "--list-checks"], label="clang-tidy check listing")
     names = [line.strip() for line in output.splitlines() if line.startswith("    ")]
     if not names:
-        raise RuntimeError(f"clang-tidy enabled no checks for {CONFIG}:\n{output}")
+        raise RuntimeError(f"clang-tidy enabled no checks for {config}:\n{output}")
     return names
 
 
-def analyze_unit(clang_tidy: str, database: Path, source: Path) -> UnitResult:
+def known_checks(clang_tidy: str) -> set[str]:
+    """Every check name the installed tool recognises, taken from the full listing."""
+    output = run([clang_tidy, "-checks=*", "--list-checks"], label="clang-tidy full check listing")
+    return {line.strip() for line in output.splitlines() if line.startswith("    ")}
+
+
+def write_check_config(directory: Path, known: set[str]) -> tuple[Path, dict[str, str]]:
+    """Write CONFIG with every RENAMED_CHECKS name the tool lacks replaced by its working name.
+
+    Returns the path to use and the substitution actually applied, so the caller can report it.
+    """
+    text = CONFIG.read_text(encoding="utf-8")
+    substituted = {}
+    for successor, alternative in RENAMED_CHECKS.items():
+        if successor in known:
+            # The tool knows the successor; the configuration already names it.
+            continue
+        if alternative not in known:
+            raise RuntimeError(
+                f"the installed clang-tidy knows neither {successor} nor its predecessor {alternative}"
+            )
+        if successor not in text:
+            raise RuntimeError(f"{CONFIG} does not name {successor}, which RENAMED_CHECKS tracks")
+        text = text.replace(successor, alternative)
+        substituted[successor] = alternative
+    config = directory / ".clang-tidy"
+    config.write_text(text, encoding="utf-8")
+    return config, substituted
+
+
+def analyze_unit(clang_tidy: str, config: Path, database: Path, source: Path) -> UnitResult:
     result = UnitResult(source=str(source))
     command = [
         clang_tidy,
         "-p",
         str(database),
-        f"--config-file={CONFIG}",
+        f"--config-file={config}",
         # A production command can carry -Werror. -Wno-error keeps a compiler warning from
         # becoming a compile error; compiler warnings belong to the strict-warning gate, and only
         # a compile error (clang-diagnostic-error) stops this gate.
@@ -215,13 +257,13 @@ def analyze_unit(clang_tidy: str, database: Path, source: Path) -> UnitResult:
     return result
 
 
-def analyze(clang_tidy: str, entries: list[dict[str, str]], jobs: int) -> list[UnitResult]:
+def analyze(clang_tidy: str, config: Path, entries: list[dict[str, str]], jobs: int) -> list[UnitResult]:
     """One clang-tidy process per compile command, from a database that holds only those commands."""
     with tempfile.TemporaryDirectory(prefix="latte-clang-tidy-db-") as database:
         Path(database, "compile_commands.json").write_text(json.dumps(entries), encoding="utf-8")
         with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
             futures = [
-                pool.submit(analyze_unit, clang_tidy, Path(database), CLAZY_GATE.unit_path(entry))
+                pool.submit(analyze_unit, clang_tidy, config, Path(database), CLAZY_GATE.unit_path(entry))
                 for entry in entries
             ]
             return [future.result() for future in futures]
@@ -238,7 +280,9 @@ def report_problems(results: list[UnitResult]) -> None:
     raise RuntimeError("\n".join(lines))
 
 
-def prove_fixtures(clang_tidy: str, flags_entry: dict[str, str], jobs: int) -> None:
+def prove_fixtures(
+    clang_tidy: str, config: Path, flags_entry: dict[str, str], jobs: int, substituted: dict[str, str]
+) -> None:
     """Every gated check must reject its own fixture as an error, and every fixture must belong to a gated check."""
     fixtures = sorted(FIXTURE_DIR.glob("*.cpp"))
     if [path.stem for path in fixtures] != sorted(GATED_CHECKS):
@@ -254,13 +298,17 @@ def prove_fixtures(clang_tidy: str, flags_entry: dict[str, str], jobs: int) -> N
             copy = Path(temp_dir, fixture.name)
             copy.write_bytes(fixture.read_bytes())
             entries.append(CLAZY_GATE.retarget(flags_entry, copy))
-        results = analyze(clang_tidy, entries, jobs)
+        results = analyze(clang_tidy, config, entries, jobs)
     report_problems(results)
 
+    # A successor-named fixture is reported by whatever spelling the installed tool uses.
     unrejected = [
         fixture.name
         for fixture, result in zip(fixtures, results)
-        if not any(item.check == fixture.stem and item.severity == "error" for item in result.findings)
+        if not any(
+            item.check == substituted.get(fixture.stem, fixture.stem) and item.severity == "error"
+            for item in result.findings
+        )
     ]
     if unrejected:
         raise RuntimeError("the gate did not reject its negative fixture(s): " + ", ".join(unrejected))
@@ -274,19 +322,29 @@ def run_gate(clang_tidy: str, entries: list[dict[str, str]], build_dir: Path, jo
         + ", ".join(f"{count} {reason}" for reason, count in sorted(skipped.items()))
     )
 
-    enabled = enabled_checks(clang_tidy)
-    if sorted(enabled) != sorted(GATED_CHECKS):
-        raise RuntimeError(f"clang-tidy enabled {sorted(enabled)}, but GATED_CHECKS names {sorted(GATED_CHECKS)}")
+    known = known_checks(clang_tidy)
+    with tempfile.TemporaryDirectory(prefix="latte-clang-tidy-config-") as config_dir:
+        config, substituted = write_check_config(Path(config_dir), known)
+        for successor, alternative in sorted(substituted.items()):
+            print(f"{successor} is unknown to this clang-tidy; gated {alternative} instead")
 
-    # Prove the checks can fire before trusting a clean production result.
-    flags_entry = next((entry for entry in selected if CLAZY_GATE.unit_path(entry) == FIXTURE_FLAGS_SOURCE), None)
-    if flags_entry is None:
-        raise RuntimeError(f"fixture flags source is absent from the compile database: {FIXTURE_FLAGS_SOURCE}")
-    if "clang" not in flags_entry["command"]:
-        raise RuntimeError("the production compile command for the fixture flags is not from a Clang build")
-    prove_fixtures(clang_tidy, flags_entry, jobs)
+        enabled = enabled_checks(clang_tidy, config)
+        # The effective configuration may spell a renamed check with its working predecessor.
+        expected = sorted(substituted.get(name, name) for name in GATED_CHECKS)
+        if sorted(enabled) != expected:
+            raise RuntimeError(
+                f"clang-tidy enabled {sorted(enabled)}, but GATED_CHECKS names {expected}"
+            )
 
-    results = analyze(clang_tidy, selected, jobs)
+        # Prove the checks can fire before trusting a clean production result.
+        flags_entry = next((entry for entry in selected if CLAZY_GATE.unit_path(entry) == FIXTURE_FLAGS_SOURCE), None)
+        if flags_entry is None:
+            raise RuntimeError(f"fixture flags source is absent from the compile database: {FIXTURE_FLAGS_SOURCE}")
+        if "clang" not in flags_entry["command"]:
+            raise RuntimeError("the production compile command for the fixture flags is not from a Clang build")
+        prove_fixtures(clang_tidy, config, flags_entry, jobs, substituted)
+
+        results = analyze(clang_tidy, config, selected, jobs)
     report_problems(results)
     raw = [item for result in results for item in result.findings]
     kept = CLAZY_GATE.unique([item for item in raw if CLAZY_GATE.first_party(item.path, build_dir)])

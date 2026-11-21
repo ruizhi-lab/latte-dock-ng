@@ -1187,6 +1187,11 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME measurefamilyrulestest
         COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_measure_process_family.py)
     set_property(TEST measurefamilyrulestest PROPERTY TIMEOUT 60)
+    # The clang-tidy gate's renamed-check selection (LLVM 23 successor vs LLVM 18/22 predecessor);
+    # needs no clang-tidy binary or compile database.
+    add_test(NAME clangtidyrenamestest
+        COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_clang_tidy_renames.py)
+    set_property(TEST clangtidyrenamestest PROPERTY TIMEOUT 60)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()

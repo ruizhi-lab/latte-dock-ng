@@ -371,7 +371,9 @@ checks. The intentional root-null ancestor call was verified on the user's
 actual Arch Plasma 6.8.2 SDK before adding one line-scoped exception. Full
 LLVM 18/22 host gates and the LLVM 18 gate on Arch pass across 156 production
 sources. The newer Arch LLVM 23 tool deprecates an older check name; that
-migration remains separate from this gate promotion. The
+migration is now [T4l](modernization-results/T4l-llvm23-renamed-check.md), which
+keeps the successor spelling in the configuration and substitutes the working
+predecessor for a tool that lacks it, so 18.1.8, 22.1.8 and 23.1.5 all pass. The
 [Qt test compatibility repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
 preserve the same assertions across Qt 6.8 and 6.12. Debian's offscreen platform
 cannot activate accessibility; that case passes in the actual Wayland session

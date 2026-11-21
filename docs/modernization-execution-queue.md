@@ -211,7 +211,16 @@ subsequent T4d changes.
   Debian: clang-tidy 18.1.8 passes the 56-check gate with 0 compiler warnings and
   CTest 65/66 (the one failure is an image accessibility-bridge gap proven by a
   standalone probe). Arch: the Clang Debug build is clean, and the known LLVM 23
-  deprecated-check transition reproduces with an exact message. T5 was published in
+  deprecated-check transition reproduces with an exact message.
+
+- T4l LLVM 23 renamed check: [record](modernization-results/T4l-llvm23-renamed-check.md)
+  **Complete.** `performance-faster-string-find` is deprecated in LLVM 23 and absent
+  under that name's successor in 18/22, so `.clang-tidy` keeps the successor and the
+  runner substitutes the working predecessor when the tool lacks it (`RENAMED_CHECKS`,
+  capability-probed, fail-closed). The gate now passes on clang-tidy 18.1.8 (Debian),
+  22.1.8 (host) and 23.1.5 (Arch, which previously failed before analysing a source).
+  `clangtidyrenamestest` adds six cases; three mutations are caught. Four presets: 0
+  compiler warnings, 67/67 CTest each. T5 was published in
   `564199ec1`; Build run 44863409259 passed the Clang Debug clang-tidy step (CI image
   clang-tidy 18.1.3), closing T5. Its GCC Debug/Release jobs failed before
   `actions/checkout` on the KDE Neon repository and dependency install, which is
