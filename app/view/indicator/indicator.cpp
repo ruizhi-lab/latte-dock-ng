@@ -144,8 +144,15 @@ bool Indicator::isModernDockStyle() const
         return false;
     }
 
-    const QString dockStyle = m_view->containment()->config().group(QStringLiteral("General"))
-                                      .readEntry(QStringLiteral("dockStyle"), QStringLiteral("Classic"));
+    // The legacy property name is part of the indicator options API.
+    // Match the live QML option, using the saved preset for older docks only.
+    const auto general = m_view->containment()->config().group(QStringLiteral("General"));
+    const int compactIndicators = general.readEntry(QStringLiteral("compactIndicators"), -1);
+    if (compactIndicators != -1) {
+        return compactIndicators == 1;
+    }
+
+    const QString dockStyle = general.readEntry(QStringLiteral("dockStyle"), QStringLiteral("Classic"));
     return dockStyle == QLatin1String("Modern") || dockStyle == QLatin1String("1");
 }
 

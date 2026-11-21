@@ -489,7 +489,7 @@ Item {
 
 
     function _updateSizeForAppletsInFill() {
-        // Modern dock style uses a lightweight fill calculation that does not
+        // The single-row layout uses a lightweight fill calculation that does not
         // depend on animation state (icon size / zoom).  Allow it to run even
         // when autosize keeps needBothAxis > 0, which would otherwise block
         // fillWidth applets (e.g. digital clock) from ever receiving their

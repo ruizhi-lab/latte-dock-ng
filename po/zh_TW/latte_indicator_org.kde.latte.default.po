@@ -191,13 +191,13 @@ msgstr "顯示最多四個個別視窗，以及代表其餘視窗的第五個點
 
 #: indicators/default/package/config/config.qml
 #, kde-format
-msgid "Use Modern dot indicators"
-msgstr "使用現代風格圓點指示器"
+msgid "Use macOS-style dots"
+msgstr "使用 macOS 風格圓點"
 
 #: indicators/default/package/config/config.qml
 #, kde-format
-msgid "Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style"
-msgstr "適用於現代風格 Dock。保留 macOS 風格圓點，或關閉此選項以獨立選擇線條或圓點"
+msgid "Available when compact task indicators are enabled in Appearance. Turn off to choose Line or Dots manually"
+msgstr "在「外觀」中啟用緊湊工作指示器後可用。關閉此選項可手動選擇線條或圓點"
 
 #: indicators/default/package/config/config.qml
 #, kde-format

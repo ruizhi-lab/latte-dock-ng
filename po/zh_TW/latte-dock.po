@@ -2554,6 +2554,31 @@ msgctxt "modern dock visual style"
 msgid "Modern"
 msgstr "現代"
 
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:112
+#, kde-format
+msgid "Keep dock items together"
+msgstr "將 Dock 項目集中排列"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:113
+#, kde-format
+msgid "Use the inset background with an outline"
+msgstr "使用帶描邊的內縮背景"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:114
+#, kde-format
+msgid "Use wider minimum item spacing"
+msgstr "加大項目最小間距"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:115
+#, kde-format
+msgid "Use an automatic floating gap"
+msgstr "使用自動浮動間距"
+
+#: shell/package/contents/configuration/pages/AppearanceConfig.qml:116
+#, kde-format
+msgid "Use compact task indicators"
+msgstr "使用緊湊工作指示器"
+
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:66
 #, kde-format
 msgctxt "absolute size"

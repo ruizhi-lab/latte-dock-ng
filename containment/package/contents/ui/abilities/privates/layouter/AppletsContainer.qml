@@ -36,7 +36,7 @@ Item {
     Binding{
         target: appletsContainer
         property:"sizeWithNoFillApplets"
-        // Modern allocates fill slots during length animations. Its budget
+        // The single-row layout allocates fill slots during length animations. Its budget
         // must still include the fixed applets, or this binding restores zero
         // and the task viewport expands back to its full content length.
         when: appletsContainer && grid && !updateIsBlocked

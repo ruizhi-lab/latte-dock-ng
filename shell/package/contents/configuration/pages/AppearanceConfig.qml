@@ -206,19 +206,23 @@ PlasmaComponents.Page {
                     }
                 }
 
-                Repeater {
-                    model: content.presetOptions
+                LatteComponents.CheckBoxesColumn {
+                    Layout.fillWidth: true
 
-                    delegate: PlasmaComponents.CheckBox {
-                        id: presetOption
-                        required property var modelData
-                        Layout.fillWidth: true
-                        text: modelData.label
-                        checked: {
-                            var option = page.dockConfiguration[modelData.key];
-                            return option === -1 ? content.styleIndex(page.dockConfiguration.dockStyle) === 1 : option === 1;
+                    Repeater {
+                        model: content.presetOptions
+
+                        delegate: LatteComponents.CheckBox {
+                            id: presetOption
+                            required property var modelData
+                            Layout.maximumWidth: page.dialog.optionsWidth
+                            text: presetOption.modelData.label
+                            value: {
+                                var option = page.dockConfiguration[presetOption.modelData.key];
+                                return option === -1 ? content.styleIndex(page.dockConfiguration.dockStyle) === 1 : option === 1;
+                            }
+                            onClicked: page.dockConfiguration[presetOption.modelData.key] = presetOption.checked ? 1 : 0
                         }
-                        onToggled: page.dockConfiguration[modelData.key] = checked ? 1 : 0
                     }
                 }
 

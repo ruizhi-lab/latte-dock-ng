@@ -523,7 +523,7 @@ ContainmentItem {
                         parabolic.sglClearZoom();
                     }
 
-                    // Modern style keeps a single-main applets flow. The legacy
+                    // Keeping items together uses a single applet flow. The legacy
                     // three-layout split used for classic Justify can drift to
                     // side-only placement under Qt6 and ends up left/right aligned.
                     fastLayoutManager.joinLayoutsToMainLayout();
