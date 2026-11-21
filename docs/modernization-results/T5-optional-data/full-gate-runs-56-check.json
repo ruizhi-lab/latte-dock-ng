@@ -1,0 +1,80 @@
+[
+  {
+    "pair": 1,
+    "variant": 55,
+    "elapsed_seconds": 72.155,
+    "exit_code": 0,
+    "load_before": [
+      3.7354,
+      3.4741,
+      1.9956
+    ],
+    "summary": "157 production sources: no findings from 55 gated clang-tidy checks",
+    "stderr": ""
+  },
+  {
+    "pair": 1,
+    "variant": 56,
+    "elapsed_seconds": 72.197,
+    "exit_code": 0,
+    "load_before": [
+      4.2808,
+      3.6807,
+      2.1758
+    ],
+    "summary": "157 production sources: no findings from 56 gated clang-tidy checks",
+    "stderr": ""
+  },
+  {
+    "pair": 2,
+    "variant": 56,
+    "elapsed_seconds": 72.268,
+    "exit_code": 0,
+    "load_before": [
+      3.9814,
+      3.7485,
+      2.3193
+    ],
+    "summary": "157 production sources: no findings from 56 gated clang-tidy checks",
+    "stderr": ""
+  },
+  {
+    "pair": 2,
+    "variant": 55,
+    "elapsed_seconds": 72.488,
+    "exit_code": 0,
+    "load_before": [
+      4.1602,
+      3.8608,
+      2.4658
+    ],
+    "summary": "157 production sources: no findings from 55 gated clang-tidy checks",
+    "stderr": ""
+  },
+  {
+    "pair": 3,
+    "variant": 55,
+    "elapsed_seconds": 72.905,
+    "exit_code": 0,
+    "load_before": [
+      4.4668,
+      4.002,
+      2.6167
+    ],
+    "summary": "157 production sources: no findings from 55 gated clang-tidy checks",
+    "stderr": ""
+  },
+  {
+    "pair": 3,
+    "variant": 56,
+    "elapsed_seconds": 72.606,
+    "exit_code": 0,
+    "load_before": [
+      4.9478,
+      4.269,
+      2.8208
+    ],
+    "summary": "157 production sources: no findings from 56 gated clang-tidy checks",
+    "stderr": ""
+  }
+]

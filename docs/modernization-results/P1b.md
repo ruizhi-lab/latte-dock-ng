@@ -4,6 +4,13 @@ Status: Deferred for long-term observation. Implementation and title-work
 target are verified; the user reports functional acceptance passed. Exact
 response latency and a measurable performance benefit remain unverified.
 
+Update (2026-11-21): the launch-environment half of the erratum below now has
+an enforced guard. `scripts/measure-process-family.py` marks any sampling window
+that overlaps a `~/.cache/ksycoca6_*` rewrite invalid, so a future rerun can
+prove its windows were not measuring that churn. See the
+[measurement foundation](P1b-measurement-foundation.md). The event-correlated
+latency half remains open, so this slice stays Deferred.
+
 Erratum (R5, 2026-10-28): the Release A/B pairs below were started by the same SSH
 test harness as P0's, and this report does not record their launch environment.
 [R5](R5.md) showed that an SSH launch with a shorter `XDG_CONFIG_DIRS` than the

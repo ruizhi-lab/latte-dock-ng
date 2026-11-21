@@ -5,11 +5,41 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import glob
 import json
 import os
 from pathlib import Path
 import statistics
 import time
+
+# R5 found that a dock launched with a shorter XDG_CONFIG_DIRS than its Plasma session
+# triggers a KSycoca rewrite loop (kbuildsycoca6 respawns, ~18 % of one core at idle
+# plus 22-26 % in plasmashell and KWin). Any sampling window that overlaps a rewrite
+# measures that churn, not the dock, so the window is invalid (performance protocol
+# rule 7). The cache file's mtime is the observable: kbuildsycoca6 rewrites
+# ~/.cache/ksycoca6_* in place, and a .lock file is transient housekeeping, not a rewrite.
+KSYCOCA_CACHE_GLOB = "~/.cache/ksycoca6_*"
+
+
+def sycoca_versions() -> dict[str, int]:
+    """The modification time of every KSycoca cache file, keyed by basename."""
+    versions = {}
+    for path in glob.glob(os.path.expanduser(KSYCOCA_CACHE_GLOB)):
+        if path.endswith(".lock"):
+            continue
+        try:
+            versions[os.path.basename(path)] = os.stat(path).st_mtime_ns
+        except OSError:
+            continue
+    return versions
+
+
+def sycoca_rewrites(start: dict[str, int], end: dict[str, int]) -> list[str]:
+    """The cache files whose mtime changed between two snapshots."""
+    changed = [name for name, mtime in end.items() if start.get(name) != mtime]
+    # A file that appeared or vanished also means the database was rebuilt.
+    changed.extend(name for name in start if name not in end)
+    return sorted(set(changed))
 
 
 def process_record(pid: int, requested: set[str]) -> dict | None:
@@ -141,6 +171,7 @@ def main() -> int:
         start_time = time.monotonic()
         wall_start = now()
         load_start = load_average()
+        sycoca_start = sycoca_versions()
         memory_samples = [initial_memory]
         invalid_reasons = []
         next_sample = start_time + 1
@@ -149,6 +180,11 @@ def main() -> int:
             current = process_family(requested)
             if set(current) != identity:
                 invalid_reasons.append(f"process family changed at second {second}")
+            rewritten = sycoca_rewrites(sycoca_start, sycoca_versions())
+            if rewritten:
+                invalid_reasons.append(f"KSycoca rewritten at second {second}: {', '.join(rewritten)}")
+                # Re-baseline so one rebuild is reported once, not once per later second.
+                sycoca_start = sycoca_versions()
             if second % args.memory_period == 0 or second == args.interval:
                 values = family_memory(current)
                 if values is None:
@@ -193,6 +229,9 @@ def main() -> int:
             "memory_mean_kib": memory_means,
             "load_average_start": load_start,
             "load_average_end": load_average(),
+            # A window over a KSycoca rebuild is invalid (rule 7); this records what the
+            # mtime watch saw so a reader can tell "no rebuild" from "not watched".
+            "sycoca_cache_versions_seen": len(sycoca_start),
         }
         print(json.dumps(result, sort_keys=True), flush=True)
 

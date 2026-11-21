@@ -188,7 +188,7 @@ is complete; execution and runtime evidence below are not.
 | M5b | Complete | [Report](modernization-results/M5b.md): user reports functional blocker/hover checks passed; GCC Debug lifecycle test passes 9/9; Debian Dock PID 14073 exited cleanly with live helper PID 14215, no new coredump or teardown warnings, then restarted as PID 14298 | Retain the focused lifecycle regression test and bounded helper reap behavior |
 | P0 | Complete | [Report](modernization-results/P0.md): Fedora baseline, idle/hidden-idle, multi-window, continuous-hover and live four-edge transition evidence retained; Debian 13.7 refreshed from USTC mirrors, rebuilt from the checked branch with GCC 14.2/CMake 3.31.6/Qt 6.8.2/KF 6.13/Plasma 6.3.6, passed all 46 CTest targets and received the final runtime pass; both saved test layouts restored byte-for-byte. User confirms all three hover modes and selected widgets work on both Fedora and Debian, resolving the earlier Debian combined-mode screenshot discrepancy. Two-output behavior remains accepted by code review, not runtime-tested. Measurements characterize tested scenarios and do not establish a CPU or memory saving | Retain the two-output code-review assumption; revisit performance only with comparable A/B or additional instrumentation |
 | P1a | Complete | [Report](modernization-results/P1a.md): instrumented Fedora Wayland title-only changes; five runs delivered 10 schedules each (execution median 4, with all outliers retained); no production behavior change | P1b adds a title-only tracker route with zero hint schedules as its predeclared work target; keep all non-title events on the full path |
-| P1b | Deferred | [Report](modernization-results/P1b.md): GCC/Clang builds and focused tests pass; five Fedora Wayland Debug trials show 0/10 hint schedules; five uninstrumented Release A/B pairs retain a CPU/PSS outlier; user reports functional checks passed; event-correlated latency is unavailable | Keep as long-term observation; do not claim a measured CPU or memory saving unless controlled A/B results later resolve the noise and latency gap |
+| P1b | Deferred | [Report](modernization-results/P1b.md): GCC/Clang builds and focused tests pass; five Fedora Wayland Debug trials show 0/10 hint schedules; five uninstrumented Release A/B pairs retain a CPU/PSS outlier; user reports functional checks passed; event-correlated latency is unavailable. The launch-environment half now has an in-collector guard ([measurement foundation](modernization-results/P1b-measurement-foundation.md)): `scripts/measure-process-family.py` marks any window overlapping a KSycoca rewrite invalid | Keep as long-term observation; rerun the Release A/B pairs under `systemd-run --user`, accepting only `"valid": true` windows, and supply an event-latency seam before any saving claim |
 | P2a | Complete | [Report](modernization-results/P2a.md): Debug raster/texture traces and invalidation tests pass; user reports Debian theme/icon checks passed; cross-screen/hotplug accepted by code review per user request, not physically tested | Keep the physical multi-display limitation visible in future validation summaries |
 | P2b | Complete | [Report](modernization-results/P2b.md): equivalent smaller-edge geometry avoids raster/texture reload at DPR 1/1.5; changed request reloads; GCC/Clang Debug/Release tests pass; user reports visual checks pass; cross-screen path accepted by code review only | Retain per-window texture ownership; no whole-app A/B memory claim is made |
 | P3a | Deferred | [Evaluation](modernization-results/P3a.md): Debian 13 Plasma 6.3.6 and Fedora 44 Plasma 6.7.5 headers both expose only a `void` geometry-publication API with no completion/generation acknowledgement; a private Fedora 45 probe verified QML source selection and Top/Bottom edge-triggered refresh passes | Establish and test a trustworthy latest-generation readiness condition before changing the bounded eight-pass fallback |
@@ -444,6 +444,18 @@ staged installation also passed with host Clang. The coordinator reviewed
 both logs and independently verified all eight installed module/root pairs
 in each environment. The host QML tooling diagnostics are retained in the
 report; no Release CTest or desktop retest is claimed.
+
+[T5 unchecked optional access](modernization-results/T5-optional-promotion.md)
+promotes `bugprone-unchecked-optional-access` to the gate's fifty-sixth check
+after proving its negative fixture under the production compile flags and
+finding nothing in 157 production sources with clang-tidy 22.1.8. Three new
+order-alternated pairs put the 55-to-56 increment below measurement resolution.
+All four presets build with zero compiler warnings and pass 65/65 CTest each.
+clang-tidy 18.1.8 was run against this source on a user-provided Debian 13.7 VM
+(the oldest supported stack): 0 compiler warnings, 56/56 fixtures rejected, no
+production findings. The slice is Complete for the clang-tidy versions exercised;
+only the GitHub runner's own 18.1.3 patch level remains unobserved. See the
+[VM validation](modernization-results/VM-validation-2026-11-21.md).
 
 The P4 [Fedora A/A baseline](modernization-results/P4-fedora-aa-baseline.md)
 was published in `ebb736602`: five same-build Plasma/KWin 6.8.3 runs have

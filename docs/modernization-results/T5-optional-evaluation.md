@@ -1,5 +1,11 @@
 # T5: unchecked optional access evaluation
 
+Status: evaluation complete; the check was subsequently promoted to the gate as
+its fifty-sixth check. See
+[T5-optional-promotion](T5-optional-promotion.md) for the promotion, its cost
+pairs and its limits. This file keeps the fixture, scan and first cost study as
+the evidence the promotion cites, and is not rewritten.
+
 This report evaluates `bugprone-unchecked-optional-access`; it does not enable
 the check. On the Clang Debug compile database after `e8ba4ad70`, the R8c
 inventory selected 156 production sources and ran only this check with four

@@ -186,6 +186,33 @@ subsequent T4d changes.
   passed fixture and production scans on LLVM 18 and 22. Three local paired
   runs showed no large wall-time increase, but CI cost and its budget remain
   unestablished; the check has not been promoted.
+- T5 promotion: [unchecked optional access](modernization-results/T5-optional-promotion.md)
+  **Complete locally, CI-version acceptance pending the push.** The check is the
+  fifty-sixth gated check, with a proven negative fixture and no finding in 157
+  production sources on clang-tidy 22.1.8; three new order-alternated pairs put
+  the 55-to-56 increment below measurement resolution (differences +0.042,
+  -0.220, -0.299 s). All four presets build with zero compiler warnings and pass
+  65/65 CTest each. LLVM 18.1.3 is unavailable here; the `clang-debug` clang-tidy
+  step on the push is the first 18.1.3 gate over this source. The Band B cost
+  budget governs promoting families, not this single proven check.
+
+- P1b measurement foundation: [KSycoca validity rule](modernization-results/P1b-measurement-foundation.md)
+  **Complete locally.** `scripts/measure-process-family.py` now marks a window that
+  overlaps a `~/.cache/ksycoca6_*` rewrite as invalid (the un-diagnosable part of
+  P1b's outlier), pinned by `autotests/test_measure_process_family.py`
+  (`measurefamilyrulestest`, 6 cases, two mutations caught). Four presets build with
+  zero compiler warnings and pass 66/66 CTest each. A **live positive case** was
+  produced on a user-provided Arch Plasma 6.8.3 VM: a forced rebuild inside a window
+  was reported as `"valid": false` with the exact file and second. This supplies the
+  launch-environment half only; P1b still needs a clean-environment rerun and an
+  event-latency seam.
+
+- VM validation (2026-11-21): [Debian 13.7 and Arch Plasma 6.8 results](modernization-results/VM-validation-2026-11-21.md).
+  Debian: clang-tidy 18.1.8 passes the 56-check gate with 0 compiler warnings and
+  CTest 65/66 (the one failure is an image accessibility-bridge gap proven by a
+  standalone probe). Arch: the Clang Debug build is clean, and the known LLVM 23
+  deprecated-check transition reproduces with an exact message. T5's only remaining
+  gap is the CI runner's clang-tidy 18.1.3 patch level.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`
@@ -232,7 +259,7 @@ post-push Build workflow. No desktop behavior changed.
 | --- | --- | --- |
 | T2-T3 | Remaining Band A checks, approximately 15 per slice | T1 accepted; each slice repeats fixture and current-production proof |
 | T4 | Fix and then gate one R8c check at a time | Review every finding; preserve documented intentional calls |
-| T5 | Band B, standalone analyzer, then Band C/unpriced candidates | Explicit CI cost budget and individual fixture proof |
+| T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
 | A2 | Bounded pre-filter message capture, then one filter family | Established emitter/version evidence; remove temporary instrumentation |
 | A3 | Saved-layout fixtures, then one legacy splitter branch family | Consumer trace and Justify/separator/drag desktop coverage |
 | P1b | Resolve Release A/B noise and event-correlated latency | Comparable repeated runs; distinguish reduced work from CPU/PSS savings |

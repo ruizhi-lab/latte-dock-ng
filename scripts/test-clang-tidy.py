@@ -71,6 +71,7 @@ GATED_CHECKS: tuple[str, ...] = (
     "bugprone-too-small-loop-variable",
     "bugprone-undefined-memory-manipulation",
     "bugprone-undelegated-constructor",
+    "bugprone-unchecked-optional-access",
     "bugprone-unhandled-self-assignment",
     "bugprone-unique-ptr-array-mismatch",
     "bugprone-unused-return-value",

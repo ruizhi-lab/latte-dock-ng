@@ -37,7 +37,11 @@ or a smaller binary is not proof of reduced resource consumption.
    SSH launch with a shorter `XDG_CONFIG_DIRS` than the session made an idle dock
    look like a 20 % CPU consumer through a KSycoca rewrite loop. Record the load
    average and whether `~/.cache/ksycoca6_*` changes during every idle window,
-   and treat a window in which it does as invalid.
+   and treat a window in which it does as invalid. `scripts/measure-process-family.py`
+   performs that check itself: a window overlapping a cache rewrite is reported
+   with `"valid": false` and a `KSycoca rewritten at second N` reason, and only
+   valid windows may be compared. The rule is pinned by
+   `autotests/test_measure_process_family.py` (`measurefamilyrulestest`).
 
 ## Scenario matrix
 
