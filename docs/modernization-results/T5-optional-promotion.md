@@ -111,6 +111,16 @@ dependencies` respectively. No source was checked out in either job, so those
 failures are infrastructure, not this slice, and they do not affect the gate
 result above.
 
+The follow-up run [44866313690](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44866313690)
+on `fa0f6df5d` (documentation only) lost two jobs at the same
+`Install KDE Neon repository` step, including the Clang Debug job that had
+passed the gate earlier. Checking the mirrors directly at that time gave
+`https://archive.neon.kde.org/user/dists/jammy/Release` -> **HTTP 502** and the
+`origin.archive.neon.kde.org` alternative -> HTTP 200 in 17 s, so the KDE Neon
+service was degraded. That run therefore carries no gate information; the
+gate acceptance remains run 44863409259 above, whose Clang Debug job checked
+out `564199ec1` and passed the step.
+
 ## Limits
 
 - LLVM 18.1.3 was unavailable on the authoring host; it ran on the CI runner and
