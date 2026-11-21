@@ -79,14 +79,15 @@ part of local mirror maintenance.
    keep component-specific details beside the code they govern. Update the
    nearby comment and its test when behavior, supported versions or the
    authoritative state changes.
-9. **Release requires help review** — Before every release, review `docs/help/`
-   against the user-visible changes in that release: settings labels, defaults
-   and scope, Advanced-mode visibility, dialogs, copy/clone behavior, launcher
-   sharing and the supported UI languages. Update every affected translated
-   guide and language `<select>` entry, and verify that UI languages without a
-   translated guide still fall back to English. Run the handbook tests with the
-   normal autotest suite. Record skipped languages or checks in the release
-   notes; do not ship stale or missing help for changed UI.
+9. **Update help with user-visible changes** — Update `docs/help/` in the
+   same change as code or configuration that affects the user. Keep the
+   English guide and every affected translation in sync with editor labels,
+   defaults, preset values, scope, Advanced-mode visibility, and behavior.
+   When adding or removing a guide language, update the language
+   `<select>` entries and verify that unsupported guide languages fall back
+   to English. Run `handbookdocumenttest` for help changes and review the
+   complete set of user-visible changes again before each release. Record
+   skipped languages or checks in the release notes.
 
 ## Development Debug & Retest Workflow
 
