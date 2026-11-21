@@ -226,6 +226,16 @@ subsequent T4d changes.
   `actions/checkout` on the KDE Neon repository and dependency install, which is
   infrastructure and unrelated to the source.
 
+- Neon bootstrap contracts: [record](modernization-results/T-Neon-bootstrap-contracts.md)
+  **Complete.** Three consecutive CI runs on 2026-11-21 lost jobs at the KDE Neon
+  steps while the mirror answered HTTP 502. Two defects were found in the workflow
+  itself: the first `apt-get update` ran before `Acquire::Retries` was written (so
+  the base indexes were never retried - this is what failed the QML lint job), and
+  the ~30-line Neon bootstrap was duplicated across two steps with no guard. The
+  policy now precedes the update, and `neonrepositorytest` pins both copies
+  byte-identical and the ordering. 7/7 cases, two mutations caught; four presets
+  pass 68/68 CTest each.
+
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`
   and staged install generated and installed all four typeinfo/plugin pairs in

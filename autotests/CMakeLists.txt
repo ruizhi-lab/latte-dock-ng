@@ -1192,6 +1192,11 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME clangtidyrenamestest
         COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_clang_tidy_renames.py)
     set_property(TEST clangtidyrenamestest PROPERTY TIMEOUT 60)
+    # The two KDE Neon bootstrap steps of build.yml: identical copies, both mirrors retried, and
+    # the apt retry policy written before the first index update. Needs no network or Docker.
+    add_test(NAME neonrepositorytest
+        COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_CURRENT_SOURCE_DIR}/test_neon_repository_contract.py)
+    set_property(TEST neonrepositorytest PROPERTY TIMEOUT 60)
 else()
     message(STATUS "Python3 interpreter unavailable; qmllint baseline parser test is not registered")
 endif()

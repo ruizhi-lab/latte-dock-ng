@@ -81,9 +81,16 @@ jobs:
           # the status). Try it first, then origin.archive.neon.kde.org, which serves the same repository
           # and the same key. apt-get update must fetch every index (--error-on=any): a half-failed update
           # leaves the Neon packages unknown and the next step fails with "Unable to locate package".
+          # Acquire::Retries must exist before the first apt-get update: otherwise the base Ubuntu
+          # indexes are fetched without retries, and a transient failure there failed a job on
+          # 2026-11-21 before the Neon repository was even touched. Writing the policy first makes
+          # that same update retry itself.
+          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
           apt-get update
           apt-get install -y --no-install-recommends ca-certificates wget gnupg
-          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
+          # The Neon bootstrap below is duplicated in "Install Git and KDE Neon repository",
+          # because both steps run before actions/checkout and cannot share a repository file.
+          # neonrepositorytest pins the two copies to each other so they cannot drift apart.
           neon_try() {
             wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc "https://$1/public.key" || return 1
             echo "deb https://$1/user noble main" > /etc/apt/sources.list.d/neon.list
@@ -262,11 +269,15 @@ jobs:
     steps:
       - name: Install Git and KDE Neon repository
         run: |
+          # Acquire::Retries must exist before the first apt-get update: otherwise the base Ubuntu
+          # indexes are fetched without retries, and a transient failure there failed a job on
+          # 2026-11-21 before the Neon repository was even touched. Writing the policy first makes
+          # that same update retry itself.
+          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
           apt-get update
           # Git must be installed before checkout; without it actions/checkout
           # can fall back to a REST archive, but QML inventory needs git ls-files.
           apt-get install -y --no-install-recommends ca-certificates wget gnupg git
-          echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
           neon_try() {
             wget --no-verbose --tries=1 --timeout=30 -O /etc/apt/trusted.gpg.d/neon.asc "https://$1/public.key" || return 1
             echo "deb https://$1/user noble main" > /etc/apt/sources.list.d/neon.list
