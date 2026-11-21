@@ -234,7 +234,8 @@ subsequent T4d changes.
   the ~30-line Neon bootstrap was duplicated across two steps with no guard. The
   policy now precedes the update, and `neonrepositorytest` pins both copies
   byte-identical and the ordering. 7/7 cases, two mutations caught; four presets
-  pass 68/68 CTest each.
+  pass 68/68 CTest each. Published as `7293f8361`; Build run 44878284519 passed
+  all 23 jobs, including the QML lint step that the ordering defect had broken.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`

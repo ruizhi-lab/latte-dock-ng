@@ -83,6 +83,24 @@ outage that was observed; the ordering defect above was the real gap.
 The test reads the workflow as text and needs no network, Docker or GitHub
 access, so it runs in every local CTest session.
 
+## CI acceptance
+
+Published as `7293f8361`. Build run
+[44878284519](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44878284519)
+passed **all 23 jobs with no failure**. The two steps that had failed before now
+succeeded:
+
+| Job | Step |
+| --- | --- |
+| QML lint (qmllint) | `Install Git and KDE Neon repository` |
+| Build (Clang Debug) | `Install KDE Neon repository`, `Install build dependencies` |
+
+The QML lint job is the one the ordering defect actually broke, so its passing
+now confirms the reordered bootstrap runs end to end. Step-level logs were not
+retrievable through the API for this run (an empty response, not a failure), so
+the `KDE Neon repository: <host>` line is inferred from the step succeeding
+rather than quoted.
+
 ## Limits
 
 - The fix removes the ordering defect that failed the QML lint job, but it does
@@ -93,8 +111,9 @@ access, so it runs in every local CTest session.
   exact per-attempt output of the failed steps is not retained. The defects were
   established from the workflow text and reproduced with the contracts and the
   simulations above, not from those logs.
-- No CI run has yet exercised the reordered steps; the push that publishes this
-  slice is the first.
+- Run 44878284519 exercised the reordered steps for the first time and passed,
+  but it did so while the mirror was healthy. A run during an outage has not been
+  observed with the new ordering; the simulation and the contracts cover that case.
 
 ## Next action
 
