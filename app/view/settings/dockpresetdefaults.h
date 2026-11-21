@@ -123,7 +123,7 @@ taskKeys()
 }
 
 inline bool
-restore(KConfigLoader *schema, KConfigPropertyMap *map, const QStringList &keys, const KConfigGroup &preset)
+restore(KConfigLoader *schema, KConfigPropertyMap *map, const QStringList &keys, const KConfigGroup &preset, const KConfigGroup &overrides = {})
 {
     if (!schema || !map) {
         return false;
@@ -134,7 +134,8 @@ restore(KConfigLoader *schema, KConfigPropertyMap *map, const QStringList &keys,
         if (!item || item->isImmutable() || map->isImmutable(key)) {
             continue;
         }
-        const QVariant value = preset.isValid() ? preset.readEntry(key, item->getDefault()) : item->getDefault();
+        const QVariant base = preset.isValid() ? preset.readEntry(key, item->getDefault()) : item->getDefault();
+        const QVariant value = overrides.isValid() ? overrides.readEntry(key, base) : base;
         if (map->value(key) != value) {
             map->insert(key, value);
             // Programmatic insert updates bindings but not valueChanged. Emit
@@ -145,6 +146,22 @@ restore(KConfigLoader *schema, KConfigPropertyMap *map, const QStringList &keys,
     }
     map->writeConfig();
     return true;
+}
+
+inline bool
+restoreDockAppearanceAndBehavior(KConfigLoader *schema, KConfigPropertyMap *map, const KConfigGroup &base, const KConfigGroup &styles)
+{
+    if (!map) {
+        return false;
+    }
+
+    // The editor map owns the selected preset before it reaches disk. Older
+    // layouts can store the enum by name. Overlay only style-specific values
+    // so both presets inherit future changes to the common defaults.
+    const QString style = map->value(QStringLiteral("dockStyle")).toString();
+    const bool modern = style == QLatin1String("Modern") || style == QLatin1String("1");
+    const auto overrides = styles.group(modern ? QStringLiteral("Modern") : QStringLiteral("Classic"));
+    return restore(schema, map, dockKeys(), base, overrides);
 }
 }
 

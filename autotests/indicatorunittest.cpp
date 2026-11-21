@@ -140,20 +140,31 @@ IndicatorUnitTest::dockPresetDefaultsRestoreEditorOptionsButPreserveContents()
     KConfig config(temp.filePath(QStringLiteral("dockrc")), KConfig::SimpleConfig);
     KConfig preset(presetPath, KConfig::SimpleConfig);
     const auto presetDock = preset.group(QStringLiteral("Containments")).group(QStringLiteral("1"));
+    const auto base = presetDock.group(QStringLiteral("General"));
+    const auto styles = preset.group(QStringLiteral("DockPresets"));
     QFile dockFile(dockXml);
     KConfigLoader dockLoader(config.group(QStringLiteral("Dock")), &dockFile);
     KConfigPropertyMap dockMap(&dockLoader);
+    const QStringList presetOptions{
+        QStringLiteral("adaptiveItemSpacing"), QStringLiteral("automaticFloatingGap"), QStringLiteral("compactIndicators"), QStringLiteral("roundedBackground"), QStringLiteral("singleRowLayout")
+    };
     for (int style : { 0, 1 }) {
         dockMap.insert(QStringLiteral("dockStyle"), style);
+        for (const QString &key : presetOptions) {
+            dockMap.insert(key, 1 - style);
+        }
         dockMap.insert(QStringLiteral("iconSize"), 120);
         dockMap.insert(QStringLiteral("customBackgroundColorEnabled"), true);
         dockMap.insert(QStringLiteral("titleTooltips"), false);
         dockMap.insert(QStringLiteral("appletOrder"), QStringLiteral("42;2;8"));
         dockMap.insert(QStringLiteral("splitterPosition"), 2);
         QSignalSpy changes(&dockMap, &QQmlPropertyMap::valueChanged);
-        QVERIFY(Latte::ViewPart::Config::DockPreset::restore(&dockLoader, &dockMap, Latte::ViewPart::Config::DockPreset::dockKeys(), presetDock.group(QStringLiteral("General"))));
+        QVERIFY(Latte::ViewPart::Config::DockPreset::restoreDockAppearanceAndBehavior(&dockLoader, &dockMap, base, styles));
         QVERIFY(!changes.isEmpty());
         QCOMPARE(dockMap.value(QStringLiteral("dockStyle")).toInt(), style);
+        for (const QString &key : presetOptions) {
+            QCOMPARE(dockMap.value(key).toInt(), style);
+        }
         QCOMPARE(dockMap.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("42;2;8"));
         QCOMPARE(dockMap.value(QStringLiteral("splitterPosition")).toInt(), 2);
         QCOMPARE(dockMap.value(QStringLiteral("iconSize")).toInt(), 64);
@@ -162,7 +173,7 @@ IndicatorUnitTest::dockPresetDefaultsRestoreEditorOptionsButPreserveContents()
         QCOMPARE(dockMap.value(QStringLiteral("customBackgroundColorEnabled")).toBool(), false);
         QCOMPARE(dockMap.value(QStringLiteral("titleTooltips")).toBool(), true);
         const auto notifications = changes.count();
-        QVERIFY(Latte::ViewPart::Config::DockPreset::restore(&dockLoader, &dockMap, Latte::ViewPart::Config::DockPreset::dockKeys(), presetDock.group(QStringLiteral("General"))));
+        QVERIFY(Latte::ViewPart::Config::DockPreset::restoreDockAppearanceAndBehavior(&dockLoader, &dockMap, base, styles));
         QCOMPARE(changes.count(), notifications);
         for (const QString &key : Latte::ViewPart::Config::DockPreset::dockKeys()) {
             QVERIFY2(dockLoader.findItemByName(key), qPrintable(key));

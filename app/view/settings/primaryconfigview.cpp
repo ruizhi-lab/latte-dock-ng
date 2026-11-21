@@ -170,7 +170,7 @@ PrimaryConfigView::restoreDockPreset()
         qCWarning(latteView) << "Cannot restore Dock preset: default indicator configuration is unavailable";
         return false;
     }
-    Config::DockPreset::restore(dockSchema, dockMap, Config::DockPreset::dockKeys(), dockPreset.group(QStringLiteral("General")));
+    Config::DockPreset::restoreDockAppearanceAndBehavior(dockSchema, dockMap, dockPreset.group(QStringLiteral("General")), preset.group(QStringLiteral("DockPresets")));
     for (const auto &task : std::as_const(tasks)) {
         if (!task.applet || !task.map) {
             qCWarning(latteView) << "Dock preset restore interrupted: task configuration was destroyed";
