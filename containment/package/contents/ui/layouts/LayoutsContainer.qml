@@ -55,10 +55,15 @@ Item{
 
     signal contentsLengthChanged();
 
+    // VisibilityManager animates x for vertical docks and y for horizontal
+    // docks. Keep that coordinate when suspending its binding so Qt does
+    // not reset the slide's starting position or overwrite an animated frame.
     Binding {
         target: layoutsContainer
         property: "x"
         when: !visibilityManager.inRelocationAnimation
+              && !(root.isVertical && (visibilityManager.inSlidingIn || visibilityManager.inSlidingOut))
+        restoreMode: Binding.RestoreNone
         value: {
             if (latteView && root.isHorizontal && root.myView.alignment === LatteCore.types.Justify) {
                 if (root.isModernDockStyle) {
@@ -67,10 +72,6 @@ Item{
 
                 return ((latteView.width/2) - (root.maxLength/2) + background.offset + layoutsContainer.externalPanelLeftMargin);
             } else {
-                if ((root.myView.inSlidingIn || root.myView.inSlidingOut) && root.isVertical){
-                    return;
-                }
-
                 if (layoutsContainer.isHidden && root.isVertical) {
                     if (LatteCore.WindowSystem.compositingActive) {
                         return visibilityManager.slidingOutToPos;
@@ -92,6 +93,8 @@ Item{
         target: layoutsContainer
         property: "y"
         when: !visibilityManager.inRelocationAnimation
+              && !(root.isHorizontal && (visibilityManager.inSlidingIn || visibilityManager.inSlidingOut))
+        restoreMode: Binding.RestoreNone
         value: {
             if (latteView && root.isVertical && root.myView.alignment === LatteCore.types.Justify) {
                 if (root.isModernDockStyle) {
@@ -100,10 +103,6 @@ Item{
 
                 return ((latteView.height/2) - (root.maxLength/2) + background.offset + layoutsContainer.externalPanelTopMargin);
             } else {
-                if ((root.myView.inSlidingIn || root.myView.inSlidingOut) && root.isHorizontal){
-                    return;
-                }
-
                 if (layoutsContainer.isHidden && root.isHorizontal) {
                     if (LatteCore.WindowSystem.compositingActive) {
                         return visibilityManager.slidingOutToPos;
