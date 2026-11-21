@@ -481,9 +481,11 @@ PlasmaComponents.Page {
 
                     // Cached indicator option pages must follow the live dock style,
                     // not the legacy CONSTANT snapshot exposed by Indicator.
-                    readonly property bool isModernDockStyle: plasmoid.configuration.dockStyle === 1
-                                                              || plasmoid.configuration.dockStyle === "1"
-                                                              || plasmoid.configuration.dockStyle === "Modern"
+                    readonly property bool isModernDockStyle: {
+                        var option = plasmoid.configuration.compactIndicators;
+                        var style = plasmoid.configuration.dockStyle;
+                        return option === -1 ? (style === 1 || style === "1" || style === "Modern") : option === 1;
+                    }
                     readonly property int optionsWidth: page.dialog.optionsWidth
                     readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
 

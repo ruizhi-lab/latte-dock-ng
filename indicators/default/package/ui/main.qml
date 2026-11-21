@@ -74,13 +74,7 @@ LatteComponents.IndicatorItem{
 
         return value === "Dot" || value === "Dots" ? 1 : 0;
     }
-    readonly property bool modernDockStyle: {
-        var styleValue = plasmoid.configuration.dockStyle;
-        var configModern = styleValue === 1 || styleValue === "1" || styleValue === "Modern";
-        var apiModern = indicator && indicator.isModernDockStyle === true;
-
-        return configModern || apiModern;
-    }
+    readonly property bool modernDockStyle: indicator && indicator.isModernDockStyle === true
     // Modern defaults to macOS-style dots. The explicit preset toggle owns that
     // override; disabling it restores the saved shape without changing dock geometry.
     readonly property bool modernDotPreset: indicator.configuration.modernDotPreset !== false

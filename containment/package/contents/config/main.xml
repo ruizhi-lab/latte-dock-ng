@@ -21,6 +21,21 @@
       <default>0</default>
       <label>dock visual style profile</label>
     </entry>
+    <entry name="singleRowLayout" type="Int">
+      <default>-1</default>
+    </entry>
+    <entry name="roundedBackground" type="Int">
+      <default>-1</default>
+    </entry>
+    <entry name="adaptiveItemSpacing" type="Int">
+      <default>-1</default>
+    </entry>
+    <entry name="automaticFloatingGap" type="Int">
+      <default>-1</default>
+    </entry>
+    <entry name="compactIndicators" type="Int">
+      <default>-1</default>
+    </entry>
     <entry name="appletOrder" type="String">
       <label>encoded order of items</label>
     </entry>

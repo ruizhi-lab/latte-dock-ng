@@ -233,6 +233,15 @@ is documented; review the guide text against the UI.
 
 ## Architecture & Compatibility Notes
 
+- **Dock styles are presets**: Modern is a one-click macOS-like preset for
+  the same settings available in Classic. Both styles expose the same editor
+  controls, and every Modern effect is reproducible by setting those controls
+  manually in Classic. The selector applies preset values to shared settings.
+  Control availability and runtime behavior depend on the effective settings,
+  including layout, screen-edge bounds, and task overflow scrolling.
+  Use the saved style as a fallback for older layouts with unset options.
+  When changing either preset, verify that equivalent settings produce
+  equivalent results in both.
 - **Architecture charter**: `Corona` coordinates application services; `View`
   composes per-dock behavior; QML composes presentation and interaction.
   Layout coordination (`app/layouts/`) and containment item arrangement

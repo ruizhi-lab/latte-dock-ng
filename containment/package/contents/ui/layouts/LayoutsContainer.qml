@@ -66,7 +66,7 @@ Item{
         restoreMode: Binding.RestoreNone
         value: {
             if (latteView && root.isHorizontal && root.myView.alignment === LatteCore.types.Justify) {
-                if (root.isModernDockStyle) {
+                if (root.singleRowLayoutEnabled) {
                     return layoutsContainer.externalPanelLeftMargin;
                 }
 
@@ -97,7 +97,7 @@ Item{
         restoreMode: Binding.RestoreNone
         value: {
             if (latteView && root.isVertical && root.myView.alignment === LatteCore.types.Justify) {
-                if (root.isModernDockStyle) {
+                if (root.singleRowLayoutEnabled) {
                     return layoutsContainer.externalPanelTopMargin;
                 }
 
@@ -120,10 +120,10 @@ Item{
         }
     }
 
-    width: Math.max(0, (root.isHorizontal && root.myView.alignment === LatteCore.types.Justify && !root.isModernDockStyle ? root.maxLength : parent.width)
+    width: Math.max(0, (root.isHorizontal && root.myView.alignment === LatteCore.types.Justify && !root.singleRowLayoutEnabled ? root.maxLength : parent.width)
                    - externalPanelLeftMargin - externalPanelRightMargin)
     height: root.isVertical
-            ? Math.max(0, (root.myView.alignment === LatteCore.types.Justify && !root.isModernDockStyle ? root.maxLength : parent.height)
+            ? Math.max(0, (root.myView.alignment === LatteCore.types.Justify && !root.singleRowLayoutEnabled ? root.maxLength : parent.height)
                        - externalPanelTopMargin - externalPanelBottomMargin)
             : parent.height
     z:10
@@ -336,7 +336,7 @@ Item{
                 return background.offset + lengthTailPadding;
             }
 
-            if (root.myView.alignment === LatteCore.types.Justify && !root.isModernDockStyle) {
+            if (root.myView.alignment === LatteCore.types.Justify && !root.singleRowLayoutEnabled) {
                 return inJustifyCenterOffset;
             }
 
@@ -425,7 +425,7 @@ Item{
                     return 0;
                 }
 
-                if (root.isModernDockStyle) {
+                if (root.singleRowLayoutEnabled) {
                     return 0;
                 }
 

@@ -121,8 +121,8 @@ ColumnLayout {
     LatteComponents.CheckBox {
         Layout.maximumWidth: root.safeOptionsWidth
         enabled: root.modernDockStyleValue
-        text: i18n("Use Modern dot indicators")
-        tooltip: i18n("Available for Modern docks. Keep the macOS-style dots, or disable to choose Line or Dots independently of the dock style")
+        text: i18n("Use macOS-style dots")
+        tooltip: i18n("Available when compact task indicators are enabled in Appearance. Turn off to choose Line or Dots manually")
         value: root.modernDotPresetValue
         onClicked: root.indicatorConfig.modernDotPreset = !value
     }

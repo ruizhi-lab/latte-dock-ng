@@ -495,7 +495,7 @@ Item {
         // fillWidth applets (e.g. digital clock) from ever receiving their
         // slot size.  Still honour appletsInParentChange.
         var canRun = inNormalFillCalculationsState
-                  || (root.isModernDockStyle && !appletsInParentChange);
+                  || (root.singleRowLayoutEnabled && !appletsInParentChange);
         if (canRun) {
             // console.log(" org.kde.latte -------------");
             // console.log(" org.kde.latte s1...");
@@ -505,7 +505,7 @@ Item {
                 return;
             }
 
-            if (root.isModernDockStyle) {
+            if (root.singleRowLayoutEnabled) {
                 updateModernFillApplets();
                 return;
             }

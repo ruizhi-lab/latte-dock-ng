@@ -71,7 +71,17 @@ ContainmentItem {
         return (styleValue === 1 || styleValue === "1" || styleValue === "Modern") ? 1 : 0;
     }
     readonly property int currentDockStyleIndex: dockStyleToIndex(plasmoid.configuration.dockStyle)
-    readonly property bool isModernDockStyle: currentDockStyleIndex === 1
+    // Layouts saved before these options existed inherit their selected
+    // preset. An explicit option always takes precedence over that fallback.
+    function presetOptionEnabled(value) {
+        return value === -1 ? currentDockStyleIndex === 1 : value === 1;
+    }
+
+    readonly property bool singleRowLayoutEnabled: presetOptionEnabled(plasmoid.configuration.singleRowLayout)
+    readonly property bool roundedBackgroundEnabled: presetOptionEnabled(plasmoid.configuration.roundedBackground)
+    readonly property bool adaptiveItemSpacingEnabled: presetOptionEnabled(plasmoid.configuration.adaptiveItemSpacing)
+    readonly property bool automaticFloatingGapEnabled: presetOptionEnabled(plasmoid.configuration.automaticFloatingGap)
+    readonly property bool compactIndicatorsEnabled: presetOptionEnabled(plasmoid.configuration.compactIndicators)
     property bool modernAlignmentNormalizationGuard: false
 
     function normalizedAlignmentForModern(alignmentValue) {
@@ -79,7 +89,7 @@ ContainmentItem {
     }
 
     function enforceModernAlignmentCompatibility() {
-        if (!root.isModernDockStyle || root.modernAlignmentNormalizationGuard) {
+        if (!root.singleRowLayoutEnabled || root.modernAlignmentNormalizationGuard) {
             return false;
         }
 
@@ -496,7 +506,7 @@ ContainmentItem {
                 return;
             }
 
-            if (root.isModernDockStyle) {
+            if (root.singleRowLayoutEnabled) {
                 var effectiveAlignment = root.normalizedAlignmentForModern(latteView.alignment);
 
                 if (latteView.alignment !== effectiveAlignment) {
@@ -583,7 +593,7 @@ ContainmentItem {
         }
     }
 
-    onCurrentDockStyleIndexChanged: {
+    onSingleRowLayoutEnabledChanged: {
         if (root.inStartup) {
             return;
         }
@@ -594,7 +604,7 @@ ContainmentItem {
 
         layouter.appletsInParentChange = true;
 
-        if (root.isModernDockStyle) {
+        if (root.singleRowLayoutEnabled) {
             root.enforceModernAlignmentCompatibility();
             fastLayoutManager.joinLayoutsToMainLayout();
             root.forceModernAppletsToMainLayout();
@@ -987,7 +997,7 @@ ContainmentItem {
     }
 
     function forceModernAppletsToMainLayout() {
-        if (!root.isModernDockStyle || !layoutsContainer || !layoutsContainer.mainLayout) {
+        if (!root.singleRowLayoutEnabled || !layoutsContainer || !layoutsContainer.mainLayout) {
             return;
         }
 

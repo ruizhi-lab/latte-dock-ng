@@ -3629,7 +3629,7 @@ void SourceContractTest::appletItemFallbackTrackedWindowsAndConstraintHints()
     QVERIFY(src.contains(QStringLiteral("canFillScreenEdge")));
 
     // isRequestingFill must bail out for modern dock style with indexer.
-    QVERIFY(src.contains(QStringLiteral("isModernDockStyle && indexerIsSupported")));
+    QVERIFY(src.contains(QStringLiteral("singleRowLayoutEnabled && indexerIsSupported")));
 }
 
 void SourceContractTest::plasmoidLaunchersAndDragDropHavePluginDetectionGuards()

@@ -20,7 +20,7 @@ Ability.MetricsPrivate {
     iconSize: _iconSize
     maxIconSize: _maxIconSize
     backgroundThickness: background.thickness
-    readonly property int styleDefaultScreenEdgeMargin: root.isModernDockStyle
+    readonly property int styleDefaultScreenEdgeMargin: root.automaticFloatingGapEnabled
                                                       ? Math.max(4, Math.round(iconSize * 0.08))
                                                       : 0
     readonly property int configuredScreenEdgeMargin: Math.max(0, plasmoid.configuration.screenEdgeMargin)

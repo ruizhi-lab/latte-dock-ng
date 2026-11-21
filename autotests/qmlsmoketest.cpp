@@ -1545,7 +1545,7 @@ import QtQuick
 import QtQuick.Layouts
 Item {
     property QtObject root: QtObject {
-        property bool isModernDockStyle: true
+        property bool singleRowLayoutEnabled: true
         property bool isHorizontal: true
         property bool isVertical: !isHorizontal
     }
@@ -1791,6 +1791,7 @@ Item {
     id: host
     width: 64; height: 64
     property int dockStyle: 0
+    property int compactIndicators: -1
     property bool vertical: false
     property QtObject plasmoid: QtObject {
         property var configuration: ({dockStyle: host.dockStyle})
@@ -1819,7 +1820,8 @@ Item {
         property var requested: ({iconOffsetX: 0, iconOffsetY: 0})
         property Item bridge: Item {
             property QtObject configuration: host.config
-            property bool isModernDockStyle: host.dockStyle === 1
+            property bool isModernDockStyle: host.compactIndicators === -1
+                                             ? host.dockStyle === 1 : host.compactIndicators === 1
             property int currentIconSize: 48
             property int maxIconSize: 48
             property int screenEdgeMargin: 0
@@ -1868,6 +1870,11 @@ Item {
     if (dockStyle == 1) {
         QCOMPARE(point->property(length).toInt(), renderer->property("size").toInt());
     }
+    QVERIFY(host->setProperty("compactIndicators", 1));
+    QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), 1);
+    QVERIFY(host->setProperty("compactIndicators", 0));
+    QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), 0);
+    QVERIFY(host->setProperty("compactIndicators", -1));
     QVERIFY(config->setProperty("modernDotPreset", false));
     QCOMPARE(renderer->property("effectiveActiveStyle").toInt(), 0);
     QVERIFY(point->property(length).toInt() > renderer->property("size").toInt());

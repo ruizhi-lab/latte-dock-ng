@@ -117,7 +117,7 @@ Item {
         target: latteView
         property: "screenEdgeMarginEnabled"
         when: latteView
-        value: (root.screenEdgeMarginEnabled || root.isModernDockStyle) && !root.hideThickScreenGap
+        value: (root.screenEdgeMarginEnabled || root.automaticFloatingGapEnabled) && !root.hideThickScreenGap
     }
 
     Binding{

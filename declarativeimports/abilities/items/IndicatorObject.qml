@@ -115,15 +115,8 @@ Item{
                                                && _indicator.metrics.margin
                                                && _indicator.metrics.margin.tailThickness !== undefined)
                                              ? _indicator.metrics.margin.tailThickness : 0
-        readonly property bool isModernDockStyle: {
-            var styleValue = plasmoid.configuration.dockStyle;
-            var configModern = styleValue === 1 || styleValue === "1" || styleValue === "Modern";
-            var metricsModern = _indicator.metrics
-                                && _indicator.metrics.modernDockStyle !== undefined
-                                && _indicator.metrics.modernDockStyle;
-
-            return configModern || metricsModern;
-        }
+        readonly property bool isModernDockStyle: _indicator.metrics
+                                                && _indicator.metrics.modernDockStyle === true
 
         // Preserve the public indicator palette API name.
         readonly property QtObject palette: _indicator.palette ? _indicator.palette : theme

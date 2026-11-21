@@ -37,19 +37,21 @@ AbilityHost.Metrics {
     }
 
     readonly property bool autosizeEnabled: autosize !== undefined && autosize.isActive
-    readonly property bool modernDockStyle: (typeof root !== "undefined") && root.isModernDockStyle
+    readonly property bool modernDockStyle: (typeof root !== "undefined") && root.compactIndicatorsEnabled
+
+    readonly property bool adaptiveSpacing: (typeof root !== "undefined") && root.adaptiveItemSpacingEnabled
 
     readonly property MetricsPrivateTypes.Fraction fraction: MetricsPrivateTypes.Fraction{
         thicknessMargin: {
             var configured = Math.max(indicators.info.minThicknessPadding, plasmoid.configuration.thickMargin / 100);
             // kThicknessMarginModernFloor=0.19, kThicknessMarginTraditionalFloor=0.14
             // See declarativeimports/abilities/definition/metrics/Constants.qml
-            return modernDockStyle ? Math.max(0.19, configured) : Math.max(0.14, configured);
+            return adaptiveSpacing ? Math.max(0.19, configured) : Math.max(0.14, configured);
         }
         lengthMargin: {
             var configured = plasmoid.configuration.lengthExtMargin / 100;
             // kLengthMarginModernFloor=0.04
-            return modernDockStyle ? Math.max(0.04, configured) : configured;
+            return adaptiveSpacing ? Math.max(0.04, configured) : configured;
         }
         lengthPadding: indicators.isEnabled ? indicators.padding : 0
         lengthAppletPadding: indicators.isEnabled ? indicators.info.appletLengthPadding : -1

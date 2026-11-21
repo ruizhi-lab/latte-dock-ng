@@ -89,7 +89,7 @@ Item {
         // Ordinary tasks keep content-sized slots after alignment changes.
         // Scrolling tasks explicitly request a viewport instead; excluding them
         // from fill allocation would keep every icon reserved beyond the screen.
-        if (root.isModernDockStyle && indexerIsSupported
+        if (root.singleRowLayoutEnabled && indexerIsSupported
                 && !appletRequestsScrollingViewport(applet)) {
             return false;
         }
@@ -1027,7 +1027,7 @@ Item {
     }
 
     function sideLayoutForSortDrop(rootX, rootY) {
-        if (root.isModernDockStyle || root.myView.alignment !== LatteCore.types.Justify) {
+        if (root.singleRowLayoutEnabled || root.myView.alignment !== LatteCore.types.Justify) {
             return null;
         }
 
@@ -1097,7 +1097,7 @@ Item {
     function sortCandidateAt(rootX, rootY) {
         var bestItem = null;
         var bestDistance = Number.POSITIVE_INFINITY;
-        var layouts = root.myView.alignment === LatteCore.types.Justify && !root.isModernDockStyle
+        var layouts = root.myView.alignment === LatteCore.types.Justify && !root.singleRowLayoutEnabled
                 ? [layoutsContainer.startLayout, layoutsContainer.mainLayout, layoutsContainer.endLayout]
                 : [layoutsContainer.mainLayout];
 
@@ -1239,7 +1239,7 @@ Item {
             return;
         }
 
-        if (root.myView.alignment === LatteCore.types.Justify && !root.isModernDockStyle) {
+        if (root.myView.alignment === LatteCore.types.Justify && !root.singleRowLayoutEnabled) {
             fastLayoutManager.moveAppletsBasedOnJustifyAlignment();
         }
 

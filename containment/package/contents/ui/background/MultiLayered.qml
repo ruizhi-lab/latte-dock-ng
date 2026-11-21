@@ -21,7 +21,7 @@ BackgroundProperties{
     id:barLine
 
     readonly property alias panelBackgroundSvg: solidBackground
-    readonly property bool modernDockStyle: root.isModernDockStyle
+    readonly property bool modernDockStyle: root.roundedBackgroundEnabled
     readonly property int visualAlignment: latteView && latteView.alignment !== LatteCore.types.NoneAlignment ? latteView.alignment : myView.alignment
 
     //! Layer 0: Multi-Layer container in order to provide a consistent final element that acts
@@ -57,14 +57,8 @@ BackgroundProperties{
 
     //! it can accept negative values in DockMode
     screenEdgeMargin: {
-        if (modernDockStyle) {
-            // Metrics owns the default and configured floating gap on every edge.
-            // Bypassing it for vertical docks makes their background touch the
-            // screen even while metrics and the horizontal dock retain a gap.
-            return metrics.effectiveScreenEdgeMargin - shadows.tailThickness;
-        }
-
-        return root.screenEdgeMarginEnabled ? metrics.margin.screenEdge - shadows.tailThickness : -shadows.tailThickness;
+        // Metrics resolves the configured gap and the automatic fallback on every edge.
+        return metrics.effectiveScreenEdgeMargin - shadows.tailThickness;
     }
 
     paddings.top: {

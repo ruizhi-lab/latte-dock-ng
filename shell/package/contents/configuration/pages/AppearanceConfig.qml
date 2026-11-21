@@ -108,52 +108,26 @@ PlasmaComponents.Page {
             return numericStyle === 1 ? 1 : 0;
         }
 
-        function applyDockStylePreset(styleValue, previousStyleValue) {
-            if (!page.latteView || !page.latteView.indicator) {
-                return;
+        readonly property var presetOptions: [
+            {key: "singleRowLayout", label: i18n("Keep dock items together")},
+            {key: "roundedBackground", label: i18n("Use the inset background with an outline")},
+            {key: "adaptiveItemSpacing", label: i18n("Use wider minimum item spacing")},
+            {key: "automaticFloatingGap", label: i18n("Use an automatic floating gap")},
+            {key: "compactIndicators", label: i18n("Use compact task indicators")}
+        ]
+
+        function applyDockStylePreset(styleValue) {
+            var value = styleIndex(styleValue);
+            // Write each option before changing the preset label so old layouts
+            // never briefly inherit a different arrangement during the switch.
+            for (var option of presetOptions) {
+                page.dockConfiguration[option.key] = value;
             }
 
-            var targetStyle = styleIndex(styleValue);
-            var previousStyle = styleIndex(previousStyleValue);
-            var isModernToClassicSwitch = (targetStyle === 0 && previousStyle === 1);
-
-            // Recover from legacy oversized values introduced by older panel-mode experiments.
-            // Keep normal user tuning untouched, only clamp clearly out-of-range values.
-            var configuredIconSize = Number(plasmoid.configuration.iconSize);
-            if (!isNaN(configuredIconSize) && configuredIconSize > 160) {
-                plasmoid.configuration.iconSize = 64;
+            if (value === 1 && page.latteView && page.latteView.indicator) {
+                page.latteView.indicator.type = "org.kde.latte.default";
             }
-
-            page.latteView.indicator.type = "org.kde.latte.default";
-
-            if (targetStyle === 1) { // Modern
-                // Modern keeps the default indicator but changes its geometry in the indicator QML.
-            } else { // Classic
-                var classicPanelSize = Number(plasmoid.configuration.panelSize);
-                if (isModernToClassicSwitch || isNaN(classicPanelSize) || classicPanelSize > 100 || classicPanelSize < 0) {
-                    plasmoid.configuration.panelSize = 6;
-                }
-
-                var classicZoomLevel = Number(plasmoid.configuration.zoomLevel);
-                if (isModernToClassicSwitch || isNaN(classicZoomLevel) || classicZoomLevel > 40 || classicZoomLevel < 0) {
-                    plasmoid.configuration.zoomLevel = 10;
-                }
-
-                if (isNaN(configuredIconSize) || configuredIconSize > 96 || configuredIconSize < 24) {
-                    plasmoid.configuration.iconSize = 64;
-                }
-
-                // Classic profile should behave as a non-floating dock by default.
-                if (isModernToClassicSwitch) {
-                    if (Number(plasmoid.configuration.proportionIconSize) > 0) {
-                        plasmoid.configuration.proportionIconSize = -1;
-                    }
-
-                    if (Number(plasmoid.configuration.screenEdgeMargin) >= 0) {
-                        plasmoid.configuration.screenEdgeMargin = -1;
-                    }
-                }
-            }
+            page.dockConfiguration.dockStyle = styleValue;
         }
 
         function dockStyleIndex(styleValue) {
@@ -222,16 +196,29 @@ PlasmaComponents.Page {
                         }
                     }
 
-                    onCurrentIndexChanged: {
-                        if (currentIndex < 0 || content.dockStyleIndex(plasmoid.configuration.dockStyle) === currentIndex) {
+                    onActivated: {
+                        if (currentIndex < 0) {
                             return;
                         }
 
-                        var previousStyleValue = plasmoid.configuration.dockStyle;
-                        var styleValue = model[currentIndex]["value"];
-                        plasmoid.configuration.dockStyle = styleValue;
-                        content.applyDockStylePreset(styleValue, previousStyleValue);
+                        content.applyDockStylePreset(model[currentIndex]["value"]);
                         syncGeometry.restart();
+                    }
+                }
+
+                Repeater {
+                    model: content.presetOptions
+
+                    delegate: PlasmaComponents.CheckBox {
+                        id: presetOption
+                        required property var modelData
+                        Layout.fillWidth: true
+                        text: modelData.label
+                        checked: {
+                            var option = page.dockConfiguration[modelData.key];
+                            return option === -1 ? content.styleIndex(page.dockConfiguration.dockStyle) === 1 : option === 1;
+                        }
+                        onToggled: page.dockConfiguration[modelData.key] = checked ? 1 : 0
                     }
                 }
 
