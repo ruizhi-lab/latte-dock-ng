@@ -39,7 +39,7 @@ AbilityHost.Metrics {
     readonly property bool autosizeEnabled: autosize !== undefined && autosize.isActive
     readonly property bool modernDockStyle: (typeof root !== "undefined") && root.compactIndicatorsEnabled
 
-    readonly property bool adaptiveSpacing: (typeof root !== "undefined") && root.adaptiveItemSpacingEnabled
+    required property bool adaptiveSpacing
 
     readonly property MetricsPrivateTypes.Fraction fraction: MetricsPrivateTypes.Fraction{
         thicknessMargin: {

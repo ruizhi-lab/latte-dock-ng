@@ -1,3 +1,24 @@
+## [v1.3.5] - 2026-11-21
+
+### Fixed
+
+- Task lists scroll when they exceed the available space in the single-row
+  layout. The dock keeps its length within the screen while other widgets
+  occupy space and the task list changes size.
+- Dock contents stay in place during slide animations. Adding a separator
+  at a task-list boundary also keeps the position synchronized across
+  cloned docks on different screens.
+
+### Changed
+
+- Modern applies a macOS-style preset to the same settings available in
+  Classic. Both styles expose controls for item arrangement, background,
+  spacing, the floating gap and compact indicators.
+- Restore Preset restores the five style options for the selected preset
+  and applies the shared defaults to the remaining editor settings.
+- The handbook documents the new controls in English, Simplified Chinese
+  and Traditional Chinese. Other interface languages open the English guide.
+
 ## [v1.3.4] - 2026-11-19
 
 This release fixes dock geometry on multi-monitor Wayland setups and keeps the

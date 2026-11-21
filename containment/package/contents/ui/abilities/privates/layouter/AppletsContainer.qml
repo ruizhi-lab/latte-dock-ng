@@ -9,6 +9,7 @@ Item {
     id: appletsContainer
 
     property Item grid: null
+    required property bool singleRowLayoutEnabled
 
     // items in grid
     readonly property int count: grid.children.length
@@ -40,7 +41,7 @@ Item {
         // must still include the fixed applets, or this binding restores zero
         // and the task viewport expands back to its full content length.
         when: appletsContainer && grid && !updateIsBlocked
-              && (inNormalFillCalculationsState || root.singleRowLayoutEnabled)
+              && (inNormalFillCalculationsState || appletsContainer.singleRowLayoutEnabled)
         value: {
             var space = 0;
             for (var i=0; i<grid.children.length; ++i){

@@ -9,6 +9,9 @@ import org.kde.latte.core as LatteCore
 import "./layouter" as LayouterElements
 
 Item {
+    id: layouterPrivate
+
+    required property bool singleRowLayoutEnabled
     property Item layouts: null
     property Item animations: null
     property Item indexer: null
@@ -23,14 +26,17 @@ Item {
     readonly property int contentsMaxLength: Math.max(0, root.maxLength - background.totals.paddingsLength - layouts.externalPanelLengthMargins)
 
     readonly property Item startLayout: LayouterElements.AppletsContainer {
+        singleRowLayoutEnabled: layouterPrivate.singleRowLayoutEnabled
         grid: layouts.startLayout
     }
 
     readonly property Item mainLayout: LayouterElements.AppletsContainer {
+        singleRowLayoutEnabled: layouterPrivate.singleRowLayoutEnabled
         grid: layouts.mainLayout
     }
 
     readonly property Item endLayout: LayouterElements.AppletsContainer {
+        singleRowLayoutEnabled: layouterPrivate.singleRowLayoutEnabled
         grid: layouts.endLayout
     }
 
@@ -495,7 +501,7 @@ Item {
         // fillWidth applets (e.g. digital clock) from ever receiving their
         // slot size.  Still honour appletsInParentChange.
         var canRun = inNormalFillCalculationsState
-                  || (root.singleRowLayoutEnabled && !appletsInParentChange);
+                  || (layouterPrivate.singleRowLayoutEnabled && !appletsInParentChange);
         if (canRun) {
             // console.log(" org.kde.latte -------------");
             // console.log(" org.kde.latte s1...");
@@ -505,7 +511,7 @@ Item {
                 return;
             }
 
-            if (root.singleRowLayoutEnabled) {
+            if (layouterPrivate.singleRowLayoutEnabled) {
                 updateModernFillApplets();
                 return;
             }

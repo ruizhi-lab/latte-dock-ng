@@ -1747,6 +1747,7 @@ ContainmentItem {
 
     Ability.Layouter {
         id: _layouter
+        singleRowLayoutEnabled: root.singleRowLayoutEnabled
         animations: _animations
         indexer: _indexer
         layouts: layoutsContainer
@@ -1755,6 +1756,7 @@ ContainmentItem {
 
     Ability.Metrics {
         id: _metrics
+        adaptiveSpacing: root.adaptiveItemSpacingEnabled
         animations: _animations
         autosize: _autosize
         background: _background
