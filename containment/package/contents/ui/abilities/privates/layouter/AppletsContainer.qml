@@ -36,7 +36,11 @@ Item {
     Binding{
         target: appletsContainer
         property:"sizeWithNoFillApplets"
-        when: appletsContainer && grid && !updateIsBlocked && inNormalFillCalculationsState
+        // Modern allocates fill slots during length animations. Its budget
+        // must still include the fixed applets, or this binding restores zero
+        // and the task viewport expands back to its full content length.
+        when: appletsContainer && grid && !updateIsBlocked
+              && (inNormalFillCalculationsState || root.isModernDockStyle)
         value: {
             var space = 0;
             for (var i=0; i<grid.children.length; ++i){
