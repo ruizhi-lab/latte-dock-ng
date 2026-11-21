@@ -102,6 +102,21 @@ No production source changed. The number of gated checks is still 56.
 The Arch and Debian builds behind these runs had 0 compiler diagnostics
 themselves.
 
+## CI acceptance
+
+Published as `cad5b3146`. Build run
+[44874290411](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44874290411)
+passed all 23 jobs. The `Build (Clang Debug)` job, which owns the gate, passed its
+`Run targeted clang-tidy checks` step on the CI image's clang-tidy 18.1.3, so the
+substitution path is confirmed on the CI tool as well as on the Debian 13.7 VM's
+18.1.8.
+
+Two jobs in the first attempt failed at `Install KDE Neon repository` and
+`Install Git and KDE Neon repository`, before `actions/checkout`; the mirror was
+degraded at the time (an earlier check had returned HTTP 502). After it answered
+HTTP 200 again, `gh run rerun --failed` completed them and the run turned green.
+No source change was involved.
+
 ## Limits
 
 - LLVM 19, 20 and 21 were not available. The rule they follow is read from the
