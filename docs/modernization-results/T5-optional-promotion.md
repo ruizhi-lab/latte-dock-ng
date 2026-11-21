@@ -1,9 +1,9 @@
 # T5: `bugprone-unchecked-optional-access` promoted to the gate
 
-Status: implemented; 56-check gate green on clang-tidy 22.1.8 locally and on
-clang-tidy 18.1.8 on a Debian 13.7 VM (the oldest supported stack), with fixture
-proof and no production findings in either. Only the GitHub runner's own
-clang-tidy 18.1.3 job remains unobserved.
+Status: Complete. The 56-check gate passes on clang-tidy 22.1.8 locally, 18.1.8
+on a Debian 13.7 VM and 18.1.3 on the GitHub runner; published in `564199ec1`
+with Build run
+[44863409259](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44863409259).
 
 Date: 2026-11-21. Base: local `main` at `4b9f6ef36`, clean working tree apart
 from the pre-existing untracked `.agents/` and `scripts/__pycache__/`.
@@ -96,24 +96,33 @@ Note: the earlier [evaluation](T5-optional-evaluation.md) recorded 71.3 s for
 both variants on the same database. The absolute level drifted upward between
 sessions (host load), which is exactly why only paired differences are read.
 
+## CI acceptance
+
+Published as `564199ec1`. Build run
+[44863409259](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/44863409259)
+runs the gate in the `Build (Clang Debug)` job, whose `Run targeted clang-tidy
+checks` step **passed**, together with `Run gated clazy checks`, `Test`,
+`Deep QML lint` and the strict-warning check. That job is the CI image's
+clang-tidy 18.1.3, so the patch-level gap noted below is now closed.
+
+`Build (GCC Release)` and `Build (GCC Debug)` failed in the same run before
+`actions/checkout`: `Install KDE Neon repository` and `Install build
+dependencies` respectively. No source was checked out in either job, so those
+failures are infrastructure, not this slice, and they do not affect the gate
+result above.
+
 ## Limits
 
-- LLVM 18.1.3 was not available here; the CI `clang-debug` job is the first
-  LLVM 18 gate on this 56-check source. clang-tidy 18.1.8 was later run on a
-  Debian 13.7 VM with the result above, so only the 18.1.3 patch level is
-  unobserved.
+- LLVM 18.1.3 was unavailable on the authoring host; it ran on the CI runner and
+  passed (above). clang-tidy 18.1.8 also passes on the Debian 13.7 VM, so the
+  check is confirmed at both LLVM 18 patch levels that were exercised.
 - `157 production sources` versus the 156 in earlier records: the compile
   database has gained a source since `e8ba4ad70`. Selection is the runner's,
   not hand-listed.
 - No production finding was fixed, because there is none in the gated scope. A
   finding outside first-party scope would not be counted, as for every check.
 
-## Next action
+## Status
 
-Push and confirm that the `clang-debug` job's `Run targeted clang-tidy checks`
-step reports 56 fixtures and no production findings under clang-tidy 18.1.3. That
-is now the only remaining gap: 18.1.8 already passes on the Debian 13.7 floor, so a
-red 18.1.3 job would be a patch-release difference, not an expected outcome.
-Record that run in this file. After that, Band B's remaining candidates may be
-scheduled; a Band B slice promoting more than one check still needs its own
-measured cost argument.
+This slice is complete. Band B's remaining candidates may be scheduled; a Band B
+slice promoting more than one check still needs its own measured cost argument.

@@ -211,8 +211,11 @@ subsequent T4d changes.
   Debian: clang-tidy 18.1.8 passes the 56-check gate with 0 compiler warnings and
   CTest 65/66 (the one failure is an image accessibility-bridge gap proven by a
   standalone probe). Arch: the Clang Debug build is clean, and the known LLVM 23
-  deprecated-check transition reproduces with an exact message. T5's only remaining
-  gap is the CI runner's clang-tidy 18.1.3 patch level.
+  deprecated-check transition reproduces with an exact message. T5 was published in
+  `564199ec1`; Build run 44863409259 passed the Clang Debug clang-tidy step (CI image
+  clang-tidy 18.1.3), closing T5. Its GCC Debug/Release jobs failed before
+  `actions/checkout` on the KDE Neon repository and dependency install, which is
+  infrastructure and unrelated to the source.
 
 - Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
   install-preparation dependencies. On Arch a verified clean `install_prep/all`

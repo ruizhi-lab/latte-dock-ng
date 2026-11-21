@@ -453,9 +453,9 @@ order-alternated pairs put the 55-to-56 increment below measurement resolution.
 All four presets build with zero compiler warnings and pass 65/65 CTest each.
 clang-tidy 18.1.8 was run against this source on a user-provided Debian 13.7 VM
 (the oldest supported stack): 0 compiler warnings, 56/56 fixtures rejected, no
-production findings. The slice is Complete for the clang-tidy versions exercised;
-only the GitHub runner's own 18.1.3 patch level remains unobserved. See the
-[VM validation](modernization-results/VM-validation-2026-11-21.md).
+production findings. Published in `564199ec1`; Build run 44863409259 passed the
+`Run targeted clang-tidy checks` step on the CI image's clang-tidy 18.1.3, so the
+slice is Complete. See the [VM validation](modernization-results/VM-validation-2026-11-21.md).
 
 The P4 [Fedora A/A baseline](modernization-results/P4-fedora-aa-baseline.md)
 was published in `ebb736602`: five same-build Plasma/KWin 6.8.3 runs have
