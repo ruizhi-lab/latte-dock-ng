@@ -129,7 +129,7 @@ public Q_SLOTS:
     Q_INVOKABLE bool removeInternalSeparatorAtLeftBoundaryOfApplet(const int appletId);
     Q_INVOKABLE bool removeInternalSeparatorAtRightBoundaryOfApplet(const int appletId);
 
-    Q_INVOKABLE void addApplet(const QString &pluginId);
+    Q_INVOKABLE void addApplet(const QString &pluginId, int beforeAppletId = -1);
     Q_INVOKABLE void suppressNextAppletCreatedSignal();
     void addApplet(QObject *metadata, int x, int y);
     void removeApplet(const int &id);
@@ -156,7 +156,7 @@ Q_SIGNALS:
     void appletRemoved(const int &id);
 
     void appletConfigPropertyChanged(const int &id, const QString &key, const QVariant &value);
-    void appletCreated(const QString &pluginId);
+    void appletCreated(const QString &pluginId, int beforeAppletId);
     void appletDataCreated(const int &id);
     void appletConfigurationReady(const int &id);
     void appletDropped(QObject *data, int x, int y);
@@ -184,6 +184,7 @@ private Q_SLOTS:
     void onPlasmaTasksCountChanged();
 
 private:
+    bool insertBoundarySeparatorBeforeApplet(int appletId, bool propagateCreation);
     void clearShortcutsHost();
     void addExpandedApplet(PlasmaQuick::AppletQuickItem * appletQuickItem);
     void removeExpandedApplet(PlasmaQuick::AppletQuickItem *appletQuickItem);
@@ -248,6 +249,7 @@ private:
     QHash<int, ViewPart::AppletInterfaceData> m_appletData;
     QTimer m_appletDelayedConfigurationTimer;
     QSet<int> m_handledRuntimeAppletCreations;
+    int m_boundarySeparatorBeforeAppletId{-1};
     int m_suppressedAppletCreations{0};
     bool m_initializationCompleted{false};
     bool m_cleaningSeparatorApplets{false};

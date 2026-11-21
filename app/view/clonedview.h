@@ -39,6 +39,7 @@ public:
 
     ViewPart::Indicator *indicator() const override;
     Latte::Data::View data() const override;
+    void addAppletFromOriginal(const QString &pluginId, int beforeAppletId);
 
 protected:
     void showConfigurationInterface(Plasma::Applet *applet) override;

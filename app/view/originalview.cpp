@@ -173,14 +173,14 @@ void OriginalView::setNextLocationForClones(const QString layoutName, int edge, 
     }
 }
 
-void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid)
+void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid, int beforeAppletId)
 {
     if (m_clones.count() == 0) {
         return;
     }
 
     // add applet in original view
-    extendedInterface()->addApplet(pluginId);
+    extendedInterface()->addApplet(pluginId, beforeAppletId);
 
     // add applet in clones and exclude the one that probably produced this triggering
     for (const auto clone : std::as_const(m_clones)) {
@@ -189,7 +189,7 @@ void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid)
             continue;
         }
 
-        clone->extendedInterface()->addApplet(pluginId);
+        clone->addAppletFromOriginal(pluginId, beforeAppletId);
     }
 }
 

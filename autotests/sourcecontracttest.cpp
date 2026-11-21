@@ -750,7 +750,7 @@ void SourceContractTest::allScreensCloneAppletSyncContracts()
     const QString interfaceCpp = QString::fromUtf8(interfaceSource.readAll());
     QVERIFY(interfaceCpp.contains(QStringLiteral("suppressNextAppletCreatedSignal();\n    Plasma::Applet *createdApplet = m_view->containment()->createApplet(pluginId);")));
     QVERIFY(!interfaceCpp.contains(QStringLiteral("Latte::Layouts::Importer::standardPaths();\n    QString pluginpath;")));
-    QVERIFY(interfaceCpp.contains(QStringLiteral("Q_EMIT appletCreated(currentPluginId);")));
+    QVERIFY(interfaceCpp.contains(QStringLiteral("Q_EMIT appletCreated(currentPluginId, beforeAppletId);")));
     // Since ed0afd054 a missing cached AppletQuickItem falls back to
     // itemForApplet() resolution instead of bailing out with nullptr.
     QVERIFY(interfaceCpp.contains(QStringLiteral("if (!ai) {\n                ai = PlasmaQuick::AppletQuickItem::itemForApplet(m_appletData[id].applet);\n            }")));
@@ -780,7 +780,13 @@ void SourceContractTest::allScreensCloneAppletSyncContracts()
     QVERIFY(clonedViewSource.contains(QStringLiteral("structuralSyncReady")));
     QVERIFY(clonedViewSource.contains(QStringLiteral("bool ClonedView::refreshAppletIdsHash()")));
     QVERIFY(clonedViewSource.contains(QStringLiteral("if (refreshAppletIdsHash()) {\n            onOriginalAppletsOrderChanged();\n        }")));
-    QVERIFY(clonedViewSource.contains(QStringLiteral("extendedInterface()->addApplet(pluginId);\n        m_syncingFromOriginal = false;\n        onOriginalAppletsOrderChanged();")));
+    // Both docks use the boundary insertion path, which repairs the order
+    // when Plasma emits appletAdded before the visual container is ready.
+    QVERIFY(interfaceCpp.contains(QStringLiteral("insertBoundarySeparatorBeforeApplet(beforeAppletId, false);")));
+    QVERIFY(interfaceCpp.contains(QStringLiteral("const QScopedValueRollback anchor(m_boundarySeparatorBeforeAppletId, appletId);")));
+    QVERIFY(interfaceCpp.contains(QStringLiteral("? m_boundarySeparatorBeforeAppletId")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("extendedInterface()->addApplet(pluginId, m_currentAppletIds.value(beforeAppletId, -1));")));
+    QVERIFY(clonedViewSource.contains(QStringLiteral("m_originalView->addApplet(pluginId, containment()->id(), originalAppletId(beforeAppletId));")));
     QVERIFY(clonedViewSource.contains(QStringLiteral("m_originalView->addApplet(data, x, y, containment()->id());\n        onCloneAppletsOrderChanged();")));
     QVERIFY(clonedViewSource.contains(QStringLiteral("extendedInterface()->addApplet(data, x, y);\n        m_syncingFromOriginal = false;\n        onOriginalAppletsOrderChanged();")));
     QVERIFY(clonedViewSource.contains(QStringLiteral("data.provides.contains(QLatin1String(Latte::PluginId::kLauncherMenu))")));

@@ -113,14 +113,14 @@ void ClonedView::initSync()
         }
     });
 
-    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this, [this](const QString & pluginId) {
+    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this, [this](const QString &pluginId, int beforeAppletId) {
         debugSyncState(QStringLiteral("clone appletCreated %1").arg(pluginId));
 
         if (m_syncingFromOriginal) {
             return;
         }
 
-        m_originalView->addApplet(pluginId, containment()->id());
+        m_originalView->addApplet(pluginId, containment()->id(), originalAppletId(beforeAppletId));
     });
 
     connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this, [this](QObject * data, int x, int y) {
@@ -168,13 +168,7 @@ void ClonedView::initSync()
         }
     });
 
-    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this->extendedInterface(), [this](const QString & pluginId) {
-        debugSyncState(QStringLiteral("original appletCreated %1").arg(pluginId));
-        m_syncingFromOriginal = true;
-        extendedInterface()->addApplet(pluginId);
-        m_syncingFromOriginal = false;
-        onOriginalAppletsOrderChanged();
-    });
+    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this, &ClonedView::addAppletFromOriginal);
 
     connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this->extendedInterface(), [this](QObject * data, int x, int y) {
         debugSyncState(QStringLiteral("original appletDropped %1,%2").arg(x).arg(y));
@@ -195,6 +189,15 @@ void ClonedView::initSync()
 
     //! Indicator
     connect(m_originalView, &Latte::View::indicatorChanged, this, &ClonedView::indicatorChanged);
+}
+
+void ClonedView::addAppletFromOriginal(const QString &pluginId, int beforeAppletId)
+{
+    debugSyncState(QStringLiteral("original appletCreated %1").arg(pluginId));
+    m_syncingFromOriginal = true;
+    extendedInterface()->addApplet(pluginId, m_currentAppletIds.value(beforeAppletId, -1));
+    m_syncingFromOriginal = false;
+    onOriginalAppletsOrderChanged();
 }
 
 bool ClonedView::isSingle() const

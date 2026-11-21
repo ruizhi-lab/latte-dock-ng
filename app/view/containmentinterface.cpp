@@ -32,6 +32,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QLatin1String>
+#include <QScopedValueRollback>
 #include <QSet>
 #include <QStringList>
 #include <QStandardPaths>
@@ -1064,7 +1065,7 @@ void ContainmentInterface::setLayoutManager(QObject *manager)
     Q_EMIT layoutManagerChanged();
 }
 
-void ContainmentInterface::addApplet(const QString &pluginId)
+void ContainmentInterface::addApplet(const QString &pluginId, int beforeAppletId)
 {
     qCDebug(latteView) << "org.kde.sync containment addApplet(plugin)"
                        << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
@@ -1075,12 +1076,17 @@ void ContainmentInterface::addApplet(const QString &pluginId)
         return;
     }
 
+    if (beforeAppletId > 0 && Latte::PluginId::isSeparatorPluginId(pluginId)) {
+        insertBoundarySeparatorBeforeApplet(beforeAppletId, false);
+        return;
+    }
+
     // Calculate the default insertion index and register it BEFORE creating the
     // applet so the QML handler's addAppletItem call places it correctly.
     if (m_layoutManager) {
         QList<int> order = m_layoutManagerDispatcher.order();
         if (!order.isEmpty()) {
-            int defaultIndex = calculateDefaultAppletInsertionIndex(order);
+            const int defaultIndex = calculateDefaultAppletInsertionIndex(order);
             m_layoutManagerDispatcher.expectAppletInsertionAt(defaultIndex);
         }
     }
@@ -1142,6 +1148,11 @@ void ContainmentInterface::addApplet(QObject *metadata, int x, int y)
 }
 
 bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
+{
+    return insertBoundarySeparatorBeforeApplet(appletId, true);
+}
+
+bool ContainmentInterface::insertBoundarySeparatorBeforeApplet(int appletId, bool propagateCreation)
 {
     if (!m_view || !m_view->containment() || appletId < 0) {
         return false;
@@ -1228,7 +1239,21 @@ bool ContainmentInterface::addInternalSeparatorBeforeApplet(const int appletId)
     Plasma::Applet *separatorApplet{nullptr};
 
     for (const QString &pluginId : separatorPlugins) {
+        // The requested neighbor is authoritative during synchronous creation.
+        // The layout's one-shot index may already be consumed by the time the
+        // applet is announced. A mirror also needs the deferred order repair
+        // below if its QML container is not ready when Plasma emits appletAdded.
+        const QScopedValueRollback anchor(m_boundarySeparatorBeforeAppletId, appletId);
+        const int existingSuppressions = m_suppressedAppletCreations;
+        if (!propagateCreation) {
+            suppressNextAppletCreatedSignal();
+        }
+
         separatorApplet = m_view->containment()->createApplet(pluginId);
+
+        if (!propagateCreation && m_suppressedAppletCreations > existingSuppressions) {
+            --m_suppressedAppletCreations;
+        }
 
         if (separatorApplet && !separatorApplet->failedToLaunch()) {
             break;
@@ -2334,7 +2359,10 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                                << "screen" << (m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
                                << "id" << currentAppletId
                                << "plugin" << currentPluginId;
-            Q_EMIT appletCreated(currentPluginId);
+            const int beforeAppletId = Latte::PluginId::isSeparatorPluginId(currentPluginId)
+                ? m_boundarySeparatorBeforeAppletId
+                : -1;
+            Q_EMIT appletCreated(currentPluginId, beforeAppletId);
         }
     }
 
