@@ -811,8 +811,6 @@ ContainmentItem {
     //////////////START OF FUNCTIONS
     function createAppletItem(applet) {
         var appletContainer = appletItemComponent.createObject(dndSpacer.parent);
-        appletContainer.backendAppletRef = applet;
-        appletContainer.sourceAppletPluginName = appletPluginName(applet);
 
         if (!initAppletContainer(appletContainer, applet)) {
             // The applet's QML graphic object may not be ready yet at startup.
@@ -934,6 +932,8 @@ ContainmentItem {
     }
 
     function initAppletContainer(appletContainer, applet) {
+        // Publish identity even before the visual item is ready. LayoutManager
+        // uses it to find the pending container during repair and removal.
         appletContainer.backendAppletRef = applet;
         appletContainer.sourceAppletPluginName = appletPluginName(applet);
 

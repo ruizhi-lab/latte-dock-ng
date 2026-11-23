@@ -15,6 +15,7 @@ Item {
 
     signal launcherChanged(string launcherUrl);
     signal launcherRemoved(string launcherUrl);
+    signal launcherOrderCommitRequested()
 
     //! triggered just before action happens. They are used mostly for animation purposes
     signal launcherInAdding(string launcherUrl);
@@ -41,6 +42,20 @@ Item {
     property Item layout: null
     property Item view: null
     property QtObject tasksModel: null
+    property bool syncingLauncherOrder: false
+
+    function syncLauncherOrder() {
+        // Plasma can reset the task model synchronously when persisting a move.
+        // Delegates recreated in that call already occupied a slot, so they
+        // should appear at their settled size instead of sliding in from zero.
+        const wasSyncing = _launchers.syncingLauncherOrder;
+        _launchers.syncingLauncherOrder = true;
+        try {
+            _launchers.launcherOrderCommitRequested();
+        } finally {
+            _launchers.syncingLauncherOrder = wasSyncing;
+        }
+    }
 
     readonly property LaunchersPart.Syncer syncer: LaunchersPart.Syncer{}
     readonly property LaunchersPart.Validator validator: LaunchersPart.Validator{}

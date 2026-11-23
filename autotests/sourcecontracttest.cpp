@@ -6478,6 +6478,11 @@ void SourceContractTest::parabolicIconsKeepStableRasterAndSuspendInvisibleEffect
     QVERIFY(source.contains(QStringLiteral("width: isZoomed ? maxLength : taskIconItem.width")));
     QVERIFY(source.contains(QStringLiteral("height: isZoomed ? maxLength : taskIconItem.height")));
     QVERIFY(source.contains(QStringLiteral("scale: isZoomed ? currentLength / maxLength : 1")));
+    // The drag effect can miss a frame while its source is rebuilt.
+    // Keep the native icon underneath the animated highlight and effect.
+    const QRegularExpression dragIconFade(QStringLiteral("target: taskIconItem\\s+property: \"opacity\""));
+    QVERIFY(!dragIconFade.match(source).hasMatch());
+
     // The drag and hover copies must stop at zero opacity, after their fade.
     for (const QString &id : { QStringLiteral("id: stateColorizer"), QStringLiteral("id:hoveredImage") }) {
         const int start = source.indexOf(id);

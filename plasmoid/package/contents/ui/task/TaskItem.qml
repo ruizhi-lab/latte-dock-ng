@@ -1216,7 +1216,9 @@ AbilityItem.BasicItem {
     ///// End of Helper functions ////
 
     Component.onCompleted: {
-        parabolicItem.opacity = 0;
+        if (!taskItem.abilities.launchers.syncingLauncherOrder) {
+            parabolicItem.opacity = 0;
+        }
 
         root.draggingFinished.connect(handlerDraggingFinished);
         root.publishTasksGeometries.connect(slotPublishGeometries);
@@ -1285,7 +1287,10 @@ AbilityItem.BasicItem {
     }
 
     /////Animations
-    TaskAnimations.ShowWindowAnimation{ id: _showWindowAnimation }
+    TaskAnimations.ShowWindowAnimation {
+        id: _showWindowAnimation
+        syncingLauncherOrder: taskItem.abilities.launchers.syncingLauncherOrder
+    }
 
     // when changing activities and desktops the index of the tasks
     // is updated immediately to -1, this timer protects this indexing

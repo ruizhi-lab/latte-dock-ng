@@ -71,7 +71,7 @@ Timer{
             stop();
             console.log("launchers synced at:" + launchers);
             launchers.length = 0;
-            _launchers.tasksModel.syncLaunchers();
+            _launchers.syncLauncherOrder();
         } else {
             var currentLaunchers = _launchers.currentShownLauncherList();
 

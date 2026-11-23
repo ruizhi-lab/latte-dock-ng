@@ -495,6 +495,9 @@ Item {
 
     //////////// Transitions //////////////
 
+    // Keep the icon visible under the drag highlight and desaturated copy.
+    // The copy can be unavailable while Qt rebuilds its effect source during a
+    // move, leaving an empty placeholder if the base icon fades out as well.
     readonly property string draggingNeedThicknessEvent: taskIcon + "_dragging"
 
     transitions: [
@@ -525,14 +528,6 @@ Item {
                         target: draggedRectangle
                         property: "opacity"
                         to: 1
-                        duration: isDraggedTransition.speed
-                        easing.type: Easing.OutQuad
-                    }
-
-                    PropertyAnimation {
-                        target: taskIconItem
-                        property: "opacity"
-                        to: 0
                         duration: isDraggedTransition.speed
                         easing.type: Easing.OutQuad
                     }
@@ -579,14 +574,6 @@ Item {
                         target: draggedRectangle
                         property: "opacity"
                         to: 0
-                        duration: defaultTransition.speed
-                        easing.type: Easing.OutQuad
-                    }
-
-                    PropertyAnimation {
-                        target: taskIconItem
-                        property: "opacity"
-                        to: 1
                         duration: defaultTransition.speed
                         easing.type: Easing.OutQuad
                     }

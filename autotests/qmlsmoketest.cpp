@@ -741,10 +741,12 @@ public:
 
     Q_INVOKABLE void syncLaunchers() {
         ++m_syncCount;
+        Q_EMIT launcherOrderSyncInvoked();
     }
 
 Q_SIGNALS:
     void launcherListChanged();
+    void launcherOrderSyncInvoked();
 
 private:
     QStringList m_launcherList;
@@ -2014,7 +2016,8 @@ void QmlSmokeTest::showWindowAnimationFrozenZoomDecisionLoadsFromSource()
     context.setContextProperty(QStringLiteral("icList"), QVariantMap{});
 
     QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_SHOW_WINDOW_ANIMATION_QML)));
-    std::unique_ptr<QObject> object(component.create(&context));
+    const QVariantMap initialProperties{{QStringLiteral("syncingLauncherOrder"), false}};
+    std::unique_ptr<QObject> object(component.createWithInitialProperties(initialProperties, &context));
     if (!object) {
         qWarning() << component.errors();
     }
@@ -3078,6 +3081,18 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
                                       Q_ARG(QVariant, QStringLiteral("manual"))));
     QCOMPARE(tasksModel.launcherList(), normalizedLaunchers);
     QCOMPARE(tasksModel.syncCount(), 1);
+
+    const QMetaMethod orderCommit = object->metaObject()->method(object->metaObject()->indexOfSignal("launcherOrderCommitRequested()"));
+    const QMetaMethod syncOrder = tasksModel.metaObject()->method(tasksModel.metaObject()->indexOfMethod("syncLaunchers()"));
+    QVERIFY(QObject::connect(object.get(), orderCommit, &tasksModel, syncOrder));
+    bool syncingDuringModelCall = false;
+    connect(&tasksModel, &TasksModelForLaunchersStub::launcherOrderSyncInvoked, object.get(), [&]() {
+        syncingDuringModelCall = object->property("syncingLauncherOrder").toBool();
+    });
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "syncLauncherOrder"));
+    QCOMPARE(tasksModel.syncCount(), 2);
+    QVERIFY(syncingDuringModelCall);
+    QVERIFY(!object->property("syncingLauncherOrder").toBool());
 }
 
 void QmlSmokeTest::plasmaVolumeBootstrapLoadsFromSource()

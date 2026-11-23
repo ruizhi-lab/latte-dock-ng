@@ -516,10 +516,15 @@ PlasmoidItem {
         windowsPreviewDlg.hide(11);
     }
 
+    Connections {
+        target: root.appletAbilities.launchers
+        function onLauncherOrderCommitRequested() { tasksModel.syncLaunchers(); }
+    }
+
     onDragSourceChanged: {
         if (dragSource == null) {
             root.draggingFinished();
-            tasksModel.syncLaunchers();
+            root.appletAbilities.launchers.syncLauncherOrder();
 
             // Force indexer bindings to re-evaluate after being frozen
             // (updateIsBlocked=true) during drag.  The QML engine may not

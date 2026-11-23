@@ -456,7 +456,7 @@ Item {
         id: delayedLaynchersSyncTimer
         interval: 450
         onTriggered: {
-            tasksModel.syncLaunchers();
+            appletAbilities.launchers.syncLauncherOrder();
             appletAbilities.launchers.validateSyncedLaunchersOrder();
             //! In case there are multiple launchers in moving state
             launchersToBeMovedCount = 0;

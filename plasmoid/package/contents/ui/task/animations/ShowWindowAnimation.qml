@@ -13,6 +13,7 @@ SequentialAnimation{
     id:showWindowAnimation
     property int speed: root.newWindowSlidingEnabled ? (1.2 * taskItem.abilities.animations.speedFactor.normal * taskItem.abilities.animations.duration.large) : 0
     property bool animationSent: false
+    required property bool syncingLauncherOrder
 
     readonly property string needLengthEvent: showWindowAnimation + "_showwindow"
 
@@ -151,6 +152,7 @@ SequentialAnimation{
             taskItem.parabolicItem.opacity = 0;
             taskItem.inAnimation = false;
         } else if (!LatteCore.WindowSystem.compositingActive || root.inDraggingPhase
+                   || showWindowAnimation.syncingLauncherOrder
                    || taskItem.isSeparator) {
             isForcedHidden = false;
             taskItem.visible = true;
