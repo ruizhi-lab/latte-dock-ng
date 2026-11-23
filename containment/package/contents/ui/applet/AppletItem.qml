@@ -1276,52 +1276,43 @@ Item {
         }
     }
 
-    function checkIndex(){
-        index = -1;
-
-        var startAppletIndex = -1;
-        for(var i=0; i<appletItem.layouter.startLayout.count; ++i){
-            var child = layoutsContainer.startLayout.children[i];
-            if (child.isParabolicEdgeSpacer || child.isInternalViewSplitter) {
-                continue;
-            }
-
-            startAppletIndex++;
-            if (child === appletItem){
-                index = layoutsContainer.startLayout.beginIndex + startAppletIndex;
-                break;
-            }
-        }
-
-        var mainAppletIndex = -1;
-        for(var i=0; i<appletItem.layouter.mainLayout.count; ++i){
-            var child = layoutsContainer.mainLayout.children[i];
-            if (child.isParabolicEdgeSpacer || child.isInternalViewSplitter) {
-                continue;
-            }
-
-            mainAppletIndex++;
-            if (child === appletItem){
-                index = layoutsContainer.mainLayout.beginIndex + mainAppletIndex;
-                break;
+    function checkIndex() {
+        // The visual parent owns the current order, including during dragging.
+        // Publish only the settled index so a refresh cannot briefly drop an
+        // unchanged applet out of the visibility and parabolic index bindings.
+        const visualParent = appletItem.parent;
+        const layouts = appletItem.layoutsContainerReference;
+        let layout = null;
+        if (visualParent && layouts) {
+            if (visualParent === layouts.mainLayout) {
+                layout = layouts.mainLayout;
+            } else if (visualParent === layouts.startLayout) {
+                layout = layouts.startLayout;
+            } else if (visualParent === layouts.endLayout) {
+                layout = layouts.endLayout;
             }
         }
 
-        var endAppletIndex = -1;
-        for(var i=0; i<appletItem.layouter.endLayout.count; ++i){
-            var child = layoutsContainer.endLayout.children[i];
-            if (child.isParabolicEdgeSpacer || child.isInternalViewSplitter) {
-                continue;
-            }
+        let nextIndex = -1;
+        if (layout) {
+            const siblings = layout.children;
+            let position = layout.beginIndex;
 
-            endAppletIndex++;
-            if (child === appletItem){
-                //create a very high index in order to not need to exchange hovering messages
-                //between layoutsContainer.mainLayout and layoutsContainer.endLayout
-                index = layoutsContainer.endLayout.beginIndex + endAppletIndex;
-                break;
+            for (let i = 0; i < siblings.length; ++i) {
+                const child = siblings[i];
+                if (child.isParabolicEdgeSpacer || child.isInternalViewSplitter) {
+                    continue;
+                }
+
+                if (child === appletItem) {
+                    nextIndex = position;
+                    break;
+                }
+                ++position;
             }
         }
+
+        appletItem.index = nextIndex;
     }
 
     function sltClearZoom(){

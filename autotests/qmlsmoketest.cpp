@@ -83,6 +83,7 @@ private Q_SLOTS:
     void scrollingTasksCanRequestShorterViewports();
     void scrollingTasksKeepFillRequestsInModernDocks();
     void scrollingTasksShareRemainingModernDockLength();
+    void appletIndexFollowsItsLayoutWithoutTransientInvalidation();
     void latteCoreQmlPluginLoadsFromBuildTree();
     void layoutInfoWindowHasAValidSizeFromSource();
     void appletAlternativesDialogResolvesOutsidePlasmashell();
@@ -1576,6 +1577,101 @@ Item {
     QVERIFY(object->setProperty("isHidden", false));
     QVERIFY(applet->setProperty("scrollingEnabled", false));
     QCOMPARE(object->property("isRequestingFill").toBool(), false);
+}
+
+void QmlSmokeTest::appletIndexFollowsItsLayoutWithoutTransientInvalidation()
+{
+    QFile file(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(file.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(file.readAll());
+    const int start = source.indexOf(QStringLiteral("    function checkIndex("));
+    const int end = source.indexOf(QStringLiteral("    function sltClearZoom("), start);
+    QVERIFY(start >= 0 && end > start);
+
+    QQmlEngine engine;
+    auto object = createQmlObject(engine,
+                                  QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: fixture
+    property alias applet: appletItem
+    property alias main: mainLayout
+    property alias end: endLayout
+    property alias splitter: splitterItem
+    Item {
+        id: startLayout
+        readonly property int count: children.length
+        property int beginIndex: 0
+        Item { property bool isParabolicEdgeSpacer: true }
+        Item { id: splitterItem; property bool isInternalViewSplitter: true }
+        Item {
+            id: appletItem
+            property int index: -1
+            property bool isParabolicEdgeSpacer: false
+            property bool isInternalViewSplitter: false
+            readonly property var layoutsContainerReference: ({
+                startLayout: startLayout, mainLayout: mainLayout, endLayout: endLayout
+            })
+            readonly property var layoutsContainer: layoutsContainerReference
+            readonly property var layouter: layoutsContainerReference
+)") + source.mid(start, end - start).toUtf8() + QByteArrayLiteral(R"(
+        }
+    }
+    Item {
+        id: mainLayout
+        readonly property int count: children.length
+        property int beginIndex: 100
+        Item {}
+    }
+    Item {
+        id: endLayout
+        readonly property int count: children.length
+        property int beginIndex: 200
+    }
+}
+)"),
+                                  QUrl(QStringLiteral("qrc:/applet-index.qml")));
+    QVERIFY(object);
+    auto *applet = object->property("applet").value<QQuickItem *>();
+    auto *main = object->property("main").value<QQuickItem *>();
+    auto *endLayout = object->property("end").value<QQuickItem *>();
+    auto *splitter = object->property("splitter").value<QQuickItem *>();
+    QVERIFY(applet && main && endLayout && splitter);
+    QSignalSpy changes(applet, SIGNAL(indexChanged()));
+    QVERIFY(changes.isValid());
+
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), 0);
+    QCOMPARE(changes.count(), 1);
+
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(changes.count(), 1);
+
+    applet->setParentItem(main);
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), 101);
+    QCOMPARE(changes.count(), 2);
+
+    applet->stackBefore(main->childItems().constFirst());
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), 100);
+    QCOMPARE(changes.count(), 3);
+
+    applet->setParentItem(endLayout);
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), 200);
+    QCOMPARE(changes.count(), 4);
+
+    QVERIFY(applet->setProperty("isInternalViewSplitter", true));
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), -1);
+    QCOMPARE(changes.count(), 5);
+
+    applet->setParentItem(splitter);
+    QVERIFY(applet->setProperty("isInternalViewSplitter", false));
+    QVERIFY(QMetaObject::invokeMethod(applet, "checkIndex"));
+    QCOMPARE(applet->property("index").toInt(), -1);
+    QCOMPARE(changes.count(), 5);
 }
 
 void
