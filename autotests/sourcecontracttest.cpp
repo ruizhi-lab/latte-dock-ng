@@ -3799,8 +3799,8 @@ void SourceContractTest::layoutManagerRestoreBuildsOrderFromLiveAppletsWhenStore
 
     // When the stored appletIdsOrder is empty but live applets exist,
     // the order must be built from the live applet list.
-    QVERIFY(src.contains(QStringLiteral("appletIdsOrder.isEmpty() && !applets.isEmpty()")));
-    QVERIFY(src.contains(QStringLiteral("appletIdsOrder << currentAppletId")));
+    QVERIFY(src.contains(QStringLiteral("appletIdsOrder.isEmpty() && !liveAppletIds.isEmpty()")));
+    QVERIFY(src.contains(QStringLiteral("appletIdsOrder = dedupeAppletIdsPreserveSplitters(liveAppletIds);")));
 }
 
 void SourceContractTest::layoutManagerRestoreInvalidAppletCleanupPreservesValidIds()
@@ -3809,11 +3809,10 @@ void SourceContractTest::layoutManagerRestoreInvalidAppletCleanupPreservesValidI
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
-    // Invalid applet tracking: only positive IDs are checked, negative/zero skipped.
-    QVERIFY(src.contains(QStringLiteral("aid > 0 && !isValidApplet(aid)")));
-    // Invalid applets must be removed from the order.
-    QVERIFY(src.contains(QStringLiteral("invalidApplets")));
-    QVERIFY(src.contains(QStringLiteral("removeAll")));
+    // Only missing positive IDs postpone restore. After the retry budget,
+    // IDs without a resolved item are skipped when constructing containers.
+    QVERIFY(src.contains(QStringLiteral("id > 0 && !appletsById.contains(id)")));
+    QVERIFY(src.contains(QStringLiteral("if (QObject *applet = appletsById.value(id))")));
 }
 
 void SourceContractTest::layoutManagerRestoreAppletContainerCreationRetryLimit()

@@ -10,6 +10,7 @@
 #include <plugin/lattetypes.h>
 
 // Qt
+#include <QHash>
 #include <QJsonArray>
 #include <QtMath>
 #include <QSequentialIterable>
@@ -1101,26 +1102,6 @@ void LayoutManager::warnRootInvocationFailureOnce(const QMetaMethod &method, con
     qCWarning(latteContainment) << "Failed to invoke containment root function" << functionName;
 }
 
-bool LayoutManager::isValidApplet(const int &id)
-{
-    //! should be loaded after m_plasmoid has been set properly
-    if (!m_plasmoid) {
-        return false;
-    }
-
-    QList<QObject *> applets = plasmoidApplets();
-
-    for (int i = 0; i < applets.count(); ++i) {
-        const int currentAppletId = appletId(applets[i]);
-
-        if (id > 0 && currentAppletId == id) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 //! Actions
 void LayoutManager::restore()
 {
@@ -1138,7 +1119,7 @@ void LayoutManager::restore()
         writeConfigValue(QStringLiteral("appletOrder"), toStr(appletIdsOrder));
     }
 
-    QList<QObject *> applets = plasmoidApplets();
+    const QList<QObject *> applets = plasmoidApplets();
     const int expectedAppletCount = qMax(appletIdsOrder.count(), configuredAppletCount());
 
     if (applets.isEmpty()) {
@@ -1161,92 +1142,70 @@ void LayoutManager::restore()
         }
     }
 
-    // A copied dock has independent IDs and configuration. Backend applets
-    // can exist before all their Quick items do; treating that partial UI as
-    // the saved membership drops late applets and their color/zoom preferences.
-    bool missingStoredApplet{ false };
-    for (const int id : std::as_const(appletIdsOrder)) {
-        if (id > 0 && !isValidApplet(id)) {
-            missingStoredApplet = true;
-            break;
+    // Use the same resolved Quick objects for readiness and ordering. Rebuild
+    // the index on every retry because a backend applet can acquire its Quick
+    // item later. Keep the first match in enumeration order, as the old scan did.
+    QHash<int, QObject *> appletsById;
+    QList<int> liveAppletIds;
+    appletsById.reserve(applets.size());
+    liveAppletIds.reserve(applets.size());
+
+    for (QObject *applet : applets) {
+        const int id = appletId(applet);
+        if (!appletsById.contains(id)) {
+            appletsById.insert(id, applet);
+        }
+        if (id > 0) {
+            liveAppletIds << id;
         }
     }
 
-    if (!applets.isEmpty() && missingStoredApplet && m_restoreRetryCount < 60) {
-        ++m_restoreRetryCount;
-        QTimer::singleShot(150, this, &LayoutManager::restore);
-        return;
-    }
-
-    if (appletIdsOrder.isEmpty() && !applets.isEmpty()) {
-        for (QObject *applet : std::as_const(applets)) {
-            const int currentAppletId = appletId(applet);
-
-            if (currentAppletId > 0) {
-                appletIdsOrder << currentAppletId;
+    // A copied dock can have backend applets before their Quick items exist.
+    // Wait for stored IDs before creating containers so late applets keep their
+    // saved positions. The retry limit still allows the available ones to load.
+    if (!applets.isEmpty() && m_restoreRetryCount < 60) {
+        for (const int id : std::as_const(appletIdsOrder)) {
+            if (id > 0 && !appletsById.contains(id)) {
+                ++m_restoreRetryCount;
+                QTimer::singleShot(150, this, &LayoutManager::restore);
+                return;
             }
         }
-
-        if (!appletIdsOrder.isEmpty()) {
-            writeConfigValue(QStringLiteral("appletOrder"), toStr(appletIdsOrder));
-        }
     }
 
-    QList<int> invalidApplets;
-
-    //! track invalid applets, meaning applets that have not be loaded properly
-    for (int i = 0; i < appletIdsOrder.count(); ++i) {
-        int aid = appletIdsOrder[i];
-
-        if (aid > 0 && !isValidApplet(aid)) {
-            invalidApplets << aid;
-        }
+    if (appletIdsOrder.isEmpty() && !liveAppletIds.isEmpty()) {
+        writeConfigValue(QStringLiteral("appletOrder"), toStr(liveAppletIds));
+        appletIdsOrder = dedupeAppletIdsPreserveSplitters(liveAppletIds);
     }
 
-    //! remove invalid applets from the ids order
-    for (int i = 0; i < invalidApplets.count(); ++i) {
-        appletIdsOrder.removeAll(invalidApplets[i]);
-    }
-
-    const QList<int> dedupedAppletIdsOrder = dedupeAppletIdsPreserveSplitters(appletIdsOrder);
-
-    if (dedupedAppletIdsOrder != appletIdsOrder) {
-        appletIdsOrder = dedupedAppletIdsOrder;
-    }
-
-    //! order valid applets based on the cleaned applet ids order
     QList<QObject *> orderedApplets;
+    QSet<QObject *> placedApplets;
+    orderedApplets.reserve(applets.size());
+    placedApplets.reserve(applets.size());
 
-    for (int i = 0; i < appletIdsOrder.count(); ++i) {
-        if (appletIdsOrder[i] == -1) {
-            orderedApplets << nullptr;
+    for (const int id : std::as_const(appletIdsOrder)) {
+        // Legacy splitter markers are handled through saved splitter positions.
+        if (id == -1) {
             continue;
         }
 
-        for (int j = 0; j < applets.count(); ++j) {
-            if (appletId(applets[j]) == appletIdsOrder[i]) {
-                orderedApplets << applets[j];
-                break;
-            }
+        if (QObject *applet = appletsById.value(id)) {
+            orderedApplets << applet;
+            placedApplets.insert(applet);
         }
     }
 
-    for (int i = 0; i < applets.count(); ++i) {
-        if (!orderedApplets.contains(applets[i])) {
-            //! after order has been loaded correctly all renaming applets that do not have specified position are added in the end
-            orderedApplets << applets[i];
+    for (QObject *applet : applets) {
+        if (!placedApplets.contains(applet)) {
+            orderedApplets << applet;
         }
     }
 
     bool appletContainerCreationFailed{false};
 
-    for (int i = 0; i < orderedApplets.count(); ++i) {
-        if (orderedApplets[i] == nullptr) {
-            continue;
-        }
-
+    for (QObject *applet : std::as_const(orderedApplets)) {
         QVariant appletItemVariant;
-        QVariant appletVariant; appletVariant.setValue(orderedApplets[i]);
+        const QVariant appletVariant = QVariant::fromValue(applet);
         if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
             warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
         }
@@ -1255,7 +1214,7 @@ void LayoutManager::restore()
         if (!appletItem) {
             appletContainerCreationFailed = true;
             qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
-                                      << appletId(orderedApplets[i]);
+                                      << appletId(applet);
             continue;
         }
 

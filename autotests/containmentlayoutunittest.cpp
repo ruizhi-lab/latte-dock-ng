@@ -738,7 +738,10 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     QQuickItem trash;
     trash.setProperty("id", 45);
     trash.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&trash)));
-    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &launcher, &tasks, &trash }));
+    QQuickItem unlistedApplet;
+    unlistedApplet.setProperty("id", 47);
+    unlistedApplet.setProperty("_plasma_graphicObject", QVariant::fromValue(static_cast<QObject *>(&unlistedApplet)));
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &unlistedApplet, &trash, &launcher }));
 
     RestoreRoot root;
     QQuickItem start;
@@ -752,26 +755,31 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     manager.setPlasmoid(&plasmoid);
 
     manager.restore();
+    QVERIFY(main.childItems().isEmpty());
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;-1;46;-1;45"));
+
+    // A queued retry must observe a newly resolved item and retain its saved slot.
+    plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &unlistedApplet, &trash, &launcher, &tasks }));
+    QTRY_COMPARE(main.childItems().count(), 4);
 
     QVERIFY(start.childItems().isEmpty());
-    QCOMPARE(main.childItems().count(), 3);
     QVERIFY(end.childItems().isEmpty());
-    QCOMPARE(manager.appletOrder(), (QList<int>{ 44, 46, 45 }));
-    QCOMPARE(manager.order(), (QList<int>{ 44, 46, 45 }));
+    QCOMPARE(manager.appletOrder(), (QList<int>{ 44, 46, 45, 47 }));
+    QCOMPARE(manager.order(), (QList<int>{ 44, 46, 45, 47 }));
     QCOMPARE(manager.splitterPosition(), 2);
     QCOMPARE(manager.splitterPosition2(), 4);
-    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;46;45"));
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;46;45;47"));
 
     QList<int> restoredAppletIds;
     for (QQuickItem *item : main.childItems()) {
         restoredAppletIds << item->property("backendAppletRef").value<QObject *>()->property("id").toInt();
     }
-    QCOMPARE(restoredAppletIds, (QList<int>{ 44, 46, 45 }));
+    QCOMPARE(restoredAppletIds, (QList<int>{ 44, 46, 45, 47 }));
 
     manager.requestAppletsOrder(QList<int>{ 45, 44, 46 });
     manager.save();
 
-    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("45;44;46"));
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("45;44;46;47"));
     QCOMPARE(configuration.value(QStringLiteral("splitterPosition")).toInt(), 2);
     QCOMPARE(configuration.value(QStringLiteral("splitterPosition2")).toInt(), 4);
 }

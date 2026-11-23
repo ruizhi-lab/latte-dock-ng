@@ -206,7 +206,6 @@ private:
     void setUserBlocksColorizingApplets(const QList<int> &applets);
 
     bool isJustifySplitter(const QQuickItem *item) const;
-    bool isValidApplet(const int &id);
     bool insertAtLayoutCoordinates(QQuickItem *layout, QQuickItem *item, int x, int y);
     int configuredAppletCount() const;
 
