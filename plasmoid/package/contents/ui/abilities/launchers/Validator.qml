@@ -8,22 +8,20 @@ import QtQuick
 //! Launchers Validate Timer
 Timer{
     id:launchersOrderValidatorTimer
-    interval: 400
+    interval: retryInterval
+
+    readonly property int retryInterval: 400
 
     property var launchers: []
+    property int emptyModelRetries: 0
 
-    function launchersAreInSync() {
-        return arraysAreEqual(_launchers.currentShownLauncherList(), launchers);
-    }
-
-    function launcherValidPos(url) {
-        for (var i=0; i<launchers.length; ++i) {
-            if (launchers[i] === url) {
-                return i;
-            }
-        }
-
-        return -1;
+    function validateOrder(orderedLaunchers) {
+        launchers = orderedLaunchers;
+        emptyModelRetries = 5;
+        // Apply a new order on the next frame. The longer interval lets the
+        // peer's task model and delegates settle between follow-up attempts.
+        interval = 0;
+        restart();
     }
 
     function arraysAreEqual(list1, list2) {
@@ -67,19 +65,34 @@ Timer{
     }
 
     onTriggered: {
-        if (launchersAreInSync()) {
+        interval = retryInterval;
+        var currentLaunchers = _launchers.currentShownLauncherList();
+        if (currentLaunchers.length === 0 && launchers.length > 0) {
+            // A peer can receive the order before its task delegates exist.
+            // Keep the latest request until they appear, with a bounded wait.
+            if (emptyModelRetries > 0) {
+                --emptyModelRetries;
+                restart();
+            }
+            return;
+        }
+
+        // Peers can expose different URLs for the same launcher. Use the shared
+        // identity for ordering and keep the peer's URL for its delegate lookup.
+        const currentOrder = currentLaunchers.map(url => _launchers.launcherIdentity(url));
+        const targetOrder = launchers.map(url => _launchers.launcherIdentity(url));
+
+        if (arraysAreEqual(currentOrder, targetOrder)) {
             stop();
             console.log("launchers synced at:" + launchers);
             launchers.length = 0;
             _launchers.syncLauncherOrder();
         } else {
-            var currentLaunchers = _launchers.currentShownLauncherList();
-
-            if (upwardIsBetter(currentLaunchers, launchers)) {
+            if (upwardIsBetter(currentOrder, targetOrder)) {
                 console.log("UPWARD....");
                 for (var i=0; i<currentLaunchers.length; ++i) {
-                    if (currentLaunchers[i] !== launchers[i]) {
-                        var p = launcherValidPos(currentLaunchers[i]);
+                    if (currentOrder[i] !== targetOrder[i]) {
+                        var p = targetOrder.indexOf(currentOrder[i]);
                         if (p === -1) {
                             console.log("No pos found for :"+currentLaunchers[i] + " at: "+launchers);
                             restart();
@@ -102,8 +115,8 @@ Timer{
             } else {
                 console.log("DOWNWARD....");
                 for (var i=currentLaunchers.length-1; i>=0; --i) {
-                    if (currentLaunchers[i] !== launchers[i]) {
-                        var p = launcherValidPos(currentLaunchers[i]);
+                    if (currentOrder[i] !== targetOrder[i]) {
+                        var p = targetOrder.indexOf(currentOrder[i]);
                         if (p === -1) {
                             console.log("No pos found for :"+currentLaunchers[i] + " at: "+launchers);
                             restart();

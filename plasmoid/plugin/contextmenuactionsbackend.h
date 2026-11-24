@@ -26,6 +26,7 @@ class ContextMenuActionsBackend : public QObject
 public:
     explicit ContextMenuActionsBackend(QObject *parent = nullptr);
 
+    Q_INVOKABLE QString launcherIdentity(const QUrl &launcherUrl) const;
     Q_INVOKABLE QVariantList jumpListActions(const QVariant &launcherUrl, QObject *parent);
     Q_INVOKABLE QVariantList placesActions(const QVariant &launcherUrl, bool showAllPlaces, QObject *parent);
     Q_INVOKABLE QVariantList recentDocumentActions(const QVariant &launcherUrl, QObject *parent);

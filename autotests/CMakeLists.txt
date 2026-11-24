@@ -297,6 +297,7 @@ target_include_directories(taskpluginunittest PRIVATE
 )
 
 target_link_libraries(taskpluginunittest
+    PW::LibTaskManager
     Qt6::Core
     Qt6::Gui
     Qt6::Test
@@ -855,6 +856,7 @@ target_compile_definitions(taskspluginunittest PRIVATE
 )
 
 target_link_libraries(taskspluginunittest
+    PW::LibTaskManager
     Qt6::Core
     Qt6::Gui
     Qt6::Qml

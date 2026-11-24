@@ -518,7 +518,39 @@ PlasmoidItem {
 
     Connections {
         target: root.appletAbilities.launchers
-        function onLauncherOrderCommitRequested() { tasksModel.syncLaunchers(); }
+        function onLauncherOrderCommitRequested() {
+            // Plasma can recreate the delegates while saving an order that
+            // is already visible. Copy the settled gaps for the same row and
+            // launcher so the receiving dock keeps its spacing through reset.
+            const slots = [];
+            const children = icList.contentItem.children;
+            for (let i = 0; i < children.length; ++i) {
+                const item = children[i] as Task.TaskItem;
+                if (!item || item.itemIndex < 0
+                        || item.isHidden || item.isSeparator || item.launcherUrl === "") {
+                    continue;
+                }
+
+                const left = item.leftSpacer.settledSeparatorSpace;
+                const right = item.rightSpacer.settledSeparatorSpace;
+                if (left > 0 || right > 0) {
+                    slots[item.itemIndex] = {
+                        launcherUrl: item.launcherUrl,
+                        leftSpacer: { settledSeparatorSpace: left },
+                        rightSpacer: { settledSeparatorSpace: right }
+                    };
+                }
+            }
+
+            const launchers = root.appletAbilities.launchers;
+            const previousSlots = launchers.orderSeparatorSlots;
+            launchers.orderSeparatorSlots = slots;
+            try {
+                tasksModel.syncLaunchers();
+            } finally {
+                launchers.orderSeparatorSlots = previousSlots;
+            }
+        }
     }
 
     onDragSourceChanged: {
@@ -908,7 +940,7 @@ PlasmoidItem {
         highlightWindows: root.highlightWindows
 
         onAddLauncher: function(url) {
-            tasksModel.requestAddLauncher(url);
+            appletAbilities.launchers.addLauncherToModel(url);
         }
 
         Component.onCompleted: {

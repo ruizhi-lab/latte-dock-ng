@@ -5,6 +5,7 @@
 
 #include <QQmlComponent>
 #include <QQmlContext>
+#include <QJSValue>
 #include <QQmlEngine>
 #include <QQuickItem>
 #include <QQuickView>
@@ -100,6 +101,7 @@ private Q_SLOTS:
     void globalMenuNativeLengthUpdatesWithoutClassifier();
     void globalMenuReflowsNeighboursSynchronously();
     void launchersGeometryRestoreSchedulingLoadsFromSource();
+    void peerLauncherOrderStartsValidationWithoutRetryDelay();
     void plasmaVolumeBootstrapLoadsFromSource();
     void audioStreamsRequireUnambiguousOwnership();
     void audioBadgesTrackPauseRatherThanConnectionLifetime();
@@ -738,6 +740,23 @@ public:
 
     Q_INVOKABLE QStringList launcherActivities(const QString &) const {
         return {};
+    }
+
+    Q_INVOKABLE QString launcherIdentity(const QString &url) const
+    {
+        if (url == QStringLiteral("preferred://filemanager")) {
+            return QStringLiteral("applications:test-file-manager.desktop");
+        }
+        if (url == QStringLiteral("preferred://browser")) {
+            return QStringLiteral("applications:test-browser.desktop");
+        }
+        return url;
+    }
+
+    Q_INVOKABLE bool requestAddLauncher(const QString &launcher)
+    {
+        m_launcherList.append(launcher);
+        return true;
     }
 
     Q_INVOKABLE void syncLaunchers() {
@@ -2273,6 +2292,18 @@ Item {
     QTRY_COMPARE_WITH_TIMEOUT(spacer->property("nHiddenSize").toReal(), 2.0, 250);
     QVERIFY(abilityItem->setProperty("keepSeparatorSpacingOnRemoval", false));
 
+    // Launcher-order commits can destroy every old delegate at once.
+    // The replacement initializes from plain gap values captured beforehand.
+    const QVariant savedSpacer = QVariantMap{{QStringLiteral("settledSeparatorSpace"), 2.0}};
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", false));
+    std::unique_ptr<QObject> resetSpacer(spacerComponent.create(&context));
+    QVERIFY(resetSpacer);
+    QVERIFY(QMetaObject::invokeMethod(resetSpacer.get(), "inheritSeparatorSpace", Q_ARG(QVariant, savedSpacer)));
+    QCOMPARE(resetSpacer->property("width").toReal(), 2.0);
+    QTRY_COMPARE_WITH_TIMEOUT(resetSpacer->property("width").toReal(), 0.0, 250);
+    QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", true));
+    QTRY_COMPARE_WITH_TIMEOUT(spacer->property("width").toReal(), 2.0, 250);
+
     // An invalid delegate index releases its slot even if the settle timer is
     // running, matching the prior immediate departure behavior.
     QVERIFY(abilityItem->setProperty("tailItemIsVisibleSeparator", false));
@@ -3122,11 +3153,15 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
     QQmlContext context(engine.rootContext());
     TasksModelForLaunchersStub tasksModel;
     const QStringList storedLaunchers{
-        QStringLiteral("applications:org.kde.dolphin.desktop"),
+        QStringLiteral("preferred://filemanager"),
+        QStringLiteral("applications:test-file-manager.desktop"),
+        QStringLiteral("preferred://browser"),
+        QStringLiteral("applications:test-browser.desktop"),
         QStringLiteral("applications:org.kde.konsole.desktop"),
     };
     const QStringList normalizedLaunchers{
         QStringLiteral("preferred://filemanager"),
+        QStringLiteral("preferred://browser"),
         QStringLiteral("applications:org.kde.konsole.desktop"),
     };
     LaunchersPlasmoidStub plasmoid(storedLaunchers);
@@ -3146,6 +3181,11 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
 
     QVERIFY(object);
     QVERIFY(object->setProperty("tasksModel", QVariant::fromValue(static_cast<QObject *>(&tasksModel))));
+
+    const QJSValue identityFactory = engine.evaluate(QStringLiteral("(backend) => (url) => backend.launcherIdentity(url)"));
+    const QJSValue resolver = identityFactory.call({engine.newQObject(&tasksModel)});
+    QVERIFY(resolver.isCallable());
+    QVERIFY(object->setProperty("resolveLauncherIdentity", QVariant::fromValue(resolver)));
 
     QVariant ignoredReturn;
     QVERIFY(QMetaObject::invokeMethod(object.get(), "scheduleLaunchersRestore",
@@ -3178,6 +3218,27 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
     QCOMPARE(tasksModel.launcherList(), normalizedLaunchers);
     QCOMPARE(tasksModel.syncCount(), 1);
 
+    QVariant added;
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "addLauncherToModel",
+                                      Q_RETURN_ARG(QVariant, added),
+                                      Q_ARG(QVariant, QStringLiteral("applications:test-file-manager.desktop")),
+                                      Q_ARG(QVariant, false)));
+    QCOMPARE(added.toBool(), false);
+    QCOMPARE(tasksModel.launcherList(), normalizedLaunchers);
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "addDroppedLauncher",
+                                      Q_RETURN_ARG(QVariant, ignoredReturn),
+                                      Q_ARG(QVariant, QStringLiteral("applications:test-browser.desktop?iconData=test"))));
+    QCOMPARE(tasksModel.launcherList(), normalizedLaunchers);
+    QCOMPARE(tasksModel.syncCount(), 1);
+
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "addLauncherToModel",
+                                      Q_RETURN_ARG(QVariant, added),
+                                      Q_ARG(QVariant, QStringLiteral("applications:org.kde.kate.desktop")),
+                                      Q_ARG(QVariant, false)));
+    QCOMPARE(added.toBool(), true);
+    QCOMPARE(tasksModel.launcherList().constLast(), QStringLiteral("applications:org.kde.kate.desktop"));
+
     const QMetaMethod orderCommit = object->metaObject()->method(object->metaObject()->indexOfSignal("launcherOrderCommitRequested()"));
     const QMetaMethod syncOrder = tasksModel.metaObject()->method(tasksModel.metaObject()->indexOfMethod("syncLaunchers()"));
     QVERIFY(QObject::connect(object.get(), orderCommit, &tasksModel, syncOrder));
@@ -3189,6 +3250,63 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
     QCOMPARE(tasksModel.syncCount(), 2);
     QVERIFY(syncingDuringModelCall);
     QVERIFY(!object->property("syncingLauncherOrder").toBool());
+}
+
+void QmlSmokeTest::peerLauncherOrderStartsValidationWithoutRetryDelay()
+{
+    QQmlEngine engine;
+    auto launchers = createQmlObject(engine,
+                                     QByteArrayLiteral(R"(
+import QtQuick
+QtObject {
+    id: launchers
+    property var order: ["first", "second"]
+    property int moves: 0
+    property int commits: 0
+    readonly property QtObject tasksModel: QtObject {
+        function move(from, to) {
+            const updated = launchers.order.slice();
+            const moved = updated.splice(from, 1)[0];
+            updated.splice(to, 0, moved);
+            launchers.order = updated;
+            ++launchers.moves;
+        }
+    }
+    function currentShownLauncherList() { return order; }
+    function launcherIdentity(url) { return url === "preferred://browser" ? "second" : url; }
+    function indexOfLayoutLauncher(url) { return order.indexOf(url); }
+    function syncLauncherOrder() { ++commits; }
+}
+)"), QUrl(QStringLiteral("qrc:/peer-launcher-order.qml")));
+    QVERIFY(launchers);
+    QQmlContext context(engine.rootContext());
+    context.setContextProperty(QStringLiteral("_launchers"), launchers.get());
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(
+        LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/abilities/launchers/Validator.qml")));
+    std::unique_ptr<QObject> validator(component.create(&context));
+    QVERIFY(validator);
+
+    const QVariant targetOrder = QStringList{QStringLiteral("preferred://browser"), QStringLiteral("first")};
+    QVERIFY(QMetaObject::invokeMethod(validator.get(), "validateOrder", Q_ARG(QVariant, targetOrder)));
+    QCOMPARE(validator->property("interval").toInt(), 0);
+    QCOMPARE(launchers->property("moves").toInt(), 0);
+
+    QTRY_COMPARE(launchers->property("moves").toInt(), 1);
+    QCOMPARE(validator->property("interval").toInt(), 400);
+    QTRY_COMPARE(launchers->property("commits").toInt(), 1);
+    QVERIFY(!validator->property("running").toBool());
+
+    QVERIFY(launchers->setProperty("order", QStringList{}));
+    QVERIFY(QMetaObject::invokeMethod(validator.get(), "validateOrder", Q_ARG(QVariant, targetOrder)));
+    QTRY_COMPARE(validator->property("interval").toInt(), 400);
+    QVERIFY(validator->property("running").toBool());
+    QCOMPARE(launchers->property("moves").toInt(), 1);
+
+    QVERIFY(launchers->setProperty("order", QStringList{QStringLiteral("first"), QStringLiteral("second")}));
+    QTRY_COMPARE(launchers->property("moves").toInt(), 2);
+    QTRY_COMPARE(launchers->property("commits").toInt(), 2);
+    QVERIFY(!validator->property("running").toBool());
 }
 
 void QmlSmokeTest::plasmaVolumeBootstrapLoadsFromSource()

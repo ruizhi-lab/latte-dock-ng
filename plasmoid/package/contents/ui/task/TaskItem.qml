@@ -1216,6 +1216,12 @@ AbilityItem.BasicItem {
     ///// End of Helper functions ////
 
     Component.onCompleted: {
+        const slots = taskItem.abilities.launchers.orderSeparatorSlots;
+        const savedSlot = slots && slots[taskItem.itemIndex];
+        if (savedSlot && savedSlot.launcherUrl === taskItem.launcherUrl) {
+            taskItem.inheritSeparatorSpacing(savedSlot);
+        }
+
         if (!taskItem.abilities.launchers.syncingLauncherOrder) {
             parabolicItem.opacity = 0;
         }

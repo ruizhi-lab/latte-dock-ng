@@ -6,6 +6,7 @@
 import QtQuick
 
 import org.kde.latte.abilities.client as AbilityClient
+import org.kde.latte.private.tasks as LatteTasks
 
 import "abilities" as Ability
 
@@ -15,11 +16,14 @@ AbilityClient.AppletAbilities {
 
     readonly property alias launchers: _launchers
 
+    LatteTasks.ContextMenuActionsBackend { id: launcherIdentityBackend }
+
     Ability.Launchers {
         id: _launchers
         bridge: _abilityContainer.bridge
         layout: _abilityContainer.layout
         tasksModel: _abilityContainer.tasksModel
+        resolveLauncherIdentity: url => launcherIdentityBackend.launcherIdentity(url)
         view: _abilityContainer.myView
     }
 

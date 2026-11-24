@@ -42,7 +42,9 @@ Item {
     property Item layout: null
     property Item view: null
     property QtObject tasksModel: null
+    property var resolveLauncherIdentity: null
     property bool syncingLauncherOrder: false
+    property var orderSeparatorSlots: null
 
     function syncLauncherOrder() {
         // Plasma can reset the task model synchronously when persisting a move.
@@ -108,14 +110,43 @@ Item {
         return _launchers.tasksModel.launcherPosition(url) >= 0;
     }
 
+    function liveLauncherList() {
+        return tasksModel ? tasksModel.launcherList : [];
+    }
+
+    function launcherIdentity(record) {
+        const text = String(record);
+        const end = text.indexOf("\n") + 1;
+        const url = text.substring(end);
+        const identity = resolveLauncherIdentity ? resolveLauncherIdentity(url) : url;
+        // Activity-specific pins must not stand in for global pins.
+        return text.substring(0, end) + identity;
+    }
+
+    function hasEquivalentGlobalLauncher(launcherUrl) {
+        const identity = launcherIdentity(launcherUrl);
+        return liveLauncherList().some(record => launcherIdentity(record) === identity);
+    }
+
+    function addLauncherToModel(launcherUrl, animate) {
+        if (hasEquivalentGlobalLauncher(launcherUrl)) {
+            return false;
+        }
+
+        if (animate) {
+            _launchers.launcherInAdding(launcherUrl.split("/").pop());
+        }
+
+        return tasksModel.requestAddLauncher(launcherUrl);
+    }
+
     function addLauncher(launcherUrl) {
         if (bridge) {
             bridge.launchers.host.addSyncedLauncher(syncer.clientId,
                                                     launchers.group,
                                                     launchers.groupId,
                                                     launcherUrl);
-        } else {
-            _launchers.tasksModel.requestAddLauncher(launcherUrl);
+        } else if (addLauncherToModel(launcherUrl)) {
             _launchers.launcherChanged(launcherUrl);
         }
     }
@@ -128,13 +159,10 @@ Item {
             launcherUrl = launcherUrl.substring( 0, launcherUrl.indexOf("?iconData=" ) );
         }
 
-        var path = launcherUrl;
-        var filename = path.split("/").pop();
-        _launchers.launcherInAdding(filename);
-
-        tasksModel.requestAddLauncher(launcherUrl);
-        launchers.launcherChanged(launcherUrl);
-        tasksModel.syncLaunchers();
+        if (addLauncherToModel(launcherUrl, true)) {
+            _launchers.launcherChanged(launcherUrl);
+            tasksModel.syncLaunchers();
+        }
     }
 
     function addDroppedLaunchers(urls) {
@@ -369,7 +397,7 @@ Item {
                 plasmoid.configuration.launchers59 = normalized.list;
             }
 
-            console.log("Tasks: Migrated legacy launcher desktop ids to preferred urls...");
+            console.log("Tasks: Normalized the saved launcher list.");
         }
 
         tasksModel.launcherList = normalized.list.slice(0);
@@ -425,12 +453,9 @@ Item {
     }
 
     function normalizeLauncherUrl(url) {
-        if (url === "applications:firefox.desktop") {
-            return "preferred://browser";
-        }
-
-        if (url === "applications:org.kde.dolphin.desktop") {
-            return "preferred://filemanager";
+        // A resolved preferred launcher must keep following its configured default.
+        if (url.startsWith("preferred:") && launcherIdentity(url) !== url) {
+            return url;
         }
 
         if (url === "preferred://email") {
@@ -478,6 +503,7 @@ Item {
     function normalizeLauncherList(launchersList) {
         var changed = false;
         var normalized = [];
+        const identities = new Set();
         var plainRecordsOnly = true;
 
         for (var i=0; i<launchersList.length; ++i) {
@@ -488,11 +514,17 @@ Item {
                 plainRecordsOnly = false;
             }
 
-            if (migrated !== current) {
+            const identity = launcherIdentity(migrated);
+            const duplicate = identities.has(identity);
+            if (migrated !== current || duplicate) {
                 changed = true;
             }
 
-            normalized.push(migrated);
+            // Preserve distinct activity records for the same launcher.
+            if (!duplicate) {
+                identities.add(identity);
+                normalized.push(migrated);
+            }
         }
 
         // Migrate old Latte defaults to a Plasma 6 stable launcher set.
@@ -603,8 +635,7 @@ Item {
                 return;
             }
 
-            var currentModelLaunchers = (_launchers.tasksModel && _launchers.tasksModel.launcherList)
-                    ? _launchers.tasksModel.launcherList : [];
+            var currentModelLaunchers = _launchers.liveLauncherList();
 
             if (currentModelLaunchers.length > 0) {
                 _launchers._lastKnownGoodLauncherList = currentModelLaunchers.slice(0);

@@ -17,6 +17,7 @@
 #include <PlasmaActivities/Stats/Cleaning>
 #include <PlasmaActivities/Stats/ResultSet>
 #include <PlasmaActivities/Stats/Terms>
+#include <tasktools.h>
 
 // Qt
 #include <QAction>
@@ -447,6 +448,22 @@ QUrl ContextMenuActionsBackend::tryDecodeApplicationsUrl(const QUrl &launcherUrl
     }
 
     return launcherUrl;
+}
+
+QString
+ContextMenuActionsBackend::launcherIdentity(const QUrl &launcherUrl) const
+{
+    const auto url = launcherUrl.adjusted(QUrl::RemoveQuery);
+    // Plasma's preferred launcher follows the current desktop default. Resolve
+    // it before comparing with the desktop entry advertised by a running task.
+    const auto resolvedUrl = url.scheme() == QLatin1String("preferred") ? TaskManager::appDataFromUrl(url).url : url;
+    const auto service = resolvedUrl.isLocalFile() ? KService::serviceByDesktopPath(resolvedUrl.toLocalFile()) : serviceFromLauncherUrl(resolvedUrl);
+    if (service) {
+        return QUrl(QStringLiteral("applications:") + service->storageId()).toString(QUrl::FullyEncoded);
+    }
+
+    // An unregistered desktop file (including a separator) keeps its own URL.
+    return resolvedUrl.toString(QUrl::FullyEncoded);
 }
 
 KService::Ptr ContextMenuActionsBackend::serviceFromLauncherUrl(const QUrl &launcherUrl)

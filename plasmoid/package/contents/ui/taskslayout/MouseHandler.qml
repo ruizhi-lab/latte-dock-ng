@@ -62,6 +62,11 @@ Item {
         return "";
     }
 
+    function isPinnedForReorder(launcherUrl) {
+        return tasksModel.launcherPosition(launcherUrl) >= 0
+                || appletAbilities.launchers.hasEquivalentGlobalLauncher(launcherUrl);
+    }
+
     function schedulePromoteToLauncherAndMove(sourceItem, targetIndex, launcherUrl) {
         pendingPinnedSource = sourceItem;
         pendingPinnedTargetIndex = Math.max(0, targetIndex);
@@ -106,7 +111,7 @@ Item {
 
             var sourceItem = pendingPinnedSource;
             var launcherReady = isLauncherTask(sourceItem)
-                    || tasksModel.launcherPosition(pendingPinnedLauncherUrl) >= 0;
+                    || dArea.isPinnedForReorder(dArea.pendingPinnedLauncherUrl);
 
             if (launcherReady) {
                 var from = sourceItem.itemIndex;
@@ -278,7 +283,7 @@ Item {
         if (!sourceIsLauncher && targetTask && targetIsLauncher) {
             var launcherUrl = launcherUrlForTask(sourceItem);
             if (launcherUrl.length > 0) {
-                if (tasksModel.launcherPosition(launcherUrl) === -1) {
+                if (!isPinnedForReorder(launcherUrl)) {
                     appletAbilities.launchers.addLauncher(launcherUrl);
                 }
                 schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl);

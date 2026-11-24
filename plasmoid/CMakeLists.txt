@@ -66,6 +66,7 @@ target_link_libraries(lattetasksplugin PRIVATE
                       KF6::KIOCore
                       KF6::KIOFileWidgets
                       KF6::KIOWidgets
+                      PW::LibTaskManager
                       Plasma::ActivitiesStats
                       Plasma::Plasma
                       Plasma::PlasmaQuick)

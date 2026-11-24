@@ -46,8 +46,7 @@ Item {
 
     //! All following actions are triggered from Main SyncedLaunchers handler
     function addSyncedLauncher(group, launcher) {
-        if (group === _launchers.group) {
-            tasksModel.requestAddLauncher(launcher);
+        if (group === _launchers.group && _launchers.addLauncherToModel(launcher)) {
             _launchers.launcherChanged(launcher);
             tasksModel.syncLaunchers();
         }
@@ -96,9 +95,7 @@ Item {
 
     function validateSyncedLaunchersOrder(group, orderedLaunchers) {
         if (group === _launchers.group && !isBlocked) {
-            validator.stop();
-            validator.launchers = orderedLaunchers;
-            validator.start();
+            validator.validateOrder(orderedLaunchers);
         }
     }
 
