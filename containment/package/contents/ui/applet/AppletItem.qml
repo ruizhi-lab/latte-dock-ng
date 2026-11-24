@@ -1053,6 +1053,18 @@ Item {
         return mainPosition < (mainLength / 2) ? layoutsContainer.startLayout : layoutsContainer.endLayout;
     }
 
+    function insertAppletAtSlot(target: Item, item: Item, before: bool) {
+        // Separately installed older containment plugins still expose the
+        // original stacking methods during a mixed upgrade.
+        if (typeof fastLayoutManager.insertAppletAtSlot === "function") {
+            fastLayoutManager.insertAppletAtSlot(target, item, before);
+        } else if (before) {
+            fastLayoutManager.insertBefore(target, item);
+        } else {
+            fastLayoutManager.insertAfter(target, item);
+        }
+    }
+
     function insertAtSideLayoutEdge(layout, item) {
         if (!item) {
             item = appletItem;
@@ -1067,25 +1079,25 @@ Item {
         if (layout === layoutsContainer.startLayout) {
             for (var i = children.length - 1; i >= 0; --i) {
                 if (children[i].isInternalViewSplitter) {
-                    fastLayoutManager.insertBefore(children[i], item);
+                    appletItem.insertAppletAtSlot(children[i], item, true);
                     return true;
                 }
             }
 
             if (children.length > 0) {
-                fastLayoutManager.insertAfter(children[children.length - 1], item);
+                appletItem.insertAppletAtSlot(children[children.length - 1], item, false);
                 return true;
             }
         } else if (layout === layoutsContainer.endLayout) {
             for (var j = 0; j < children.length; ++j) {
                 if (children[j].isInternalViewSplitter) {
-                    fastLayoutManager.insertAfter(children[j], item);
+                    appletItem.insertAppletAtSlot(children[j], item, false);
                     return true;
                 }
             }
 
             if (children.length > 0) {
-                fastLayoutManager.insertBefore(children[0], item);
+                appletItem.insertAppletAtSlot(children[0], item, true);
                 return true;
             }
         }
@@ -1177,11 +1189,7 @@ Item {
                 return;
             }
 
-            if (insertBeforeTarget) {
-                fastLayoutManager.insertBefore(target, appletItem);
-            } else {
-                fastLayoutManager.insertAfter(target, appletItem);
-            }
+            appletItem.insertAppletAtSlot(target, appletItem, insertBeforeTarget);
         } else {
             var boundary = sortBoundaryAt(rootX, rootY);
 
@@ -1201,11 +1209,7 @@ Item {
                     return;
                 }
 
-                if (insertBeforeBoundary) {
-                    fastLayoutManager.insertBefore(boundary, appletItem);
-                } else {
-                    fastLayoutManager.insertAfter(boundary, appletItem);
-                }
+                appletItem.insertAppletAtSlot(boundary, appletItem, insertBeforeBoundary);
 
                 insertedAtBoundary = true;
             } else {

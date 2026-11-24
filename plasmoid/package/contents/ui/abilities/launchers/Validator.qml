@@ -66,7 +66,8 @@ Timer{
 
     onTriggered: {
         interval = retryInterval;
-        var currentLaunchers = _launchers.currentShownLauncherList();
+        const launcherClient = _launchers;
+        var currentLaunchers = launcherClient.currentShownLauncherList();
         if (currentLaunchers.length === 0 && launchers.length > 0) {
             // A peer can receive the order before its task delegates exist.
             // Keep the latest request until they appear, with a bounded wait.
@@ -79,14 +80,14 @@ Timer{
 
         // Peers can expose different URLs for the same launcher. Use the shared
         // identity for ordering and keep the peer's URL for its delegate lookup.
-        const currentOrder = currentLaunchers.map(url => _launchers.launcherIdentity(url));
-        const targetOrder = launchers.map(url => _launchers.launcherIdentity(url));
+        const currentOrder = currentLaunchers.map(url => launcherClient.launcherIdentity(url));
+        const targetOrder = launchers.map(url => launcherClient.launcherIdentity(url));
 
         if (arraysAreEqual(currentOrder, targetOrder)) {
             stop();
             console.log("launchers synced at:" + launchers);
             launchers.length = 0;
-            _launchers.syncLauncherOrder();
+            launcherClient.syncLauncherOrder();
         } else {
             if (upwardIsBetter(currentOrder, targetOrder)) {
                 console.log("UPWARD....");
@@ -98,7 +99,7 @@ Timer{
                             restart();
                             return;
                         }
-                        var launcherLayoutIndex = _launchers.indexOfLayoutLauncher(currentLaunchers[i]);
+                        var launcherLayoutIndex = launcherClient.indexOfLayoutLauncher(currentLaunchers[i]);
 
                         if (launcherLayoutIndex === -1) {
                             console.log(" launcher was not found in model, syncing stopped...");
@@ -107,7 +108,7 @@ Timer{
                         }
 
                         console.log(" moving:" +launcherLayoutIndex + " _ " + p );
-                        _launchers.tasksModel.move(launcherLayoutIndex, p);
+                        launcherClient.tasksModel.move(launcherLayoutIndex, p);
                         restart();
                         return;
                     }
@@ -122,7 +123,7 @@ Timer{
                             restart();
                             return;
                         }
-                        var launcherLayoutIndex = _launchers.indexOfLayoutLauncher(currentLaunchers[i]);
+                        var launcherLayoutIndex = launcherClient.indexOfLayoutLauncher(currentLaunchers[i]);
 
                         if (launcherLayoutIndex === -1) {
                             console.log(" launcher was not found in model, syncing stopped...");
@@ -131,7 +132,7 @@ Timer{
                         }
 
                         console.log(" moving:" +launcherLayoutIndex + " _ " + p );
-                        _launchers.tasksModel.move(launcherLayoutIndex, p);
+                        launcherClient.tasksModel.move(launcherLayoutIndex, p);
                         restart();
                         return;
                     }

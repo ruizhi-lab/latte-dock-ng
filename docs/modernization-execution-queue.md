@@ -284,13 +284,13 @@ post-push Build workflow. No desktop behavior changed.
 | T4 | Fix and then gate one R8c check at a time | Review every finding; preserve documented intentional calls |
 | T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
 | A2 | Bounded pre-filter message capture, then one filter family | Established emitter/version evidence; remove temporary instrumentation |
-| A3 | Saved-layout fixtures, then one legacy splitter branch family | Consumer trace and Justify/separator/drag desktop coverage |
+| A3 / R6-S3 | Verify legacy Justify compatibility on the desktop | Unreachable branches have been removed. Exercise saved layouts, separators and drag ordering with the retained compatibility paths |
 | P1b | Resolve Release A/B noise and event-correlated latency | Comparable repeated runs; distinguish reduced work from CPU/PSS savings |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
 | P4 | Shared task-query evaluation, then a bounded implementation if justified | Paired Release work and CPU/PSS evidence, accepted ownership design |
 | P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
 | P6 | Module cold/warm measurement and override-safe build prototype | Demonstrated module-specific Release cost |
-| M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design; documents alone are not implementation. For R6 the remaining LayoutManager slices are S5 (needs the drag profile), S6 and S7; S1–S4 are implemented |
+| M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design. See the R6 follow-up below for LayoutManager validation and the next performance measurement |
 
 R8j remains closed at the user's decision. Its unrun 60-window experiment is
 not a scheduled task. A new memory investigation requires its own design and
@@ -298,7 +298,10 @@ pre-registered verdict rule.
 
 A3 has a preliminary [legacy Justify restore/save fixture](modernization-results/A3-legacy-justify-fixture.md).
 It exercises production layout logic through the configuration property map;
-disk-backed KConfig loading and live desktop interactions remain unverified.
+[R6-S3](modernization-results/R6-layoutmanager-s3.md) subsequently removed the
+unreachable splitter branches and retained the compatibility entry points.
+The preliminary fixture did not exercise disk-backed KConfig loading, and
+the full S3 desktop interaction matrix remains open.
 
 P4's [Arch synthetic preflight](modernization-results/P4-arch-synthetic-preflight.md)
 reached a private TaskManager session and activated two per-applet trackers in
@@ -381,10 +384,102 @@ action was S4.
   against the Debug `dev-env.sh` QML overlay, which broke window previews until
   the packaged dock was restored; the record documents that and the leftover
   state it created.
-- Next action: this round of R6 is closed on evidence — S1–S4 implemented, S6
-  shipped as diagnostics, S5/S7/S8 recorded as measured or assessed negatives.
-  Nothing in this queue is blocked on the user. A future slice needs its own
-  accepted design and, for the parabolic computation, a Release profile.
+- S1–S4 are implemented, and S6 shipped as diagnostics. The S5, S7 and S8
+  evaluations did not justify the proposed changes. A new parabolic slice
+  needs a Release profile and a design that reduces per-move work.
+
+### LayoutManager validation and performance follow-up (2026-11-24)
+
+- Complete the remaining S4 desktop interactions in
+  [design §7.4](modernization-results/R6-layoutmanager-design.md). Commit
+  `80cf37c20` implements propagation of boundary separator insertion using
+  the mapped neighboring applet, so the historical system-package
+  reproduction in the S4 report no longer describes the current code path.
+  Include separator insertion and removal on a clone in the retest.
+- The [restore index](modernization-results/R6-layoutmanager-restore-index.md)
+  and [factory cleanup](modernization-results/R6-layoutmanager-factory-profile.md)
+  are implemented. The current-tree clang-tidy gate passed 56 negative
+  fixtures and 157 production translation units. The existing Ubuntu 24.04
+  image passed all 49 clazy negative fixtures and found no issues across all
+  157 production translation units. Qt 6.11.1 matched the reviewed deep lint
+  fingerprint and identified two added unqualified accesses in the launcher
+  code. The reference qualification fix left zero added diagnostics and 45
+  fewer warning occurrences against the checked-in baseline. Syntax lint
+  passed all 244 QML files. Earlier on the same source revision, GCC and Clang
+  Debug and Release each passed 68/68 CTest targets in the graphical-session
+  user manager after rebuilding both stale Release `qmlsmoketest` binaries.
+  After the QML fix, each preset passed the four focused QML, containment,
+  clone-policy and source-contract tests. The
+  [index refresh](modernization-results/R6-layoutmanager-index-refresh.md)
+  and [readiness retry fix](modernization-results/R6-layoutmanager-restore-readiness.md)
+  have their own completed validation records.
+- The [48 paired Release launches](modernization-results/R6-layoutmanager-startup-ab.md)
+  show a reproducible reduction of less than 0.1 ms in enumeration and order
+  matching for two six-applet docks. Whole-launch results vary across series.
+  For a further startup slice, measure applet reparenting and anchor updates
+  in Release with the same applets and order, and record first paint and
+  completed restore separately. These operations dominated the factory
+  profile. Evaluate a concrete reduction in attachment work before changing
+  the QML lifecycle.
+- For the clone startup follow-up, compare the mapped logical order,
+  including splitter positions and the identity of repeated applets.
+  `ClonedView` documents that clone applet IDs are recreated at startup.
+  The factory comparison recorded changing clone IDs with matching plugin
+  order, so it leaves logical order for repeated applets unverified.
+- Desktop startup of the current user-mode Debug install completed on DP-1
+  and HDMI-A-1. At clone initialization the complete seven-applet mapping
+  translated the source order to the exact clone order, including the
+  existing boundary separator. Both docks had one instance of each applet
+  plugin, so repeated-plugin identity still needs a dedicated fixture. The
+  startup log contained no warnings, errors, fatal messages or assertions.
+  The desktop interaction log records boundary separator removal and
+  recreation on both displays and an applet reorder. After reinstalling
+  the QML reference changes, startup preserved the mapped order and
+  exposed a misplaced separator already present in the saved order.
+  A widget could be inserted between a task area and its existing boundary
+  separator. The insertion policy now moves that slot to the widget side
+  of the separator for both edges, including coordinate-based drops.
+  The insertion fix's user-mode Debug install started on both displays with matching
+  mapped order for nine applets. Both the before and after startup logs
+  emitted the same Plasma brightness applet warning. A subsequent desktop
+  drag moved an existing widget between an initially adjacent left
+  separator and the task area. Edit-mode sorting now checks live sibling
+  order before stacking, so either hit target at a left or right boundary
+  redirects the drop to the widget side. The direct stacking test covers
+  both targets at both edges. GCC and Clang Debug each passed the five
+  focused tests, and QML syntax lint passed. The reinstalled Debug build
+  started on both displays with the mapped order intact and the same
+  brightness warning. The user confirmed the drag fix. Widget creation
+  could still bypass the application-side insertion adjustment when
+  QML handled Plasma's applet-added signal first. Indexed creation now
+  applies the same boundary rule at placement, with regression coverage
+  for a one-shot request consumed through the QML entry point on either
+  side. The user confirmed widget creation on the desktop.
+- A separate application-menu pin
+  appended a task launcher after the final internal separator. Launcher
+  creation now puts the appended model record ahead of trailing separators
+  while preserving interior separators. A real Plasma TasksModel probe
+  verified the order both after pinning and after synchronization.
+  The right separator added from a pinned task also stays in the launcher
+  model, so it remains visible without unpinned windows and separates them
+  from pins when they appear. Manual reordering keeps the two sides apart.
+  Older right separators created as separate containment applets can be
+  removed through the existing boundary removal action before adding a
+  launcher-local separator.
+- After desktop confirmation of the right separator, opening an unpinned
+  application exposed a right-widget position jump. A new task could
+  publish a full-width slot when it became visible, then retract it when
+  the entrance slide initialized. The delegate now releases its layout
+  slot after the animation setup, and a reveal without sliding keeps the
+  full length. The QML regression samples the following item's position
+  through initial visibility and subsequent expansion. The user confirmed
+  the desktop fix. The retest log showed two known brightness applet
+  warnings and sixteen warnings while loading the world clock on both
+  outputs, consistent with the
+  [earlier system applet observations](modernization-results/R6-layoutmanager-s2b.md).
+  No Latte runtime errors or assertions were identified. The final GCC
+  and Clang Debug suites each passed all 68 targets. The Qt 6.11.1 deep
+  QML baseline comparison passed.
 
 ## References
 

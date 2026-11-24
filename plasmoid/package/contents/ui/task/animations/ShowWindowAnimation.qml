@@ -166,9 +166,12 @@ SequentialAnimation{
         } else if (!replacesRow && ( animation2 || animation3 || animation6 || isForcedHidden)
                    && (taskItem.abilities.animations.speedFactor.current !== 0) && !launcherIsAlreadyShown){
             isForcedHidden = false;
+            // Publish visibility with the entrance size already set.
+            // Without sliding there is no reason to collapse the slot.
+            const initialZoom = showWindowAnimation.speed > 0 ? 0.0 : 1.0;
+            taskItem.parabolicItem.zoomLength = initialZoom;
+            taskItem.parabolicItem.zoomThickness = initialZoom;
             taskItem.visible = true;
-            taskItem.parabolicItem.zoomLength = 0.0;
-            taskItem.parabolicItem.zoomThickness = 0.0;
             start();
         } else {
             isForcedHidden = false;

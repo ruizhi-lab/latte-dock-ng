@@ -111,6 +111,7 @@ public Q_SLOTS:
     Q_INVOKABLE void joinLayoutsToMainLayout();
     Q_INVOKABLE void insertBefore(QQuickItem *hoveredItem, QQuickItem *item);
     Q_INVOKABLE void insertAfter(QQuickItem *hoveredItem, QQuickItem *item);
+    Q_INVOKABLE void insertAppletAtSlot(QQuickItem *target, QQuickItem *item, bool before);
     Q_INVOKABLE void insertAtCoordinates(QQuickItem *item, const int &x, const int &y) override;
     Q_INVOKABLE bool repairAppletContainers();
     Q_INVOKABLE QObject *resolveAppletQuickItem(QObject *applet) const;

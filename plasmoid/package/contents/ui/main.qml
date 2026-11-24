@@ -940,7 +940,7 @@ PlasmoidItem {
         highlightWindows: root.highlightWindows
 
         onAddLauncher: function(url) {
-            appletAbilities.launchers.addLauncherToModel(url);
+            root.appletAbilities.launchers.addLauncherToModel(url);
         }
 
         Component.onCompleted: {
@@ -1202,6 +1202,7 @@ PlasmoidItem {
 
         TasksLayout.MouseHandler {
             id: mouseHandler
+            launcherAbility: root.appletAbilities.launchers
             anchors.bottom: (root.location === PlasmaCore.Types.BottomEdge) ? scrollableList.bottom : undefined
             anchors.top: (root.location === PlasmaCore.Types.TopEdge) ? scrollableList.top : undefined
             anchors.left: (root.location === PlasmaCore.Types.LeftEdge) ? scrollableList.left : undefined

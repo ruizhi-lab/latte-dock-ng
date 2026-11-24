@@ -3059,22 +3059,10 @@ void SourceContractTest::systemTrayAndPlasmoidActAsAppletInsertionBoundary()
     QVERIFY(containmentInterfaceCpp.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(containmentInterfaceCpp.readAll());
 
-    // System tray (both KDE and Nomad) and latte plasmoid act as insertion
-    // boundaries: newly created applets are inserted before them.
-    QVERIFY(src.contains(QStringLiteral("kSystemTray")));
-    QVERIFY(src.contains(QStringLiteral("\"org.nomad.systemtray\"")));
-    QVERIFY(src.contains(QStringLiteral("kPlasmoid")));
-
-    // All three must be in the same boundary-check block.
-    const int blockStart = src.indexOf(QStringLiteral("kSystemTray"));
-    const int nomadInBlock = src.indexOf(QStringLiteral("\"org.nomad.systemtray\""), blockStart);
-    const int plasmoidInBlock = src.indexOf(QStringLiteral("kPlasmoid"), blockStart);
-    QVERIFY(nomadInBlock > blockStart);
-    QVERIFY(plasmoidInBlock > nomadInBlock);
-
-    // The boundary check must be followed by boundaryIds.insert.
-    const int insertCall = src.indexOf(QStringLiteral("boundaryIds.insert"), plasmoidInBlock);
-    QVERIFY(insertCall > plasmoidInBlock);
+    // Keep the live containment wired to the insertion policy exercised by
+    // ViewPartUnitTest with task managers, both trays and boundary separators.
+    QVERIFY(src.contains(QStringLiteral("calculateWidgetInsertionIndex(order, pendingIndex)")));
+    QVERIFY(src.contains(QStringLiteral("return widgetInsertionIndex(order, plugins, requestedIndex);")));
 }
 
 void SourceContractTest::separatorAndSpacerDetectionAndBehaviorInAppletItem()
@@ -4155,6 +4143,8 @@ void SourceContractTest::contextMenuSeparatorRemovalRoutesThroughGuardedLauncher
     QVERIFY(tailItem > headItem);
 
     const QString headBlock = src.mid(headItem, tailItem - headItem);
+    QVERIFY(src.contains(QStringLiteral("addInternalSeparatorAtPos(visualParent.itemIndex + 1)")));
+    QVERIFY(!src.contains(QStringLiteral("addInternalSeparatorAtRightBoundaryOfApplet(")));
     QVERIFY(headBlock.contains(QStringLiteral("supportsLauncherSeparators()")));
     QVERIFY(headBlock.contains(QStringLiteral("visualParent.headItemIsSeparator")));
     QVERIFY(headBlock.contains(QStringLiteral("removeInternalSeparatorAtPos(rightIndex)")));

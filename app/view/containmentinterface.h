@@ -192,7 +192,7 @@ private:
     void cleanupInvalidSeparatorApplets();
     void saveAppletsOrder(const QList<int> &order);
     void persistAppletsOrder(const QList<int> &order);
-    int calculateDefaultAppletInsertionIndex(const QList<int> &order);
+    int calculateWidgetInsertionIndex(const QList<int> &order, int requestedIndex);
 
     bool appletIsExpandable(PlasmaQuick::AppletQuickItem *appletQuickItem) const;
 

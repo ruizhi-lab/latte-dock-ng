@@ -10,6 +10,7 @@
 #include "../../containment/plugin/layoutmanager.h"
 
 // local
+#include "appletinsertion.h"
 #include "pluginids.h"
 #include "view.h"
 #include "visualitemsearch.h"
@@ -1081,13 +1082,10 @@ void ContainmentInterface::addApplet(const QString &pluginId, int beforeAppletId
         return;
     }
 
-    // Calculate the default insertion index and register it BEFORE creating the
-    // applet so the QML handler's addAppletItem call places it correctly.
     if (m_layoutManager) {
-        QList<int> order = m_layoutManagerDispatcher.order();
+        const QList<int> order = m_layoutManagerDispatcher.order();
         if (!order.isEmpty()) {
-            const int defaultIndex = calculateDefaultAppletInsertionIndex(order);
-            m_layoutManagerDispatcher.expectAppletInsertionAt(defaultIndex);
+            m_layoutManagerDispatcher.expectAppletInsertionAt(calculateWidgetInsertionIndex(order, -1));
         }
     }
 
@@ -2292,6 +2290,9 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         return;
     }
 
+    const KPluginMetaData appletMeta = applet->pluginMetaData();
+    const QString currentPluginId = pluginIdFromMetaData(appletMeta);
+
     // Check for an insertion request registered by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler cannot match the Plasma 6
     // signal signature (appletAdded(Plasma::Applet*, const QRectF&) vs the
@@ -2300,19 +2301,14 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
     if (m_layoutManager) {
         const int pendingIndex = m_layoutManagerDispatcher.takeAppletInsertionIndex();
 
-        if (pendingIndex >= 0) {
-            m_layoutManagerDispatcher.addAppletItem(applet, pendingIndex);
+        if (Latte::PluginId::isSeparatorPluginId(currentPluginId) || currentPluginId == QLatin1String(Latte::PluginId::kSplitter)) {
+            if (pendingIndex >= 0) {
+                m_layoutManagerDispatcher.addAppletItem(applet, pendingIndex);
+            }
         } else {
-            // No drag-drop index. The QML handler never fires in Plasma 6,
-            // so we must create the container ourselves here. Place new
-            // applets at the end of left-side widgets (before system tray).
-            QList<int> order = m_layoutManagerDispatcher.order();
-            if (!order.isEmpty() && !order.contains(applet->id())) {
-                const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
-                if (!Latte::PluginId::isSeparatorPluginId(pluginId) && pluginId != QLatin1String(Latte::PluginId::kSplitter)) {
-                    int defaultIndex = calculateDefaultAppletInsertionIndex(order);
-                    m_layoutManagerDispatcher.addAppletItem(applet, defaultIndex);
-                }
+            const QList<int> order = m_layoutManagerDispatcher.order();
+            if (pendingIndex >= 0 || (!order.isEmpty() && !order.contains(applet->id()))) {
+                m_layoutManagerDispatcher.addAppletItem(applet, calculateWidgetInsertionIndex(order, pendingIndex));
             }
         }
     }
@@ -2320,8 +2316,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
     PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
     bool isSubContainment = Layouts::Storage::self()->isSubContainment(m_view->corona(), applet); //we use corona() to make sure that returns true even when it is first created from user
     int currentAppletId = applet->id();
-    KPluginMetaData appletMeta = applet->pluginMetaData();
-    const QString currentPluginId = pluginIdFromMetaData(appletMeta);
 
     //! When the user opts out of colorizing for this applet, undo Plasma's
     //! panel "-symbolic" icon substitution (e.g. the Trash widget) so the
@@ -2511,39 +2505,18 @@ QList<int> ContainmentInterface::toIntList(const QVariantList &list)
     return converted;
 }
 
-int ContainmentInterface::calculateDefaultAppletInsertionIndex(const QList<int> &order)
+int ContainmentInterface::calculateWidgetInsertionIndex(const QList<int> &order, int requestedIndex)
 {
-    // Identify boundary applets (system tray, task manager).  New
-    // applets go just before the first boundary encountered when
-    // scanning left-to-right.  If none found, append to the end.
-
-    QSet<int> boundaryIds;
-
+    QHash<int, QString> plugins;
     if (m_view && m_view->containment()) {
         const auto applets = m_view->containment()->applets();
-
         for (const auto *applet : applets) {
-            if (!applet) {
-                continue;
-            }
-
-            const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
-
-            if (pluginId == QLatin1String(Latte::PluginId::kSystemTray)
-                || pluginId == QLatin1String("org.nomad.systemtray")
-                || pluginId == QLatin1String(Latte::PluginId::kPlasmoid)) {
-                boundaryIds.insert(static_cast<int>(applet->id()));
+            if (applet) {
+                plugins.insert(static_cast<int>(applet->id()), pluginIdFromMetaData(applet->pluginMetaData()));
             }
         }
     }
-
-    for (int i = 0; i < order.count(); ++i) {
-        if (boundaryIds.contains(order[i])) {
-            return i; // Insert just before the boundary
-        }
-    }
-
-    return order.count();
+    return widgetInsertionIndex(order, plugins, requestedIndex);
 }
 
 }

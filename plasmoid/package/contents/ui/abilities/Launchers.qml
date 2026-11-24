@@ -128,6 +128,38 @@ Item {
         return liveLauncherList().some(record => launcherIdentity(record) === identity);
     }
 
+    function trailingSeparatorStart(records, end) {
+        while (end > 0 && _launchers.isSeparator(records[end - 1])) {
+            --end;
+        }
+        return end;
+    }
+
+    function isTrailingSeparator(launcherUrl: string): bool {
+        const records = _launchers.liveLauncherList();
+        const start = _launchers.trailingSeparatorStart(records, records.length);
+        return start > 0 && records.indexOf(launcherUrl, start) >= 0;
+    }
+
+    function taskMoveIndex(from: int, to: int, launcherUrl: string, pinned: bool): int {
+        const records = _launchers.liveLauncherList();
+        const start = _launchers.trailingSeparatorStart(records, records.length);
+        if (start === records.length) {
+            return to;
+        }
+
+        // Launcher records keep the edge separator identifiable while the
+        // delegates reorder. The TasksModel move uses visible row indexes.
+        if (records.indexOf(launcherUrl, start) >= 0) {
+            return from;
+        }
+        const boundary = _launchers.indexOfLayoutLauncher(records[pinned ? start : records.length - 1]);
+        if (boundary < 0) {
+            return to;
+        }
+        return pinned ? Math.min(to, boundary - 1) : Math.max(to, boundary + 1);
+    }
+
     function addLauncherToModel(launcherUrl, animate) {
         if (hasEquivalentGlobalLauncher(launcherUrl)) {
             return false;
@@ -137,7 +169,25 @@ Item {
             _launchers.launcherInAdding(launcherUrl.split("/").pop());
         }
 
-        return tasksModel.requestAddLauncher(launcherUrl);
+        if (!tasksModel.requestAddLauncher(launcherUrl)) {
+            return false;
+        }
+
+        // Plasma appends new pins. Use the model's launcher records to keep
+        // any trailing separators at the edge, even before delegates exist.
+        const modelRecords = _launchers.liveLauncherList();
+        const addedIndex = modelRecords.length - 1;
+        if (addedIndex > 0 && !_launchers.isSeparator(launcherUrl)
+                && _launchers.launcherIdentity(modelRecords[addedIndex]) === _launchers.launcherIdentity(launcherUrl)) {
+            const index = _launchers.trailingSeparatorStart(modelRecords, addedIndex);
+            if (index < addedIndex) {
+                const records = modelRecords.slice(0);
+                const record = records.pop();
+                records.splice(index, 0, record);
+                _launchers.tasksModel.launcherList = records;
+            }
+        }
+        return true;
     }
 
     function addLauncher(launcherUrl) {

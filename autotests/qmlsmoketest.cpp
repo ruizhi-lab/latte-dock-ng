@@ -89,6 +89,7 @@ private Q_SLOTS:
     void layoutInfoWindowHasAValidSizeFromSource();
     void appletAlternativesDialogResolvesOutsidePlasmashell();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
+    void newTaskPublishesSlotAfterEntranceSetup();
     void parabolicItemZoomRecoveryLoadsFromSource();
     void hiddenSpacerRetainsSlotWhileSeparatorStateSettles();
     void taskRemovalDefersGeometryFeedback_data();
@@ -2152,6 +2153,53 @@ void QmlSmokeTest::showWindowAnimationFrozenZoomDecisionLoadsFromSource()
     QCOMPARE(keepFrozenZoom.toBool(), true);
 }
 
+void QmlSmokeTest::newTaskPublishesSlotAfterEntranceSetup()
+{
+    QFile source(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/TaskItem.qml"));
+    QVERIFY(source.open(QFile::ReadOnly));
+    const QByteArray contents = source.readAll();
+    const QByteArray bindingStart("occupiesLayoutSlot:");
+    const qsizetype start = contents.indexOf(bindingStart);
+    QVERIFY(start >= 0);
+    const QByteArray slotBinding = contents.mid(start, contents.indexOf('\n', start) - start);
+
+    QQmlEngine engine;
+    auto host = createQmlObject(engine, QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: host
+    property alias task: taskItem
+    property real followingX: 100 + taskItem.width
+    Item {
+        id: taskItem
+        visible: false
+        property bool initialTaskGeometryReady: false
+        property bool waitingForTaskRowReplacement: false
+        property bool checkingTaskRowReplacement: false
+        property bool )") + slotBinding + QByteArrayLiteral(R"(
+        property real zoomLength: 1
+        width: visible && occupiesLayoutSlot ? 48 * zoomLength : 0
+    }
+}
+)"), QUrl(QStringLiteral("qrc:/new-task-slot.qml")));
+    QVERIFY(host);
+    auto *task = host->property("task").value<QQuickItem *>();
+    QVERIFY(task);
+
+    QSignalSpy positionChanges(host.get(), SIGNAL(followingXChanged()));
+    QVERIFY(task->setProperty("visible", true));
+    QCOMPARE(host->property("followingX").toReal(), 100.0);
+    QVERIFY(task->setProperty("zoomLength", 0.0));
+    QVERIFY(task->setProperty("initialTaskGeometryReady", true));
+    QCOMPARE(positionChanges.count(), 0);
+
+    QVERIFY(task->setProperty("zoomLength", 0.5));
+    QCOMPARE(host->property("followingX").toReal(), 124.0);
+    QVERIFY(task->setProperty("zoomLength", 1.0));
+    QCOMPARE(host->property("followingX").toReal(), 148.0);
+    QCOMPARE(positionChanges.count(), 2);
+}
+
 void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
 {
     QTemporaryDir importRoot;
@@ -3238,6 +3286,44 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
                                       Q_ARG(QVariant, false)));
     QCOMPARE(added.toBool(), true);
     QCOMPARE(tasksModel.launcherList().constLast(), QStringLiteral("applications:org.kde.kate.desktop"));
+
+    const QStringList regularLaunchers = tasksModel.launcherList();
+    const QString interiorSeparator = QStringLiteral("file:///latte-separator1.desktop");
+    const QString trailingSeparator = QStringLiteral("file:///latte-separator2.desktop");
+    const QString anotherSeparator = QStringLiteral("file:///latte-separator3.desktop");
+    const QString newLauncher = QStringLiteral("applications:test-menu-launcher.desktop");
+    tasksModel.setLauncherList({regularLaunchers.first(), interiorSeparator,
+                                regularLaunchers.last(), trailingSeparator, anotherSeparator});
+
+    // The application-menu action enters through addLauncher. The launcher
+    // model is authoritative even when there are no task delegates.
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "addLauncher", Q_ARG(QVariant, newLauncher)));
+    QCOMPARE(tasksModel.launcherList(),
+             (QStringList{regularLaunchers.first(), interiorSeparator, regularLaunchers.last(),
+                          newLauncher, trailingSeparator, anotherSeparator}));
+
+    auto taskRows = createQmlObject(engine, QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    Item { property string launcherUrl: "file:///latte-separator2.desktop"; property int itemIndex: 6 }
+    Item { property string launcherUrl: "file:///latte-separator3.desktop"; property int itemIndex: 7 }
+}
+)"), QUrl(QStringLiteral("qrc:/trailing-separator-task-rows.qml")));
+    QVERIFY(taskRows);
+    QVERIFY(object->setProperty("layout", QVariant::fromValue(static_cast<QObject *>(taskRows.get()))));
+    const QJSValue launcherObject = engine.newQObject(object.get());
+    const QJSValue isTrailingSeparator = launcherObject.property(QStringLiteral("isTrailingSeparator"));
+    QVERIFY(isTrailingSeparator.isCallable());
+    QVERIFY(isTrailingSeparator.callWithInstance(launcherObject, {trailingSeparator}).toBool());
+    QVERIFY(!isTrailingSeparator.callWithInstance(launcherObject, {interiorSeparator}).toBool());
+    const QJSValue taskMoveIndex = launcherObject.property(QStringLiteral("taskMoveIndex"));
+    QVERIFY(taskMoveIndex.isCallable());
+    QCOMPARE(taskMoveIndex.callWithInstance(launcherObject, {1, 9, newLauncher, true}).toInt(), 5);
+    QCOMPARE(taskMoveIndex.callWithInstance(launcherObject, {9, 3, QStringLiteral("applications:running.desktop"), false}).toInt(), 8);
+    QCOMPARE(taskMoveIndex.callWithInstance(launcherObject, {6, 3, trailingSeparator, true}).toInt(), 6);
+    QCOMPARE(taskMoveIndex.callWithInstance(launcherObject, {1, 3, newLauncher, true}).toInt(), 3);
+    QVERIFY(object->setProperty("layout", QVariant::fromValue(static_cast<QQuickItem *>(nullptr))));
+    tasksModel.setLauncherList(regularLaunchers);
 
     const QMetaMethod orderCommit = object->metaObject()->method(object->metaObject()->indexOfSignal("launcherOrderCommitRequested()"));
     const QMetaMethod syncOrder = tasksModel.metaObject()->method(tasksModel.metaObject()->indexOfMethod("syncLaunchers()"));

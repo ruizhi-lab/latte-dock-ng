@@ -11,6 +11,7 @@ import org.kde.draganddrop
 
 import org.kde.taskmanager as TaskManager
 
+import "../abilities" as Abilities
 import "../../code/tools.js" as TaskTools
 
 Item {
@@ -18,6 +19,7 @@ Item {
     id: dArea
     signal urlsDropped(var urls)
 
+    required property Abilities.Launchers launcherAbility
     property Item target
     property Item ignoredItem
     property Item dragParabolicItem
@@ -64,7 +66,7 @@ Item {
 
     function isPinnedForReorder(launcherUrl) {
         return tasksModel.launcherPosition(launcherUrl) >= 0
-                || appletAbilities.launchers.hasEquivalentGlobalLauncher(launcherUrl);
+                || dArea.launcherAbility.hasEquivalentGlobalLauncher(launcherUrl);
     }
 
     function schedulePromoteToLauncherAndMove(sourceItem, targetIndex, launcherUrl) {
@@ -115,7 +117,8 @@ Item {
 
             if (launcherReady) {
                 var from = sourceItem.itemIndex;
-                var to = Math.max(0, Math.min(pendingPinnedTargetIndex, tasksModel.count - 1));
+                var to = dArea.launcherAbility.taskMoveIndex(from,
+                    Math.min(pendingPinnedTargetIndex, tasksModel.count - 1), dArea.pendingPinnedLauncherUrl, true);
 
                 if (from >= 0 && to >= 0 && from !== to) {
                     tasksModel.move(from, to);
@@ -280,11 +283,11 @@ Item {
 
         // Auto-pin: dragging a non-pinned task into the launcher area
         // promotes it to a launcher first, then moves it.
-        if (!sourceIsLauncher && targetTask && targetIsLauncher) {
+        if (!sourceIsLauncher && targetTask && targetIsLauncher && !targetTask.isSeparator) {
             var launcherUrl = launcherUrlForTask(sourceItem);
             if (launcherUrl.length > 0) {
                 if (!isPinnedForReorder(launcherUrl)) {
-                    appletAbilities.launchers.addLauncher(launcherUrl);
+                    dArea.launcherAbility.addLauncher(launcherUrl);
                 }
                 schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl);
                 ignoredItem = targetTask;
@@ -293,10 +296,16 @@ Item {
             }
         }
 
+        var from = sourceItem.itemIndex;
+        const sourceUrl = dArea.launcherUrlForTask(sourceItem);
+        const pinned = sourceIsLauncher || (sourceUrl !== "" && dArea.isPinnedForReorder(sourceUrl));
+        insertAt = dArea.launcherAbility.taskMoveIndex(from, insertAt, sourceUrl, pinned);
+        if (insertAt < 0 || insertAt >= tasksModel.count || insertAt === from) {
+            return;
+        }
+
         sourceItem.z = 100;
         ignoredItem = above;
-
-        var from = sourceItem.itemIndex;
         tasksModel.move(from, insertAt);
 
         // Record the commit position so subsequent drag-move events
@@ -506,9 +515,9 @@ Item {
 
             if (inDroppingSeparator) {
                 if (hoveredItem && hoveredItem.itemIndex >=0){
-                    appletAbilities.launchers.addInternalSeparatorAtPos(hoveredItem.itemIndex);
+                    dArea.launcherAbility.addInternalSeparatorAtPos(hoveredItem.itemIndex);
                 } else {
-                    appletAbilities.launchers.addInternalSeparatorAtPos(0);
+                    dArea.launcherAbility.addInternalSeparatorAtPos(0);
                 }
             } else if (inDroppingOnlyLaunchers || inDroppingFiles) {
                 parent.urlsDropped(event.mimeData.urls);

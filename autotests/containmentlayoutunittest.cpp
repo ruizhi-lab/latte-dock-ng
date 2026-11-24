@@ -169,6 +169,7 @@ class ContainmentLayoutUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void sortingKeepsBothBoundarySeparatorsAdjacent();
     void tracksRequestedAppletOptionLists();
     void independentCopyWaitsForLateApplet_data();
     void independentCopyWaitsForLateApplet();
@@ -186,6 +187,7 @@ private Q_SLOTS:
     void insertAtCoordinatesUsesMainLayoutForJustify();
     void requestAppletsOrderMaintainsSideAppletOrderInJustify();
     void addAppletItemByIndexUsesMainLayoutInJustify();
+    void requestedWidgetInsertionKeepsBoundarySeparatorsAdjacent();
     void warnsWhenContainmentRootMethodsAreMissing();
     void warnsOncePerMissingLayoutChildRole();
     void edgeSpacerNeedsNoBackendAppletRole();
@@ -199,6 +201,34 @@ private Q_SLOTS:
     void droppedInsertionRequestDoesNotDisplaceNextApplet();
     void skipSpacerReorderRequestIsConsumedByOneSave();
 };
+
+void ContainmentLayoutUnitTest::sortingKeepsBothBoundarySeparatorsAdjacent()
+{
+    Latte::Containment::LayoutManager manager;
+    QQuickItem layout;
+    QQuickItem widget(&layout);
+    QQuickItem leftSeparator(&layout);
+    QQuickItem tasks(&layout);
+    QQuickItem rightSeparator(&layout);
+    QQuickItem rightWidget(&layout);
+
+    leftSeparator.setProperty("pluginName", QStringLiteral("org.kde.latte.separator"));
+    tasks.setProperty("pluginName", QStringLiteral("org.kde.latte.plasmoid"));
+    rightSeparator.setProperty("pluginName", QStringLiteral("audoban.applet.separator"));
+
+    const QList<QQuickItem *> expected{&widget, &leftSeparator, &tasks, &rightSeparator, &rightWidget};
+    manager.insertAppletAtSlot(&leftSeparator, &widget, false);
+    QCOMPARE(layout.childItems(), expected);
+    manager.insertAppletAtSlot(&tasks, &widget, true);
+    QCOMPARE(layout.childItems(), expected);
+    manager.insertAppletAtSlot(&rightSeparator, &rightWidget, true);
+    QCOMPARE(layout.childItems(), expected);
+    manager.insertAppletAtSlot(&tasks, &rightWidget, false);
+    QCOMPARE(layout.childItems(), expected);
+
+    manager.insertAppletAtSlot(&rightWidget, &widget, false);
+    QCOMPARE(layout.childItems(), (QList<QQuickItem *>{&leftSeparator, &tasks, &rightSeparator, &rightWidget, &widget}));
+}
 
 void
 ContainmentLayoutUnitTest::dispatcherUsesLegacyQObjectContractAndTracksLifetime()
@@ -989,6 +1019,54 @@ void ContainmentLayoutUnitTest::addAppletItemByIndexUsesMainLayoutInJustify()
 }
 
 
+
+void ContainmentLayoutUnitTest::requestedWidgetInsertionKeepsBoundarySeparatorsAdjacent()
+{
+    TestConfig configuration;
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    RestoreRoot root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QObject leftBackend;
+    QObject tasksBackend;
+    QObject rightBackend;
+    QObject newLeftWidget;
+    QObject newRightWidget;
+    leftBackend.setProperty("id", 10);
+    tasksBackend.setProperty("id", 20);
+    rightBackend.setProperty("id", 30);
+    newLeftWidget.setProperty("id", 15);
+    newRightWidget.setProperty("id", 25);
+
+    QQuickItem leftSeparator(&main);
+    QQuickItem tasks(&main);
+    QQuickItem rightSeparator(&main);
+    leftSeparator.setProperty("pluginName", QStringLiteral("org.kde.latte.separator"));
+    tasks.setProperty("pluginName", QStringLiteral("org.kde.latte.plasmoid"));
+    rightSeparator.setProperty("pluginName", QStringLiteral("audoban.applet.separator"));
+    leftSeparator.setProperty("backendAppletRef", QVariant::fromValue(&leftBackend));
+    tasks.setProperty("backendAppletRef", QVariant::fromValue(&tasksBackend));
+    rightSeparator.setProperty("backendAppletRef", QVariant::fromValue(&rightBackend));
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+    manager.requestAppletsOrder({10, 20, 30});
+
+    manager.expectAppletInsertionAt(1);
+    QCOMPARE(root.addAppletAtRequestedIndex(manager, &newLeftWidget), 1);
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("15;10;20;30"));
+
+    manager.expectAppletInsertionAt(3);
+    QCOMPARE(root.addAppletAtRequestedIndex(manager, &newRightWidget), 3);
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("15;10;20;30;25"));
+}
 
 void ContainmentLayoutUnitTest::insertionRequestIsConsumedOnce()
 {

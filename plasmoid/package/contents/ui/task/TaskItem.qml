@@ -22,9 +22,11 @@ AbilityItem.BasicItem {
     objectName: "TaskItem"
 
     isHidden: !visible || isForcedHidden || !occupiesLayoutSlot
-    // A staged row must exclude its separator and parabolic spacers as well
-    // as its icon, otherwise ListView still counts it in the dock length.
-    occupiesLayoutSlot: !waitingForTaskRowReplacement && !checkingTaskRowReplacement
+    // Completion can reveal a new row before the entrance animation sets
+    // its initial zoom. Publish its slot only after that setup, so ListView
+    // cannot first add a full-width slot and then collapse it.
+    property bool initialTaskGeometryReady: false
+    occupiesLayoutSlot: taskItem.initialTaskGeometryReady && !waitingForTaskRowReplacement && !checkingTaskRowReplacement
 
     // Keep the last settled separator gap until removal can determine whether
     // a replacement owns this slot. Ordinary removals release it when they start.
@@ -73,9 +75,10 @@ AbilityItem.BasicItem {
     }
 
     // Use itemIndex (always current) instead of lastValidIndex (stale after
-    // drag reorder).  Fall back to lastValidIndex only during removal when
-    // itemIndex is -1.
+    // drag reorder). Keep the pinned group's trailing separator visible
+    // even with no unpinned windows. Fall back to lastValidIndex on removal.
     isSeparatorHidden: isSeparator
+                       && !taskItem.abilities.launchers.isTrailingSeparator(taskItem.launcherUrl)
                        && ((itemIndex >= 0 ? itemIndex : lastValidIndex) > taskItem.abilities.indexer.lastVisibleItemIndex)
     isSeparatorInRealLength: isSeparator && root.dragSource
 
@@ -1262,6 +1265,7 @@ AbilityItem.BasicItem {
         }
         updateAudioPlayer();
         updateAudioStreams();
+        taskItem.initialTaskGeometryReady = true;
     }
 
     Component.onDestruction: {

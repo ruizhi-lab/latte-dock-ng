@@ -185,7 +185,7 @@ PlasmaExtras.Menu {
         return -1;
     }
 
-    function tryAddBoundarySeparator(atRightBoundary) {
+    function tryAddLeftBoundarySeparator() {
         if (!appletAbilities || !appletAbilities.myView) {
             return false;
         }
@@ -195,11 +195,7 @@ PlasmaExtras.Menu {
             return false;
         }
 
-        if (atRightBoundary && typeof appletAbilities.myView.addInternalSeparatorAtRightBoundaryOfApplet === "function") {
-            return appletAbilities.myView.addInternalSeparatorAtRightBoundaryOfApplet(appletId);
-        }
-
-        if (!atRightBoundary && typeof appletAbilities.myView.addInternalSeparatorAtLeftBoundaryOfApplet === "function") {
+        if (typeof appletAbilities.myView.addInternalSeparatorAtLeftBoundaryOfApplet === "function") {
             return appletAbilities.myView.addInternalSeparatorAtLeftBoundaryOfApplet(appletId);
         }
 
@@ -245,21 +241,9 @@ PlasmaExtras.Menu {
             return false;
         }
 
-        var insertAt = visualParent.itemIndex + 1;
-
-        // For the right-most launcher in this applet, prefer a containment
-        // boundary separator only when there is no launcher item to the right
-        // (for example when a widget follows tasks).
-        if (appletAbilities.indexer
-                && typeof appletAbilities.indexer.lastVisibleItemIndex === "number"
-                && visualParent.itemIndex === appletAbilities.indexer.lastVisibleItemIndex
-                && !hasLauncherAtLayoutIndex(visualParent.itemIndex + 1)) {
-            if (tryAddBoundarySeparator(true)) {
-                return true;
-            }
-        }
-
-        return appletAbilities.launchers.addInternalSeparatorAtPos(insertAt);
+        // Keep the right boundary in the launcher model. A containment
+        // separator would follow the whole tasks applet when windows appear.
+        return appletAbilities.launchers.addInternalSeparatorAtPos(visualParent.itemIndex + 1);
     }
 
     function addTailSeparatorAtAppletBoundary(taskIndex) {
@@ -287,7 +271,7 @@ PlasmaExtras.Menu {
                 && typeof appletAbilities.indexer.firstVisibleItemIndex === "number"
                 && visualParent.itemIndex === appletAbilities.indexer.firstVisibleItemIndex
                 && !hasLauncherAtLayoutIndex(visualParent.itemIndex - 1)) {
-            if (tryAddBoundarySeparator(false)) {
+            if (tryAddLeftBoundarySeparator()) {
                 return true;
             }
         }

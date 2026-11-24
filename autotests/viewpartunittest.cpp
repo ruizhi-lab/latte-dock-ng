@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include "appletinsertion.h"
 #include "indicatorinfo.h"
 #include "indicatorresources.h"
 #include "tasksmodel.h"
@@ -15,11 +16,33 @@ class ViewPartUnitTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void widgetInsertionKeepsBoundarySeparatorsAdjacent();
     void tasksModelIgnoresNullTasks();
     void tasksModelExposesTaskRoleOnlyForValidRows();
     void indicatorInfoEmitsOnlyWhenValuesChange();
     void indicatorResourcesIgnoreRepeatedSvgPaths();
 };
+
+void ViewPartUnitTest::widgetInsertionKeepsBoundarySeparatorsAdjacent()
+{
+    const QHash<int, QString> plugins{
+        {2, QString::fromLatin1(Latte::PluginId::kSeparator)},
+        {3, QString::fromLatin1(Latte::PluginId::kPlasmoid)},
+        {4, QString::fromLatin1(Latte::PluginId::kLegacySeparator)},
+        {6, QString::fromLatin1(Latte::PluginId::kSystemTray)},
+        {7, QString::fromLatin1(Latte::PluginId::kNomadSystemTray)},
+    };
+    const QList<int> order{1, 2, 3, 4, 5};
+
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex(order, plugins, -1), 1);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex(order, plugins, 2), 1);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex(order, plugins, 3), 4);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex(order, plugins, 0), 0);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex({1, 3, 5}, plugins, -1), 1);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex({1, 5}, plugins, -1), 2);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex({1, 2, 6}, plugins, -1), 1);
+    QCOMPARE(Latte::ViewPart::widgetInsertionIndex({1, 2, 7}, plugins, -1), 1);
+}
 
 void ViewPartUnitTest::tasksModelIgnoresNullTasks()
 {

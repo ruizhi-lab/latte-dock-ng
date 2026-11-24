@@ -8,6 +8,7 @@
 
 // local
 #include <plugin/lattetypes.h>
+#include "../../app/pluginids.h"
 
 // Qt
 #include <QHash>
@@ -1495,6 +1496,45 @@ void LayoutManager::insertAfter(QQuickItem *hoveredItem, QQuickItem *item)
     item->stackAfter(hoveredItem);
 }
 
+void LayoutManager::insertAppletAtSlot(QQuickItem *target, QQuickItem *item, bool before)
+{
+    if (!target || !target->parentItem() || !item || target == item) {
+        return;
+    }
+
+    const QString movingPlugin = item->property("pluginName").toString();
+    const QString targetPlugin = target->property("pluginName").toString();
+    if (!PluginId::isSeparatorPluginId(movingPlugin)
+        && !PluginId::isWidgetInsertionBoundary(movingPlugin)
+        && (PluginId::isSeparatorPluginId(targetPlugin) || PluginId::isWidgetInsertionBoundary(targetPlugin))) {
+        // Child stacking owns the visible boundary during insertion and
+        // reordering. Ignore the moving item when finding the other side of
+        // the slot, so a widget cannot detach a separator from its boundary.
+        const auto children = target->parentItem()->childItems();
+        const qsizetype step = before ? -1 : 1;
+        for (qsizetype index = children.indexOf(target) + step; index >= 0 && index < children.size(); index += step) {
+            auto *neighbor = children.at(index);
+            if (neighbor == item || neighbor == m_dndSpacer || neighbor->property("isParabolicEdgeSpacer").toBool()) {
+                continue;
+            }
+
+            const QString neighborPlugin = neighbor->property("pluginName").toString();
+            if (PluginId::isSeparatorPluginId(targetPlugin) && PluginId::isWidgetInsertionBoundary(neighborPlugin)) {
+                before = !before;
+            } else if (PluginId::isWidgetInsertionBoundary(targetPlugin) && PluginId::isSeparatorPluginId(neighborPlugin)) {
+                target = neighbor;
+            }
+            break;
+        }
+    }
+
+    if (before) {
+        insertBefore(target, item);
+    } else {
+        insertAfter(target, item);
+    }
+}
+
 void LayoutManager::insertAtLayoutTail(QQuickItem *layout, QQuickItem *item)
 {
     if (!layout || !item) {
@@ -2001,6 +2041,7 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         return;
     }
 
+    const bool restoringPosition = m_order.contains(id) || m_appletRemovalIndexes.contains(id);
     if (id > 0 && m_appletRemovalIndexes.contains(id)) {
         index = m_appletRemovalIndexes.take(id);
     }
@@ -2033,7 +2074,14 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
     }
 
     if (previousItem) {
-        insertBefore(previousItem, aitem);
+        // The QML appletAdded handler can consume the request and create
+        // the item before the application's C++ callback. Apply the boundary
+        // rule at physical placement so either signal subscriber is safe.
+        if (restoringPosition) {
+            insertBefore(previousItem, aitem);
+        } else {
+            insertAppletAtSlot(previousItem, aitem, true);
+        }
     } else {
         insertAtLayoutHead(m_mainLayout, aitem);
     }

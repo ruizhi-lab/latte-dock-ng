@@ -53,6 +53,11 @@ inline bool isSeparatorPluginId(const QString &pluginId)
            || pluginId == QLatin1String(kLegacySeparator);
 }
 
+inline bool isWidgetInsertionBoundary(const QString &pluginId)
+{
+    return pluginId == QLatin1String(kPlasmoid) || pluginId == QLatin1String(kSystemTray) || pluginId == QLatin1String(kNomadSystemTray);
+}
+
 inline bool isLatteBuiltIn(const QString &pluginId)
 {
     return pluginId == QLatin1String(kSeparator)
