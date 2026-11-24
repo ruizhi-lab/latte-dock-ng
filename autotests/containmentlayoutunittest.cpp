@@ -758,9 +758,16 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     QVERIFY(main.childItems().isEmpty());
     QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("44;-1;46;-1;45"));
 
-    // A queued retry must observe a newly resolved item and retain its saved slot.
+    // Restore as soon as the last applet is ready, leaving the earlier retry
+    // queued. It must not rebuild the same containers during the startup delay.
     plasmoid.setProperty("applets", QVariant::fromValue(QList<QObject *>{ &unlistedApplet, &trash, &launcher, &tasks }));
-    QTRY_COMPARE(main.childItems().count(), 4);
+    manager.restore();
+    QCOMPARE(root.appletItemCreationCount(), 4);
+    QVERIFY(!manager.hasRestoredApplets());
+
+    QTRY_VERIFY(manager.hasRestoredApplets());
+    QCOMPARE(root.appletItemCreationCount(), 4);
+    QCOMPARE(main.childItems().count(), 4);
 
     QVERIFY(start.childItems().isEmpty());
     QVERIFY(end.childItems().isEmpty());

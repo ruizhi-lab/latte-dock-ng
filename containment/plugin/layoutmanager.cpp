@@ -1105,7 +1105,10 @@ void LayoutManager::warnRootInvocationFailureOnce(const QMetaMethod &method, con
 //! Actions
 void LayoutManager::restore()
 {
-    if (m_hasRestoredApplets) {
+    // The startup timer delays the QML readiness signal after the containers
+    // are already attached. A queued retry or appletsChanged during that
+    // window would otherwise create them again and repeat the save wiring.
+    if (m_hasRestoredApplets || m_hasRestoredAppletsTimer.isActive()) {
         return;
     }
 
