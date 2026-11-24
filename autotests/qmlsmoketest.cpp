@@ -3250,6 +3250,45 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
     QCOMPARE(tasksModel.syncCount(), 2);
     QVERIFY(syncingDuringModelCall);
     QVERIFY(!object->property("syncingLauncherOrder").toBool());
+
+    auto bridge = createQmlObject(engine, QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    id: bridge
+    property var indexer: null
+    property var receivedOrder: []
+    property QtObject launchers: QtObject {
+        property Item client
+        property QtObject host: QtObject {
+            property bool isReady: true
+            function addAbilityClient(client) {}
+            function removeAbilityClient(client) {}
+            function validateSyncedLaunchersOrder(sender, group, groupId, order) {
+                bridge.receivedOrder = order
+            }
+        }
+    }
+}
+)"), QUrl(QStringLiteral("qrc:/launcher-order-bridge.qml")));
+    QVERIFY(bridge);
+    QVERIFY(object->setProperty("bridge", QVariant::fromValue(bridge.get())));
+
+    // A launcher-list notification can arrive before the delegate layout is
+    // available. The broadcast must still reflect the committed model order.
+    const QStringList modelOrder{
+        QStringLiteral("applications:second.desktop"),
+        QStringLiteral("[other]\napplications:hidden.desktop"),
+        QStringLiteral("[current]\napplications:first.desktop"),
+    };
+    QTRY_VERIFY(!object->property("_suppressLauncherListWriteBack").toBool());
+    context.setContextProperty(QStringLiteral("inDraggingPhase"), true);
+    tasksModel.setLauncherList(modelOrder);
+    const QStringList expectedOrder{
+        QStringLiteral("applications:second.desktop"),
+        QStringLiteral("applications:first.desktop"),
+    };
+    QCOMPARE(bridge->property("receivedOrder").value<QJSValue>().toVariant().toStringList(), expectedOrder);
+    object.reset();
 }
 
 void QmlSmokeTest::peerLauncherOrderStartsValidationWithoutRetryDelay()

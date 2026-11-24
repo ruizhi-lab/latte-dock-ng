@@ -253,16 +253,15 @@ Item {
         }
     }
 
-    function validateSyncedLaunchersOrder() {
+    function validateSyncedLaunchersOrder(modelLaunchers = liveLauncherList()) {
         if (bridge) {
+            // The model publishes its committed order before the delegates
+            // finish moving. Sending the delegate order here can tell the peer
+            // to keep its old order even though the local move was saved.
             bridge.launchers.host.validateSyncedLaunchersOrder(syncer.clientId,
-                                                               launchers.group,
-                                                               launchers.groupId,
-                                                               currentShownLauncherList());
-        } else {
-            /*validator.stop();
-            validator.launchers = orderedLaunchers;
-            validator.start();*/
+                                                               _launchers.group,
+                                                               _launchers.groupId,
+                                                               launchersForCurrentActivity(modelLaunchers));
         }
     }
 
@@ -337,7 +336,6 @@ Item {
 
 
     function currentStoredLauncherList() {
-        var launch = [];
         var launchersList = [];
 
         if (bridge && bridge.launchers.host.isReady && !_launchers.inUniqueGroup()) {
@@ -351,6 +349,11 @@ Item {
         }
 
 
+        return launchersForCurrentActivity(launchersList);
+    }
+
+    function launchersForCurrentActivity(launchersList) {
+        var launch = [];
         for(var i=0; i<launchersList.length; ++i){
             var launcherRecord = launchersList[i];
 
@@ -674,7 +677,7 @@ Item {
                 }
 
                 if (inDraggingPhase) {
-                    _launchers.validateSyncedLaunchersOrder();
+                    _launchers.validateSyncedLaunchersOrder(currentModelLaunchers);
                 }
             } else if (!appletAbilities.myView.isReady) {
                 // This way we make sure that a delayed view.layout initialization does not store irrelevant launchers from different
