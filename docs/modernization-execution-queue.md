@@ -288,7 +288,7 @@ post-push Build workflow. No desktop behavior changed.
 | P1b | Deferred: environment rerun complete, event latency open | Five valid Release pairs show no CPU/PSS saving and no return of the old outlier. Reopen only with a bounded event-correlated latency seam |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
 | P4 | Deferred (unjustified) | Five valid model-cost pairs show zero CPU delta and −15 KiB median PSS, below the 5 MiB screening threshold. No shared owner for the current workload |
-| P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
+| P5 | Deferred (unjustified) | Five valid RHI pairs show zero texture-operation and median frame-time deltas and +3 KiB median PSS. No shadow implementation change |
 | P6 | Deferred (unjustified) | Existing component-specific cold/warm probes show small mixed-direction differences and no stable cache benefit. No build/install/override change |
 | M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design. See the R6 follow-up below for LayoutManager validation and the next performance measurement |
 
