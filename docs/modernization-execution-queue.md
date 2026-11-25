@@ -289,7 +289,7 @@ post-push Build workflow. No desktop behavior changed.
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
 | P4 | Deferred (unjustified) | Five valid model-cost pairs show zero CPU delta and −15 KiB median PSS, below the 5 MiB screening threshold. No shared owner for the current workload |
 | P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
-| P6 | Module cold/warm measurement and override-safe build prototype | Demonstrated module-specific Release cost |
+| P6 | Deferred (unjustified) | Existing component-specific cold/warm probes show small mixed-direction differences and no stable cache benefit. No build/install/override change |
 | M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design. See the R6 follow-up below for LayoutManager validation and the next performance measurement |
 
 R8j remains closed at the user's decision. Its unrun 60-window experiment is
