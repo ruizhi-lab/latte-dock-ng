@@ -1357,7 +1357,6 @@ PlasmoidItem {
                     //position, if the duration is too big there is a point in the
                     //list that an item is going back and forth too fast
 
-                    //more of a trouble
                     moveDisplaced: Transition {
                         // A new separator has no settled row geometry until
                         // its deferred move finishes. Animate user reorders
