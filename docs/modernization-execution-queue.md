@@ -287,7 +287,7 @@ post-push Build workflow. No desktop behavior changed.
 | A3 / R6-S3 | Complete | Saved Justify layouts, separators and cross-area dragging passed on both screens. A scoped guard fixes the synchronous order-request recursion found during the retest; four presets pass 68/68 and no new core appeared |
 | P1b | Deferred: environment rerun complete, event latency open | Five valid Release pairs show no CPU/PSS saving and no return of the old outlier. Reopen only with a bounded event-correlated latency seam |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
-| P4 | Shared task-query evaluation, then a bounded implementation if justified | Paired Release work and CPU/PSS evidence, accepted ownership design |
+| P4 | Deferred (unjustified) | Five valid model-cost pairs show zero CPU delta and −15 KiB median PSS, below the 5 MiB screening threshold. No shared owner for the current workload |
 | P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
 | P6 | Module cold/warm measurement and override-safe build prototype | Demonstrated module-specific Release cost |
 | M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design. See the R6 follow-up below for LayoutManager validation and the next performance measurement |
