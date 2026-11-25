@@ -418,17 +418,17 @@ action was S4.
   completed restore separately. These operations dominated the factory
   profile. Evaluate a concrete reduction in attachment work before changing
   the QML lifecycle.
-- For the clone startup follow-up, compare the mapped logical order,
-  including splitter positions and the identity of repeated applets.
-  `ClonedView` documents that clone applet IDs are recreated at startup.
-  The factory comparison recorded changing clone IDs with matching plugin
-  order, so it leaves logical order for repeated applets unverified.
+- The clone startup follow-up now covers repeated applets as well as splitter
+  positions. Three isolated launches with two binary-clock instances verify
+  the complete mapped order and the locked-zoom/disabled-coloring identity of
+  each instance. Clone applet IDs are recreated in every run; the logical
+  mapping remains correct.
 - Desktop startup of the current user-mode Debug install completed on DP-1
   and HDMI-A-1. At clone initialization the complete seven-applet mapping
   translated the source order to the exact clone order, including the
-  existing boundary separator. Both docks had one instance of each applet
-  plugin, so repeated-plugin identity still needs a dedicated fixture. The
-  startup log contained no warnings, errors, fatal messages or assertions.
+  existing boundary separator. The later dedicated repeated-binary-clock
+  fixture closed the remaining identity case. The desktop startup log
+  contained no warnings, errors, fatal messages or assertions.
   The desktop interaction log records boundary separator removal and
   recreation on both displays and an applet reorder. After reinstalling
   the QML reference changes, startup preserved the mapped order and

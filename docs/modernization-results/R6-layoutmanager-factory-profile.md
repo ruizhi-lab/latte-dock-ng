@@ -88,3 +88,34 @@ GCC and Clang Debug and Release each passed all 68 tests, including the
 launcher order synchronization smoke check and the handbook check. The
 244-file syntax lint passed, and the local Qt 6.11.3 deep lint comparison
 showed no diagnostic changes.
+
+## Repeated-applet clone identity validation
+
+The remaining repeated-plugin case was validated on `main` at
+`bde6d626c97cf31fc8140f0521da655ff932b950`, using the current GCC Release
+build in an isolated prefix and two virtual outputs. The fixture started from
+the working cloned desktop layout and placed two `binaryclock` instances at
+adjacent logical positions. Original IDs 65 and 77 carried the locked-zoom and
+disabled-coloring markers respectively. The input was regenerated for each of
+three launches so no run inherited an earlier write-back.
+
+Clone IDs were recreated in every launch. The complete six-applet clone order
+matched the source order after translation in all three runs:
+
+| Run | First binary clock | Second binary clock | Clone locked zoom | Clone disabled coloring |
+| --- | --- | --- | --- | --- |
+| 1 | `65 -> 44` | `77 -> 45` | 44 | 45 |
+| 2 | `65 -> 46` | `77 -> 47` | 46 | 47 |
+| 3 | `65 -> 42` | `77 -> 46` | 42 | 46 |
+
+An automated check also verified the binary-clock plugin at both mapped IDs,
+all six mapped order entries and both preference identities. KSycoca remained
+unchanged and every dock exited through its signal-driven teardown. The
+private sessions emitted the expected portal and activity-service warnings;
+no Fatal, ASSERT, ReferenceError or TypeError was found. Harness files and
+logs are outside the repository under `/tmp/latte-repeated-clone`; production
+QML and C++ were not instrumented or changed.
+
+This closes the repeated-plugin identity validation. It provides no evidence
+of a remaining mapping defect or a justification for another startup timing
+change.

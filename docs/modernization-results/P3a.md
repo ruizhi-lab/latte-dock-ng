@@ -169,3 +169,24 @@ The report, marker observations, tool details and limitations are recorded in
 the installed task and containment QML hashes matched the workspace sources
 before and after the run. The probe was diagnostic only: no readiness signal,
 timer change, performance measurement or optimization is claimed.
+
+## Current-tree readiness recheck — 2026-11-25
+
+The recheck used `main` at `bde6d626c97cf31fc8140f0521da655ff932b950`.
+`plasmoid/package/contents/ui/main.qml` still constructs the upstream
+`org.kde.taskmanager.TasksModel` directly. The Latte plasmoid plugin has no
+production-owned tasks-model adapter or geometry-publication acknowledgement.
+The publication call remains `requestPublishDelegateGeometry()` from each
+`TaskItem`, with the immediate pass and eight delayed passes unchanged.
+
+Returning from the QML `publishTasksGeometries()` broadcast would only prove
+that currently connected delegates ran their publication slot. It cannot prove
+that every row in the current virtualized model generation has a live delegate
+or that TaskManager/KWin accepted its geometry. Stable child counts or a
+completed `forceLayout()` therefore remain insufficient readiness conditions.
+
+P3a stays Deferred under its existing entry rule. No production source,
+runtime behavior or installed QML changed in this recheck, so a new build and
+desktop retest were not required. Reopen only with a production-owned adapter
+that acknowledges the latest generation and current delegate set, or an
+upstream completion contract.
