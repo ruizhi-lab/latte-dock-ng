@@ -141,3 +141,51 @@ the Release measurement. Keep exact title-response latency unmeasured unless a
 lightweight event-correlated seam is later identified. Retain the user's
 functional acceptance while keeping the response-latency and performance
 benefit limits explicit.
+
+## Valid Release rerun on the session desktop — 2026-11-25
+
+The launch-environment question is now closed, but P1b stays Deferred because
+response latency remains unmeasured. The same P1a baseline `ec8a504db` (A) and
+title-only implementation `f6ebf3432` (B) were built with GCC 16.2.1 in Release
+mode and installed into independent prefixes. Both used Qt 6.11.3, Plasma and
+KWin 6.7.6, kernel 6.18.64-p1-gentoo-dist and NVIDIA 580.196.07. The two outputs
+were 1920x1200 at 59.95 Hz and 1920x1080 at 60 Hz, both at scale 1. The power
+profile was `performance`.
+
+Each run restored the same configuration before launch through
+`systemd-run --user`. The layout and settings hashes were
+`66fdb0bdaabc9e29369dfcf905948dc39ea080fbe078705251a227952e670134` and
+`cc43dc34cd4fb224c185d73b829578d8885b0cbd648ad76345e26b9e966757e0`.
+After a 30-second warmup, the shared synthetic window changed only its title
+ten times at 500 ms intervals. The collector sampled 13 seconds, including that
+sequence, and enforced the KSycoca validity rule. Five pairs alternated A/B and
+B/A order. All accepted windows reported `valid: true`.
+
+The table is B−A: CPU percentage points of one core, mean PSS in KiB and
+context switches per second.
+
+| Pair | CPU | PSS | Context switches/s |
+| --- | ---: | ---: | ---: |
+| 1 | +0.1513 | +1521 | +6.563 |
+| 2 | -1.2950 | -560 | +0.711 |
+| 3 | +0.4613 | -217 | +7.885 |
+| 4 | +2.7258 | +194 | +15.213 |
+| 5 | +2.1908 | +3020 | +12.380 |
+| Median | +0.4613 | +194 | +7.885 |
+| Range | -1.2950 to +2.7258 | -560 to +3020 | +0.711 to +15.213 |
+
+The first attempt at pair 4 A was rejected after KSycoca rewrote at second 12.
+It was rerun and the replacement was valid; the rejected record is retained.
+The earlier +144,763 KiB PSS outlier did not reproduce. The new PSS range is
+-560 to +3020 KiB. These results do not support a CPU or memory saving claim,
+and the positive context-switch median is not attributed to B without an
+event-level explanation. The confirmed title-work reduction remains separate
+from resource cost.
+
+The latency seam is still absent: the production signals carry window IDs but
+no event timestamp, and no production tracing was added for this measurement.
+A synchronous unit-test duration would not establish desktop response latency.
+The canonical Debug dock and the original configuration were restored. Its
+startup emitted two known external Plasma brightness `PopupDialog.qml`
+warnings and no Latte error. Raw records are local under
+`/tmp/latte-p1b-results`, with the summary at `/tmp/latte-p1b-summary.txt`.

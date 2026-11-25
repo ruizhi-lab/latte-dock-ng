@@ -68,9 +68,14 @@ window.
 - It does not change P1b's status. P1b needs both a clean-environment rerun **and**
   an event-latency seam before a CPU/PSS or latency claim can be made.
 
-## Next action
+## Environment rerun result
 
-For P1b: rerun the Release A/B pairs under `systemd-run --user` with this collector
-and accept only windows reporting `"valid": true`; record whether the retained
-+144,763 KiB PSS outlier reproduces in a valid window. That is the environment half.
-The latency half still needs its own accepted seam before P1b can be un-deferred.
+The five-pair Release rerun under `systemd-run --user` is complete. Every
+accepted window reported `"valid": true`; one baseline attempt was rejected
+after a KSycoca rewrite and rerun successfully. The +144,763 KiB PSS outlier
+did not reproduce. Median B−A deltas were +0.4613 CPU percentage points and
++194 KiB PSS, so no resource saving is claimed. See the valid rerun section in
+[P1b](P1b.md#valid-release-rerun-on-the-session-desktop--2026-11-25).
+
+Only the environment half is closed. P1b stays Deferred until a bounded,
+event-correlated latency seam exists.

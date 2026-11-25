@@ -203,9 +203,9 @@ subsequent T4d changes.
   (`measurefamilyrulestest`, 6 cases, two mutations caught). Four presets build with
   zero compiler warnings and pass 66/66 CTest each. A **live positive case** was
   produced on a user-provided Arch Plasma 6.8.3 VM: a forced rebuild inside a window
-  was reported as `"valid": false` with the exact file and second. This supplies the
-  launch-environment half only; P1b still needs a clean-environment rerun and an
-  event-latency seam.
+  was reported as `"valid": false` with the exact file and second. The subsequent
+  five-pair Release rerun closed the environment half without reproducing the
+  outlier; only the event-latency seam remains open.
 
 - VM validation (2026-11-21): [Debian 13.7 and Arch Plasma 6.8 results](modernization-results/VM-validation-2026-11-21.md).
   Debian: clang-tidy 18.1.8 passes the 56-check gate with 0 compiler warnings and
@@ -285,7 +285,7 @@ post-push Build workflow. No desktop behavior changed.
 | T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
 | A2 | Bounded pre-filter message capture, then one filter family | Established emitter/version evidence; remove temporary instrumentation |
 | A3 / R6-S3 | Complete | Saved Justify layouts, separators and cross-area dragging passed on both screens. A scoped guard fixes the synchronous order-request recursion found during the retest; four presets pass 68/68 and no new core appeared |
-| P1b | Resolve Release A/B noise and event-correlated latency | Comparable repeated runs; distinguish reduced work from CPU/PSS savings |
+| P1b | Deferred: environment rerun complete, event latency open | Five valid Release pairs show no CPU/PSS saving and no return of the old outlier. Reopen only with a bounded event-correlated latency seam |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
 | P4 | Shared task-query evaluation, then a bounded implementation if justified | Paired Release work and CPU/PSS evidence, accepted ownership design |
 | P5 | Effect allocation/frame measurement, then a bounded implementation | Supported on/off measurement and visual acceptance |
