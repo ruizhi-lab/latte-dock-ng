@@ -20,3 +20,14 @@ branch removal.
 The affected target built under GCC and Clang Debug and Release; the full
 CTest suite passed 64/64 in each of the four configurations. The focused
 offscreen test also passed without a session bus. Remote CI is pending.
+
+## Desktop completion
+
+The saved-layout gap is now covered by the real dual-screen Justify layout on
+2026-11-25. Cross-area dragging and separator creation/removal synchronize on
+both screens, and restart restores the complete mapped order. Separator removal
+initially exposed the synchronous Justify order-request recursion documented in
+[R6-S3](R6-layoutmanager-s3.md#justify-order-request-reentrancy-fix-and-final-acceptance).
+The scoped reentry guard fixed that path; the user then passed the same
+separator operation, another drag and restart with no new core. All four build
+presets pass 68/68 CTest targets, and A3 is complete.

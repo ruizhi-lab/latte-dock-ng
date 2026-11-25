@@ -1,7 +1,6 @@
 # R6 LayoutManager S3: retire legacy Justify splitter branches
 
-Status: Complete.
-interaction retest pending.** This slice follows the consumer trace in
+Status: **Complete.** This slice follows the consumer trace in
 `R6-layoutmanager-design.md` and preserves the live Justify migration entry
 points and persisted layout compatibility.
 
@@ -90,3 +89,28 @@ The user confirmed that reordering synchronized across both screens. The
 Debug log recorded three paired order updates on DP-2 and HDMI-A-1 without
 runtime warnings or errors. The next slice is S4, the typed one-shot insertion
 protocol.
+
+## Justify order-request reentrancy fix and final acceptance
+
+The final Justify desktop matrix passed alignment and cross-area dragging, but
+separator removal crashed PID 352199 at 20:30:58 on 2026-11-25. Its native
+backtrace repeats `ContainmentInterface::updateAppletsOrder()` through
+`setAppletsOrder()`, `LayoutManager::requestAppletsOrder()`, `save()` and
+`updateOrder()`. QML then reported `Maximum call stack size exceeded` in
+`AppletItem.qml` and containment `main.qml`.
+
+`requestAppletsOrder()` now rejects synchronous reentry with a scoped guard.
+The outer request still arranges the layout and saves it. A production-path
+regression reproduces the requested/visual order oscillation behind the crash:
+before the guard, a bounded callback published ten nested orders instead of
+the expected two. After the guard, the containment suite passes 37/37 and the
+source-contract suite passes 235/235. All four GCC/Clang Debug/Release presets
+pass 68/68 CTest targets without new C/C++ compiler warnings.
+
+For the desktop A/B, the same separator add/remove operation that crashed the
+pre-fix binary passed every step on the fixed Debug build, as did another
+cross-area drag and restart. No new core appeared. The final Justify layout
+restored eight mapped applet pairs, including the boundary separator, with no
+recursive-order errors. Two startup warnings came from Plasma's external
+brightness `PopupDialog.qml`, not this change. A3's saved Justify, separator
+and drag acceptance is complete.

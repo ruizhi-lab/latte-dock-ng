@@ -34,7 +34,7 @@ A4-2 is not a simple extension of `corecomponentstest`: that target currently
 compiles ScreenPool, not Corona, GenericLayout or Synchronizer. A4-1 must settle
 this integration boundary first. R8a covers detached mappings and primary
 fallback; R7 covers two-output hotplug. Neither proves the entire mapping chain.
-Keep A4 Pending validation until its remaining acceptance is satisfied.
+A4 is Complete; the later resolver record covers primary-not-zero and nested containment.
 
 T1 candidate names, in the recorded cost order:
 
@@ -70,9 +70,9 @@ version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
   The [implementation](modernization-results/A4-resolver.md) preserves lazy
   authority lookup and adds direct policy tests plus adapter source guards.
   Full-chain QObject integration coverage is not claimed.
-- A4-3: user-mode Debug desktop smoke passed by user report; subsequent log
-  review found no emitted warning/error or new dock core. Full-chain
-  primary-not-zero and nested-containment cases remain Pending validation.
+- A4-3: complete. The [resolver record](modernization-results/A4-resolver.md)
+  covers primary-not-zero and nested containment with production tests and
+  mutations; the follow-up ledger already marks A4 complete.
 - T1: thirteen candidates promoted and two exception-dependent checks excluded;
   fifteen total checks passed local gates on clang-tidy 22.1.8 and 18.1.3 across
   156 production sources. See the [slice record](modernization-results/T1.md)
@@ -284,7 +284,7 @@ post-push Build workflow. No desktop behavior changed.
 | T4 | Fix and then gate one R8c check at a time | Review every finding; preserve documented intentional calls |
 | T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
 | A2 | Bounded pre-filter message capture, then one filter family | Established emitter/version evidence; remove temporary instrumentation |
-| A3 / R6-S3 | Verify legacy Justify compatibility on the desktop | Unreachable branches have been removed. Exercise saved layouts, separators and drag ordering with the retained compatibility paths |
+| A3 / R6-S3 | Complete | Saved Justify layouts, separators and cross-area dragging passed on both screens. A scoped guard fixes the synchronous order-request recursion found during the retest; four presets pass 68/68 and no new core appeared |
 | P1b | Resolve Release A/B noise and event-correlated latency | Comparable repeated runs; distinguish reduced work from CPU/PSS savings |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
 | P4 | Shared task-query evaluation, then a bounded implementation if justified | Paired Release work and CPU/PSS evidence, accepted ownership design |
@@ -296,12 +296,12 @@ R8j remains closed at the user's decision. Its unrun 60-window experiment is
 not a scheduled task. A new memory investigation requires its own design and
 pre-registered verdict rule.
 
-A3 has a preliminary [legacy Justify restore/save fixture](modernization-results/A3-legacy-justify-fixture.md).
+A3 has a [legacy Justify restore/save fixture](modernization-results/A3-legacy-justify-fixture.md).
 It exercises production layout logic through the configuration property map;
 [R6-S3](modernization-results/R6-layoutmanager-s3.md) subsequently removed the
 unreachable splitter branches and retained the compatibility entry points.
-The preliminary fixture did not exercise disk-backed KConfig loading, and
-the full S3 desktop interaction matrix remains open.
+The later real KConfig/Plasma desktop matrix closed the remaining acceptance,
+including the Justify order-request reentrancy fix and restart verification.
 
 P4's [Arch synthetic preflight](modernization-results/P4-arch-synthetic-preflight.md)
 reached a private TaskManager session and activated two per-applet trackers in

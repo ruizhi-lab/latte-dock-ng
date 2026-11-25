@@ -200,6 +200,7 @@ private Q_SLOTS:
     void dndSpacerIndexUsesMainLayoutAndSkipsParabolicSpacers();
     void insertAtCoordinatesUsesMainLayoutForJustify();
     void requestAppletsOrderMaintainsSideAppletOrderInJustify();
+    void justifyOrderRequestDoesNotReenterSynchronously();
     void addAppletItemByIndexUsesMainLayoutInJustify();
     void requestedWidgetInsertionKeepsBoundarySeparatorsAdjacent();
     void warnsWhenContainmentRootMethodsAreMissing();
@@ -1051,6 +1052,52 @@ void ContainmentLayoutUnitTest::requestAppletsOrderMaintainsSideAppletOrderInJus
     QVERIFY(end.childItems().isEmpty());
     QCOMPARE(main.childItems(), (QList<QQuickItem *>{ &last, &first, &middle }));
     QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("3;1;2"));
+}
+
+void ContainmentLayoutUnitTest::justifyOrderRequestDoesNotReenterSynchronously()
+{
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("alignment"), QStringLiteral("Justify"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QObject firstBackend;
+    firstBackend.setProperty("id", 1);
+    QObject secondBackend;
+    secondBackend.setProperty("id", 2);
+    QObject removedBackend;
+    removedBackend.setProperty("id", 78);
+
+    QQuickItem root;
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    QQuickItem first(&main);
+    first.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&firstBackend)));
+    QQuickItem second(&main);
+    second.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&secondBackend)));
+    QQuickItem removed(&main);
+    removed.setProperty("backendAppletRef", QVariant::fromValue(static_cast<QObject *>(&removedBackend)));
+
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    const QList<int> requestedOrder{1, 2};
+    int orderPublications = 0;
+    connect(&manager, &Latte::Containment::LayoutManager::orderChanged, &manager, [&]() {
+        ++orderPublications;
+        if (orderPublications < 10) {
+            manager.requestAppletsOrder(requestedOrder);
+        }
+    });
+
+    manager.requestAppletsOrder(requestedOrder);
+
+    QCOMPARE(orderPublications, 2);
 }
 
 void ContainmentLayoutUnitTest::addAppletItemByIndexUsesMainLayoutInJustify()

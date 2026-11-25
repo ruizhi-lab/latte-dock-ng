@@ -289,6 +289,7 @@ private:
     //! Set while a programmatic separator creation runs. save() must skip
     //! reorderParabolicSpacers() once while it is set and then clear it.
     bool m_skipSpacerReorderOnce{false};
+    bool m_requestingAppletsOrder{false};
 };
 }
 }

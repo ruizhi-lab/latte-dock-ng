@@ -14,6 +14,7 @@
 #include <QHash>
 #include <QJsonArray>
 #include <QtMath>
+#include <QScopedValueRollback>
 #include <QSequentialIterable>
 #include <QSet>
 
@@ -1773,6 +1774,14 @@ int LayoutManager::dndSpacerIndex()
 
 void LayoutManager::requestAppletsOrder(const QList<int> &order)
 {
+    if (m_requestingAppletsOrder) {
+        return;
+    }
+
+    // Justify save() publishes orderChanged synchronously. ContainmentInterface
+    // answers with the same request, so only the outer request may complete it.
+    const QScopedValueRollback<bool> requestingGuard(m_requestingAppletsOrder, true);
+
     // Keep internal order in sync immediately, even when some requested applet
     // items are not created yet (e.g. freshly created separators). This lets
     // repairAppletContainers() place late-created applets at the intended slot.
