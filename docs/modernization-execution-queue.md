@@ -1,522 +1,62 @@
 # Modernization execution queue
 
-Date: 2026-11-13. Planning source: `main` at `7c6c88845`.
-Reconciled source: `796344495` after the user's appearance, vertical-gap,
-preset-restore and translation commits; current validation is in T4a.
-This queue decomposes the remaining work; it does not mark proposed checks as run.
-The existing plan ledgers and batch reports remain the completion authority.
+Status: 2026-11-25, `main` at `672d41c16178a54126ede1da8c924f4316ab3a00`.
 
-## Responsibility and integration
+This file is the current task index, not a history of every experiment. The
+main plan and the linked batch reports remain the evidence and completion
+authorities. There is no active implementation task with supporting evidence.
 
-The coordinating agent owns scope, dependencies, integration and review of the
-final diff. Worker agents use `gpt-6-luna` with `medium` reasoning. Workers do not
-commit, push, switch branches or change desktop state independently. On `main`,
-commit and push require the user's explicit authorization under AGENTS.md.
+## Remaining candidates
 
-Assign disjoint files when workers share a checkout. Build and desktop jobs run
-sequentially; read-only investigations can run concurrently. A worker returns
-changed files, exact commands and results, limitations and its next action. The
-coordinator reads the actual diff and checks the evidence before accepting it;
-a worker summary alone is not acceptance. Preserve concurrent external changes.
-
-## First wave
-
-| Task | Deliverable and boundary | Dependency | Acceptance |
-| --- | --- | --- | --- |
-| Q0 | Synchronize stale next actions in the main plan, QML backlog and R2c report; preserve historical observations | None | Evidence links support each status; no new validation claims; whitespace and local links checked |
-| A4-1 | Design an app-runtime test fixture that reaches the existing screen-mapping production methods | Existing A4/R8a/R7 evidence | Show how to construct and isolate the actual objects without copying their algorithm or changing mapping behavior; review fixture ownership and cost before implementation |
-| A4-2 | Implement focused mapping behavior tests using the accepted fixture | A4-1 | Pending update precedence (including primary), connector-to-stable-ID lookup, missing mapping fallback and nested containment; relevant mutations fail; GCC/Clang builds and tests pass |
-| A4-3 | Close remaining desktop mapping coverage | A4-2 | Record primary-not-zero and nested containment observations; reuse R7 hotplug evidence where applicable, and leave unavailable scenarios explicitly pending |
-| T1 | Promote the first 15 cost-ranked Band A candidates, only after individual fixture proof | Current R8i gate | Every promoted check fires as an error under production flags in clang-tidy 18 and 22, has no current production finding, and is explicitly named; measure gate cost; no unrelated production fixes |
-| Q1 | Integrate results and audit the combined diff | Each completed slice | Verify scope, test registration, failure handling, current evidence and status; record skipped checks and exact next action |
-
-A4-2 is not a simple extension of `corecomponentstest`: that target currently
-compiles ScreenPool, not Corona, GenericLayout or Synchronizer. A4-1 must settle
-this integration boundary first. R8a covers detached mappings and primary
-fallback; R7 covers two-output hotplug. Neither proves the entire mapping chain.
-A4 is Complete; the later resolver record covers primary-not-zero and nested containment.
-
-T1 candidate names, in the recorded cost order:
-
-1. `bugprone-empty-catch`
-2. `misc-throw-by-value-catch-by-reference`
-3. `performance-implicit-conversion-in-loop`
-4. `performance-for-range-copy`
-5. `bugprone-terminating-continue`
-6. `performance-inefficient-vector-operation`
-7. `bugprone-lambda-function-name`
-8. `bugprone-too-small-loop-variable`
-9. `performance-trivially-destructible`
-10. `bugprone-suspicious-missing-comma`
-11. `misc-misleading-bidirectional`
-12. `bugprone-unique-ptr-array-mismatch`
-13. `bugprone-shared-ptr-array-mismatch`
-14. `bugprone-sizeof-container`
-15. `bugprone-string-integer-assignment`
-
-This selection comes from the [recorded candidate table](modernization-results/R8c-data/ci-gate-candidates.tsv),
-not a fresh inventory. Fixture feasibility is proposed, not proven. Exclude a
-candidate that cannot be demonstrated; do not weaken the runner to admit it.
-Workers must check current tool/container availability before promising the CI
-version run. Use `--jobs 4` for analysis and `--parallel 8` for builds.
-
-## Execution status (2026-11-13)
-
-- Q0: complete; stale ledger next actions reconciled with existing evidence.
-- A4-1: fixture investigation reviewed. A second app-sized test target was
-  rejected because its cost and duplicated build settings outweigh its limited
-  branch coverage. See the [investigation](modernization-results/A4-validation.md).
-- A4-2: the coordinator selected the bounded production resolver design.
-  The [implementation](modernization-results/A4-resolver.md) preserves lazy
-  authority lookup and adds direct policy tests plus adapter source guards.
-  Full-chain QObject integration coverage is not claimed.
-- A4-3: complete. The [resolver record](modernization-results/A4-resolver.md)
-  covers primary-not-zero and nested containment with production tests and
-  mutations; the follow-up ledger already marks A4 complete.
-- T1: thirteen candidates promoted and two exception-dependent checks excluded;
-  fifteen total checks passed local gates on clang-tidy 22.1.8 and 18.1.3 across
-  156 production sources. See the [slice record](modernization-results/T1.md)
-  for the isolated LLVM 18 environment limits. The published A4/T1/T2 batch's
-  CI run 43350616185 subsequently passed all 23 jobs.
-- Q1: coordinator reviewed the combined production adapter/helper, tests,
-  configuration and all new fixtures; independently verified five mutations.
-  Four compiler/configuration builds have zero warnings and pass 64/64 tests
-  each. This initial acceptance preceded authorized commit/push `803cce3d9`;
-  its 23-job CI pass remains separate from later local work.
-- T2: fourteen more candidates promoted, bringing the gate to twenty-nine;
-  both local tool versions rejected all fixtures and found nothing in 156
-  production sources. Published CI acceptance passed in run 43350616185;
-  [record](modernization-results/T2.md).
-- T3: the remaining sixteen Band A candidates plus the deferred string check
-  are now proven and promoted. Both local full-source gates pass with forty-six
-  fixtures and no findings in 156 production sources. The coordinator reviewed
-  the actual diff; the expansion was published in `9e62bfaa9`.
-  [Record](modernization-results/T3.md). Band A has forty-four promoted
-  candidates and two exception-dependent exclusions; the original two checks
-  bring the current total to forty-six.
-- T4a: the existing BackgroundCache correction now has a
-  `misc-redundant-expression` gate and negative fixture. All forty-seven checks
-  pass on both local tool versions against `796344495`; all four application
-  configurations have zero compiler warnings and pass 64/64 tests. This
-  revalidates T3 against the newer source; both were published in `9e62bfaa9`.
-  [Record](modernization-results/T4a.md).
-- QML inventory refresh: the user's two new QML helpers expand coverage to 243
-  files. The [reviewed CI baseline](modernization-results/QML-baseline-2026-11-13.md)
-  preserves the 6.11.1 fingerprint and all visible warnings; three independent
-  CI reports match. The previous 241-file baseline caused the current CI
-  coverage failure. The refresh and T3/T4a were published in `9e62bfaa9`. Run
-  [43404434373](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43404434373)
-  passed the deep QML and clang-tidy gates but failed on two pre-existing
-  clazy loop findings in the user's preset feature. The
-  [CI repair](modernization-results/CI-9e62bfaa9-clazy.md) preserves list snapshots.
-- T4b: [move-constructor initialization](modernization-results/T4b-move-constructor.md)
-  moves two window-ID byte arrays and expands the explicit gate to 48 checks.
-  Remote acceptance passed in [run 43424231020](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43424231020)
-  on `64a7f1ae5` (23/23 successful jobs). Genuine Plasma 6.8 and 6.3 validation
-  will use the user's Arch and Debian 13 VMs; no version macro is forced.
-
-- T4c: [parent-virtual-call gate](modernization-results/T4c-parent-virtual-call.md)
-  reaches 49 checks. The intentional ancestor call was reproduced on the real
-  Arch Plasma 6.8 SDK before adding one line-specific exception; the normal
-  immediate-base path remains unchanged. Both host full gates and four 64-test
-  configurations pass. Published as `1d36b229b`; run 43429056818 passed all 23 jobs.
-- Cross-version test API compatibility: [Qt test repairs](modernization-results/Qt-test-compatibility-2026-11-13.md)
-  preserve the assertions on Qt 6.8 and 6.12. Arch passes both 64-test suites;
-  Debian's accessibility test passes in its actual Wayland session. Debian's
-  persistent-menu fixture now satisfies Qt 6.8's pointer-movement precondition,
-  as verified against plain QMenu. Final per-platform results are recorded
-  separately; the initial failures are not called passes.
-
-- T4d: [copy initialization](modernization-results/T4d-copy-initialization.md)
-  removes three audited copies while retaining the independent Apply-time
-  layout snapshot and original-ID lock mapping. The gate now has 50 checks;
-  both full host tool versions reject all fixtures and report no findings in
-  156 production sources. Four compiler configurations pass 64/64 tests each
-  with zero compiler warnings; focused clazy passes all three changed sources.
-  Published as `6f9757229`; [run 43432385377](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43432385377)
-  passed all 23 jobs on the 50-check source.
-
-T4c was published as `1d36b229b`; [run 43429056818](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43429056818)
-passed all 23 jobs on that 49-check source. It does not validate the
-subsequent T4d changes.
-
-- T4e: [header include direction](modernization-results/T4e-header-cycle.md)
-  removes the record/table include cycle and declares the table dependencies
-  explicitly in its two embedding headers. The gate has 51 checks; LLVM18/22
-  full gates and all four 64-test compiler configurations pass, with zero
-  compiler warnings. Four affected data sources are clazy-clean. This slice
-  was published as `bbc8f6782`; [run 43436056930](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/43436056930)
-  passed all 23 jobs on the 51-check source.
-
-- T4f: [forward declaration namespaces](modernization-results/T4f-forward-declarations.md)
-  removes three unused, incorrectly scoped declarations without changing the
-  actual dialog/layout types or QML registration. The gate has 52 checks;
-  LLVM18/22 full gates and all four 64-test configurations pass with zero
-  compiler warnings. Three consumer sources are clazy-clean. One external SDK
-  diagnostic was audited and remains outside the unchanged production scope.
-  Published as `d0ce8cf89`; run 43440085083 passed all 23 jobs.
-
-- T4g: [automatic moves](modernization-results/T4g-automatic-move.md) removes
-  `const` from five value-return locals covering six diagnostics. Both full
-  LLVM gates pass with 53 checks; four compiler configurations pass 64/64
-  tests with zero compiler warnings, and five affected sources are clazy-clean.
-  Published as `d77eef902`; run 43474161451 passed all 23 jobs on its
-  53-check source. An additional Qt 6.12-only finding was fixed in T4h.
-- T4h: [explicit switch defaults](modernization-results/T4h-switch-defaults.md)
-  preserves all eight existing fallbacks and adds the 54th check. Both local
-  gates and four 64-test configurations pass with zero compiler warnings;
-  focused clazy is clean on seven affected sources. The Arch Qt 6.12 follow-up
-  also passes the real Plasma 6.8 gate and targeted core behavior tests.
-  Published as `97c4be752`; CI run 43481441747 passed all 23 jobs.
-
-- T4i: [integer-division gate](modernization-results/T4i-integer-division.md)
-  preserves popup centering, adds the 55th check, and passes both native gates,
-  four 64-test configurations, and the Arch Qt 6.12 gate and core test.
-  Wayland popup placement was not visually re-observed. Published as
-  `43bc885aa`; CI run 43530811418 passed all 23 jobs.
-
-- T4j: [startup screen fallback and drawing](modernization-results/T4j-screen-fallback.md)
-  retains the configured screen through temporary startup fallback and merges
-  two equivalent drawing branches. Local validation and desktop retesting pass,
-  including one live DP-3 disable, startup fallback and re-enable transition.
-  Published as `e8ba4ad70`; CI run 43545267519 passed all 23 jobs. The
-  branch-clone gate is not enabled.
-
-- T5 evaluation: [unchecked optional access](modernization-results/T5-optional-evaluation.md)
-  passed fixture and production scans on LLVM 18 and 22. Three local paired
-  runs showed no large wall-time increase, but CI cost and its budget remain
-  unestablished; the check has not been promoted.
-- T5 promotion: [unchecked optional access](modernization-results/T5-optional-promotion.md)
-  **Complete locally, CI-version acceptance pending the push.** The check is the
-  fifty-sixth gated check, with a proven negative fixture and no finding in 157
-  production sources on clang-tidy 22.1.8; three new order-alternated pairs put
-  the 55-to-56 increment below measurement resolution (differences +0.042,
-  -0.220, -0.299 s). All four presets build with zero compiler warnings and pass
-  65/65 CTest each. LLVM 18.1.3 is unavailable here; the `clang-debug` clang-tidy
-  step on the push is the first 18.1.3 gate over this source. The Band B cost
-  budget governs promoting families, not this single proven check.
-
-- P1b measurement foundation: [KSycoca validity rule](modernization-results/P1b-measurement-foundation.md)
-  **Complete locally.** `scripts/measure-process-family.py` now marks a window that
-  overlaps a `~/.cache/ksycoca6_*` rewrite as invalid (the un-diagnosable part of
-  P1b's outlier), pinned by `autotests/test_measure_process_family.py`
-  (`measurefamilyrulestest`, 6 cases, two mutations caught). Four presets build with
-  zero compiler warnings and pass 66/66 CTest each. A **live positive case** was
-  produced on a user-provided Arch Plasma 6.8.3 VM: a forced rebuild inside a window
-  was reported as `"valid": false` with the exact file and second. The subsequent
-  five-pair Release rerun closed the environment half without reproducing the
-  outlier; only the event-latency seam remains open.
-
-- VM validation (2026-11-21): [Debian 13.7 and Arch Plasma 6.8 results](modernization-results/VM-validation-2026-11-21.md).
-  Debian: clang-tidy 18.1.8 passes the 56-check gate with 0 compiler warnings and
-  CTest 65/66 (the one failure is an image accessibility-bridge gap proven by a
-  standalone probe). Arch: the Clang Debug build is clean, and the known LLVM 23
-  deprecated-check transition reproduces with an exact message.
-
-- T4l LLVM 23 renamed check: [record](modernization-results/T4l-llvm23-renamed-check.md)
-  **Complete.** `performance-faster-string-find` is deprecated in LLVM 23 and absent
-  under that name's successor in 18/22, so `.clang-tidy` keeps the successor and the
-  runner substitutes the working predecessor when the tool lacks it (`RENAMED_CHECKS`,
-  capability-probed, fail-closed). The gate now passes on clang-tidy 18.1.8 (Debian),
-  22.1.8 (host) and 23.1.5 (Arch, which previously failed before analysing a source).
-  `clangtidyrenamestest` adds six cases; three mutations are caught. Four presets: 0
-  compiler warnings, 67/67 CTest each. T5 was published in
-  `564199ec1`; Build run 44863409259 passed the Clang Debug clang-tidy step (CI image
-  clang-tidy 18.1.3), closing T5. Its GCC Debug/Release jobs failed before
-  `actions/checkout` on the KDE Neon repository and dependency install, which is
-  infrastructure and unrelated to the source.
-
-- Neon bootstrap contracts: [record](modernization-results/T-Neon-bootstrap-contracts.md)
-  **Complete.** Three consecutive CI runs on 2026-11-21 lost jobs at the KDE Neon
-  steps while the mirror answered HTTP 502. Two defects were found in the workflow
-  itself: the first `apt-get update` ran before `Acquire::Retries` was written (so
-  the base indexes were never retried - this is what failed the QML lint job), and
-  the ~30-line Neon bootstrap was duplicated across two steps with no guard. The
-  policy now precedes the update, and `neonrepositorytest` pins both copies
-  byte-identical and the ordering. 7/7 cases, two mutations caught; four presets
-  pass 68/68 CTest each. Published as `7293f8361`; Build run 44878284519 passed
-  all 23 jobs, including the QML lint step that the ordering defect had broken.
-
-- Tooling follow-up: CMake 4.5 emits four author warnings about QML typeinfo
-  install-preparation dependencies. On Arch a verified clean `install_prep/all`
-  and staged install generated and installed all four typeinfo/plugin pairs in
-  both QML roots. The warnings remain; investigate explicit producer dependencies
-  without suppressing them or raising the existing CMake floor.
-  [Evidence](modernization-results/T4h-data/arch/cmake45/install-prep-qmltypes.md).
-
-## Continuation (2026-11-16–17)
-
-The continuation started from `main` at `0a6974f5cd1b13116764a2320e3d882674f5fed3`
-with a clean working tree. Workers use `gpt-6-luna` with `medium` reasoning;
-the coordinator owns integration and review. On 2026-11-17 the user explicitly
-authorized commit and push after each completed task unless manual validation
-is required; this does not authorize a release or tag.
-
-- P4 A/A baseline: **Complete as a measurement slice**, published in
-  `ebb736602`. Five same-build Fedora Plasma/KWin 6.8.3 runs passed the
-  observer, identity, cache and artifact gates. The earlier 6.8.2 runs remain
-  separate after an intervening package upgrade. The [baseline](modernization-results/P4-fedora-aa-baseline.md)
-  records raw data, limitations and the resolution of zero whole CPU ticks;
-  it establishes no saving and does not complete the deferred P4 optimization.
-  Build CI for `ebb736602` is tracked separately.
-- T4k: [QML metadata producer dependencies](modernization-results/T4k-qmltypes-install-dependencies.md)
-  are **Complete**: clean genuine CMake 4.5/GCC on Fedora and CMake 4.5/Clang
-  on the host passed Release install preparation and both-root staged metadata
-  checks, independently reviewed by the coordinator. GCC/Clang Debug builds
-  on CMake 4.3.4 each passed 64/64 tests with zero compiler diagnostics. Host
-  QML tooling diagnostics remain recorded; no Release CTest or desktop retest
-  is claimed for this build/install-only slice.
-
-Post-publication CI repair: the P4 evidence commit introduced 11 archived
-`.qml` copies under `docs/modernization-results/`, which expanded both lint
-inventories and caused Deep QML lint to reject its 244-file baseline. The
-[repair record](modernization-results/P4-qmllint-ci-inventory.md) documents a
-shared inventory helper that excludes only that archive subtree, keeps the
-baseline unchanged, and adds an isolated Git inventory test. Host GCC and Clang
-Debug each pass 65/65 tests; the Nix check and CI-version deep lint require the
-post-push Build workflow. No desktop behavior changed.
-
-## Later waves
-
-| Task group | Separate slices | Entry condition |
+| Candidate | State | Evidence required before reopening |
 | --- | --- | --- |
-| T2-T3 | Remaining Band A checks, approximately 15 per slice | T1 accepted; each slice repeats fixture and current-production proof |
-| T4 | Fix and then gate one R8c check at a time | Review every finding; preserve documented intentional calls |
-| T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
-| A2 | Complete | Pre-filter evidence exposes a real ScrollView binding loop, so only that family is now visible. Controlled injection and popup retest pass; other filters and unrelated warnings retain their behavior |
-| A3 / R6-S3 | Complete | Saved Justify layouts, separators and cross-area dragging passed on both screens. A scoped guard fixes the synchronous order-request recursion found during the retest; four presets pass 68/68 and no new core appeared |
-| P1b | Deferred: environment rerun complete, event latency open | Five valid Release pairs show no CPU/PSS saving and no return of the old outlier. Reopen only with a bounded event-correlated latency seam |
-| P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |
-| P4 | Deferred (unjustified) | Five valid model-cost pairs show zero CPU delta and −15 KiB median PSS, below the 5 MiB screening threshold. No shared owner for the current workload |
-| P5 | Deferred (unjustified) | Five valid RHI pairs show zero texture-operation and median frame-time deltas and +3 KiB median PSS. No shadow implementation change |
-| P6 | Deferred (unjustified) | Existing component-specific cold/warm probes show small mixed-direction differences and no stable cache benefit. No build/install/override change |
-| M6/A5/R6 | Select one useful dependency or ownership boundary | Measured benefit and accepted narrow design. See the R6 follow-up below for LayoutManager validation and the next performance measurement |
+| A5 policy extraction | Deferred | A concrete ownership defect, duplicated policy or measured maintenance/build benefit. See [evaluation](modernization-results/A5.md). |
+| P1b title-only fast path | Deferred | A bounded event-correlated latency seam. The valid Release rerun closed the environment question but found no CPU/PSS saving. See [report](modernization-results/P1b.md). |
+| P3a edge-layout refresh | Deferred | A production-owned latest-generation geometry publication acknowledgement. See [readiness review](modernization-results/P3a.md). |
+| P4 shared task query | Deferred as unjustified | A materially different workload showing meaningful duplicate-model cost. Five model-cost pairs found zero CPU delta and −15 KiB median PSS. See [evaluation](modernization-results/P4-P6.md). |
+| P5 background shadow | Deferred as unjustified | Evidence of removable allocation or frame cost. Five RHI pairs found zero texture-operation and median frame-time deltas. See [evaluation](modernization-results/P4-P6.md). |
+| P6 QML module caching | Deferred as unjustified | Material, repeatable cold/warm module benefit and an override-safe prototype. Existing component-specific results are mixed-direction noise. See [baseline](modernization-results/P6-scratch-build-baseline.md). |
 
-R8j remains closed at the user's decision. Its unrun 60-window experiment is
-not a scheduled task. A new memory investigation requires its own design and
-pre-registered verdict rule.
+Deferred here means no implementation is justified, not that work is pending.
+Do not reopen a candidate merely to continue modernization.
 
-A3 has a [legacy Justify restore/save fixture](modernization-results/A3-legacy-justify-fixture.md).
-It exercises production layout logic through the configuration property map;
-[R6-S3](modernization-results/R6-layoutmanager-s3.md) subsequently removed the
-unreachable splitter branches and retained the compatibility entry points.
-The later real KConfig/Plasma desktop matrix closed the remaining acceptance,
-including the Justify order-request reentrancy fix and restart verification.
+## Completed work
 
-P4's [Arch synthetic preflight](modernization-results/P4-arch-synthetic-preflight.md)
-reached a private TaskManager session and activated two per-applet trackers in
-both Folder/Trash and two-Trash synthetic layouts. These are not the historical
-Fedora layout; runtime environment warnings remain, and the runs do not yet
-justify resource measurement or a shared-query implementation.
+- A2: ScrollView/ScrollBar warnings remain visible after pre-filter evidence;
+  other message filters and popup behavior are preserved.
+- A3: saved Justify layouts, separators, dragging and restart pass, including
+  the synchronous order-request reentrancy fix.
+- A4: primary-not-zero and nested containment mapping are covered by production
+  tests and mutations.
+- R6 LayoutManager: S1–S4, restore retry, launcher ordering and separator
+  placement are complete. S5, S7 and S8 were evaluated and not implemented.
+- R7/R8: the implementation and measurement slices in the main ledger are
+  complete or explicitly closed.
+- T1–T5: the accepted clang-tidy/clazy gate work is complete, including the
+  optional-access promotion and LLVM renamed-check compatibility.
+- P0, P1a, P2a, P2b and P3b are complete. P1b and P3a remain deferred only for
+  the evidence listed above. P4–P6 are closed as unjustified.
 
-P6's [scratch Release build preflight](modernization-results/P6-scratch-build-baseline.md)
-establishes a local build baseline only; it does not measure module-attributable
-runtime import cost or justify a build-system change.
+## Evidence index
 
-## R6 LayoutManager continuation (2026-11-20)
+- [Main modernization plan and completion ledger](architecture-modernization-plan.md)
+- [A-track follow-up plan](architecture-followup-plan.md)
+- [Implementation and verification rules](architecture-modernization-implementation.md)
+- [Performance validation protocol](performance-validation-guide.md)
+- [A2 warning-filter review](modernization-results/A2.md)
+- [A3 Justify fixture and desktop acceptance](modernization-results/A3-legacy-justify-fixture.md)
+- [A4 mapping resolver](modernization-results/A4-resolver.md)
+- [R6 partial restore and launcher follow-up](modernization-results/R6-layoutmanager-partial-retry.md)
+- [P1b measurement foundation](modernization-results/P1b-measurement-foundation.md)
+- [T5 optional-access promotion](modernization-results/T5-optional-promotion.md)
 
-S3 was already accepted when the execution queue was written; the next named
-action was S4.
+## Next-candidate gate
 
-- R6-S4: [typed one-shot insertion protocol](modernization-results/R6-layoutmanager-s4.md)
-  replaces `_latte_pendingInsertionIndex` and `_latte_skipSpacerReorder` with
-  typed `LayoutManagerApi` members (IID `.../1.1`) owned by the manager and
-  written only through `LayoutManagerApiDispatcher`; the dispatcher keeps the
-  dynamic-property fallback for a pre-S4 plugin, and both creation sites drop
-  an unconsumed request, closing the stale-index hazard in the
-  [design](modernization-results/R6-layoutmanager-design.md#-family-4-name-channels-in-both-directions-dynamic-properties-and-qml-binding--property-).
-  QML, registered names and persisted keys are unchanged. **Complete:**
-  current-tree clazy and clang-tidy gates pass, and the 2026-11-25 desktop
-  matrix passed insertion, reorder, delete/undo, context-menu actions,
-  separator synchronization and launcher/file drops. Restart restored all six
-  logical applet pairs with no warnings or errors in the interaction log.
-- R6-S5: [measured, not implemented](modernization-results/R6-layoutmanager-s5-evaluation.md).
-  The slice was gated on a drag profile. The profile disproves its premise:
-  `insertAtLayoutCoordinates()` contains no `readConfigValue()` call, and
-  `readConfigValue("alignment")` is reached only from `requestAppletsOrder()`,
-  which an applet drag never runs (`AppletItem.qml` sorts with
-  `insertBefore()`/`insertAfter()`). A temporary probe collected six
-  event-driven alignment-read samples (median 5.71 µs) and **zero** samples of
-  the insertion-path reads. Probe removed, user installation uninstalled, no
-  source change: **S5 is closed as unjustified**.
-- S4 desktop acceptance and the current-tree analysis gates are complete. The
-  per-drag name calls the profile did find (`insertBefore`/`insertAfter`,
-  `createAppletItem`, `initAppletContainer`) belong to S7, not S5.
-- R6-S6: [evaluated, not recommended as written](modernization-results/R6-layoutmanager-s6-evaluation.md).
-  The sixteen name-based layout-child reads all sit in structural functions, so
-  the slice has no performance case either; its value is type safety. It costs a
-  new registered QML type, both root types (`AppletItem.qml` at 2077 lines and
-  `layouts/ParabolicEdgeSpacer.qml`) and all 60 qmllint baseline entries for
-  `AppletItem.qml`. The same defect class — a renamed property silently reading
-  as false — can be closed with missing-property diagnostics in the manager, the
-  shape S1 already used for the root functions, without changing any QML.
-- R6-S6 (implemented as diagnostics): `LayoutManager::noteLayoutChildRoles()`
-  reports once per role a layout child stops declaring, using the same shape S1
-  used for the root functions. A first draft demanded every role of every child
-  and produced two false warnings on a real desktop, because a parabolic edge
-  spacer never has `backendAppletRef`; the role list is now per class and
-  `edgeSpacerNeedsNoBackendAppletRole` pins it. No QML and no qmllint baseline
-  changed. GCC/Clang Debug: zero compiler warnings, 65/65 CTest each; qmllint
-  gate OK; a user-mode Debug run logged 0 role warnings. The typed base class
-  itself is not started.
-- R6-S7: [evaluated, not started](modernization-results/R6-layoutmanager-s7-evaluation.md).
-  Moving the creation functions to C++ does not remove the QML-engine boundary:
-  their bodies own a `Qt.binding()` over `status`, `isHidden` and
-  `keepVisibleOnHiddenStatus`, where `status` is itself resolved dynamically, and
-  a per-container retry timer whose path no autotest covers. The opacity-based
-  visibility is deliberate. The functions are also a compatibility surface for
-  separately installed plugins.
-- R6-S8: [measured, not implemented](modernization-results/R6-layoutmanager-s8-evaluation.md).
-  This is the repository's only per-pointer-move named call, so it was worth
-  measuring: over 7831 hover samples `indexOfMethod()` costs 1.11 µs and
-  `method()` 0.055 µs against a 196 µs invocation (0.59 %). Caching the method
-  would save ~1.2 µs of a 16.7 ms frame, below noise. The remaining 196 µs is the
-  QML parabolic computation, a separate candidate.
-- Parabolic computation (candidate, now measured): 196 µs p50 on Debug versus
-  184 µs p50 on Release across 958 samples each. A 6 % gap means the cost is QML
-  interpretation and JavaScript allocation, not compiled arithmetic, so a C++
-  port of `applyParabolicEffect()` would not reach it and would cross the same
-  engine boundary S7 rejected. Closed as unjustified; a future attempt must
-  reduce per-move work instead. During this measurement a Release binary was run
-  against the Debug `dev-env.sh` QML overlay, which broke window previews until
-  the packaged dock was restored; the record documents that and the leftover
-  state it created.
-- S1–S4 are implemented, and S6 shipped as diagnostics. The S5, S7 and S8
-  evaluations did not justify the proposed changes. A new parabolic slice
-  needs a Release profile and a design that reduces per-move work.
-
-### LayoutManager validation and performance follow-up (2026-11-24)
-
-- The remaining S4 desktop interactions in
-  [design §7.4](modernization-results/R6-layoutmanager-design.md) are complete.
-  Commit `80cf37c20` implements propagation of boundary separator insertion
-  using the mapped neighboring applet, so the historical system-package
-  reproduction in the S4 report no longer describes the current code path.
-  Separator insertion and removal passed on the clone after restart.
-- The [restore index](modernization-results/R6-layoutmanager-restore-index.md)
-  and [factory cleanup](modernization-results/R6-layoutmanager-factory-profile.md)
-  are implemented. The current-tree clang-tidy gate passed 56 negative
-  fixtures and 157 production translation units. The existing Ubuntu 24.04
-  image passed all 49 clazy negative fixtures and found no issues across all
-  157 production translation units. Qt 6.11.1 matched the reviewed deep lint
-  fingerprint and identified two added unqualified accesses in the launcher
-  code. The reference qualification fix left zero added diagnostics and 45
-  fewer warning occurrences against the checked-in baseline. Syntax lint
-  passed all 244 QML files. Earlier on the same source revision, GCC and Clang
-  Debug and Release each passed 68/68 CTest targets in the graphical-session
-  user manager after rebuilding both stale Release `qmlsmoketest` binaries.
-  After the QML fix, each preset passed the four focused QML, containment,
-  clone-policy and source-contract tests. The
-  [index refresh](modernization-results/R6-layoutmanager-index-refresh.md)
-  and [readiness retry fix](modernization-results/R6-layoutmanager-restore-readiness.md)
-  have their own completed validation records.
-- The [48 paired Release launches](modernization-results/R6-layoutmanager-startup-ab.md)
-  show a reproducible reduction of less than 0.1 ms in enumeration and order
-  matching for two six-applet docks. Whole-launch results vary across series.
-  For a further startup slice, measure applet reparenting and anchor updates
-  in Release with the same applets and order, and record first paint and
-  completed restore separately. These operations dominated the factory
-  profile. Evaluate a concrete reduction in attachment work before changing
-  the QML lifecycle.
-- The clone startup follow-up now covers repeated applets as well as splitter
-  positions. Three isolated launches with two binary-clock instances verify
-  the complete mapped order and the locked-zoom/disabled-coloring identity of
-  each instance. Clone applet IDs are recreated in every run; the logical
-  mapping remains correct.
-- Desktop startup of the current user-mode Debug install completed on DP-1
-  and HDMI-A-1. At clone initialization the complete seven-applet mapping
-  translated the source order to the exact clone order, including the
-  existing boundary separator. The later dedicated repeated-binary-clock
-  fixture closed the remaining identity case. The desktop startup log
-  contained no warnings, errors, fatal messages or assertions.
-  The desktop interaction log records boundary separator removal and
-  recreation on both displays and an applet reorder. After reinstalling
-  the QML reference changes, startup preserved the mapped order and
-  exposed a misplaced separator already present in the saved order.
-  A widget could be inserted between a task area and its existing boundary
-  separator. The insertion policy now moves that slot to the widget side
-  of the separator for both edges, including coordinate-based drops.
-  The insertion fix's user-mode Debug install started on both displays with matching
-  mapped order for nine applets. Both the before and after startup logs
-  emitted the same Plasma brightness applet warning. A subsequent desktop
-  drag moved an existing widget between an initially adjacent left
-  separator and the task area. Edit-mode sorting now checks live sibling
-  order before stacking, so either hit target at a left or right boundary
-  redirects the drop to the widget side. The direct stacking test covers
-  both targets at both edges. GCC and Clang Debug each passed the five
-  focused tests, and QML syntax lint passed. The reinstalled Debug build
-  started on both displays with the mapped order intact and the same
-  brightness warning. The user confirmed the drag fix. Widget creation
-  could still bypass the application-side insertion adjustment when
-  QML handled Plasma's applet-added signal first. Indexed creation now
-  applies the same boundary rule at placement, with regression coverage
-  for a one-shot request consumed through the QML entry point on either
-  side. The user confirmed widget creation on the desktop.
-- The [partial restore retry](modernization-results/R6-layoutmanager-partial-retry.md)
-  reuses attached containers and defers independent repair while restore
-  owns placement. Under a single factory failure per six-applet dock,
-  the isolated Release comparison reduced creation from eleven to six
-  containers and preserved the saved order. Per-plugin Release measurements
-  and a real reversed-initialization series attribute normal-startup
-  reparent/anchor costs to the first hosted `kickerdash` and memory-monitor
-  instances. No redundant normal-path attachment work was found, so the QML
-  lifecycle remains unchanged. All four build presets pass 68/68 CTest;
-  the user-mode Debug startup restored both nine-applet orders and the full
-  clone mapping without a restore/factory error.
-- The desktop retest exposed menu-driven separator insertion shifting task
-  slots. Initial drag fixes did not help and were reverted after state probes
-  proved that no drag path ran. Menu zoom clearing then exposed the old
-  append-then-move transition beside non-trailing pins.
-- The positioned-add candidate removed that transition in model tests but
-  crashed on the desktop: its backtrace enters `TasksModel::data()` from QML
-  after synchronous `launcherList` replacement. Every separator candidate and
-  its new tests were reverted under the two-failure stop rule. Focused tests
-  pass and the stable user-mode Debug dock has restarted with both mapped
-  orders and no startup warnings or errors. The immediate-list candidate
-  remains stopped; the later user-requested delayed-placement retry is
-  recorded below.
-- The remaining separator transient came from publishing the appended item's
-  slot before the existing delayed move. Positioned dispatch now forwards the
-  requested index to every synced client, and only the pending separator's
-  slot is withheld until that move completes. The legacy `addLauncher()` and
-  all synchronous `launcherList` replacement paths remain unchanged. Focused
-  tests and five-file QML lint pass; all four presets pass 68/68 CTest without
-  C/C++ warnings. The Debug restart restored seven mapped pairs without
-  startup warnings or errors. The final binding and displaced-transition
-  fixes passed the user's continuous insertion checks on both screens,
-  single insertion, deletion and restart persistence.
-- A separate application-menu pin
-  appended a task launcher after the final internal separator. Launcher
-  creation now puts the appended model record ahead of trailing separators
-  while preserving interior separators. A real Plasma TasksModel probe
-  verified the order both after pinning and after synchronization.
-  The right separator added from a pinned task also stays in the launcher
-  model, so it remains visible without unpinned windows and separates them
-  from pins when they appear. Manual reordering keeps the two sides apart.
-  Older right separators created as separate containment applets can be
-  removed through the existing boundary removal action before adding a
-  launcher-local separator.
-- After desktop confirmation of the right separator, opening an unpinned
-  application exposed a right-widget position jump. A new task could
-  publish a full-width slot when it became visible, then retract it when
-  the entrance slide initialized. The delegate now releases its layout
-  slot after the animation setup, and a reveal without sliding keeps the
-  full length. The QML regression samples the following item's position
-  through initial visibility and subsequent expansion. The user confirmed
-  the desktop fix. The retest log showed two known brightness applet
-  warnings and sixteen warnings while loading the world clock on both
-  outputs, consistent with the
-  [earlier system applet observations](modernization-results/R6-layoutmanager-s2b.md).
-  No Latte runtime errors or assertions were identified. The final GCC
-  and Clang Debug suites each passed all 68 targets. The Qt 6.11.1 deep
-  QML baseline comparison passed.
-
-## References
-
-- [Main plan and ledgers](architecture-modernization-plan.md)
-- [Implementation rules and verification](architecture-modernization-implementation.md)
-- [A-track ledger](architecture-followup-plan.md)
-- [clang-tidy gate order](modernization-results/R8c.md#proposed-gate-order)
-- [Existing production-wide gate](modernization-results/R8i.md)
-- [Desktop evidence](modernization-results/R7-desktop-check.md)
-- [Memory investigation closure](modernization-results/R8j.md#closure)
+A new task must have a concrete defect or measured benefit and a bounded scope.
+Follow the implementation guide: account for the current HEAD and worktree,
+trace consumers, preserve compatibility, add production-path regression checks,
+and run affected GCC/Clang builds and tests. Runtime changes also require the
+canonical user-mode Debug install and focused manual retest. Update the linked
+evidence and this index after each accepted slice. On `main`, commit and push
+require explicit user approval; task completion alone does not authorize a
+release or tag.
