@@ -150,42 +150,28 @@ QList<QQuickItem *> SyncedLaunchers::clients(QString layoutName, uint senderId, 
     return temclients;
 }
 
-void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher)
+void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, int position)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
     QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
         if (auto *metaObject = c->metaObject()) {
-            int methodIndex = metaObject->indexOfMethod("addSyncedLauncher(QVariant,QVariant)");
+            const bool positioned = position >= 0;
+            const int methodIndex = positioned ? metaObject->indexOfMethod("addSyncedLauncherAtPosition(QVariant,QVariant,QVariant)")
+                                               : metaObject->indexOfMethod("addSyncedLauncher(QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qCDebug(latteLayout) << "Launchers Syncer Ability: addSyncedLauncher(QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: launcher addition method was NOT found...";
                 continue;
             }
 
             QMetaMethod method = metaObject->method(methodIndex);
-            method.invoke(c, Q_ARG(QVariant, launcherGroup), Q_ARG(QVariant, launcher));
-        }
-    }
-}
-
-void SyncedLaunchers::addLauncherAtPosition(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, int position)
-{
-    Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
-
-    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
-        if (auto *metaObject = c->metaObject()) {
-            int methodIndex = metaObject->indexOfMethod("addSyncedLauncherAtPosition(QVariant,QVariant,QVariant)");
-
-            if (methodIndex == -1) {
-                qCDebug(latteLayout) << "Launchers Syncer Ability: addSyncedLauncherAtPosition(QVariant,QVariant,QVariant) was NOT found...";
-                continue;
+            if (positioned) {
+                method.invoke(c, Q_ARG(QVariant, launcherGroup), Q_ARG(QVariant, launcher), Q_ARG(QVariant, position));
+            } else {
+                method.invoke(c, Q_ARG(QVariant, launcherGroup), Q_ARG(QVariant, launcher));
             }
-
-            QMetaMethod method = metaObject->method(methodIndex);
-            method.invoke(c, Q_ARG(QVariant, launcherGroup), Q_ARG(QVariant, launcher), Q_ARG(QVariant, qMax(0, position)));
         }
     }
 }

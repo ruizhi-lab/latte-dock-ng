@@ -97,8 +97,8 @@ void LauncherUnitTest::positionedLaunchersDispatchPosition()
 
     launchers.addAbilityClient(&sender);
     launchers.addAbilityClient(&receiver);
-    launchers.addLauncherAtPosition(QString(), 1, Latte::Types::UniqueLaunchers,
-                                    QStringLiteral("group"), QStringLiteral("file:///latte-separator1.desktop"), 3);
+    launchers.addLauncher(QString(), 1, Latte::Types::UniqueLaunchers,
+                          QStringLiteral("group"), QStringLiteral("file:///latte-separator1.desktop"), 3);
 
     QCOMPARE(sender.calls, QList<QString>{QStringLiteral("addAtPosition")});
     QCOMPARE(receiver.calls, QList<QString>{QStringLiteral("addAtPosition")});
