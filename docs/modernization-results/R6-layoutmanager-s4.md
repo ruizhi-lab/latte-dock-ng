@@ -1,6 +1,6 @@
 # R6 LayoutManager S4: typed one-shot insertion protocol
 
-Status: **Complete except desktop retest and clazy/clang-tidy gates.** This
+Status: **Complete.** This
 slice replaces the two dynamic properties that carried the pending insertion
 index and the parabolic-spacer suppression with typed members of
 `LayoutManagerApi`. It closes the stale-token hazard recorded in
@@ -116,22 +116,29 @@ The containment cleanup also persists clone IDs that no longer exist (a
 the clone synchronisation and persistence paths, not to the typed insertion
 protocol. An attempt to fix them was reverted; it is not part of this slice.
 
-Consequently the desktop retest item "separators follow on both screens" cannot
-pass on this build. Every other item of the design's §7.4 list is unaffected.
+At that stage the desktop retest item "separators follow on both screens"
+could not pass. Commit `80cf37c20` later propagated insertion through the
+mapped neighboring applet; the final acceptance below supersedes this interim
+result.
 
-## Not run
+## Final desktop acceptance
 
-- **Desktop interaction retest (user).** Still required: drop a widget from
-  the Widget Explorer at a position, drop launchers and files on the dock, add
-  and remove a separator (the spacer-suppression path), drag-reorder across
-  start/main/end, then restart the dock and confirm the order and the absence
-  of new log warnings. See [§7.4](R6-layoutmanager-design.md).
-- **clazy and clang-tidy gates.** `clazy-standalone` is not installed on this
-  host (`scripts/test-clazy.py` aborts with "clazy-standalone was not found in
-  PATH"); the clang-tidy gate was not run for this slice either. Both must run
-  in the published CI Clang Debug job before this is called fully validated.
-- Release builds and the Debian 13 floor (Qt 6.8.2 / Plasma 6.3.6) were not
-  built; nothing here uses API newer than the S2 slices that already passed
-  them.
+On 2026-11-25 the user passed Widget Explorer creation and positioned drops,
+Left/Center/Right reordering, delete/undo on both screens, applet context-menu
+actions, and launcher/file drops. An initial boundary-separator mismatch was
+not reproduced after the requested dock restart. The subsequent log records
+synchronized deletion of separator IDs 68/42 and creation of IDs 78/79 on the
+two screens. The final saved orders place both separators at the same logical
+index.
+
+The restart restored all six logical applet pairs without duplicates. The full
+post-restart interaction log contains no warning, error, fatal or assertion
+entries. Current-tree clazy and clang-tidy acceptance is recorded in the main
+plan and execution queue.
+
+## Remaining limits
+
 - The pre-S4-plugin QML path described above was not exercised on a real mixed
   installation.
+- A full session logout/login was not separately tested in this acceptance;
+  the user requested and completed a dock restart instead.

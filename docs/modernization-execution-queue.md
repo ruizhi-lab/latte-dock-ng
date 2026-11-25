@@ -325,13 +325,11 @@ action was S4.
   dynamic-property fallback for a pre-S4 plugin, and both creation sites drop
   an unconsumed request, closing the stale-index hazard in the
   [design](modernization-results/R6-layoutmanager-design.md#-family-4-name-channels-in-both-directions-dynamic-properties-and-qml-binding--property-).
-  QML, registered names and persisted keys are unchanged. **Complete except**
-  the user's desktop interaction retest (design §7.4) and the clazy and
-  clang-tidy gates: `clazy-standalone` is not installed on this host, so
-  `scripts/test-clazy.py` aborts and neither gate ran here. GCC and Clang Debug
-  full builds have zero compiler warnings and pass 65/65 CTest each; the
-  qmllint errors-only gate is clean on 244 files; a user-mode Debug startup
-  logged both containment orders with no warning or error entries.
+  QML, registered names and persisted keys are unchanged. **Complete:**
+  current-tree clazy and clang-tidy gates pass, and the 2026-11-25 desktop
+  matrix passed insertion, reorder, delete/undo, context-menu actions,
+  separator synchronization and launcher/file drops. Restart restored all six
+  logical applet pairs with no warnings or errors in the interaction log.
 - R6-S5: [measured, not implemented](modernization-results/R6-layoutmanager-s5-evaluation.md).
   The slice was gated on a drag profile. The profile disproves its premise:
   `insertAtLayoutCoordinates()` contains no `readConfigValue()` call, and
@@ -341,10 +339,9 @@ action was S4.
   event-driven alignment-read samples (median 5.71 µs) and **zero** samples of
   the insertion-path reads. Probe removed, user installation uninstalled, no
   source change: **S5 is closed as unjustified**.
-- Next action: the user runs the S4 desktop retest; the published CI run then
-  owns the clazy/clang-tidy gates. The per-drag name calls the profile did find
-  (`insertBefore`/`insertAfter`, `createAppletItem`, `initAppletContainer`)
-  belong to S7, not S5.
+- S4 desktop acceptance and the current-tree analysis gates are complete. The
+  per-drag name calls the profile did find (`insertBefore`/`insertAfter`,
+  `createAppletItem`, `initAppletContainer`) belong to S7, not S5.
 - R6-S6: [evaluated, not recommended as written](modernization-results/R6-layoutmanager-s6-evaluation.md).
   The sixteen name-based layout-child reads all sit in structural functions, so
   the slice has no performance case either; its value is type safety. It costs a
@@ -390,12 +387,12 @@ action was S4.
 
 ### LayoutManager validation and performance follow-up (2026-11-24)
 
-- Complete the remaining S4 desktop interactions in
-  [design §7.4](modernization-results/R6-layoutmanager-design.md). Commit
-  `80cf37c20` implements propagation of boundary separator insertion using
-  the mapped neighboring applet, so the historical system-package
+- The remaining S4 desktop interactions in
+  [design §7.4](modernization-results/R6-layoutmanager-design.md) are complete.
+  Commit `80cf37c20` implements propagation of boundary separator insertion
+  using the mapped neighboring applet, so the historical system-package
   reproduction in the S4 report no longer describes the current code path.
-  Include separator insertion and removal on a clone in the retest.
+  Separator insertion and removal passed on the clone after restart.
 - The [restore index](modernization-results/R6-layoutmanager-restore-index.md)
   and [factory cleanup](modernization-results/R6-layoutmanager-factory-profile.md)
   are implemented. The current-tree clang-tidy gate passed 56 negative
