@@ -48,6 +48,7 @@ public Q_SLOTS:
     Q_INVOKABLE void removeAbilityClient(QQuickItem *client);
 
     Q_INVOKABLE void addLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher);
+    Q_INVOKABLE void addLauncherAtPosition(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, int position);
     Q_INVOKABLE void removeLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher);
     Q_INVOKABLE void addLauncherToActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity);
     Q_INVOKABLE void removeLauncherFromActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity);

@@ -66,20 +66,7 @@ part of local mirror maintenance.
    authoritative state source and record the failure mode that would return if
    the constraint were removed. This context is required for both human and AI
    maintainers; do not narrate self-evident code.
-8. **Keep local design knowledge beside the implementation** — Skills, plans
-   and review notes may provide process or broad design guidance, but they are
-   not a substitute for durable component knowledge. When a feature, workaround
-   or invariant is discovered or changed, put its concise rationale next to the
-   owning C++/QML/Python/Shell implementation and add a focused test or contract
-   when practical. The comment should state the trigger, the authoritative
-   state, the ownership/lifecycle or timing constraint, and the failure mode
-   prevented. Do not paste a whole skill or plan into source comments, and do
-   not leave essential behavior explainable only by a skill file or chat history.
-   Keep AGENTS.md as the cross-component architecture and workflow charter;
-   keep component-specific details beside the code they govern. Update the
-   nearby comment and its test when behavior, supported versions or the
-   authoritative state changes.
-9. **Update help with user-visible changes** — Update `docs/help/` in the
+8. **Update help with user-visible changes** — Update `docs/help/` in the
    same change as code or configuration that affects the user. Keep the
    English guide and every affected translation in sync with editor labels,
    defaults, preset values, scope, Advanced-mode visibility, and behavior.
@@ -88,6 +75,15 @@ part of local mirror maintenance.
    to English. Run `handbookdocumenttest` for help changes and review the
    complete set of user-visible changes again before each release. Record
    skipped languages or checks in the release notes.
+9. **Minimal changes only** — Modify only functions and files directly
+   related to the current task. Do not refactor surrounding code that was not
+   requested.
+10. **Avoid overengineering** — Do not add unnecessary abstraction layers,
+    redundant comments, or unrequested defensive exception handling.
+11. **Verify and stop after repeated failures** — Run the relevant unit tests
+    or build commands after every modification. After two consecutive failed
+    fix attempts for the same issue, stop changing code and provide a root
+    cause analysis before making any further edits.
 
 ## Development Debug & Retest Workflow
 
@@ -277,11 +273,7 @@ is documented; review the guide text against the UI.
   particular, `TaskItem.qml` documents the task-tooltip ownership, hover and
   enable-state contract; its source-contract autotests protect that design.
 - Treat `AGENTS.md` as the high-level index, architecture charter and policy
-  document. Put localized feature contracts, failure modes and workaround
-  rationale in concise English comments beside the relevant implementation;
-  future maintainers and AI tools must be able to understand the behavior from
-  the code and its nearby documentation without recovering hidden skill or chat
-  context.
+  document.
 
 ## Coding Standards
 

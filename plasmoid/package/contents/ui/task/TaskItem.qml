@@ -26,7 +26,8 @@ AbilityItem.BasicItem {
     // its initial zoom. Publish its slot only after that setup, so ListView
     // cannot first add a full-width slot and then collapse it.
     property bool initialTaskGeometryReady: false
-    occupiesLayoutSlot: taskItem.initialTaskGeometryReady && !waitingForTaskRowReplacement && !checkingTaskRowReplacement
+    property bool waitingForLauncherPosition: tasksExtendedManager.launcherPositionIsPending(launcherUrl)
+    occupiesLayoutSlot: taskItem.initialTaskGeometryReady && !waitingForLauncherPosition && !waitingForTaskRowReplacement && !checkingTaskRowReplacement
 
     // Keep the last settled separator gap until removal can determine whether
     // a replacement owns this slot. Ordinary removals release it when they start.

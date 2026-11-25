@@ -170,6 +170,26 @@ void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launche
     }
 }
 
+void SyncedLaunchers::addLauncherAtPosition(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, int position)
+{
+    Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
+
+    for (const auto matchingClients = clients(lName, senderId, group, launcherGroupId); const auto c : matchingClients) {
+        if (auto *metaObject = c->metaObject()) {
+            int methodIndex = metaObject->indexOfMethod("addSyncedLauncherAtPosition(QVariant,QVariant,QVariant)");
+
+            if (methodIndex == -1) {
+                qCDebug(latteLayout) << "Launchers Syncer Ability: addSyncedLauncherAtPosition(QVariant,QVariant,QVariant) was NOT found...";
+                continue;
+            }
+
+            QMetaMethod method = metaObject->method(methodIndex);
+            method.invoke(c, Q_ARG(QVariant, launcherGroup), Q_ARG(QVariant, launcher), Q_ARG(QVariant, qMax(0, position)));
+        }
+    }
+}
+
 void SyncedLaunchers::removeLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);

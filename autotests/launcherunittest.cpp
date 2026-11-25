@@ -23,6 +23,11 @@ public:
         arguments << QVariantList{group, launcher};
     }
 
+    Q_INVOKABLE void addSyncedLauncherAtPosition(QVariant group, QVariant launcher, QVariant position) {
+        calls << QStringLiteral("addAtPosition");
+        arguments << QVariantList{group, launcher, position};
+    }
+
     Q_INVOKABLE void removeSyncedLauncher(QVariant group, QVariant launcher) {
         calls << QStringLiteral("remove");
         arguments << QVariantList{group, launcher};
@@ -55,6 +60,7 @@ class LauncherUnitTest : public QObject
 
 private Q_SLOTS:
     void uniqueLaunchersTargetOnlySenderWhenGroupIdIsEmpty();
+    void positionedLaunchersDispatchPosition();
     void groupLaunchersTargetMatchingGroupClients();
     void layoutLaunchersRestrictClientsToMatchingLayout();
     void destroyedClientsAreCompactedBeforeDispatch();
@@ -77,6 +83,27 @@ void LauncherUnitTest::uniqueLaunchersTargetOnlySenderWhenGroupIdIsEmpty()
     QCOMPARE(sender.calls, QList<QString> {QStringLiteral("add")});
     QCOMPARE(sender.arguments.constFirst().at(1).toString(), QStringLiteral("app.desktop"));
     QVERIFY(other.calls.isEmpty());
+}
+
+void LauncherUnitTest::positionedLaunchersDispatchPosition()
+{
+    Latte::Layouts::SyncedLaunchers launchers(nullptr);
+    LauncherClient sender;
+    LauncherClient receiver;
+    sender.setProperty("clientId", 1);
+    sender.setProperty("syncedGroupId", QStringLiteral("group"));
+    receiver.setProperty("clientId", 2);
+    receiver.setProperty("syncedGroupId", QStringLiteral("group"));
+
+    launchers.addAbilityClient(&sender);
+    launchers.addAbilityClient(&receiver);
+    launchers.addLauncherAtPosition(QString(), 1, Latte::Types::UniqueLaunchers,
+                                    QStringLiteral("group"), QStringLiteral("file:///latte-separator1.desktop"), 3);
+
+    QCOMPARE(sender.calls, QList<QString>{QStringLiteral("addAtPosition")});
+    QCOMPARE(receiver.calls, QList<QString>{QStringLiteral("addAtPosition")});
+    QCOMPARE(sender.arguments.constFirst().at(2).toInt(), 3);
+    QCOMPARE(receiver.arguments.constFirst().at(2).toInt(), 3);
 }
 
 void LauncherUnitTest::groupLaunchersTargetMatchingGroupClients()

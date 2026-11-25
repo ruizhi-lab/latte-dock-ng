@@ -1205,15 +1205,31 @@ void LayoutManager::restore()
         }
     }
 
-    bool appletContainerCreationFailed{false};
-
-    for (QObject *applet : std::as_const(orderedApplets)) {
-        QVariant appletItemVariant;
-        const QVariant appletVariant = QVariant::fromValue(applet);
-        if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
-            warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+    const bool reuseAttachedItems = m_restoreRetryCount > 0;
+    QHash<int, QPointer<QQuickItem>> attachedItems;
+    if (reuseAttachedItems) {
+        for (QObject *applet : std::as_const(orderedApplets)) {
+            const int id = appletId(applet);
+            if (id > 0) {
+                if (auto *item = appletItemInLayout(m_mainLayout, id)) {
+                    attachedItems.insert(id, item);
+                }
+            }
         }
-        QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
+    }
+
+    bool appletContainerCreationFailed{false};
+    QPointer<QQuickItem> previousItem;
+    for (QObject *applet : std::as_const(orderedApplets)) {
+        auto *appletItem = reuseAttachedItems ? attachedItems.value(appletId(applet)).data() : nullptr;
+        if (!appletItem) {
+            QVariant appletItemVariant;
+            const QVariant appletVariant = QVariant::fromValue(applet);
+            if (m_createAppletItemMethod.isValid() && !m_createAppletItemMethod.invoke(m_rootItem, Q_RETURN_ARG(QVariant, appletItemVariant), Q_ARG(QVariant, appletVariant))) {
+                warnRootInvocationFailureOnce(m_createAppletItemMethod, "createAppletItem(QVariant)");
+            }
+            appletItem = appletItemVariant.value<QQuickItem *>();
+        }
 
         if (!appletItem) {
             appletContainerCreationFailed = true;
@@ -1222,7 +1238,14 @@ void LayoutManager::restore()
             continue;
         }
 
-        appletItem->setParentItem(m_mainLayout);
+        if (!reuseAttachedItems) {
+            appletItem->setParentItem(m_mainLayout);
+        } else if (previousItem) {
+            insertAfter(previousItem, appletItem);
+        } else if (appletItem->parentItem() != m_mainLayout) {
+            insertAtLayoutTail(m_mainLayout, appletItem);
+        }
+        previousItem = appletItem;
     }
 
     if (appletContainerCreationFailed) {
@@ -1854,6 +1877,10 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
 bool LayoutManager::repairAppletContainers()
 {
     bool didWork = false;
+
+    if (m_restoreRetryCount > 0 && m_restoreRetryCount < 60) {
+        return false;
+    }
 
     if (!m_startLayout || !m_mainLayout || !m_endLayout || !m_rootItem || !m_plasmoid) {
         return false;

@@ -455,6 +455,39 @@ action was S4.
   applies the same boundary rule at placement, with regression coverage
   for a one-shot request consumed through the QML entry point on either
   side. The user confirmed widget creation on the desktop.
+- The [partial restore retry](modernization-results/R6-layoutmanager-partial-retry.md)
+  reuses attached containers and defers independent repair while restore
+  owns placement. Under a single factory failure per six-applet dock,
+  the isolated Release comparison reduced creation from eleven to six
+  containers and preserved the saved order. Per-plugin Release measurements
+  and a real reversed-initialization series attribute normal-startup
+  reparent/anchor costs to the first hosted `kickerdash` and memory-monitor
+  instances. No redundant normal-path attachment work was found, so the QML
+  lifecycle remains unchanged. All four build presets pass 68/68 CTest;
+  the user-mode Debug startup restored both nine-applet orders and the full
+  clone mapping without a restore/factory error.
+- The desktop retest exposed menu-driven separator insertion shifting task
+  slots. Initial drag fixes did not help and were reverted after state probes
+  proved that no drag path ran. Menu zoom clearing then exposed the old
+  append-then-move transition beside non-trailing pins.
+- The positioned-add candidate removed that transition in model tests but
+  crashed on the desktop: its backtrace enters `TasksModel::data()` from QML
+  after synchronous `launcherList` replacement. Every separator candidate and
+  its new tests were reverted under the two-failure stop rule. Focused tests
+  pass and the stable user-mode Debug dock has restarted with both mapped
+  orders and no startup warnings or errors. The immediate-list candidate
+  remains stopped; the later user-requested delayed-placement retry is
+  recorded below.
+- The remaining separator transient came from publishing the appended item's
+  slot before the existing delayed move. Positioned dispatch now forwards the
+  requested index to every synced client, and only the pending separator's
+  slot is withheld until that move completes. The legacy `addLauncher()` and
+  all synchronous `launcherList` replacement paths remain unchanged. Focused
+  tests and five-file QML lint pass; all four presets pass 68/68 CTest without
+  C/C++ warnings. The Debug restart restored seven mapped pairs without
+  startup warnings or errors. The final binding and displaced-transition
+  fixes passed the user's continuous insertion checks on both screens,
+  single insertion, deletion and restart persistence.
 - A separate application-menu pin
   appended a task launcher after the final internal separator. Launcher
   creation now puts the appended model record ahead of trailing separators

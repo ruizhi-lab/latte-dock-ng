@@ -28,6 +28,12 @@ class RestoreRoot : public QQuickItem
   public:
     Q_INVOKABLE QVariant createAppletItem(QVariant applet)
     {
+        auto *backend = applet.value<QObject *>();
+        if (backend && backend->property("id").toInt() == m_failOnceForApplet) {
+            m_failOnceForApplet = -1;
+            return {};
+        }
+
         ++m_appletItemCreationCount;
         auto *item = new QQuickItem(this);
         item->setProperty("backendAppletRef", applet);
@@ -49,6 +55,11 @@ class RestoreRoot : public QQuickItem
         return indexPath;
     }
 
+    void failOnceForApplet(int id)
+    {
+        m_failOnceForApplet = id;
+    }
+
     int appletItemCreationCount() const
     {
         return m_appletItemCreationCount;
@@ -63,6 +74,7 @@ class RestoreRoot : public QQuickItem
 
 private:
     int m_appletItemCreationCount{0};
+    int m_failOnceForApplet{-1};
 };
 
 class MissingInitRoot : public QQuickItem
@@ -182,6 +194,8 @@ private Q_SLOTS:
     void resolveAppletQuickItemStopsAtCyclicPropertyGraph();
     void resolveAppletQuickItemFindsQuickItemThroughPropertyChain();
     void restoresAndSavesLegacyJustifyFromPersistedMap();
+    void retriesOnlyMissingRestoreContainers_data();
+    void retriesOnlyMissingRestoreContainers();
     void joinsLegacyJustifyLayoutsThroughProductionEntryPoint();
     void dndSpacerIndexUsesMainLayoutAndSkipsParabolicSpacers();
     void insertAtCoordinatesUsesMainLayoutForJustify();
@@ -819,6 +833,69 @@ void ContainmentLayoutUnitTest::restoresAndSavesLegacyJustifyFromPersistedMap()
     QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("45;44;46;47"));
     QCOMPARE(configuration.value(QStringLiteral("splitterPosition")).toInt(), 2);
     QCOMPARE(configuration.value(QStringLiteral("splitterPosition2")).toInt(), 4);
+}
+
+void ContainmentLayoutUnitTest::retriesOnlyMissingRestoreContainers_data()
+{
+    QTest::addColumn<int>("failedAppletId");
+    QTest::newRow("first") << 10;
+    QTest::newRow("middle") << 20;
+    QTest::newRow("last") << 30;
+}
+
+void ContainmentLayoutUnitTest::retriesOnlyMissingRestoreContainers()
+{
+    QFETCH(int, failedAppletId);
+    TestConfig configuration;
+    configuration.insert(QStringLiteral("appletOrder"), QStringLiteral("10;20;30"));
+    QObject plasmoid;
+    plasmoid.setProperty("configuration", QVariant::fromValue(static_cast<QObject *>(&configuration)));
+
+    QQuickItem firstApplet;
+    QQuickItem middleApplet;
+    QQuickItem lastApplet;
+    firstApplet.setProperty("id", 10);
+    middleApplet.setProperty("id", 20);
+    lastApplet.setProperty("id", 30);
+    const QList<QObject *> applets{&firstApplet, &middleApplet, &lastApplet};
+    for (auto *applet : applets) {
+        applet->setProperty("_plasma_graphicObject", QVariant::fromValue(applet));
+    }
+    plasmoid.setProperty("applets", QVariant::fromValue(applets));
+
+    RestoreRoot root;
+    root.failOnceForApplet(failedAppletId);
+    QQuickItem start;
+    QQuickItem main;
+    QQuickItem end;
+    Latte::Containment::LayoutManager manager;
+    manager.setRootItem(&root);
+    manager.setStartLayout(&start);
+    manager.setMainLayout(&main);
+    manager.setEndLayout(&end);
+    manager.setPlasmoid(&plasmoid);
+
+    manager.restore();
+    QCOMPARE(root.appletItemCreationCount(), 2);
+    const auto partialItems = main.childItems();
+    QCOMPARE(partialItems.size(), 2);
+    QVERIFY(!manager.repairAppletContainers());
+    QCOMPARE(root.appletItemCreationCount(), 2);
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("10;20;30"));
+
+    QTRY_COMPARE(manager.order(), (QList<int>{10, 20, 30}));
+    QCOMPARE(root.appletItemCreationCount(), 3);
+    const auto completedItems = main.childItems();
+    QCOMPARE(completedItems.size(), 3);
+    QList<int> completedOrder;
+    for (auto *item : completedItems) {
+        completedOrder << item->property("backendAppletRef").value<QObject *>()->property("id").toInt();
+    }
+    QCOMPARE(completedOrder, (QList<int>{10, 20, 30}));
+    for (auto *item : partialItems) {
+        QVERIFY(completedItems.contains(item));
+    }
+    QCOMPARE(configuration.value(QStringLiteral("appletOrder")).toString(), QStringLiteral("10;20;30"));
 }
 
 void ContainmentLayoutUnitTest::joinsLegacyJustifyLayoutsThroughProductionEntryPoint()

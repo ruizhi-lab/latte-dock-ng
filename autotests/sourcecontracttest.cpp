@@ -275,6 +275,7 @@ private Q_SLOTS:
     void widgetOriginalIconColorsFallbackKeepsHoverAndStateSynchronized();
     void containmentLayoutAutotestLinksIconThemes();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
+    void tasksPublishLauncherOrderWhenDragFinishes();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
     void scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize();
     void systrayGuardsInAppletItemPreventLayoutAndInteractionBreakage();
@@ -2850,6 +2851,22 @@ void SourceContractTest::mouseHandlerAutoPinOnDragPromotesNonLauncherTasks()
     const int fnDef = source.indexOf(QStringLiteral("function schedulePromoteToLauncherAndMove"));
     const int callSite = source.indexOf(QStringLiteral("schedulePromoteToLauncherAndMove(sourceItem, insertAt, launcherUrl)"));
     QVERIFY(callSite > fnDef);
+}
+
+void SourceContractTest::tasksPublishLauncherOrderWhenDragFinishes()
+{
+    QFile mainQml(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/main.qml"));
+    QVERIFY(mainQml.open(QFile::ReadOnly));
+    const QString source = withoutComments(QString::fromUtf8(mainQml.readAll()));
+    const int handlerStart = source.indexOf(QStringLiteral("onDragSourceChanged: {"));
+    QVERIFY(handlerStart >= 0);
+    const int handlerEnd = source.indexOf(QStringLiteral("\n    }"), handlerStart);
+    QVERIFY(handlerEnd > handlerStart);
+    const QString handler = source.mid(handlerStart, handlerEnd - handlerStart);
+    const int saveOrder = handler.indexOf(QStringLiteral("root.appletAbilities.launchers.syncLauncherOrder();"));
+    const int publishOrder = handler.indexOf(QStringLiteral("root.appletAbilities.launchers.validateSyncedLaunchersOrder();"));
+    QVERIFY(saveOrder >= 0);
+    QVERIFY(publishOrder > saveOrder);
 }
 
 void SourceContractTest::scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing()

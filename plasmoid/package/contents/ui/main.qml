@@ -124,7 +124,7 @@ PlasmoidItem {
     property QtObject contextMenuComponent: Qt.createComponent("ContextMenu.qml", Component.PreferSynchronous);
     property Item dragSource: null
 
-    property Item tasksExtendedManager: _tasksExtendedManager
+    property TasksExtendedManager tasksExtendedManager: _tasksExtendedManager
     readonly property alias appletAbilities: _appletAbilities
 
     readonly property alias containsDrag: mouseHandler.containsDrag
@@ -557,6 +557,7 @@ PlasmoidItem {
         if (dragSource == null) {
             root.draggingFinished();
             root.appletAbilities.launchers.syncLauncherOrder();
+            root.appletAbilities.launchers.validateSyncedLaunchersOrder();
 
             // Force indexer bindings to re-evaluate after being frozen
             // (updateIsBlocked=true) during drag.  The QML engine may not
@@ -1358,6 +1359,10 @@ PlasmoidItem {
 
                     //more of a trouble
                     moveDisplaced: Transition {
+                        // A new separator has no settled row geometry until
+                        // its deferred move finishes. Animate user reorders
+                        // without animating the temporary append position.
+                        enabled: root.tasksExtendedManager.launchersToBeMovedCount === 0
                         NumberAnimation { properties: "x,y"; duration: root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.large; easing.type: Easing.Linear }
                     }
 

@@ -7,6 +7,8 @@ import QtQuick
 import "./privates" as Ability
 
 Ability.LaunchersPrivate {
+    id: hostLaunchers
+    readonly property var launcherSynchronizer: root.layoutsManager ? root.layoutsManager.syncedLaunchers : null
     //! do not update during dragging/moving applets inConfigureAppletsMode
     updateIsBlocked: (root.dragOverlay && root.dragOverlay.pressed)
                      || layouter.appletsInParentChange
@@ -29,11 +31,20 @@ Ability.LaunchersPrivate {
     }
 
     function addSyncedLauncher(senderId, group, groupId, launcherUrl) {
-        layoutsManager.syncedLaunchers.addLauncher(layoutName,
+        hostLaunchers.launcherSynchronizer.addLauncher(layoutName,
                                                    senderId,
                                                    group,
                                                    groupId,
                                                    launcherUrl);
+    }
+
+    function addSyncedLauncherAtPosition(senderId, group, groupId, launcherUrl, position) {
+        hostLaunchers.launcherSynchronizer.addLauncherAtPosition(layoutName,
+                                                             senderId,
+                                                             group,
+                                                             groupId,
+                                                             launcherUrl,
+                                                             position);
     }
 
     function removeSyncedLauncher(senderId, group,groupId, launcherUrl) {

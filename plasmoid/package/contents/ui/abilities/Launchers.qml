@@ -39,6 +39,7 @@ Item {
     property string groupId: view && group === LatteCore.types.UniqueLaunchers ? String(view.groupId) + "#" + appletIndex : ""
 
     property Item bridge: null
+    readonly property var launcherHost: bridge ? bridge.launchers.host : null
     property Item layout: null
     property Item view: null
     property QtObject tasksModel: null
@@ -192,12 +193,24 @@ Item {
 
     function addLauncher(launcherUrl) {
         if (bridge) {
-            bridge.launchers.host.addSyncedLauncher(syncer.clientId,
+            _launchers.launcherHost.addSyncedLauncher(syncer.clientId,
                                                     launchers.group,
                                                     launchers.groupId,
                                                     launcherUrl);
         } else if (addLauncherToModel(launcherUrl)) {
             _launchers.launcherChanged(launcherUrl);
+        }
+    }
+
+    function addLauncherAtPosition(launcherUrl, position) {
+        if (bridge) {
+            _launchers.launcherHost.addSyncedLauncherAtPosition(syncer.clientId,
+                                                              launchers.group,
+                                                              launchers.groupId,
+                                                              launcherUrl,
+                                                              position);
+        } else {
+            addLauncher(launcherUrl);
         }
     }
 
@@ -237,7 +250,7 @@ Item {
         }
 
         _launchers.launcherInMoving(separatorName, Math.max(0,pos));
-        addLauncher(separatorName);
+        addLauncherAtPosition(separatorName, Math.max(0,pos));
         return true;
     }
 

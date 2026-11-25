@@ -90,6 +90,8 @@ private Q_SLOTS:
     void appletAlternativesDialogResolvesOutsidePlasmashell();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void newTaskPublishesSlotAfterEntranceSetup();
+    void launcherPositionPendingCoversDelayedMove();
+    void positionedSyncedLauncherRequestsDelayedMove();
     void parabolicItemZoomRecoveryLoadsFromSource();
     void hiddenSpacerRetainsSlotWhileSeparatorStateSettles();
     void taskRemovalDefersGeometryFeedback_data();
@@ -2176,6 +2178,7 @@ Item {
         property bool initialTaskGeometryReady: false
         property bool waitingForTaskRowReplacement: false
         property bool checkingTaskRowReplacement: false
+        property bool waitingForLauncherPosition: false
         property bool )") + slotBinding + QByteArrayLiteral(R"(
         property real zoomLength: 1
         width: visible && occupiesLayoutSlot ? 48 * zoomLength : 0
@@ -2198,6 +2201,121 @@ Item {
     QVERIFY(task->setProperty("zoomLength", 1.0));
     QCOMPARE(host->property("followingX").toReal(), 148.0);
     QCOMPARE(positionChanges.count(), 2);
+
+    QVERIFY(task->setProperty("waitingForLauncherPosition", true));
+    QCOMPARE(host->property("followingX").toReal(), 100.0);
+    QVERIFY(task->setProperty("waitingForLauncherPosition", false));
+    QCOMPARE(host->property("followingX").toReal(), 148.0);
+}
+
+void QmlSmokeTest::launcherPositionPendingCoversDelayedMove()
+{
+    QQmlEngine engine;
+    auto host = createQmlObject(engine, QByteArrayLiteral(R"(
+import QtQuick
+import "plasmoid/package/contents/ui" as Tasks
+Item {
+    id: host
+    property alias manager: manager
+    property int moves: 0
+    property bool firstPending: manager.launcherPositionIsPending("file:///latte-separator1.desktop")
+    property bool pendingDuringMove: false
+    property string moveOrder: ""
+    property QtObject appletAbilities: QtObject {
+        property QtObject launchers: QtObject {
+            signal launcherInRemoving(string launcherUrl)
+            signal launcherInAdding(string launcherUrl)
+            signal launcherInMoving(string launcherUrl, int pos)
+            function syncLauncherOrder() {}
+            function validateSyncedLaunchersOrder() {}
+        }
+    }
+    property QtObject tasksModel: QtObject {
+        function move(from, to) {
+            if (host.moves === 0) {
+                host.pendingDuringMove = host.firstPending;
+            }
+            ++host.moves;
+            host.moveOrder += from + ":" + to + ";";
+        }
+    }
+    Tasks.TasksExtendedManager { id: manager }
+}
+)"), QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/launcher-position-pending.qml")));
+    QVERIFY(host);
+    auto *manager = host->property("manager").value<QObject *>();
+    QVERIFY(manager);
+
+    const QString launcher = QStringLiteral("file:///latte-separator1.desktop");
+    QVERIFY(QMetaObject::invokeMethod(manager, "addLauncherToBeMoved", Q_ARG(QVariant, launcher), Q_ARG(QVariant, 3)));
+    QVERIFY(host->property("firstPending").toBool());
+    QVariant pending;
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, launcher)));
+    QVERIFY(pending.toBool());
+    QVERIFY(QMetaObject::invokeMethod(manager, "moveLauncherToCorrectPos", Q_ARG(QVariant, launcher), Q_ARG(QVariant, 8)));
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, launcher)));
+    QVERIFY(pending.toBool());
+    QTRY_VERIFY((QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, launcher)), !pending.toBool()));
+    QCOMPARE(host->property("moves").toInt(), 1);
+    QVERIFY(host->property("pendingDuringMove").toBool());
+    QVERIFY(!host->property("firstPending").toBool());
+
+    const QString secondLauncher = QStringLiteral("file:///latte-separator2.desktop");
+    const QString thirdLauncher = QStringLiteral("file:///latte-separator3.desktop");
+    QVERIFY(QMetaObject::invokeMethod(manager, "addLauncherToBeMoved", Q_ARG(QVariant, secondLauncher), Q_ARG(QVariant, 4)));
+    QVERIFY(QMetaObject::invokeMethod(manager, "addLauncherToBeMoved", Q_ARG(QVariant, thirdLauncher), Q_ARG(QVariant, 5)));
+    QVERIFY(QMetaObject::invokeMethod(manager, "moveLauncherToCorrectPos", Q_ARG(QVariant, secondLauncher), Q_ARG(QVariant, 9)));
+    QVERIFY(QMetaObject::invokeMethod(manager, "moveLauncherToCorrectPos", Q_ARG(QVariant, thirdLauncher), Q_ARG(QVariant, 10)));
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, secondLauncher)));
+    QVERIFY(pending.toBool());
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, thirdLauncher)));
+    QVERIFY(pending.toBool());
+    QTRY_COMPARE(host->property("moves").toInt(), 3);
+    QCOMPARE(host->property("moveOrder").toString(), QStringLiteral("8:3;9:4;10:5;"));
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, secondLauncher)));
+    QVERIFY(!pending.toBool());
+    QVERIFY(QMetaObject::invokeMethod(manager, "launcherPositionIsPending", Q_RETURN_ARG(QVariant, pending), Q_ARG(QVariant, thirdLauncher)));
+    QVERIFY(!pending.toBool());
+}
+
+void QmlSmokeTest::positionedSyncedLauncherRequestsDelayedMove()
+{
+    QQmlEngine engine;
+    auto launchers = createQmlObject(engine, QByteArrayLiteral(R"(
+import QtQuick
+Item {
+    property int group: 1
+    property string groupId: "group"
+    property int added: 0
+    property int syncs: 0
+    property int movingPosition: -1
+    signal launcherInMoving(string launcherUrl, int pos)
+    signal launcherChanged(string launcherUrl)
+    onLauncherInMoving: function(launcherUrl, pos) { movingPosition = pos; }
+    function addLauncherToModel(launcher) { ++added; return true; }
+    function syncLaunchers() { ++syncs; }
+}
+)"), QUrl(QStringLiteral("qrc:/positioned-syncer-launchers.qml")));
+    QVERIFY(launchers);
+    auto plasmoid = createQmlObject(engine, QByteArrayLiteral("import QtQml\nQtObject { property int id: 42 }"), QUrl(QStringLiteral("qrc:/syncer-plasmoid.qml")));
+    QVERIFY(plasmoid);
+    QQmlContext context(engine.rootContext());
+    context.setContextProperty(QStringLiteral("_launchers"), launchers.get());
+    context.setContextProperty(QStringLiteral("plasmoid"), plasmoid.get());
+    context.setContextProperty(QStringLiteral("bridge"), QVariant::fromValue(static_cast<QObject *>(nullptr)));
+    context.setContextProperty(QStringLiteral("tasksModel"), launchers.get());
+
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(
+        LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/abilities/launchers/Syncer.qml")));
+    std::unique_ptr<QObject> syncer(component.create(&context));
+    QVERIFY(syncer);
+    QVERIFY(QMetaObject::invokeMethod(syncer.get(), "addSyncedLauncherAtPosition",
+                                      Q_ARG(QVariant, 1),
+                                      Q_ARG(QVariant, QStringLiteral("file:///latte-separator1.desktop")),
+                                      Q_ARG(QVariant, 3)));
+    QCOMPARE(launchers->property("movingPosition").toInt(), 3);
+    QCOMPARE(launchers->property("added").toInt(), 1);
+    QCOMPARE(launchers->property("syncs").toInt(), 0);
 }
 
 void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
@@ -3228,6 +3346,7 @@ void QmlSmokeTest::launchersGeometryRestoreSchedulingLoadsFromSource()
     }
 
     QVERIFY(object);
+    context.setContextProperty(QStringLiteral("launchers"), object.get());
     QVERIFY(object->setProperty("tasksModel", QVariant::fromValue(static_cast<QObject *>(&tasksModel))));
 
     const QJSValue identityFactory = engine.evaluate(QStringLiteral("(backend) => (url) => backend.launcherIdentity(url)"));
@@ -3343,6 +3462,8 @@ Item {
     id: bridge
     property var indexer: null
     property var receivedOrder: []
+    property int receivedPosition: -1
+    property string receivedSeparator: ""
     property QtObject launchers: QtObject {
         property Item client
         property QtObject host: QtObject {
@@ -3351,6 +3472,13 @@ Item {
             function removeAbilityClient(client) {}
             function validateSyncedLaunchersOrder(sender, group, groupId, order) {
                 bridge.receivedOrder = order
+            }
+            function addSyncedLauncher(sender, group, groupId, launcher) {
+                bridge.receivedSeparator = launcher
+            }
+            function addSyncedLauncherAtPosition(sender, group, groupId, launcher, position) {
+                bridge.receivedSeparator = launcher
+                bridge.receivedPosition = position
             }
         }
     }
@@ -3374,6 +3502,12 @@ Item {
         QStringLiteral("applications:first.desktop"),
     };
     QCOMPARE(bridge->property("receivedOrder").value<QJSValue>().toVariant().toStringList(), expectedOrder);
+    QVariant separatorAdded;
+    QVERIFY(QMetaObject::invokeMethod(object.get(), "addInternalSeparatorAtPos",
+                                      Q_RETURN_ARG(QVariant, separatorAdded), Q_ARG(QVariant, 3)));
+    QVERIFY(separatorAdded.toBool());
+    QCOMPARE(bridge->property("receivedSeparator").toString(), QStringLiteral("file:///latte-separator1.desktop"));
+    QCOMPARE(bridge->property("receivedPosition").toInt(), 3);
     object.reset();
 }
 

@@ -7,6 +7,7 @@ import QtQuick
 
 Item {
     id:_syncer
+    readonly property var launcherClient: _launchers
     property bool isBlocked: false
     readonly property bool isActive: bridge !== null && bridge.launchers.host !==null
     readonly property int clientId: plasmoid.id
@@ -46,9 +47,20 @@ Item {
 
     //! All following actions are triggered from Main SyncedLaunchers handler
     function addSyncedLauncher(group, launcher) {
-        if (group === _launchers.group && _launchers.addLauncherToModel(launcher)) {
-            _launchers.launcherChanged(launcher);
+        if (group === _syncer.launcherClient.group && _syncer.launcherClient.addLauncherToModel(launcher)) {
+            _syncer.launcherClient.launcherChanged(launcher);
             tasksModel.syncLaunchers();
+        }
+    }
+
+    function addSyncedLauncherAtPosition(group, launcher, position) {
+        if (group === _syncer.launcherClient.group) {
+            _syncer.launcherClient.launcherInMoving(launcher, Math.max(0, position));
+            // The positioning timer commits the order after the move.
+            // Syncing the temporary append order here can reset live delegates.
+            if (_syncer.launcherClient.addLauncherToModel(launcher)) {
+                _syncer.launcherClient.launcherChanged(launcher);
+            }
         }
     }
 

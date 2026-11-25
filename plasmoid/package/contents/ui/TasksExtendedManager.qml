@@ -357,43 +357,26 @@ Item {
         arraysGarbageCollectorTimer.restart();
 
         if (!isLauncherToBeMoved(launcherUrl)) {
-            launchersToBeMoved.push({launcher: launcherUrl, pos: Math.max(0,toPos)});
+            launchersToBeMoved = launchersToBeMoved.concat({launcher: launcherUrl, pos: Math.max(0,toPos)});
             launchersToBeMovedCount++;
         }
     }
 
     function moveLauncherToCorrectPos(launcherUrl, from) {
         if (isLauncherToBeMoved(launcherUrl)) {
-            launchersToBeMovedTimer.from = from;
-            launchersToBeMovedTimer.to = posOfLauncherToBeMoved(launcherUrl);
-            launchersToBeMovedTimer.launcherUrl = launcherUrl
+            launchersToBeMovedTimer.pendingMoves = launchersToBeMovedTimer.pendingMoves.concat({
+                launcherUrl: launcherUrl, from: from, to: posOfLauncherToBeMoved(launcherUrl)
+            });
 
             removeLauncherToBeMoved(launcherUrl);
-            launchersToBeMovedTimer.start();
+            if (!launchersToBeMovedTimer.running) {
+                launchersToBeMovedTimer.start();
+            }
         }
     }
 
     function removeLauncherToBeMoved(launcherUrl) {
-        if (isLauncherToBeMoved(launcherUrl)) {
-            var sLength = launchersToBeMoved.length;
-            var index = -1;
-
-            for (var i=0; i<sLength; ++i) {
-                //!safety checker
-                if (i>=launchersToBeMoved.length)
-                    return -1;
-
-                if (launchersToBeMoved[i].launcher === launcherUrl) {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index > -1) {
-                // console.log("removing launcher to be moved:: "+launcherUrl);
-                launchersToBeMoved.splice(index, 1);
-            }
-        }
+        launchersToBeMoved = launchersToBeMoved.filter(move => move.launcher !== launcherUrl);
     }
 
     function posOfLauncherToBeMoved(launcherUrl) {
@@ -413,6 +396,14 @@ Item {
 
     function isLauncherToBeMoved(launcher) {
         return (posOfLauncherToBeMoved(launcher) >= 0);
+    }
+
+    function launcherPositionIsPending(launcherUrl) {
+        if (isLauncherToBeMoved(launcherUrl)) {
+            return true;
+        }
+
+        return launchersToBeMovedTimer.pendingMoves.some(move => move.launcherUrl === launcherUrl);
     }
 
     function printToBeMovedLaunchers() {
@@ -438,13 +429,17 @@ Item {
     Timer {
         id: launchersToBeMovedTimer
         interval: 50
-        property int from: -1
-        property int to: -1
-
-        property string launcherUrl: ""
+        property var pendingMoves: []
 
         onTriggered: {
-            tasksModel.move(from, to);
+            const nextMove = launchersToBeMovedTimer.pendingMoves[0];
+            // Keep the placeholder out of layout until the model has moved
+            // it. Revealing it at the append position displaces existing rows.
+            tasksModel.move(nextMove.from, nextMove.to);
+            launchersToBeMovedTimer.pendingMoves = launchersToBeMovedTimer.pendingMoves.slice(1);
+            if (pendingMoves.length > 0) {
+                start();
+            }
             delayedLaynchersSyncTimer.start();
         }
     }
@@ -482,7 +477,7 @@ Item {
 
             immediateLaunchers.splice(0, immediateLaunchers.length);
             launchersToBeAdded.splice(0, launchersToBeAdded.length);
-            launchersToBeMoved.splice(0, launchersToBeMoved.length);
+            launchersToBeMoved = [];
             launchersToBeRemoved.splice(0, launchersToBeRemoved.length);
             waitingLaunchers.splice(0, waitingLaunchers.length);
             frozenTasks.splice(0, frozenTasks.length);
