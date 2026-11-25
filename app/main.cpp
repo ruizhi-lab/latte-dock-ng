@@ -1120,8 +1120,6 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg.contains(QStringLiteral("Toolbox not loading, toolbox package is either invalid or disabled."))
         || (msg.contains(QStringLiteral("Could not find required file \"mainscript\" for package \"/usr/share/plasma/plasmoids/org.kde.plasma."))
             && msg.contains(QStringLiteral("should be QList(\"ui/main.qml\")")))
-        || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml"))
-        || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml"))
         || msg.startsWith(QStringLiteral("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0"))
         // Plasma theme SVG rendering — cosmetic only: an SVG element with
         // invalid path data is truncated, and an oversized render request

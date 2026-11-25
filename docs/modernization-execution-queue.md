@@ -283,7 +283,7 @@ post-push Build workflow. No desktop behavior changed.
 | T2-T3 | Remaining Band A checks, approximately 15 per slice | T1 accepted; each slice repeats fixture and current-production proof |
 | T4 | Fix and then gate one R8c check at a time | Review every finding; preserve documented intentional calls |
 | T5 | Band B remaining checks, standalone analyzer, then Band C/unpriced candidates | For each further promotion: individual fixture proof and a measured cost argument; the first Band B check (unchecked optional access) is promoted |
-| A2 | Bounded pre-filter message capture, then one filter family | Established emitter/version evidence; remove temporary instrumentation |
+| A2 | Complete | Pre-filter evidence exposes a real ScrollView binding loop, so only that family is now visible. Controlled injection and popup retest pass; other filters and unrelated warnings retain their behavior |
 | A3 / R6-S3 | Complete | Saved Justify layouts, separators and cross-area dragging passed on both screens. A scoped guard fixes the synchronous order-request recursion found during the retest; four presets pass 68/68 and no new core appeared |
 | P1b | Deferred: environment rerun complete, event latency open | Five valid Release pairs show no CPU/PSS saving and no return of the old outlier. Reopen only with a bounded event-correlated latency seam |
 | P3a | Generation-aware geometry publication design and probe verification | Authoritative completion signal before reducing eight-pass fallback |

@@ -276,6 +276,7 @@ private Q_SLOTS:
     void containmentLayoutAutotestLinksIconThemes();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
     void tasksPublishLauncherOrderWhenDragFinishes();
+    void scrollViewWarningsRemainVisible();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
     void scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize();
     void systrayGuardsInAppletItemPreventLayoutAndInteractionBreakage();
@@ -2867,6 +2868,22 @@ void SourceContractTest::tasksPublishLauncherOrderWhenDragFinishes()
     const int publishOrder = handler.indexOf(QStringLiteral("root.appletAbilities.launchers.validateSyncedLaunchersOrder();"));
     QVERIFY(saveOrder >= 0);
     QVERIFY(publishOrder > saveOrder);
+}
+
+void SourceContractTest::scrollViewWarningsRemainVisible()
+{
+    QFile mainSource(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainSource.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(mainSource.readAll());
+    const int handlerStart = source.indexOf(QStringLiteral("inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)\n{"));
+    const int handlerEnd = source.indexOf(QStringLiteral("configureAboutData"), handlerStart);
+    QVERIFY(handlerStart >= 0);
+    QVERIFY(handlerEnd > handlerStart);
+    const QString handler = source.mid(handlerStart, handlerEnd - handlerStart);
+    QVERIFY(!handler.contains(QStringLiteral("ScrollView.qml")));
+    QVERIFY(!handler.contains(QStringLiteral("ScrollBar.qml")));
+    QVERIFY(handler.contains(QStringLiteral("Toolbox not loading")));
+    QVERIFY(handler.contains(QStringLiteral("Member palette of the object")));
 }
 
 void SourceContractTest::scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing()
