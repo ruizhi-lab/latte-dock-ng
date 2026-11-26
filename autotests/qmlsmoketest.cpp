@@ -4385,7 +4385,9 @@ class MinimizedSectionTestModel : public QStandardItemModel
         Minimized,
         Group,
         WindowIds,
-        LauncherUrl
+        LauncherUrl,
+        ApplicationId,
+        ApplicationName
     };
 
     QHash<int, QByteArray> roleNames() const override
@@ -4396,6 +4398,8 @@ class MinimizedSectionTestModel : public QStandardItemModel
         roles.insert(Group, "IsGroupParent");
         roles.insert(WindowIds, "WinIdList");
         roles.insert(LauncherUrl, "LauncherUrlWithoutIcon");
+        roles.insert(ApplicationId, "AppId");
+        roles.insert(ApplicationName, "AppName");
         return roles;
     }
 
@@ -4422,6 +4426,8 @@ QmlSmokeTest::minimizedSectionTracksGroupedWindows()
         window->setData(true, MinimizedSectionTestModel::Window);
         window->setData(minimized, MinimizedSectionTestModel::Minimized);
         window->setData(QVariantList{ id }, MinimizedSectionTestModel::WindowIds);
+        window->setData(parent->data(MinimizedSectionTestModel::ApplicationId), MinimizedSectionTestModel::ApplicationId);
+        window->setData(parent->data(MinimizedSectionTestModel::ApplicationName), MinimizedSectionTestModel::ApplicationName);
         parent->appendRow(window);
         return window;
     };
@@ -4429,6 +4435,8 @@ QmlSmokeTest::minimizedSectionTracksGroupedWindows()
     auto *group = new QStandardItem(QStringLiteral("Pinned application"));
     group->setData(true, MinimizedSectionTestModel::Group);
     group->setData(QStringLiteral("pinned"), MinimizedSectionTestModel::LauncherUrl);
+    group->setData(QStringLiteral("pinned.application"), MinimizedSectionTestModel::ApplicationId);
+    group->setData(QStringLiteral("Pinned application"), MinimizedSectionTestModel::ApplicationName);
     model.appendRow(group);
     auto *ordinary = addWindow(group, QStringLiteral("ordinary"), false);
     addWindow(group, QStringLiteral("minimized"), true);
@@ -4445,6 +4453,17 @@ QmlSmokeTest::minimizedSectionTracksGroupedWindows()
       { QStringLiteral("onlyFromLaunchers"), false },
     }));
     QVERIFY2(section, qPrintable(component.errorString()));
+    // The active ordinary window follows a minimized sibling in source order.
+    // Its only visible dot must receive index zero.
+    int activeDot = -1;
+    QVERIFY(QMetaObject::invokeMethod(section.get(), "ordinaryActiveWindowIndex", Q_RETURN_ARG(int, activeDot),
+                                      Q_ARG(int, 1), Q_ARG(QVariant, QVariant::fromValue(QVariantList{true, false}))));
+    QCOMPARE(activeDot, 0);
+    const QVariant mixedWindows = QVariantList{true, false, false};
+    QVERIFY(QMetaObject::invokeMethod(section.get(), "ordinaryActiveWindowIndex", Q_RETURN_ARG(int, activeDot),
+                                      Q_ARG(int, 2), Q_ARG(QVariant, mixedWindows)));
+    QCOMPARE(activeDot, 1);
+
     QObject *entries = section->property("orderedWindows").value<QObject *>();
     QVERIFY(entries);
     QTRY_COMPARE(entries->property("count").toInt(), 2);
@@ -4453,6 +4472,19 @@ QmlSmokeTest::minimizedSectionTracksGroupedWindows()
     QTRY_COMPARE(entries->property("count").toInt(), 1);
     ordinary->setData(true, MinimizedSectionTestModel::Minimized);
     QTRY_COMPARE(entries->property("count").toInt(), 2);
+
+    const QJSValue entriesObject = engine.newQObject(entries);
+    const QJSValue firstEntry = entriesObject.property(QStringLiteral("get")).callWithInstance(entriesObject, QJSValueList{ 0 });
+    QVERIFY(!firstEntry.isError());
+    QCOMPARE(firstEntry.property(QStringLiteral("applicationOrdinal")).toInt(), 1);
+    QCOMPARE(firstEntry.property(QStringLiteral("applicationCount")).toInt(), 2);
+    QCOMPARE(firstEntry.property(QStringLiteral("applicationBoundary")).toBool(), true);
+    const QJSValue secondEntry = entriesObject.property(QStringLiteral("get")).callWithInstance(entriesObject, QJSValueList{ 1 });
+    QVERIFY(!secondEntry.isError());
+    QCOMPARE(secondEntry.property(QStringLiteral("applicationKey")).toString(), QStringLiteral("pinned.application"));
+    QCOMPARE(secondEntry.property(QStringLiteral("applicationOrdinal")).toInt(), 2);
+    QCOMPARE(secondEntry.property(QStringLiteral("applicationCount")).toInt(), 2);
+    QCOMPARE(secondEntry.property(QStringLiteral("applicationBoundary")).toBool(), false);
 
     QVERIFY(QMetaObject::invokeMethod(section.get(), "activate", Q_ARG(QVariant, QStringLiteral("minimized"))));
     QCOMPARE(model.activatedWindow, QStringLiteral("minimized"));

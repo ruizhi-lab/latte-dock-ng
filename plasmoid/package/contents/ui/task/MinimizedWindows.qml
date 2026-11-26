@@ -27,6 +27,14 @@ Item {
         return ids && ids.length > 0 && windowsById.has(String(ids[0]));
     }
 
+    function ordinaryActiveWindowIndex(activeIndex: int, minimized: var): int {
+        if (activeIndex < 0 || activeIndex >= minimized.length || minimized[activeIndex])
+            return -1;
+
+        // The ordinary indicator drops minimized slots in source-window order.
+        return activeIndex - minimized.slice(0, activeIndex).filter(hidden => hidden).length;
+    }
+
     function windowFor(id) {
         const window = windowsById.get(id);
         return window && window.windowId === id && window.eligible ? window : null;
@@ -76,8 +84,29 @@ Item {
             known.add(orderedWindows.get(i).windowId);
 
         for (const id of current.keys()) {
-            if (!known.has(id))
-                orderedWindows.append({windowId: id});
+            if (!known.has(id)) {
+                const window = current.get(id);
+                orderedWindows.append({windowId: id, applicationKey: window.applicationKey,
+                    applicationOrdinal: 1, applicationCount: 1, applicationBoundary: true});
+            }
+        }
+
+        const applicationCounts = new Map();
+        for (let i = 0; i < orderedWindows.count; ++i) {
+            const key = current.get(orderedWindows.get(i).windowId).applicationKey;
+            applicationCounts.set(key, (applicationCounts.get(key) || 0) + 1);
+        }
+
+        const applicationOrdinals = new Map();
+        let previousApplicationKey = "";
+        for (let i = 0; i < orderedWindows.count; ++i) {
+            const key = current.get(orderedWindows.get(i).windowId).applicationKey;
+            const ordinal = (applicationOrdinals.get(key) || 0) + 1;
+            applicationOrdinals.set(key, ordinal);
+            orderedWindows.set(i, {applicationKey: key, applicationOrdinal: ordinal,
+                applicationCount: applicationCounts.get(key),
+                applicationBoundary: i === 0 || key !== previousApplicationKey});
+            previousApplicationKey = key;
         }
     }
 
@@ -102,11 +131,18 @@ Item {
         readonly property string windowId: model.WinIdList && model.WinIdList.length > 0
                                            ? String(model.WinIdList[0]) : ""
         readonly property string title: String(model.display || model.AppName || "")
+        readonly property string applicationName: String(model.AppName || "")
+        readonly property string applicationKey: {
+            const identity = String(model.AppId || model.LauncherUrlWithoutIcon
+                                    || model.LauncherUrl || applicationName || "");
+            return identity !== "" ? identity : "window:" + windowId;
+        }
         readonly property var icon: model.decoration || "application-x-executable"
         readonly property bool eligible: model.IsWindow === true && model.IsMinimized === true
                                          && windowId !== "" && (!section.onlyFromLaunchers || pinned)
 
         onWindowIdChanged: refreshTimer.restart()
+        onApplicationKeyChanged: refreshTimer.restart()
         onEligibleChanged: refreshTimer.restart()
         onIndexChanged: refreshTimer.restart()
     }

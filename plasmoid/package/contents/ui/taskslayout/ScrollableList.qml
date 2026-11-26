@@ -19,6 +19,8 @@ Flickable{
     property int thickness:0 // through Binding to avoid binding loops
     property int length:0 // through Binding to avoid binding loops
 
+    required property bool hasMinimizedEntries
+
     property real offset: 0
 
     readonly property bool animationsFinished: !horizontalAnimation.running && !verticalAnimation.running
@@ -143,11 +145,17 @@ Flickable{
 
         var block = !root.autoScrollTasksEnabled && !duringDragging;
 
-        if (block || !contentsExceed || root.tasksCount < 3
-                || (task.itemIndex === appletAbilities.indexer.lastVisibleItemIndex && appletAbilities.parabolic.factor.zoom>1)) {
-            //last task with parabolic effect breaks the autoscolling behavior
+        if (block || !contentsExceed) {
             return;
         }
+
+        // A single grouped row can fill the viewport with minimized entries,
+        // so the ordinary task count must not block dragging through them.
+        // The last-task zoom guard still prevents parabolic animation breakage.
+        const zoomedLastTask = task.itemIndex === appletAbilities.indexer.lastVisibleItemIndex
+                               && appletAbilities.parabolic.factor.zoom > 1;
+        if ((root.tasksCount < 3 && !flickableContainer.hasMinimizedEntries) || zoomedLastTask)
+            return;
 
         var cP = task.mapToItem(scrollableList, 0, 0);
 

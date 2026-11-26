@@ -1158,10 +1158,10 @@ PlasmoidItem {
         // For vertical docks the panel thickness should follow task thickness,
         // not a fixed tiny fallback size.
         width: (icList.orientation === Qt.Horizontal)
-               ? (icList.hasMinimizedEntries ? root.tasksLength : icList.width) + spacing
+               ? icList.width + spacing
                : Math.max(icList.width + spacing, scrollableList.thickness, smallSize)
         height: (icList.orientation === Qt.Vertical)
-                ? (icList.hasMinimizedEntries ? root.tasksLength : icList.height) + spacing
+                ? icList.height + spacing
                 : Math.max(icList.height + spacing, scrollableList.thickness, smallSize)
 
         property int spacing: root.latteBridge ? 0 : root.appletAbilities.metrics.iconSize / 2
@@ -1329,10 +1329,11 @@ PlasmoidItem {
 
         TasksLayout.ScrollableList {
             id: scrollableList
+            hasMinimizedEntries: icList.hasMinimizedEntries
             width: !root.vertical ? length : thickness
             height: root.vertical ? length : thickness
-            contentWidth: icList.hasMinimizedEntries && !root.vertical ? root.tasksLength : icList.width
-            contentHeight: icList.hasMinimizedEntries && root.vertical ? root.tasksLength : icList.height
+            contentWidth: icList.width
+            contentHeight: icList.height
 
             //onCurrentPosChanged: console.log("CP :: "+ currentPos + " icW:"+icList.width + " rw: "+root.width + " w:" +width);
 
@@ -1386,8 +1387,8 @@ PlasmoidItem {
                     id:icList
                     model: tasksModel
                     readonly property bool hasMinimizedEntries: (root.minimizedWindows?.orderedWindows.count ?? 0) > 0
-                    width: hasMinimizedEntries ? (root.vertical ? scrollableList.thickness : root.width) : 0
-                    height: hasMinimizedEntries ? (root.vertical ? root.height : scrollableList.thickness) : 0
+                    // The shared ListView size bindings include its inline footer.
+                    // Only the outer viewport should move when section entries overflow.
                     interactive: !hasMinimizedEntries
                     orientation: root.vertical ? ListView.Vertical : ListView.Horizontal
                     delegate: Task.TaskItem{
@@ -1424,14 +1425,24 @@ PlasmoidItem {
 
                                 delegate: QtControls.AbstractButton {
                                     id: entry
+                                    required property int index
                                     required property string windowId
+                                    required property int applicationOrdinal
+                                    required property int applicationCount
+                                    required property bool applicationBoundary
                                     readonly property var entryWindow: root.minimizedWindows?.windowFor(windowId) ?? null
+                                    readonly property string displayTitle: {
+                                        const title = entryWindow?.title ?? "";
+                                        const application = entryWindow?.applicationName ?? "";
+                                        return application !== "" && title !== "" && application !== title
+                                                ? application + " — " + title : title;
+                                    }
                                     width: root.vertical ? footer.slotThickness : footer.slotLength
                                     height: root.vertical ? footer.slotLength : footer.slotThickness
                                     enabled: entryWindow !== null && !root.inEditMode && !root.inDraggingPhase
                                     hoverEnabled: true
                                     activeFocusOnTab: true
-                                    Accessible.name: entryWindow?.title ?? ""
+                                    Accessible.name: displayTitle
                                     QtControls.ToolTip.text: Accessible.name
                                     QtControls.ToolTip.delay: hovered ? 400 : 0
                                     QtControls.ToolTip.visible: enabled && (hovered || visualFocus)
@@ -1447,6 +1458,41 @@ PlasmoidItem {
                                         width: root.appletAbilities.metrics.iconSize
                                         height: width
                                         source: entry.entryWindow?.icon ?? "application-x-executable"
+                                    }
+
+                                    Rectangle {
+                                        visible: entry.applicationBoundary && entry.index > 0
+                                        anchors.left: root.vertical ? undefined : parent.left
+                                        anchors.top: root.vertical ? parent.top : undefined
+                                        anchors.horizontalCenter: root.vertical ? parent.horizontalCenter : undefined
+                                        anchors.verticalCenter: root.vertical ? undefined : parent.verticalCenter
+                                        width: root.vertical ? root.appletAbilities.metrics.iconSize / 2 : 1
+                                        height: root.vertical ? 1 : root.appletAbilities.metrics.iconSize / 2
+                                        color: Kirigami.Theme.textColor
+                                        opacity: 0.18
+                                    }
+
+                                    Rectangle {
+                                        visible: entry.applicationCount > 1
+                                        anchors.right: parent.right
+                                        anchors.bottom: parent.bottom
+                                        anchors.margins: 2
+                                        width: Math.max(20, sequenceLabel.implicitWidth + 6)
+                                        height: Math.max(14, root.appletAbilities.metrics.iconSize * 0.3)
+                                        radius: height / 2
+                                        color: Kirigami.Theme.backgroundColor
+                                        border.color: Kirigami.Theme.highlightColor
+                                        border.width: 1
+                                        opacity: 0.95
+
+                                        QtControls.Label {
+                                            id: sequenceLabel
+                                            anchors.centerIn: parent
+                                            padding: 0
+                                            text: entry.applicationOrdinal + "/" + entry.applicationCount
+                                            color: Kirigami.Theme.textColor
+                                            font.pixelSize: Math.max(9, root.appletAbilities.metrics.iconSize * 0.22)
+                                        }
                                     }
 
                                     function publishGeometry() {

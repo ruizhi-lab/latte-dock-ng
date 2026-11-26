@@ -311,7 +311,13 @@ AbilityItem.BasicItem {
     indicator.hasShown: !root.disableAllWindowsFunctionality && taskItem.hasShown
     indicator.windowsCount: !root.disableAllWindowsFunctionality ? Math.max(0, taskItem.windowsCount - taskItem.movedWindowCount) : 0
     indicator.windowsMinimizedCount: !root.disableAllWindowsFunctionality ? Math.max(0, taskItem.windowsMinimizedCount - taskItem.movedWindowCount) : 0
-    indicator.activeWindowIndex: !root.disableAllWindowsFunctionality ? taskItem.activeWindowIndex : -1
+    indicator.activeWindowIndex: {
+        if (root.disableAllWindowsFunctionality)
+            return -1;
+        if (root.minimizedWindows && taskItem.movedWindowCount > 0)
+            return root.minimizedWindows.ordinaryActiveWindowIndex(taskItem.activeWindowIndex, taskItem.windowsMinimizedList);
+        return taskItem.activeWindowIndex;
+    }
     indicator.windowsMinimizedList: !root.disableAllWindowsFunctionality ? (taskItem.movedWindowCount > 0 ? taskItem.windowsMinimizedList.filter(minimized => !minimized)
                                                         : taskItem.windowsMinimizedList) : []
 
