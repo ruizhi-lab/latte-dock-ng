@@ -3415,6 +3415,11 @@ msgstr "Montri nur taskojn de la nuna labortablo"
 msgid "Show only tasks from the current activity"
 msgstr "Montri nur taskojn el la nuna agado"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Montri sekcion de minimumigitaj fenestroj"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

@@ -3586,6 +3586,11 @@ msgstr "Alleen taken van het huidige bureaublad tonen"
 msgid "Show only tasks from the current activity"
 msgstr "Alleen taken van de huidige activiteit tonen"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Sectie met geminimaliseerde vensters tonen"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

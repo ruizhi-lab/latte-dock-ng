@@ -3424,6 +3424,11 @@ msgstr ""
 msgid "Show only tasks from the current activity"
 msgstr ""
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Wotrězk za minimizowane wokna pokazać"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

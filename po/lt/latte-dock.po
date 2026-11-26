@@ -3782,6 +3782,11 @@ msgstr "Rodyti tik esamo darbalaukio užduotis"
 msgid "Show only tasks from the current activity"
 msgstr "Rodyti tik esamos veiklos užduotis"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Rodyti suskleistų langų sekciją"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

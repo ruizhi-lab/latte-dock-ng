@@ -3605,6 +3605,11 @@ msgstr "Показувати лише завдання з поточної ст�
 msgid "Show only tasks from the current activity"
 msgstr "Показувати тільки завдання з поточного простору дій"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Показати розділ мінімізованих вікон"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

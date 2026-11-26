@@ -3490,6 +3490,11 @@ msgstr "仅显示当前桌面的任务"
 msgid "Show only tasks from the current activity"
 msgstr "仅显示当前活动的任务"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "显示已最小化窗口分区"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

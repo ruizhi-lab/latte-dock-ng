@@ -3575,6 +3575,11 @@ msgstr "Erakutsi uneko mahaigaineko atazak bakarrik"
 msgid "Show only tasks from the current activity"
 msgstr "Erakutsi uneko jarduerako atazak bakarrik"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Erakutsi minimizatutako leihoen atala"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

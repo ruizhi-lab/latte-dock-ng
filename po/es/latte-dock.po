@@ -3587,6 +3587,11 @@ msgstr "Mostrar solo las tareas del escritorio actual"
 msgid "Show only tasks from the current activity"
 msgstr "Mostrar solo las tareas de la actividad actual"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Mostrar la sección de ventanas minimizadas"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

@@ -3785,6 +3785,11 @@ msgstr "Εργασίες μόνο της τρέχουσας επιφάνειας
 msgid "Show only tasks from the current activity"
 msgstr "Εργασίες μόνο της τρέχουσας δραστηριότητας"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Εμφάνιση ενότητας ελαχιστοποιημένων παραθύρων"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

@@ -3589,6 +3589,11 @@ msgstr "Mostra solo i processi del desktop corrente"
 msgid "Show only tasks from the current activity"
 msgstr "Mostra solo i processi dell'attività corrente"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Mostra la sezione delle finestre minimizzate"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

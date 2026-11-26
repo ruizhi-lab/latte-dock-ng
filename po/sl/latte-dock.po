@@ -3594,6 +3594,11 @@ msgstr "Prikaži samo naloge trenutnega namizja"
 msgid "Show only tasks from the current activity"
 msgstr "Prikaži samo naloge trenutne dejavnosti"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Pokaži razdelek pomanjšanih oken"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

@@ -3549,6 +3549,11 @@ msgstr "Visa bara aktiviteter på nuvarande skrivbord"
 msgid "Show only tasks from the current activity"
 msgstr "Visa bara aktiviteter från nuvarande aktivitet"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Visa avsnitt för minimerade fönster"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

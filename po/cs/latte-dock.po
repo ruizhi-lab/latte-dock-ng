@@ -3423,6 +3423,11 @@ msgstr "Zobrazit pouze úlohy z aktuální plochy"
 msgid "Show only tasks from the current activity"
 msgstr "Zobrazit pouze úlohy z aktuální aktivity"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Zobrazit sekci minimalizovaných oken"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

@@ -3604,6 +3604,11 @@ msgstr "Nur Fenster der aktuellen Arbeitsfläche anzeigen"
 msgid "Show only tasks from the current activity"
 msgstr "Nur Fenster der aktuellen Aktivität anzeigen"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Bereich für minimierte Fenster anzeigen"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, fuzzy, kde-format
 #| msgid "Show only tasks from the current screen"

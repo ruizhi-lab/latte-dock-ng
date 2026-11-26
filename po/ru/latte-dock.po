@@ -3597,6 +3597,11 @@ msgstr "Показывать приложения только с текущег
 msgid "Show only tasks from the current activity"
 msgstr "Показывать приложения только из текущей комнаты"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Показывать раздел свёрнутых окон"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

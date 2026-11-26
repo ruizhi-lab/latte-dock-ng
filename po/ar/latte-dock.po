@@ -3542,6 +3542,11 @@ msgstr "أظهر المهمّات من سطح المكتب الحاليّ فقط
 msgid "Show only tasks from the current activity"
 msgstr "أظهر المهمّات من النشاط الحاليّ فقط"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "إظهار قسم النوافذ المصغّرة"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

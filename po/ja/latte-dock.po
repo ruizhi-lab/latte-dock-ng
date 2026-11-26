@@ -3462,6 +3462,11 @@ msgstr "現在のデスクトップのタスクのみ表示"
 msgid "Show only tasks from the current activity"
 msgstr "現在のアクティビティのタスクのみ表示"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "最小化したウィンドウのセクションを表示"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

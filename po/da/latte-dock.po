@@ -3555,6 +3555,11 @@ msgstr "Vis kun opgaver fra det aktuelle skrivebord"
 msgid "Show only tasks from the current activity"
 msgstr "Vis kun opgaver fra den aktuelle aktivitet"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Vis sektion med minimerede vinduer"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"

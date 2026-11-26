@@ -3722,6 +3722,11 @@ msgstr "Ainult aktiivse töölaua ülesannete näitamine"
 msgid "Show only tasks from the current activity"
 msgstr "Ainult aktiivse tegevuse ülesannete näitamine"
 
+#: shell/package/contents/configuration/pages/TasksConfig.qml:238
+#, kde-format
+msgid "Show Minimized Window Section"
+msgstr "Minimeeritud akende jaotise näitamine"
+
 #: shell/package/contents/configuration/pages/TasksConfig.qml:234
 #, kde-format
 msgid "Show only tasks from launchers"
