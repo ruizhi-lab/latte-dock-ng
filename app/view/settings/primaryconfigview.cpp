@@ -82,9 +82,6 @@ PrimaryConfigView::PrimaryConfigView(Latte::View *view)
                 hideConfigWindow();
             }
         });
-
-        connect(m_corona->universalSettings(), &Latte::UniversalSettings::inAdvancedModeForEditSettingsChanged,
-                this, &PrimaryConfigView::syncGeometry);
     }
 
     m_availableScreemGeometryTimer.setSingleShot(true);
@@ -461,15 +458,8 @@ void PrimaryConfigView::syncGeometry()
 
     switch (m_latteView->formFactor()) {
         case Plasma::Types::Horizontal: {
-            if (inAdvancedMode()) {
-                if (qApp->isLeftToRight()) {
-                    xPos = availGeometry.x() + availGeometry.width() - size.width();
-                } else {
-                    xPos = availGeometry.x();
-                }
-            } else {
-                xPos = scrGeometry.center().x() - size.width() / 2;
-            }
+            // Use the same horizontal anchor when the editor changes mode.
+            xPos = scrGeometry.center().x() - size.width() / 2;
 
             if (location == Plasma::Types::TopEdge) {
                 yPos = availGeometry.top();
@@ -495,8 +485,8 @@ void PrimaryConfigView::syncGeometry()
             break;
     }
 
-    // Both basic centering and advanced edge alignment must stay in the same
-    // reserved rectangle that caps QML's viewport, including on offset outputs.
+    // Keep the window in the reserved rectangle that caps the QML viewport,
+    // including on offset outputs.
     xPos = qBound(availGeometry.left(), xPos, qMax(availGeometry.left(), availGeometry.right() + 1 - size.width()));
     yPos = qBound(availGeometry.top(), yPos, qMax(availGeometry.top(), availGeometry.bottom() + 1 - size.height()));
     position = {xPos, yPos};
@@ -632,11 +622,6 @@ void PrimaryConfigView::setSticker(bool blockFocusLost)
         return;
 
     m_blockFocusLost = blockFocusLost;
-}
-
-bool PrimaryConfigView::inAdvancedMode() const
-{
-    return m_corona->universalSettings()->inAdvancedModeForEditSettings();
 }
 
 //!BEGIN borders

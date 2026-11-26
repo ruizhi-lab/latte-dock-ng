@@ -129,8 +129,6 @@ private:
     void setIsReady(bool ready);
     void instantUpdateAvailableScreenGeometry();
 
-    bool inAdvancedMode() const;
-
 private:
     bool m_blockFocusLost{false};
     bool m_blockFocusLostOnStartup{true};

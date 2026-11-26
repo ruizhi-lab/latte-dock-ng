@@ -94,21 +94,28 @@ Loader {
         property real userScaleWidth: 1
         property real userScaleHeight: 1
 
-        // Pages own their natural height independently of the scroll viewport.
-        // Include only the fixed window chrome here: deriving this from the
-        // viewport would feed the applied window height back into itself and
-        // prevent shorter advanced pages from shrinking after a tab switch.
-        readonly property real naturalHeight: (dialog.currentPage ? dialog.currentPage.height : 0)
-                                              + header.implicitHeight + tabBar.implicitHeight + actionButtons.implicitHeight
-                                              + content.spacing * 3 + dialog.units.smallSpacing
-
         onHeightChanged: viewConfig.syncGeometry();
 
         //! applied size in order to not be out of boundaries
         //! width can be between 200px - maxWidth
         //! height can be between 400px - maxHeight
         property int appliedWidth: Math.min(maxWidth, Math.max(200, chosenWidth))
-        property int appliedHeight: Math.min(dialog.maxHeight, Math.max(400, dialog.advancedLevel ? dialog.naturalHeight : dialog.chosenHeight))
+        // Size advanced mode for all its pages so switching tabs cannot move
+        // the dock-anchored window as pages of different heights take focus.
+        readonly property real advancedHeight: {
+            let pageHeight = Math.max(behaviorPage.height, appearancePage.height, effectsPage.height);
+            for (let i = 0; i < tasksRepeater.count; ++i) {
+                const page = tasksRepeater.itemAt(i);
+                if (page)
+                    pageHeight = Math.max(pageHeight, page.height);
+            }
+            return pageHeight + header.implicitHeight + tabBar.implicitHeight + actionButtons.implicitHeight
+                    + content.spacing * 3 + dialog.units.smallSpacing;
+        }
+
+        property int appliedHeight: Math.min(dialog.maxHeight, Math.max(400, dialog.advancedLevel
+                                    ? dialog.userScaleHeight * Math.min(dialog.maxHeight, dialog.advancedHeight)
+                                    : dialog.chosenHeight))
 
         Layout.minimumWidth: width
         Layout.minimumHeight: height

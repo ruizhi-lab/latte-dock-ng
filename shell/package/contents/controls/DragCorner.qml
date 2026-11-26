@@ -85,32 +85,19 @@ Rectangle {
                     differX = curGlobalX - initGlobalX;
                 }
 
-                //! In normal settings mode for horizontal View when dragging the corner the length must be increased two times
-                //! in order to be in the exact position when finished
-                var percentXMultiplier = (!dialog.advancedLevel && plasmoid.formFactor===PlasmaCore.Types.Horizontal ? 2 : 1);
+                // Horizontal docks center the editor on the screen's horizontal axis.
+                var percentXMultiplier = plasmoid.formFactor === PlasmaCore.Types.Horizontal ? 2 : 1;
 
                 var percentX = percentXMultiplier * (differX / initWidth);
                 var newScaleWidth = Math.max(0.35, initScaleWidth + (percentX*initScaleWidth)).toFixed(3);
 
-                var newScaleHeight = dialog.userScaleHeight;
+                var differY = plasmoid.location === PlasmaCore.Types.TopEdge
+                    ? curGlobalY - initGlobalY : initGlobalY - curGlobalY;
 
-                if (!dialog.advancedLevel) {
-                    var differY = 0;
-
-                    if (plasmoid.location !== PlasmaCore.Types.LeftEdge) {
-                        if (plasmoid.location === PlasmaCore.Types.TopEdge) {
-                            differY = curGlobalY - initGlobalY;
-                        } else {
-                            differY = initGlobalY - curGlobalY;
-                        }
-                    } else {
-                        differY = initGlobalY - curGlobalY;
-                    }
-
-                    var percentYMultiplier = (!dialog.advancedLevel && plasmoid.formFactor===PlasmaCore.Types.Vertical ? 2 : 1);
-                    var percentY = percentYMultiplier * (differY / initHeight);
-                    newScaleHeight = Math.max(0.5, initScaleHeight + (percentY*initScaleHeight)).toFixed(3);
-                }
+                // Vertical docks center the editor on the screen's vertical axis.
+                var percentYMultiplier = plasmoid.formFactor === PlasmaCore.Types.Vertical ? 2 : 1;
+                var percentY = percentYMultiplier * (differY / initHeight);
+                var newScaleHeight = Math.max(0.5, initScaleHeight + (percentY * initScaleHeight)).toFixed(3);
 
                 universalSettings.setScreenScales(latteView.positioner.currentScreenName, newScaleWidth, newScaleHeight);
                 dialog.userScaleWidth = newScaleWidth;
