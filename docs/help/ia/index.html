@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ia"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guida Utente de Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Guida Utente de Latte Dock NG</h1><p>Iste instructiones describe le optiones actual. Le modo avantiate, le stilo del dock e le plugins installate pote cambiar le controlos visibile. Le optiones marcate como Avantiate es celate in le editor basic.</p><div class="language-menu"><label for="language-select">Lingua</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html" selected>Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Solmente le guides traducite es listate. Altere linguas de interfacia aperi le guida in anglese.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>In iste pagina</h2><a class="chapter" href="#edit-dock">Editar Dock</a><a class="subsection" href="#behavior">Comportamento</a><a class="subsection" href="#appearance">Apparentia</a><a class="subsection" href="#effects">Effectos</a><a class="subsection" href="#tasks">Tasquetas</a><a class="chapter" href="#configure-latte">Configurar Latte</a><a class="subsection" href="#layouts">Editor de Layouts</a><a class="subsection" href="#layout-details">Detalios del Layout</a><a class="subsection" href="#docks-dialog">Dialogo de Docks</a><a class="subsection" href="#screens-dialog">Dialogo de Screens</a><a class="subsection" href="#preferences">Preferentias</a><a class="subsection" href="#context-menu-actions">Actiones del Menu de Contexto</a><a class="chapter" href="#copies-and-clones">Copias e Clones Independente</a><a class="subsection" href="#create-independent-copy">Crear un copia independente</a><a class="subsection" href="#create-clone">Crear clones</a><a class="subsection" href="#differences">Differentias a vista de oculo</a></nav></aside><main>
+<section id="edit-dock"><h2>Editar Dock</h2><p class="note">Le cambios ha effecto immediatemente. Celer celate le editor; illo non disface le cambios. Fixar mantene le editor aperte. Adder… → Duplicar Dock crea un copia independente de un dock original; Remover remove le dock actual. Cambiar de schedas mantene le fenestra in loco. Le modo avantiate dimensiona le fenestra pro su pagina le plus longe, intra le spatio de schermo disponibile. Le paginas plus longe defila intra le fenestra. Trahe le angulo de redimensionamento pro ajustar le dimension del fenestra in ambe modos de editing.</p>
+<p class="note">Le modo avantiate revela plus controlos. Optiones marcate Avantiate es celate in le editor basic.</p>
+<h3 id="behavior">Comportamento</h3>
+<p class="note">Visibilitate, retardo, actiones, comportamento de item, spatio flottante e optiones de ambiente pro iste dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilitate</td></tr>
+<tr><td>Ecran / Location</td><td>Selige le ecran e le bordo pro iste dock. Con multiple ecrans, 'Sur Tote le Ecrans' e 'Sur Tote le Ecrans Secundari' crea clones ligate. Vide Copias Independente e Clones.</td></tr>
+<tr><td>Alineamento</td><td>Positona le dock along le bordo del ecran. Le alineamento de items controla ubi le widgets se trova intra le dock.</td></tr>
+<tr><td>Sempre Visibile</td><td>Mantene le dock visibile e reserva spatio de scriptorio ubi le gestor de fenestras lo supporta.</td></tr>
+<tr><td>Celar Automaticamente</td><td>Cela le dock usque le cursor attinge su area de activation.</td></tr>
+<tr><td>Evitar Active</td><td>Cela quando le fenestra active tocca le area del dock, e monstra le dock quando le cursor entra.</td></tr>
+<tr><td>Evitar Maximate</td><td>Cela solmente quando un fenestra maximate es active sur iste ecran, e monstra le dock quando le cursor entra.</td></tr>
+<tr><td>Evitar Tote le Fenestras</td><td>Cela quando alcun fenestra tocca le area del dock, e monstra le dock quando le cursor entra.</td></tr>
+<tr><td>Fenestras Vade Sub</td><td>Mantene le dock super le fenestras; le fenestras pote esser placiate sub illo.</td></tr>
+<tr><td>Fenestras Pote Cooperir</td><td>Permitte que le fenestras cooperi le dock. Le dock veni in prime plano quando le cursor attinge su bordo de ecran.</td></tr>
+<tr><td>Fenestras Sempre Cooperi</td><td>Mantene le fenestras super le dock in omne momento; le dock resta detra illes.</td></tr>
+<tr class="group"><td colspan="2">Retardo</td></tr>
+<tr><td>Retardo / Monstrar / Celar</td><td>Defini le tempore de expecta ante monstrar o celar, in millisecondes. Retardos plus longe reduce le activation accidental.</td></tr>
+<tr class="group"><td colspan="2">Actiones</td></tr>
+<tr><td>Tracia <span class="advanced">Avantiate</span></td><td>Selige qual actiones de area vacue del fenestra active seque: Fenestra Active del Ecran Currente o Fenestra Active de Tote le Ecrans.</td></tr>
+<tr><td>Button Sinistre / Traher Fenestra Active <span class="advanced">Avantiate</span></td><td>Activa le trahimento ab le spatio vacue del dock pro mover o maximizar/restaurar le fenestra active tracciate.</td></tr>
+<tr><td>Button Medie / Clausura Fenestra Active <span class="advanced">Avantiate</span></td><td>Activa le clic mediate sur le spatio vacue del dock pro clauder le fenestra active tracciate.</td></tr>
+<tr><td>Rota del mouse <span class="advanced">Avantiate</span></td><td>Selige que face le rota sur le spatio vacue del dock: Nulle Action, Cycler inter Desktops, Cycler inter Activitates, Cycler inter Tareas, o Cycler e Minimizar Tareas.</td></tr>
+<tr class="group"><td colspan="2">Elementos</td></tr>
+<tr><td>Tooltipes de titulo magre al passar le cursor</td><td>Monstra tooltipes de titulo de widget compacte. Le previews de fenestras de tasca es controllate separatemente per le action de Hover del tasca.</td></tr>
+<tr><td>Zoom de widgets al passar le cursor</td><td>Permite que le widgets face zoom con le dock. Disactiva isto pro mantener le icones de widget nitide; le icones de tasca e le launchers ancora face zoom.</td></tr>
+<tr><td>Expande popup per rota del mouse</td><td>Rota sur un widget supportate pro monstrar o celar su popup.</td></tr>
+<tr><td>Adjusta le dimension automaticamente quando necessari</td><td>Reduce le elementos quando illos excede le longe disponibile e cresce los de novo quando illos cabe.</td></tr>
+<tr><td>Activar basate sur position global shortcuts</td><td>Permite que le global shortcuts basate sur position activa le elementos de iste dock. Solmente un dock per layout debe usar isto.</td></tr>
+<tr class="group"><td colspan="2">Flottante</td></tr>
+<tr><td>Usa sempre le spatio flottante pro interaction del usator <span class="advanced">Avantiate</span></td><td>Include le spatio flottante in le area usate pro le interaction con widgets e fenestras.</td></tr>
+<tr><td>Celar le spatio flottante pro fenestras maximisate <span class="advanced">Avantiate</span></td><td>Remover le spatio flottante quando un fenestra maximisate require le bordo del schermo.</td></tr>
+<tr><td>Retardar le occultation del spatio flottante usque le mouse parti <span class="advanced">Avantiate</span></td><td>Attendere que le cursor parti ante celar le spatio, pro evitar clics accidental sur items proxime.</td></tr>
+<tr><td>Specular le spatio flottante quando illo es monstrate <span class="advanced">Avantiate</span></td><td>In le modo Sempre Visibile, specular le spatio sur le latere opposite del dock.</td></tr>
+<tr class="group"><td colspan="2">Ambiente</td></tr>
+<tr><td>Elevar al cambio de scriptorio <span class="advanced">Avantiate</span></td><td>Revelar temporaneamente le dock quando le scriptorio virtual cambia. Isto non es usate per Sempre Visibile o Fenestras Sub.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Apparentia</h3>
+<p class="note">Margines, Colores, Radio/Umbra, Adjustamentos Dynamic de Longitude, Visibilitate Dynamic e Exceptiones require le modo Avantiate.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Items</td></tr>
+<tr><td>Stilo del Dock</td><td>Elige Classic o Modern pro aplicar un predefinition. In ambe stilos, usa le interruptores sub Stilo del Dock pro definir independentemente le arrangemento del items, le fundo contornate, le spatio minime inter items, le spatio flottante automatic e le indicadores de taska compacte.</td></tr>
+<tr><td>Mantener le items del dock insimul</td><td>Usar un gruppo pro le items del dock, includente quando le alineamento del dock es Justificar.</td></tr>
+<tr><td>Usar le fundo interne con un contorno</td><td>Usar le fundo predefinite con un contorno e stilisation pro su spatio, angulos rotunde e umbra.</td></tr>
+<tr><td>Usar un spatio minime inter items plus large</td><td>Augmentar le spatio minime circa le items del dock. Le valores plus grande definite con le controlos de margine ancora se applica.</td></tr>
+<tr><td>Usar un spatio fluttuante automatic</td><td>Calcular un spatio ab le bordo del schermo basate sur le dimension del icono quando un valor specific de spatio non es definite.</td></tr>
+<tr><td>Usar indicadores de task compacte</td><td>Usar le disposition compacte pro le indicadores de task de Latte. Selige le forma del indicator in Effectos.</td></tr>
+<tr><td>Restaurar Preset</td><td>Le button al fundo de Editar Dock restaura immediatemente Comportamento, Apparentia, Effectos e tote le schedas de Tasks al preset de Dock incluse in le stilo Classic/Modern actual, includente optiones celate per le modo Advance. Le schermo, le bordo del dock, le lanciatore e le widgets es conservate. Alineamento, visibilitate e retardos es reinitialisate. Le compartimento de lanciatore retorna al gruppo local predefinite, retinente un copia del lista effective de lanciatore; le listas compartite de altere docks remane inalterate. Colores personalisate e substitutiones de indicator es reinitialisate. Le preset combina le modello Default Dock incluse con le valores predefinite del schema de configuration. Isto es separate de simplemente cambiar le Stilo de Dock. Classic disactiva le cinque interruptores de apparentia sub Stilo de Dock per predefinition. Modern los activa. Ambes presets usa le mesme valores predefinite pro le optiones restante.</td></tr>
+<tr><td>Dimension absolute / Dimension relative</td><td>Definir le dimension del icono in pixels o como un parte del schermo. Le dimension relative es utile in configurationes de alte-DPI o multi-schermo.</td></tr>
+<tr><td>Zoom al passar le cursor</td><td>Definir quanto le items cresce sub le cursor.</td></tr>
+<tr class="group"><td colspan="2">Longitude</td></tr>
+<tr><td>Maxime / Minime / Offset</td><td>Definir le longitude maxime e minime del dock e mover lo along le bordo del schermo.</td></tr>
+<tr><td>Adjustamentos Dynamic de Longitude <span class="advanced">Advance</span></td><td>Maximizar le longe del pannello in presentia de fenestras maximizate: extender le dock al longe complete quando un fenestra maximizate es presente. Le fundo debe esser activate.</td></tr>
+<tr class="group"><td colspan="2">Margines</td></tr>
+<tr><td>Margines / Longe / Spissor / Spatio flottante <span class="advanced">Avantiate</span></td><td>Definir le margine externe along le dock, le margine trans su spissor, e le spatio inter le dock e le bordo del schermo.</td></tr>
+<tr><td>Spatio ab fenestras maximizate (px) <span class="advanced">Avantiate</span></td><td>Reservar un additional 0–128 pixels inter le fenestras e iste dock in modo Sempre Visibile. Predefinite: 0. Iste es separate ab le spatio flottante del bordo del schermo e se adde a qualque spatio specular; modos de occultamento automatic non reserva iste spatio.</td></tr>
+<tr class="group"><td colspan="2">Colores</td></tr>
+<tr><td>Colores / Paletta <span class="advanced">Avantiate</span></td><td>Elige Colores del Tema Plasma, Colores Obscur, Colores Clar, Colores Personalisate del Layout, Inverse, o Colores Intelligent Basate Super le Fundo del Desktop. Colores Personalisate del Layout usa le schema de colores del layout; Intelligent seque le tapete de muros.</td></tr>
+<tr><td>Usar color de fundo personalisate / Color de die <span class="advanced">Avantiate</span></td><td>Superscribe le fundo de iste dock con un color eligite; le contrasto del texto se ajusta automaticamente. Disactivate per predefinite. Le palettas derivate del fenestra e le paletta Plasma pro applets expandite retene prioritate. Le opacitate resta un configuration separate del fundo.</td></tr>
+<tr><td>Cambiar colores de fundo per hora del die / Color de nocte / Die comencia (hora local) / Nocte comencia (hora local) <span class="advanced">Avantiate</span></td><td>Optionalmente alternar inter duo colores personalisate usante horas local de 24 horas. Valores predefinite: die 07:00, nocte 19:00. Le hora de initio es inclusive. Le intervallus pote passar le medianocte; le horas equal mantene le color de die durante tote le die. Disactivar le schedula mantene le color de die. Le horologio es verificate cata secunda, includite post le resume.</td></tr>
+<tr class="group"><td colspan="2">Fundal</td></tr>
+<tr><td>Fundal</td><td>Fundal es un interruptor on/off. Quando activate, usa le controlos infra pro fixar le spissor, opacitate, radio e umbra.</td></tr>
+<tr><td>Opacitate / Opacitate Ocupate</td><td>Fixar le opacitate del fundal. Le mesme cursor es appellate Opacitate Ocupate quando celar le fundal quando non es necessari e preferer un fundal opace quando tocca un fenestra es ambes activate. Def. restaoura le valor predefinite del thema.</td></tr>
+<tr><td>Radio / Umbra <span class="advanced">Avantiate</span></td><td>Fixar le radio del angulos del fundal e le dimension del umbra. Def. usa le valor predefinite del thema.</td></tr>
+<tr><td>Blur / Umbras / Contorno / Tote le Angulos <span class="advanced">Avantiate</span></td><td>Activar le blur del fundal, le umbra del fundal, le contorno e le angulos rotunde. Tote le Angulos es disponibile solmente pro certain geometrias flottante/justificate.</td></tr>
+<tr class="group"><td colspan="2">Visibilitate Dynamic</td></tr>
+<tr><td>Preferer un fundal opace quando tocca un fenestra <span class="advanced">Avantiate</span></td><td>Remover le transparentia del fundal durante que un fenestra tocca le dock.</td></tr>
+<tr><td>Celar le fundal quando non es necessari <span class="advanced">Avantiate</span></td><td>Celar le fundal excepte quando un fenestra tocca le dock o le fundal del scriptorio es occupate.</td></tr>
+<tr><td>Celar le umbra del fundal pro fenestras maximisate <span class="advanced">Avantiate</span></td><td>Celar le umbra del fundal durante que un fenestra maximisate active tocca le dock.</td></tr>
+<tr class="group"><td colspan="2">Exceptiones</td></tr>
+<tr><td>Preferer fundo e colores de Plasma pro applets expandite<span class="advanced">Avantiate</span></td><td>Usar un fundo opac in stilo Plasma e colores de Plasma durante que le popup de widget es expandite.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effectos</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Umbra</td></tr>
+<tr><td>Umbra</td><td>Activar o disactivar le umbras del widget. Le Dimension e Opacitate es disactivate quando le umbras es disactivate.</td></tr>
+<tr><td>Dimension / Opacitate</td><td>Definir le dimension e le opacitate del umbra del widget.</td></tr>
+<tr><td>Color predefinite / Color del thema / color personalisate</td><td>Eliger le color predefinite del umbra, un color del paletta del thema, o cliccar le quadrato de color pro eliger un color personalisate.</td></tr>
+<tr class="group"><td colspan="2">Animationes</td></tr>
+<tr><td>Animationes / x1 / x2 / x3</td><td>Activar o disactivar tote le animationes del dock. x1 es velocitate normal, x2 es plus lente, x3 es le plus lente.</td></tr>
+<tr class="group"><td colspan="2">Indicatores</td></tr>
+<tr><td>Indicatores</td><td>Activar o disactivar le indicatores de activitate. Quando activate, eliger le indicator Latte o un plugin de indicator personalisate; le optiones specific del plugin appare in su scheda.</td></tr>
+<tr><td>Usar punctos in stilo macOS</td><td>Le indicator Latte usa punctos in stilo macOS per predefinition quando le indicatores de activitate compacte es activate in Apparentia. Disactivar Usar punctos in stilo macOS in Effectos pro eliger manualmente Linea o Punctos.</td></tr>
+<tr><td>Usar colores del icono del application</td><td>Optionalmente colorar le indicatores de activitate con le color dominante de cata icono de application, ajustate pro le contrasto con le fundo. Eliger Linea pro sublineas colorate. Disactivate per predefinition; le applets retene le colores del paletta.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Activitates</h3>
+<p>Le lancitores de task comencia a reordinar se in altere docks que comparti le lista de lancitores post que tu lassa cader le icone. Le ordine pote require un momento pro stabilisar se. Le spatios de separation resta in loco quando le dock recipient salve le nove ordine. Traxer un app jam fixate conserva su lancitor existente, includente quando ille lancitor seque le application predefinite del systema. Le nove separationes occupa spatio un vice que illos attinge le spatio seligite.</p>
+<p>Quando tu adde o traxa un widget al latere de un separation al bordo del area de task o del tray de systema, le widget va al exterior del separation. Le separation resta proxime al area de task o al tray.</p>
+<p>Quando tu fixa un app ab le menu de application, su icone appare ante omne separationes al fin del lista de task. Le separation dextre pertine al gruppo fixate, dunque le apps currente que non es fixate appare ultra illo.</p>
+<p>Le spacio de task resta highlightate e le icone remane visibile durante que tu lo traxa pro reordinar le tasks. Quando un nove task glissa intra, le dock comencia a reservar su spacio ab le dimension initial del animation.</p>
+<p class="note">Insignias, Animationes, Scrolling, Actiones e alcun optiones de Interaction/Filtros require le modo Advance. Monstrar solmente le lancitores e celar omne le tasks disactiva le actiones e filtros relate al fenestras.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Illo que illo controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insignias</td></tr>
+<tr><td>Notificationes ab le tasks <span class="advanced">Advance</span></td><td>Monstrar le contages de notificationes non legite sur le icones de task.</td></tr>
+<tr><td>Information de progresso pro le tasks <span class="advanced">Advance</span></td><td>Monstrar insignias de progresso, per exemplo durante que Dolphin copia files.</td></tr>
+<tr><td>Audio in reproduction ab le taskas <span class="advanced">Avantiate</span></td><td>Monstrar un insignia de audio pro applicationes que reproduce sono. Le correspondente preferite identificatores explicite de desktop/application. Information generic de processo de navigator non es sufficient pro identificar un PWA particular; flussos ambigue es lassate non assignate anstatt de dar controlos de audio a applicationes non relate. Applicationes Electron independente pote ancora correspondere a lor proprie processo de audio. Le stato de reproduction e le activitate de output celant le flussos in pausa mesmo quando le application mantene su connexion de audio aperte. Sin stato de reproductor, un silentio breve es tolerate durante circa un secundo.</td></tr>
+<tr><td>Color prominente pro insignia de notification <span class="advanced">Avantiate</span></td><td>Usar un insignia de notification plus forte, usualmente rubie. Require Notificationes ab le taskas.</td></tr>
+<tr><td>Cambiar volumine quando facer scroll super le insignia de audio <span class="advanced">Avantiate</span></td><td>Cliccar le insignia de audio pro mutar/de-mutar, o facer scroll super illo pro cambiar le volumine. Require Audio in reproduction ab le taskas.</td></tr>
+<tr class="group"><td colspan="2">Interaction</td></tr>
+<tr><td>Le lanciatore es addite solmente in le applet de taskas actual</td><td>Adder le lanciatore deposite solmente a iste widget de taskas, non como widget separate o a altere widgets de taskas.</td></tr>
+<tr><td>Actiones de fenestra in le menu de contexto <span class="advanced">Avantiate</span></td><td>Monstrar actiones specific de fenestra in le menu de contexto del taska.</td></tr>
+<tr><td>Le fenestra de preview se comporta como popup <span class="advanced">Avantiate</span></td><td>Aperir le previews como un popup anstatt de un tooltip. Le action de Hover debe requirer le previews; isto solmente cambia como illos es monstrate.</td></tr>
+<tr><td>Basate sur position, le vices curte se applica solmente al taskos actual<span class="advanced">Avantiate</span></td><td>Limitar le vices curte global basate sur position a iste widget de taskos.</td></tr>
+<tr class="group"><td colspan="2">Filtros</td></tr>
+<tr><td>Monstrar solmente le taskos del schermo actual</td><td>Monstrar le fenestras del schermo de iste dock.</td></tr>
+<tr><td>Monstrar solmente le taskos del scriptorio actual</td><td>Monstrar le fenestras del scriptorio virtual actual.</td></tr>
+<tr><td>Monstrar le Section de Fenestras Minificate</td><td>Disactivate per default. Monstra le fenestras minificate como icone individual post le taskos ordinari. Passa le cursor o focalisa un icone pro su application e titulo de fenestra, e activa lo pro restaurar le fenestra. Quando un application ha plure fenestras minificate, un parve insigna monstra le sequentia de cata fenestra e le total pro ille application. Le section seque le filtros de taskos e comparti le scrolling de overflow de taskos. Activar Scrolling pro attinger le fenestras foras del schermo usante tu action configurate de rota del mus o de passage del cursor al bordo. Le modo solmente-lanciador lo celar.</td></tr>
+<tr><td>Monstrar solmente le taskos del lanciator <span class="advanced">Avantiate</span></td><td>Monstrar le fenestras solmente pro le applicationes jam in le lista del lanciator.</td></tr>
+<tr><td>Monstrar solmente le lanciatores e celar tote le taskos <span class="advanced">Avantiate</span></td><td>Monstrar le icones del lanciator e celar le taskos in execution. Isto anque disactiva le actiones e filtros relate al fenestras.</td></tr>
+<tr><td>Monstrar solmente le taskos grupate pro le mesme application <span class="advanced">Avantiate</span></td><td>Gruppar le fenestras del mesme application per default.</td></tr>
+<tr class="group"><td colspan="2">Animationes</td></tr>
+<tr><td>Facir saltar le lanciatores quando activate <span class="advanced">Avantiate</span></td><td>Animar le lanciatores quando illes es activate.</td></tr>
+<tr><td>Facir saltar le taskos que require attention <span class="advanced">Avantiate</span></td><td>Animar le taskos que require attention.</td></tr>
+<tr><td>Glissar intra e foras le fenestras individual <span class="advanced">Avantiate</span></td><td>Animar nove fenestras singule e claudite.</td></tr>
+<tr><td>Tasque grupate facer saltar lor nove fenestras <span class="advanced">Avantiate</span></td><td>Animar un nove fenestra intra un gruppo de tasque.</td></tr>
+<tr><td>Tasque grupate facer glissar foras lor fenestras claudite <span class="advanced">Avantiate</span></td><td>Animar un fenestra claudite intra un gruppo de tasque.</td></tr>
+<tr class="group"><td colspan="2">Lanciatores</td></tr>
+<tr><td>Gruppo Unice</td><td>Dar a iste widget de tasque su proprie lista de lanciatores.</td></tr>
+<tr><td>Gruppo de Layout</td><td>Compartir lanciatores con widgets de tasque in le mesme layout. Iste button es monstrate solmente quando le dock jam usa Gruppo de Layout.</td></tr>
+<tr><td>Gruppo Global</td><td>Compartir lanciatores con widgets de tasque in tote le layouts.</td></tr>
+<tr class="group"><td colspan="2">Scrolling</td></tr>
+<tr><td>Scrolling <span class="advanced">Avantiate</span></td><td>Activar scrolling quando le tasque excede le spatio disponibile. Isto functiona con ambes presets de dock, includente quando 'Mantener items del dock insimul' es activate.</td></tr>
+<tr><td>Manual <span class="advanced">Avantiate</span></td><td>Eliger Scrolling Disactivate, Solmente Scrolling Vertical/Horizontal, o Scrolling Horizontal e Vertical. Le option de direction unic depende del orientation del dock.</td></tr>
+<tr><td>Automatic <span class="advanced">Avantiate</span></td><td>Activar o disactivar le scrolling automatic.</td></tr>
+<tr class="group"><td colspan="2">Actiones</td></tr>
+<tr><td>Clic Sinistre <span class="advanced">Avantiate</span></td><td>Action pro un clic sinistre sur un tasca: Nihil, Clauder Fenestra o Gruppo, Nove Instantia, Minimizar/Restaurar, Cycler Inter Tasque, Alternar Gruppare de Tasque, Presentar Fenestras, Previsualisar Fenestras, Evidentiar Fenestras, o Previsualisar e Evidentiar Fenestras.</td></tr>
+<tr><td>Clic Medie <span class="advanced">Avantiate</span></td><td>Action pro un clic medie sur un tasca. Le optiones es le mesme que pro Clic Sinistre.</td></tr>
+<tr><td>Passar Super <span class="advanced">Avantiate</span></td><td>Actiones de passar super: Nihil, Previsualisar Fenestras, Evidentiar Fenestras, o Previsualisar e Evidentiar Fenestras. Le tooltips de titulo de tasca es controllate in Comportamento.</td></tr>
+<tr><td>Rota <span class="advanced">Avantiate</span></td><td>Actiones del rota: Nihil, Cycler inter Tascas, o Cycler e Minimizar Tascas.</td></tr>
+<tr><td>Modifier + clic <span class="advanced">Avantiate</span></td><td>Tene Shift, Ctrl, Alt o Meta e clicca sinistre, medie o dextre pro executar un action additional. Selige le modifier, le button e le action; isto es separate del actiones principal supra.</td></tr>
+</tbody></table></div>
+<p class="note">Le filtro de activitate actual es celate in Plasma 6 proque le supporto de KActivities es non fidibile.</p></section><section id="configure-latte"><h2>Configurar Latte</h2><p class="note">Le Editor de Layoutos managea layoutos e lor docks. Preferentias controla le comportamento del application integre. Applicar salva le cambios pendente in le scheda actual; Reinitialisar restaura le stato salvate de ille scheda; Restaurar Predefinite prepara le valores predefinite pro revision. Screens... managea le referentias de schermo salvate.</p>
+<h3 id="layouts">Editor de Layoutos</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr><td>Un sol layout a omne tempore</td><td>Usar un sol layout pro omne activitates.</td></tr>
+<tr><td>Plure layoutos basate sur activitates</td><td>Assignar differente layoutos a activitates; plure layoutos pote restar cargate.</td></tr>
+<tr><td>Cambiar</td><td>Activar le layout seligite. Prima applica le cambios pendente; Latte non cambiara con cambios non salvate.</td></tr>
+<tr><td>Activitates...</td><td>Aperir le gestor de Activitates de Plasma. Usa le columna Activitates o Activate pro assignar iste layout a activitates.</td></tr>
+<tr><td>Nove / Duplicar / Remover</td><td>Crear, copiar o remover un layout. Duplicar hic copia le layout integre, non un dock individual. Le layoutos active e blocate non pote esser removite.</td></tr>
+<tr><td>Activate</td><td>Assignar iste layout a un o plure activitates pro que le Activitates de Plasma pote activar lo. Monstrate solmente in le modo de plure layoutos.</td></tr>
+<tr><td>Solmente Leger</td><td>Protege le configuration del disposition ab modificationes.</td></tr>
+<tr><td>Detalios...</td><td>Aperi le dialog de detalios del disposition pro icono, colores personalisate, margine de popup e visibilitate del menu de contexto.</td></tr>
+<tr><td>Dockes...</td><td>Aperi le lista de dockes pro iste disposition: nomine, schermo, bordo, alineamento, widgets includite, e nove/duplicar/remover/importar/exportar.</td></tr>
+<tr><td>Importar... / Exportar...</td><td>Importa un disposition ab un file local o le KDE Store; exporta lo pro backup o como un modello. File → Importar Configuration / Exportar Configuration mane un backup complete del application.</td></tr>
+<tr><td>Nomine / In Menu / Activitates</td><td>Le lista de dispositiones ha columnas Nomine, In Menu e Activitates. Edita Nomine e Activitates directemente in le lista; In Menu controla si le disposition appare in le menu de Dispositiones del dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalios del Disposition</h3>
+<p>Aperi con Editor de Dispositiones → Detalios... pro editar le disposition seligite.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr><td>Disposition</td><td>Selige qual disposition editar.</td></tr>
+<tr><td>Icono</td><td>Selige un icono pro le disposition. Le button de clarar lo remove.</td></tr>
+<tr><td>Colores Personalisate</td><td>Selige un file de schema de colores personalisate pro iste disposition.</td></tr>
+<tr><td>Margine de PopUp</td><td>Fixa le margine usate per le popups del disposition; disactivate significa usar le predefinite.</td></tr>
+<tr><td>Monstrar in le menu de contexto de dispositiones quando possibile</td><td>Monstra iste disposition in le menu de Dispositiones del dock quando le activitate actual lo permitte.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialog de Dockes</h3>
+<p>Aperi con Editor de Dispositiones → Dockes... pro gerer le dockes in le disposition seligite.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Columnas</td></tr>
+<tr><td>Nomine</td><td>Nomine del dock. Duplo-clic pro renominar lo.</td></tr>
+<tr><td>Schermo</td><td>Le schermo al qual le dock pertine, includente Primary, All Screens e All Secondary Screens.</td></tr>
+<tr><td>Bordo</td><td>Le bordo del schermo usate per le dock.</td></tr>
+<tr><td>Alineamento</td><td>Alineamento del dock along su bordo.</td></tr>
+<tr><td>Include</td><td>Widgets e subcontenimentos includite in le dock. Iste columna es solmente pro lectura.</td></tr>
+<tr class="group"><td colspan="2">Buttones</td></tr>
+<tr><td>Nove</td><td>Crear un dock ab un modello.</td></tr>
+<tr><td>Duplicar</td><td>Crear un copia independente del dock seligite, o un altere clone si le dock seligite es un clone.</td></tr>
+<tr><td>Remover</td><td>Remover le dock seligite. Le clones es removite con lor original.</td></tr>
+<tr><td>Importar...</td><td>Importar un dock ab un file de modello local.</td></tr>
+<tr><td>Exportar...</td><td>Exportar le dock seligite pro backup o como un modello. Le dialogo de modello permitte seliger qual configurationes de widget includer; exclude widgets con datos personal como contos de e-mail o calendario.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialogo de Schermos</h3>
+<p>Aperir con File → Screens... pro purgar le referentias de schermo salvate per Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr><td>Lista de schermos</td><td>Lista le referentias de schermo salvate in Latte, includente le schermos que non es plus connectite.</td></tr>
+<tr><td>Seliger schermos obsolete</td><td>Marcar solmente le schermos que non existe plus. Le schermos active e le schermos usate per un layout non pote esser removite.</td></tr>
+<tr><td>Deseleger Tote</td><td>Vacuar le selection ante seliger un altere gruppo.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferentias</h3>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr><td>Monstrar fenestra informative pro activation automatic de layouts</td><td>Monstrar un fenestra de information quando un layout se activa automaticamente.</td></tr>
+<tr><td>Effecto Parabolic / Parve / Medie / Grande</td><td>Definir le dispersion global del zoom al passar le cursor super le items vicin.</td></tr>
+<tr><td>Activar le auto-initio durante le initio</td><td>Initiar Latte quando tu apere session.</td></tr>
+<tr><td>Usar stilo 3D pro insignias de notification e de shortcut</td><td>Usar un stilo dimensional pro insignias de notification e de shortcut.</td></tr>
+<tr><td>Pressar e tener ⌘ pro monstrar insignias de shortcut</td><td>Disactivate per default. Tene le clave Meta pro circa un secunda pro monstrar docks celate e le insignias de shortcut de lor taskas e widgets; release le clave pro celar los de novo. Con le configurationes predefinite de Plasma, su proprie launcher anque se aperi quando Meta es release; cambia ille shortcut in System Settings si tu non vole isto.</td></tr>
+<tr><td>Influentia del margine de spissor</td><td>Selige quanto le margines de spissor del items affecta le disposition: 0%, 50% o 100%.</td></tr>
+<tr><td>Informar le desktop de Plasma pro spatio de desktop disponibile</td><td>Publicar le spatio de desktop disponibile a Plasma pro que pannellos e fenestras pote usar lo.</td></tr>
+<tr><td>Menu de Contexto / Actiones...</td><td>Selige qual actiones del menu de contexto del dock es sempre monstrate. Actiones excluse es disponibile solmente in modo de modification.</td></tr>
+<tr><td>Ecrans / retardo de reaction pro cambios</td><td>Defini quanto tempore Latte expecta ante de reagir a cambios de ecran, in millisecondos. Augmenta lo si le hardware reporta transitiones instabile.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Actiones del Menu de Contexto</h3>
+<p>Aperi con Preferentias → Menu de Contexto → Actiones... pro selige qual actiones del dock es sempre visibile.</p>
+<div class="table-wrap"><table><thead><tr><th>Option in le fenestra</th><th>Que illo controla</th></tr></thead><tbody>
+<tr><td>Accessibile sempre</td><td>Actiones in iste lista es monstrate in le menu de contexto del dock in omne momento.</td></tr>
+<tr><td>Accessibile solmente in modo de modification</td><td>Le actiones in iste lista appare solmente durante que le dock es editate. Move actiones inter le listas pro cambiar isto.</td></tr>
+<tr><td>Move inter listas</td><td>Selige un action e usa le buttones de flecha pro mover lo. Reinitialisar e Restaurar Predefinite restaura le gruppo predefinite.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Copias Independente e Clones</h2><p class="note">Un duplicato e un clone appare similar sur le schermo ma se comporta differentemente. Un duplicato es un nove dock independente. Un clone es le mesme dock monstrate sur un altere schermo. Selige basate sur si tu vole configurar iste dock separatamente.</p>
+<h3 id="create-independent-copy">Crear un copia independente</h3>
+<p>Usa qualcunque de iste methodos sur le dock original, non sur un clone:</p>
+<ul><li>Clicca con le button dextra sur le dock e selige <strong>Duplicar Dock</strong>.</li><li>Aperi <strong>Editar Dock</strong> e selige <strong>Adder… → Duplicar Dock</strong>.</li><li>Aperi <strong>Configurar Latte → Editor de Layouts → Docks…</strong>, selige le dock, e selige <strong>Duplicar</strong>.</li></ul>
+<p>Le copia recipe nove IDs de dock e de widget e copia le configurationes actual un vice. Post isto, tu pote cambiar su schermo, bordo, dimension, apparentia, comportamento, widgets e launchers independentemente. Es un entry separate in le layout e pote esser removite con <strong>Remover Dock</strong>.</p>
+<p>Duplicar un clone ab le dialogo Docks crea un altere clone del mesme original, non un dock independente. Pro construer un dock independente ab un clone, prime aperi <strong>Editar Dock Original…</strong> e duplica le original.</p>
+<p>Si le original usa <strong>Global Group</strong>, le copia anque lo usa e comparti launchers. Selige <strong>Unique Group</strong> sur le copia si tu vole un lista de launcher separate. <strong>Layout Group</strong> es disponibile solmente quando le dock jam lo usa.</p>
+<h3 id="create-clone">Crear clones</h3>
+<p>Le clones es create per le modo de schermo de un dock original, non per <strong>Duplicar Dock</strong>:</p>
+<ul><li><strong>Editar Dock → Schermo → In Omne Schermos</strong>: le original resta in le schermo principal, e Latte crea un clone in cata schermo secundari.</li><li><strong>Editar Dock → Schermo → In Omne Schermos Secundari</strong>: le original resta in un schermo secundari, e Latte crea clones in le restante schermos secundari.</li></ul>
+<p>Latte crea e remove clones automaticamente quando le disposition del schermo cambia. Pro remover clones, fixa le original de novo a <strong>In Schermo Principal</strong> o a un schermo specific. Un clone non ha un entry <strong>Remover Dock</strong> in su menu de contexto; usa <strong>Editar Dock Original…</strong> ibi pro configurar lo.</p>
+<p>Aperir le editor ab un clone sempre aperi le parametros del dock original, proque le clones comparti le configuration del dock. Le parametros del widget cambiate in un clone actualisa anque le original.</p>
+<h3 id="differences">Differentias a vista de oculo</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspecto</th><th>Copia independente</th><th>Clone</th></tr></thead><tbody>
+<tr><td>Create per</td><td>Duplicar Dock</td><td>Schermo → In Omne Schermos o In Omne Schermos Secundari</td></tr>
+<tr><td>Identitate</td><td>Nove IDs de dock e widget</td><td>Un vista ligate del dock original</td></tr>
+<tr><td>Parametros</td><td>Copiate un vice, postea independente</td><td>Compartite: editar le original actualisa cata clone; le parametros del widget cambiate in un clone actualisa anque le original</td></tr>
+<tr><td>Schermo e bordo</td><td>Pote esser cambiate independentemente</td><td>Seque le original; non pote esser movite o redimensionate separatamente</td></tr>
+<tr><td>Lanciatores</td><td>Copiate al creation; compartition posterior solmente per Grupo de Layout o Grupo Global</td><td>Sempre specula le original</td></tr>
+<tr><td>Menu de contexto</td><td>Actiones complete del dock, includente Duplificar e Remover</td><td>Monstra Editar Dock Original…; Duplificar, Mover, Exportar e Remover es celate</td></tr>
+<tr><td>Como remover</td><td>Remover Dock</td><td>Restaurar le original a un sol schermo</td></tr>
+</tbody></table></div>
+<p><strong>Colores del icono del widget:</strong> <strong>Usar Colores del Tema de Iconos</strong>in le menu de contexto de un widget impide que Latte colora le icono de ille widget. Le configuration es salvate per widget: le clones lo comparti con le original. Un copia independente conserva le valor que habeva quando esseva create e pote modificar lo separatamente.</p></section></main></div><footer>Latte Dock NG · Documentation offline. Le linguas de interfacie non disponibile retorna al anglese.</footer></body></html>

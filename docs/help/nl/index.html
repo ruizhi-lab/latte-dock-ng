@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Gebruikershandleiding</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Gebruikershandleiding</h1><p>Deze instructies beschrijven de huidige opties. Geavanceerde modus, dock-stijl en geïnstalleerde plug-ins kunnen bepalen welke bedieningselementen zichtbaar zijn. Opties gemarkeerd als Geavanceerd zijn verborgen in de basis-editor.</p><div class="language-menu"><label for="language-select">Taal</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html" selected>Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Alleen vertaalde handleidingen worden weergegeven. Andere interface-talen openen de Engelse handleiding.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Op deze pagina</h2><a class="chapter" href="#edit-dock">Dock bewerken</a><a class="subsection" href="#behavior">Gedrag</a><a class="subsection" href="#appearance">Weergave</a><a class="subsection" href="#effects">Effecten</a><a class="subsection" href="#tasks">Taken</a><a class="chapter" href="#configure-latte">Latte configureren</a><a class="subsection" href="#layouts">Layout-editor</a><a class="subsection" href="#layout-details">Layoutdetails</a><a class="subsection" href="#docks-dialog">Dock-dialoog</a><a class="subsection" href="#screens-dialog">Schermen-dialoog</a><a class="subsection" href="#preferences">Voorkeuren</a><a class="subsection" href="#context-menu-actions">Contextmenu-acties</a><a class="chapter" href="#copies-and-clones">Onafhankelijke kopieën en klonen</a><a class="subsection" href="#create-independent-copy">Een onafhankelijke kopie maken</a><a class="subsection" href="#create-clone">Klonen maken</a><a class="subsection" href="#differences">Verschillen in één oogopslag</a></nav></aside><main>
+<section id="edit-dock"><h2>Dock bewerken</h2><p class="note">Wijzigingen worden onmiddellijk toegepast. Sluiten verbergt de editor; het maakt wijzigingen niet ongedaan. Vastzetten houdt de editor open. Toevoegen… → Dock dupliceren maakt een onafhankelijke kopie van een origineel dock; Verwijderen verwijdert het huidige dock. Het wisselen tussen tabbladen houdt het venster op zijn plaats. Geavanceerde modus past de venstergrootte aan voor de langste pagina, binnen de beschikbare schermruimte. Langere pagina's scrollen binnen het venster. Sleep de vergrotingshoek om de venstergrootte aan te passen in beide bewerkingsmodi.</p>
+<p class="note">De geavanceerde modus toont meer bedieningselementen. Opties die als Geavanceerd zijn gemarkeerd, worden verborgen in de basis-editor.</p>
+<h3 id="behavior">Gedrag</h3>
+<p class="note">Zichtbaarheid, vertraging, acties, itemgedrag, zwevende tussenruimte en omgevingsinstellingen voor dit dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het bestuurt</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Zichtbaarheid</td></tr>
+<tr><td>Scherm / Locatie</td><td>Kies het scherm en de rand voor dit dock. Bij meerdere schermen maken 'Op alle schermen' en 'Op alle secundaire schermen' gekoppelde klonen. Zie Onafhankelijke kopieën en klonen.</td></tr>
+<tr><td>Uitlijning</td><td>Positioneer het dock langs de schermrand. De uitlijning van items bepaalt waar widgets binnen het dock worden geplaatst.</td></tr>
+<tr><td>Altijd zichtbaar</td><td>Houd het dock zichtbaar en reserveer bureaubladruimte waar de window manager dit ondersteunt.</td></tr>
+<tr><td>Automatisch verbergen</td><td>Verberg het dock totdat de cursor het activeringsgebied bereikt.</td></tr>
+<tr><td>Actief venster ontwijken</td><td>Verbergen wanneer het actieve venster het dockgebied raakt, en het dock tonen wanneer de cursor binnenkomt.</td></tr>
+<tr><td>Gemaximaliseerd venster ontwijken</td><td>Alleen verbergen wanneer een gemaximaliseerd venster actief is op dit scherm, en het dock tonen wanneer de cursor binnenkomt.</td></tr>
+<tr><td>Alle vensters ontwijken</td><td>Verbergen wanneer een venster het dockgebied raakt, en het dock tonen wanneer de cursor binnenkomt.</td></tr>
+<tr><td>Vensters gaan eronder</td><td>Houd het dock boven vensters; vensters kunnen eronder worden geplaatst.</td></tr>
+<tr><td>Vensters kunnen bedekken</td><td>Laat vensters het dock bedekken. Het dock komt naar voren wanneer de cursor de schermrand bereikt.</td></tr>
+<tr><td>Vensters bedekken altijd</td><td>Houd vensters altijd boven het dock; het dock blijft erachter.</td></tr>
+<tr class="group"><td colspan="2">Vertraging</td></tr>
+<tr><td>Vertraging / Tonen / Verbergen</td><td>Stel in hoe lang er gewacht wordt voordat iets wordt weergegeven of verborgen, in milliseconden. Langere vertragingen verminderen onbedoelde activering.</td></tr>
+<tr class="group"><td colspan="2">Acties</td></tr>
+<tr><td>Volg <span class="advanced">Geavanceerd</span></td><td>Kies welke actieve venster-acties op lege ruimte worden gevolgd: Actief venster van huidig scherm of Actief venster van alle schermen.</td></tr>
+<tr><td>Linkermuisknop / Sleep actief venster <span class="advanced">Geavanceerd</span></td><td>Schakel slepen vanaf lege dockruimte in om het gevolgde actieve venster te verplaatsen of te maximaliseren/herstellen.</td></tr>
+<tr><td>Middelste muisknop / Sluit actief venster <span class="advanced">Geavanceerd</span></td><td>Schakel middelste muisknop op lege dockruimte in om het gevolgde actieve venster te sluiten.</td></tr>
+<tr><td>Muiswiel <span class="advanced">Geavanceerd</span></td><td>Kies wat het muiswiel doet boven lege dockruimte: Geen actie, Wissel tussen bureaubladen, Wissel tussen activiteiten, Wissel tussen taken, of Wissel en minimaliseer taken.</td></tr>
+<tr class="group"><td colspan="2">Items</td></tr>
+<tr><td>Dunne titeltooltips bij hoveren</td><td>Toon compacte widget-titeltooltips. Taakvenstervoorbeelden worden apart beheerd door de taak-Hover-actie.</td></tr>
+<tr><td>Widgets vergroten bij hoveren</td><td>Sta toe dat widgets met het dock meevergroten. Schakel dit uit om widgetpictogrammen scherp te houden; taakpictogrammen en launchers worden nog steeds vergroot.</td></tr>
+<tr><td>Popup uitbreiden via muiswiel</td><td>Scroll over een ondersteunde widget om de popup te tonen of te verbergen.</td></tr>
+<tr><td>Grootte automatisch aanpassen wanneer nodig</td><td>Verklein items wanneer ze de beschikbare lengte overschrijden en vergroot ze weer wanneer ze passen.</td></tr>
+<tr><td>Activeer op basis van positie globale sneltoetsen</td><td>Sta toe dat op positie gebaseerde globale sneltoetsen de items van dit dock activeren. Slechts één dock per lay-out moet dit gebruiken.</td></tr>
+<tr class="group"><td colspan="2">Zwevend</td></tr>
+<tr><td>Gebruik altijd zwevende tussenruimte voor gebruikersinteractie <span class="advanced">Geavanceerd</span></td><td>Neem de zwevende ruimte op in het gebied dat wordt gebruikt voor widget- en vensterinteractie.</td></tr>
+<tr><td>Verberg zwevende ruimte voor gemaximaliseerde vensters <span class="advanced">Geavanceerd</span></td><td>Verwijder de zwevende ruimte wanneer een gemaximaliseerd venster de schermrand nodig heeft.</td></tr>
+<tr><td>Vertraag het verbergen van de zwevende ruimte totdat de muis <span class="advanced">Geavanceerd</span></td><td>Wacht tot de aanwijzer de ruimte verlaat voordat deze wordt verborgen, om onbedoelde klikken op nabijgelegen items te voorkomen.</td></tr>
+<tr><td>Spiegel zwevende ruimte wanneer deze wordt weergegeven <span class="advanced">Geavanceerd</span></td><td>Spiegel in de modus Altijd zichtbaar de ruimte aan de tegenovergestelde zijde van het dock.</td></tr>
+<tr class="group"><td colspan="2">Omgeving</td></tr>
+<tr><td>Tonen bij wijziging van bureaublad <span class="advanced">Geavanceerd</span></td><td>Toon het dock tijdelijk wanneer het virtuele bureaublad verandert. Dit wordt niet gebruikt door Altijd zichtbaar of Vensters onderaan.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Weergave</h3>
+<p class="note">Marges, Kleuren, Radius/Schaduw, Dynamische lengteaanpassingen, Dynamische zichtbaarheid en Uitzonderingen vereisen de Geavanceerde modus.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Items</td></tr>
+<tr><td>Dock-stijl</td><td>Kies Klassiek of Modern om een voorinstelling toe te passen. In beide stijlen kunt u met de schakelaars onder Dock-stijl onafhankelijk de itemindeling, omrande achtergrond, minimale itemafstand, automatische zwevende ruimte en compacte taakindicatoren instellen.</td></tr>
+<tr><td>Dock-items bij elkaar houden</td><td>Gebruik één groep voor dock-items, ook wanneer de dockuitlijning Uitvullen is.</td></tr>
+<tr><td>Gebruik de ingezette achtergrond met een omtrek</td><td>Gebruik de voorinstelling achtergrond met een omtrek en opmaak voor de tussenruimte, afgeronde hoeken en schaduw.</td></tr>
+<tr><td>Gebruik bredere minimale itemafstand</td><td>Vergroot de minimale tussenruimte rond dock-items. Grotere waarden die met de marge-regelaars zijn ingesteld, blijven van toepassing.</td></tr>
+<tr><td>Gebruik een automatische zwevende tussenruimte</td><td>Bereken een tussenruimte aan de schermrand op basis van de pictogramgrootte wanneer een specifieke tussenruimtewaarde niet is ingesteld.</td></tr>
+<tr><td>Gebruik compacte taakindicatoren</td><td>Gebruik de compacte indeling voor de Latte-taakindicatoren. Kies de vorm van de indicator in Effecten.</td></tr>
+<tr><td>Standaardinstelling herstellen</td><td>De knop onderaan Dock bewerken herstelt onmiddellijk Gedrag, Uiterlijk, Effecten en alle Taak-tabbladen naar de meegeleverde Dock-standaardinstelling voor de huidige Klassieke/Moderne stijl, inclusief opties die verborgen zijn door de Geavanceerde modus. Het scherm, de dockrand, launchers en widgets blijven behouden. Uitlijning, zichtbaarheid en vertragingen worden gereset. Het delen van launchers keert terug naar de standaard lokale groep, terwijl een kopie van de effectieve launcherlijst behouden blijft; gedeelde lijsten van andere docks blijven onveranderd. Aangepaste kleuren en indicatoroverschrijvingen worden gereset. De standaardinstelling combineert het meegeleverde Standaard Dock-sjabloon met de standaardwaarden van het configuratieschema. Dit is afzonderlijk van het wisselen van Dock-stijl. Klassiek schakelt standaard de vijf uiterlijk-schakelaars onder Dock-stijl uit. Modern schakelt ze in. Beide standaardinstellingen gebruiken dezelfde standaardwaarden voor de overige opties.</td></tr>
+<tr><td>Absolute grootte / Relatieve grootte</td><td>Stel de pictogramgrootte in pixels of als een deel van het scherm in. Relatieve grootte is handig bij high-DPI- of meerschermconfiguraties.</td></tr>
+<tr><td>Zoomen bij hover</td><td>Stel in hoeveel items groeien onder de aanwijzer.</td></tr>
+<tr class="group"><td colspan="2">Lengte</td></tr>
+<tr><td>Maximum / Minimum / Verschuiving</td><td>Stel de maximale en minimale lengte van de dock in en verplaats deze langs de schermrand.</td></tr>
+<tr><td>Dynamische lengteaanpassingen <span class="advanced">Geavanceerd</span></td><td>Paneellengte maximaliseren bij gemaximaliseerde vensters: verleng de dock naar volledige lengte wanneer er een gemaximaliseerd venster aanwezig is. De achtergrond moet ingeschakeld zijn.</td></tr>
+<tr class="group"><td colspan="2">Marges</td></tr>
+<tr><td>Marges / Lengte / Dikte / Zwevende tussenruimte <span class="advanced">Geavanceerd</span></td><td>Stel de externe marge langs de dock, de marge over de dikte en de tussenruimte tussen de dock en de schermrand in.</td></tr>
+<tr><td>Tussenruimte van gemaximaliseerde vensters (px) <span class="advanced">Geavanceerd</span></td><td>Reserveer een extra 0–128 pixels tussen vensters en deze dock in de modus 'Altijd zichtbaar'. Standaard: 0. Dit is apart van de zwevende tussenruimte aan de schermrand en komt bovenop elke gespiegelde tussenruimte; modus automatisch verbergen reserveert deze ruimte niet.</td></tr>
+<tr class="group"><td colspan="2">Kleuren</td></tr>
+<tr><td>Kleuren / Palet <span class="advanced">Geavanceerd</span></td><td>Kies Plasma-themakleuren, Donkere kleuren, Lichte kleuren, Aangepaste indelingskleuren, Omgekeerd of Slimme kleuren op basis van bureaubladachtergrond. Aangepaste indelingskleuren gebruikt het kleurenschema van de indeling; Slim volgt het behang.</td></tr>
+<tr><td>Aangepaste achtergrondkleur gebruiken / Dagkleur <span class="advanced">Geavanceerd</span></td><td>Overschrijf de achtergrond van deze dock met een gekozen kleur; tekstcontrast past zich automatisch aan. Standaard uitgeschakeld. Vensterafgeleide paletten en het Plasma-palet voor uitgebreide applets hebben voorrang. Dekking blijft een aparte achtergrondinstelling.</td></tr>
+<tr><td>Achtergrondkleuren wisselen op tijdstip van de dag / Nachtkleur / Dag begint (lokale tijd) / Nacht begint (lokale tijd) <span class="advanced">Geavanceerd</span></td><td>Schakel optioneel tussen twee aangepaste kleuren met behulp van lokale 24-uurs tijden. Standaardwaarden: dag 07:00, nacht 19:00. De starttijd is inclusief. Intervallen kunnen middernacht overschrijden; gelijke tijden houden de dagkleur de hele dag aan. Het uitschakelen van het schema houdt de dagkleur aan. De klok wordt elke seconde gecontroleerd, ook na hervatting.</td></tr>
+<tr class="group"><td colspan="2">Achtergrond</td></tr>
+<tr><td>Achtergrond</td><td>Achtergrond is een aan/uit-schakelaar. Wanneer ingeschakeld, gebruik de onderstaande bedieningselementen om dikte, dekking, straal en schaduw in te stellen.</td></tr>
+<tr><td>Dekking / Drukke Dekking</td><td>Stel de dekking van de achtergrond in. Dezelfde schuifregelaar heet Drukke Dekking wanneer Verberg achtergrond wanneer niet nodig en Geef de voorkeur aan ondoorzichtige achtergrond bij aanraken van een venster beide zijn ingeschakeld. Def. herstelt de standaardwaarde van het thema.</td></tr>
+<tr><td>Straal / Schaduw <span class="advanced">Geavanceerd</span></td><td>Stel de straal van de achtergrondhoeken en de grootte van de schaduw in. Def. gebruikt de standaardwaarde van het thema.</td></tr>
+<tr><td>Vervaging / Schaduwen / Omtrek / Alle Hoeken <span class="advanced">Geavanceerd</span></td><td>Schakel achtergrondvervaging, achtergrondschaduw, omtrek en afgeronde hoeken in. Alle Hoeken is alleen beschikbaar voor bepaalde zwevende/uitgelijnde geometrieën.</td></tr>
+<tr class="group"><td colspan="2">Dynamische Zichtbaarheid</td></tr>
+<tr><td>Geef de voorkeur aan ondoorzichtige achtergrond bij aanraken van een venster <span class="advanced">Geavanceerd</span></td><td>Verwijder de transparantie van de achtergrond terwijl een venster de dock aanraakt.</td></tr>
+<tr><td>Verberg achtergrond wanneer niet nodig <span class="advanced">Geavanceerd</span></td><td>Verberg de achtergrond behalve wanneer een venster de dock aanraakt of de bureaubladachtergrond druk is.</td></tr>
+<tr><td>Verberg achtergrondschaduw voor gemaximaliseerde vensters <span class="advanced">Geavanceerd</span></td><td>Verberg de achtergrondschaduw terwijl een actief gemaximaliseerd venster de dock aanraakt.</td></tr>
+<tr class="group"><td colspan="2">Uitzonderingen</td></tr>
+<tr><td>Voorkeur voor Plasma-achtergrond en -kleuren voor uitgebreide applets<span class="advanced">Geavanceerd</span></td><td>Gebruik een ondoorzichtige Plasma-stijl achtergrond en Plasma-kleuren terwijl widgetpopups zijn uitgebreid.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effecten</h3>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het bestuurt</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Schaduwen</td></tr>
+<tr><td>Schaduwen</td><td>Schakel widgetschaduwen in of uit. Grootte en Dekking zijn uitgeschakeld wanneer schaduwen uit staan.</td></tr>
+<tr><td>Grootte / Dekking</td><td>Stel de grootte en dekking van widgetschaduwen in.</td></tr>
+<tr><td>Standaardkleur / Themakleur / aangepaste kleur</td><td>Kies de standaard schaduwkleur, een kleur uit het themapalet, of klik op het kleurblokje om een aangepaste kleur te kiezen.</td></tr>
+<tr class="group"><td colspan="2">Animaties</td></tr>
+<tr><td>Animaties / x1 / x2 / x3</td><td>Schakel alle dock-animaties in of uit. x1 is normale snelheid, x2 is langzamer, x3 is het langzaamst.</td></tr>
+<tr class="group"><td colspan="2">Indicatoren</td></tr>
+<tr><td>Indicatoren</td><td>Schakel actieve taakindicatoren in of uit. Wanneer ingeschakeld, kies de Latte-indicator of een aangepaste indicatorplug-in; plug-in-specifieke opties verschijnen in het bijbehorende tabblad.</td></tr>
+<tr><td>Gebruik macOS-stijl stippen</td><td>De Latte-indicator gebruikt standaard macOS-stijl stippen wanneer compacte taakindicatoren zijn ingeschakeld in Weergave. Schakel 'Gebruik macOS-stijl stippen' uit in Effecten om handmatig Lijn of Stippen te kiezen.</td></tr>
+<tr><td>Gebruik applicatiepictogramkleuren</td><td>Optioneel kleur taakindicatoren met de dominante kleur van elk applicatiepictogram, aangepast voor achtergrondcontrast. Kies Lijn voor gekleurde onderstrepingen. Standaard uitgeschakeld; applets behouden paletkleuren.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Taken</h3>
+<p>Taaklaunchers beginnen opnieuw te ordenen op andere docks die de launcherlijst delen nadat je het pictogram hebt losgelaten. De volgorde kan even duren voordat deze stabiliseert. Scheidingsgaten blijven op hun plaats wanneer het ontvangende dock de nieuwe volgorde opslaat. Slepen van een al vastgezet app behoudt de bestaande launcher, ook wanneer die launcher de systeemstandaardtoepassing volgt. Nieuwe scheidingen nemen ruimte in zodra ze de geselecteerde opening bereiken.</p>
+<p>Wanneer je een widget toevoegt of sleept naast een scheiding aan de rand van het taakgebied of systeemvak, wordt het widget aan de buitenkant van de scheiding geplaatst. De scheiding blijft naast het taakgebied of systeemvak.</p>
+<p>Wanneer je een app vastzet vanuit het applicatiemenu, verschijnt het pictogram vóór eventuele scheidingen aan het einde van de taaklijst. De rechter scheiding behoort tot de vastgezette groep, dus apps die niet vastgezet zijn maar wel actief zijn, verschijnen daarachter.</p>
+<p>De taaksleuf blijft gemarkeerd en het pictogram blijft zichtbaar terwijl je het sleept om taken te herordenen. Wanneer een nieuwe taak inschuift, begint het dock de sleuf te reserveren vanaf de initiële animatiegrootte.</p>
+<p class="note">Badges, Animaties, Scrollen, Acties en sommige Interactie/Filter-opties vereisen Geavanceerde modus. Alleen launchers tonen en alle taken verbergen schakelt venstergerelateerde acties en filters uit.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het bestuurt</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Badges</td></tr>
+<tr><td>Meldingen van taken <span class="advanced">Geavanceerd</span></td><td>Toon aantal ongelezen meldingen op taakpictogrammen.</td></tr>
+<tr><td>Voortgangsinformatie voor taken <span class="advanced">Geavanceerd</span></td><td>Toon voortgangsbadges, bijvoorbeeld terwijl Dolphin bestanden kopieert.</td></tr>
+<tr><td>Audio afspelen van taken <span class="advanced">Geavanceerd</span></td><td>Toon een audiobadge voor applicaties die geluid afspelen. Overeenkomsten geven de voorkeur aan expliciete desktop-/applicatie-identificatoren. Algemene browserprocesinformatie is niet voldoende om een specifieke PWA te identificeren; meerduidige streams worden niet toegewezen in plaats van ongerelateerde applicaties audiobesturingen te geven. Onafhankelijke Electron-applicaties kunnen nog steeds overeenkomen met hun eigen audioproces. Afspeelstatus en uitvoeractiviteit verbergen gepauzeerde streams, zelfs wanneer de applicatie zijn audioverbinding open houdt. Zonder spelerstatus wordt korte stilte ongeveer één seconde geduld.</td></tr>
+<tr><td>Opvallende kleur voor meldingsbadge <span class="advanced">Geavanceerd</span></td><td>Gebruik een sterkere, meestal rode meldingsbadge. Vereist Meldingen van taken.</td></tr>
+<tr><td>Volume wijzigen bij scrollen over audiobadge <span class="advanced">Geavanceerd</span></td><td>Klik op de audiobadge om te dempen/ontdempelen, of scroll eroverheen om het volume te wijzigen. Vereist Audio afspelen van taken.</td></tr>
+<tr class="group"><td colspan="2">Interactie</td></tr>
+<tr><td>Launchers worden alleen toegevoegd in de huidige taken-applet</td><td>Voeg gedropte launchers alleen toe aan deze taken-widget, niet als afzonderlijke widgets of aan andere taakwidgets.</td></tr>
+<tr><td>Vensteracties in het contextmenu <span class="advanced">Geavanceerd</span></td><td>Toon vensterspecifieke acties in het contextmenu van de taak.</td></tr>
+<tr><td>Voorbeeldvenster gedraagt zich als popup <span class="advanced">Geavanceerd</span></td><td>Open voorbeelden als een popup in plaats van een tooltip. De hover-actie moet voorbeelden opvragen; dit verandert alleen hoe ze worden weergegeven.</td></tr>
+<tr><td>Op basis van positie sneltoetsen alleen toepassen op huidige taken <span class="advanced">Geavanceerd</span></td><td>Beperk positie-gebaseerde globale sneltoetsen tot deze takenwidget.</td></tr>
+<tr class="group"><td colspan="2">Filters</td></tr>
+<tr><td>Toon alleen taken van het huidige scherm</td><td>Toon vensters van het scherm van deze dock.</td></tr>
+<tr><td>Toon alleen taken van het huidige bureaublad</td><td>Toon vensters van het huidige virtuele bureaublad.</td></tr>
+<tr><td>Toon sectie Geminimaliseerde Vensters</td><td>Standaard uitgeschakeld. Toont geminimaliseerde vensters als individuele pictogrammen na de gewone taken. Beweeg over of focus op een pictogram voor de applicatie- en venstertitel, en activeer het om het venster te herstellen. Wanneer een applicatie meerdere geminimaliseerde vensters heeft, toont een kleine badge de volgorde van elk venster en het totaal voor die applicatie. De sectie volgt de taakfilters en deelt het overloop-scrollen van taken. Schakel Scrollen in om vensters buiten beeld te bereiken met uw geconfigureerde muiswiel- of rand-hover-actie. Launcher-only modus verbergt dit.</td></tr>
+<tr><td>Toon alleen taken van launchers <span class="advanced">Geavanceerd</span></td><td>Toon alleen vensters voor applicaties die al in de launcherlijst staan.</td></tr>
+<tr><td>Toon alleen launchers en verberg alle taken <span class="advanced">Geavanceerd</span></td><td>Toon launcher-pictogrammen en verberg lopende taken. Dit schakelt ook venstergerelateerde acties en filters uit.</td></tr>
+<tr><td>Toon alleen gegroepeerde taken voor dezelfde applicatie <span class="advanced">Geavanceerd</span></td><td>Groepeer standaard vensters van dezelfde applicatie.</td></tr>
+<tr class="group"><td colspan="2">Animaties</td></tr>
+<tr><td>Laat launchers stuiteren wanneer ze worden geactiveerd <span class="advanced">Geavanceerd</span></td><td>Animeer launchers wanneer ze worden geactiveerd.</td></tr>
+<tr><td>Laat taken die aandacht nodig hebben stuiteren <span class="advanced">Geavanceerd</span></td><td>Animeer taken die aandacht vragen.</td></tr>
+<tr><td>Schuif enkele vensters in en uit <span class="advanced">Geavanceerd</span></td><td>Nieuwe en gesloten enkelvoudige vensters animeren.</td></tr>
+<tr><td>Gegroepeerde taken laten hun nieuwe vensters stuiteren <span class="advanced">Geavanceerd</span></td><td>Een nieuw venster binnen een taakgroep animeren.</td></tr>
+<tr><td>Gegroepeerde taken schuiven hun gesloten vensters uit <span class="advanced">Geavanceerd</span></td><td>Een gesloten venster binnen een taakgroep animeren.</td></tr>
+<tr class="group"><td colspan="2">Launchers</td></tr>
+<tr><td>Unieke groep</td><td>Geef deze takenwidget zijn eigen launcherlijst.</td></tr>
+<tr><td>Lay-outgroep</td><td>Deel launchers met takenwidgets in dezelfde lay-out. Deze knop wordt alleen weergegeven wanneer de dock al Lay-outgroep gebruikt.</td></tr>
+<tr><td>Globale groep</td><td>Deel launchers met takenwidgets in alle lay-outs.</td></tr>
+<tr class="group"><td colspan="2">Scrollen</td></tr>
+<tr><td>Scrollen <span class="advanced">Geavanceerd</span></td><td>Schakel scrollen in wanneer taken de beschikbare ruimte overschrijden. Dit werkt met beide dock-presets, inclusief wanneer 'Dock-items bij elkaar houden' is ingeschakeld.</td></tr>
+<tr><td>Handmatig <span class="advanced">Geavanceerd</span></td><td>Kies Scrollen uitgeschakeld, Alleen verticaal/horizontaal scrollen, of Horizontaal en verticaal scrollen. De keuze voor één richting hangt af van de dockoriëntatie.</td></tr>
+<tr><td>Automatisch <span class="advanced">Geavanceerd</span></td><td>Schakel automatisch scrollen in of uit.</td></tr>
+<tr class="group"><td colspan="2">Acties</td></tr>
+<tr><td>Linkermuisknop <span class="advanced">Geavanceerd</span></td><td>Actie voor een linkermuisklik op een taak: Geen, Venster of groep sluiten, Nieuwe instantie, Minimaliseren/Herstellen, Door taken bladeren, Taakgroepering schakelen, Vensters presenteren, Vensters voorvertonen, Vensters markeren, of Vensters voorvertonen en markeren.</td></tr>
+<tr><td>Middelste muisknop <span class="advanced">Geavanceerd</span></td><td>Actie voor een middelste muisklik op een taak. De keuzes zijn hetzelfde als voor Linkermuisknop.</td></tr>
+<tr><td>Hover <span class="advanced">Geavanceerd</span></td><td>Hover-acties: Geen, Vensters voorvertonen, Vensters markeren, of Vensters voorvertonen en markeren. Tooltips voor taaktitels worden beheerd in Gedrag.</td></tr>
+<tr><td>Scrollwiel <span class="advanced">Geavanceerd</span></td><td>Acties met het scrollwiel: Geen, Door taken bladeren, of Door taken bladeren en minimaliseren.</td></tr>
+<tr><td>Modifier + klik <span class="advanced">Geavanceerd</span></td><td>Houd Shift, Ctrl, Alt of Meta ingedrukt en klik links, midden of rechts om een extra actie uit te voeren. Kies de modifier, knop en actie; dit is gescheiden van de bovenstaande hoofdacties.</td></tr>
+</tbody></table></div>
+<p class="note">Het filter voor de huidige activiteit is verborgen in Plasma 6 omdat de ondersteuning voor KActivities onbetrouwbaar is.</p></section><section id="configure-latte"><h2>Latte configureren</h2><p class="note">De Layouts Editor beheert lay-outs en hun docks. Voorkeuren regelt het gedrag van de hele applicatie. Toepassen slaat openstaande wijzigingen op in het huidige tabblad; Herstellen herstelt de opgeslagen staat van dat tabblad; Standaardwaarden herstellen bereidt standaardwaarden voor ter beoordeling. Schermen... beheert opgeslagen schermverwijzingen.</p>
+<h3 id="layouts">Layouts Editor</h3>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr><td>Eén lay-out op elk moment</td><td>Gebruik één lay-out voor alle activiteiten.</td></tr>
+<tr><td>Meerdere lay-outs op basis van activiteiten</td><td>Wijs verschillende lay-outs toe aan activiteiten; meerdere lay-outs kunnen geladen blijven.</td></tr>
+<tr><td>Wisselen</td><td>Activeer de geselecteerde lay-out. Pas openstaande wijzigingen eerst toe; Latte schakelt niet over bij niet-opgeslagen wijzigingen.</td></tr>
+<tr><td>Activiteiten...</td><td>Open de Activiteitenbeheerder van Plasma. Gebruik de kolom Activiteiten of Ingeschakeld om deze lay-out toe te wijzen aan activiteiten.</td></tr>
+<tr><td>Nieuw / Dupliceren / Verwijderen</td><td>Maak, kopieer of verwijder een lay-out. Dupliceren hier kopieert de hele lay-out, niet een individueel dock. Actieve en vergrendelde lay-outs kunnen niet worden verwijderd.</td></tr>
+<tr><td>Ingeschakeld</td><td>Wijs deze lay-out toe aan een of meer activiteiten zodat Plasma Activities deze kan activeren. Alleen zichtbaar in modus met meerdere lay-outs.</td></tr>
+<tr><td>Alleen lezen</td><td>Bescherm de lay-outconfiguratie tegen wijzigingen.</td></tr>
+<tr><td>Details...</td><td>Open het dialoogvenster voor lay-outdetails voor pictogram, aangepaste kleuren, pop-upmarge en zichtbaarheid van het contextmenu.</td></tr>
+<tr><td>Docks...</td><td>Open de docklijst voor deze lay-out: naam, scherm, rand, uitlijning, opgenomen widgets, en nieuw/dupliceren/verwijderen/importeren/exporteren.</td></tr>
+<tr><td>Importeren... / Exporteren...</td><td>Importeer een lay-out uit een lokaal bestand of de KDE Store; exporteer deze voor back-up of als sjabloon. Bestand → Configuratie importeren / Configuratie exporteren verzorgt een volledige applicatieback-up.</td></tr>
+<tr><td>Naam / In menu / Activiteiten</td><td>De lay-outlijst heeft kolommen Naam, In menu en Activiteiten. Bewerk Naam en Activiteiten direct in de lijst; In menu bepaalt of de lay-out verschijnt in het Lay-outmenu van de dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Lay-outdetails</h3>
+<p>Open met Lay-outeditor → Details... om de geselecteerde lay-out te bewerken.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr><td>Lay-out</td><td>Kies welke lay-out u wilt bewerken.</td></tr>
+<tr><td>Pictogram</td><td>Kies een pictogram voor de lay-out. De wis-knop verwijdert deze.</td></tr>
+<tr><td>Aangepaste kleuren</td><td>Kies een bestand met een aangepast kleurenschema voor deze lay-out.</td></tr>
+<tr><td>Pop-upmarge</td><td>Stel de marge in die door pop-ups van de lay-out wordt gebruikt; uitgeschakeld betekent dat de standaardwaarde wordt gebruikt.</td></tr>
+<tr><td>Toon in lay-outcontextmenu wanneer mogelijk</td><td>Toon deze lay-out in het Lay-outmenu van de dock wanneer de huidige activiteit dit toestaat.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Docks-dialoogvenster</h3>
+<p>Open met Lay-outeditor → Docks... om de docks in de geselecteerde lay-out te beheren.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolommen</td></tr>
+<tr><td>Naam</td><td>Docknaam. Dubbelklik om deze te hernoemen.</td></tr>
+<tr><td>Scherm</td><td>Het scherm waar het dock bij hoort, inclusief Primair, Alle schermen en Alle secundaire schermen.</td></tr>
+<tr><td>Rand</td><td>Schermrand die door het dock wordt gebruikt.</td></tr>
+<tr><td>Uitlijning</td><td>Uitlijning van het dock langs de rand.</td></tr>
+<tr><td>Bevat</td><td>Widgets en subcontainments die in het dock zijn opgenomen. Deze kolom is alleen-lezen.</td></tr>
+<tr class="group"><td colspan="2">Knoppen</td></tr>
+<tr><td>Nieuw</td><td>Maak een dock aan van een sjabloon.</td></tr>
+<tr><td>Dupliceren</td><td>Maak een onafhankelijke kopie van het geselecteerde dock, of een andere kloon als het geselecteerde dock een kloon is.</td></tr>
+<tr><td>Verwijderen</td><td>Verwijder het geselecteerde dock. Klonen worden verwijderd samen met het origineel.</td></tr>
+<tr><td>Importeren...</td><td>Importeer een dock uit een lokaal sjabloonbestand.</td></tr>
+<tr><td>Exporteren...</td><td>Exporteer het geselecteerde dock voor back-up of als sjabloon. In het sjabloonvenster kunt u kiezen welke widgetinstellingen worden opgenomen; laat widgets met persoonlijke gegevens zoals e-mail- of kalenderaccounts weg.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Schermenvenster</h3>
+<p>Open via Bestand → Schermen... om schermverwijzingen opgeslagen door Latte op te schonen.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr><td>Schermenlijst</td><td>Toont schermverwijzingen die in Latte zijn opgeslagen, inclusief schermen die niet meer zijn aangesloten.</td></tr>
+<tr><td>Selecteer verouderde schermen</td><td>Vink alleen schermen aan die niet meer bestaan. Actieve schermen en schermen die door een lay-out worden gebruikt, kunnen niet worden verwijderd.</td></tr>
+<tr><td>Alles deselecteren</td><td>Wis de selectie voordat u een andere set kiest.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Voorkeuren</h3>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr><td>Toon informatief venster voor automatische activering van lay-outs</td><td>Toon een informatievenster wanneer een lay-out automatisch wordt geactiveerd.</td></tr>
+<tr><td>Parabolisch effect / Klein / Middelgroot / Groot</td><td>Stel de globale spreiding van hover-zoom over aangrenzende items in.</td></tr>
+<tr><td>Schakel automatisch starten in bij het opstarten</td><td>Start Latte wanneer u zich aanmeldt.</td></tr>
+<tr><td>Gebruik 3D-stijl voor meldings- en snelkoppelingsbadges</td><td>Gebruik een dimensionale stijl voor meldings- en snelkoppelingsbadges.</td></tr>
+<tr><td>Houd ⌘ ingedrukt om snelkoppelingsbadges weer te geven</td><td>Standaard uitgeschakeld. Houd de Meta-toets ongeveer een seconde ingedrukt om verborgen docks en de snelkoppelingsbadges van hun taken en widgets weer te geven; laat de toets los om ze weer te verbergen. Met de standaardinstellingen van Plasma opent de eigen launcher ook wanneer Meta wordt losgelaten; wijzig die snelkoppeling in Systeeminstellingen als u dit niet wilt.</td></tr>
+<tr><td>Invloed van diktemarges</td><td>Kies hoeveel de diktemarges van items de lay-out beïnvloeden: 0%, 50% of 100%.</td></tr>
+<tr><td>Informeer Plasma-desktop over beschikbare desktopruimte</td><td>Publiceer beschikbare desktopruimte naar Plasma zodat panelen en vensters deze kunnen gebruiken.</td></tr>
+<tr><td>Contextmenu / Acties...</td><td>Kies welke acties in het contextmenu van het dock altijd worden weergegeven. Acties die niet zijn opgenomen, zijn alleen beschikbaar in de bewerkingsmodus.</td></tr>
+<tr><td>Schermen / reactievertraging voor wijzigingen</td><td>Stel in hoe lang Latte wacht voordat het reageert op schermwijzigingen, in milliseconden. Verhoog dit als hardware onstabiele overgangen meldt.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Acties in contextmenu</h3>
+<p>Open via Voorkeuren → Contextmenu → Acties... om te kiezen welke dock-acties altijd zichtbaar zijn.</p>
+<div class="table-wrap"><table><thead><tr><th>Optie in het venster</th><th>Wat het regelt</th></tr></thead><tbody>
+<tr><td>Altijd toegankelijk</td><td>Acties in deze lijst worden altijd weergegeven in het contextmenu van het dock.</td></tr>
+<tr><td>Alleen toegankelijk in bewerkingsmodus</td><td>Acties in deze lijst verschijnen alleen tijdens het bewerken van het dock. Verplaats acties tussen de lijsten om dit te wijzigen.</td></tr>
+<tr><td>Verplaats tussen lijsten</td><td>Selecteer een actie en gebruik de pijlknoppen om deze te verplaatsen. Reset en Standaardwaarden herstellen herstellen de standaardset.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Onafhankelijke kopieën en klonen</h2><p class="note">Een duplicaat en een kloon zien er op het scherm vergelijkbaar uit, maar gedragen zich anders. Een duplicaat is een nieuw, onafhankelijk dock. Een kloon is hetzelfde dock dat op een ander scherm wordt weergegeven. Kies op basis van of u dit dock afzonderlijk wilt configureren.</p>
+<h3 id="create-independent-copy">Maak een onafhankelijke kopie</h3>
+<p>Gebruik een van deze methoden op het oorspronkelijke dock, niet op een kloon:</p>
+<ul><li>Klik met de rechtermuisknop op het dock en kies <strong>Dock dupliceren</strong>.</li><li>Open <strong>Dock bewerken</strong> en kies <strong>Toevoegen… → Dock dupliceren</strong>.</li><li>Open <strong>Latte configureren → Layout-editor → Docks…</strong>, selecteer het dock en kies <strong>Dupliceren</strong>.</li></ul>
+<p>De kopie ontvangt nieuwe dock- en widget-ID's en kopieert de huidige instellingen eenmalig. Daarna kunt u het scherm, de rand, de grootte, het uiterlijk, het gedrag, de widgets en de launchers onafhankelijk wijzigen. Het is een afzonderlijke vermelding in de layout en kan worden verwijderd met <strong>Dock verwijderen</strong>.</p>
+<p>Het dupliceren van een kloon vanuit het dialoogvenster Docks maakt een andere kloon van hetzelfde origineel, geen onafhankelijk dock. Om een onafhankelijk dock van een kloon te maken, opent u eerst <strong>Origineel dock bewerken…</strong> en dupliceert u het origineel.</p>
+<p>Als het origineel <strong>Globale groep</strong> gebruikt, gebruikt de kopie deze ook en deelt launchers. Kies <strong>Unieke groep</strong> op de kopie als u een afzonderlijke launcherlijst wilt. <strong>Layoutgroep</strong> is alleen beschikbaar wanneer de dock deze al gebruikt.</p>
+<h3 id="create-clone">Klonen aanmaken</h3>
+<p>Klonen worden aangemaakt door de schermmodus van een originele dock, niet door <strong>Dock dupliceren</strong>:</p>
+<ul><li><strong>Dock bewerken → Scherm → Op alle schermen</strong>: het origineel blijft op het primaire scherm, en Latte maakt een kloon op elk secundair scherm.</li><li><strong>Dock bewerken → Scherm → Op alle secundaire schermen</strong>: het origineel blijft op één secundair scherm, en Latte maakt klonen op de overige secundaire schermen.</li></ul>
+<p>Latte maakt en verwijdert klonen automatisch wanneer de schermindeling verandert. Om klonen te verwijderen, stel je het origineel weer in op <strong>Op primair scherm</strong> of op één specifiek scherm. Een kloon heeft geen <strong>Dock verwijderen</strong>-item in het contextmenu; gebruik <strong>Originele dock bewerken…</strong> daar om deze te configureren.</p>
+<p>Als je de editor opent vanuit een kloon, worden altijd de instellingen van de originele dock geopend, omdat klonen de dockconfiguratie delen. Widgetinstellingen die op een kloon zijn gewijzigd, werken ook het origineel bij.</p>
+<h3 id="differences">Verschillen in één oogopslag</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspect</th><th>Onafhankelijke kopie</th><th>Kloon</th></tr></thead><tbody>
+<tr><td>Aangemaakt door</td><td>Dock dupliceren</td><td>Scherm → Op alle schermen of Op alle secundaire schermen</td></tr>
+<tr><td>Identiteit</td><td>Nieuwe dock- en widget-ID's</td><td>Een gekoppelde weergave van de originele dock</td></tr>
+<tr><td>Instellingen</td><td>Eén keer gekopieerd, daarna onafhankelijk</td><td>Gedeeld: het bewerken van het origineel werkt elke kloon bij; widgetinstellingen die op een kloon zijn gewijzigd, werken ook het origineel bij</td></tr>
+<tr><td>Scherm en rand</td><td>Kan onafhankelijk worden gewijzigd</td><td>Volgt het origineel; kan niet afzonderlijk worden verplaatst of in grootte worden aangepast</td></tr>
+<tr><td>Launchers</td><td>Gekopieerd bij aanmaak; latere deling alleen via Layout Group of Global Group</td><td>Spiegel altijd het origineel</td></tr>
+<tr><td>Contextmenu</td><td>Volledige dockacties, inclusief Dupliceren en Verwijderen</td><td>Toont Bewerk origineel dock…; Dupliceren, Verplaatsen, Exporteren en Verwijderen zijn verborgen</td></tr>
+<tr><td>Hoe te verwijderen</td><td>Dock verwijderen</td><td>Stel het origineel terug op één scherm</td></tr>
+</tbody></table></div>
+<p><strong>Widgetpictogramkleuren:</strong> <strong>Gebruik pictogramthemakleuren</strong> in het contextmenu van een widget voorkomt dat Latte het pictogram van dat widget kleurt. De instelling wordt per widget opgeslagen: klonen delen deze met het origineel. Een onafhankelijke kopie behoudt de waarde die deze had bij het aanmaken en kan deze afzonderlijk wijzigen.</p></section></main></div><footer>Latte Dock NG · Offline documentatie. Niet beschikbare interface-talen vallen terug op Engels.</footer></body></html>

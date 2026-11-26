@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía de usuario de Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Guía de usuario de Latte Dock NG</h1><p>Estas instrucciones describen las opciones actuales. El modo avanzado, el estilo del dock y los complementos instalados pueden cambiar qué controles son visibles. Las opciones marcadas como Avanzadas están ocultas en el editor básico.</p><div class="language-menu"><label for="language-select">Idioma</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html" selected>Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Solo se listan las guías traducidas. Otros idiomas de interfaz abren la guía en inglés.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>En esta página</h2><a class="chapter" href="#edit-dock">Editar Dock</a><a class="subsection" href="#behavior">Comportamiento</a><a class="subsection" href="#appearance">Apariencia</a><a class="subsection" href="#effects">Efectos</a><a class="subsection" href="#tasks">Tareas</a><a class="chapter" href="#configure-latte">Configurar Latte</a><a class="subsection" href="#layouts">Editor de Diseños</a><a class="subsection" href="#layout-details">Detalles del Diseño</a><a class="subsection" href="#docks-dialog">Diálogo de Docks</a><a class="subsection" href="#screens-dialog">Diálogo de Pantallas</a><a class="subsection" href="#preferences">Preferencias</a><a class="subsection" href="#context-menu-actions">Acciones del Menú Contextual</a><a class="chapter" href="#copies-and-clones">Copias y Clones Independientes</a><a class="subsection" href="#create-independent-copy">Crear una copia independiente</a><a class="subsection" href="#create-clone">Crear clones</a><a class="subsection" href="#differences">Diferencias de un vistazo</a></nav></aside><main>
+<section id="edit-dock"><h2>Editar Dock</h2><p class="note">Los cambios surten efecto inmediatamente. Cerrar oculta el editor; no deshace los cambios. Fijar mantiene el editor abierto. Añadir… → Duplicar Dock crea una copia independiente de un dock original; Eliminar elimina el dock actual. Cambiar de pestañas mantiene la ventana en su lugar. El modo avanzado ajusta el tamaño de la ventana para su página más larga, dentro del espacio de pantalla disponible. Las páginas más largas se desplazan dentro de la ventana. Arrastre la esquina de redimensionamiento para ajustar el tamaño de la ventana en cualquiera de los modos de edición.</p>
+<p class="note">El modo avanzado revela más controles. Las opciones marcadas como Avanzadas están ocultas en el editor básico.</p>
+<h3 id="behavior">Comportamiento</h3>
+<p class="note">Opciones de visibilidad, retardo, acciones, comportamiento de los elementos, espacio flotante y entorno para este dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilidad</td></tr>
+<tr><td>Pantalla / Ubicación</td><td>Elija la pantalla y el borde para este dock. Con varias pantallas, En todas las pantallas y En todas las pantallas secundarias crean clones vinculados. Consulte Copias independientes y Clones.</td></tr>
+<tr><td>Alineación</td><td>Posicione el dock a lo largo del borde de la pantalla. La alineación de los elementos controla dónde se sitúan los widgets dentro del dock.</td></tr>
+<tr><td>Siempre visible</td><td>Mantenga el dock visible y reserve espacio de escritorio donde el gestor de ventanas lo soporte.</td></tr>
+<tr><td>Ocultar automáticamente</td><td>Oculte el dock hasta que el puntero alcance su área de activación.</td></tr>
+<tr><td>Evitar ventana activa</td><td>Ocultar cuando la ventana activa toca el área del dock, y mostrar el dock cuando el puntero entra.</td></tr>
+<tr><td>Evitar ventana maximizada</td><td>Ocultar solo cuando una ventana maximizada está activa en esta pantalla, y mostrar el dock cuando el puntero entra.</td></tr>
+<tr><td>Evitar todas las ventanas</td><td>Ocultar cuando cualquier ventana toca el área del dock, y mostrar el dock cuando el puntero entra.</td></tr>
+<tr><td>Las ventanas van debajo</td><td>Mantenga el dock por encima de las ventanas; las ventanas pueden colocarse debajo de él.</td></tr>
+<tr><td>Las ventanas pueden cubrir</td><td>Permita que las ventanas cubran el dock. El dock se trae al frente cuando el puntero alcanza su borde de pantalla.</td></tr>
+<tr><td>Las ventanas siempre cubren</td><td>Mantenga las ventanas por encima del dock en todo momento; el dock permanece detrás de ellas.</td></tr>
+<tr class="group"><td colspan="2">Retardo</td></tr>
+<tr><td>Retardo / Mostrar / Ocultar</td><td>Establezca cuánto tiempo esperar antes de mostrar u ocultar, en milisegundos. Los retrasos más largos reducen la activación accidental.</td></tr>
+<tr class="group"><td colspan="2">Acciones</td></tr>
+<tr><td>Seguir <span class="advanced">Avanzado</span></td><td>Elija qué acciones de área vacía de la ventana activa siguen: Ventana activa de la pantalla actual o Ventana activa de todas las pantallas.</td></tr>
+<tr><td>Botón izquierdo / Arrastrar ventana activa <span class="advanced">Avanzado</span></td><td>Habilite arrastrar desde el espacio vacío del dock para mover o maximizar/restaurar la ventana activa rastreada.</td></tr>
+<tr><td>Botón central / Cerrar ventana activa <span class="advanced">Avanzado</span></td><td>Habilite hacer clic con el botón central en el espacio vacío del dock para cerrar la ventana activa rastreada.</td></tr>
+<tr><td>Rueda del ratón <span class="advanced">Avanzado</span></td><td>Elija qué hace la rueda sobre el espacio vacío del dock: Ninguna acción, Ciclar entre escritorios, Ciclar entre actividades, Ciclar entre tareas o Ciclar y minimizar tareas.</td></tr>
+<tr class="group"><td colspan="2">Elementos</td></tr>
+<tr><td>Mostrar tooltips de título compactos al pasar el cursor</td><td>Mostrar tooltips de título de widget compactos. Las vistas previas de ventanas de tareas se controlan por separado mediante la acción Hover de la tarea.</td></tr>
+<tr><td>Ampliar widgets al pasar el cursor</td><td>Permitir que los widgets se amplíen con el dock. Desactive esto para mantener los iconos de los widgets nítidos; los iconos de tareas y los lanzadores aún se amplían.</td></tr>
+<tr><td>Expandir ventana emergente mediante la rueda del ratón</td><td>Desplácese sobre un widget compatible para mostrar u ocultar su ventana emergente.</td></tr>
+<tr><td>Ajustar tamaño automáticamente cuando sea necesario</td><td>Reducir los elementos cuando superan la longitud disponible y volver a ampliarlos cuando quepan.</td></tr>
+<tr><td>Activar mediante atajos globales basados en la posición</td><td>Permitir que los atajos globales basados en la posición activen los elementos de este dock. Solo un dock por diseño debe usar esto.</td></tr>
+<tr class="group"><td colspan="2">Flotante</td></tr>
+<tr><td>Usar siempre el espacio flotante para la interacción del usuario <span class="advanced">Avanzado</span></td><td>Incluye el espacio flotante en el área utilizada para la interacción con widgets y ventanas.</td></tr>
+<tr><td>Ocultar el espacio flotante para ventanas maximizadas <span class="advanced">Avanzado</span></td><td>Eliminar el espacio flotante cuando una ventana maximizada necesita el borde de la pantalla.</td></tr>
+<tr><td>Retrasar la ocultación del espacio flotante hasta que el ratón salga <span class="advanced">Avanzado</span></td><td>Esperar a que el puntero salga antes de ocultar el espacio, para evitar clics accidentales en elementos cercanos.</td></tr>
+<tr><td>Reflejar el espacio flotante cuando se muestra <span class="advanced">Avanzado</span></td><td>En el modo Siempre visible, reflejar el espacio en el lado opuesto del dock.</td></tr>
+<tr class="group"><td colspan="2">Entorno</td></tr>
+<tr><td>Elevar al cambiar de escritorio <span class="advanced">Avanzado</span></td><td>Revelar temporalmente el dock cuando cambia el escritorio virtual. Esto no se utiliza en Siempre visible o Ventanas por debajo.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Apariencia</h3>
+<p class="note">Márgenes, Colores, Radio/Sombra, Ajustes dinámicos de longitud, Visibilidad dinámica y Excepciones requieren el modo Avanzado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementos</td></tr>
+<tr><td>Estilo del dock</td><td>Elige Clásico o Moderno para aplicar un preajuste. En cualquiera de los estilos, usa los interruptores debajo de Estilo del dock para configurar la disposición de los elementos, el fondo con contorno, el espaciado mínimo entre elementos, el espacio flotante automático y los indicadores de tareas compactos de forma independiente.</td></tr>
+<tr><td>Mantener los elementos del dock juntos</td><td>Usar un solo grupo para los elementos del dock, incluso cuando la alineación del dock es Justificar.</td></tr>
+<tr><td>Usar el fondo incrustado con un contorno</td><td>Usar el fondo preajustado con un contorno y estilo para su espaciado, esquinas redondeadas y sombra.</td></tr>
+<tr><td>Usar un espaciado mínimo más amplio entre elementos</td><td>Aumentar el espaciado mínimo alrededor de los elementos del dock. Los valores más grandes establecidos con los controles de margen siguen aplicándose.</td></tr>
+<tr><td>Usar un espacio flotante automático</td><td>Calcular un espacio en el borde de la pantalla a partir del tamaño del icono cuando no se establece un valor de espacio específico.</td></tr>
+<tr><td>Usar indicadores de tarea compactos</td><td>Usar el diseño compacto para los indicadores de tarea de Latte. Elija la forma del indicador en Efectos.</td></tr>
+<tr><td>Restaurar preajuste</td><td>El botón en la parte inferior de Editar Dock restaura inmediatamente Comportamiento, Apariencia, Efectos y todas las pestañas de Tareas al preajuste de Dock incluido para el estilo Clásico/Moderno actual, incluidas las opciones ocultas por el modo Avanzado. Se conservan la pantalla, el borde del dock, los lanzadores y los widgets. La alineación, la visibilidad y los retrasos se restablecen. La compartición de lanzadores vuelve al grupo local predeterminado mientras se conserva una copia de la lista de lanzadores efectiva; las listas compartidas de otros docks permanecen sin cambios. Los colores personalizados y las anulaciones de indicadores se restablecen. El preajuste combina la plantilla Dock Predeterminado incluida con los valores predeterminados del esquema de configuración. Esto es independiente de simplemente cambiar el Estilo de Dock. Clásico desactiva por defecto los cinco interruptores de apariencia bajo Estilo de Dock. Moderno los activa. Ambos preajustes usan los mismos valores predeterminados para las opciones restantes.</td></tr>
+<tr><td>Tamaño absoluto / Tamaño relativo</td><td>Establecer el tamaño del icono en píxeles o como una proporción de la pantalla. El tamaño relativo es útil en configuraciones de alta densidad de píxeles (high-DPI) o de múltiples pantallas.</td></tr>
+<tr><td>Zoom al pasar el cursor</td><td>Establecer cuánto crecen los elementos bajo el puntero.</td></tr>
+<tr class="group"><td colspan="2">Longitud</td></tr>
+<tr><td>Máximo / Mínimo / Desplazamiento</td><td>Establecer la longitud máxima y mínima del dock y moverlo a lo largo del borde de la pantalla.</td></tr>
+<tr><td>Ajustes dinámicos de longitud <span class="advanced">Avanzado</span></td><td>Maximizar la longitud del panel en presencia de ventanas maximizadas: extender el dock a longitud completa cuando hay una ventana maximizada presente. El fondo debe estar habilitado.</td></tr>
+<tr class="group"><td colspan="2">Márgenes</td></tr>
+<tr><td>Márgenes / Longitud / Grosor / Brecha flotante <span class="advanced">Avanzado</span></td><td>Establecer el margen externo a lo largo del dock, el margen a través de su grosor y la brecha entre el dock y el borde de la pantalla.</td></tr>
+<tr><td>Brecha de ventanas maximizadas (px) <span class="advanced">Avanzado</span></td><td>Reservar 0–128 píxeles adicionales entre las ventanas y este dock en modo Siempre Visible. Predeterminado: 0. Esto es independiente de la brecha flotante del borde de la pantalla y se suma a cualquier brecha reflejada; los modos de ocultación automática no reservan este espacio.</td></tr>
+<tr class="group"><td colspan="2">Colores</td></tr>
+<tr><td>Colores / Paleta <span class="advanced">Avanzado</span></td><td>Elegir Colores del Tema de Plasma, Colores Oscuros, Colores Claros, Colores Personalizados del Diseño, Invertido o Colores Inteligentes Basados en el Fondo del Escritorio. Colores Personalizados del Diseño utiliza el esquema de colores del diseño; Inteligente sigue el fondo de pantalla.</td></tr>
+<tr><td>Usar color de fondo personalizado / Color de día <span class="advanced">Avanzado</span></td><td>Anular el fondo de este dock con un color elegido; el contraste del texto se ajusta automáticamente. Deshabilitado por defecto. Las paletas derivadas de la ventana y la paleta de Plasma para applets expandidos conservan prioridad. La opacidad sigue siendo una configuración de fondo separada.</td></tr>
+<tr><td>Cambiar colores de fondo según la hora del día / Color de noche / Inicio del día (hora local) / Inicio de la noche (hora local) <span class="advanced">Avanzado</span></td><td>Opcionalmente, cambia entre dos colores personalizados usando horas locales de 24 horas. Predeterminados: día 07:00, noche 19:00. La hora de inicio es inclusiva. Los intervalos pueden cruzar la medianoche; si las horas son iguales, se mantiene el color de día todo el día. Desactivar la programación mantiene el color de día. El reloj se comprueba cada segundo, incluso después de reanudar.</td></tr>
+<tr class="group"><td colspan="2">Fondo</td></tr>
+<tr><td>Fondo</td><td>Fondo es un interruptor de activación/desactivación. Cuando está activado, usa los controles siguientes para establecer el grosor, la opacidad, el radio y la sombra.</td></tr>
+<tr><td>Opacidad / Opacidad ocupada</td><td>Establece la opacidad del fondo. El mismo control deslizante se llama Opacidad ocupada cuando Ocultar fondo cuando no sea necesario y Preferir fondo opaco al tocar cualquier ventana están ambos activados. Def. restaura el valor predeterminado del tema.</td></tr>
+<tr><td>Radio / Sombra <span class="advanced">Avanzado</span></td><td>Establece el radio de las esquinas del fondo y el tamaño de la sombra. Def. usa el valor predeterminado del tema.</td></tr>
+<tr><td>Desenfoque / Sombras / Contorno / Todas las esquinas <span class="advanced">Avanzado</span></td><td>Activa el desenfoque del fondo, la sombra del fondo, el contorno y las esquinas redondeadas. Todas las esquinas está disponible solo para ciertas geometrías flotantes/justificadas.</td></tr>
+<tr class="group"><td colspan="2">Visibilidad dinámica</td></tr>
+<tr><td>Preferir fondo opaco al tocar cualquier ventana <span class="advanced">Avanzado</span></td><td>Elimina la transparencia del fondo mientras una ventana toca el dock.</td></tr>
+<tr><td>Ocultar fondo cuando no sea necesario <span class="advanced">Avanzado</span></td><td>Oculta el fondo excepto cuando una ventana toca el dock o el fondo del escritorio está ocupado.</td></tr>
+<tr><td>Ocultar sombra del fondo para ventanas maximizadas <span class="advanced">Avanzado</span></td><td>Oculta la sombra del fondo mientras una ventana maximizada activa toca el dock.</td></tr>
+<tr class="group"><td colspan="2">Excepciones</td></tr>
+<tr><td>Preferir el fondo y los colores de Plasma para los applets expandidos <span class="advanced">Avanzado</span></td><td>Usar un fondo opaco estilo Plasma y los colores de Plasma mientras los popups de los widgets están expandidos.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efectos</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sombras</td></tr>
+<tr><td>Sombras</td><td>Activar o desactivar las sombras de los widgets. Tamaño y Opacidad se deshabilitan cuando las sombras están desactivadas.</td></tr>
+<tr><td>Tamaño / Opacidad</td><td>Establecer el tamaño y la opacidad de la sombra del widget.</td></tr>
+<tr><td>Color predeterminado / Color del tema / color personalizado</td><td>Elegir el color de sombra predeterminado, un color de la paleta del tema o hacer clic en la muestra de color para elegir un color personalizado.</td></tr>
+<tr class="group"><td colspan="2">Animaciones</td></tr>
+<tr><td>Animaciones / x1 / x2 / x3</td><td>Activar o desactivar todas las animaciones del dock. x1 es velocidad normal, x2 es más lenta, x3 es la más lenta.</td></tr>
+<tr class="group"><td colspan="2">Indicadores</td></tr>
+<tr><td>Indicadores</td><td>Activar o desactivar los indicadores de tareas activas. Cuando están habilitados, elegir el indicador de Latte o un plugin de indicador personalizado; las opciones específicas del plugin aparecen en su pestaña.</td></tr>
+<tr><td>Usar puntos estilo macOS</td><td>El indicador de Latte usa puntos estilo macOS por defecto cuando los indicadores de tareas compactos están habilitados en Apariencia. Desactivar Usar puntos estilo macOS en Efectos para elegir Línea o Puntos manualmente.</td></tr>
+<tr><td>Usar colores de iconos de aplicación</td><td>Opcionalmente, colorear los indicadores de tareas con el color dominante del icono de cada aplicación, ajustado para el contraste del fondo. Seleccionar Línea para subrayados coloreados. Deshabilitado por defecto; los applets mantienen los colores de la paleta.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tareas</h3>
+<p>Los lanzadores de tareas comienzan a reordenarse en otros docks que comparten la lista de lanzadores después de soltar el icono. El orden puede tardar un momento en estabilizarse. Los espacios de separación permanecen en su lugar cuando el dock receptor guarda el nuevo orden. Arrastrar una aplicación ya fijada mantiene su lanzador existente, incluso cuando ese lanzador sigue la aplicación predeterminada del sistema. Los nuevos separadores ocupan espacio una vez que alcanzan el espacio seleccionado.</p>
+<p>Cuando agregas o arrastras un widget junto a un separador en el borde del área de tareas o de la bandeja del sistema, el widget se coloca en el exterior del separador. El separador permanece junto al área de tareas o la bandeja.</p>
+<p>Cuando fijas una aplicación desde el menú de aplicaciones, su icono aparece antes de cualquier separador al final de la lista de tareas. El separador derecho pertenece al grupo de aplicaciones fijadas, por lo que las aplicaciones en ejecución que no están fijadas aparecen más allá de él.</p>
+<p>El espacio de la tarea permanece resaltado y el icono sigue visible mientras lo arrastras para reordenar las tareas. Cuando una nueva tarea se desliza hacia adentro, el dock comienza a reservar su espacio desde el tamaño inicial de la animación.</p>
+<p class="note">Las opciones de Insignias, Animaciones, Desplazamiento, Acciones y algunas opciones de Interacción/Filtros requieren el modo Avanzado. Mostrar solo lanzadores y ocultar todas las tareas deshabilita las acciones y filtros relacionados con ventanas.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insignias</td></tr>
+<tr><td>Notificaciones de tareas <span class="advanced">Avanzado</span></td><td>Mostrar el número de notificaciones no leídas en los iconos de las tareas.</td></tr>
+<tr><td>Información de progreso para tareas <span class="advanced">Avanzado</span></td><td>Mostrar insignias de progreso, por ejemplo, mientras Dolphin copia archivos.</td></tr>
+<tr><td>Audio reproduciéndose desde tareas <span class="advanced">Avanzado</span></td><td>Mostrar una insignia de audio para aplicaciones que están reproduciendo sonido. La coincidencia prefiere identificadores explícitos de escritorio/aplicación. La información genérica del proceso del navegador no es suficiente para identificar una PWA concreta; las transmisiones ambiguas se dejan sin asignar en lugar de otorgar controles de audio a aplicaciones no relacionadas. Las aplicaciones Electron independientes aún pueden coincidir con su propio proceso de audio. El estado de reproducción y la actividad de salida ocultan las transmisiones pausadas incluso cuando la aplicación mantiene su conexión de audio abierta. Sin el estado del reproductor, se tolera un breve silencio durante aproximadamente un segundo.</td></tr>
+<tr><td>Color destacado para la insignia de notificación <span class="advanced">Avanzado</span></td><td>Usar una insignia de notificación más fuerte, generalmente roja. Requiere Notificaciones desde tareas.</td></tr>
+<tr><td>Cambiar el volumen al desplazarse sobre la insignia de audio <span class="advanced">Avanzado</span></td><td>Haga clic en la insignia de audio para silenciar/activar el sonido, o desplácese sobre ella para cambiar el volumen. Requiere Audio reproduciéndose desde tareas.</td></tr>
+<tr class="group"><td colspan="2">Interacción</td></tr>
+<tr><td>Los lanzadores se añaden solo en el applet de tareas actual</td><td>Añadir los lanzadores soltados solo a este widget de tareas, no como widgets separados ni a otros widgets de tareas.</td></tr>
+<tr><td>Acciones de ventana en el menú contextual <span class="advanced">Avanzado</span></td><td>Mostrar acciones específicas de la ventana en el menú contextual de la tarea.</td></tr>
+<tr><td>La ventana de vista previa se comporta como una ventana emergente <span class="advanced">Avanzado</span></td><td>Abrir las vistas previas como una ventana emergente en lugar de una información sobre herramientas. La acción al pasar el cursor debe solicitar vistas previas; esto solo cambia cómo se muestran.</td></tr>
+<tr><td>Los atajos de posición se aplican solo a las tareas actuales <span class="advanced">Avanzado</span></td><td>Limitar los atajos globales basados en la posición a este widget de tareas.</td></tr>
+<tr class="group"><td colspan="2">Filtros</td></tr>
+<tr><td>Mostrar solo tareas de la pantalla actual</td><td>Mostrar ventanas de la pantalla de este dock.</td></tr>
+<tr><td>Mostrar solo tareas del escritorio actual</td><td>Mostrar ventanas del escritorio virtual actual.</td></tr>
+<tr><td>Mostrar sección de ventanas minimizadas</td><td>Desactivado por defecto. Muestra las ventanas minimizadas como iconos individuales después de las tareas normales. Pase el cursor o enfoque un icono para ver su aplicación y título de ventana, y actívelo para restaurar la ventana. Cuando una aplicación tiene varias ventanas minimizadas, una pequeña insignia muestra la secuencia de cada ventana y el total para esa aplicación. La sección sigue los filtros de tareas y comparte el desplazamiento de desbordamiento de tareas. Habilite el desplazamiento para acceder a ventanas fuera de pantalla usando su acción configurada de rueda o borde. El modo solo lanzadores lo oculta.</td></tr>
+<tr><td>Mostrar solo tareas de los lanzadores <span class="advanced">Avanzado</span></td><td>Mostrar ventanas solo para aplicaciones que ya están en la lista de lanzadores.</td></tr>
+<tr><td>Mostrar solo lanzadores y ocultar todas las tareas <span class="advanced">Avanzado</span></td><td>Mostrar iconos de lanzadores y ocultar tareas en ejecución. Esto también deshabilita las acciones y filtros relacionados con ventanas.</td></tr>
+<tr><td>Mostrar solo tareas agrupadas para la misma aplicación <span class="advanced">Avanzado</span></td><td>Agrupar ventanas de la misma aplicación por defecto.</td></tr>
+<tr class="group"><td colspan="2">Animaciones</td></tr>
+<tr><td>Rebotar lanzadores cuando se activan <span class="advanced">Avanzado</span></td><td>Animar lanzadores cuando se activan.</td></tr>
+<tr><td>Rebotar tareas que requieren atención <span class="advanced">Avanzado</span></td><td>Animar tareas que solicitan atención.</td></tr>
+<tr><td>Deslizar ventanas individuales dentro y fuera <span class="advanced">Avanzado</span></td><td>Animar ventanas individuales nuevas y cerradas.</td></tr>
+<tr><td>Las tareas agrupadas rebotan sus ventanas nuevas <span class="advanced">Avanzado</span></td><td>Animar una ventana nueva dentro de un grupo de tareas.</td></tr>
+<tr><td>Las tareas agrupadas deslizan sus ventanas cerradas <span class="advanced">Avanzado</span></td><td>Animar una ventana cerrada dentro de un grupo de tareas.</td></tr>
+<tr class="group"><td colspan="2">Lanzadores</td></tr>
+<tr><td>Grupo único</td><td>Dar a este widget de tareas su propia lista de lanzadores.</td></tr>
+<tr><td>Grupo de diseño</td><td>Compartir lanzadores con widgets de tareas en el mismo diseño. Este botón solo se muestra cuando el dock ya usa Grupo de diseño.</td></tr>
+<tr><td>Grupo global</td><td>Compartir lanzadores con widgets de tareas en todos los diseños.</td></tr>
+<tr class="group"><td colspan="2">Desplazamiento</td></tr>
+<tr><td>Desplazamiento <span class="advanced">Avanzado</span></td><td>Habilitar el desplazamiento cuando las tareas exceden el espacio disponible. Esto funciona con cualquier preset del dock, incluso cuando Mantener los elementos del dock juntos está habilitado.</td></tr>
+<tr><td>Manual <span class="advanced">Avanzado</span></td><td>Elegir Desplazamiento deshabilitado, Solo desplazamiento vertical/horizontal, o Desplazamiento horizontal y vertical. La opción de dirección única depende de la orientación del dock.</td></tr>
+<tr><td>Automático <span class="advanced">Avanzado</span></td><td>Activar o desactivar el desplazamiento automático.</td></tr>
+<tr class="group"><td colspan="2">Acciones</td></tr>
+<tr><td>Clic izquierdo <span class="advanced">Avanzado</span></td><td>Acción para un clic izquierdo en una tarea: Ninguna, Cerrar ventana o grupo, Nueva instancia, Minimizar/Restaurar, Ciclar entre tareas, Alternar agrupación de tareas, Presentar ventanas, Vista previa de ventanas, Resaltar ventanas, o Vista previa y resaltar ventanas.</td></tr>
+<tr><td>Clic central <span class="advanced">Avanzado</span></td><td>Acción para un clic central en una tarea. Las opciones son las mismas que para Clic izquierdo.</td></tr>
+<tr><td>Puntero <span class="advanced">Avanzado</span></td><td>Acciones al pasar el puntero: Ninguna, Vista previa de ventanas, Resaltar ventanas, o Vista previa y resaltar ventanas. Las descripciones emergentes del título de la tarea se controlan en Comportamiento.</td></tr>
+<tr><td>Rueda <span class="advanced">Avanzado</span></td><td>Acciones de la rueda: Ninguna, Ciclar entre tareas o Ciclar y minimizar tareas.</td></tr>
+<tr><td>Modificador + clic <span class="advanced">Avanzado</span></td><td>Mantén Shift, Ctrl, Alt o Meta y haz clic izquierdo, central o derecho para ejecutar una acción adicional. Elige el modificador, el botón y la acción; esto es independiente de las acciones principales anteriores.</td></tr>
+</tbody></table></div>
+<p class="note">El filtro de actividad actual está oculto en Plasma 6 porque el soporte de KActivities no es fiable.</p></section><section id="configure-latte"><h2>Configurar Latte</h2><p class="note">El Editor de diseños gestiona los diseños y sus docks. Preferencias controla el comportamiento de la aplicación. Aplicar guarda los cambios pendientes en la pestaña actual; Restablecer restaura el estado guardado de esa pestaña; Restaurar valores predeterminados prepara los valores predeterminados para su revisión. Pantallas... gestiona las referencias de pantalla almacenadas.</p>
+<h3 id="layouts">Editor de diseños</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr><td>Un solo diseño en todo momento</td><td>Usar un diseño para todas las actividades.</td></tr>
+<tr><td>Varios diseños basados en actividades</td><td>Asignar diferentes diseños a las actividades; varios diseños pueden permanecer cargados.</td></tr>
+<tr><td>Cambiar</td><td>Activar el diseño seleccionado. Aplica primero los cambios pendientes; Latte no cambiará si hay cambios sin guardar.</td></tr>
+<tr><td>Actividades...</td><td>Abrir el gestor de Actividades de Plasma. Usa la columna Actividades o Habilitado para asignar este diseño a las actividades.</td></tr>
+<tr><td>Nuevo / Duplicar / Eliminar</td><td>Crear, copiar o eliminar un diseño. Duplicar aquí copia todo el diseño, no un dock individual. Los diseños activos y bloqueados no se pueden eliminar.</td></tr>
+<tr><td>Habilitado</td><td>Asignar este diseño a una o más actividades para que las Actividades de Plasma puedan activarlo. Solo se muestra en el modo de varios diseños.</td></tr>
+<tr><td>Solo lectura</td><td>Proteger la configuración del diseño de cambios.</td></tr>
+<tr><td>Detalles...</td><td>Abre el diálogo de detalles del diseño para icono, colores personalizados, margen de ventana emergente y visibilidad del menú contextual.</td></tr>
+<tr><td>Docks...</td><td>Abre la lista de docks para este diseño: nombre, pantalla, borde, alineación, widgets incluidos, y nuevo/duplicar/eliminar/importar/exportar.</td></tr>
+<tr><td>Importar... / Exportar...</td><td>Importa un diseño desde un archivo local o la KDE Store; expórtalo para respaldo o como plantilla. Archivo → Importar Configuración / Exportar Configuración maneja un respaldo completo de la aplicación.</td></tr>
+<tr><td>Nombre / En Menú / Actividades</td><td>La lista de diseños tiene columnas Nombre, En Menú y Actividades. Edite Nombre y Actividades directamente en la lista; En Menú controla si el diseño aparece en el menú Diseños del dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalles del Diseño</h3>
+<p>Abra con Editor de Diseños → Detalles... para editar el diseño seleccionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr><td>Diseño</td><td>Elija qué diseño editar.</td></tr>
+<tr><td>Icono</td><td>Elija un icono para el diseño. El botón de borrar lo elimina.</td></tr>
+<tr><td>Colores Personalizados</td><td>Elija un archivo de esquema de colores personalizado para este diseño.</td></tr>
+<tr><td>Margen de Ventana Emergente</td><td>Establezca el margen utilizado por las ventanas emergentes del diseño; deshabilitado significa usar el predeterminado.</td></tr>
+<tr><td>Mostrar en el menú contextual de diseños cuando sea posible</td><td>Muestre este diseño en el menú Diseños del dock cuando la actividad actual lo permita.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Diálogo de Docks</h3>
+<p>Abra con Editor de Diseños → Docks... para gestionar los docks en el diseño seleccionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Columnas</td></tr>
+<tr><td>Nombre</td><td>Nombre del dock. Doble clic para renombrarlo.</td></tr>
+<tr><td>Pantalla</td><td>Pantalla a la que pertenece el dock, incluyendo Principal, Todas las pantallas y Todas las pantallas secundarias.</td></tr>
+<tr><td>Borde</td><td>Borde de la pantalla utilizado por el dock.</td></tr>
+<tr><td>Alineación</td><td>Alineación del dock a lo largo de su borde.</td></tr>
+<tr><td>Incluye</td><td>Widgets y subcontenidos incluidos en el dock. Esta columna es de solo lectura.</td></tr>
+<tr class="group"><td colspan="2">Botones</td></tr>
+<tr><td>Nuevo</td><td>Crear un dock desde una plantilla.</td></tr>
+<tr><td>Duplicar</td><td>Crear una copia independiente del dock seleccionado, o otro clon si el dock seleccionado es un clon.</td></tr>
+<tr><td>Eliminar</td><td>Eliminar el dock seleccionado. Los clones se eliminan junto con su original.</td></tr>
+<tr><td>Importar...</td><td>Importar un dock desde un archivo de plantilla local.</td></tr>
+<tr><td>Exportar...</td><td>Exportar el dock seleccionado para respaldo o como plantilla. El diálogo de plantilla le permite elegir qué ajustes de widgets incluir; omita los widgets con datos personales como cuentas de correo electrónico o calendario.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Diálogo de Pantallas</h3>
+<p>Abra con Archivo → Pantallas... para limpiar las referencias de pantalla guardadas por Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr><td>Lista de pantallas</td><td>Lista las referencias de pantalla almacenadas en Latte, incluyendo pantallas que ya no están conectadas.</td></tr>
+<tr><td>Seleccionar pantallas obsoletas</td><td>Marque solo las pantallas que ya no existen. Las pantallas activas y las utilizadas por un diseño no se pueden eliminar.</td></tr>
+<tr><td>Deseleccionar todo</td><td>Borrar la selección antes de elegir un conjunto diferente.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferencias</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr><td>Mostrar ventana informativa para la activación automática de diseños</td><td>Mostrar una ventana de información cuando un diseño se activa automáticamente.</td></tr>
+<tr><td>Efecto Parabólico / Pequeño / Medio / Grande</td><td>Establecer la dispersión global del zoom al pasar el cursor sobre los elementos vecinos.</td></tr>
+<tr><td>Habilitar el inicio automático durante el arranque</td><td>Iniciar Latte al iniciar sesión.</td></tr>
+<tr><td>Usar estilo 3D para las insignias de notificación y accesos directos</td><td>Usar un estilo dimensional para las insignias de notificación y accesos directos.</td></tr>
+<tr><td>Mantener pulsada ⌘ para mostrar las insignias de accesos directos</td><td>Desactivado por defecto. Mantenga pulsada la tecla Meta durante aproximadamente un segundo para mostrar los docks ocultos y las insignias de accesos directos de sus tareas y widgets; suelte la tecla para ocultarlos de nuevo. Con la configuración predeterminada de Plasma, su propio lanzador también se abre al soltar Meta; cambie ese atajo en la Configuración del sistema si no desea este comportamiento.</td></tr>
+<tr><td>Influencia del margen de grosor</td><td>Elija cómo afectan los márgenes de grosor de los elementos a la disposición: 0%, 50% o 100%.</td></tr>
+<tr><td>Informar al escritorio de Plasma sobre el espacio disponible en el escritorio</td><td>Publicar el espacio disponible en el escritorio para Plasma para que los paneles y las ventanas puedan usarlo.</td></tr>
+<tr><td>Menú contextual / Acciones...</td><td>Elija qué acciones del menú contextual del dock se muestran siempre. Las acciones omitidas solo están disponibles en el modo de edición.</td></tr>
+<tr><td>Pantallas / retardo de reacción ante cambios</td><td>Establezca cuánto tiempo espera Latte antes de reaccionar a los cambios de pantalla, en milisegundos. Aumente este valor si el hardware informa de transiciones inestables.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Acciones del menú contextual</h3>
+<p>Abra Preferencias → Menú contextual → Acciones... para elegir qué acciones del dock están siempre visibles.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción en la ventana</th><th>Qué controla</th></tr></thead><tbody>
+<tr><td>Accesible siempre</td><td>Las acciones de esta lista se muestran en el menú contextual del dock en todo momento.</td></tr>
+<tr><td>Accesible solo en el modo de edición</td><td>Las acciones de esta lista solo aparecen mientras se edita el dock. Mueva acciones entre las listas para cambiar esto.</td></tr>
+<tr><td>Mover entre listas</td><td>Seleccione una acción y use los botones de flecha para moverla. Restablecer y Restaurar valores predeterminados restauran el conjunto predeterminado.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Copias independientes y clones</h2><p class="note">Un duplicado y un clon se ven similares en pantalla pero se comportan de manera diferente. Un duplicado es un dock nuevo e independiente. Un clon es el mismo dock mostrado en otra pantalla. Elija según si desea configurar este dock por separado.</p>
+<h3 id="create-independent-copy">Crear una copia independiente</h3>
+<p>Use cualquiera de estos métodos en el dock original, no en un clon:</p>
+<ul><li>Haga clic derecho en el dock y elija <strong>Duplicar Dock</strong>.</li><li>Abra <strong>Editar Dock</strong> y elija <strong>Añadir… → Duplicar Dock</strong>.</li><li>Abra <strong>Configurar Latte → Editor de Diseños → Docks…</strong>, seleccione el dock y elija <strong>Duplicar</strong>.</li></ul>
+<p>La copia recibe nuevos IDs de dock y widget y copia la configuración actual una sola vez. Después de eso, puede cambiar su pantalla, borde, tamaño, apariencia, comportamiento, widgets y lanzadores de forma independiente. Es una entrada separada en el diseño y se puede eliminar con <strong>Eliminar Dock</strong>.</p>
+<p>Duplicar un clon desde el diálogo Docks crea otro clon del mismo original, no un dock independiente. Para crear un dock independiente desde un clon, primero abra <strong>Editar Dock Original…</strong> y duplique el original.</p>
+<p>Si el original usa <strong>Grupo Global</strong>, la copia también lo usa y comparte lanzadores. Elija <strong>Grupo Único</strong> en la copia si desea una lista de lanzadores separada. <strong>Grupo de Diseño</strong> solo está disponible cuando el dock ya lo utiliza.</p>
+<h3 id="create-clone">Crear clones</h3>
+<p>Los clones son creados por el modo de pantalla de un dock original, no por <strong>Duplicar Dock</strong>:</p>
+<ul><li><strong>Editar Dock → Pantalla → En Todas las Pantallas</strong>: el original permanece en la pantalla principal, y Latte crea un clon en cada pantalla secundaria.</li><li><strong>Editar Dock → Pantalla → En Todas las Pantallas Secundarias</strong>: el original permanece en una pantalla secundaria, y Latte crea clones en las pantallas secundarias restantes.</li></ul>
+<p>Latte crea y elimina clones automáticamente cuando cambia la disposición de las pantallas. Para eliminar los clones, configure el original de nuevo en <strong>En Pantalla Principal</strong> o en una pantalla específica. Un clon no tiene una entrada <strong>Eliminar Dock</strong> en su menú contextual; use <strong>Editar Dock Original…</strong> allí para configurarlo.</p>
+<p>Abrir el editor desde un clon siempre abre la configuración del dock original, porque los clones comparten la configuración del dock. Los ajustes de widgets modificados en un clon también actualizan el original.</p>
+<h3 id="differences">Diferencias de un vistazo</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspecto</th><th>Copia independiente</th><th>Clon</th></tr></thead><tbody>
+<tr><td>Creado por</td><td>Duplicar Dock</td><td>Pantalla → En Todas las Pantallas o En Todas las Pantallas Secundarias</td></tr>
+<tr><td>Identidad</td><td>Nuevos IDs de dock y widget</td><td>Una vista vinculada del dock original</td></tr>
+<tr><td>Configuración</td><td>Copiada una vez, luego independiente</td><td>Compartida: editar el original actualiza cada clon; los ajustes de widgets modificados en un clon también actualizan el original</td></tr>
+<tr><td>Pantalla y borde</td><td>Puede cambiarse independientemente</td><td>Sigue al original; no puede moverse ni redimensionarse por separado</td></tr>
+<tr><td>Lanzadores</td><td>Copiados en la creación; el uso compartido posterior solo a través de Grupo de Diseño o Grupo Global</td><td>Reflejar siempre el original</td></tr>
+<tr><td>Menú contextual</td><td>Acciones completas del dock, incluyendo Duplicar y Eliminar</td><td>Muestra Editar Dock Original…; Duplicar, Mover, Exportar y Eliminar están ocultos</td></tr>
+<tr><td>Cómo eliminar</td><td>Eliminar Dock</td><td>Restablecer el original a una sola pantalla</td></tr>
+</tbody></table></div>
+<p><strong>Colores de los iconos de los widgets:</strong> <strong>Usar colores del tema de iconos</strong> en el menú contextual de un widget impide que Latte colorea el icono de ese widget. La configuración se guarda por widget: los clones la comparten con el original. Una copia independiente conserva el valor que tenía cuando se creó y puede cambiarlo por separado.</p></section></main></div><footer>Latte Dock NG · Documentación sin conexión. Los idiomas de interfaz no disponibles recurren al inglés.</footer></body></html>

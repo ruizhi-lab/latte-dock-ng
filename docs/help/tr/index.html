@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Kullanım Kılavuzu</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Kullanım Kılavuzu</h1><p>Bu talimatlar mevcut seçenekleri açıklar. Gelişmiş mod, dock stili ve yüklü eklentiler hangi kontrollerin görüneceğini değiştirebilir. Gelişmiş olarak işaretlenen seçenekler temel düzenleyicide gizlidir.</p><div class="language-menu"><label for="language-select">Dil</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html" selected>Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Yalnızca çevrilmiş kılavuzlar listelenir. Diğer arayüz dilleri İngilizce kılavuzu açar.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Bu sayfada</h2><a class="chapter" href="#edit-dock">Dock'u Düzenle</a><a class="subsection" href="#behavior">Davranış</a><a class="subsection" href="#appearance">Görünüm</a><a class="subsection" href="#effects">Efektler</a><a class="subsection" href="#tasks">Görevler</a><a class="chapter" href="#configure-latte">Latte'yi Yapılandır</a><a class="subsection" href="#layouts">Düzenler Düzenleyicisi</a><a class="subsection" href="#layout-details">Düzen Ayrıntıları</a><a class="subsection" href="#docks-dialog">Dock'lar İletişim Kutusu</a><a class="subsection" href="#screens-dialog">Ekranlar İletişim Kutusu</a><a class="subsection" href="#preferences">Tercihler</a><a class="subsection" href="#context-menu-actions">Bağlam Menüsü Eylemleri</a><a class="chapter" href="#copies-and-clones">Bağımsız Kopyalar ve Klonlar</a><a class="subsection" href="#create-independent-copy">Bağımsız bir kopya oluştur</a><a class="subsection" href="#create-clone">Klonlar oluştur</a><a class="subsection" href="#differences">Farklar bir bakışta</a></nav></aside><main>
+<section id="edit-dock"><h2>Dock'u Düzenle</h2><p class="note">Değişiklikler hemen etkili olur. Kapat, düzenleyiciyi gizler; değişiklikleri geri almaz. Sabitle, düzenleyiciyi açık tutar. Ekle… → Dock'u Çoğalt, orijinal bir dock'un bağımsız bir kopyasını oluşturur; Kaldır, mevcut dock'u kaldırır. Sekmeler arasında geçiş yapmak pencereyi yerinde tutar. Gelişmiş mod, pencereyi kullanılabilir ekran alanı içinde en uzun sayfasına göre boyutlandırır. Daha uzun sayfalar pencere içinde kaydırılır. Her iki düzenleme modunda da pencere boyutunu ayarlamak için yeniden boyutlandırma köşesini sürükleyin.</p>
+<p class="note">Gelişmiş mod daha fazla kontrol sunar. Gelişmiş olarak işaretlenen seçenekler temel düzenleyicide gizlidir.</p>
+<h3 id="behavior">Davranış</h3>
+<p class="note">Bu dock için görünürlük, gecikme, eylemler, öğe davranışı, yüzen boşluk ve ortam seçenekleri.</p>
+<div class="table-wrap"><table><thead><tr><th>Pencere içindeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Görünürlük</td></tr>
+<tr><td>Ekran / Konum</td><td>Bu dock için ekranı ve kenarı seçin. Birden fazla ekran varsa, Tüm Ekranlarda ve Tüm İkincil Ekranlarda seçenekleri bağlantılı klonlar oluşturur. Bağımsız Kopyalar ve Klonlar bölümüne bakın.</td></tr>
+<tr><td>Hizalama</td><td>Dock'u ekran kenarı boyunca konumlandırın. Öğeler hizalaması, widget'ların dock içinde nerede duracağını kontrol eder.</td></tr>
+<tr><td>Her Zaman Görünür</td><td>Dock'u görünür tutun ve pencere yöneticisi destekliyorsa masaüstü alanını ayırın.</td></tr>
+<tr><td>Otomatik Gizle</td><td>İşaretçi etkinleştirme alanına ulaşana kadar dock'u gizleyin.</td></tr>
+<tr><td>Aktif Olanı Kaçın</td><td>Aktif pencere dock alanına dokunduğunda gizleyin ve işaretçi girdiğinde dock'u gösterin.</td></tr>
+<tr><td>Maksimize Olanı Kaçın</td><td>Yalnızca bu ekranda maksimize edilmiş bir pencere aktif olduğunda gizleyin ve işaretçi girdiğinde dock'u gösterin.</td></tr>
+<tr><td>Tüm Pencerelerden Kaçın</td><td>Herhangi bir pencere dock alanına dokunduğunda gizleyin ve işaretçi girdiğinde dock'u gösterin.</td></tr>
+<tr><td>Pencereler Altta Kalır</td><td>Dock'u pencerelerin üzerinde tutun; pencereler altına yerleştirilebilir.</td></tr>
+<tr><td>Pencereler Kapatabilir</td><td>Pencerelerin dock'u kapatmasına izin verin. İşaretçi ekran kenarına ulaştığında dock öne gelir.</td></tr>
+<tr><td>Pencereler Her Zaman Kapatır</td><td>Pencereleri her zaman dock'un üzerinde tutun; dock onların arkasında kalır.</td></tr>
+<tr class="group"><td colspan="2">Gecikme</td></tr>
+<tr><td>Gecikme / Göster / Gizle</td><td>Gösterme veya gizleme öncesi bekleme süresini milisaniye cinsinden ayarlayın. Daha uzun gecikmeler, yanlışlıkla etkinleştirmeyi azaltır.</td></tr>
+<tr class="group"><td colspan="2">Eylemler</td></tr>
+<tr><td>Takip <span class="advanced">Gelişmiş</span></td><td>Boş alan eylemlerinin hangi etkin pencereyi takip edeceğini seçin: Aktif Pencere Mevcut Ekrandan veya Aktif Pencere Tüm Ekranlardan.</td></tr>
+<tr><td>Sol Tık / Etkin Pencereyi Sürükle <span class="advanced">Gelişmiş</span></td><td>Takip edilen etkin pencereyi taşımak veya büyütmek/geri yüklemek için boş dock alanından sürüklemeyi etkinleştirin.</td></tr>
+<tr><td>Orta Tık / Etkin Pencereyi Kapat <span class="advanced">Gelişmiş</span></td><td>Takip edilen etkin pencereyi kapatmak için boş dock alanına orta tıklamayı etkinleştirin.</td></tr>
+<tr><td>Fare tekerleği <span class="advanced">Gelişmiş</span></td><td>Boş dock alanı üzerinde tekerleğin ne yapacağını seçin: Eylem Yok, Masaüstleri Döngüyle Geç, Etkinlikleri Döngüyle Geç, Görevleri Döngüyle Geç veya Görevleri Döngüyle Geç ve Küçült.</td></tr>
+<tr class="group"><td colspan="2">Öğeler</td></tr>
+<tr><td>Üzerine gelindiğinde ince başlık ipuçları</td><td>Kompakt widget başlık ipuçlarını gösterin. Görev penceresi önizlemeleri, görev Üzerine Gelme eylemi tarafından ayrı olarak kontrol edilir.</td></tr>
+<tr><td>Üzerine gelindiğinde widgetları yakınlaştır</td><td>Widgetların dock ile birlikte yakınlaşmasına izin verin. Widget simgelerini net tutmak için bunu devre dışı bırakın; görev simgeleri ve başlatıcılar yine de yakınlaşır.</td></tr>
+<tr><td>Fare tekerleğiyle açılır pencereyi genişlet</td><td>Desteklenen bir widget üzerinde kaydırarak açılır penceresini gösterin veya gizleyin.</td></tr>
+<tr><td>Gerekli olduğunda boyutu otomatik olarak ayarla</td><td>Öğeler kullanılabilir uzunluğu aştığında küçültün ve sığdığında tekrar büyütün.</td></tr>
+<tr><td>Konuma dayalı genel kısayollara göre etkinleştir</td><td>Konuma dayalı genel kısayolların bu dock'un öğelerini etkinleştirmesine izin verin. Her düzen için yalnızca bir dock bunu kullanmalıdır.</td></tr>
+<tr class="group"><td colspan="2">Yüzen</td></tr>
+<tr><td>Kullanıcı etkileşimi için her zaman yüzen boşluk kullan <span class="advanced">Gelişmiş</span></td><td>Widget ve pencere etkileşimi için kullanılan alana yüzen boşluğu dahil et.</td></tr>
+<tr><td>Maksimize edilmiş pencereler için yüzen boşluğu gizle <span class="advanced">Gelişmiş</span></td><td>Maksimize edilmiş bir pencere ekran kenarına ihtiyaç duyduğunda yüzen boşluğu kaldır.</td></tr>
+<tr><td>Yüzen boşluğu gizlemeyi fare ayrılana kadar geciktir <span class="advanced">Gelişmiş</span></td><td>Yakındaki öğelere yanlışlıkla tıklamayı önlemek için boşluğu gizlemeden önce işaretçinin ayrılmasını bekleyin.</td></tr>
+<tr><td>Gösterildiğinde yüzen boşluğu yansıt <span class="advanced">Gelişmiş</span></td><td>Her Zaman Görünür modunda, boşluğu dock'un karşı tarafında yansıt.</td></tr>
+<tr class="group"><td colspan="2">Ortam</td></tr>
+<tr><td>Masaüstü değişiminde öne çıkar <span class="advanced">Gelişmiş</span></td><td>Sanal masaüstü değiştiğinde dock'u geçici olarak göster. Bu, Her Zaman Görünür veya Pencereler Altta modlarında kullanılmaz.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Görünüm</h3>
+<p class="note">Kenar Boşlukları, Renkler, Yarıçap/Gölge, Dinamik Uzunluk Ayarları, Dinamik Görünürlük ve İstisnalar Gelişmiş mod gerektirir.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Kontrol ettiği şey</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Öğeler</td></tr>
+<tr><td>Dock Stili</td><td>Bir ön ayar uygulamak için Klasik veya Modern seçin. Her iki stilde de, Dock Stili altındaki anahtarları kullanarak öğe düzenini, konturlu arka planı, minimum öğe aralığını, otomatik yüzen boşluğu ve kompakt görev göstergelerini bağımsız olarak ayarlayın.</td></tr>
+<tr><td>Dock öğelerini bir arada tut</td><td>Dock hizalaması Justify (Yasla) olduğunda bile dock öğeleri için tek bir grup kullan.</td></tr>
+<tr><td>Konturlu iç içe geçmiş arka planı kullan</td><td>Aralığı, yuvarlatılmış köşeleri ve gölgesi için ön ayarlı arka planı bir kontur ve stil ile kullan.</td></tr>
+<tr><td>Daha geniş minimum öğe aralığı kullan</td><td>Dock öğelerinin etrafındaki minimum aralığı artır. Kenar boşluğu kontrolleriyle belirlenen daha büyük değerler yine de geçerlidir.</td></tr>
+<tr><td>Otomatik boşluk kullan</td><td>Belirli bir boşluk değeri ayarlanmadığında, simge boyutundan bir ekran kenarı boşluğu hesaplayın.</td></tr>
+<tr><td>Sıkışık görev göstergelerini kullan</td><td>Latte görev göstergeleri için sıkışık düzeni kullanın. Gösterge şeklini Efektler bölümünden seçin.</td></tr>
+<tr><td>Ön Ayarı Geri Yükle</td><td>Dock Düzenleme penceresinin altındaki düğme, Davranış, Görünüm, Efektler ve tüm Görevler sekmelerini, Gelişmiş mod tarafından gizlenen seçenekler de dahil olmak üzere, mevcut Klasik/Modern stil için gelen Dock ön ayarına anında geri yükler. Ekran, dock kenarı, başlatıcılar ve widget'lar korunur. Hizalama, görünürlük ve gecikmeler sıfırlanır. Başlatıcı paylaşımı, etkili başlatıcı listesinin bir kopyasını koruyarak varsayılan yerel gruba döner; diğer dock'ların paylaşılan listeleri değişmez. Özel renkler ve gösterge geçersiz kılmaları sıfırlanır. Ön ayar, gelen Varsayılan Dock şablonunu yapılandırma şeması varsayılanlarıyla birleştirir. Bu, yalnızca Dock Stilini değiştirmekten ayrıdır. Klasik, Dock Stili altındaki beş görünüm anahtarını varsayılan olarak kapatır. Modern, bunları açar. Her iki ön ayar da kalan seçenekler için aynı varsayılanları kullanır.</td></tr>
+<tr><td>Mutlak boyut / Göreceli boyut</td><td>Simge boyutunu piksel cinsinden veya ekranın bir oranı olarak ayarlayın. Göreceli boyut, yüksek DPI veya çoklu ekran kurulumlarında kullanışlıdır.</td></tr>
+<tr><td>Üzerine gelince yakınlaştır</td><td>Öğelerin imleç altında ne kadar büyüyeceğini ayarlayın.</td></tr>
+<tr class="group"><td colspan="2">Uzunluk</td></tr>
+<tr><td>Maksimum / Minimum / Ofset</td><td>Dock'un maksimum ve minimum uzunluğunu ayarlayın ve onu ekran kenarı boyunca hareket ettirin.</td></tr>
+<tr><td>Dinamik Uzunluk Ayarlamaları <span class="advanced">Gelişmiş</span></td><td>Maksimize edilmiş pencereler varken panel uzunluğunu maksimize et: Maksimize edilmiş bir pencere varken dock'u tam uzunluğa genişletin. Arka plan etkinleştirilmiş olmalıdır.</td></tr>
+<tr class="group"><td colspan="2">Kenar Boşlukları</td></tr>
+<tr><td>Kenar Boşlukları / Uzunluk / Kalınlık / Yüzen Boşluk<span class="advanced">Gelişmiş</span></td><td>Dock boyunca dış kenar boşluğunu, kalınlığı boyunca kenar boşluğunu ve dock ile ekran kenarı arasındaki boşluğu ayarlayın.</td></tr>
+<tr><td>Maksimize edilmiş pencerelerden boşluk (px)<span class="advanced">Gelişmiş</span></td><td>Her Zaman Görünür modunda pencereler ile bu dock arasında ek olarak 0–128 piksel ayırın. Varsayılan: 0. Bu, ekran kenarı yüzen boşluğundan ayrıdır ve aynalanan boşluğa eklenir; otomatik gizleme modları bu alanı ayırmaz.</td></tr>
+<tr class="group"><td colspan="2">Renkler</td></tr>
+<tr><td>Renkler / Palet<span class="advanced">Gelişmiş</span></td><td>Plasma Tema Renkleri, Koyu Renkler, Açık Renkler, Düzen Özel Renkleri, Ters Çevir veya Masaüstü Arka Planına Göre Akıllı Renkler seçeneklerinden birini seçin. Düzen Özel Renkleri, düzenin renk şemasını kullanır; Akıllı Renkler, duvar kağıdını takip eder.</td></tr>
+<tr><td>Özel arka plan rengini kullan / Gündüz rengi<span class="advanced">Gelişmiş</span></td><td>Bu dock'un arka planını seçilen bir renkle geçersiz kılın; metin kontrastı otomatik olarak ayarlanır. Varsayılan olarak devre dışıdır. Pencereden türetilen paletler ve genişletilmiş applet'ler için Plasma paleti önceliğini korur. Opaklık, ayrı bir arka plan ayarı olarak kalır.</td></tr>
+<tr><td>Arka plan renklerini günün saatine göre değiştir / Gece rengi / Gündüz başlangıcı (yerel saat) / Gece başlangıcı (yerel saat)<span class="advanced">Gelişmiş</span></td><td>Yerel 24 saatlik zamanları kullanarak isteğe bağlı olarak iki özel renk arasında geçiş yapın. Varsayılanlar: gündüz 07:00, gece 19:00. Başlangıç zamanı dahildir. Aralıklar gece yarısını aşabilir; eşit zamanlar tüm gün gündüz rengini korur. Zamanlamayı devre dışı bırakmak gündüz rengini korur. Saat, uyku modundan çıkış dahil olmak üzere her saniye kontrol edilir.</td></tr>
+<tr class="group"><td colspan="2">Arka Plan</td></tr>
+<tr><td>Arka Plan</td><td>Arka Plan, açma/kapama anahtarıdır. Etkinleştirildiğinde, kalınlık, opaklık, yarıçap ve gölgeyi ayarlamak için aşağıdaki kontrolleri kullanın.</td></tr>
+<tr><td>Opaklık / Meşgul Opaklığı</td><td>Arka plan opaklığını ayarlayın. 'Gerekmediğinde arka planı gizle' ve 'Herhangi bir pencereye dokunulduğunda opak arka planı tercih et' seçenekleri etkinleştirildiğinde aynı kaydırıcı Meşgul Opaklığı olarak adlandırılır. Def., tema varsayılanını geri yükler.</td></tr>
+<tr><td>Yarıçap / Gölge <span class="advanced">Gelişmiş</span></td><td>Arka plan köşe yarıçapını ve gölge boyutunu ayarlayın. Def., tema varsayılanını kullanır.</td></tr>
+<tr><td>Bulanıklık / Gölge / Kontur / Tüm Köşeler <span class="advanced">Gelişmiş</span></td><td>Arka plan bulanıklığını, arka plan gölgesini, konturu ve yuvarlatılmış köşeleri etkinleştirin. Tüm Köşeler yalnızca belirli yüzen/hizalı geometri türleri için kullanılabilir.</td></tr>
+<tr class="group"><td colspan="2">Dinamik Görünürlük</td></tr>
+<tr><td>Herhangi bir pencereye dokunulduğunda opak arka planı tercih et <span class="advanced">Gelişmiş</span></td><td>Bir pencere dock'a dokunduğunda arka plan şeffaflığını kaldırın.</td></tr>
+<tr><td>Gerekmediğinde arka planı gizle <span class="advanced">Gelişmiş</span></td><td>Bir pencere dock'a dokunmadığı veya masaüstü arka planı meşgul olmadığı sürece arka planı gizleyin.</td></tr>
+<tr><td>Maksimize edilmiş pencereler için arka plan gölgesini gizle <span class="advanced">Gelişmiş</span></td><td>Etkin bir maksimize edilmiş pencere dock'a dokunduğunda arka plan gölgesini gizleyin.</td></tr>
+<tr class="group"><td colspan="2">İstisnalar</td></tr>
+<tr><td>Genişletilmiş applet'ler için Plasma arka planını ve renklerini tercih et<span class="advanced">Gelişmiş</span></td><td>Widget açılır pencereleri genişletildiğinde opak Plasma tarzı arka planı ve Plasma renklerini kullan.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efektler</h3>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Gölgeler</td></tr>
+<tr><td>Gölgeler</td><td>Widget gölgelerini açın veya kapatın. Gölgeler kapalıyken Boyut ve Opaklık devre dışı bırakılır.</td></tr>
+<tr><td>Boyut / Opaklık</td><td>Widget gölge boyutunu ve opaklığını ayarlayın.</td></tr>
+<tr><td>Varsayılan Renk / Tema Rengi / özel renk</td><td>Varsayılan gölge rengini, tema paletinden bir rengi seçin veya özel bir renk seçmek için renk örneğine tıklayın.</td></tr>
+<tr class="group"><td colspan="2">Animasyonlar</td></tr>
+<tr><td>Animasyonlar / x1 / x2 / x3</td><td>Tüm dock animasyonlarını açın veya kapatın. x1 normal hız, x2 daha yavaş, x3 en yavaştır.</td></tr>
+<tr class="group"><td colspan="2">Göstergeler</td></tr>
+<tr><td>Göstergeler</td><td>Aktif görev göstergelerini açın veya kapatın. Etkinleştirildiğinde, Latte göstergesini veya özel bir gösterge eklentisini seçin; eklentiye özgü seçenekler sekmesinde görünür.</td></tr>
+<tr><td>macOS tarzı noktaları kullan</td><td>Görünüm'de kompakt görev göstergeleri etkinleştirildiğinde, Latte göstergesi varsayılan olarak macOS tarzı noktaları kullanır. Çizgi veya Noktaları manuel olarak seçmek için Efektler'de 'macOS tarzı noktaları kullan' seçeneğini kapatın.</td></tr>
+<tr><td>Uygulama simge renklerini kullan</td><td>İsteğe bağlı olarak, görev göstergelerini her uygulama simgesinin baskın rengiyle, arka plan kontrastına göre ayarlanmış şekilde renklendirin. Renkli alt çizgiler için Çizgi'yi seçin. Varsayılan olarak devre dışıdır; applet'ler palet renklerini korur.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Görevler</h3>
+<p>Simgeyi bıraktıktan sonra, başlatıcı listesini paylaşan diğer dock'larda görev başlatıcıları yeniden sıralanmaya başlar. Sıralamanın yerleşmesi biraz zaman alabilir. Alıcı dock yeni sıralamayı kaydettiğinde ayırıcı boşlukları yerinde kalır. Zaten sabitlenmiş bir uygulamayı sürüklemek, o başlatıcı sistem varsayılan uygulamasını takip etse bile mevcut başlatıcısını korur. Yeni ayırıcılar, seçilen boşluğa ulaştıklarında yer kaplar.</p>
+<p>Görev alanının veya sistem tepsisinin kenarındaki bir ayırıcının yanına bir widget eklediğinizde veya sürüklediğinizde, widget ayırıcının dış tarafına yerleşir. Ayırıcı, görev alanının veya tepsinin yanında kalır.</p>
+<p>Uygulama menüsünden bir uygulamayı sabitlediğinizde, simgesi görev listesinin sonundaki ayırıcılardan önce görünür. Sağdaki ayırıcı sabitlenmiş gruba aittir, bu nedenle sabitlenmemiş çalışan uygulamalar onun ötesinde görünür.</p>
+<p>Görevleri yeniden sıralamak için sürüklerken görev yuvası vurgulanmış kalır ve simge görünür durumda kalır. Yeni bir görev kayarak geldiğinde, dock ilk animasyon boyutundan itibaren yuvasını ayırmaya başlar.</p>
+<p class="note">Rozetler, Animasyonlar, Kaydırma, Eylemler ve bazı Etkileşim/Filtre seçenekleri Gelişmiş mod gerektirir. Yalnızca başlatıcıları göster ve tüm görevleri gizle seçeneği, pencereyle ilgili eylemleri ve filtreleri devre dışı bırakır.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Rozetler</td></tr>
+<tr><td>Görevlerden gelen bildirimler <span class="advanced">Gelişmiş</span></td><td>Görev simgelerinde okunmamış bildirim sayılarını göster.</td></tr>
+<tr><td>Görevler için ilerleme bilgisi <span class="advanced">Gelişmiş</span></td><td>Dolphin dosyaları kopyalarken olduğu gibi ilerleme rozetlerini göster.</td></tr>
+<tr><td>Görevlerden çalan ses <span class="advanced">Gelişmiş</span></td><td>Ses çalan uygulamalar için bir ses rozeti göster. Eşleştirme, açık masaüstü/uygulama tanımlayıcılarını tercih eder. Genel tarayıcı işlem bilgileri, belirli bir PWA'yı tanımlamak için yeterli değildir; belirsiz akışlar, ilgisiz uygulamalara ses kontrolleri vermek yerine atanmamış bırakılır. Bağımsız Electron uygulamaları kendi ses işlemleriyle eşleşmeye devam edebilir. Oynatma durumu ve çıkış etkinliği, uygulama ses bağlantısını açık tutsa bile duraklatılmış akışları gizler. Oynatıcı durumu olmadan, kısa süreli sessizlik yaklaşık bir saniye boyunca tolere edilir.</td></tr>
+<tr><td>Bildirim rozeti için belirgin renk <span class="advanced">Gelişmiş</span></td><td>Daha güçlü, genellikle kırmızı bir bildirim rozeti kullan. Görevlerden Bildirimler özelliğini gerektirir.</td></tr>
+<tr><td>Ses rozetinde kaydırma yaparken sesi değiştir <span class="advanced">Gelişmiş</span></td><td>Sesi açmak/kapatmak için ses rozetine tıklayın veya sesi değiştirmek için üzerinde kaydırın. Görevlerden Çalan Ses özelliğini gerektirir.</td></tr>
+<tr class="group"><td colspan="2">Etkileşim</td></tr>
+<tr><td>Başlatıcılar yalnızca mevcut görevler applet'ine eklenir</td><td>Bırakılan başlatıcıları yalnızca bu görevler widget'ına ekleyin, ayrı widget'lar olarak veya diğer görev widget'larına değil.</td></tr>
+<tr><td>Bağlam menüsünde pencere eylemleri <span class="advanced">Gelişmiş</span></td><td>Görev bağlam menüsünde pencereye özgü eylemleri göster.</td></tr>
+<tr><td>Önizleme penceresi açılır pencere gibi davranır <span class="advanced">Gelişmiş</span></td><td>Önizlemeleri ipucu yerine açılır pencere olarak aç. Üzerine Gelme eylemi önizlemeleri talep etmelidir; bu yalnızca nasıl gösterildiklerini değiştirir.</td></tr>
+<tr><td>Konum kısayolları yalnızca mevcut görevlere uygulansın<span class="advanced">Gelişmiş</span></td><td>Konum tabanlı genel kısayolları yalnızca bu görev widget'ına sınırla.</td></tr>
+<tr class="group"><td colspan="2">Filtreler</td></tr>
+<tr><td>Yalnızca mevcut ekrandaki görevleri göster</td><td>Bu dock'un ekranındaki pencereleri göster.</td></tr>
+<tr><td>Yalnızca mevcut masaüstündeki görevleri göster</td><td>Mevcut sanal masaüstündeki pencereleri göster.</td></tr>
+<tr><td>Simge Durumuna Küçültülmüş Pencereler Bölümünü Göster</td><td>Varsayılan olarak kapalı. Simgeleri, sıradan görevlerin ardından simge durumuna küçültülmüş pencereler olarak gösterir. Bir simgenin üzerine gelindiğinde veya odaklanıldığında uygulaması ve pencere başlığı görüntülenir; simgeyi etkinleştirmek pencereyi geri yükler. Bir uygulamanın birden fazla simge durumuna küçültülmüş penceresi varsa, küçük bir rozet her pencerenin sırasını ve o uygulama için toplam sayıyı gösterir. Bu bölüm, görev filtrelerini takip eder ve görev taşma kaydırmasını paylaşır. Yapılandırılmış tekerlek veya kenar üzerine gelme eylemini kullanarak ekran dışındaki pencerelere erişmek için Kaydırmayı etkinleştirin. Yalnızca başlatıcı modu bu bölümü gizler.</td></tr>
+<tr><td>Yalnızca başlatıcılardaki görevleri göster<span class="advanced">Gelişmiş</span></td><td>Yalnızca başlatıcı listesinde zaten bulunan uygulamalar için pencereleri göster.</td></tr>
+<tr><td>Yalnızca başlatıcıları göster ve tüm görevleri gizle<span class="advanced">Gelişmiş</span></td><td>Başlatıcı simgelerini göster ve çalışan görevleri gizle. Bu ayrıca pencereyle ilgili eylemleri ve filtreleri devre dışı bırakır.</td></tr>
+<tr><td>Aynı uygulama için yalnızca gruplanmış görevleri göster<span class="advanced">Gelişmiş</span></td><td>Aynı uygulamanın pencerelerini varsayılan olarak grupla.</td></tr>
+<tr class="group"><td colspan="2">Animasyonlar</td></tr>
+<tr><td>Tetiklendiğinde başlatıcılar zıplasın<span class="advanced">Gelişmiş</span></td><td>Tetiklendiğinde başlatıcıları animasyonla.</td></tr>
+<tr><td>Dikkat gerektiren görevler zıplasın<span class="advanced">Gelişmiş</span></td><td>Dikkat isteyen görevleri animasyonla.</td></tr>
+<tr><td>Tek pencereler kayarak girip çıksın<span class="advanced">Gelişmiş</span></td><td>Yeni ve kapatılan tek pencereleri animasyonla.</td></tr>
+<tr><td>Gruplanmış görevler yeni pencerelerini zıplatır <span class="advanced">Gelişmiş</span></td><td>Bir görev grubu içindeki yeni bir pencereyi animasyonla.</td></tr>
+<tr><td>Gruplanmış görevler kapatılan pencerelerini kaydırarak çıkarır <span class="advanced">Gelişmiş</span></td><td>Bir görev grubu içindeki kapatılan bir pencereyi animasyonla.</td></tr>
+<tr class="group"><td colspan="2">Başlatıcılar</td></tr>
+<tr><td>Benzersiz Grup</td><td>Bu görev widget'ına kendi başlatıcı listesini verin.</td></tr>
+<tr><td>Düzen Grubu</td><td>Başlatıcıları aynı düzendeki görev widget'larıyla paylaşın. Bu düğme yalnızca dock zaten Düzen Grubu kullanıyorsa gösterilir.</td></tr>
+<tr><td>Genel Grup</td><td>Başlatıcıları tüm düzenlerdeki görev widget'larıyla paylaşın.</td></tr>
+<tr class="group"><td colspan="2">Kaydırma</td></tr>
+<tr><td>Kaydırma <span class="advanced">Gelişmiş</span></td><td>Görevler kullanılabilir alanı aştığında kaydırmayı etkinleştirin. Bu, 'Dock öğelerini bir arada tut' etkinleştirildiğinde dahil olmak üzere her iki dock ön ayarıyla da çalışır.</td></tr>
+<tr><td>Manuel <span class="advanced">Gelişmiş</span></td><td>Devre dışı kaydırma, Yalnızca dikey/yatay kaydırma veya Yatay ve dikey kaydırma seçeneklerinden birini seçin. Tek yönlü seçim, dock yönüne bağlıdır.</td></tr>
+<tr><td>Otomatik <span class="advanced">Gelişmiş</span></td><td>Otomatik kaydırmayı açın veya kapatın.</td></tr>
+<tr class="group"><td colspan="2">Eylemler</td></tr>
+<tr><td>Sol Tık <span class="advanced">Gelişmiş</span></td><td>Bir görev üzerinde sol tıklama eylemi: Yok, Pencereyi Kapat veya Grupla, Yeni Örnek, Küçült/Genişlet, Görevler Arasında Dolaş, Görev Gruplamayı Aç/Kapat, Pencereleri Sun, Pencereleri Önizle, Pencereleri Vurgula veya Pencereleri Önizle ve Vurgula.</td></tr>
+<tr><td>Orta Tık <span class="advanced">Gelişmiş</span></td><td>Bir görev üzerinde orta tıklama eylemi. Seçenekler Sol Tık ile aynıdır.</td></tr>
+<tr><td>Üzerine Gelme <span class="advanced">Gelişmiş</span></td><td>Üzerine gelme eylemleri: Yok, Pencereleri Önizle, Pencereleri Vurgula veya Pencereleri Önizle ve Vurgula. Görev başlığı araç ipuçları Davranış bölümünde kontrol edilir.</td></tr>
+<tr><td>Tekerlek <span class="advanced">Gelişmiş</span></td><td>Tekerlek eylemleri: Yok, Görevler Arasında Geçiş Yap veya Görevler Arasında Geçiş Yap ve Küçült.</td></tr>
+<tr><td>Değiştirici + tıkla <span class="advanced">Gelişmiş</span></td><td>Ek bir eylem çalıştırmak için Shift, Ctrl, Alt veya Meta tuşlarından birini basılı tutarak sol, orta veya sağ tıklayın. Değiştiriciyi, düğmeyi ve eylemi seçin; bu, yukarıdaki ana eylemlerden bağımsızdır.</td></tr>
+</tbody></table></div>
+<p class="note">KActivities desteği güvenilir olmadığı için Plasma 6'da geçerli etkinlik filtresi gizlidir.</p></section><section id="configure-latte"><h2>Latte'yi Yapılandır</h2><p class="note">Düzenler Düzenleyicisi, düzenleri ve bunların dock'larını yönetir. Tercihler, uygulama genelindeki davranışı kontrol eder. Uygula, geçerli sekmedeki bekleyen değişiklikleri kaydeder; Sıfırla, o sekmenin kaydedilmiş durumunu geri yükler; Varsayılanları Geri Yükle, incelemeye hazır varsayılanları hazırlar. Ekranlar... kaydedilmiş ekran referanslarını yönetir.</p>
+<h3 id="layouts">Düzenler Düzenleyicisi</h3>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Kontrol ettiği şey</th></tr></thead><tbody>
+<tr><td>Her zaman tek düzen</td><td>Tüm etkinlikler için tek bir düzen kullanın.</td></tr>
+<tr><td>Etkinliklere dayalı birden fazla düzen</td><td>Etkinliklere farklı düzenler atayın; birden fazla düzen yüklü kalabilir.</td></tr>
+<tr><td>Değiştir</td><td>Seçili düzeni etkinleştirin. Önce bekleyen değişiklikleri uygulayın; Latte, kaydedilmemiş değişikliklerle geçiş yapmaz.</td></tr>
+<tr><td>Etkinlikler...</td><td>Plasma'nın Etkinlikler yöneticisini açın. Bu düzeni etkinliklere atamak için Etkinlikler sütununu veya Etkin seçeneğini kullanın.</td></tr>
+<tr><td>Yeni / Kopyala / Kaldır</td><td>Bir düzen oluşturun, kopyalayın veya kaldırın. Buradaki Kopyala, tüm düzeni kopyalar, tek bir dock'u değil. Etkin ve kilitli düzenler kaldırılamaz.</td></tr>
+<tr><td>Etkin</td><td>Bu düzeni bir veya daha fazla etkinliğe atayın ki Plasma Etkinlikleri onu etkinleştirebilsin. Yalnızca çoklu düzen modunda gösterilir.</td></tr>
+<tr><td>Salt Okunur</td><td>Yerleşim yapılandırmasını değişikliklere karşı koruyun.</td></tr>
+<tr><td>Ayrıntılar...</td><td>Simge, özel renkler, açılır pencere kenar boşluğu ve bağlam menüsü görünürlüğü için yerleşim ayrıntıları iletişim kutusunu açın.</td></tr>
+<tr><td>Dock'lar...</td><td>Bu yerleşim için dock listesini açın: ad, ekran, kenar, hizalama, dahil edilen widget'lar ve yeni/çoğalt/kaldır/içe aktar/dışa aktar.</td></tr>
+<tr><td>İçe Aktar... / Dışa Aktar...</td><td>Yerel bir dosyadan veya KDE Store'dan bir yerleşim içe aktarın; yedekleme veya şablon olarak dışa aktarın. Dosya → Yapılandırmayı İçe Aktar / Yapılandırmayı Dışa Aktar, tam bir uygulama yedeğini yönetir.</td></tr>
+<tr><td>Ad / Menüde / Etkinlikler</td><td>Yerleşim listesinde Ad, Menüde ve Etkinlikler sütunları bulunur. Ad ve Etkinlikleri doğrudan listede düzenleyin; Menüde, yerleşimin dock'un Yerleşimler menüsünde görünüp görünmeyeceğini kontrol eder.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Yerleşim Ayrıntıları</h3>
+<p>Seçili yerleşimi düzenlemek için Yerleşimler Düzenleyicisi → Ayrıntılar... ile açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki Seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr><td>Yerleşim</td><td>Hangi yerleşimin düzenleneceğini seçin.</td></tr>
+<tr><td>Simge</td><td>Yerleşim için bir simge seçin. Temizle düğmesi onu kaldırır.</td></tr>
+<tr><td>Özel Renkler</td><td>Bu yerleşim için özel bir renk şeması dosyası seçin.</td></tr>
+<tr><td>Açılır Pencere Kenar Boşluğu</td><td>Yerleşim açılır pencereleri tarafından kullanılan kenar boşluğunu ayarlayın; devre dışı bırakılırsa varsayılanı kullanır.</td></tr>
+<tr><td>Mümkün olduğunda yerleşimler bağlam menüsünde göster</td><td>Geçerli etkinlik izin verdiğinde bu yerleşimi dock'un Yerleşimler menüsünde göster.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dock'lar İletişim Kutusu</h3>
+<p>Seçili yerleşimdeki dock'ları yönetmek için Yerleşimler Düzenleyicisi → Dock'lar... ile açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki Seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sütunlar</td></tr>
+<tr><td>Ad</td><td>Dock adı. Yeniden adlandırmak için çift tıklayın.</td></tr>
+<tr><td>Ekran</td><td>Dock'un ait olduğu ekran; Birincil, Tüm Ekranlar ve Tüm İkincil Ekranlar dahil.</td></tr>
+<tr><td>Kenar</td><td>Dock tarafından kullanılan ekran kenarı.</td></tr>
+<tr><td>Hizalama</td><td>Dock'un kenarı boyunca hizalanması.</td></tr>
+<tr><td>İçerir</td><td>Dock'a dahil edilen widget'lar ve alt içerikler. Bu sütun salt okunurdur.</td></tr>
+<tr class="group"><td colspan="2">Düğmeler</td></tr>
+<tr><td>Yeni</td><td>Bir şablondan dock oluşturun.</td></tr>
+<tr><td>Kopyala</td><td>Seçili dock'un bağımsız bir kopyasını oluşturun veya seçili dock bir klon ise başka bir klon oluşturun.</td></tr>
+<tr><td>Kaldır</td><td>Seçili dock'u kaldırın. Klonlar, orijinalleriyle birlikte kaldırılır.</td></tr>
+<tr><td>İçe Aktar...</td><td>Yerel bir şablon dosyasından dock içe aktarın.</td></tr>
+<tr><td>Dışa Aktar...</td><td>Seçili dock'u yedekleme veya şablon olarak dışa aktarın. Şablon penceresi, hangi widget ayarlarının dahil edileceğini seçmenizi sağlar; e-posta veya takvim hesapları gibi kişisel veri içeren widget'ları hariç tutun.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Ekranlar Penceresi</h3>
+<p>Latte tarafından kaydedilen ekran referanslarını temizlemek için Dosya → Ekranlar... ile açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr><td>Ekran listesi</td><td>Artık bağlı olmayan ekranlar dahil, Latte'de saklanan ekran referanslarını listeler.</td></tr>
+<tr><td>Kullanılmayan ekranları seçin</td><td>Yalnızca artık var olmayan ekranları işaretleyin. Etkin ekranlar ve bir düzen tarafından kullanılan ekranlar kaldırılamaz.</td></tr>
+<tr><td>Tüm Seçimi Kaldır</td><td>Farklı bir küme seçmeden önce seçimi temizleyin.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Tercihler</h3>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr><td>Düzenlerin otomatik etkinleştirilmesi için bilgilendirici pencereyi göster</td><td>Bir düzen otomatik olarak etkinleştiğinde bir bilgi penceresi gösterin.</td></tr>
+<tr><td>Parabolik Efekt / Küçük / Orta / Büyük</td><td>Komşu öğeler genelinde hover zoom'un global yayılımını ayarlayın.</td></tr>
+<tr><td>Başlangıçta otomatik başlatmayı etkinleştir</td><td>Oturum açtığınızda Latte'yi başlatın.</td></tr>
+<tr><td>Bildirim ve kısayol rozetleri için 3D stilini kullan</td><td>Bildirim ve kısayol rozetleri için boyutlu bir stil kullanın.</td></tr>
+<tr><td>Kısayol rozetlerini göstermek için ⌘ tuşuna basılı tutun</td><td>Varsayılan olarak kapalı. Gizli dock'ları ve görevlerinin ve widget'larının kısayol rozetlerini göstermek için Meta tuşunu yaklaşık bir saniye basılı tutun; tekrar gizlemek için tuşu bırakın. Plasma'nın varsayılan ayarlarında, Meta bırakıldığında kendi başlatıcısı da açılır; bunu istemiyorsanız Sistem Ayarları'nda bu kısayolu değiştirin.</td></tr>
+<tr><td>Kalınlık kenar boşluğu etkisi</td><td>Öğe kalınlık kenar boşluklarının düzeni ne kadar etkileyeceğini seçin: %0, %50 veya %100.</td></tr>
+<tr><td>Kullanılabilir masaüstü alanı için Plasma masaüstünü bilgilendir</td><td>Panel ve pencerelerin kullanabilmesi için kullanılabilir masaüstü alanını Plasma'ya yayınlayın.</td></tr>
+<tr><td>Bağlam Menüsü / Eylemler...</td><td>Hangi dock bağlam menüsü eylemlerinin her zaman gösterileceğini seçin. Dışarıda bırakılan eylemler yalnızca düzenleme modunda kullanılabilir.</td></tr>
+<tr><td>Ekranlar / değişiklikler için tepki gecikmesi</td><td>Latte'nin ekran değişikliklerine tepki vermeden önce ne kadar bekleyeceğini milisaniye cinsinden ayarlayın. Donanım kararsız geçişler bildiriyorsa bunu artırın.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Bağlam Menüsü Eylemleri</h3>
+<p>Hangi dock eylemlerinin her zaman görünür olacağını seçmek için Tercihler → Bağlam Menüsü → Eylemler... öğesini açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Penceredeki seçenek</th><th>Ne kontrol eder</th></tr></thead><tbody>
+<tr><td>Her zaman erişilebilir</td><td>Bu listedeki eylemler, dock bağlam menüsünde her zaman gösterilir.</td></tr>
+<tr><td>Yalnızca düzenleme modunda erişilebilir</td><td>Bu listedeki eylemler yalnızca dock düzenlenirken görünür. Eylemleri listeler arasında taşıyarak bunu değiştirebilirsiniz.</td></tr>
+<tr><td>Listeler arasında taşıma</td><td>Bir eylem seçin ve onu taşımak için ok düğmelerini kullanın. Sıfırla ve Varsayılanları Geri Yükle, varsayılan ayarları geri yükler.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Bağımsız Kopyalar ve Klonlar</h2><p class="note">Bir kopya ve bir klon ekranda benzer görünür ancak farklı davranır. Kopya, yeni ve bağımsız bir dock'tur. Klon ise başka bir ekranda gösterilen aynı dock'tur. Bu dock'u ayrı ayrı yapılandırmak isteyip istemediğinize bağlı olarak seçim yapın.</p>
+<h3 id="create-independent-copy">Bağımsız bir kopya oluşturma</h3>
+<p>Bu yöntemlerden herhangi birini klon üzerinde değil, orijinal dock üzerinde kullanın:</p>
+<ul><li>Dock'a sağ tıklayın ve şunu seçin: <strong>Dock'u Kopyala</strong>.</li><li>Aç <strong>Dock'u Düzenle</strong> ve seç <strong>Ekle… → Dock'u Kopyala</strong>.</li><li>Aç <strong>Latte → Düzenler Editörü → Dock'lar…</strong>, dock'u seçin ve <strong>Kopyala</strong> seçeneğini belirleyin.</li></ul>
+<p>Kopya, yeni dock ve widget kimlikleri alır ve mevcut ayarları bir kez kopyalar. Bundan sonra, ekranını, kenarını, boyutunu, görünümünü, davranışını, widget'larını ve başlatıcılarını bağımsız olarak değiştirebilirsiniz. Düzen içinde ayrı bir giriş olarak yer alır ve <strong>Dock'u Kaldır</strong> ile kaldırılabilir.</p>
+<p>Dock'lar iletişim kutusundan bir klonu kopyalamak, aynı orijinalin başka bir klonunu oluşturur, bağımsız bir dock değil. Bir klondan bağımsız bir dock oluşturmak için önce <strong>Orijinal Dock'u Düzenle…</strong> öğesini açın ve orijinali kopyalayın.</p>
+<p>Orijinal <strong>Global Grup</strong> kullanıyorsa, kopya da bunu kullanır ve başlatıcıları paylaşır. Ayrı bir başlatıcı listesi istiyorsanız kopyada <strong>Benzersiz Grup</strong> seçeneğini seçin. <strong>Düzen Grubu</strong>yalnızca dock zaten bunu kullanıyorsa kullanılabilir.</p>
+<h3 id="create-clone">Klonlar oluştur</h3>
+<p>Klonlar, orijinal dock'un ekran modu tarafından oluşturulur, <strong>Dock'u Çoğalt</strong>:</p>
+<ul><li><strong>Dock'u Düzenle → Ekran → Tüm Ekranlarda</strong>: orijinal birincil ekranda kalır ve Latte her ikincil ekranda bir klon oluşturur.</li><li><strong>Dock'u Düzenle → Ekran → Tüm İkincil Ekranlarda</strong>: orijinal bir ikincil ekranda kalır ve Latte kalan ikincil ekranlarda klonlar oluşturur.</li></ul>
+<p>Latte, ekran düzeni değiştiğinde klonları otomatik olarak oluşturur ve kaldırır. Klonları kaldırmak için orijinali tekrar <strong>Birincil Ekranda</strong> veya belirli bir ekrana ayarlayın. Bir klonun bağlam menüsünde <strong>Dock'u Kaldır</strong> seçeneği yoktur; yapılandırmak için orada <strong>Orijinal Dock'u Düzenle…</strong> seçeneğini kullanın.</p>
+<p>Bir klondan düzenleyiciyi açmak her zaman orijinal dock'un ayarlarını açar, çünkü klonlar dock yapılandırmasını paylaşır. Bir klonda değiştirilen widget ayarları orijinali de günceller.</p>
+<h3 id="differences">Farklar bir bakışta</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Özellik</th><th>Bağımsız kopya</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Oluşturan</td><td>Dock'u Çoğalt</td><td>Ekran → Tüm Ekranlarda veya Tüm İkincil Ekranlarda</td></tr>
+<tr><td>Kimlik</td><td>Yeni dock ve widget ID'leri</td><td>Orijinal dock'un bağlantılı bir görünümü</td></tr>
+<tr><td>Ayarlar</td><td>Bir kez kopyalanır, sonra bağımsızdır</td><td>Paylaşımlı: orijinali düzenlemek her klonu günceller; bir klonda değiştirilen widget ayarları orijinali de günceller</td></tr>
+<tr><td>Ekran ve kenar</td><td>Bağımsız olarak değiştirilebilir</td><td>Orijinali takip eder; ayrı olarak taşınamaz veya yeniden boyutlandırılamaz</td></tr>
+<tr><td>Başlatıcılar</td><td>Oluşturma sırasında kopyalanır; sonraki paylaşım yalnızca Düzen Grubu veya Global Grup aracılığıyla yapılır</td><td>Her zaman orijinali yansıt</td></tr>
+<tr><td>Bağlam menüsü</td><td>Kopyala ve Kaldır dahil tüm dock eylemleri</td><td>Orijinal Dock'u Düzenle... gösterilir; Kopyala, Taşı, Dışa Aktar ve Kaldır gizlidir</td></tr>
+<tr><td>Nasıl kaldırılır</td><td>Dock'u Kaldır</td><td>Orijinali tek ekrana geri ayarla</td></tr>
+</tbody></table></div>
+<p><strong>Widget simge renkleri:</strong> <strong>Simge Teması Renklerini Kullan</strong> bir widget'ın bağlam menüsünde, Latte'nin o widget'ın simgesini renklendirmesini engeller. Ayar widget başına saklanır: klonlar bunu orijinal ile paylaşır. Bağımsız bir kopya, oluşturulduğundaki değeri korur ve bunu ayrı olarak değiştirebilir.</p></section></main></div><footer>Latte Dock NG · Çevrimdışı dokümantasyon. Kullanılamayan arayüz dilleri İngilizce'ye geri döner.</footer></body></html>

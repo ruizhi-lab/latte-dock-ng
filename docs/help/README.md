@@ -11,16 +11,15 @@ The `configure-latte` chapter also documents `layout-details`, `docks-dialog`,
 `screens-dialog` and `context-menu-actions`, because those dialogs are opened
 from the Layouts Editor and Preferences windows.
 
-English is the fallback. Simplified Chinese (`zh_CN`, including Hans) and
+English is the fallback. Every language with a `po/<code>/latte-dock.po` catalog
+has a translated guide. Simplified Chinese (`zh_CN`, including Hans) and
 Traditional Chinese (`zh_TW`, including Hant and Hong Kong) follow KDE's ordered
 UI language list. A language is searched across data prefixes before trying the
 next language. Missing files and browser-launch failures produce translated
 messages rather than silently failing.
 
 The language switcher is a native `<select>` dropdown, not a flat row of links.
-It lists only guides that actually exist: currently `en`, `zh_CN` and `zh_TW`.
-Other UI languages are not listed until a translated page is added; the runtime
-lookup in `handbook.cpp` still falls back to English for them. The select uses
+It lists every translated guide. The select uses
 one inline `onchange` handler to navigate; the table of contents and all guide
 links still work without scripts. When adding a translation, add its option to
 the select and keep `handbookdocumenttest` green.
@@ -42,15 +41,14 @@ its original. Use the UI terms for clones (`克隆` in `zh_CN`, `複本` in
 
 ## Translation status
 
-`en`, `zh_CN` and `zh_TW` have complete guide pages. No machine-generated
-translations are shipped. Other KDE UI languages fall back to the English guide
-at runtime but are not advertised in the selector until a real translation is
-provided. To add a language, create `docs/help/<code>/index.html` with the same
-section IDs, group rows, advanced badges and table row counts, add its option to
-the selector, and run `handbookdocumenttest`. Do not add an untranslated copy
-under a language code; the runtime fallback already covers it.
+All interface languages have complete guide pages, translated from the English
+source. Keep established software terminology where a suitable translation is
+unavailable. When adding an interface language, create
+`docs/help/<code>/index.html` with the same section IDs, group rows, advanced
+badges and table row counts, add its option to every page's selector, and run
+`handbookdocumenttest`. Do not add an untranslated copy under a non-English
+language code; the runtime fallback already covers missing translations.
 
 The HTML and stylesheet are installed under `latte-dock-ng/help` in the standard
 data directory. All assets and navigation are local; no network access or extra
-runtime dependency is required. Interface strings remain in `latte-dock.po`;
-additional interface languages use English until a matching guide is provided.
+runtime dependency is required. Interface strings remain in `latte-dock.po`.

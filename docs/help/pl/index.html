@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Przewodnik użytkownika Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Przewodnik użytkownika Latte Dock NG</h1><p>Te instrukcje opisują bieżące opcje. Tryb zaawansowany, styl doku i zainstalowane wtyczki mogą zmieniać widoczność elementów sterujących. Opcje oznaczone jako Zaawansowane są ukryte w podstawowym edytorze.</p><div class="language-menu"><label for="language-select">Język</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html" selected>Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Wypisano tylko przetłumaczone przewodniki. Pozostałe języki interfejsu otwierają przewodnik w języku angielskim.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Na tej stronie</h2><a class="chapter" href="#edit-dock">Edytuj dok</a><a class="subsection" href="#behavior">Zachowanie</a><a class="subsection" href="#appearance">Wygląd</a><a class="subsection" href="#effects">Efekty</a><a class="subsection" href="#tasks">Zadania</a><a class="chapter" href="#configure-latte">Konfiguruj Latte</a><a class="subsection" href="#layouts">Edytor układów</a><a class="subsection" href="#layout-details">Szczegóły układu</a><a class="subsection" href="#docks-dialog">Okno dialogowe doków</a><a class="subsection" href="#screens-dialog">Okno dialogowe ekranów</a><a class="subsection" href="#preferences">Preferencje</a><a class="subsection" href="#context-menu-actions">Akcje menu kontekstowego</a><a class="chapter" href="#copies-and-clones">Niezależne kopie i klony</a><a class="subsection" href="#create-independent-copy">Utwórz niezależną kopię</a><a class="subsection" href="#create-clone">Utwórz klony</a><a class="subsection" href="#differences">Różnice w skrócie</a></nav></aside><main>
+<section id="edit-dock"><h2>Edytuj dok</h2><p class="note">Zmiany są wprowadzane natychmiast. Zamknięcie ukrywa edytor; nie cofa zmian. Przypięcie utrzymuje edytor otwarty. Dodaj… → Duplikuj dok tworzy niezależną kopię oryginalnego doku; Usuń usuwa bieżący dok. Przełączanie kart utrzymuje okno na miejscu. Tryb zaawansowany dostosowuje rozmiar okna do jego najdłuższej strony, w ramach dostępnego miejsca na ekranie. Dłuższe strony przewijają się wewnątrz okna. Przeciągnij róg zmiany rozmiaru, aby dostosować rozmiar okna w każdym trybie edycji.</p>
+<p class="note">Tryb zaawansowany ujawnia więcej elementów sterujących. Opcje oznaczone jako Zaawansowane są ukryte w podstawowym edytorze.</p>
+<h3 id="behavior">Zachowanie</h3>
+<p class="note">Opcje widoczności, opóźnienia, akcji, zachowania elementów, odstępu pływającego i środowiska dla tego doku.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Widoczność</td></tr>
+<tr><td>Ekran / Lokalizacja</td><td>Wybierz ekran i krawędź dla tego doku. Przy wielu ekranach opcje Na wszystkich ekranach i Na wszystkich ekranach wtórnych tworzą powiązane kopie. Zobacz Niezależne kopie i Klonowanie.</td></tr>
+<tr><td>Wyrównanie</td><td>Ustaw pozycję doku wzdłuż krawędzi ekranu. Wyrównanie elementów kontroluje, gdzie widżety są umieszczone wewnątrz doku.</td></tr>
+<tr><td>Zawsze widoczny</td><td>Utrzymuj dok widocznym i zarezerwuj miejsce na pulpicie, jeśli menedżer okien to obsługuje.</td></tr>
+<tr><td>Automatyczne ukrywanie</td><td>Ukryj dok, aż kursor dotrze do jego obszaru aktywacji.</td></tr>
+<tr><td>Unikaj aktywnego</td><td>Ukryj, gdy aktywne okno dotyka obszaru doku, i pokaż dok, gdy kursor wejdzie w ten obszar.</td></tr>
+<tr><td>Unikaj zmaksymalizowanych</td><td>Ukryj tylko, gdy zmaksymalizowane okno jest aktywne na tym ekranie, i pokaż dok, gdy kursor wejdzie w ten obszar.</td></tr>
+<tr><td>Unikaj wszystkich okien</td><td>Ukryj, gdy jakiekolwiek okno dotyka obszaru doku, i pokaż dok, gdy kursor wejdzie w ten obszar.</td></tr>
+<tr><td>Okna pod dokiem</td><td>Utrzymuj dok nad oknami; okna mogą być umieszczane pod nim.</td></tr>
+<tr><td>Okna mogą przykrywać</td><td>Pozwól oknom przykrywać dok. Dok wychodzi na wierzch, gdy kursor dotrze do krawędzi ekranu.</td></tr>
+<tr><td>Okna zawsze przykrywają</td><td>Utrzymuj okna nad dokiem przez cały czas; dok pozostaje za nimi.</td></tr>
+<tr class="group"><td colspan="2">Opóźnienie</td></tr>
+<tr><td>Opóźnienie / Pokaż / Ukryj</td><td>Ustaw czas oczekiwania przed wyświetleniem lub ukryciem, w milisekundach. Dłuższe opóźnienia zmniejszają przypadkową aktywację.</td></tr>
+<tr class="group"><td colspan="2">Akcje</td></tr>
+<tr><td>Śledź <span class="advanced">Zaawansowane</span></td><td>Wybierz, której aktywnej okna akcje na pustym obszarze mają śledzić: Aktywne okno z bieżącego ekranu lub Aktywne okno ze wszystkich ekranów.</td></tr>
+<tr><td>Lewy przycisk / Przeciąganie aktywnego okna <span class="advanced">Zaawansowane</span></td><td>Włącz przeciąganie z pustej przestrzeni doku, aby przesuwać lub maksymalizować/przywracać śledzone aktywne okno.</td></tr>
+<tr><td>Środkowy przycisk / Zamknij aktywne okno <span class="advanced">Zaawansowane</span></td><td>Włącz kliknięcie środkowym przyciskiem na pustej przestrzeni doku, aby zamknąć śledzone aktywne okno.</td></tr>
+<tr><td>Kółko myszy <span class="advanced">Zaawansowane</span></td><td>Wybierz, co robi kółko nad pustą przestrzenią doku: Brak akcji, Przełączanie między pulpitami, Przełączanie między aktywnościami, Przełączanie między zadaniami lub Przełączanie i minimalizowanie zadań.</td></tr>
+<tr class="group"><td colspan="2">Elementy</td></tr>
+<tr><td>Cienkie podpowiedzi tytułów po najechaniu</td><td>Pokaż kompaktowe podpowiedzi tytułów widżetów. Podglądy okien zadań są kontrolowane osobno przez akcję Hover zadania.</td></tr>
+<tr><td>Powiększaj widżety po najechaniu</td><td>Zezwól widżetom na powiększanie wraz z dokiem. Wyłącz to, aby zachować ostrość ikon widżetów; ikony zadań i launchery nadal się powiększają.</td></tr>
+<tr><td>Rozwiń wyskakujące okienko za pomocą kółka myszy</td><td>Przewiń nad obsługiwanym widżetem, aby wyświetlić lub ukryć jego wyskakujące okienko.</td></tr>
+<tr><td>Automatycznie dostosuj rozmiar w razie potrzeby</td><td>Zmniejszaj elementy, gdy przekraczają dostępną długość, i zwiększaj je ponownie, gdy się mieszczą.</td></tr>
+<tr><td>Aktywuj skróty globalne oparte na pozycji</td><td>Zezwól skrótom globalnym opartym na pozycji na aktywację elementów tego doku. Tylko jeden dok na układ powinien to używać.</td></tr>
+<tr class="group"><td colspan="2">Pływający</td></tr>
+<tr><td>Zawsze używaj pływającej przerwy dla interakcji użytkownika <span class="advanced">Zaawansowane</span></td><td>Uwzględnij pływającą lukę w obszarze używanym do interakcji z widżetami i oknami.</td></tr>
+<tr><td>Ukryj pływającą lukę dla zmaksymalizowanych okien <span class="advanced">Zaawansowane</span></td><td>Usuń pływającą lukę, gdy zmaksymalizowane okno potrzebuje krawędzi ekranu.</td></tr>
+<tr><td>Opóźnij ukrywanie pływającej luki, aż kursor opuści <span class="advanced">Zaawansowane</span></td><td>Poczekaj, aż kursor opuści obszar, przed ukryciem luki, aby uniknąć przypadkowych kliknięć na pobliskich elementach.</td></tr>
+<tr><td>Odbijaj pływającą lukę, gdy jest wyświetlana <span class="advanced">Zaawansowane</span></td><td>W trybie Zawsze widoczny odbijaj lukę po przeciwnej stronie doku.</td></tr>
+<tr class="group"><td colspan="2">Środowisko</td></tr>
+<tr><td>Podnieś przy zmianie pulpitu <span class="advanced">Zaawansowane</span></td><td>Tymczasowo ujawnij dok przy zmianie wirtualnego pulpitu. Ta opcja nie jest używana w trybach Zawsze widoczny ani Okna pod dokiem.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Wygląd</h3>
+<p class="note">Marginesy, Kolory, Promień/Cień, Dynamiczne dostosowania długości, Dynamiczna widoczność i Wyjątki wymagają trybu Zaawansowanego.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementy</td></tr>
+<tr><td>Styl doku</td><td>Wybierz Klasyczny lub Nowoczesny, aby zastosować ustawienie wstępne. W każdym stylu użyj przełączników poniżej Stylu doku, aby niezależnie ustawić rozmieszczenie elementów, obrysowane tło, minimalny odstęp między elementami, automatyczną pływającą lukę i kompaktowe wskaźniki zadań.</td></tr>
+<tr><td>Utrzymuj elementy doku razem</td><td>Użyj jednej grupy dla elementów doku, również gdy wyrównanie doku jest ustawione na Justify.</td></tr>
+<tr><td>Użyj tła wciśniętego z obrysem</td><td>Użyj ustawienia wstępnego tła z obrysem i stylizacją dla jego odstępów, zaokrąglonych rogów i cienia.</td></tr>
+<tr><td>Użyj szerszego minimalnego odstępu między elementami</td><td>Zwiększ minimalny odstęp wokół elementów doku. Większe wartości ustawione za pomocą kontrolek marginesów nadal obowiązują.</td></tr>
+<tr><td>Użyj automatycznej odstępu pływającego</td><td>Oblicz odstęp od krawędzi ekranu na podstawie rozmiaru ikony, gdy nie ustawiono konkretnej wartości odstępu.</td></tr>
+<tr><td>Użyj kompaktowych wskaźników zadań</td><td>Użyj kompaktowego układu dla wskaźników zadań Latte. Wybierz kształt wskaźnika w efektach.</td></tr>
+<tr><td>Przywróć ustawienie wstępne</td><td>Przycisk na dole edytora doków natychmiast przywraca zachowanie, wygląd, efekty i wszystkie karty zadań do ustawień wstępnych dostarczanego doku dla bieżącego stylu Klasyczny/Nowoczesny, w tym opcje ukryte w trybie Zaawansowane. Ekran, krawędź doku, launchery i widżety są zachowane. Wyrównanie, widoczność i opóźnienia są resetowane. Udostępnianie launcherów wraca do domyślnej grupy lokalnej, zachowując kopię aktywnej listy launcherów; udostępnione listy innych doków pozostają bez zmian. Niestandardowe kolory i nadpisania wskaźników są resetowane. Ustawienie wstępne łączy szablon Domyślny dok z domyślnymi wartościami schematu konfiguracji. Jest to oddzielne od samego przełączania stylu doku. Klasyczny domyślnie wyłącza pięć przełączników wyglądu pod Stylem doku. Nowoczesny domyślnie je włącza. Oba ustawienia wstępne używają tych samych wartości domyślnych dla pozostałych opcji.</td></tr>
+<tr><td>Rozmiar bezwzględny / Rozmiar względny</td><td>Ustaw rozmiar ikony w pikselach lub jako udział ekranu. Rozmiar względny jest przydatny w konfiguracjach o wysokim DPI lub wielu ekranach.</td></tr>
+<tr><td>Powiększanie po najechaniu</td><td>Ustaw, o ile elementy powiększają się pod kursorem.</td></tr>
+<tr class="group"><td colspan="2">Długość</td></tr>
+<tr><td>Maksimum / Minimum / Przesunięcie</td><td>Ustaw maksymalną i minimalną długość doku oraz przesuwaj go wzdłuż krawędzi ekranu.</td></tr>
+<tr><td>Dynamiczne dostosowania długości <span class="advanced">Zaawansowane</span></td><td>Maksymalizuj długość panelu w obecności zmaksymalizowanych okien: rozszerz dok do pełnej długości, gdy obecne jest zmaksymalizowane okno. Tło musi być włączone.</td></tr>
+<tr class="group"><td colspan="2">Marginesy</td></tr>
+<tr><td>Marginesy / Długość / Grubość / Przerwa pływająca <span class="advanced">Zaawansowane</span></td><td>Ustaw zewnętrzny margines wzdłuż doku, margines w poprzek jego grubości oraz przerwę między dokiem a krawędzią ekranu.</td></tr>
+<tr><td>Przerwa od zmaksymalizowanych okien (px) <span class="advanced">Zaawansowane</span></td><td>Zarezerwuj dodatkowe 0–128 pikseli między oknami a tym dokiem w trybie Zawsze widoczny. Domyślnie: 0. Jest to osobne od pływającej przerwy od krawędzi ekranu i dodaje się do każdej lustrzanej przerwy; tryby automatycznego ukrywania nie rezerwują tej przestrzeni.</td></tr>
+<tr class="group"><td colspan="2">Kolory</td></tr>
+<tr><td>Kolory / Paleta <span class="advanced">Zaawansowane</span></td><td>Wybierz Kolory motywu Plasma, Ciemne kolory, Jasne kolory, Kolory niestandardowe układu, Odwrócone lub Inteligentne kolory na podstawie tła pulpitu. Kolory niestandardowe układu korzystają z schematu kolorów układu; Inteligentne podążają za tapetą.</td></tr>
+<tr><td>Użyj niestandardowego koloru tła / Kolor dzienny <span class="advanced">Zaawansowane</span></td><td>Nadpisz tło tego doku wybranym kolorem; kontrast tekstu dostosowuje się automatycznie. Wyłączone domyślnie. Palety pochodne od okna oraz paleta Plasma dla rozwiniętych apletów mają priorytet. Nieprzezroczystość pozostaje osobnym ustawieniem tła.</td></tr>
+<tr><td>Zmieniaj kolory tła w zależności od pory dnia / Kolor nocny / Początek dnia (czas lokalny) / Początek nocy (czas lokalny) <span class="advanced">Zaawansowane</span></td><td>Opcjonalnie przełączaj między dwoma niestandardowymi kolorami przy użyciu lokalnego czasu 24-godzinnego. Domyślnie: dzień 07:00, noc 19:00. Czas rozpoczęcia jest włączony. Przedziały mogą przekraczać północ; równe czasy utrzymują kolor dzienny przez cały dzień. Wyłączenie harmonogramu utrzymuje kolor dzienny. Zegar jest sprawdzany co sekundę, również po wznowieniu.</td></tr>
+<tr class="group"><td colspan="2">Tło</td></tr>
+<tr><td>Tło</td><td>Tło to przełącznik włącz/wyłącz. Gdy jest włączone, użyj poniższych elementów sterujących, aby ustawić grubość, krycie, promień i cień.</td></tr>
+<tr><td>Krycie / Krycie przy zajętości</td><td>Ustaw krycie tła. Ten sam suwak nazywa się Krycie przy zajętości, gdy opcje Ukryj tło, gdy nie jest potrzebne oraz Preferuj nieprzezroczyste tło przy dotykaniu dowolnego okna są włączone. Def. przywraca domyślną wartość motywu.</td></tr>
+<tr><td>Promień / Cień <span class="advanced">Zaawansowane</span></td><td>Ustaw promień narożników tła i rozmiar cienia. Def. używa domyślnej wartości motywu.</td></tr>
+<tr><td>Rozmycie / Cienie / Kontur / Wszystkie narożniki <span class="advanced">Zaawansowane</span></td><td>Włącz rozmycie tła, cień tła, kontur i zaokrąglone narożniki. Wszystkie narożniki są dostępne tylko dla niektórych geometrii pływających/justyfikowanych.</td></tr>
+<tr class="group"><td colspan="2">Dynamiczna widoczność</td></tr>
+<tr><td>Preferuj nieprzezroczyste tło przy dotykaniu dowolnego okna <span class="advanced">Zaawansowane</span></td><td>Usuń przezroczystość tła, gdy okno dotyka doku.</td></tr>
+<tr><td>Ukryj tło, gdy nie jest potrzebne <span class="advanced">Zaawansowane</span></td><td>Ukryj tło, chyba że okno dotyka doku lub tło pulpitu jest zajęte.</td></tr>
+<tr><td>Ukryj cień tła dla zmaksymalizowanych okien <span class="advanced">Zaawansowane</span></td><td>Ukryj cień tła, gdy aktywne zmaksymalizowane okno dotyka doku.</td></tr>
+<tr class="group"><td colspan="2">Wyjątki</td></tr>
+<tr><td>Preferuj tło i kolory Plasma dla rozwiniętych apletów<span class="advanced">Zaawansowane</span></td><td>Używaj nieprzezroczystego tła w stylu Plasma i kolorów Plasma podczas rozwijania wyskakujących okienek widżetów.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efekty</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Cienie</td></tr>
+<tr><td>Cienie</td><td>Włącz lub wyłącz cienie widżetów. Rozmiar i Nieprzezroczystość są wyłączone, gdy cienie są wyłączone.</td></tr>
+<tr><td>Rozmiar / Nieprzezroczystość</td><td>Ustaw rozmiar i nieprzezroczystość cienia widżetu.</td></tr>
+<tr><td>Kolor domyślny / Kolor motywu / kolor niestandardowy</td><td>Wybierz domyślny kolor cienia, kolor z palety motywu lub kliknij próbkę koloru, aby wybrać kolor niestandardowy.</td></tr>
+<tr class="group"><td colspan="2">Animacje</td></tr>
+<tr><td>Animacje / x1 / x2 / x3</td><td>Włącz lub wyłącz wszystkie animacje doku. x1 to normalna prędkość, x2 to wolniejsza, x3 to najwolniejsza.</td></tr>
+<tr class="group"><td colspan="2">Wskaźniki</td></tr>
+<tr><td>Wskaźniki</td><td>Włącz lub wyłącz wskaźniki aktywnych zadań. Gdy są włączone, wybierz wskaźnik Latte lub niestandardową wtyczkę wskaźnika; opcje specyficzne dla wtyczki pojawią się w jej zakładce.</td></tr>
+<tr><td>Używaj kropek w stylu macOS</td><td>Wskaźnik Latte domyślnie używa kropek w stylu macOS, gdy kompaktowe wskaźniki zadań są włączone w Wyglądzie. Wyłącz opcję Używaj kropek w stylu macOS w Efektach, aby ręcznie wybrać Linia lub Kropki.</td></tr>
+<tr><td>Używaj kolorów ikon aplikacji</td><td>Opcjonalnie koloruj wskaźniki zadań dominującym kolorem każdej ikony aplikacji, dostosowanym do kontrastu tła. Wybierz Linia dla kolorowych podkreśleń. Wyłączone domyślnie; aplety zachowują kolory palety.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Zadania</h3>
+<p>Po upuszczeniu ikony na innych dokach współdzielących listę uruchamiaczy, uruchamiacze zadań zaczynają się przetasowywać. Ustalenie kolejności może chwilę potrwać. Przerwy separatorów pozostają na swoim miejscu, gdy odbierający dok zapisuje nową kolejność. Przeciąganie już przypiętej aplikacji zachowuje jej istniejący uruchamiacz, również wtedy, gdy ten uruchamiacz odwołuje się do domyślnej aplikacji systemowej. Nowe separatory zajmują miejsce po dotarciu do wybranego odstępu.</p>
+<p>Gdy dodasz lub przeciągniesz widżet obok separatora na krawędzi obszaru zadań lub zasobnika systemowego, widżet zostanie umieszczony na zewnątrz separatora. Separator pozostaje obok obszaru zadań lub zasobnika.</p>
+<p>Gdy przypniesz aplikację z menu aplikacji, jej ikona pojawi się przed wszelkimi separatorami na końcu listy zadań. Prawy separator należy do grupy przypiętych, więc uruchomione, ale nieprzypięte aplikacje pojawiają się za nim.</p>
+<p>Slot zadania pozostaje podświetlony, a ikona widoczna podczas przeciągania w celu zmiany kolejności zadań. Gdy nowe zadanie się pojawia, dok zaczyna rezerwować dla niego slot od początkowego rozmiaru animacji.</p>
+<p class="note">Odznaki, Animacje, Przewijanie, Akcje oraz niektóre opcje Interakcji/Filtrów wymagają trybu Zaawansowanego. Wyświetlanie tylko uruchamiaczy i ukrywanie wszystkich zadań wyłącza akcje i filtry związane z oknami.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Odznaki</td></tr>
+<tr><td>Powiadomienia z zadań <span class="advanced">Zaawansowane</span></td><td>Wyświetla liczbę nieprzeczytanych powiadomień na ikonach zadań.</td></tr>
+<tr><td>Informacje o postępie dla zadań <span class="advanced">Zaawansowane</span></td><td>Pokaż odznaki postępu, na przykład podczas kopiowania plików przez Dolphin.</td></tr>
+<tr><td>Odtwarzanie dźwięku z zadań <span class="advanced">Zaawansowane</span></td><td>Pokaż odznakę dźwięku dla aplikacji odtwarzających dźwięk. Dopasowanie preferuje jawne identyfikatory pulpitu/aplikacji. Ogólne informacje o procesie przeglądarki nie wystarczają do zidentyfikowania konkretnej PWA; niejednoznaczne strumienie audio pozostają nieprzypisane, zamiast przypisywać kontrolki dźwięku niepowiązanym aplikacjom. Niezależne aplikacje Electron mogą nadal dopasowywać własny proces audio. Status odtwarzania i aktywność wyjścia ukrywają wstrzymane strumienie, nawet gdy aplikacja utrzymuje połączenie audio. Bez statusu odtwarzacza krótka cisza jest tolerowana przez około jedną sekundę.</td></tr>
+<tr><td>Wyróżniający kolor odznaki powiadomienia <span class="advanced">Zaawansowane</span></td><td>Użyj mocniejszej, zwykle czerwonej odznaki powiadomienia. Wymaga opcji Powiadomienia z zadań.</td></tr>
+<tr><td>Zmień głośność podczas przewijania odznaki dźwięku <span class="advanced">Zaawansowane</span></td><td>Kliknij odznakę dźwięku, aby wyciszyć/włączyć dźwięk, lub przewiń po niej, aby zmienić głośność. Wymaga opcji Odtwarzanie dźwięku z zadań.</td></tr>
+<tr class="group"><td colspan="2">Interakcja</td></tr>
+<tr><td>Uruchamianie jest dodawane tylko w bieżącym aplecie zadań</td><td>Dodawaj upuszczone uruchamianie tylko do tego widżetu zadań, a nie jako osobne widżety lub do innych widżetów zadań.</td></tr>
+<tr><td>Akcje okna w menu kontekstowym <span class="advanced">Zaawansowane</span></td><td>Pokaż akcje specyficzne dla okna w menu kontekstowym zadania.</td></tr>
+<tr><td>Podgląd okna zachowuje się jak wyskakujące okienko <span class="advanced">Zaawansowane</span></td><td>Otwieraj podglądy jako wyskakujące okienko zamiast podpowiedzi. Akcja po najechaniu musi żądać podglądów; to zmienia tylko sposób ich wyświetlania.</td></tr>
+<tr><td>Na podstawie skrótów pozycyjnych stosuj tylko do bieżących zadań<span class="advanced">Zaawansowane</span></td><td>Ogranicz globalne skróty pozycyjne do tego widżetu zadań.</td></tr>
+<tr class="group"><td colspan="2">Filtry</td></tr>
+<tr><td>Pokaż tylko zadania z bieżącego ekranu</td><td>Pokaż okna z ekranu tej doki.</td></tr>
+<tr><td>Pokaż tylko zadania z bieżącego pulpitu</td><td>Pokaż okna z bieżącego wirtualnego pulpitu.</td></tr>
+<tr><td>Pokaż sekcję zminimalizowanych okien</td><td>Domyślnie wyłączone. Wyświetla zminimalizowane okna jako pojedyncze ikony po zwykłych zadaniach. Najedź kursorem lub skup fokus na ikonie, aby zobaczyć nazwę aplikacji i tytuł okna, a kliknij, aby przywrócić okno. Gdy aplikacja ma wiele zminimalizowanych okien, mała plakietka pokazuje kolejność każdego okna i ich łączną liczbę dla tej aplikacji. Sekcja podlega filtrom zadań i współdzieli przewijanie nadmiaru zadań. Włącz przewijanie, aby dotrzeć do okien poza ekranem, używając skonfigurowanej akcji kółka myszy lub najechania na krawędź. Tryb tylko uruchamiania ukrywa tę sekcję.</td></tr>
+<tr><td>Pokaż tylko zadania z uruchamiaczy<span class="advanced">Zaawansowane</span></td><td>Pokaż okna tylko dla aplikacji już obecnych na liście uruchamiaczy.</td></tr>
+<tr><td>Pokaż tylko uruchamiacze i ukryj wszystkie zadania<span class="advanced">Zaawansowane</span></td><td>Pokaż ikony uruchamiaczy i ukryj działające zadania. To również wyłącza akcje i filtry związane z oknami.</td></tr>
+<tr><td>Pokaż tylko pogrupowane zadania dla tej samej aplikacji<span class="advanced">Zaawansowane</span></td><td>Domyślnie grupuj okna tej samej aplikacji.</td></tr>
+<tr class="group"><td colspan="2">Animacje</td></tr>
+<tr><td>Odbijaj uruchamiacze po uruchomieniu<span class="advanced">Zaawansowane</span></td><td>Animuj uruchamiacze po ich uruchomieniu.</td></tr>
+<tr><td>Odbijaj zadania wymagające uwagi<span class="advanced">Zaawansowane</span></td><td>Animuj zadania, które proszą o uwagę.</td></tr>
+<tr><td>Przesuwaj pojedyncze okna wewnątrz i na zewnątrz<span class="advanced">Zaawansowane</span></td><td>Animuj nowe i zamknięte pojedyncze okna.</td></tr>
+<tr><td>Grupowane zadania odbijają swoje nowe okna <span class="advanced">Zaawansowane</span></td><td>Animuj nowe okno wewnątrz grupy zadań.</td></tr>
+<tr><td>Grupowane zadania wysuwają swoje zamknięte okna <span class="advanced">Zaawansowane</span></td><td>Animuj zamknięte okno wewnątrz grupy zadań.</td></tr>
+<tr class="group"><td colspan="2">Uruchamiacze</td></tr>
+<tr><td>Unikalna grupa</td><td>Przypisz temu widżetowi zadań własną listę uruchamiaczy.</td></tr>
+<tr><td>Grupa układu</td><td>Udostępniaj uruchamiacze widżetom zadań w tym samym układzie. Ten przycisk jest wyświetlany tylko wtedy, gdy dok już używa Grupy układu.</td></tr>
+<tr><td>Grupa globalna</td><td>Udostępniaj uruchamiacze widżetom zadań we wszystkich układach.</td></tr>
+<tr class="group"><td colspan="2">Przewijanie</td></tr>
+<tr><td>Przewijanie <span class="advanced">Zaawansowane</span></td><td>Włącz przewijanie, gdy zadania przekraczają dostępną przestrzeń. Działa z każdym presetem doku, w tym gdy opcja Utrzymuj elementy doku razem jest włączona.</td></tr>
+<tr><td>Ręczne <span class="advanced">Zaawansowane</span></td><td>Wybierz Wyłączone przewijanie, Tylko pionowe/poziome przewijanie lub Poziome i pionowe przewijanie. Wybór jednokierunkowy zależy od orientacji doku.</td></tr>
+<tr><td>Automatyczne <span class="advanced">Zaawansowane</span></td><td>Włącz lub wyłącz automatyczne przewijanie.</td></tr>
+<tr class="group"><td colspan="2">Akcje</td></tr>
+<tr><td>Lewy przycisk <span class="advanced">Zaawansowane</span></td><td>Akcja dla lewego kliknięcia na zadaniu: Brak, Zamknij okno lub grupę, Nowa instancja, Minimalizuj/Przywróć, Cykl przez zadania, Przełącz grupowanie zadań, Przedstaw okna, Podgląd okien, Podświetl okna lub Podgląd i podświetl okna.</td></tr>
+<tr><td>Środkowy przycisk <span class="advanced">Zaawansowane</span></td><td>Akcja dla środkowego kliknięcia na zadaniu. Opcje są takie same jak dla Lewego przycisku.</td></tr>
+<tr><td>Najedzenie <span class="advanced">Zaawansowane</span></td><td>Akcje po najechaniu: Brak, Podgląd okien, Podświetl okna lub Podgląd i podświetl okna. Podpowiedzi tytułów zadań są kontrolowane w zachowaniu.</td></tr>
+<tr><td>Kółko <span class="advanced">Zaawansowane</span></td><td>Akcje kółka: Brak, Przechodzenie przez zadania lub Przechodzenie i minimalizowanie zadań.</td></tr>
+<tr><td>Modyfikator + kliknięcie <span class="advanced">Zaawansowane</span></td><td>Przytrzymaj Shift, Ctrl, Alt lub Meta i kliknij lewym, środkowym lub prawym przyciskiem, aby wykonać dodatkową akcję. Wybierz modyfikator, przycisk i akcję; jest to niezależne od głównych akcji powyżej.</td></tr>
+</tbody></table></div>
+<p class="note">Filtr bieżącej aktywności jest ukryty w Plasma 6, ponieważ obsługa KActivities jest niestabilna.</p></section><section id="configure-latte"><h2>Konfiguruj Latte</h2><p class="note">Edytor układów zarządza układami i ich dokami. Preferencje kontrolują zachowanie aplikacji. Zastosuj zapisuje oczekujące zmiany w bieżącej karcie; Reset przywraca zapisany stan tej karty; Przywróć ustawienia domyślne przygotowuje ustawienia domyślne do przeglądu. Ekran... zarządza zapisanymi odniesieniami do ekranów.</p>
+<h3 id="layouts">Edytor układów</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr><td>Jeden układ przez cały czas</td><td>Używaj jednego układu dla wszystkich aktywności.</td></tr>
+<tr><td>Wiele układów na podstawie aktywności</td><td>Przypisz różne układy do aktywności; wiele układów może pozostać załadowanych.</td></tr>
+<tr><td>Przełącz</td><td>Aktywuj wybrany układ. Najpierw zastosuj oczekujące zmiany; Latte nie przełączy układu przy niezapisanych zmianach.</td></tr>
+<tr><td>Aktywności...</td><td>Otwórz menedżer Aktywności Plasma. Użyj kolumny Aktywności lub Włączone, aby przypisać ten układ do aktywności.</td></tr>
+<tr><td>Nowy / Duplikuj / Usuń</td><td>Utwórz, skopiuj lub usuń układ. Duplikowanie tutaj kopiuje cały układ, a nie pojedynczy dok. Aktywne i zablokowane układy nie mogą być usunięte.</td></tr>
+<tr><td>Włączone</td><td>Przypisz ten układ do jednej lub więcej aktywności, aby Aktywności Plasma mogły go aktywować. Wyświetlane tylko w trybie wielu układów.</td></tr>
+<tr><td>Tylko do odczytu</td><td>Chroń konfigurację układu przed zmianami.</td></tr>
+<tr><td>Szczegóły...</td><td>Otwórz okno dialogowe szczegółów układu dla ikony, niestandardowych kolorów, marginesu wyskakującego okna i widoczności menu kontekstowego.</td></tr>
+<tr><td>Doki...</td><td>Otwórz listę doków dla tego układu: nazwa, ekran, krawędź, wyrównanie, zawarte widżety oraz opcje now/duplikuj/usuń/importuj/eksportuj.</td></tr>
+<tr><td>Importuj... / Eksportuj...</td><td>Importuj układ z pliku lokalnego lub ze sklepu KDE; eksportuj go w celu utworzenia kopii zapasowej lub jako szablon. Plik → Importuj konfigurację / Eksportuj konfigurację obsługuje pełną kopię zapasową aplikacji.</td></tr>
+<tr><td>Nazwa / W menu / Aktywności</td><td>Lista układów zawiera kolumny Nazwa, W menu i Aktywności. Edytuj Nazwę i Aktywności bezpośrednio na liście; opcja W menu kontroluje, czy układ pojawia się w menu Układy doku.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Szczegóły układu</h3>
+<p>Otwórz za pomocą Edytor układów → Szczegóły..., aby edytować wybrany układ.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr><td>Układ</td><td>Wybierz układ do edycji.</td></tr>
+<tr><td>Ikona</td><td>Wybierz ikonę dla układu. Przycisk wyczyść usuwa ją.</td></tr>
+<tr><td>Niestandardowe kolory</td><td>Wybierz plik schematu niestandardowych kolorów dla tego układu.</td></tr>
+<tr><td>Margines wyskakującego okna</td><td>Ustaw margines używany przez wyskakujące okna układu; opcja wyłączona oznacza użycie wartości domyślnej.</td></tr>
+<tr><td>Pokaż w menu kontekstowym układów, gdy to możliwe</td><td>Pokaż ten układ w menu Układy doku, gdy bieżąca aktywność na to pozwala.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Okno dialogowe doków</h3>
+<p>Otwórz za pomocą Edytor układów → Doki..., aby zarządzać dokami w wybranym układzie.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolumny</td></tr>
+<tr><td>Nazwa</td><td>Nazwa doku. Kliknij dwukrotnie, aby zmienić nazwę.</td></tr>
+<tr><td>Ekran</td><td>Ekran, do którego należy dok, w tym Główny, Wszystkie ekrany i Wszystkie ekrany dodatkowe.</td></tr>
+<tr><td>Krawędź</td><td>Krawędź ekranu używana przez dok.</td></tr>
+<tr><td>Wyrównanie</td><td>Wyrównanie doku wzdłuż jego krawędzi.</td></tr>
+<tr><td>Zawiera</td><td>Widżety i podkontenery zawarte w doku. Ta kolumna jest tylko do odczytu.</td></tr>
+<tr class="group"><td colspan="2">Przyciski</td></tr>
+<tr><td>Nowy</td><td>Utwórz dok z szablonu.</td></tr>
+<tr><td>Duplikuj</td><td>Utwórz niezależną kopię wybranego doku lub kolejny klon, jeśli wybrany dok jest klonem.</td></tr>
+<tr><td>Usuń</td><td>Usuń wybrany dok. Klony są usuwane wraz z ich oryginałem.</td></tr>
+<tr><td>Importuj...</td><td>Importuj dok z lokalnego pliku szablonu.</td></tr>
+<tr><td>Eksportuj...</td><td>Wyeksportuj wybrany dok w celu utworzenia kopii zapasowej lub jako szablon. Okno dialogowe szablonu pozwala wybrać, które ustawienia widżetów mają być uwzględnione; pomijaj widżety zawierające dane osobowe, takie jak konta e-mail lub kalendarza.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Okno dialogowe ekranów</h3>
+<p>Otwórz za pomocą Plik → Ekrany..., aby wyczyścić odniesienia do ekranów zapisane przez Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr><td>Lista ekranów</td><td>Wyświetla odniesienia do ekranów przechowywane w Latte, w tym ekrany, które nie są już podłączone.</td></tr>
+<tr><td>Zaznacz przestarzałe ekrany</td><td>Zaznacz tylko ekrany, które już nie istnieją. Aktywne ekrany i ekrany używane przez układ nie mogą być usunięte.</td></tr>
+<tr><td>Odznacz wszystko</td><td>Wyczyść zaznaczenie przed wyborem innego zestawu.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferencje</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr><td>Pokaż okno informacyjne dla automatycznej aktywacji układów</td><td>Pokaż okno informacyjne, gdy układ aktywuje się automatycznie.</td></tr>
+<tr><td>Efekt paraboliczny / Mały / Średni / Duży</td><td>Ustaw globalny zakres powiększenia po najechaniu na sąsiednie elementy.</td></tr>
+<tr><td>Włącz autostart podczas uruchamiania</td><td>Uruchom Latte po zalogowaniu.</td></tr>
+<tr><td>Użyj stylu 3D dla odznak powiadomień i skrótów</td><td>Użyj przestrzennego stylu dla odznak powiadomień i skrótów.</td></tr>
+<tr><td>Przytrzymaj ⌘, aby wyświetlić odznaki skrótów</td><td>Domyślnie wyłączone. Przytrzymaj klawisz Meta przez około sekundę, aby wyświetlić ukryte doki oraz odznaki skrótów ich zadań i widgetów; puść klawisz, aby je ponownie ukryć. Przy domyślnych ustawieniach Plasma własny launcher również otwiera się po puszczeniu klawisza Meta; zmień ten skrót w Ustawieniach systemowych, jeśli nie chcesz tego zachowania.</td></tr>
+<tr><td>Wpływ marginesów grubości</td><td>Wybierz, w jakim stopniu marginesy grubości elementów wpływają na układ: 0%, 50% lub 100%.</td></tr>
+<tr><td>Informuj pulpit Plasma o dostępnym miejscu na pulpicie</td><td>Publikuj dostępne miejsce na pulpicie dla Plasma, aby panele i okna mogły z niego korzystać.</td></tr>
+<tr><td>Menu kontekstowe / Akcje...</td><td>Wybierz, które akcje menu kontekstowego doka są zawsze wyświetlane. Akcje pominięte są dostępne tylko w trybie edycji.</td></tr>
+<tr><td>Ekrany / opóźnienie reakcji na zmiany</td><td>Ustaw, jak długo Latte czeka przed zareagowaniem na zmiany ekranu, w milisekundach. Zwiększ tę wartość, jeśli sprzęt zgłasza niestabilne przejścia.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Akcje menu kontekstowego</h3>
+<p>Otwórz Preferencje → Menu kontekstowe → Akcje..., aby wybrać, które akcje doka są zawsze widoczne.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcja w oknie</th><th>Co kontroluje</th></tr></thead><tbody>
+<tr><td>Dostępne zawsze</td><td>Akcje z tej listy są zawsze wyświetlane w menu kontekstowym doka.</td></tr>
+<tr><td>Dostępne tylko w trybie edycji</td><td>Akcje na tej liście pojawiają się tylko podczas edycji doku. Przenoś akcje między listami, aby to zmienić.</td></tr>
+<tr><td>Przenoszenie między listami</td><td>Zaznacz akcję i użyj przycisków strzałek, aby ją przenieść. Przyciski Reset i Restore Defaults przywracają domyślny zestaw.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Niezależne kopie i klony</h2><p class="note">Duplikat i klon wyglądają podobnie na ekranie, ale zachowują się inaczej. Duplikat to nowy, niezależny dok. Klon to ten sam dok wyświetlany na innym ekranie. Wybierz opcję w zależności od tego, czy chcesz konfigurować ten dok osobno.</p>
+<h3 id="create-independent-copy">Utwórz niezależną kopię</h3>
+<p>Użyj dowolnej z tych metod na oryginalnym doku, a nie na klonie:</p>
+<ul><li>Kliknij prawym przyciskiem myszy na dok i wybierz <strong>Duplicate Dock</strong>.</li><li>Otwórz <strong>Edit Dock</strong> i wybierz <strong>Add… → Duplicate Dock</strong>.</li><li>Otwórz <strong>Configure Latte → Layouts Editor → Docks…</strong>, zaznacz dok i wybierz <strong>Duplicate</strong>.</li></ul>
+<p>Kopia otrzymuje nowe identyfikatory doku i widżetów oraz kopiuje bieżące ustawienia jednorazowo. Po tym możesz niezależnie zmieniać jej ekran, krawędź, rozmiar, wygląd, zachowanie, widżety i launchery. Jest to osobny wpis w układzie i można go usunąć za pomocą <strong>Remove Dock</strong>.</p>
+<p>Duplikowanie klona z okna dialogowego Docks tworzy kolejny klon tego samego oryginału, a nie niezależny dok. Aby utworzyć niezależny dok z klona, najpierw otwórz <strong>Edit Original Dock…</strong> i zduplikuj oryginał.</p>
+<p>Jeśli oryginał używa <strong>Global Group</strong>, kopia również go używa i współdzieli launchery. Wybierz <strong>Unique Group</strong> w kopii, jeśli chcesz osobną listę launcherów. <strong>Layout Group</strong> jest dostępne tylko wtedy, gdy dok już go używa.</p>
+<h3 id="create-clone">Utwórz klony</h3>
+<p>Klony są tworzone przez tryb ekranu oryginalnego doku, a nie przez <strong>Duplikuj dok</strong>:</p>
+<ul><li><strong>Edytuj dok → Ekran → Na wszystkich ekranach</strong>: oryginał pozostaje na ekranie głównym, a Latte tworzy klon na każdym ekranie dodatkowym.</li><li><strong>Edytuj dok → Ekran → Na wszystkich ekranach dodatkowych</strong>: oryginał pozostaje na jednym ekranie dodatkowym, a Latte tworzy klony na pozostałych ekranach dodatkowych.</li></ul>
+<p>Latte automatycznie tworzy i usuwa klony, gdy zmienia się układ ekranów. Aby usunąć klony, ustaw oryginał z powrotem na <strong>Na ekranie głównym</strong> lub na jednym konkretnym ekranie. Klon nie ma wpisu <strong>Usuń dok</strong> w swoim menu kontekstowym; użyj tam <strong>Edytuj oryginalny dok…</strong> aby go skonfigurować.</p>
+<p>Otwarcie edytora z klona zawsze otwiera ustawienia oryginalnego doku, ponieważ klony współdzielą konfigurację doku. Zmiany ustawień widżetów na klonie również aktualizują oryginał.</p>
+<h3 id="differences">Różnice w skrócie</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Niezależna kopia</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Tworzony przez</td><td>Duplikuj dok</td><td>Ekran → Na wszystkich ekranach lub Na wszystkich ekranach dodatkowych</td></tr>
+<tr><td>Tożsamość</td><td>Nowe identyfikatory doku i widżetów</td><td>Powiązany widok oryginalnego doku</td></tr>
+<tr><td>Ustawienia</td><td>Kopiowane raz, następnie niezależne</td><td>Współdzielone: edycja oryginału aktualizuje każdy klon; zmiany ustawień widżetów na klonie również aktualizują oryginał</td></tr>
+<tr><td>Ekran i krawędź</td><td>Można zmieniać niezależnie</td><td>Podąża za oryginałem; nie można go przesuwać ani zmieniać rozmiaru osobno</td></tr>
+<tr><td>Uruchamiacze</td><td>Kopiowane przy tworzeniu; późniejsze współdzielenie tylko przez Grupę układu lub Grupę globalną</td><td>Zawsze odzwierciedlaj oryginał</td></tr>
+<tr><td>Menu kontekstowe</td><td>Pełne akcje doku, w tym Duplikuj i Usuń</td><td>Pokazuje Edytuj oryginalny dok…; opcje Duplikuj, Przenieś, Eksportuj i Usuń są ukryte</td></tr>
+<tr><td>Jak usunąć</td><td>Usuń dok</td><td>Przywróć oryginał na pojedynczy ekran</td></tr>
+</tbody></table></div>
+<p><strong>Kolory ikon widżetów:</strong> <strong>Użyj kolorów motywu ikon</strong> w menu kontekstowym widżetu zapobiega kolorowaniu ikony tego widżetu przez Latte. Ustawienie jest przechowywane dla każdego widżetu osobno: klony dzielą je z oryginałem. Niezależna kopia zachowuje wartość, którą miała w momencie utworzenia, i może zmieniać ją osobno.</p></section></main></div><footer>Latte Dock NG · Dokumentacja offline. Niedostępne języki interfejsu są zastępowane angielskim.</footer></body></html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="hsb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wužiwarski přewodnik Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Wužiwarski přewodnik Latte Dock NG</h1><p>Tute instrukcije wopisuja aktualne opcije. Rozšěrjeny modus, stil dokow a instalowane pluginy móža změnić, kotre kontrolne elementy su widźomne. Opcije, kotrež su jako Rozšěrjene woznamjenjene, su w zakładnym editorje schowane.</p><div class="language-menu"><label for="language-select">Rěč</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html" selected>Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Jenož přełožene přewodniki su wupisane. Druhe rěčne warianty interfejsa wočinja jendźelski přewodnik.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Na tutej stronje</h2><a class="chapter" href="#edit-dock">Dok wobdźěłać</a><a class="subsection" href="#behavior">Zachowanje so</a><a class="subsection" href="#appearance">Wuhotowka</a><a class="subsection" href="#effects">Efekty</a><a class="subsection" href="#tasks">Nadawkow</a><a class="chapter" href="#configure-latte">Latte konfigurować</a><a class="subsection" href="#layouts">Editor rozłoženjow</a><a class="subsection" href="#layout-details">Podrobnosće rozłoženja</a><a class="subsection" href="#docks-dialog">Dialog dokow</a><a class="subsection" href="#screens-dialog">Dialog wobrazowkow</a><a class="subsection" href="#preferences">Nastajenja</a><a class="subsection" href="#context-menu-actions">Akcije kontekstoweho menuja</a><a class="chapter" href="#copies-and-clones">Niezawisne kopije a klony</a><a class="subsection" href="#create-independent-copy">Niezawisnu kopiju wutworić</a><a class="subsection" href="#create-clone">Klony wutworić</a><a class="subsection" href="#differences">Rozdźělenja na jedyn pohlad</a></nav></aside><main>
+<section id="edit-dock"><h2>Dok wobdźěłać</h2><p class="note">Změny so hnydom wuskutkuja. Zamknjenje schowa editor; njewotwołuje změny. Připinjowanje dźerži editor wočiny. Přidać… → Dok duplikować wutworja niezawisnu kopiju originalneho doka; Wotstronić wotstroni aktualny dok. Přepinjenje tabow dźerži wokno na městnje. Rozšěrjeny modus wulkosć wokna za jeho najdlěšu stronu přiměri, w ramikach dostupneho wobrazowkoweho ruma. Dłěše strony so wnutř wokna posuwaja. Wulkosć wokna so w kóždym wobdźěłanskim modusu přez ćahjenje rožka za změnu wulkosće přiměri.</p>
+<p class="note">Rozšěrjony mod zwobraznja wjace kontrolow. Opcije, kotrež su jako Rozšěrjene woznamjenjene, su w zakładnym editorje schowane.</p>
+<h3 id="behavior">Zachowanje so</h3>
+<p class="note">Widźomnosć, spóždanje, akcije, zachowanje so zapiskow, pływacy mjezot a opcije za wobswět za tutón dok.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što wón kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Widźomnosć</td></tr>
+<tr><td>Ekran / Městno</td><td>Wubjerće ekran a kónc za tutón dok. Při wjacorych ekranach wutworja Na wšěch ekranach a Na wšěch sekundarnych ekranach zwjazane kopije. Wobhladajće sej Samostatne kopije a Kopije.</td></tr>
+<tr><td>Wusměrjenje</td><td>Pozicionujće dok podłu kónca ekrana. Wusměrjenje zapiskow kontroluje, hdźež so widgety w dokje namakaja.</td></tr>
+<tr><td>Stajnje widźomny</td><td>Zachowajće dok widźomny a rezervujće desktopowy rum, hdyž to wokjowy manager podpěruje.</td></tr>
+<tr><td>Awtomatisce schować</td><td>Schowajće dok, doniž pointer njedóńdźe do jeho aktiwaciskeho ruma.</td></tr>
+<tr><td>Wobchadźeć aktiwne</td><td>Schowajće, hdyž so aktiwne wokno doka dótka, a zwobrazńće dok, hdyž so pointer do njeho zadobywa.</td></tr>
+<tr><td>Wobchadźeć maksimalizowane</td><td>Schowajće jenož, hdyž je maksimalizowane wokno na tutym ekranje aktiwne, a zwobrazńće dok, hdyž so pointer do njeho zadobywa.</td></tr>
+<tr><td>Wobchadźeć wšě wokna</td><td>Schowajće, hdyž so kóžde wokno doka dótka, a zwobrazńće dok, hdyž so pointer do njeho zadobywa.</td></tr>
+<tr><td>Wokna so pod nim</td><td>Zachowajće dok nad woknami; wokna móža so pod nim pozicionować.</td></tr>
+<tr><td>Wokna móža jeho přikryć</td><td>Dopušćće, zo wokna dok přikryja. Dok so na předni plan dóńdźe, hdyž so pointer k jeho ekranowemu kóncu dóńdźe.</td></tr>
+<tr><td>Wokna jeho stajnje přikrywaja</td><td>Zachowajće wokna stajnje nad dokom; dok so za nimi chowa.</td></tr>
+<tr class="group"><td colspan="2">Spóždanje</td></tr>
+<tr><td>Spóždanje / Zwobraznić / Schować</td><td>Nastajće, kak dołho ma so čakać, prjedy hač so pokazanje abo schowanje započeje, w milisekundach. Dolepše čakanje pomjeńša njewotwisne spušćenje.</td></tr>
+<tr class="group"><td colspan="2">Akcije</td></tr>
+<tr><td>Sledować <span class="advanced">Rozšěrjene</span></td><td>Wubjerće, kotre akcije prózdneje wobłuka aktiwneho wokna so slěduja: Aktiwne wokno z tuchwilneho wobrazoweho zwjazka abo Aktiwne wokno ze wšěch wobrazowych zwjazkow.</td></tr>
+<tr><td>Lěwy knof / Ćahanje aktiwneho wokna <span class="advanced">Rozšěrjene</span></td><td>Zmóžńće ćahanje z prózdneje wobłuka dokow, zo by so slědowane aktiwne wokno přesunło abo maksimalizowało/restoreowało.</td></tr>
+<tr><td>Srjedźny knof / Zamknjenje aktiwneho wokna <span class="advanced">Rozšěrjene</span></td><td>Zmóžńće srjedźne kliknjenje prózdneje wobłuka dokow, zo by so slědowane aktiwne wokno zamknyło.</td></tr>
+<tr><td>Kolesko myški <span class="advanced">Rozšěrjene</span></td><td>Wubjerće, što kolesko čini nad prózdnej wobłukom dokow: Ničo, Přechod mjez wobrazowymi zwjazkami, Přechod mjez aktiwitami, Přechod mjez nadawkami abo Přechod a minimalizowanje nadawkow.</td></tr>
+<tr class="group"><td colspan="2">Zapiski</td></tr>
+<tr><td>Wuske tooltipy titula při přechodźowanju</td><td>Pokazajće kompaktne tooltipy titula widgetow. Přehladki woknow nadawkow so separatnje přez akciju Hover nadawka kontroluja.</td></tr>
+<tr><td>Zwjetšowanje widgetow při přechodźowanju</td><td>Dopušćće, zo so widgety z dokom zwjetšuja. Zhašće to, zo byšće ikonki widgetow wótre zachowali; ikonki nadawkow a startery so přeco zwjetšuja.</td></tr>
+<tr><td>Rozšěrjenje popupa přez kolesko myški</td><td>Přewijće nad podpěranym widgetom, zo by so jeho popup pokazował abo schował.</td></tr>
+<tr><td>Wulkosć awtomatisce přiměrić, hdyž je trjeba</td><td>Zmjeńšće zapiski, hdyž překročja dostupnu dołhosć, a zaso je zwjetšće, hdyž so do nim wěstaja.</td></tr>
+<tr><td>Aktiwować na zakładźe globalnych skrótow pozicije</td><td>Dopušćće, zo globalne skróty na zakładźe pozicije zapiski tutón doko aktiwuja. Jenož jedyn doko na layout měł to wužiwać.</td></tr>
+<tr class="group"><td colspan="2">Swěsowacy</td></tr>
+<tr><td>Přeco swěsowacu mjeru za interakciju wužiwać <span class="advanced">Rozšěrjene</span></td><td>Zahóńće pływacy mjezot do wobłuka, kotryž so za interakciju z widgetami a woknami wužiwa.</td></tr>
+<tr><td>Schowaj pływacy mjezot za maksimalizowane wokna <span class="advanced">Rozšěrjene</span></td><td>Wotstronńće pływacy mjezot, hdyž maksimalizowane wokno trjeba kónc wobrazowki.</td></tr>
+<tr><td>Počakaj ze schowanim pływaceho mjezota, doniž myš njeopušći <span class="advanced">Rozšěrjene</span></td><td>Počakaj, doniž pokazać njeopušći, prjedy hač so mjezot schowa, zo by so njezaměrne kliknjenje na bliske zapiski wuměło.</td></tr>
+<tr><td>Zrcadluj pływacy mjezot, hdyž so pokazuje <span class="advanced">Rozšěrjene</span></td><td>W modusu 'Stajnje widźomny' zrcadluj mjezot na přećiwnym boku dokowca.</td></tr>
+<tr class="group"><td colspan="2">Wokřiwica</td></tr>
+<tr><td>Zwjertaj při změnje wobrazowki <span class="advanced">Rozšěrjene</span></td><td>Časowje pokaž dokowc, hdyž so wirtuelna wobrazowka změni. To so njewužiwa w modusach 'Stajnje widźomny' abo 'Wokna pod dokowcom'.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Wupohlad</h3>
+<p class="note">Nastajenja za Mjezoty, Barby, Radius/Ćeń, Dynamiske přiměrjowanje dołhosće, Dynamiska widźomnosć a Wuwzaća wžaduja modus 'Rozšěrjene'.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija we woknje</th><th>Što kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Zapiski</td></tr>
+<tr><td>Stil dokowca</td><td>Wubjerće 'Klasiski' abo 'Moderny', zo by so přednastajenje nałožiło. W kóždym stilu wužiwajće přepinaki pod 'Stil dokowca', zo byšće rozrjadowanje zapiskow, wobrisany pozad, minimalny rozstawk mjez zapiskami, awtomatiski pływacy mjezot a kompaktne indikatory nadawkow nezavisnje nastajili.</td></tr>
+<tr><td>Trzymaj zapiski dokowca zhromadnje</td><td>Wužiwaj jedyn skupinu za zapiski dokowca, tež hdyž je zarjadowanje dokowca 'Rozrjadować'.</td></tr>
+<tr><td>Wužiwaj pozad z wnutřnym wotstawkom a wobrisom</td><td>Wužiwaj přednastajeny pozad z wobrisom a stilizaciju za jeho wotstawk, zaokruglene rožki a ćeń.</td></tr>
+<tr><td>Wužiwaj širši minimalny rozstawk mjez zapiskami</td><td>Zwjetšaj minimalny rozstawk wokolo zapiskow dokowca. Wjetše hódnoty, nastajene z kontrolami mjezotow, so přiwšěm aplikuja.</td></tr>
+<tr><td>Wužiwajć awtomatiske pływace mjezoty</td><td>Wypočć mjezotu na kromje wobrazowki z wulkosću ikonow, hdyž je wěsta hódnota mjezoty njepostajena.</td></tr>
+<tr><td>Wužiwajć kompaktne pokazaki nadawkow</td><td>Wužiwajć kompaktne rozłoženje za pokazaki nadawkow Latte. Wubjerće formu pokazaka w Efektach.</td></tr>
+<tr><td>Přewróć předstajenje</td><td>Tłóčatko na spodu Edit Dock so hnydom wróći na předstajenje za Wobchadźenje, Wuprawu, Efekty a wšě rajtarki Nadawkow za aktualny styl Classic/Modern, wotewrjace tež opcije, kotrež su w Advanced modusće schowane. Wobrazowka, kromu doka, startery a widgety so zachowaja. Wusměrjenje, widźomnosć a spóždanja so resetuja. Dźělenje starterow so wróći do standardneje lokalneje skupiny, při čimž so kopija efektiwneje lisćiny starterow zachowa; dźělene lisćiny druhich dokow so njeměnja. Wosobinske barby a přepisowanja pokazakow so resetuja. Předstajenje kombinuje šablonu Default Dock z standardnymi hódnotami konfiguracyjskeje schimy. To je separatne wot jenož změny Styl Doka. Classic wupina pjeć wuprawowych přepinanjow pod Styl Doka po standardźe. Modern je zapina. Wobaj předstajenja wužiwatej samske standardne hódnoty za wostałe opcije.</td></tr>
+<tr><td>Absolutna wulkosć / Relatiwna wulkosć</td><td>Postajće wulkosć ikonow w pikselach abo jako dźěl wobrazowki. Relatiwna wulkosć je wužitna na wysokich DPI abo wjaceobrazowkowych nastajenjach.</td></tr>
+<tr><td>Přiblisowanje při přechodźe myški</td><td>Postajće, kak wulkosć elementow pod pointerom roste.</td></tr>
+<tr class="group"><td colspan="2">Dłuhosć</td></tr>
+<tr><td>Maksimum / Minimum / Wotstawk</td><td>Postajće maksimalnu a minimalnu dłuhosć doka a pohibujće jeho po kromje wobrazowki.</td></tr>
+<tr><td>Dynamiske přiměrjowanja dłuhosće <span class="advanced">Pokročile</span></td><td>Maksymalizować dołhosć panela při maksimalizowanych woknach: rozšěrić dok na połnu dołhosć, hdyž je maksimalizowane wokno wobstojace. Pozadk dyrbi być zapinjaty.</td></tr>
+<tr class="group"><td colspan="2">Marginy</td></tr>
+<tr><td>Marginy / Dołhosć / Tłusćosć / Płuwacy mjezot <span class="advanced">Rozšěrjene</span></td><td>Nastajće wonkowny marginy podłu doka, marginy přez jeho tłusćosć a mjezot mjez dokom a kromu wobrazowki.</td></tr>
+<tr><td>Mjezot wot maksimalizowanych woknow (px) <span class="advanced">Rozšěrjene</span></td><td>Zachować additional 0–128 pikselow mjez woknomi a tutym dokom w modusu 'Přeco widźomny'. Standard: 0. To je separatne wot płuwaceho mjezota kromy wobrazowki a přidawa so k spjelnjenemu mjezotej; modusy awtomatickeho schowanja njezachowaja tutón rum.</td></tr>
+<tr class="group"><td colspan="2">Barby</td></tr>
+<tr><td>Barby / Paleta <span class="advanced">Rozšěrjene</span></td><td>Wubjerće Barby Plasma-temy, Ćmowe barby, Swětłe barby, Własne barby rozłoženja, Wobroćene, abo Inteligentne barby po pozadku wobrazowki. Własne barby rozłoženja wužiwaja barejnu shemu rozłoženja; Inteligentne so po tapetach orientuja.</td></tr>
+<tr><td>Wužić wlasnu barbu pozadka / Dnjowa barba <span class="advanced">Rozšěrjene</span></td><td>Přepisować pozadk tutón doka z wubranej barbu; kontrast teksta so awtomaticce přiměri. Standardnje wupinjaty. Palety wotwodźene wot woknow a Plasma-paleta za rozšěrjene applety maja přednost. Opacita wostanje separatne nastajenje pozadka.</td></tr>
+<tr><td>Přepinać barby pozadka po časodźe dnja / Nocna barba / Dźeń so započina (lokalny čas) / Noc so započina (lokalny čas) <span class="advanced">Rozšěrjene</span></td><td>Opcionalnje přepinajće mjez dwěma wosebitymaj barbomaj z lokalnym 24hodźinskim časom. Standardnje: dźeń 07:00, nóc 19:00. Startowy čas je zapřijaty. Intervalaj móžetaj północ překročić; runostaj časa wostajetaj dźensnju barbu cyły dźeń. Zhašenje planowanja wostaja dźensnju barbu. Hodźinowy čas so kóždu sekundu kontroluje, tež po wotnowjenju.</td></tr>
+<tr class="group"><td colspan="2">Pozadk</td></tr>
+<tr><td>Pozadk</td><td>Pozadk je zapinanski/wupinanski přepinč. Jeli je zapinjaty, wužiwajće kontrolne elementy deleka, zo byšće thickness, opacity, radius a shadow nastajili.</td></tr>
+<tr><td>Opacity / Busy Opacity</td><td>Nastajće pozadkowu opacity. Samsny slider so Busy Opacity mjenuje, hdyž Hide background when not needed a Prefer opaque background when touching any window wobaj zapinjatej. Def. wróći standardnu temu.</td></tr>
+<tr><td>Radius / Shadow <span class="advanced">Rozšěrjene</span></td><td>Nastajće pozadkowy rožkowy radius a shadow wulkosć. Def. wužiwa standardnu temu.</td></tr>
+<tr><td>Blur / Shadows / Outline / All Corners <span class="advanced">Rozšěrjene</span></td><td>Zapinjće pozadkowy blur, pozadkowy shadow, outline a zaokróglene rožki. All Corners je jenož za wěste floating/justify geometrije k dispoziciji.</td></tr>
+<tr class="group"><td colspan="2">Dynamic Visibility</td></tr>
+<tr><td>Prefer opaque background when touching any window <span class="advanced">Rozšěrjene</span></td><td>Wotstronjeće pozadkowu transparency, hdyž wokno na dock dźe.</td></tr>
+<tr><td>Hide background when not needed <span class="advanced">Rozšěrjene</span></td><td>Schowajće pozadk, kromow hdyž wokno na dock dźe abo desktopowy pozadk je busy.</td></tr>
+<tr><td>Hide background shadow for maximized windows <span class="advanced">Rozšěrjene</span></td><td>Schowajće pozadkowy shadow, hdyž aktiwne maksimalizowane wokno na dock dźe.</td></tr>
+<tr class="group"><td colspan="2">Wuwzaća</td></tr>
+<tr><td>Preferować tło a barby Plasma za rozšěrjene aplety<span class="advanced">Rozšěrjene</span></td><td>Wužiwać njepřehladne tło w stilu Plasma a barby Plasma, mjeztym zo so widgetowe wuskoki rozšěrja.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efekty</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sćiny</td></tr>
+<tr><td>Sćiny</td><td>Zapinaj abo wupinaj sćiny widgetow. Wulkosć a njepřehladnosć stej zakazanej, hdyž su sćiny wupinjene.</td></tr>
+<tr><td>Wulkosć / Njepřehladnosć</td><td>Nastaj wulkosć a njepřehladnosć sćina widgeta.</td></tr>
+<tr><td>Standardna barba / Barba temy / swójska barba</td><td>Wubjer standardnu barbu sćina, barbu z palety temy abo klikń na farbowy wzor, zo by swójsku barbu wuběrał.</td></tr>
+<tr class="group"><td colspan="2">Animacije</td></tr>
+<tr><td>Animacije / x1 / x2 / x3</td><td>Zapinaj abo wupinaj wšě animacije doka. x1 je normalna spěšnosć, x2 je pomalejša, x3 je najpomalejša.</td></tr>
+<tr class="group"><td colspan="2">Indikatory</td></tr>
+<tr><td>Indikatory</td><td>Zapinaj abo wupinaj indikatory aktiwnych nadawkow. Hdyž je zapinjene, wubjer indiktor Latte abo plugin za swójski indiktor; opcije specifikke za plugin so w jeho rajtarku jewja.</td></tr>
+<tr><td>Wužiwać dypki w stilu macOS</td><td>Indiktor Latte wužiwa po standardźe dypki w stilu macOS, hdyž su kompaktne indikatory nadawkow w Wupohladźe zapinjene. Wupinaj 'Wužiwać dypki w stilu macOS' w Efektych, zo by manuelnje Liniju abo Dypki wuběrał.</td></tr>
+<tr><td>Wužiwać barby ikonow aplikacijow</td><td>Opcionalnje barbuj indikatory nadawkow z dominantnej barbu kóždeje ikony aplikacije, přiměrjenej kontrastej pozadka. Wubjer Liniju za barbne podšmórki. Po standardźe zakazane; aplety so barbow palety dla dźerža.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Nadawki</h3>
+<p>Po pušćenju ikony se započnu launcherji zadaćow na druhich dokach, kotrež so launcher-listu dźěleja, přerjadować. Porjad móže chwilku trjechić, doniž so njewustali. Města mjezowarjow so zachowaja, hdyž přijimacy dok nowy porjad składowaće. Ćehnjenje hižo připinjateje aplikacije zachowa jeje eksistowacy launcher, tež hdyž so tón launcher po systemowym standardnym programom orientuje. Nowe mjezowary wobsadźa městno, hdyž docpěja wubrane město.</p>
+<p>Hdyž widget přidawaće abo ćehnjeće k mjezowarju na kóncu wobłuka zadaćow abo systemoweje blidowki, so widget wonka mjezowara zasadźi. Mjezowar so pola wobłuka zadaćow abo blidowki zachowa.</p>
+<p>Hdyž aplikaciju z aplikaciskeho menuja připinjeće, so jeje ikona před wšěmi mjezowarami na kóncu lisćiny zadaćow jewi. Prawy mjezowar słuša k připinjatej skupinje, tak zo so běžace, njepřipinjate aplikacije za nim jewja.</p>
+<p>Městno zadaće so wuzběhnje a ikona so widźomna wostanje, mjeztym zo ju za přerjadowanje zadaćow ćehnjeće. Hdyž so nowe zadaće zasunje, dok so započnje swoje městno wot initialneje animaciskeje wulkosće rezervować.</p>
+<p class="note">Woznamjenja, animacije, kotrowanje, akcije a někotre opcije interakcije/filtrow wumóžuja rozšěrjeny modus. Jenož launcherje zwobraznić a wšě zadaća schować zakazuje akcije a filtry zwjazane z woknom.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija we woknje</th><th>Što kontroluje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Woznamjenja</td></tr>
+<tr><td>Notifikacije z zadaćow <span class="advanced">Rozšěrjeny</span></td><td>Nječitane notifikaciske ličby na ikonach zadaćow zwobraznić.</td></tr>
+<tr><td>Informacije wo postupje za zadaća <span class="advanced">Rozšěrjeny</span></td><td>Pokazujće znamješka postupa, na přikład, hdyž Dolphin dataje kopěruje.</td></tr>
+<tr><td>Awdio hraje z nadawkow <span class="advanced">Rozšěrjene</span></td><td>Pokazujće awdio znamješko za aplikacije, kotrež zwuk hraja. Wotpowědowanje preferuje eksplicitne desktopowe/aplikaciske identifikatory. Powšitkne informacije wo procesach wobhladowarja njejsu dosć, zo by so wěsta PWA identifikowała; njedźěłate streamy so njepřirjaduja, město toho zo by so njezwjazanym aplikacijam awdio kontrola dała. Samostatne Electron aplikacije móža so ze swojim awdio procesom wotpowědować. Status wothrawanja a aktiwita wudaća schowaja zastopjene streamy, samo hdyž aplikacija swoju awdio zwjazanosć wočinjena dźerži. Bjez statusa hrajerja so krótki ćišć za něhdźe jednu sekundu toleruje.</td></tr>
+<tr><td>Wupadna barba za znamješko notifikacijow <span class="advanced">Rozšěrjene</span></td><td>Wužiwajće sylnišu, zwjetša čerwenu notifikacisku znamješko. Trjeba Notifikacije z nadawkow.</td></tr>
+<tr><td>Změńće hłośnosć, hdyž so po awdio znamješku skroluje <span class="advanced">Rozšěrjene</span></td><td>Klikńće na awdio znamješko, zo by so zwuk wumutował/wočinił, abo skrolujće po nim, zo by so hłośnosć změniła. Trjeba Awdio hraje z nadawkow.</td></tr>
+<tr class="group"><td colspan="2">Interakcija</td></tr>
+<tr><td>Startery so jenož w aktualnym appletu nadawkow přidaja</td><td>Přidajće wotłožene startery jenož k tutemu widgetej nadawkow, nic jako samostatne widgety abo k druhim widgetam nadawkow.</td></tr>
+<tr><td>Akcije wokna w kontekstowym menu <span class="advanced">Rozšěrjene</span></td><td>Pokazujće akcije, kotrež so na konkretne wokno wotnošeja, w kontekstowym menu nadawka.</td></tr>
+<tr><td>Předhlad wokna so jako popup wobchadźeje <span class="advanced">Rozšěrjene</span></td><td>Wotewriće předhlady jako popup město tooltipa. Akcija Hover dyrbi předhlady wotewrěć; to jenož změni, kak so zwobraznja.</td></tr>
+<tr><td>Na poziciji wotwisne skrótowki so jenož na aktualne nadawki stosuja<span class="advanced">Rozšěrjene</span></td><td>Na poziciji wotwisne globalne skrótowki na tutón nadawkowy widget wobmjezować.</td></tr>
+<tr class="group"><td colspan="2">Filtry</td></tr>
+<tr><td>Jenož nadawki z aktualneho wobrazoweho zwjazka pokazać</td><td>Wokna z wobrazoweho zwjazka tutoho dokowca pokazać.</td></tr>
+<tr><td>Jenož nadawki z aktualneje wirtuelneje powjercha pokazać</td><td>Wokna z aktualneje wirtuelneje powjercha pokazać.</td></tr>
+<tr><td>Sekciju minimalizowanych woknow pokazać</td><td>Po standardźe wupinjene. Minimalizowane wokna so jako jednotliwe symbole po normalnych nadawkach pokazaja. Symbolej so wobdźěłuje abo fokusuje za swoje aplikaciju a woknowy titul, a aktivuje so za wobnowjenje wokna. Hdyž ma aplikacija wjacore minimalizowane wokna, mały znamješko pokazuje sekwencu kóždeho wokna a cyłkowny ličnik za tutu aplikaciju. Sekcija slěduje nadawkowe filtry a dźěli nadawkowe přewinjenje. Zapinajće Přewinjenje, zo byšće wonka wobrazoweho zwjazka ležace wokna z pomocu swojeho konfiguracneho kolesa abo hraničneho wobdźěłowanja docpěli. Modus jenož za spušćaki tutu sekciju schowa.</td></tr>
+<tr><td>Jenož nadawki ze spušćakow pokazać<span class="advanced">Rozšěrjene</span></td><td>Wokna jenož za aplikacije, kotrež hižo w lisćinje spušćakow su, pokazać.</td></tr>
+<tr><td>Jenož spušćaki pokazać a wšě nadawki schować<span class="advanced">Rozšěrjene</span></td><td>Symbole spušćakow pokazać a běžace nadawki schować. To tež woknowe akcije a filtry znjemóžnja.</td></tr>
+<tr><td>Jenož zgrupowane nadawki za samsnu aplikaciju pokazać<span class="advanced">Rozšěrjene</span></td><td>Wokna samsneje aplikacije po standardźe zgrupować.</td></tr>
+<tr class="group"><td colspan="2">Animacije</td></tr>
+<tr><td>Spušćaki při wuwabjenju skakać dać<span class="advanced">Rozšěrjene</span></td><td>Spušćaki při wuwabjenju animować.</td></tr>
+<tr><td>Nadawki, kotrež wuwabjenje wumóžuja, skakać dać<span class="advanced">Rozšěrjene</span></td><td>Nadawki, kotrež wuwabjenje wumóžuja, animować.</td></tr>
+<tr><td>Jednotliwe wokna zasunować a wusunować<span class="advanced">Rozšěrjene</span></td><td>Animuj nowe a zamknjene single okna.</td></tr>
+<tr><td>Zgrupowane nadawki odbijaja swoje nowe okna <span class="advanced">Za pokročilych</span></td><td>Animuj nowe okno wnutřik task group.</td></tr>
+<tr><td>Zgrupowane nadawki wysuwaja swoje zamknjene okna <span class="advanced">Za pokročilych</span></td><td>Animuj zamknjene okno wnutřik task group.</td></tr>
+<tr class="group"><td colspan="2">Spusćowaki</td></tr>
+<tr><td>Unikatna skupina</td><td>Daj tutemu widgetej nadawkow swójski lisćik spusćowakow.</td></tr>
+<tr><td>Skupina rozłoženja</td><td>Dźěl spusćowaki z widgetami nadawkow w tom samsnym rozłoženju. Tuta tłóčenka so jenož zwobraznja, hdyž dok hižo skupinu rozłoženja wužywa.</td></tr>
+<tr><td>Globalna skupina</td><td>Dźěl spusćowaki z widgetami nadawkow we wšych rozłoženjach.</td></tr>
+<tr class="group"><td colspan="2">Skrolowanje</td></tr>
+<tr><td>Skrolowanje <span class="advanced">Za pokročilych</span></td><td>Zmóžni skrolowanje, hdyž nadawki dostupne městno překročuja. To funguje z kóždym presetom doka, tež hdyž je 'Keep dock items together' zmóžnjene.</td></tr>
+<tr><td>Manuelne <span class="advanced">Za pokročilych</span></td><td>Wubjeŕ Disabled scrolling, Only vertical/horizontal scrolling abo Horizontal and vertical scrolling. Wuběrk jano jedne směra zawisi wót orientacije doka.</td></tr>
+<tr><td>Awtomatiski <span class="advanced">Za pokročilych</span></td><td>Zapni abo wupni awtomatiski skrolowanje.</td></tr>
+<tr class="group"><td colspan="2">Akcije</td></tr>
+<tr><td>Lěwy klik <span class="advanced">Za pokročilych</span></td><td>Akcija za lěwy klik na nadawk: None, Close Window or Group, New Instance, Minimize/Restore, Cycle Through Tasks, Toggle Task Grouping, Present Windows, Preview Windows, Highlight Windows abo Preview and Highlight Windows.</td></tr>
+<tr><td>Srědny klik <span class="advanced">Za pokročilych</span></td><td>Akcija za srědny klik na nadawk. Wuběrki su samske ako za Lěwy klik.</td></tr>
+<tr><td>Přejechanje <span class="advanced">Za pokročilych</span></td><td>Akcije při přejechanju: None, Preview Windows, Highlight Windows abo Preview and Highlight Windows. Tooltipy titula nadawka so w Behavior kontroluju.</td></tr>
+<tr><td>Kóło <span class="advanced">Za pokročilych</span></td><td>Akcije koleska: Ničo, Přechod přez nadawki abo Přechod a minimalizowanje nadawkow.</td></tr>
+<tr><td>Modifikator + klik <span class="advanced">Rozšěrjene</span></td><td>Dźeržće Shift, Ctrl, Alt abo Meta a klikńće na lěwy, srjedźny abo prawy, zo byšće dalšu akciju spušćili. Wubjerće modifikator, tłóčatko a akciju; to je separatnje wot hłownych akcijow horje.</td></tr>
+</tbody></table></div>
+<p class="note">Filter aktualneje aktiwity je w Plasma 6 schowany, dokelž podpera KActivities njeje spóhlěbliwa.</p></section><section id="configure-latte"><h2>Latte konfigurować</h2><p class="note">Editor rozłoženjow rjaduje rozłoženja a jich dokowe. Preferency rjaduja zachowanje aplikacije. Nałožić składowa njezawěšćene změny w aktualnym tabu; Wróćić wróći składowany staw taba; Standardne nastajenja wróćić přihotuje standardne nastajenja za přepruwowanje. Wobrazy... rjaduja składowane referency wobrazow.</p>
+<h3 id="layouts">Editor rozłoženjow</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što rjaduje</th></tr></thead><tbody>
+<tr><td>Jedne rozłoženje kóždy čas</td><td>Wužiwajće jedne rozłoženje za wšě aktiwity.</td></tr>
+<tr><td>Wjacore rozłoženja na zakładźe aktiwitow</td><td>Přirjeduńće wšelake rozłoženja aktiwitam; wjacore rozłoženja móža so načinjene wostać.</td></tr>
+<tr><td>Přepinaj</td><td>Aktiwujće wubrane rozłoženje. Nałožće njezawěšćene změny najprjedy; Latte so njepřepina z njeskładowanymi změnjemi.</td></tr>
+<tr><td>Aktiwity...</td><td>Wotewriće managera aktiwitow Plasma. Wužiwajće kolonu Aktiwity abo Zapinane, zo byšće tute rozłoženje aktiwitam přirjeduńći.</td></tr>
+<tr><td>Nowe / Duplikować / Wotstronić</td><td>Wutworće, kopěrujće abo wotstrońće rozłoženje. Duplikowanje tu kopěruje cyłe rozłoženje, nic jednotliwy dok. Aktiwne a zamknjene rozłoženja njemóža so wotstronić.</td></tr>
+<tr><td>Zapinane</td><td>Přirjeduńće tute rozłoženje jednaj abo wjacorym aktiwitam, zo by Plasma Aktiwity móhło je aktiwować. Pokazuje so jenož w modusu wjacorych rozłoženjow.</td></tr>
+<tr><td>Jenož čitać</td><td>Škitaj konfiguraciju rozłoženja před změnjemi.</td></tr>
+<tr><td>Podrobnosće...</td><td>Wotewri dialog podrobnosćow rozłoženja za symbol, wosobinske barby, wotstawk wuskakowaceho wokna a widźomnosć kontekstoweho menuja.</td></tr>
+<tr><td>Doki...</td><td>Wotewri lisćinu dokow za tute rozłoženje: mjeno, wobrazowka, kónc, zarjadowanje, zapřijate widgety a nowo/duplikat/wotstronić/importować/eksportować.</td></tr>
+<tr><td>Importować... / Eksportować...</td><td>Importuj rozłoženje z lokalneho dataja abo z KDE Store; eksportuj jo za zawěsćenje abo jako šablonu. Dataja → Konfiguraciju importować / Konfiguraciju eksportować wobstara so z cyłkownym zawěsćenjom aplikacije.</td></tr>
+<tr><td>Mjeno / W menuju / Aktivitety</td><td>Lisćina rozłoženjow ma słupce Mjeno, W menuju a Aktivitety. Wobdźěłaj Mjeno a Aktivitety direktnje w lisćinje; W menuju rjaduje, hač so rozłoženje w menuju Rozłoženja doka jewi.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Podrobnosće rozłoženja</h3>
+<p>Wotewri z Editorom rozłoženjow → Podrobnosće..., zo by so wobdźěłało wuzwolene rozłoženje.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što rjaduje</th></tr></thead><tbody>
+<tr><td>Rozłoženje</td><td>Wuzwol, kotre rozłoženje ma so wobdźěłać.</td></tr>
+<tr><td>Symbol</td><td>Wuzwol symbol za tute rozłoženje. Tłóčatko Wupraznić jo wotstroni.</td></tr>
+<tr><td>Wosobinske barby</td><td>Wuzwol datowu sadu wosobinskich barbow za tute rozłoženje.</td></tr>
+<tr><td>Wotstawk wuskakowaceho wokna</td><td>Nastaj wotstawk, kotryž wuskakowace wokna rozłoženja wužiwaja; wupinjene woznamjenja, zo so standardowy wotstawk wužiwa.</td></tr>
+<tr><td>Pokazaj w kontekstowym menuju rozłoženjow, jeli móžno</td><td>Pokazaj tute rozłoženje w menuju Rozłoženja doka, hdyž aktualna aktivita to dowola.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialog dokow</h3>
+<p>Wotewri z Editorom rozłoženjow → Doki..., zo by so doki we wuzwolenym rozłoženju rjadował.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što rjaduje</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Słupce</td></tr>
+<tr><td>Mjeno</td><td>Mjeno doka. Dwójne klikni, zo by jo přemjenował.</td></tr>
+<tr><td>Wobrazowka</td><td>Wobrazowka, ke kotrejž dok słuša, wobsahuje Primarnu, Wšě wobrazowki a Wšě sekundarne wobrazowki.</td></tr>
+<tr><td>Kant</td><td>Kant wobrazowki, kotryž dok wužiwa.</td></tr>
+<tr><td>Wusměrjenje</td><td>Wusměrjenje doka podłu swojeho kanta.</td></tr>
+<tr><td>Wobsahuje</td><td>Widźety a podwobsahi, kotrež su do doka zapřijate. Tuta kolona je jenož čitajomca.</td></tr>
+<tr class="group"><td colspan="2">Tłóčatka</td></tr>
+<tr><td>Nowy</td><td>Wutworće dok z předłohi.</td></tr>
+<tr><td>Duplikować</td><td>Wutworće njewotwisnu kopiju wuzwolenja doka abo dalšu kopiju, jeli wuzwoleny dok je kopija.</td></tr>
+<tr><td>Wotstronić</td><td>Wotstronće wuzwoleny dok. Kopije so ze swojim originalom wotstronjeja.</td></tr>
+<tr><td>Importować...</td><td>Importujće dok z lokalneje předłohoweje dataje.</td></tr>
+<tr><td>Exportować...</td><td>Exportujće wuzwoleny dok za zawěsćenje abo jako předłohu. Dialog předłohi wam zmóžnja wuzwolić, kotre nastajenja widźetow maja so zapřijeć; wostajće widźety z wosobinskimi datami, kaž e-mejl abo kalenderowe konta, won.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialog wobrazowkow</h3>
+<p>Wočinjaće z Datowo → Wobrazowki..., zo byšće referency na wobrazowki, kotrež su so wot Latte składowali, wučisćili.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što wón rjaduje</th></tr></thead><tbody>
+<tr><td>Lisćina wobrazowkow</td><td>Naspomnjeće referency na wobrazowki, kotrež su so w Latte składowali, wobsahujo wobrazowki, kotrež hižo njejsu zwjazane.</td></tr>
+<tr><td>Wuzwólcće zastarjene wobrazowki</td><td>Wuzwólcće jenož wobrazowki, kotrež hižo njeeksistuja. Aktiwne wobrazowki a wobrazowki, kotrež so wot rozłoženja wužiwaja, njemóža so wotstronić.</td></tr>
+<tr><td>Wšě wuzwólenja wotstronić</td><td>Wotstronće wuzwólenje, prjedy hač wuzwolće druhu sadu.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Nastajenja</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcija w woknje</th><th>Što wón rjaduje</th></tr></thead><tbody>
+<tr><td>Pokazaj informaciske wokno za awtomatiske aktiwizowanje rozłoženjow</td><td>Pokazaj informaciske wokno, hdyž so rozłoženje awtomatisce aktiwizuje.</td></tr>
+<tr><td>Paraboliski efekt / Mały / Srjedźny / Wulki</td><td>Nastajće globalne rozšěrjenje zooma při přechodźe mjez susodnymi zapiskami.</td></tr>
+<tr><td>Powółać awtomaticke startowanje při startowanju</td><td>Startować Latte, hdyž so přizjewite.</td></tr>
+<tr><td>Wužiwać 3D stil za znamješka za powěsće a skrótne klawisowe kombinacije</td><td>Wužiwać dimenzionalny stil za znamješka za powěsće a skrótne klawisowe kombinacije.</td></tr>
+<tr><td>Stiskać a dźeržeć ⌘, zo by so pokazali znamješka za skrótne klawisowe kombinacije</td><td>Po standardźe wupinjene. Dźeržće klawis Meta za něhdźe jednu sekundu, zo by so pokazali schowane dokowe a znamješka za skrótne klawisowe kombinacije za ich nadawki a widgety; pušćće klawis, zo by so znowa schowali. Při standardowych nastajenjach Plasma so tež wotpowědny startowy program wočinja, hdyž so Meta pušći; změńće tutu skrótne klawisowe kombinaciju w Systemowych nastajenjach, jeli to njewokazće.</td></tr>
+<tr><td>Wpływ na marginejće dźěkow</td><td>Wubjerće, kak wliwaja marginejće dźěkow na rozłoženje: 0%, 50% abo 100%.</td></tr>
+<tr><td>Informować Plasma desktop wo dostupnym desktopowym rumje</td><td>Wozjewić dostupny desktopowy rum Plasma, zo bychu so panele a wokna móhli wužiwać.</td></tr>
+<tr><td>Kontekstowy meni / Akcije...</td><td>Wubjerće, kotre akcije kontekstoweho menija dokowe so stajnje pokazaja. Akcije, kotrež njejsu wubrane, su jenož w modusu wobdźěłanja k dispoziciji.</td></tr>
+<tr><td>Wobrazy / reakciski čas za změny</td><td>Nastajće, kak dołho Latte čaka, prjedy hač reaguje na změny wobrazow, w milisekundach. Zwyšće tutu hódnotu, jeli hardware nestabilne přechody zdźěla.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Akcije kontekstoweho menija</h3>
+<p>Wočinjaće z Preferency → Kontekstowy meni → Akcije..., zo by wubrali, kotre akcije dokowe so stajnje widźeja.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcija we woknje</th><th>Što wón rjaduje</th></tr></thead><tbody>
+<tr><td>Stajnje přistupny</td><td>Akcije w tutej lisćinje so stajnje w kontekstowym mjenju dokowe pokazaja.</td></tr>
+<tr><td>Jenož w modusu wobdźěłanja přistupny</td><td>Akcije w tutym lisćinje so jenož pokazuja, mjez druhim so dok edituje. Přesuńće akcije mjez lisćinami, zo byšće to změnił.</td></tr>
+<tr><td>Přesuńće mjez lisćinami</td><td>Wubjerće akciju a wužiwajće šipkowe tłóčatka, zo byšće ju přesunył. Reset a Restore Defaults wobnowitej standardnu sadźbu.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Niezawisne kopije a klony</h2><p class="note">Duplikat a klon wupadatej na wobrazowce podobnje, ale so wosobowje wěstej. Duplikat je nowy, niezawisny dok. Klon je samsny dok, kotryž so na druhej wobrazowce pokazuje. Wubjerće na zakładźe toho, hač chceće tutón dok separatnje konfigurować.</p>
+<h3 id="create-independent-copy">Niezawisnu kopiju wutworjeć</h3>
+<p>Wužiwajće kóždu z tutych metodow na originalnym dokje, nic na klonje:</p>
+<ul><li>Klikńće prawu myšowu na dok a wubjerće <strong>Duplicate Dock</strong>.</li><li>Wotewrěće <strong>Edit Dock</strong> a wubjerće <strong>Add… → Duplicate Dock</strong>.</li><li>Wotewrěće <strong>Configure Latte → Layouts Editor → Docks…</strong>, wubjerće dok a wubjerće <strong>Duplicate</strong>.</li></ul>
+<p>Kopija dóstawa nowe dokowe a widgetowe ID-y a kopěruje aktualne nastajenja jónu. Po tym móžeće jeje wobrazowku, kónc, wulkosć, wupad, zadźerženje, widgety a startery separatnje změnić. Je separaten zapis w layoutu a móže so z <strong>Remove Dock</strong> wotstronić.</p>
+<p>Duplikowanje klona z dialoga Docks wutworjeje dalši klon samsneho originala, nic niezawisny dok. Zo byšće niezawisny dok z klona natwarił, wotewrěće najprjedy <strong>Edit Original Dock…</strong> a duplikujće original.</p>
+<p>Jeli original <strong>Global Group</strong> wužiwa, kopija tež tutu wužiwa a dźěli startery. Wubjerće <strong>Unique Group</strong> na kopiji, jeli chceće separatnu lisćinu starterow. <strong>Layout Group</strong>je k dispoziciji jenož, hdyž dok hižo wužiwa.</p>
+<h3 id="create-clone">Klonować</h3>
+<p>Klony so tworja přez wobrazowy modus originalneho doka, nic přez <strong>Duplikować dok</strong>:</p>
+<ul><li><strong>Editować dok → Wobraz → Na wšěch wobrazach</strong>: original wostanje na primarnym wobrazu, a Latte tworji klon na kóždym sekundarnym wobrazu.</li><li><strong>Editować dok → Wobraz → Na wšěch sekundarnych wobrazach</strong>: original wostanje na jednym sekundarnym wobrazu, a Latte tworji klony na zwostanych sekundarnych wobrazach.</li></ul>
+<p>Latte tworji a wotstronja klony awtomatisce, hdyž so wobrazowe rozłoženje změni. Zo by klony wotstronił, staj original wróćo na <strong>Na primarnym wobrazu</strong> abo na jedyn specifiski wobraz. Klon njema <strong>Wotstronić dok</strong> zapisk w swojim kontekstowym menu; wužiwajće <strong>Editować originalny dok…</strong> tam, zo by jeho konfigurował.</p>
+<p>Wotewrjenje editora z klona wotewrje stajnje nastajenja originalneho doka, dokelž klony dźěleja dokowu konfiguraciju. Nastajenja widgetow, kotrež so na klonu změnja, tež original aktualizuja.</p>
+<h3 id="differences">Rozdźěle na jedyn pohlad</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Njezawisna kopija</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Tworjeny přez</td><td>Duplikować dok</td><td>Wobraz → Na wšěch wobrazach abo Na wšěch sekundarnych wobrazach</td></tr>
+<tr><td>Identita</td><td>Nowe dokowe a widgetowe ID</td><td>Zwjazany wobhlad originalneho doka</td></tr>
+<tr><td>Nastajenja</td><td>Kopěrowane jedynkróć, potom njezawisne</td><td>Dźělene: editowanje originala aktualizuje kóždy klon; nastajenja widgetow, kotrež so na klonu změnja, tež original aktualizuja</td></tr>
+<tr><td>Wobraz a kónc</td><td>Móže so njezawisnje změnić</td><td>Slěduje original; njeda so separatnje pohibować abo wulkosć změnić</td></tr>
+<tr><td>Startery</td><td>Kopěrowane při tworjenju; pozdźišo dźělenje jenož přez Layout Group abo Global Group</td><td>Wotewrěć original wotbłyšćować</td></tr>
+<tr><td>Kontekstowy meni</td><td>Cyłkowne akcije dokow, wobsahujo Duplikować a Wotstronić</td><td>Pokazuje Originalowy dok wobdźěłać…; Duplikować, Přesunjeć, Eksportować a Wotstronić su schowane</td></tr>
+<tr><td>Kak wotstronić</td><td>Dok wotstronić</td><td>Original wróćo na jedyn wobrazowy ekran stajić</td></tr>
+</tbody></table></div>
+<p><strong>Barby ikon widgetow:</strong> <strong>Wužiwać barby ikonoweho temy</strong>w kontekstowym meniju widgeta zastopuje, zo Latte ikonowu barbu widgeta njepřeměnja. Nastajenje so po widgetu składowaće: kloni so z originalom dźěla. Independntna kopija zachowa hódnotu, kotruž měješe, hdyž so wutwori, a móže ju separatnje změnić.</p></section></main></div><footer>Latte Dock NG · Offline dokumentacija. Njejsćiłe rěče interfejsa so na jendźelšćinu wróća.</footer></body></html>

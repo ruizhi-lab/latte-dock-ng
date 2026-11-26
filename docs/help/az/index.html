@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG İstifadəçi Təlimatı</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG İstifadəçi Təlimatı</h1><p>Bu təlimatlar cari seçimləri təsvir edir. Qabaqcıl rejim, dok stili və quraşdırılmış plaginlər hansı idarəetmə elementlərinin görünəcəyini dəyişə bilər. Qabaqcıl kimi işarələnmiş seçimlər sadə redaktorda gizlədilir.</p><div class="language-menu"><label for="language-select">Dil</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html" selected>Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Yalnız tərcümə olunmuş təlimatlar siyahıda göstərilir. Digər interfeys dilləri ingilis təlimatını açır.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Bu səhifədə</h2><a class="chapter" href="#edit-dock">Dok Redaktoru</a><a class="subsection" href="#behavior">Davranış</a><a class="subsection" href="#appearance">Görünüş</a><a class="subsection" href="#effects">Effektlər</a><a class="subsection" href="#tasks">Tapşırıqlar</a><a class="chapter" href="#configure-latte">Latte-ni Konfiqurasiya Et</a><a class="subsection" href="#layouts">Düzülüş Redaktoru</a><a class="subsection" href="#layout-details">Düzülüş Təfərrüatları</a><a class="subsection" href="#docks-dialog">Doklar Dialoqu</a><a class="subsection" href="#screens-dialog">Ekranlar Dialoqu</a><a class="subsection" href="#preferences">Tərcihlər</a><a class="subsection" href="#context-menu-actions">Kontekst Menyusu Hərəkətləri</a><a class="chapter" href="#copies-and-clones">Müstəqil Nüsxələr və Klonlar</a><a class="subsection" href="#create-independent-copy">Müstəqil nüsxə yarat</a><a class="subsection" href="#create-clone">Klonlar yarat</a><a class="subsection" href="#differences">Bir baxışda fərqlər</a></nav></aside><main>
+<section id="edit-dock"><h2>Dok Redaktoru</h2><p class="note">Dəyişikliklər dərhal qüvvəyə minir. Bağlama redaktoru gizlədir; dəyişiklikləri geri qaytarmır. Sabitləmə redaktoru açıq saxlayır. Əlavə et… → Dok Kopyala orijinal dokun müstəqil bir nüsxəsini yaradır; Sil cari dok'u silir. Vərəqlər arasında keçid pəncərəni yerində saxlayır. Qabaqcıl rejim pəncərəni mövcud ekran sahəsi daxilində ən uzun səhifəyə uyğun ölçür. Daha uzun səhifələr pəncərə daxilində sürüşdürülür. Hər iki redaktə rejimində pəncərə ölçüsünü tənzimləmək üçün ölçü küncünü sürüşdürün.</p>
+<p class="note">Qabaqcıl rejim daha çox idarəetmə elementini göstərir. Qabaqcıl kimi işarələnmiş seçimlər sadə redaktorda gizlədilir.</p>
+<h3 id="behavior">Davranış</h3>
+<p class="note">Bu dok üçün görünmə, gecikmə, hərəkətlər, element davranışı, üzən boşluq və mühit seçimləri.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə etdiyi</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Görünmə</td></tr>
+<tr><td>Ekran / Yerləşmə</td><td>Bu dok üçün ekranı və kənarı seçin. Bir neçə ekran olduqda, Bütün Ekranlarda və Bütün İkinci Ekranlarda seçimləri əlaqəli klonlar yaradır. Müstəqil Nüsxələr və Klonlar bölməsinə baxın.</td></tr>
+<tr><td>Hizalama</td><td>Dokun ekran kənarı boyunca yerləşdirin. Element hizalaması vidjetlərin dokun daxilində harada yerləşdiyini təyin edir.</td></tr>
+<tr><td>Həmişə Görünür</td><td>Dokun görünür saxlayın və pəncərə meneceri dəstəklədikdə masaüstü sahəsini ayırın.</td></tr>
+<tr><td>Avtomatik Gizlətmə</td><td>Kursor aktivləşdirmə zonasına çatana qədər dokun gizlədin.</td></tr>
+<tr><td>Aktiv Pəncərədən Yayınma</td><td>Aktiv pəncərə dok sahəsinə toxunduqda gizlədin və kursor daxil olduqda dokun göstərin.</td></tr>
+<tr><td>Maksimum Böyüdülmüş Pəncərədən Yayınma</td><td>Yalnız bu ekranda maksimum böyüdülmüş pəncərə aktiv olduqda gizlədin və kursor daxil olduqda dokun göstərin.</td></tr>
+<tr><td>Bütün Pəncərələrdən Yayınma</td><td>Hər hansı bir pəncərə dok sahəsinə toxunduqda gizlədin və kursor daxil olduqda dokun göstərin.</td></tr>
+<tr><td>Pəncərələr Aşağıda Qalır</td><td>Dokun pəncərələrin üstündə saxlayın; pəncərələr onun altına yerləşdirilə bilər.</td></tr>
+<tr><td>Pəncərələr Örtə Bilər</td><td>Pəncərələrin dokun örtməsinə icazə verin. Kursor ekran kənarına çatdıqda dok önə çıxır.</td></tr>
+<tr><td>Pəncərələr Həmişə Örtür</td><td>Pəncərələri həmişə dokun üstündə saxlayın; dok onların arxasında qalır.</td></tr>
+<tr class="group"><td colspan="2">Gecikmə</td></tr>
+<tr><td>Gecikmə / Göstərmə / Gizlətmə</td><td>Göstərmək və ya gizlətmək üçün gözləmə müddətini millisekuntla təyin edin. Daha uzun gecikmələr təsadüfi aktivləşdirməni azaldır.</td></tr>
+<tr class="group"><td colspan="2">Hərəkətlər</td></tr>
+<tr><td>İzlə <span class="advanced">Qabaqcıl</span></td><td>Boş sahə hərəkətlərinin hansı aktiv pəncərəni izləyəcəyini seçin: Cari Ekrandakı Aktiv Pəncərə və ya Bütün Ekranlardakı Aktiv Pəncərə.</td></tr>
+<tr><td>Sol Düymə / Aktiv Pəncərəni Sürüklə <span class="advanced">Qabaqcıl</span></td><td>İzlənən aktiv pəncərəni daşımaq və ya böyütmə/bərpa etmək üçün boş dok boşluğundan sürükləməni aktiv edin.</td></tr>
+<tr><td>Orta Düymə / Aktiv Pəncərəni Bağla <span class="advanced">Qabaqcıl</span></td><td>İzlənən aktiv pəncərəni bağlamaq üçün boş dok boşluğuna orta klik etməni aktiv edin.</td></tr>
+<tr><td>Siçan təkəri <span class="advanced">Qabaqcıl</span></td><td>Boş dok boşluğu üzərində təkərin nə edəcəyini seçin: Hərəkət Yoxdur, İş Masaları Arasında Keçid, Fəaliyyətlər Arasında Keçid, Tapşırıqlar Arasında Keçid və ya Keçid və Tapşırıqları Kiçilt.</td></tr>
+<tr class="group"><td colspan="2">Elementlər</td></tr>
+<tr><td>Üzərinə gəldikdə başlıq ipuçlarını incəlt</td><td>Yığcam vidjet başlıq ipuçlarını göstərin. Tapşırıq pəncərə önizləmələri ayrıca tapşırıq Hover hərəkəti ilə idarə olunur.</td></tr>
+<tr><td>Üzərinə gəldikdə vidjetləri böyüt</td><td>Vidjetlərin dok ilə böyüməsinə icazə verin. Vidjet ikonlarını kəskin saxlamaq üçün bunu deaktiv edin; tapşırıq ikonları və başlatıcılar yenə də böyüyür.</td></tr>
+<tr><td>Pop-up'u siçan təkəri ilə genişləndir</td><td>Dəstəklənən bir vidjet üzərində sürüşdürərək onun pop-up'unu göstərin və ya gizlədin.</td></tr>
+<tr><td>Tələb olunduqda ölçünü avtomatik tənzimlə</td><td>Elementlər mövcud uzunluğu aşdıqda kiçildin və yerləşdikdə yenidən böyüdün.</td></tr>
+<tr><td>Mövqeyə əsaslanan qlobal qısayollarla aktivləşdir</td><td>Mövqeyə əsaslanan qlobal qısayolların bu dokun elementlərini aktivləşdirməsinə icazə verin. Hər bir düzülüş üçün yalnız bir dok bunu istifadə etməlidir.</td></tr>
+<tr class="group"><td colspan="2">Üzgən</td></tr>
+<tr><td>İstifadəçi qarşılıqlı əlaqəsi üçün həmişə üzgən boşluqdan istifadə et <span class="advanced">Qabaqcıl</span></td><td>Vidget və pəncərə qarşılıqlı əlaqəsi üçün istifadə olunan sahaya üzən boşluğu daxil edin.</td></tr>
+<tr><td>Maksimum ölçüdəki pəncərələr üçün üzən boşluğu gizlədin <span class="advanced">Qabaqcıl</span></td><td>Maksimum ölçüdəki pəncərə ekran kənarına ehtiyac duyduqda üzən boşluğu çıxarın.</td></tr>
+<tr><td>Üzən boşluğun gizlənməsini siçan çıxana qədər təxirə salın <span class="advanced">Qabaqcıl</span></td><td>Yaxınlıqdakı elementlərə təsadüfi kliklərin qarşısını almaq üçün boşluğu gizlətməzdən əvvəl işarənin çıxmasını gözləyin.</td></tr>
+<tr><td>Göstərildikdə üzən boşluğu əks etdirin <span class="advanced">Qabaqcıl</span></td><td>Həmişə Görünən rejimində, boşluğu dokun əks tərəfində əks etdirin.</td></tr>
+<tr class="group"><td colspan="2">Mühit</td></tr>
+<tr><td>İş masası dəyişdikdə qaldırın <span class="advanced">Qabaqcıl</span></td><td>Virtual iş masası dəyişdikdə dokunu müvəqqəti olaraq göstərin. Bu, Həmişə Görünən və ya Pəncərələr Aşağıda rejimlərində istifadə edilmir.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Görünüş</h3>
+<p class="note">Kənarlar, Rənglər, Radius/Kölgə, Dinamik Uzunluq Tənzimləmələri, Dinamik Görünmə və İstisnalar Qabaqcıl rejim tələb edir.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementlər</td></tr>
+<tr><td>Dok Üslubu</td><td>Hazır bir tənzimləmə tətbiq etmək üçün Klassik və ya Müasir seçin. Hər iki üslubda, elementlərin düzülüşünü, konturlu fonu, minimum element aralığını, avtomatik üzən boşluğu və kompakt tapşırıq göstəricilərini müstəqil olaraq təyin etmək üçün Dok Üslubu altındakı açarlardan istifadə edin.</td></tr>
+<tr><td>Dok elementlərini bir yerdə saxlayın</td><td>Dok hizalaması Düzəldilmiş olduqda belə, dok elementləri üçün bir qrupdan istifadə edin.</td></tr>
+<tr><td>Konturlu içəridəki fonu istifadə edin</td><td>Aralığı, yuvarlaq künc və kölgə üçün üslublandırma ilə konturlu hazır fonu istifadə edin.</td></tr>
+<tr><td>Daha geniş minimum element aralığından istifadə edin</td><td>Dok elementləri ətrafındakı minimum aralığı artırın. Kənar idarələri ilə təyin edilmiş daha böyük dəyərlər yenə də tətbiq olunur.</td></tr>
+<tr><td>Avtomatik üzən boşluqdan istifadə edin</td><td>Müəyyən bir boşluq dəyəri təyin edilmədikdə, ikon ölçüsündən asılı olaraq ekran kənarı boşluğunu hesablayın.</td></tr>
+<tr><td>Yığcam tap göstəricilərindən istifadə edin</td><td>Latte tap göstəriciləri üçün yığcam düzəndən istifadə edin. Göstərici formasını Effektlər bölməsində seçin.</td></tr>
+<tr><td>Preseti Bərpa Et</td><td>Dokun Redaktəsi hissəsinin aşağısındakı düymə, Davranış, Görünüş, Effektlər və bütün Taplar sekmələrini cari Klassik/Müasir üslub üçün göndərilmiş Dok presetinə dərhal bərpa edir; bu, Qabaqcıl rejim tərəfindən gizlədilmiş seçimləri də əhatə edir. Ekran, dok kənarı, başlatıcılar və vidjetlər saxlanılır. Hizalama, görünürlük və gecikmələr sıfırlanır. Başlatıcı paylaşımı, effektiv başlatıcı siyahısının bir nüsxəsini saxlayaraq default yerli qrupa qayıdır; digər dokların paylaşılan siyahıları dəyişməz qalır. Xüsusi rənglər və göstərici üstünlükləri sıfırlanır. Preset, göndərilmiş Default Dok şablonunu konfiqurasiya sxemi defaultları ilə birləşdirir. Bu, sadəcə Dok Üslubunu dəyişdirməkdən fərqlidir. Klassik, Dok Üslubu altındakı beş görünüş açarını default olaraq söndürür. Müasir onları yandırır. Hər iki preset qalan seçimlər üçün eyni defaultlardan istifadə edir.</td></tr>
+<tr><td>Mütləq ölçü / Nisbi ölçü</td><td>İkon ölçüsünü pikseldə və ya ekranın bir hissəsi kimi təyin edin. Nisbi ölçü yüksək DPI və ya çoxlu ekran qurulumlarında faydalıdır.</td></tr>
+<tr><td>Kursor üzərinə gəldikdə böyütmə</td><td>Kursorun altında elementlərin nə qədər böyüdüyünü təyin edin.</td></tr>
+<tr class="group"><td colspan="2">Uzunluq</td></tr>
+<tr><td>Maksimum / Minimum / Offset</td><td>Dokun maksimum və minimum uzunluğunu təyin edin və onu ekran kənarı boyunca hərəkət etdirin.</td></tr>
+<tr><td>Dinamik Uzunluq Tənzimləmələri <span class="advanced">Qabaqcıl</span></td><td>Maksimumlaşdırılmış pəncərələr olduqda panel uzunluğunu maksimallaşdırın: maksimumlaşdırılmış pəncərə olduqda dok tam uzunluğa qədər genişləndirilsin. Fon aktiv edilməlidir.</td></tr>
+<tr class="group"><td colspan="2">Kənar boşluqları</td></tr>
+<tr><td>Kənar boşluqları / Uzunluq / Qalınlıq / Üzmə boşluğu<span class="advanced">Qabaqcıl</span></td><td>Dok boyunca xarici kənar boşluğunu, qalınlığı boyunca boşluğu və dok ilə ekran kənarı arasındakı boşluğu təyin edin.</td></tr>
+<tr><td>Maksimumlaşdırılmış pəncərələrdən boşluq (px)<span class="advanced">Qabaqcıl</span></td><td>Həmişə Görünən rejimində pəncərələr ilə bu dok arasında əlavə 0–128 piksel yer ayırın. Standart: 0. Bu, ekran kənarındakı üzmə boşluğundan fərqlidir və əks boşluğa əlavə olunur; avtomatik gizlənmə rejimləri bu yeri ayırmır.</td></tr>
+<tr class="group"><td colspan="2">Rənglər</td></tr>
+<tr><td>Rənglər / Palitra<span class="advanced">Qabaqcıl</span></td><td>Plasma Tema Rəngləri, Tünd Rənglər, Açıq Rənglər, Yerləşdirmə Xüsusi Rəngləri, Tərs, və ya İş Masası Fonuna Əsasən Ağıllı Rənglər seçimlərindən birini seçin. Yerləşdirmə Xüsusi Rəngləri yerləşdirmənin rəng sxemindən istifadə edir; Ağıllı rənglər divar kağızına uyğunlaşır.</td></tr>
+<tr><td>Xüsusi fon rəngindən istifadə edin / Gündüz rəngi<span class="advanced">Qabaqcıl</span></td><td>Bu dokun fonunu seçilmiş rənglə əvəz edin; mətn kontrastı avtomatik tənzimlənir. Standart olaraq deaktivdir. Pəncərədən alınan palitralar və genişləndirilmiş appletlər üçün Plasma palitrası üstünlüyü saxlayır. Şəffaflıq ayrı bir fon tənzimləməsidir.</td></tr>
+<tr><td>Günün vaxtına görə fon rənglərini dəyişin / Gecə rəngi / Gündüzün başlanğıcı (yerli vaxt) / Gecenin başlanğıcı (yerli vaxt)<span class="advanced">Qabaqcıl</span></td><td>İsteğe bağlı olarak yerel 24 saatlik zamanlara göre iki özel renk arasında geçiş yapın. Varsayılanlar: gündüz 07:00, gece 19:00. Başlangıç zamanı dahildir. Aralıklar gece yarısını aşabilir; eşit zamanlar tüm gün boyunca gündüz rengini korur. Zamanlamanın devre dışı bırakılması gündüz rengini korur. Saat, yeniden başlatma dahil olmak üzere her saniye kontrol edilir.</td></tr>
+<tr class="group"><td colspan="2">Arka Plan</td></tr>
+<tr><td>Arka Plan</td><td>Arka Plan, açma/kapama anahtarıdır. Etkinleştirildiğinde, kalınlığı, opaklığı, yarıçapı ve gölgeyi ayarlamak için aşağıdaki kontrolleri kullanın.</td></tr>
+<tr><td>Opaklık / Meşgul Opaklığı</td><td>Arka plan opaklığını ayarlayın. 'Gerekmediğinde arka planı gizle' ve 'Herhangi bir pencereye dokunulduğunda opak arka planı tercih et' seçeneklerinin her ikisi de etkinleştirildiğinde aynı kaydırıcı Meşgul Opaklığı olarak adlandırılır. Def., tema varsayılanını geri yükler.</td></tr>
+<tr><td>Yarıçap / Gölge <span class="advanced">Gelişmiş</span></td><td>Arka plan köşe yarıçapını ve gölge boyutunu ayarlayın. Def., tema varsayılanını kullanır.</td></tr>
+<tr><td>Bulanıklık / Gölge / Kontur / Tüm Köşeler <span class="advanced">Gelişmiş</span></td><td>Arka plan bulanıklığını, arka plan gölgesini, konturu ve yuvarlatılmış köşeleri etkinleştirin. Tüm Köşeler yalnızca belirli yüzen/hizalı geometriler için kullanılabilir.</td></tr>
+<tr class="group"><td colspan="2">Dinamik Görünürlük</td></tr>
+<tr><td>Herhangi bir pencereye dokunulduğunda opak arka planı tercih et <span class="advanced">Gelişmiş</span></td><td>Bir pencere dock'a dokunduğunda arka plan şeffaflığını kaldırın.</td></tr>
+<tr><td>Gerekmediğinde arka planı gizle <span class="advanced">Gelişmiş</span></td><td>Bir pencere dock'a dokunmadığı veya masaüstü arka planı meşgul olmadığı sürece arka planı gizleyin.</td></tr>
+<tr><td>Maksimize edilmiş pencereler için arka plan gölgesini gizle <span class="advanced">Gelişmiş</span></td><td>Aktif bir maksimize edilmiş pencere dock'a dokunduğunda arka plan gölgesini gizleyin.</td></tr>
+<tr class="group"><td colspan="2">İstisnalar</td></tr>
+<tr><td>Genişləndirilmiş appletlər üçün Plasma fonunu və rənglərini üstün tutun<span class="advanced">Qabaqcıl</span></td><td>Widget açılan pəncərələri genişləndirildikdə qeyri-şəffaflı Plasma üslublu fon və Plasma rənglərindən istifadə edin.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effektlər</h3>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kölgələr</td></tr>
+<tr><td>Kölgələr</td><td>Widget kölgələrini açın və ya bağlayın. Kölgələr söndürüldükdə Ölçü və Şəffaflıq deaktiv olur.</td></tr>
+<tr><td>Ölçü / Şəffaflıq</td><td>Widget kölgəsinin ölçüsünü və şəffaflığını təyin edin.</td></tr>
+<tr><td>Defolt Rəng / Tema Rəngi / fərdi rəng</td><td>Defolt kölgə rəngini, tema palitrasından bir rəngi seçin və ya fərdi rəng seçmək üçün rəng nümunəsinə klikləyin.</td></tr>
+<tr class="group"><td colspan="2">Animasiyalar</td></tr>
+<tr><td>Animasiyalar / x1 / x2 / x3</td><td>Bütün dok animasiyalarını açın və ya bağlayın. x1 normal sürətdir, x2 daha yavaşdır, x3 ən yavaşdır.</td></tr>
+<tr class="group"><td colspan="2">Göstəricilər</td></tr>
+<tr><td>Göstəricilər</td><td>Aktiv tapşırıq göstəricilərini açın və ya bağlayın. Aktiv olduqda, Latte göstəricisini və ya fərdi göstərici plaginini seçin; plaginə xas seçimlər onun tabında görünür.</td></tr>
+<tr><td>macOS üslublu nöqtələrdən istifadə edin</td><td>Görünüşdə kompakt tapşırıq göstəriciləri aktiv olduqda, Latte göstəricisi defolt olaraq macOS üslublu nöqtələrdən istifadə edir. Xətt və ya Nöqtələri əl ilə seçmək üçün Effektlərdə 'macOS üslublu nöqtələrdən istifadə et' seçimini söndürün.</td></tr>
+<tr><td>Tətbiq ikon rənglərindən istifadə edin</td><td>İstəsəniz, tapşırıq göstəricilərini hər bir tətbiq ikonunun dominant rəngi ilə, fon kontrastına uyğunlaşdırılmış şəkildə rəngləndirin. Rəngli alt xətlər üçün Xətt seçin. Defolt olaraq deaktivdir; appletlər palitra rənglərini saxlayır.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tapşırıqlar</h3>
+<p>Simvolu buraxdıqdan sonra, açıcı siyahısını paylaşan digər doklarda tapşırıq açıcıları yenidən sıralanmağa başlayır. Sıralamanın yerləşməsi bir az vaxt ala bilər. Qəbul edən dok yeni sıralamayı qeyd etdikdə ayırıcı boşluqları yerində qalır. Artıq sabitlənmiş bir tətbiqi sürükləmək, həmin açıcı sistem defolt tətbiqini izləsə belə, mövcud açıcısını saxlayır. Yeni ayırıcılar seçilmiş boşluğa çatdıqda yer tutmağa başlayır.</p>
+<p>Tapşırıq sahəsinin və ya sistem tepsisinin kənarındakı bir ayırıcının yanına vidjet əlavə etdikdə və ya sürüklədikdə, vidjet ayırıcının xaricinə yerləşir. Ayırıcı tapşırıq sahəsi və ya tepsinin yanında qalır.</p>
+<p>Tətbiq menyusu vasitəsilə bir tətbiqi sabitlədikdə, onun simvolu tapşırıq siyahısının sonundakı istənilən ayırıcıdan əvvəl görünür. Sağ ayırıcı sabitlənmiş qrupa aiddir, ona görə də sabitlənməmiş işlək tətbiqlər ondan sonra görünür.</p>
+<p>Tapşırıqları yenidən sıralamaq üçün onları sürüklədiyiniz müddətcə tapşırıq yuvası vurğulanmış qalır və simvol görünür vəziyyətdə olur. Yeni bir tapşırıq sürüşdükdə, dok ilkin animasiya ölçüsündən etibarən onun yuvasını ayırmağa başlayır.</p>
+<p class="note">Nişanlar, Animasiyalar, Sürüşdürmə, Fəaliyyətlər və bəzi Qarşılıqlı Təsir/Filtrlər seçimləri Qabaqcıl rejim tələb edir. Yalnız açıcıları göstərmək və bütün tapşırıqları gizlətmək pəncərə ilə bağlı fəaliyyətləri və filtrləri deaktiv edir.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə etdiyi</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Nişanlar</td></tr>
+<tr><td>Tapşırıqlardan bildirişlər <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq simvollarında oxunmamış bildiriş saylarını göstərir.</td></tr>
+<tr><td>Tapşırıqlar üçün irəliləyiş məlumatı <span class="advanced">Qabaqcıl</span></td><td>İlerləmə nişanlarını göstərin, məsələn, Dolphin faylları kopyalayarkən.</td></tr>
+<tr><td>Tapşırıqlardan səsləndirilən audio <span class="advanced">Qabaqcıl</span></td><td>Səs səsləndirən tətbiqlər üçün audio nişanı göstərin. Uyğunlaşma açıq masaüstü/tətbiq identifikatorlarına üstünlük verir. Ümumi brauzer proses məlumatları müəyyən bir PWA-nı müəyyən etmək üçün kifayət deyil; qeyri-müəyyən axınlar uyğun olmayan tətbiqlərə audio idarəetmələri vermək əvəzinə təyinsiz qalır. Müstəqil Electron tətbiqləri öz audio prosesləri ilə uyğunlaşa bilər. Oynatma statusu və çıxış fəaliyyəti, tətbiq audio bağlantısını açıq saxlasa belə, dayandırılmış axınları gizlədir. Oynatıcı statusu olmadan, təxminən bir saniyəlik qısa sükut tolerans edilir.</td></tr>
+<tr><td>Bildiriş nişanı üçün nəzərəçarpan rəng <span class="advanced">Qabaqcıl</span></td><td>Daha güclü, adətən qırmızı bildiriş nişanı istifadə edin. Tapşırıqlardan Bildirişlər tələb olunur.</td></tr>
+<tr><td>Audio nişanı üzərində sürüşdürərkən səsi dəyişin <span class="advanced">Qabaqcıl</span></td><td>Audio nişanına klikləyərək səsi susdurun/açın və ya səsi dəyişmək üçün üzərində sürüşdürün. Tapşırıqlardan Audio səsləndirmə tələb olunur.</td></tr>
+<tr class="group"><td colspan="2">Qarşılıqlı əlaqə</td></tr>
+<tr><td>Başladıcılar yalnız cari tapşırıqlar appletinə əlavə edilir</td><td>Buraxılan başladıcıları yalnız bu tapşırıqlar vidjetinə əlavə edin, ayrı vidjetlər kimi və ya digər tapşırıq vidjetlərinə deyil.</td></tr>
+<tr><td>Kontekst menyusunda pəncərə əməliyyatları <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq kontekst menyusunda pəncərəyə xas əməliyyatları göstərin.</td></tr>
+<tr><td>Önizləmə pəncərəsi açılan pəncərə kimi davranır <span class="advanced">Qabaqcıl</span></td><td>Önizləmələri ipucu kimi deyil, açılan pəncərə kimi açın. Hover əməliyyatı önizləmələri tələb etməlidir; bu yalnız onların necə göstərildiyini dəyişir.</td></tr>
+<tr><td>Mövqe qısayolları yalnız cari tapşırıqlara tətbiq edilsin<span class="advanced">Qabaqcıl</span></td><td>Mövqe əsaslı qlobal qısayolları yalnız bu tapşırıq vidcetine məhdudlaşdırın.</td></tr>
+<tr class="group"><td colspan="2">Filtrlər</td></tr>
+<tr><td>Yalnız cari ekrandakı tapşırıqları göstərin</td><td>Bu dokun ekranındakı pəncərələri göstərin.</td></tr>
+<tr><td>Yalnız cari iş masasındakı tapşırıqları göstərin</td><td>Cari virtual iş masasındakı pəncərələri göstərin.</td></tr>
+<tr><td>Kiçildilmiş Pəncərə Bölməsini Göstərin</td><td>Defolt olaraq bağlıdır. Adi tapşırıqlardan sonra kiçildilmiş pəncərələri fərdi ikonlar kimi göstərir. İkonun üzərinə gəldikdə və ya fokuslandıqda onun tətbiqi və pəncərə başlığı görünür, aktivləşdirdikdə pəncərə bərpa olunur. Bir tətbiqin bir neçə kiçildilmiş pəncərəsi olduqda, kiçik nişan hər pəncərənin nömrəsini və həmin tətbiq üçün ümumi sayı göstərir. Bu bölmə tapşırıq filtrlərinə tabe olur və tapşırıq daşması sürüşdürməsini paylaşır. Ekran kənarındakı pəncərələrə çatmaq üçün konfiqurasiya edilmiş təkər və ya kənar üzərinə gəlmə hərəkətindən istifadə etmək üçün Sürüşdürməni aktiv edin. Yalnız başlatıcı rejimi bunu gizlədir.</td></tr>
+<tr><td>Yalnız başlatıcılardakı tapşırıqları göstərin<span class="advanced">Qabaqcıl</span></td><td>Yalnız artıq başlatıcı siyahısında olan tətbiqlərin pəncərələrini göstərin.</td></tr>
+<tr><td>Yalnız başlatıcıları göstərin və bütün tapşırıqları gizlədin<span class="advanced">Qabaqcıl</span></td><td>Başlatıcı ikonlarını göstərin və işlək tapşırıqları gizlədin. Bu, həmçinin pəncərə ilə əlaqəli əməliyyatları və filtrləri deaktiv edir.</td></tr>
+<tr><td>Eyni tətbiq üçün yalnız qruplaşdırılmış tapşırıqları göstərin<span class="advanced">Qabaqcıl</span></td><td>Eyni tətbiqin pəncərələrini defolt olaraq qruplaşdırın.</td></tr>
+<tr class="group"><td colspan="2">Animasiyalar</td></tr>
+<tr><td>Tetikləndikdə başlatıcıları sıçradın<span class="advanced">Qabaqcıl</span></td><td>Tetikləndikdə başlatıcıları animasiya edin.</td></tr>
+<tr><td>Diqqət tələb edən tapşırıqları sıçradın<span class="advanced">Qabaqcıl</span></td><td>Diqqət tələb edən tapşırıqları animasiya edin.</td></tr>
+<tr><td>Tək pəncərələri içəri və kənara sürüşdürün<span class="advanced">Qabaqcıl</span></td><td>Yeni və bağlı tək pəncərələri animasiya edin.</td></tr>
+<tr><td>Qruplaşdırılmış tapşırıqların yeni pəncərələri sıçrayır <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq qrupu daxilində yeni pəncərəni animasiya edin.</td></tr>
+<tr><td>Qruplaşdırılmış tapşırıqların bağlı pəncərələri sürüşür <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq qrupu daxilində bağlı pəncərəni animasiya edin.</td></tr>
+<tr class="group"><td colspan="2">İşə salanlar</td></tr>
+<tr><td>Unikal Qrup</td><td>Bu tapşırıq vidcetinə öz işə salan siyahısını verin.</td></tr>
+<tr><td>Düzülüş Qrupu</td><td>İşə salanları eyni düzülüşdəki tapşırıq vidcetləri ilə paylaşın. Bu düymə yalnız dok artıq Düzülüş Qrupundan istifadə etdikdə göstərilir.</td></tr>
+<tr><td>Qlobal Qrup</td><td>İşə salanları bütün düzülüşlərdəki tapşırıq vidcetləri ilə paylaşın.</td></tr>
+<tr class="group"><td colspan="2">Sürüşdürmə</td></tr>
+<tr><td>Sürüşdürmə <span class="advanced">Qabaqcıl</span></td><td>Tapşırıqlar mövcud sahədən daşdıqda sürüşdürməni aktiv edin. Bu, 'Dok elementlərini bir yerdə saxla' aktiv olduqda da daxil olmaqla, hər iki dok ön tənzimləməsi ilə işləyir.</td></tr>
+<tr><td>Əl ilə <span class="advanced">Qabaqcıl</span></td><td>Sürüşdürməni Deaktiv, Yalnız şaquli/üfüqi sürüşdürmə və ya Üfüqi və şaquli sürüşdürmə seçimlərindən birini seçin. Tək istiqamətli seçim dokun istiqamətindən asılıdır.</td></tr>
+<tr><td>Avtomatik <span class="advanced">Qabaqcıl</span></td><td>Avtomatik sürüşdürməni aktiv və ya deaktiv edin.</td></tr>
+<tr class="group"><td colspan="2">Hərəkətlər</td></tr>
+<tr><td>Sol Klik <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq üzərində sol klik üçün hərəkət: Heç biri, Pəncərəni Bağla və ya Qrup, Yeni Nüsxə, Kiçilt/Bərpa Et, Tapşırıqlar Arasında Keçid, Tapşırıq Qruplaşdırmasını Dəyişdir, Pəncərələri Təqdim Et, Pəncərələri Önizlə, Pəncərələri Vurğula və ya Pəncərələri Önizlə və Vurğula.</td></tr>
+<tr><td>Orta Klik <span class="advanced">Qabaqcıl</span></td><td>Tapşırıq üzərində orta klik üçün hərəkət. Seçimlər Sol Klik üçün olanlarla eynidir.</td></tr>
+<tr><td>Kursor Üstündə <span class="advanced">Qabaqcıl</span></td><td>Kursor üstündə hərəkətlər: Heç biri, Pəncərələri Önizlə, Pəncərələri Vurğula və ya Pəncərələri Önizlə və Vurğula. Tapşırıq başlıqlarının ipucu məlumatları Davranış bölməsində idarə olunur.</td></tr>
+<tr><td>Təkər <span class="advanced">Qabaqcıl</span></td><td>Təkər hərəkətləri: Heç biri, Tapşırıqlar arasında keçid, və ya Tapşırıqlar arasında keçid və kiçildilmə.</td></tr>
+<tr><td>Dəyişdirici + klik <span class="advanced">Qabaqcıl</span></td><td>Shift, Ctrl, Alt və ya Meta düymələrindən birini basılı saxlayın və sol, orta və ya sağ klikləyin ki, əlavə bir hərəkət icra olunsun. Dəyişdiricini, düyməni və hərəkəti seçin; bu, yuxarıdakı əsas hərəkətlərdən ayrıdır.</td></tr>
+</tbody></table></div>
+<p class="note">Plasma 6-da cari fəaliyyət filtri gizlədilib, çünki KActivities dəstəyi etibarsızdır.</p></section><section id="configure-latte"><h2>Latte-ni Konfiqurasiya Et</h2><p class="note">Layouts Editor (Düzülüş Redaktoru) düzülüşləri və onların doklarını idarə edir. Preferences (Tərcihlər) proqram səviyyəsindəki davranışı idarə edir. Apply (Tətbiq Et) cari tabdakı gözləyən dəyişiklikləri yadda saxlayır; Reset (Sıfırla) həmin tabın yadda saxlanmış vəziyyətini bərpa edir; Restore Defaults (Varsayılanları Bərpa Et) nəzərdən keçirmək üçün varsayılanları hazırlayır. Screens... (Ekranlar...) yadda saxlanmış ekran istinadlarını idarə edir.</p>
+<h3 id="layouts">Layouts Editor (Düzülüş Redaktoru)</h3>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə etdiyi</th></tr></thead><tbody>
+<tr><td>Hər zaman tək düzülüş</td><td>Bütün fəaliyyətlər üçün bir düzülüş istifadə edin.</td></tr>
+<tr><td>Fəaliyyətlərə əsaslanan çoxlu düzülüşlər</td><td>Fəaliyyətlərə fərqli düzülüşlər təyin edin; bir neçə düzülüş yüklənmiş vəziyyətdə qala bilər.</td></tr>
+<tr><td>Keçid</td><td>Seçilmiş düzülüşü aktivləşdirin. Əvvəlcə gözləyən dəyişiklikləri tətbiq edin; Latte yadda saxlanmamış dəyişikliklərlə keçid etməyəcək.</td></tr>
+<tr><td>Fəaliyyətlər...</td><td>Plasma-nın Fəaliyyətlər menecerini açın. Bu düzülüşü fəaliyyətlərə təyin etmək üçün Fəaliyyətlər sütunundan və ya Enabled (Aktiv) seçimindən istifadə edin.</td></tr>
+<tr><td>Yeni / Kopyala / Sil</td><td>Düzülüş yaradın, kopyalayın və ya silin. Buradakı Kopyala (Duplicate) bütün düzülüşü kopyalayır, fərdi bir dok deyil. Aktiv və kilidli düzülüşlər silinə bilməz.</td></tr>
+<tr><td>Aktiv</td><td>Bu düzülüşü bir və ya daha çox fəaliyyətə təyin edin ki, Plasma Fəaliyyətləri onu aktivləşdirə bilsin. Yalnız çoxlu düzülüş rejimində göstərilir.</td></tr>
+<tr><td>Yalnız Oxu</td><td>Yerləşdirmə konfiqurasiyasını dəyişikliklərdən qoruyun.</td></tr>
+<tr><td>Təfərrüatlar...</td><td>İkon, fərdi rənglər, açılan pəncərə kənarları və kontekst menyusunun görünməsi üçün yerləşdirmə təfərrüatları dialoqunu açın.</td></tr>
+<tr><td>Doklar...</td><td>Bu yerləşdirmə üçün dok siyahısını açın: ad, ekran, kənar, düzülüş, daxil edilmiş vidjetlər və yeni/kopyalama/silmə/idxal/ixrac.</td></tr>
+<tr><td>İdxal... / İxrac...</td><td>Yerləşdirməni lokal fayldan və ya KDE Mağazasından idxal edin; ehtiyat nüsxəsi və ya şablon kimi ixrac edin. Fayl → Konfiqurasiyanı İdxal Et / Konfiqurasiyanı İxrac Et tam proqram ehtiyat nüsxəsini idarə edir.</td></tr>
+<tr><td>Ad / Menyuda / Fəaliyyətlər</td><td>Yerləşdirmə siyahısında Ad, Menyuda və Fəaliyyətlər sütunları var. Adı və Fəaliyyətləri birbaşa siyahıda redaktə edin; Menyuda seçimi yerləşdirmənin dokun Yerləşdirmələr menyusunda görünüb-görünməyəcəyini idarə edir.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Yerləşdirmə Təfərrüatları</h3>
+<p>Seçilmiş yerləşdirməni redaktə etmək üçün Yerləşdirmələr Redaktoru → Təfərrüatlar... ilə açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr><td>Yerləşdirmə</td><td>Hansı yerləşdirmənin redaktə ediləcəyini seçin.</td></tr>
+<tr><td>İkon</td><td>Yerləşdirmə üçün ikon seçin. Təmizləmə düyməsi onu silir.</td></tr>
+<tr><td>Fərdi Rənglər</td><td>Bu yerləşdirmə üçün fərdi rəng sxemi faylı seçin.</td></tr>
+<tr><td>Açılan Pəncərə Kənarları</td><td>Yerləşdirmə açılan pəncərələri tərəfindən istifadə olunan kənarları təyin edin; deaktiv edildikdə standart istifadə olunur.</td></tr>
+<tr><td>Mümkün olduqda yerləşdirmələr kontekst menyusunda göstər</td><td>Cari fəaliyyət icazə verdikdə bu yerləşdirməni dokun Yerləşdirmələr menyusunda göstər.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Doklar Dialoqu</h3>
+<p>Seçilmiş yerləşdirmədəki dokları idarə etmək üçün Yerləşdirmələr Redaktoru → Doklar... ilə açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sütunlar</td></tr>
+<tr><td>Ad</td><td>Dok adı. Yenidən adlandırmaq üçün iki dəfə klikləyin.</td></tr>
+<tr><td>Ekran</td><td>Dockun aid olduğu ekran, Primary, All Screens və All Secondary Screens daxil olmaqla.</td></tr>
+<tr><td>Kənar</td><td>Dock tərəfindən istifadə edilən ekran kənarı.</td></tr>
+<tr><td>Hizalama</td><td>Dockun kənarı boyunca hizalanması.</td></tr>
+<tr><td>Daxildir</td><td>Docka daxil olan vidjetlər və alt konteynerlər. Bu sütun yalnız oxunur.</td></tr>
+<tr class="group"><td colspan="2">Düymələr</td></tr>
+<tr><td>Yeni</td><td>Şablondan bir dock yaradın.</td></tr>
+<tr><td>Kopyala</td><td>Seçilmiş dockun müstəqil bir kopyasını yaradın, ya da seçilmiş dock bir klon varsa, başqa bir klon yaradın.</td></tr>
+<tr><td>Sil</td><td>Seçilmiş docku silin. Klonlar orijinalları ilə birlikdə silinir.</td></tr>
+<tr><td>İdxal et...</td><td>Yerli şablon faylından bir dock idxal edin.</td></tr>
+<tr><td>İxrac et...</td><td>Yedekleme və ya şablon kimi seçilmiş docku ixrac edin. Şablon pənceresi hansı vidjet parametrlərinin daxil edilməsini seçməyə imkan verir; e-poçt və ya təqvim hesabları kimi şəxsi məlumatları olan vidjetləri çıxarın.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Ekranlar Pənceresi</h3>
+<p>Latte tərəfindən saxlanılan ekran istinadlarını təmizləmək üçün File → Screens... ilə açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Pənceredəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr><td>Ekran siyahısı</td><td>Latte-də saxlanılan ekran istinadlarını, artıq qoşulmamış ekranlar da daxil olmaqla, siyahılayır.</td></tr>
+<tr><td>Köhnəlmiş ekranları seçin</td><td>Yalnız artıq mövcud olmayan ekranları seçin. Aktiv ekranlar və bir düzənlik tərəfindən istifadə edilən ekranlar silinə bilməz.</td></tr>
+<tr><td>Hamısını Seçmə</td><td>Fərqli bir dəst seçməzdən əvvəl seçimi təmizləyin.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Tərcihlər</h3>
+<div class="table-wrap"><table><thead><tr><th>Pənceredəki seçim</th><th>Nəyi idarə edir</th></tr></thead><tbody>
+<tr><td>Düzənliklərin avtomatik aktivləşdirilməsi üçün məlumat pənceresini göstər</td><td>Bir düzənlik avtomatik aktivləşdikdə məlumat pənceresini göstər.</td></tr>
+<tr><td>Parabolik Effekt / Kiçik / Orta / Böyük</td><td>Qonşu elementlər üzərində hover zoom-un qlobal yayılmasını təyin edin.</td></tr>
+<tr><td>Başlanğıcda avtomatik başlatmanı aktivləşdirin</td><td>Sistemə daxil olduqda Latte-ni başladın.</td></tr>
+<tr><td>Bildiriş və qısayol nişanları üçün 3D üslubundan istifadə edin</td><td>Bildiriş və qısayol nişanları üçün ölçülü üslubdan istifadə edin.</td></tr>
+<tr><td>Qısayol nişanlarını göstərmək üçün ⌘ düyməsini basılı saxlayın</td><td>Defolt olaraq söndürülüb. Gizli dokları və onların tapşırıqlarının və vidjetlərinin qısayol nişanlarını göstərmək üçün Meta düyməsini təxminən bir saniyə basılı saxlayın; onları yenidən gizlətmək üçün düyməni buraxın. Plasma-nın defolt parametrləri ilə Meta buraxıldıqda öz başlatıcısı da açılır; bunu istəmirsinizsə, Sistem Parametrlərində bu qısayolu dəyişin.</td></tr>
+<tr><td>Qalınlıq marjının təsiri</td><td>Element qalınlığı marjlarının düzülüşə nə qədər təsir etdiyini seçin: 0%, 50% və ya 100%.</td></tr>
+<tr><td>Mövcud iş masası sahəsi üçün Plasma iş masasını məlumatlandırın</td><td>Panellər və pəncərələr istifadə edə bilsin deyə mövcud iş masası sahəsini Plasma-ya açıqlayın.</td></tr>
+<tr><td>Kontekst menyusu / Fəaliyyətlər...</td><td>Dok kontekst menyusunda həmişə hansı fəaliyyətlərin göstəriləcəyini seçin. Buraxılan fəaliyyətlər yalnız redaktə rejimində mövcuddur.</td></tr>
+<tr><td>Ekranlar / dəyişikliklərə reaksiya gecikməsi</td><td>Latte-nin ekran dəyişikliklərinə reaksiya verməzdən əvvəl neçə millisaniyə gözləyəcəyini təyin edin. Donanım qeyri-sabit keçidlər bildirirsə, bunu artırın.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontekst menyusu fəaliyyətləri</h3>
+<p>Hansı dok fəaliyyətlərinin həmişə görünür olacağını seçmək üçün Parametrlər → Kontekst menyusu → Fəaliyyətlər... bölməsini açın.</p>
+<div class="table-wrap"><table><thead><tr><th>Pəncərədəki seçim</th><th>Nəyi idarə etdiyi</th></tr></thead><tbody>
+<tr><td>Həmişə əlçatan</td><td>Bu siyahıdakı fəaliyyətlər dok kontekst menyusunda həmişə göstərilir.</td></tr>
+<tr><td>Yalnız redaktə rejimində əlçatan</td><td>Bu siyahıdakı əməliyyatlar yalnız dok düzəldildiyi zaman görünür. Bu siyahılar arasında əməliyyatları köçürmək üçün onları daşıyın.</td></tr>
+<tr><td>Siyahılar arasında köçürün</td><td>Bir əməliyyatı seçin və onu köçürmək üçün ox düymələrindən istifadə edin. Sıfırla və Varsayılanları Bərpa Et, standart dəsti bərpa edir.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Müstəqil Nüsxələr və Klonlar</h2><p class="note">Ekranda bir kopya və bir klon oxşar görünür, lakin fərqli davranır. Kopya yeni, müstəqil bir dokdur. Klon isə başqa bir ekranda göstərilən eyni dokdur. Bu dokun ayrı-ayrılıqda konfiqurasiya edilməsini istəyib-istəmədiyinizə əsasən seçim edin.</p>
+<h3 id="create-independent-copy">Müstəqil nüsxə yaradın</h3>
+<p>Bu üsulların hər hansı birini klon üzərində deyil, orijinal dok üzərində istifadə edin:</p>
+<ul><li>Dokun sağ klikləyin və <strong>Dok Kopyala</strong> seçin.</li><li>Açın <strong>Dok Düzəlt</strong> və seçin <strong>Əlavə et… → Dok Kopyala</strong>.</li><li>Açın <strong>Latte Konfiqurasiyası → Düzülüş Redaktoru → Doklar…</strong>, dokun seçin və <strong>Kopyala</strong> seçin.</li></ul>
+<p>Nüsxə yeni dok və vidjet ID-ləri alır və cari parametrləri bir dəfə kopyalayır. Bundan sonra onun ekranını, kənarını, ölçüsünü, görünüşünü, davranışını, vidjetlərini və başlatıcılarını müstəqil olaraq dəyişə bilərsiniz. Bu, düzülüşdə ayrı bir girişdir və <strong>Dok Sil</strong> ilə silinə bilər.</p>
+<p>Doklar pəncərəsindən klonu kopyalamaq, müstəqil bir dok deyil, eyni orijinalın başqa bir klonunu yaradır. Klondan müstəqil bir dok qurmaq üçün, əvvəlcə <strong>Orijinal Dok Düzəlt…</strong> açın və orijinalı kopyalayın.</p>
+<p>Əgər orijinal <strong>Qlobal Qrup</strong> istifadə edirsə, nüsxə də ondan istifadə edir və başlatıcıları paylaşır. Ayrı bir başlatıcı siyahısı istəyirsinizsə, nüsxədə <strong>Unikal Qrup</strong> seçin. <strong>Düzülüş Qrupu</strong> yalnızca dok yerləşdiricisi artıq ondan istifadə edirsə mövcuddur.</p>
+<h3 id="create-clone">Klonlar yaratmaq</h3>
+<p>Klonlar orijinal dok yerləşdiricisinin ekran rejimi tərəfindən yaradılır, <strong>Dok Yerləşdiricisini Kopyalamaq</strong>:</p>
+<ul><li><strong>Dok Yerləşdiricisini Redaktə Et → Ekran → Bütün Ekranlarda</strong>: orijinal əsas ekranda qalır və Latte hər bir ikincili ekranda bir klon yaradır.</li><li><strong>Dok Yerləşdiricisini Redaktə Et → Ekran → Bütün İkincili Ekranlarda</strong>: orijinal bir ikincili ekranda qalır və Latte qalan ikincili ekranlarda klonlar yaradır.</li></ul>
+<p>Latte ekran düzülüşü dəyişdikdə klonları avtomatik olaraq yaradır və silir. Klonları silmək üçün orijinalı yenidən <strong>Əsas Ekranda</strong> və ya konkret bir ekrana təyin edin. Klonun kontekst menyusunda <strong>Dok Yerləşdiricisini Sil</strong> girişi yoxdur; onu konfiqurasiya etmək üçün orada <strong>Orijinal Dok Yerləşdiricisini Redaktə Et…</strong> istifadə edin.</p>
+<p>Klondan redaktoru açmaq həmişə orijinal dok yerləşdiricisinin parametrlərini açır, çünki klonlar dok konfiqurasiyasını bölüşür. Klonda dəyişdirilmiş vidjet parametrləri orijinalı da yeniləyir.</p>
+<h3 id="differences">Ümumi fərqlər</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Müstəqil kopya</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Yaradan</td><td>Dok Yerləşdiricisini Kopyalamaq</td><td>Ekran → Bütün Ekranlarda və ya Bütün İkincili Ekranlarda</td></tr>
+<tr><td>Kimlik</td><td>Yeni dok və vidjet ID-ləri</td><td>Orijinal dok yerləşdiricisinin əlaqəli görünüşü</td></tr>
+<tr><td>Parametrlər</td><td>Bir dəfə kopyalanır, sonra müstəqil olur</td><td>Bölüşülür: orijinalı redaktə etmək hər bir klonu yeniləyir; klonda dəyişdirilmiş vidjet parametrləri orijinalı da yeniləyir</td></tr>
+<tr><td>Ekran və kənar</td><td>Müstəqil olaraq dəyişdirilə bilər</td><td>Orijinalı izləyir; ayrıca daşına və ya ölçüsü dəyişdirilə bilməz</td></tr>
+<tr><td>Başladıcılar</td><td>Yaradılma zamanı kopyalanır; sonradan yalnız Layout Group və ya Global Group vasitəsilə bölüşülür</td><td>Həmişə orijinalı əks etdirin</td></tr>
+<tr><td>Kontekst menyusu</td><td>Tam dok hərəkətləri, o cümlədən Çoxaltma və Silmə</td><td>Orijinal Dokunu Redaktə Et… göstərilir; Çoxaltma, Köçürmə, İxrac və Silmə gizlədilib</td></tr>
+<tr><td>Necə silinir</td><td>Dokunu Sil</td><td>Orijinalı tək ekrana qaytarın</td></tr>
+</tbody></table></div>
+<p><strong>Vidget ikon rəngləri:</strong> <strong>İkon Mövzusu Rənglərindən İstifadə Et</strong> vidgetin kontekst menyusunda Latte-nin həmin vidgetin ikonunu rəngləndirməsinin qarşısını alır. Parametr vidgetə görə yadda saxlanılır: klonlar onu orijinal ilə paylaşır. Müstəqil kopya yaradıldığı anda olan dəyəri saxlayır və onu ayrıca dəyişə bilər.</p></section></main></div><footer>Latte Dock NG · Offline sənədlər. Mövcud olmayan interfeys dilləri ingilis dilinə qayıdır.</footer></body></html>

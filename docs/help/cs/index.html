@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Uživatelská příručka Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Uživatelská příručka Latte Dock NG</h1><p>Tyto pokyny popisují aktuální možnosti. Rozšířený režim, styl dokování a nainstalované pluginy mohou ovlivnit viditelnost ovládacích prvků. Možnosti označené jako Rozšířené jsou v základním editoru skryté.</p><div class="language-menu"><label for="language-select">Jazyk</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html" selected>Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Uvedeny jsou pouze přeložené příručky. Ostatní jazyky rozhraní otevírají anglickou příručku.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Na této stránce</h2><a class="chapter" href="#edit-dock">Upravit dok</a><a class="subsection" href="#behavior">Chování</a><a class="subsection" href="#appearance">Vzhled</a><a class="subsection" href="#effects">Efekty</a><a class="subsection" href="#tasks">Úlohy</a><a class="chapter" href="#configure-latte">Konfigurovat Latte</a><a class="subsection" href="#layouts">Editor rozvržení</a><a class="subsection" href="#layout-details">Podrobnosti rozvržení</a><a class="subsection" href="#docks-dialog">Dialog doků</a><a class="subsection" href="#screens-dialog">Dialog obrazovek</a><a class="subsection" href="#preferences">Předvolby</a><a class="subsection" href="#context-menu-actions">Akce kontextové nabídky</a><a class="chapter" href="#copies-and-clones">Nezávislé kopie a klony</a><a class="subsection" href="#create-independent-copy">Vytvořit nezávislou kopii</a><a class="subsection" href="#create-clone">Vytvořit klony</a><a class="subsection" href="#differences">Rozdíly na první pohled</a></nav></aside><main>
+<section id="edit-dock"><h2>Upravit dok</h2><p class="note">Změny se projeví okamžitě. Zavření skryje editor; nevrátí změny zpět. Připnutí ponechá editor otevřený. Přidat… → Duplikovat dok vytvoří nezávislou kopii původního doku; Odebrat odstraní aktuální dok. Přepínání karet ponechá okno na místě. Rozšířený režim přizpůsobí velikost okna pro jeho nejdelší stránku, v rámci dostupného prostoru na obrazovce. Delší stránky se posouvají uvnitř okna. Tažením rohu pro změnu velikosti upravíte velikost okna v obou režimech úprav.</p>
+<p class="note">Rozšířený režim odhaluje více ovládacích prvků. Možnosti označené jako Rozšířené jsou v základním editoru skryté.</p>
+<h3 id="behavior">Chování</h3>
+<p class="note">Možnosti viditelnosti, zpoždění, akcí, chování položek, plovoucí mezery a prostředí pro tento dok.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Viditelnost</td></tr>
+<tr><td>Obrazovka / Umístění</td><td>Vyberte obrazovku a okraj pro tento dok. Při více obrazovkách vytvářejí možnosti Na všech obrazovkách a Na všech sekundárních obrazovkách propojené klony. Viz Nezávislé kopie a klony.</td></tr>
+<tr><td>Zarovnání</td><td>Umístěte dok podél okraje obrazovky. Zarovnání položek určuje, kde se widgety nacházejí uvnitř doku.</td></tr>
+<tr><td>Vždy viditelný</td><td>Ponechte dok viditelný a rezervujte prostor na ploše, pokud to správce oken podporuje.</td></tr>
+<tr><td>Automaticky skrývat</td><td>Skrýt dok, dokud se kurzor nedostane do jeho aktivační oblasti.</td></tr>
+<tr><td>Vyhnout se aktivnímu</td><td>Skrýt, když se aktivní okno dotkne oblasti doku, a zobrazit dok, když do něj vstoupí kurzor.</td></tr>
+<tr><td>Vyhnout se maximalizovanému</td><td>Skrýt pouze tehdy, když je na této obrazovce aktivní maximalizované okno, a zobrazit dok, když do něj vstoupí kurzor.</td></tr>
+<tr><td>Vyhnout se všem oknům</td><td>Skrýt, když se jakékoli okno dotkne oblasti doku, a zobrazit dok, když do něj vstoupí kurzor.</td></tr>
+<tr><td>Okna jdou pod dok</td><td>Ponechte dok nad okny; okna mohou být umístěna pod ním.</td></tr>
+<tr><td>Okna mohou překrývat</td><td>Povolit oknům překrývat dok. Dok se dostane do popředí, když kurzor dosáhne okraje obrazovky.</td></tr>
+<tr><td>Okna vždy překrývají</td><td>Ponechte okna nad dokem za všech okolností; dok zůstává za nimi.</td></tr>
+<tr class="group"><td colspan="2">Zpoždění</td></tr>
+<tr><td>Zpoždění / Zobrazit / Skrýt</td><td>Nastavte dobu čekání před zobrazením nebo skrytím v milisekundách. Delší prodlevy snižují náhodnou aktivaci.</td></tr>
+<tr class="group"><td colspan="2">Akce</td></tr>
+<tr><td>Sledovat <span class="advanced">Rozšířené</span></td><td>Vyberte, podle kterého aktivního okna se budou řídit akce v prázdné oblasti: Aktivní okno z aktuální obrazovky nebo Aktivní okno ze všech obrazovek.</td></tr>
+<tr><td>Levé tlačítko / Přetažení aktivního okna <span class="advanced">Rozšířené</span></td><td>Povolte přetahování z prázdného místa v doku pro přesun nebo maximalizaci/obnovení sledovaného aktivního okna.</td></tr>
+<tr><td>Prostřední tlačítko / Zavření aktivního okna <span class="advanced">Rozšířené</span></td><td>Povolte kliknutí prostředním tlačítkem na prázdné místo v doku pro zavření sledovaného aktivního okna.</td></tr>
+<tr><td>Kolečko myši <span class="advanced">Rozšířené</span></td><td>Vyberte, co dělá kolečko nad prázdným místem v doku: Žádná akce, Přepínání mezi pracovními plochami, Přepínání mezi aktivitami, Přepínání mezi úlohami nebo Přepínání a minimalizace úloh.</td></tr>
+<tr class="group"><td colspan="2">Položky</td></tr>
+<tr><td>Zobrazovat tenké popisky titulků při najetí myší</td><td>Zobrazovat kompaktní popisky názvů widgetů. Náhledy oken úloh jsou ovládány samostatně akcí Hover pro úlohy.</td></tr>
+<tr><td>Přibližovat widgety při najetí myší</td><td>Povolit přibližování widgetů spolu s dokem. Zakázáním této funkce zachováte ostré ikony widgetů; ikony úloh a spouštěče se stále přibližují.</td></tr>
+<tr><td>Rozbalovat vyskakovací okno pomocí kolečka myši</td><td>Přejetím kolečkem nad podporovaným widgetem zobrazíte nebo skryjete jeho vyskakovací okno.</td></tr>
+<tr><td>Automaticky upravovat velikost podle potřeby</td><td>Zmenšovat položky, když překročí dostupnou délku, a zvětšovat je, když se vejdou.</td></tr>
+<tr><td>Aktivovat globální zkratky na základě pozice</td><td>Povolit globálním zkratkám na základě pozice aktivovat položky tohoto doku. Tuto funkci by měl používat pouze jeden dok na rozložení.</td></tr>
+<tr class="group"><td colspan="2">Plovoucí</td></tr>
+<tr><td>Vždy používat plovoucí mezeru pro interakci uživatele <span class="advanced">Rozšířené</span></td><td>Zahrnout plovoucí mezeru do oblasti používané pro interakci s widgety a okny.</td></tr>
+<tr><td>Skrýt plovoucí mezeru pro maximalizovaná okna <span class="advanced">Rozšířené</span></td><td>Odstranit plovoucí mezeru, když maximalizované okno potřebuje okraj obrazovky.</td></tr>
+<tr><td>Zpoždit skrytí plovoucí mezery, dokud myš neopustí <span class="advanced">Rozšířené</span></td><td>Počkat, dokud kurzor neopustí oblast, před skrytím mezery, aby se předešlo náhodným kliknutím na blízké položky.</td></tr>
+<tr><td>Zrcadlit plovoucí mezeru, když je zobrazena <span class="advanced">Rozšířené</span></td><td>V režimu Vždy viditelný zrcadlit mezeru na opačné straně doku.</td></tr>
+<tr class="group"><td colspan="2">Prostředí</td></tr>
+<tr><td>Zvýraznit při změně pracovní plochy <span class="advanced">Rozšířené</span></td><td>Dočasně zobrazit dok při změně virtuální pracovní plochy. Toto se nepoužívá v režimech Vždy viditelný nebo Okna pod dokem.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Vzhled</h3>
+<p class="note">Okraje, Barvy, Poloměr/Stín, Dynamické úpravy délky, Dynamická viditelnost a Výjimky vyžadují rozšířený režim.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Položky</td></tr>
+<tr><td>Styl doku</td><td>Vyberte Klasický nebo Moderní pro použití přednastavení. V obou stylech použijte přepínače pod Styl doku pro nezávislé nastavení uspořádání položek, ohraničeného pozadí, minimálního rozestupu položek, automatické plovoucí mezery a kompaktních indikátorů úloh.</td></tr>
+<tr><td>Ponechat položky doku pohromadě</td><td>Použít jednu skupinu pro položky doku, včetně případů, kdy je zarovnání doku Nastavit.</td></tr>
+<tr><td>Použít vnořené pozadí s obrysem</td><td>Použít přednastavené pozadí s obrysem a stylováním pro jeho rozestupy, zaoblené rohy a stín.</td></tr>
+<tr><td>Použít širší minimální rozestup položek</td><td>Zvýšit minimální rozestup kolem položek doku. Větší hodnoty nastavené pomocí ovládacích prvků okrajů stále platí.</td></tr>
+<tr><td>Použít automatickou plovoucí mezeru</td><td>Vypočítat mezeru od okraje obrazovky na základě velikosti ikony, pokud není nastavena konkrétní hodnota mezery.</td></tr>
+<tr><td>Použít kompaktní indikátory úloh</td><td>Použít kompaktní rozložení pro indikátory úloh Latte. Tvar indikátoru vyberte v sekci Efekty.</td></tr>
+<tr><td>Obnovit předvolbu</td><td>Tlačítko ve spodní části panelu Upravit dok okamžitě obnoví chování, vzhled, efekty a všechny karty Úlohy na výchozí předvolbu doku pro aktuální styl Klasický/Moderní, včetně možností skrytých v režimu Pokročilé. Obrazovka, okraj doku, spouštěče a widgety zůstávají zachovány. Zarovnání, viditelnost a zpoždění se resetují. Sdílení spouštěčů se vrátí do výchozí lokální skupiny, přičemž se zachová kopie efektivního seznamu spouštěčů; sdílené seznamy ostatních doků zůstanou nezměněny. Vlastní barvy a přepsání indikátorů se resetují. Předvolba kombinuje dodávanou šablonu Default Dock s výchozími hodnotami schématu konfigurace. Toto je oddělené od samotného přepínání stylu doku. Klasický styl ve výchozím nastavení vypíná pět přepínačů vzhledu pod Stylem doku. Moderní styl je zapíná. Obě předvolby používají stejné výchozí hodnoty pro zbývající možnosti.</td></tr>
+<tr><td>Absolutní velikost / Relativní velikost</td><td>Nastavte velikost ikony v pixelech nebo jako podíl obrazovky. Relativní velikost je užitečná při vysokém DPI nebo na více obrazovkách.</td></tr>
+<tr><td>Přiblížení při najetí kurzorem</td><td>Nastavte, o kolik se položky zvětší pod kurzorem.</td></tr>
+<tr class="group"><td colspan="2">Délka</td></tr>
+<tr><td>Maximum / Minimum / Posun</td><td>Nastavte maximální a minimální délku doku a posuňte jej podél okraje obrazovky.</td></tr>
+<tr><td>Dynamické úpravy délky <span class="advanced">Pokročilé</span></td><td>Maximalizovat délku panelu při maximalizovaných oknech: rozšířit dok na plnou délku, když je přítomno maximalizované okno. Pozadí musí být povoleno.</td></tr>
+<tr class="group"><td colspan="2">Okraje</td></tr>
+<tr><td>Okraje / Délka / Tloušťka / Plovoucí mezera <span class="advanced">Rozšířené</span></td><td>Nastavte vnější okraj podél doku, okraj napříč jeho tloušťkou a mezeru mezi dokem a okrajem obrazovky.</td></tr>
+<tr><td>Mezera od maximalizovaných oken (px) <span class="advanced">Rozšířené</span></td><td>Rezervovat dalších 0–128 pixelů mezi okny a tímto dokem v režimu Vždy viditelný. Výchozí: 0. Toto je oddělené od plovoucí mezery od okraje obrazovky a přičítá se k jakékoli zrcadlené mezeře; režimy automatického skrytí tento prostor nevyhraňují.</td></tr>
+<tr class="group"><td colspan="2">Barvy</td></tr>
+<tr><td>Barvy / Paleta <span class="advanced">Rozšířené</span></td><td>Vyberte Barvy tématu Plasma, Tmavé barvy, Světlé barvy, Vlastní barvy rozložení, Obrácené, nebo Chytré barvy založené na pozadí plochy. Vlastní barvy rozložení používají barevné schéma rozložení; Chytré sleduje tapetu.</td></tr>
+<tr><td>Použít vlastní barvu pozadí / Denní barva <span class="advanced">Rozšířené</span></td><td>Přepsat pozadí tohoto doku zvolenou barvou; kontrast textu se upraví automaticky. Ve výchozím nastavení zakázáno. Palety odvozené z okna a paleta Plasma pro rozbalené aplety si zachovávají prioritu. Průhlednost zůstává samostatným nastavením pozadí.</td></tr>
+<tr><td>Přepínat barvy pozadí podle denní doby / Noční barva / Začátek dne (místní čas) / Začátek noci (místní čas) <span class="advanced">Rozšířené</span></td><td>Volitelně přepínejte mezi dvěma vlastními barvami pomocí lokálního 24hodinového času. Výchozí hodnoty: den 07:00, noc 19:00. Čas začátku je součástí intervalu. Interval může překračovat půlnoc; při shodných časech zůstává denní barva po celý den. Zakázání rozvrhu zachovává denní barvu. Hodiny jsou kontrolovány každou sekundu, včetně po probuzení.</td></tr>
+<tr class="group"><td colspan="2">Pozadí</td></tr>
+<tr><td>Pozadí</td><td>Pozadí je přepínač zap/vyp. Když je povoleno, použijte ovládací prvky níže k nastavení tloušťky, krytí, poloměru a stínu.</td></tr>
+<tr><td>Krytí / Krytí při zatížení</td><td>Nastavte krytí pozadí. Stejný posuvník se nazývá Krytí při zatížení, když jsou obě možnosti Skrýt pozadí, když není potřeba a Preferovat neprůhledné pozadí při dotyku jakéhokoli okna povoleny. Def. obnoví výchozí hodnotu motivu.</td></tr>
+<tr><td>Poloměr / Stín <span class="advanced">Rozšířené</span></td><td>Nastavte poloměr rohu pozadí a velikost stínu. Def. používá výchozí hodnotu motivu.</td></tr>
+<tr><td>Rozostření / Stíny / Obrys / Všechny rohy <span class="advanced">Rozšířené</span></td><td>Povolte rozostření pozadí, stín pozadí, obrys a zaoblené rohy. Všechny rohy jsou dostupné pouze pro určité geometrie plovoucích/justifikovaných prvků.</td></tr>
+<tr class="group"><td colspan="2">Dynamická viditelnost</td></tr>
+<tr><td>Preferovat neprůhledné pozadí při dotyku jakéhokoli okna <span class="advanced">Rozšířené</span></td><td>Odstraňte průhlednost pozadí, když se okno dotýká dokovací lišty.</td></tr>
+<tr><td>Skrýt pozadí, když není potřeba <span class="advanced">Rozšířené</span></td><td>Skryjte pozadí, kromě případů, kdy se okno dotýká dokovací lišty nebo je pozadí plochy rušné.</td></tr>
+<tr><td>Skrýt stín pozadí pro maximalizovaná okna <span class="advanced">Rozšířené</span></td><td>Skryjte stín pozadí, když se aktivní maximalizované okno dotýká dokovací lišty.</td></tr>
+<tr class="group"><td colspan="2">Výjimky</td></tr>
+<tr><td>Preferovat pozadí a barvy Plasma pro rozbalené aplety<span class="advanced">Rozšířené</span></td><td>Použít neprůhledné pozadí ve stylu Plasma a barvy Plasma, když jsou vyskakovací okna widgetů rozbalená.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efekty</h3>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Stíny</td></tr>
+<tr><td>Stíny</td><td>Zapnout nebo vypnout stíny widgetů. Velikost a Průhlednost jsou zakázány, když jsou stíny vypnuté.</td></tr>
+<tr><td>Velikost / Průhlednost</td><td>Nastavit velikost a průhlednost stínu widgetu.</td></tr>
+<tr><td>Výchozí barva / Barva motivu / vlastní barva</td><td>Vyberte výchozí barvu stínu, barvu z palety motivu nebo klikněte na vzorek barvy pro výběr vlastní barvy.</td></tr>
+<tr class="group"><td colspan="2">Animace</td></tr>
+<tr><td>Animace / x1 / x2 / x3</td><td>Zapnout nebo vypnout všechny animace doku. x1 je normální rychlost, x2 je pomalejší, x3 je nejpomalejší.</td></tr>
+<tr class="group"><td colspan="2">Indikátory</td></tr>
+<tr><td>Indikátory</td><td>Zapnout nebo vypnout indikátory aktivních úloh. Když jsou povoleny, vyberte indikátor Latte nebo plugin vlastního indikátoru; specifické možnosti pluginu se zobrazí na jeho kartě.</td></tr>
+<tr><td>Použít tečky ve stylu macOS</td><td>Indikátor Latte používá tečky ve stylu macOS ve výchozím nastavení, když jsou povoleny kompaktní indikátory úloh v Vzhledu. Vypněte Použít tečky ve stylu macOS v Efektech pro ruční výběr Čáry nebo Teček.</td></tr>
+<tr><td>Použít barvy ikon aplikací</td><td>Volitelně obarvit indikátory úloh dominantní barvou ikony každé aplikace, upravenou pro kontrast s pozadím. Pro barevné podtržení vyberte Čáru. Ve výchozím nastavení zakázáno; aplety si ponechávají barvy palety.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Úlohy</h3>
+<p>Spouštěče úloh začnou přeuspořádávat na jiných dokách, které sdílejí seznam spouštěčů, po upuštění ikony. Uspořádání může chvíli trvat, než se ustálí. Mezery oddělovačů zůstávají na místě, když přijímající doka uloží nové pořadí. Tažení již připnuté aplikace zachovává její stávající spouštěč, včetně případu, kdy tento spouštěč následuje systémovou výchozí aplikaci. Nové oddělovače zaujmou místo, jakmile dosáhnou vybrané mezery.</p>
+<p>Když přidáte nebo přetáhnete widget vedle oddělovače na okraji oblasti úloh nebo systémové lišty, widget se umístí mimo oddělovač. Oddělovač zůstává vedle oblasti úloh nebo lišty.</p>
+<p>Když připnete aplikaci z nabídky aplikací, její ikona se objeví před všemi oddělovači na konci seznamu úloh. Pravý oddělovač patří ke skupině připnutých aplikací, takže spuštěné, ale nepřipnuté aplikace se zobrazují za ním.</p>
+<p>Slot úlohy zůstává zvýrazněn a ikona zůstává viditelná, zatímco ji přetahujete pro přeuspořádání úloh. Když se nová úloha posune dovnitř, doka začne rezervovat její slot od počáteční velikosti animace.</p>
+<p class="note">Možnosti Odznaky, Animace, Posouvání, Akce a některé možnosti Interakce/Filtry vyžadují Rozšířený režim. Zobrazení pouze spouštěčů a skrytí všech úloh zakazuje akce a filtry související s okny.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Odznaky</td></tr>
+<tr><td>Oznámení z úloh <span class="advanced">Rozšířené</span></td><td>Zobrazit počty nepřečtených oznámení na ikonách úloh.</td></tr>
+<tr><td>Informace o průběhu pro úlohy <span class="advanced">Rozšířené</span></td><td>Zobrazit odznaky průběhu, například při kopírování souborů v aplikaci Dolphin.</td></tr>
+<tr><td>Přehrávání zvuku z úloh <span class="advanced">Rozšířené</span></td><td>Zobrazit odznak zvuku pro aplikace, které přehrávají zvuk. Shoda upřednostňuje explicitní identifikátory plochy/aplikací. Obecné informace o procesu prohlížeče nestačí k identifikaci konkrétní PWA; nejednoznačné proudy zůstávají nepřiřazeny, aby se nedaly ovládací prvky zvuku nesouvisejícím aplikacím. Nezávislé aplikace Electron se stále mohou shodovat se svým vlastním zvukovým procesem. Stav přehrávání a aktivita výstupu skryjí pozastavené proudy, i když aplikace udržuje své zvukové připojení otevřené. Bez stavu přehrávače je krátké ticho tolerováno po dobu přibližně jedné sekundy.</td></tr>
+<tr><td>Výrazná barva pro odznak oznámení <span class="advanced">Rozšířené</span></td><td>Použít silnější, obvykle červený odznak oznámení. Vyžaduje Oznámení z úloh.</td></tr>
+<tr><td>Změnit hlasitost při rolování odznaku zvuku <span class="advanced">Rozšířené</span></td><td>Kliknutím na odznak zvuku ztlumíte/zrušíte ztlumení, nebo rolováním přes něj změníte hlasitost. Vyžaduje Přehrávání zvuku z úloh.</td></tr>
+<tr class="group"><td colspan="2">Interakce</td></tr>
+<tr><td>Spouštěče jsou přidávány pouze v aktuálním apletu úloh</td><td>Přidat upuštěné spouštěče pouze do tohoto widgetu úloh, nikoliv jako samostatné widgety nebo do jiných widgetů úloh.</td></tr>
+<tr><td>Akce okna v kontextové nabídce <span class="advanced">Rozšířené</span></td><td>Zobrazit akce specifické pro okno v kontextové nabídce úlohy.</td></tr>
+<tr><td>Náhled okna se chová jako vyskakovací okno <span class="advanced">Rozšířené</span></td><td>Otevírat náhledy jako vyskakovací okno místo tooltipu. Akce při najetí kurzorem musí vyžadovat náhledy; toto pouze mění způsob jejich zobrazení.</td></tr>
+<tr><td>Zkrácené klávesy založené na pozici se vztahují pouze na aktuální úlohy<span class="advanced">Rozšířené</span></td><td>Omezit globální zkratky založené na pozici na tento widget úloh.</td></tr>
+<tr class="group"><td colspan="2">Filtry</td></tr>
+<tr><td>Zobrazit pouze úlohy z aktuální obrazovky</td><td>Zobrazit okna z obrazovky tohoto doku.</td></tr>
+<tr><td>Zobrazit pouze úlohy z aktuální pracovní plochy</td><td>Zobrazit okna z aktuální virtuální pracovní plochy.</td></tr>
+<tr><td>Zobrazit sekci minimalizovaných oken</td><td>Ve výchozím nastavení vypnuto. Zobrazuje minimalizovaná okna jako samostatné ikony za běžnými úlohami. Najeďte myší nebo zaměřte ikonu pro zobrazení názvu aplikace a okna a aktivujte ji pro obnovení okna. Pokud má aplikace více minimalizovaných oken, malý odznak zobrazuje pořadí každého okna a celkový počet pro danou aplikaci. Sekce dodržuje filtry úloh a sdílí posouvání přeplnění úloh. Povolte posouvání pro přístup k oknům mimo obrazovku pomocí nakonfigurované akce kolečka nebo najetí na okraj. Režim pouze pro spouštěče tuto sekci skrývá.</td></tr>
+<tr><td>Zobrazit pouze úlohy ze spouštěčů<span class="advanced">Rozšířené</span></td><td>Zobrazit okna pouze pro aplikace, které jsou již v seznamu spouštěčů.</td></tr>
+<tr><td>Zobrazit pouze spouštěče a skrýt všechny úlohy<span class="advanced">Rozšířené</span></td><td>Zobrazit ikony spouštěčů a skrýt spuštěné úlohy. Tím se také zakážou akce a filtry související s okny.</td></tr>
+<tr><td>Zobrazit pouze seskupené úlohy pro stejnou aplikaci<span class="advanced">Rozšířené</span></td><td>Ve výchozím nastavení seskupit okna stejné aplikace.</td></tr>
+<tr class="group"><td colspan="2">Animace</td></tr>
+<tr><td>Odrážet spouštěče při spuštění<span class="advanced">Rozšířené</span></td><td>Animovat spouštěče při jejich spuštění.</td></tr>
+<tr><td>Odrážet úlohy, které vyžadují pozornost<span class="advanced">Rozšířené</span></td><td>Animovat úlohy, které požadují pozornost.</td></tr>
+<tr><td>Posouvat jednotlivá okna dovnitř a ven<span class="advanced">Rozšířené</span></td><td>Animovat nová a zavřená samostatná okna.</td></tr>
+<tr><td>Seskupené úlohy odskakují svá nová okna <span class="advanced">Rozšířené</span></td><td>Animovat nové okno uvnitř skupiny úloh.</td></tr>
+<tr><td>Seskupené úlohy vysouvají svá zavřená okna <span class="advanced">Rozšířené</span></td><td>Animovat zavřené okno uvnitř skupiny úloh.</td></tr>
+<tr class="group"><td colspan="2">Spouštěče</td></tr>
+<tr><td>Unikátní skupina</td><td>Přiřadit tomuto widgetu úloh vlastní seznam spouštěčů.</td></tr>
+<tr><td>Skupina rozložení</td><td>Sdílet spouštěče s widgety úloh ve stejném rozložení. Toto tlačítko se zobrazí pouze tehdy, když dok již používá Skupinu rozložení.</td></tr>
+<tr><td>Globální skupina</td><td>Sdílet spouštěče s widgety úloh ve všech rozloženích.</td></tr>
+<tr class="group"><td colspan="2">Posouvání</td></tr>
+<tr><td>Posouvání <span class="advanced">Rozšířené</span></td><td>Povolit posouvání, když úlohy přesahují dostupný prostor. Funguje s oběma přednastaveními doku, včetně případu, kdy je povolena možnost Ponechat položky doku pohromadě.</td></tr>
+<tr><td>Ruční <span class="advanced">Rozšířené</span></td><td>Vyberte možnost Zakázáno posouvání, Pouze svislé/vodorovné posouvání nebo Vodorovné a svislé posouvání. Volba jednoho směru závisí na orientaci doku.</td></tr>
+<tr><td>Automatické <span class="advanced">Rozšířené</span></td><td>Zapnout nebo vypnout automatické posouvání.</td></tr>
+<tr class="group"><td colspan="2">Akce</td></tr>
+<tr><td>Levé kliknutí <span class="advanced">Rozšířené</span></td><td>Akce pro levé kliknutí na úlohu: Žádná, Zavřít okno nebo skupinu, Nová instance, Minimalizovat/Obnovit, Cyklovat mezi úlohami, Přepnout seskupování úloh, Představit okna, Náhled oken, Zvýraznit okna nebo Náhled a zvýraznit okna.</td></tr>
+<tr><td>Prostřední kliknutí <span class="advanced">Rozšířené</span></td><td>Akce pro prostřední kliknutí na úlohu. Volby jsou stejné jako pro Levé kliknutí.</td></tr>
+<tr><td>Najetí myší <span class="advanced">Rozšířené</span></td><td>Akce při najetí myší: Žádná, Náhled oken, Zvýraznit okna nebo Náhled a zvýraznit okna. Popisky úloh jsou ovládány v sekci Chování.</td></tr>
+<tr><td>Kolečko myši <span class="advanced">Rozšířené</span></td><td>Akce kolečka: Žádná, Přepínat mezi úlohami nebo Přepínat a minimalizovat úlohy.</td></tr>
+<tr><td>Modifikátor + klik <span class="advanced">Rozšířené</span></td><td>Podržte Shift, Ctrl, Alt nebo Meta a klikněte levým, prostředním nebo pravým tlačítkem pro spuštění další akce. Vyberte modifikátor, tlačítko a akci; toto je nezávislé na hlavních akcích uvedených výše.</td></tr>
+</tbody></table></div>
+<p class="note">Filtr aktuální aktivity je v Plasma 6 skryt, protože podpora KActivities je nespolehlivá.</p></section><section id="configure-latte"><h2>Konfigurovat Latte</h2><p class="note">Editor rozvržení spravuje rozvržení a jejich doky. Předvolby ovládají chování celé aplikace. Použít uloží čekající změny v aktuální kartě; Obnovit vrátí uložený stav této karty; Obnovit výchozí připraví výchozí hodnoty ke kontrole. Obrazovky... spravuje uložené odkazy na obrazovky.</p>
+<h3 id="layouts">Editor rozvržení</h3>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr><td>Jedno rozvržení po celou dobu</td><td>Použít jedno rozvržení pro všechny aktivity.</td></tr>
+<tr><td>Více rozvržení na základě aktivit</td><td>Přiřadit různá rozvržení k aktivitám; několik rozvržení může zůstat načteno.</td></tr>
+<tr><td>Přepnout</td><td>Aktivovat vybrané rozvržení. Nejprve použijte čekající změny; Latte nepřepne rozvržení s neuloženými změnami.</td></tr>
+<tr><td>Aktivity...</td><td>Otevřít správce aktivit Plasma. Použijte sloupec Aktivity nebo Povoleno pro přiřazení tohoto rozvržení k aktivitám.</td></tr>
+<tr><td>Nové / Duplikovat / Odebrat</td><td>Vytvořit, zkopírovat nebo odebrat rozvržení. Duplikovat zde kopíruje celé rozvržení, nikoli jednotlivý dok. Aktivní a uzamčená rozvržení nelze odebrat.</td></tr>
+<tr><td>Povoleno</td><td>Přiřaďte toto rozvržení k jedné nebo více aktivitám, aby je Plasma Activities mohla aktivovat. Zobrazuje se pouze v režimu více rozvržení.</td></tr>
+<tr><td>Pouze pro čtení</td><td>Chraňte konfiguraci rozložení před změnami.</td></tr>
+<tr><td>Podrobnosti...</td><td>Otevřete dialogové okno s podrobnostmi rozložení pro ikonu, vlastní barvy, okraj vyskakovacího okna a viditelnost kontextové nabídky.</td></tr>
+<tr><td>Doky...</td><td>Otevřete seznam doků pro toto rozložení: název, obrazovka, okraj, zarovnání, zahrnuté widgety a nová/kopie/odstranění/import/export.</td></tr>
+<tr><td>Import... / Export...</td><td>Importujte rozložení z místního souboru nebo z KDE Store; exportujte jej pro zálohování nebo jako šablonu. Soubor → Importovat konfiguraci / Exportovat konfiguraci zpracovává kompletní zálohu aplikace.</td></tr>
+<tr><td>Název / V nabídce / Aktivity</td><td>Seznam rozložení má sloupce Název, V nabídce a Aktivity. Název a Aktivity upravujte přímo v seznamu; V nabídce určuje, zda se rozložení zobrazí v nabídce Rozložení v doku.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Podrobnosti rozložení</h3>
+<p>Otevřete pomocí Editor rozložení → Podrobnosti... pro úpravu vybraného rozložení.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr><td>Rozložení</td><td>Vyberte, které rozložení chcete upravovat.</td></tr>
+<tr><td>Ikona</td><td>Vyberte ikonu pro rozložení. Tlačítko vymazat ji odstraní.</td></tr>
+<tr><td>Vlastní barvy</td><td>Vyberte soubor s vlastní barevnou schématou pro toto rozložení.</td></tr>
+<tr><td>Okraj vyskakovacího okna</td><td>Nastavte okraj používaný vyskakovacími okny rozložení; zakázáno znamená použít výchozí hodnotu.</td></tr>
+<tr><td>Zobrazit v kontextové nabídce rozložení, pokud je to možné</td><td>Zobrazit toto rozložení v nabídce Rozložení v doku, pokud to aktuální aktivita umožňuje.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialogové okno doků</h3>
+<p>Otevřete pomocí Editor rozložení → Doky... pro správu doků ve vybraném rozložení.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sloupce</td></tr>
+<tr><td>Název</td><td>Název doku. Dvojklikem jej přejmenujte.</td></tr>
+<tr><td>Obrazovka</td><td>Obrazovka, ke které dok patří, včetně Primární, Všechny obrazovky a Všechny sekundární obrazovky.</td></tr>
+<tr><td>Hrana</td><td>Hrana obrazovky používaná dokem.</td></tr>
+<tr><td>Zarovnání</td><td>Zarovnání doku podél jeho hrany.</td></tr>
+<tr><td>Obsahuje</td><td>Widgety a podobsahy zahrnuté v doku. Tento sloupec je pouze pro čtení.</td></tr>
+<tr class="group"><td colspan="2">Tlačítka</td></tr>
+<tr><td>Nový</td><td>Vytvořit dok ze šablony.</td></tr>
+<tr><td>Duplikovat</td><td>Vytvořit nezávislou kopii vybraného doku, nebo další klon, pokud je vybraný dok klonem.</td></tr>
+<tr><td>Odebrat</td><td>Odebrat vybraný dok. Klony jsou odebrány spolu s jejich originálem.</td></tr>
+<tr><td>Importovat...</td><td>Importovat dok z místního souboru šablony.</td></tr>
+<tr><td>Exportovat...</td><td>Exportovat vybraný dok pro zálohu nebo jako šablonu. Dialog šablony umožňuje vybrat, která nastavení widgetů zahrnout; vynechte widgety s osobními údaji, jako jsou e-mailové nebo kalendářové účty.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialog obrazovek</h3>
+<p>Otevřete pomocí Soubor → Obrazovky... pro vyčištění odkazů na obrazovky uložených aplikací Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr><td>Seznam obrazovek</td><td>Vypisuje odkazy na obrazovky uložené v aplikaci Latte, včetně obrazovek, které již nejsou připojeny.</td></tr>
+<tr><td>Vybrat zastaralé obrazovky</td><td>Zaškrtněte pouze obrazovky, které již neexistují. Aktivní obrazovky a obrazovky používané rozložením nelze odebrat.</td></tr>
+<tr><td>Zrušit výběr všeho</td><td>Vymazat výběr před volbou jiné množiny.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Předvolby</h3>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr><td>Zobrazit informační okno pro automatickou aktivaci rozložení</td><td>Zobrazit informační okno, když se rozložení aktivuje automaticky.</td></tr>
+<tr><td>Parabolický efekt / Malý / Střední / Velký</td><td>Nastavit globální rozptyl zvětšení při najetí na sousední položky.</td></tr>
+<tr><td>Povolit automatické spouštění při startu</td><td>Spustit Latte při přihlášení.</td></tr>
+<tr><td>Použít 3D styl pro odznaky oznámení a zástupců</td><td>Použít prostorový styl pro odznaky oznámení a zástupců.</td></tr>
+<tr><td>Podržet ⌘ pro zobrazení odznaků zástupců</td><td>Ve výchozím nastavení vypnuto. Podržte klávesu Meta přibližně jednu sekundu pro zobrazení skrytých doků a odznaků zástupců jejich úloh a widgetů; uvolněním klávesy je znovu skryjete. Při výchozím nastavení Plasma se po uvolnění klávesy Meta otevře také vlastní spouštěč; pokud to nechcete, změňte tuto zkratku v Nastavení systému.</td></tr>
+<tr><td>Vliv okraje tloušťky</td><td>Zvolte, jak moc okraje tloušťky položek ovlivňují rozložení: 0 %, 50 % nebo 100 %.</td></tr>
+<tr><td>Informovat Plasma desktop o dostupném prostoru na ploše</td><td>Zveřejnit dostupný prostor na ploše pro Plasma, aby ho mohly používat panely a okna.</td></tr>
+<tr><td>Kontextová nabídka / Akce...</td><td>Zvolte, které akce kontextové nabídky doků jsou vždy zobrazeny. Akce, které nejsou vybrány, jsou dostupné pouze v režimu úprav.</td></tr>
+<tr><td>Obrazovky / zpoždění reakce na změny</td><td>Nastavte, jak dlouho Latte čeká před reakcí na změny obrazovek, v milisekundách. Zvyšte hodnotu, pokud hardware hlásí nestabilní přechody.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Akce kontextové nabídky</h3>
+<p>Otevřete Předvolby → Kontextová nabídka → Akce... pro výběr akcí doků, které jsou vždy viditelné.</p>
+<div class="table-wrap"><table><thead><tr><th>Možnost v okně</th><th>Co ovládá</th></tr></thead><tbody>
+<tr><td>Vždy dostupné</td><td>Akce v tomto seznamu jsou vždy zobrazeny v kontextové nabídce doků.</td></tr>
+<tr><td>Dostupné pouze v režimu úprav</td><td>Akce v tomto seznamu se zobrazují pouze při úpravě doku. Přesouváním akcí mezi seznamy toto změníte.</td></tr>
+<tr><td>Přesun mezi seznamy</td><td>Vyberte akci a použijte tlačítka se šipkami k jejímu přesunu. Tlačítka Obnovit a Obnovit výchozí nastavení obnoví výchozí sadu.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Nezávislé kopie a klony</h2><p class="note">Duplikát a klon vypadají na obrazovce podobně, ale chovají se odlišně. Duplikát je nový, nezávislý dok. Klon je stejný dok zobrazený na jiné obrazovce. Vyberte podle toho, zda chcete tento dok konfigurovat samostatně.</p>
+<h3 id="create-independent-copy">Vytvoření nezávislé kopie</h3>
+<p>Použijte kteroukoli z těchto metod na původním doku, nikoli na klonu:</p>
+<ul><li>Klikněte pravým tlačítkem na dok a zvolte <strong>Duplikovat dok</strong>.</li><li>Otevřete <strong>Upravit dok</strong> a zvolte <strong>Přidat… → Duplikovat dok</strong>.</li><li>Otevřete <strong>Konfigurovat Latte → Editor rozvržení → Doky…</strong>, vyberte dok a zvolte <strong>Duplikovat</strong>.</li></ul>
+<p>Kopie získá nová ID doku a widgetu a jednou zkopíruje aktuální nastavení. Poté můžete nezávisle měnit její obrazovku, okraj, velikost, vzhled, chování, widgety a spouštěče. Je to samostatná položka v rozvržení a lze ji odstranit pomocí <strong>Odebrat dok</strong>.</p>
+<p>Duplikování klonu z dialogu Doky vytvoří další klon stejného původního doku, nikoli nezávislý dok. Chcete-li vytvořit nezávislý dok z klonu, nejprve otevřete <strong>Upravit původní dok…</strong> a duplikujte původní dok.</p>
+<p>Pokud původní dok používá <strong>Globální skupinu</strong>, kopie ji také používá a sdílí spouštěče. Pokud chcete samostatný seznam spouštěčů, zvolte na kopii <strong>Unikátní skupina</strong>. <strong>Skupina rozvržení</strong> je dostupné pouze v případě, že dok již tuto funkci používá.</p>
+<h3 id="create-clone">Vytvořit klony</h3>
+<p>Klony jsou vytvářeny režimem obrazovky původního doku, nikoli <strong>Duplikovat dok</strong>:</p>
+<ul><li><strong>Upravit dok → Obrazovka → Na všech obrazovkách</strong>: původní dok zůstává na primární obrazovce a Latte vytvoří klon na každé sekundární obrazovce.</li><li><strong>Upravit dok → Obrazovka → Na všech sekundárních obrazovkách</strong>: původní dok zůstává na jedné sekundární obrazovce a Latte vytvoří klony na zbývajících sekundárních obrazovkách.</li></ul>
+<p>Latte automaticky vytváří a odstraňuje klony při změně rozložení obrazovek. Chcete-li klony odstranit, nastavte původní dok zpět na <strong>Na primární obrazovce</strong> nebo na jednu konkrétní obrazovku. Klon nemá v kontextové nabídce položku <strong>Odebrat dok</strong>; použijte tam <strong>Upravit původní dok…</strong> pro jeho konfiguraci.</p>
+<p>Otevření editoru z klonu vždy otevře nastavení původního doku, protože klony sdílejí konfiguraci doku. Nastavení widgetů změněná na klonu také aktualizují původní dok.</p>
+<h3 id="differences">Rozdíly na první pohled</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Nezávislá kopie</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Vytvořeno pomocí</td><td>Duplikovat dok</td><td>Obrazovka → Na všech obrazovkách nebo Na všech sekundárních obrazovkách</td></tr>
+<tr><td>Identita</td><td>Nová ID doku a widgetů</td><td>Propojené zobrazení původního doku</td></tr>
+<tr><td>Nastavení</td><td>Zkopírováno jednou, poté nezávislé</td><td>Sdílené: úprava původního doku aktualizuje každý klon; nastavení widgetů změněná na klonu také aktualizují původní dok</td></tr>
+<tr><td>Obrazovka a okraj</td><td>Lze měnit nezávisle</td><td>Následuje původní dok; nelze jej samostatně přesouvat ani měnit jeho velikost</td></tr>
+<tr><td>Spouštěče</td><td>Zkopírovány při vytvoření; pozdější sdílení pouze prostřednictvím Skupiny rozložení nebo Globální skupiny</td><td>Vždy zrcadlit originál</td></tr>
+<tr><td>Kontextová nabídka</td><td>Úplné akce doku, včetně Duplicovat a Odebrat</td><td>Zobrazuje Upravit originální dok…; Duplicovat, Přesunout, Exportovat a Odebrat jsou skryté</td></tr>
+<tr><td>Jak odebrat</td><td>Odebrat dok</td><td>Nastavit originál zpět na jeden displej</td></tr>
+</tbody></table></div>
+<p><strong>Barvy ikon widgetu:</strong> <strong>Použít barvy motivu ikon</strong> v kontextové nabídce widgetu zastaví barevné zbarvení ikony tohoto widgetu v Latte. Nastavení je uloženo pro každý widget: klony sdílejí nastavení s originálem. Nezávislá kopie si ponechává hodnotu, kterou měla při vytvoření, a může ji měnit samostatně.</p></section></main></div><footer>Latte Dock NG · Offline dokumentace. Nedostupné jazyky rozhraní se vrátí zpět na angličtinu.</footer></body></html>

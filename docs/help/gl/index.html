@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="gl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía de usuario de Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Guía de usuario de Latte Dock NG</h1><p>Estas instrucións describen as opcións actuais. O modo avanzado, o estilo do dock e os complementos instalados poden cambiar que controis son visibles. As opcións marcadas como Avanzadas ocúltanse no editor básico.</p><div class="language-menu"><label for="language-select">Idioma</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html" selected>Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Só se listan as guías traducidas. Outros idiomas da interface abren a guía en inglés.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Nesta páxina</h2><a class="chapter" href="#edit-dock">Editar Dock</a><a class="subsection" href="#behavior">Comportamento</a><a class="subsection" href="#appearance">Aparencia</a><a class="subsection" href="#effects">Efectos</a><a class="subsection" href="#tasks">Tarefas</a><a class="chapter" href="#configure-latte">Configurar Latte</a><a class="subsection" href="#layouts">Editor de Disposicións</a><a class="subsection" href="#layout-details">Detalles da Disposición</a><a class="subsection" href="#docks-dialog">Diálogo de Docks</a><a class="subsection" href="#screens-dialog">Diálogo de Pantallas</a><a class="subsection" href="#preferences">Preferencias</a><a class="subsection" href="#context-menu-actions">Accións do Menú Contextual</a><a class="chapter" href="#copies-and-clones">Copias e Clones Independentes</a><a class="subsection" href="#create-independent-copy">Crear unha copia independente</a><a class="subsection" href="#create-clone">Crear clones</a><a class="subsection" href="#differences">Diferenzas nunha ollada</a></nav></aside><main>
+<section id="edit-dock"><h2>Editar Dock</h2><p class="note">Os cambios aplícanse inmediatamente. Pechar oculta o editor; non desfai os cambios. Fixar mantén o editor aberto. Engadir… → Duplicar Dock crea unha copia independente dun dock orixinal; Eliminar elimina o dock actual. Cambiar de pestana mantén a xanela no seu lugar. O modo avanzado dimensiona a xanela para a súa páxina máis longa, dentro do espazo de pantalla dispoñible. As páxinas máis longas desprázanse dentro da xanela. Arrastre a esquina de redimensionamento para axustar o tamaño da xanela en calquera dos modos de edición.</p>
+<p class="note">O modo avanzado revela máis controis. As opcións marcadas como Avanzadas ocúltanse no editor básico.</p>
+<h3 id="behavior">Comportamento</h3>
+<p class="note">Opcións de visibilidade, atraso, accións, comportamento dos elementos, espazo flotante e entorno para este dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilidade</td></tr>
+<tr><td>Pantalla / Localización</td><td>Escolla a pantalla e o bordo para este dock. Con varias pantallas, En Todas as Pantallas e En Todas as Pantallas Secundarias crean clones vinculados. Consulte Copias Independentes e Clones.</td></tr>
+<tr><td>Aliñamento</td><td>Posicione o dock ao longo do bordo da pantalla. O aliñamento dos elementos controla onde se sitúan os widgets dentro do dock.</td></tr>
+<tr><td>Sempre Visible</td><td>Mantén o dock visible e reserva espazo no escritorio se o xestor de xanelas o admite.</td></tr>
+<tr><td>Ocultar Automaticamente</td><td>Oculta o dock ata que o punteiro chega á súa área de activación.</td></tr>
+<tr><td>Evitar Activa</td><td>Oculta cando a xanela activa toca a área do dock, e mostra o dock cando o punteiro entra.</td></tr>
+<tr><td>Evitar Maximizada</td><td>Oculta só cando unha xanela maximizada está activa nesta pantalla, e mostra o dock cando o punteiro entra.</td></tr>
+<tr><td>Evitar Todas as Xanelas</td><td>Oculta cando calquera xanela toca a área do dock, e mostra o dock cando o punteiro entra.</td></tr>
+<tr><td>As Xanelas Pasan Por Debaixo</td><td>Mantén o dock por riba das xanelas; as xanelas poden colocarse por debaixo del.</td></tr>
+<tr><td>As Xanelas Poden Cobrir</td><td>Permite que as xanelas cubran o dock. O dock vén cara adiante cando o punteiro chega ao bordo da pantalla.</td></tr>
+<tr><td>As Xanelas Sempre Cobren</td><td>Mantén as xanelas por riba do dock en todo momento; o dock queda detrás delas.</td></tr>
+<tr class="group"><td colspan="2">Atraso</td></tr>
+<tr><td>Atraso / Mostrar / Ocultar</td><td>Define o tempo de espera antes de mostrar ou ocultar, en milisegundos. Os atrasos máis longos reducen a activación accidental.</td></tr>
+<tr class="group"><td colspan="2">Accións</td></tr>
+<tr><td>Seguir <span class="advanced">Avanzado</span></td><td>Escolla a que ventá activa seguen as accións da área baleira: Ventá activa da pantalla actual ou Ventá activa de todas as pantallas.</td></tr>
+<tr><td>Botón esquerdo / Arrastrar ventá activa <span class="advanced">Avanzado</span></td><td>Permita arrastrar desde o espazo baleiro do dock para mover ou maximizar/restaurar a ventá activa rastreada.</td></tr>
+<tr><td>Botón central / Pechar ventá activa <span class="advanced">Avanzado</span></td><td>Permita facer clic central no espazo baleiro do dock para pechar a ventá activa rastreada.</td></tr>
+<tr><td>Roda do rato <span class="advanced">Avanzado</span></td><td>Escolla o que fai a roda sobre o espazo baleiro do dock: Ningunha acción, Ciclar entre escritorios, Ciclar entre actividades, Ciclar entre tarefas ou Ciclar e minimizar tarefas.</td></tr>
+<tr class="group"><td colspan="2">Elementos</td></tr>
+<tr><td>Mostrar descricións de ferramentas compactas ao pasar o rato</td><td>Mostrar descricións de ferramentas compactas dos widgets. As vistas previas das ventás de tarefas contrólanse por separado mediante a acción Hover da tarefa.</td></tr>
+<tr><td>Ampliar widgets ao pasar o rato</td><td>Permitir que os widgets se amplíen co dock. Desactive isto para manter as iconas dos widgets nítidas; as iconas de tarefas e os lanzadores aínda se amplían.</td></tr>
+<tr><td>Expandir a xanela emergente mediante a roda do rato</td><td>Desprácese sobre un widget compatible para mostrar ou ocultar a súa xanela emergente.</td></tr>
+<tr><td>Axustar o tamaño automaticamente cando sexa necesario</td><td>Reducir os elementos cando superan a lonxitude dispoñible e volvelos ampliar cando caben.</td></tr>
+<tr><td>Activar atallos globais baseados na posición</td><td>Permitir que os atallos globais baseados na posición activen os elementos deste dock. Só un dock por disposición debe usar isto.</td></tr>
+<tr class="group"><td colspan="2">Flotante</td></tr>
+<tr><td>Usar sempre o espazo flotante para a interacción do usuario <span class="advanced">Avanzado</span></td><td>Inclúe o espazo flotante na área utilizada para a interacción de widgets e xanelas.</td></tr>
+<tr><td>Oculta o espazo flotante para as xanelas maximizadas <span class="advanced">Avanzado</span></td><td>Elimina o espazo flotante cando unha xanela maximizada precisa do bordo da pantalla.</td></tr>
+<tr><td>Retarda a ocultación do espazo flotante ata que o rato sae <span class="advanced">Avanzado</span></td><td>Espera ata que o punteiro saia antes de ocultar o espazo, para evitar clics accidentais en elementos próximos.</td></tr>
+<tr><td>Reflicte o espazo flotante cando se mostra <span class="advanced">Avanzado</span></td><td>No modo Sempre Visible, reflicte o espazo no lado oposto do dock.</td></tr>
+<tr class="group"><td colspan="2">Entorno</td></tr>
+<tr><td>Elevar ao cambiar de escritorio <span class="advanced">Avanzado</span></td><td>Mostra temporalmente o dock cando cambia o escritorio virtual. Isto non se usa en Sempre Visible ou Xanelas Por Baixo.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Aparencia</h3>
+<p class="note">Marxes, Cores, Raio/Sombra, Axustes Dinámicos de Lonxitude, Visibilidade Dinámica e Excepcións requiren o modo Avanzado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementos</td></tr>
+<tr><td>Estilo do Dock</td><td>Escolle Clásico ou Moderno para aplicar un predefinido. En calquera estilo, usa os interruptores debaixo de Estilo do Dock para configurar a disposición dos elementos, o fondo con contorno, o espazo mínimo entre elementos, o espazo flotante automático e os indicadores de tarefas compactos de forma independente.</td></tr>
+<tr><td>Mantén os elementos do dock xuntos</td><td>Usa un grupo para os elementos do dock, incluso cando a aliñación do dock é Xustificar.</td></tr>
+<tr><td>Usa o fondo interno con un contorno</td><td>Usa o fondo predefinido cun contorno e estilo para o seu espazo, cantos redondeados e sombra.</td></tr>
+<tr><td>Usa un espazo mínimo entre elementos máis amplo</td><td>Aumenta o espazo mínimo arredor dos elementos do dock. Os valores máis grandes establecidos cos controis de marxe seguen aplicándose.</td></tr>
+<tr><td>Usar un espazo flotante automático</td><td>Calcular un espazo do bordo da pantalla a partir do tamaño da icona cando non se establece un valor específico de espazo.</td></tr>
+<tr><td>Usar indicadores de tarefa compactos</td><td>Usar o deseño compacto para os indicadores de tarefa de Latte. Escolla a forma do indicador en Efectos.</td></tr>
+<tr><td>Restaurar predefinido</td><td>O botón na parte inferior de Editar Dock restaura inmediatamente Comportamento, Apariencia, Efectos e todas as pestanas de Tarefas ao predefinido de Dock incluído para o estilo Clásico/Moderno actual, incluíndo as opcións ocultas polo modo Avanzado. Mantéñense a pantalla, o bordo do dock, os lanzadores e os widgets. Restablécense a aliñación, a visibilidade e os atrasos. O uso compartido de lanzadores volve ao grupo local predeterminado mantendo unha copia da lista efectiva de lanzadores; as listas compartidas doutros docks non cambian. Restablécense as cores personalizadas e as substitucións de indicadores. O predefinido combina o modelo de Dock Predeterminado incluído cos valores predeterminados do esquema de configuración. Isto é independente do simple cambio de Estilo de Dock. Clásico desactiva por defecto os cinco interruptores de aparencia baixo Estilo de Dock. Moderno actívaos. Ambos os predefinidos usan os mesmos valores predeterminados para as opcións restantes.</td></tr>
+<tr><td>Tamaño absoluto / Tamaño relativo</td><td>Establecer o tamaño da icona en píxeles ou como unha parte da pantalla. O tamaño relativo é útil en configuracións de alta densidade de píxeles (DPI) ou de varias pantallas.</td></tr>
+<tr><td>Zoom ao pasar o cursor</td><td>Establecer canto medran os elementos baixo o punteiro.</td></tr>
+<tr class="group"><td colspan="2">Lonxitude</td></tr>
+<tr><td>Máximo / Mínimo / Desprazamento</td><td>Establecer a lonxitude máxima e mínima do dock e movelo ao longo do bordo da pantalla.</td></tr>
+<tr><td>Axustes dinámicos de lonxitude <span class="advanced">Avanzado</span></td><td>Maximizar a lonxitude do panel na presenza de xanelas maximizadas: estender o dock á lonxitude completa cando hai unha xanela maximizada. Debe estar activado o fondo.</td></tr>
+<tr class="group"><td colspan="2">Marxes</td></tr>
+<tr><td>Marxes / Lonxitude / Grosor / Espazo flotante <span class="advanced">Avanzado</span></td><td>Establecer a marxe externa ao longo do dock, a marxe a través do seu grosor e o espazo entre o dock e o bordo da pantalla.</td></tr>
+<tr><td>Espazo desde as xanelas maximizadas (px) <span class="advanced">Avanzado</span></td><td>Reservar 0–128 píxeles adicionais entre as xanelas e este dock no modo Sempre Visible. Predeterminado: 0. Isto é independente do espazo flotante do bordo da pantalla e súmase a calquera espazo espellado; os modos de ocultación automática non reservan este espazo.</td></tr>
+<tr class="group"><td colspan="2">Cores</td></tr>
+<tr><td>Cores / Paleta <span class="advanced">Avanzado</span></td><td>Escoller Cores do Tema Plasma, Cores Escuras, Cores Claras, Cores Personalizadas do Deseño, Invertido ou Cores Intelixentes Baseadas no Fondo do Escritorio. As Cores Personalizadas do Deseño usan o esquema de cores do deseño; as Intelixentes seguen o fondo de pantalla.</td></tr>
+<tr><td>Usar cor de fondo personalizada / Cor diurna <span class="advanced">Avanzado</span></td><td>Substituír o fondo deste dock cunha cor escollida; o contraste do texto axústase automaticamente. Desactivado por defecto. As paletas derivadas da xanela e a paleta Plasma para os applets expandidos manteñen a prioridade. A opacidade segue sendo unha configuración de fondo independente.</td></tr>
+<tr><td>Cambiar as cores de fondo segundo a hora do día / Cor nocturna / Comezo do día (hora local) / Comezo da noite (hora local) <span class="advanced">Avanzado</span></td><td>Opcionalmente, cambia entre dúas cores personalizadas usando horas locais de 24 horas. Predeterminados: día 07:00, noite 19:00. A hora de inicio é inclusiva. Os intervalos poden cruzar a medianoite; as horas iguais manteñen a cor de día todo o día. Desactivar a programación mantén a cor de día. O reloxo compróbase cada segundo, incluído despois de retomar.</td></tr>
+<tr class="group"><td colspan="2">Fondo</td></tr>
+<tr><td>Fondo</td><td>Fondo é un interruptor de activación/desactivación. Cando está activado, usa os controis de abaixo para establecer o grosor, a opacidade, o raio e a sombra.</td></tr>
+<tr><td>Opacidade / Opacidade ocupada</td><td>Establece a opacidade do fondo. O mesmo controlador chámase Opacidade ocupada cando Ocultar fondo cando non se precisa e Preferir fondo opaco ao tocar calquera xanela están ambos activados. Def. restaura o predeterminado do tema.</td></tr>
+<tr><td>Raio / Sombra <span class="advanced">Avanzado</span></td><td>Establece o raio das esquinas do fondo e o tamaño da sombra. Def. usa o predeterminado do tema.</td></tr>
+<tr><td>Desenfoque / Sombras / Contorno / Todas as esquinas <span class="advanced">Avanzado</span></td><td>Activa o desenfoque do fondo, a sombra do fondo, o contorno e as esquinas redondeadas. Todas as esquinas está dispoñible só para certas xeometrías flotantes/xustificadas.</td></tr>
+<tr class="group"><td colspan="2">Visibilidade dinámica</td></tr>
+<tr><td>Preferir fondo opaco ao tocar calquera xanela <span class="advanced">Avanzado</span></td><td>Elimina a transparencia do fondo mentres unha xanela toca o dock.</td></tr>
+<tr><td>Ocultar fondo cando non se precisa <span class="advanced">Avanzado</span></td><td>Oculta o fondo agás cando unha xanela toca o dock ou o fondo do escritorio está ocupado.</td></tr>
+<tr><td>Ocultar sombra do fondo para xanelas maximizadas <span class="advanced">Avanzado</span></td><td>Oculta a sombra do fondo mentres unha xanela maximizada activa toca o dock.</td></tr>
+<tr class="group"><td colspan="2">Excepcións</td></tr>
+<tr><td>Preferir o fondo e as cores de Plasma para os applets expandidos <span class="advanced">Avanzado</span></td><td>Usar un fondo opaco estilo Plasma e as cores de Plasma mentres as xanelas emerxentes do widget están expandidas.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efectos</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sombras</td></tr>
+<tr><td>Sombras</td><td>Activar ou desactivar as sombras do widget. O tamaño e a opacidade están desactivados cando as sombras están apagadas.</td></tr>
+<tr><td>Tamaño / Opacidade</td><td>Establecer o tamaño e a opacidade da sombra do widget.</td></tr>
+<tr><td>Cor predeterminada / Cor do tema / cor personalizada</td><td>Escoller a cor predeterminada da sombra, unha cor da paleta do tema ou facer clic na mostra de cor para escoller unha cor personalizada.</td></tr>
+<tr class="group"><td colspan="2">Animacións</td></tr>
+<tr><td>Animacións / x1 / x2 / x3</td><td>Activar ou desactivar todas as animacións do dock. x1 é velocidade normal, x2 é máis lenta, x3 é a máis lenta.</td></tr>
+<tr class="group"><td colspan="2">Indicadores</td></tr>
+<tr><td>Indicadores</td><td>Activar ou desactivar os indicadores de tarefas activas. Cando están activados, escoller o indicador de Latte ou un plugin de indicador personalizado; as opcións específicas do plugin aparecen na súa pestana.</td></tr>
+<tr><td>Usar puntos estilo macOS</td><td>O indicador de Latte usa puntos estilo macOS por defecto cando os indicadores de tarefas compactas están activados en Apariencia. Desactivar Usar puntos estilo macOS en Efectos para escoller Liña ou Puntos manualmente.</td></tr>
+<tr><td>Usar cores da icona da aplicación</td><td>Opcionalmente, colorear os indicadores de tarefas coa cor dominante da icona de cada aplicación, axustada para o contraste do fondo. Seleccionar Liña para subliñados coloreados. Desactivado por defecto; os applets manteñen as cores da paleta.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tarefas</h3>
+<p>Os lanzadores de tarefas comezan a reordenarse en outros docks que comparten a lista de lanzadores despois de soltar a icona. A orde pode tardar un momento en estabilizarse. Os espazos dos separadores mantéñense no lugar cando o dock receptor garda a nova orde. Arrastrar unha aplicación xa fixada mantén o seu lanzador existente, incluído cando ese lanzador segue a aplicación predeterminada do sistema. Os novos separadores ocupan espazo unha vez que alcanzan o espazo seleccionado.</p>
+<p>Cando engades ou arrastras un widget ao lado dun separador no bordo da área de tarefas ou da bandexa do sistema, o widget colócase no exterior do separador. O separador permanece xunto á área de tarefas ou á bandexa.</p>
+<p>Cando fixas unha aplicación desde o menú de aplicacións, a súa icona aparece antes de calquera separador ao final da lista de tarefas. O separador da dereita pertence ao grupo fixado, polo que as aplicacións en execución que non están fixadas aparecen máis alá del.</p>
+<p>O espazo da tarefa permanece resaltado e a icona segue visible mentres a arrastras para reordenar as tarefas. Cando entra unha nova tarefa, o dock comeza a reservar o seu espazo desde o tamaño inicial da animación.</p>
+<p class="note">As opcións de Insignias, Animacións, Desprazamento, Accións e algunhas opcións de Interacción/Filtros requiren o modo Avanzado. Mostrar só lanzadores e ocultar todas as tarefas desactiva as accións e filtros relacionados coas xanelas.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insignias</td></tr>
+<tr><td>Notificacións das tarefas <span class="advanced">Avanzado</span></td><td>Mostrar o número de notificacións non lidas nas iconas das tarefas.</td></tr>
+<tr><td>Información de progreso para as tarefas <span class="advanced">Avanzado</span></td><td>Mostrar insignias de progreso, por exemplo mentres Dolphin copia ficheiros.</td></tr>
+<tr><td>Reprodución de audio desde tarefas <span class="advanced">Avanzado</span></td><td>Mostrar unha insignia de audio para aplicacións que están reproducindo son. A coincidencia prefire identificadores explícitos de escritorio/aplicación. A información xenérica do proceso do navegador non é suficiente para identificar unha PWA concreta; as transmisións ambiguas déixanse sen asignar en lugar de darlle controis de audio a aplicacións non relacionadas. As aplicacións Electron independentes aínda poden coincidir co seu propio proceso de audio. O estado de reprodución e a actividade de saída ocultan as transmisións en pausa mesmo cando a aplicación mantén aberta a súa conexión de audio. Sen o estado do reprodutor, tolérase un breve silencio durante aproximadamente un segundo.</td></tr>
+<tr><td>Cor destacada para a insignia de notificación <span class="advanced">Avanzado</span></td><td>Usar unha insignia de notificación máis forte, normalmente vermella. Require Notificacións desde tarefas.</td></tr>
+<tr><td>Cambiar o volume ao desprazar a insignia de audio <span class="advanced">Avanzado</span></td><td>Fai clic na insignia de audio para silenciar/activar o son, ou despraza sobre ela para cambiar o volume. Require Reprodución de audio desde tarefas.</td></tr>
+<tr class="group"><td colspan="2">Interacción</td></tr>
+<tr><td>Os lanzadores engádense só no applet de tarefas actual</td><td>Engadir os lanzadores soltados só a este widget de tarefas, non como widgets separados nin a outros widgets de tarefas.</td></tr>
+<tr><td>Accións de xanela no menú contextual <span class="advanced">Avanzado</span></td><td>Mostrar accións específicas da xanela no menú contextual da tarefa.</td></tr>
+<tr><td>A vista previa da xanela compórtase como unha xanela emerxente <span class="advanced">Avanzado</span></td><td>Abrir as vistas previas como unha xanela emerxente en lugar dunha ferramenta de información. A acción ao pasar o rato debe solicitar vistas previas; isto só cambia como se mostran.</td></tr>
+<tr><td>Os atallos baseados na posición aplícanse só ás tarefas actuais <span class="advanced">Avanzado</span></td><td>Limitar os atallos globais baseados na posición a este widget de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Filtros</td></tr>
+<tr><td>Mostrar só as tarefas da pantalla actual</td><td>Mostrar as xanelas da pantalla deste dock.</td></tr>
+<tr><td>Mostrar só as tarefas do escritorio actual</td><td>Mostrar as xanelas do escritorio virtual actual.</td></tr>
+<tr><td>Mostrar a sección de xanelas minimizadas</td><td>Desactivado por defecto. Mostra as xanelas minimizadas como iconas individuais despois das tarefas ordinarias. Pasa o cursor ou enfoca unha icona para ver a súa aplicación e o título da xanela, e actívaa para restaurar a xanela. Cando unha aplicación ten varias xanelas minimizadas, unha pequena insignia mostra a secuencia de cada xanela e o total para esa aplicación. A sección segue os filtros de tarefas e comparte o desprazamento do desbordamento de tarefas. Activa o Desprazamento para acceder ás xanelas fóra da pantalla usando a túa acción configurada de roda ou de paso do cursor polo bordo. O modo só lanzador ocúltao.</td></tr>
+<tr><td>Mostrar só as tarefas dos lanzadores <span class="advanced">Avanzado</span></td><td>Mostrar as xanelas só para as aplicacións que xa están na lista de lanzadores.</td></tr>
+<tr><td>Mostrar só os lanzadores e ocultar todas as tarefas <span class="advanced">Avanzado</span></td><td>Mostrar as iconas dos lanzadores e ocultar as tarefas en execución. Isto tamén desactiva as accións e filtros relacionados coas xanelas.</td></tr>
+<tr><td>Mostrar só as tarefas agrupadas para a mesma aplicación <span class="advanced">Avanzado</span></td><td>Agrupar as xanelas da mesma aplicación por defecto.</td></tr>
+<tr class="group"><td colspan="2">Animacións</td></tr>
+<tr><td>Rebotar os lanzadores cando se activan <span class="advanced">Avanzado</span></td><td>Animar os lanzadores cando se activan.</td></tr>
+<tr><td>Rebotar as tarefas que precisan atención <span class="advanced">Avanzado</span></td><td>Animar as tarefas que solicitan atención.</td></tr>
+<tr><td>Deslizar as xanelas individuais dentro e fóra <span class="advanced">Avanzado</span></td><td>Animar novas xanelas individuais e pechadas.</td></tr>
+<tr><td>As tarefas agrupadas fan saltar as súas novas xanelas <span class="advanced">Avanzado</span></td><td>Animar unha nova xanela dentro dun grupo de tarefas.</td></tr>
+<tr><td>As tarefas agrupadas deslizan as súas xanelas pechadas <span class="advanced">Avanzado</span></td><td>Animar unha xanela pechada dentro dun grupo de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Lanzadores</td></tr>
+<tr><td>Grupo único</td><td>Dar a este widget de tarefas a súa propia lista de lanzadores.</td></tr>
+<tr><td>Grupo de deseño</td><td>Compartir lanzadores con widgets de tarefas no mesmo deseño. Este botón só se mostra cando o dock xa usa Grupo de deseño.</td></tr>
+<tr><td>Grupo global</td><td>Compartir lanzadores con widgets de tarefas en todos os deseños.</td></tr>
+<tr class="group"><td colspan="2">Desprazamento</td></tr>
+<tr><td>Desprazamento <span class="advanced">Avanzado</span></td><td>Activar o desprazamento cando as tarefas superan o espazo dispoñible. Isto funciona con calquera predefinido do dock, incluído cando está activada a opción Manter os elementos do dock xuntos.</td></tr>
+<tr><td>Manual <span class="advanced">Avanzado</span></td><td>Escoller Desprazamento desactivado, Só desprazamento vertical/horizontal, ou Desprazamento horizontal e vertical. A opción de sentido único depende da orientación do dock.</td></tr>
+<tr><td>Automático <span class="advanced">Avanzado</span></td><td>Activar ou desactivar o desprazamento automático.</td></tr>
+<tr class="group"><td colspan="2">Accións</td></tr>
+<tr><td>Clic esquerdo <span class="advanced">Avanzado</span></td><td>Acción para un clic esquerdo nunha tarefa: Ningunha, Pechar xanela ou grupo, Nova instancia, Minimizar/Restaurar, Ciclar entre tarefas, Alternar agrupamento de tarefas, Presentar xanelas, Vista previa de xanelas, Resaltar xanelas, ou Vista previa e resaltar xanelas.</td></tr>
+<tr><td>Clic central <span class="advanced">Avanzado</span></td><td>Acción para un clic central nunha tarefa. As opcións son as mesmas que para Clic esquerdo.</td></tr>
+<tr><td>Paso do rato <span class="advanced">Avanzado</span></td><td>Accións ao pasar o rato: Ningunha, Vista previa de xanelas, Resaltar xanelas, ou Vista previa e resaltar xanelas. As descricións de ferramentas do título da tarefa contólanse en Comportamento.</td></tr>
+<tr><td>Roda do rato <span class="advanced">Avanzado</span></td><td>Accións da roda: Ningunha, Ciclar entre tarefas ou Ciclar e minimizar tarefas.</td></tr>
+<tr><td>Modificador + clic <span class="advanced">Avanzado</span></td><td>Mantén Shift, Ctrl, Alt ou Meta e fai clic esquerdo, central ou dereito para executar unha acción adicional. Escolle o modificador, o botón e a acción; isto é independente das accións principais anteriores.</td></tr>
+</tbody></table></div>
+<p class="note">O filtro de actividade actual está oculto en Plasma 6 porque o soporte de KActivities non é fiable.</p></section><section id="configure-latte"><h2>Configurar Latte</h2><p class="note">O Editor de Disposicións xestiona as disposicións e os seus docks. Preferencias controla o comportamento a nivel de aplicación. Aplicar garda os cambios pendentes na pestana actual; Restablecer recupera o estado gardado desa pestana; Restaurar valores predeterminados prepara os valores predeterminados para revisión. Pantallas... xestiona as referencias de pantalla almacenadas.</p>
+<h3 id="layouts">Editor de Disposicións</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Unha única disposición en todo momento</td><td>Usa unha disposición para todas as actividades.</td></tr>
+<tr><td>Múltiples disposicións baseadas en actividades</td><td>Asigna diferentes disposicións ás actividades; varias disposicións poden permanecer cargadas.</td></tr>
+<tr><td>Cambiar</td><td>Activa a disposición seleccionada. Aplica primeiro os cambios pendentes; Latte non cambiará con cambios non gardados.</td></tr>
+<tr><td>Actividades...</td><td>Abre o xestor de Actividades de Plasma. Usa a columna Actividades ou Activado para asignar esta disposición ás actividades.</td></tr>
+<tr><td>Nova / Duplicar / Eliminar</td><td>Crea, copia ou elimina unha disposición. Duplicar aquí copia toda a disposición, non un dock individual. As disposicións activas e bloqueadas non se poden eliminar.</td></tr>
+<tr><td>Activado</td><td>Asigna esta disposición a unha ou máis actividades para que as Actividades de Plasma poidan activala. Só se mostra no modo de múltiples disposicións.</td></tr>
+<tr><td>Só lectura</td><td>Protexer a configuración do deseño de cambios.</td></tr>
+<tr><td>Detalles...</td><td>Abrir o diálogo de detalles do deseño para icona, cores personalizadas, marxe da xanela emerxente e visibilidade do menú contextual.</td></tr>
+<tr><td>Docks...</td><td>Abrir a lista de docks para este deseño: nome, pantalla, bordo, aliñamento, widgets incluídos, e novo/duplicar/eliminar/importar/exportar.</td></tr>
+<tr><td>Importar... / Exportar...</td><td>Importar un deseño desde un ficheiro local ou a KDE Store; exportalo para copia de seguridade ou como modelo. Ficheiro → Importar Configuración / Exportar Configuración xestiona unha copia de seguridade completa da aplicación.</td></tr>
+<tr><td>Nome / No Menú / Actividades</td><td>A lista de deseños ten as columnas Nome, No Menú e Actividades. Edite Nome e Actividades directamente na lista; No Menú controla se o deseño aparece no menú de Deseños do dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalles do Deseño</h3>
+<p>Abrir con Editor de Deseños → Detalles... para editar o deseño seleccionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Deseño</td><td>Escolla que deseño editar.</td></tr>
+<tr><td>Icona</td><td>Escolla unha icona para o deseño. O botón de limpeza elimínaa.</td></tr>
+<tr><td>Cores Personalizadas</td><td>Escolla un ficheiro de esquema de cores personalizado para este deseño.</td></tr>
+<tr><td>Marxe da Xanela Emerxente</td><td>Establecer a marxe usada polas xanelas emerxentes do deseño; desactivado significa usar o predeterminado.</td></tr>
+<tr><td>Mostrar no menú contextual de deseños cando sexa posible</td><td>Mostrar este deseño no menú de Deseños do dock cando a actividade actual o permita.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Diálogo de Docks</h3>
+<p>Abrir con Editor de Deseños → Docks... para xestionar os docks no deseño seleccionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Columnas</td></tr>
+<tr><td>Nome</td><td>Nome do dock. Dobre clic para renomealo.</td></tr>
+<tr><td>Pantalla</td><td>Pantalla á que pertence a doca, incluíndo Principal, Todas as pantallas e Todas as pantallas secundarias.</td></tr>
+<tr><td>Bordo</td><td>Bordo da pantalla usado pola doca.</td></tr>
+<tr><td>Aliñamento</td><td>Aliñamento da doca ao longo do seu bordo.</td></tr>
+<tr><td>Inclúe</td><td>Widgets e subcontidos incluídos na doca. Esta columna é de só lectura.</td></tr>
+<tr class="group"><td colspan="2">Botóns</td></tr>
+<tr><td>Novo</td><td>Crear unha doca desde un modelo.</td></tr>
+<tr><td>Duplicar</td><td>Crear unha copia independente da doca seleccionada, ou outro clon se a doca seleccionada é un clon.</td></tr>
+<tr><td>Eliminar</td><td>Eliminar a doca seleccionada. Os clones elimínanse co seu orixinal.</td></tr>
+<tr><td>Importar...</td><td>Importar unha doca desde un ficheiro de modelo local.</td></tr>
+<tr><td>Exportar...</td><td>Exportar a doca seleccionada para copia de seguridade ou como modelo. O diálogo de modelos permítelle escoller que axustes de widgets incluír; omita os widgets con datos persoais como contas de correo electrónico ou de calendario.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Diálogo de Pantallas</h3>
+<p>Abra con Ficheiro → Pantallas... para limpar as referencias de pantalla gardadas por Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Lista de pantallas</td><td>Enumera as referencias de pantalla almacenadas en Latte, incluíndo pantallas que xa non están conectadas.</td></tr>
+<tr><td>Seleccionar pantallas obsoletas</td><td>Marque só as pantallas que xa non existen. As pantallas activas e as pantallas usadas por un deseño non se poden eliminar.</td></tr>
+<tr><td>Deseleccionar todo</td><td>Limpe a selección antes de escoller un conxunto diferente.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferencias</h3>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Mostrar xanela informativa para a activación automática de deseños</td><td>Mostrar unha xanela de información cando un deseño se activa automaticamente.</td></tr>
+<tr><td>Efecto Parabólico / Pequeno / Medio / Grande</td><td>Establecer a dispersión global do zoom ao pasar o rato sobre os elementos veciños.</td></tr>
+<tr><td>Activar o inicio automático durante o arranque</td><td>Iniciar Latte ao iniciar sesión.</td></tr>
+<tr><td>Usar estilo 3D para as insignias de notificación e atallos</td><td>Usar un estilo dimensional para as insignias de notificación e atallos.</td></tr>
+<tr><td>Manter premido ⌘ para mostrar as insignias de atallos</td><td>Desactivado por defecto. Mantén a tecla Meta durante aproximadamente un segundo para mostrar os docks ocultos e as insignias de atallos das súas tarefas e widgets; solta a tecla para volver ocultalos. Coa configuración predeterminada de Plasma, o seu propio lanzador tamén se abre ao soltar Meta; cambia ese atallo en Configuración do sistema se non queres isto.</td></tr>
+<tr><td>Influencia da marxe de grosor</td><td>Escolle en que medida as marxes de grosor dos elementos afectan ao deseño: 0%, 50% ou 100%.</td></tr>
+<tr><td>Informar ao escritorio de Plasma sobre o espazo de escritorio dispoñible</td><td>Publicar o espazo de escritorio dispoñible a Plasma para que os paneis e as xanelas poidan usalo.</td></tr>
+<tr><td>Menú contextual / Accións...</td><td>Escolle que accións do menú contextual do dock se mostran sempre. As accións omitidas só están dispoñibles no modo de edición.</td></tr>
+<tr><td>Pantallas / retardo de reacción para cambios</td><td>Establece canto tempo espera Latte antes de reaccionar aos cambios de pantalla, en milisegundos. Auméntao se o hardware informa de transicións inestables.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Accións do menú contextual</h3>
+<p>Abre Preferencias → Menú contextual → Accións... para escoller que accións do dock están sempre visibles.</p>
+<div class="table-wrap"><table><thead><tr><th>Opción na xanela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Accesible sempre</td><td>As accións desta lista móstranse no menú contextual do dock en todo momento.</td></tr>
+<tr><td>Accesible só no modo de edición</td><td>As accións desta lista aparecen só mentres se edita o dock. Mova as accións entre as listas para cambiar isto.</td></tr>
+<tr><td>Mover entre listas</td><td>Seleccione unha acción e use os botóns de frecha para movela. Restablecer e Restaurar valores predeterminados recuperan o conxunto predeterminado.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Copias e clons independentes</h2><p class="note">Unha copia e un clon parecen similares na pantalla pero compórtanse de forma diferente. Unha copia é un novo dock independente. Un clon é o mesmo dock mostrado noutra pantalla. Escolla segundo se desexe configurar este dock por separado.</p>
+<h3 id="create-independent-copy">Crear unha copia independente</h3>
+<p>Use calquera destes métodos no dock orixinal, non nun clon:</p>
+<ul><li>Faga clic dereito no dock e escolla <strong>Duplicar Dock</strong>.</li><li>Abra <strong>Editar Dock</strong> e escolla <strong>Engadir… → Duplicar Dock</strong>.</li><li>Abra <strong>Configurar Latte → Editor de Disposicións → Docks…</strong>, seleccione o dock e escolla <strong>Duplicar</strong>.</li></ul>
+<p>A copia recibe novos IDs de dock e de widget e copia a configuración actual unha vez. Despois, pode cambiar a súa pantalla, bordo, tamaño, aparencia, comportamento, widgets e lanzadores de forma independente. É unha entrada separada na disposición e pode eliminarse con <strong>Eliminar Dock</strong>.</p>
+<p>Duplicar un clon desde o diálogo Docks crea outro clon do mesmo orixinal, non un dock independente. Para crear un dock independente desde un clon, primeiro abra <strong>Editar Dock Orixinal…</strong> e duplique o orixinal.</p>
+<p>Se o orixinal usa <strong>Grupo Global</strong>, a copia tamén o usa e comparte lanzadores. Escolla <strong>Grupo Único</strong> na copia se desexa unha lista de lanzadores separada. <strong>Grupo de Disposición</strong> só está dispoñible cando o dock xa o utiliza.</p>
+<h3 id="create-clone">Crear clones</h3>
+<p>Os clones créanse mediante o modo de pantalla dun dock orixinal, non mediante <strong>Duplicar Dock</strong>:</p>
+<ul><li><strong>Editar Dock → Pantalla → En Todas as Pantallas</strong>: o orixinal permanece na pantalla primaria, e Latte crea un clon en cada pantalla secundaria.</li><li><strong>Editar Dock → Pantalla → En Todas as Pantallas Secundarias</strong>: o orixinal permanece nunha pantalla secundaria, e Latte crea clones nas pantallas secundarias restantes.</li></ul>
+<p>Latte crea e elimina clones automaticamente cando cambia a disposición das pantallas. Para eliminar os clones, volva configurar o orixinal en <strong>Na Pantalla Primaria</strong> ou nunha pantalla específica. Un clon non ten a entrada <strong>Eliminar Dock</strong> no seu menú contextual; use <strong>Editar Dock Orixinal…</strong> alí para configuralo.</p>
+<p>Abrir o editor desde un clon sempre abre a configuración do dock orixinal, porque os clones comparten a configuración do dock. Os axustes de widgets modificados nun clon tamén actualizan o orixinal.</p>
+<h3 id="differences">Diferenzas nunha ollada</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspecto</th><th>Copia independente</th><th>Clon</th></tr></thead><tbody>
+<tr><td>Creado por</td><td>Duplicar Dock</td><td>Pantalla → En Todas as Pantallas ou En Todas as Pantallas Secundarias</td></tr>
+<tr><td>Identidade</td><td>Novos IDs de dock e widget</td><td>Unha vista vinculada do dock orixinal</td></tr>
+<tr><td>Configuración</td><td>Copiada unha vez, despois independente</td><td>Compartida: editar o orixinal actualiza todos os clones; os axustes de widgets modificados nun clon tamén actualizan o orixinal</td></tr>
+<tr><td>Pantalla e bordo</td><td>Pódense cambiar de forma independente</td><td>Segue ao orixinal; non se pode mover nin redimensionar por separado</td></tr>
+<tr><td>Lanzadores</td><td>Copiados na creación; o compartimento posterior só se realiza mediante Grupo de Disposición ou Grupo Global</td><td>Sempre espellar o orixinal</td></tr>
+<tr><td>Menú contextual</td><td>Accións completas do dock, incluíndo Duplicar e Eliminar</td><td>Mostra Editar Dock Orixinal…; Duplicar, Mover, Exportar e Eliminar están ocultos</td></tr>
+<tr><td>Como eliminar</td><td>Eliminar Dock</td><td>Restablecer o orixinal a unha soa pantalla</td></tr>
+</tbody></table></div>
+<p><strong>Cores das iconas do widget:</strong> <strong>Usar cores do tema de iconas</strong> no menú contextual dun widget impide que Latte colore a icona dese widget. A configuración gárdase por widget: os clones compártena co orixinal. Unha copia independente mantén o valor que tiña cando se creou e pode cambialo por separado.</p></section></main></div><footer>Latte Dock NG · Documentación sen conexión. As linguas de interface non dispoñibles volven ao inglés.</footer></body></html>

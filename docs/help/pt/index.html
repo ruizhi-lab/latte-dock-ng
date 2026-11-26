@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guia do Utilizador do Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Guia do Utilizador do Latte Dock NG</h1><p>Estas instruções descrevem as opções atuais. O modo avançado, o estilo da barra e os plugins instalados podem alterar os controlos visíveis. As opções marcadas como Avançadas estão ocultas no editor básico.</p><div class="language-menu"><label for="language-select">Idioma</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html" selected>Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Apenas são listados guias traduzidos. Outros idiomas de interface abrem o guia em inglês.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Nesta página</h2><a class="chapter" href="#edit-dock">Editar Barra</a><a class="subsection" href="#behavior">Comportamento</a><a class="subsection" href="#appearance">Aparência</a><a class="subsection" href="#effects">Efeitos</a><a class="subsection" href="#tasks">Tarefas</a><a class="chapter" href="#configure-latte">Configurar Latte</a><a class="subsection" href="#layouts">Editor de Esquemas</a><a class="subsection" href="#layout-details">Detalhes do Esquema</a><a class="subsection" href="#docks-dialog">Diálogo de Barras</a><a class="subsection" href="#screens-dialog">Diálogo de Ecrãs</a><a class="subsection" href="#preferences">Preferências</a><a class="subsection" href="#context-menu-actions">Ações do Menu de Contexto</a><a class="chapter" href="#copies-and-clones">Cópias Independentes e Clones</a><a class="subsection" href="#create-independent-copy">Criar uma cópia independente</a><a class="subsection" href="#create-clone">Criar clones</a><a class="subsection" href="#differences">Diferenças de um relance</a></nav></aside><main>
+<section id="edit-dock"><h2>Editar Barra</h2><p class="note">As alterações têm efeito imediato. Fechar oculta o editor; não desfaz as alterações. Fixar mantém o editor aberto. Adicionar… → Duplicar Barra cria uma cópia independente de uma barra original; Remover elimina a barra atual. A mudança de separadores mantém a janela no lugar. O modo avançado dimensiona a janela para a sua página mais longa, dentro do espaço de ecrã disponível. Páginas mais longas deslocam-se dentro da janela. Arraste o canto de redimensionamento para ajustar o tamanho da janela em qualquer modo de edição.</p>
+<p class="note">O modo avançado revela mais controlos. As opções marcadas como Avançadas estão ocultas no editor básico.</p>
+<h3 id="behavior">Comportamento</h3>
+<p class="note">Opções de visibilidade, atraso, ações, comportamento dos itens, intervalo flutuante e ambiente para esta barra de ferramentas.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilidade</td></tr>
+<tr><td>Ecrã / Localização</td><td>Escolha o ecrã e a borda para esta barra de ferramentas. Com vários ecrãs, Em Todos os Ecrãs e Em Todos os Ecrãs Secundários criam clones vinculados. Consulte Cópias Independentes e Clones.</td></tr>
+<tr><td>Alinhamento</td><td>Posicione a barra de ferramentas ao longo da borda do ecrã. O alinhamento dos itens controla onde os widgets se situam dentro da barra de ferramentas.</td></tr>
+<tr><td>Sempre Visível</td><td>Mantenha a barra de ferramentas visível e reserve espaço no ambiente de trabalho onde o gestor de janelas o suportar.</td></tr>
+<tr><td>Ocultar Automaticamente</td><td>Oculte a barra de ferramentas até que o cursor atinja a sua área de ativação.</td></tr>
+<tr><td>Evitar Janela Ativa</td><td>Oculte quando a janela ativa tocar na área da barra de ferramentas, e mostre a barra de ferramentas quando o cursor entrar.</td></tr>
+<tr><td>Evitar Janela Maximizada</td><td>Oculte apenas quando uma janela maximizada estiver ativa neste ecrã, e mostre a barra de ferramentas quando o cursor entrar.</td></tr>
+<tr><td>Evitar Todas as Janelas</td><td>Oculte quando qualquer janela tocar na área da barra de ferramentas, e mostre a barra de ferramentas quando o cursor entrar.</td></tr>
+<tr><td>Janelas Por Baixo</td><td>Mantenha a barra de ferramentas acima das janelas; as janelas podem ser colocadas por baixo dela.</td></tr>
+<tr><td>Janelas Podem Cobrir</td><td>Permita que as janelas cubram a barra de ferramentas. A barra de ferramentas vem para a frente quando o cursor atinge a borda do ecrã.</td></tr>
+<tr><td>Janelas Sempre Por Cima</td><td>Mantenha as janelas acima da barra de ferramentas em todos os momentos; a barra de ferramentas permanece atrás delas.</td></tr>
+<tr class="group"><td colspan="2">Atraso</td></tr>
+<tr><td>Atraso / Mostrar / Ocultar</td><td>Defina o tempo de espera antes de mostrar ou ocultar, em milissegundos. Atrasos mais longos reduzem a ativação acidental.</td></tr>
+<tr class="group"><td colspan="2">Ações</td></tr>
+<tr><td>Rastrear <span class="advanced">Avançado</span></td><td>Escolha quais ações de área vazia da janela ativa seguir: Janela Ativa do Ecrã Atual ou Janela Ativa de Todos os Ecrãs.</td></tr>
+<tr><td>Botão Esquerdo / Arrastar Janela Ativa <span class="advanced">Avançado</span></td><td>Ativar arrastar a partir do espaço vazio da barra para mover ou maximizar/restaurar a janela ativa rastreada.</td></tr>
+<tr><td>Botão do Meio / Fechar Janela Ativa <span class="advanced">Avançado</span></td><td>Ativar o clique com o botão do meio no espaço vazio da barra para fechar a janela ativa rastreada.</td></tr>
+<tr><td>Roda do rato <span class="advanced">Avançado</span></td><td>Escolha o que a roda faz sobre o espaço vazio da barra: Nenhuma Ação, Alternar entre Áreas de Trabalho, Alternar entre Atividades, Alternar entre Tarefas ou Alternar e Minimizar Tarefas.</td></tr>
+<tr class="group"><td colspan="2">Itens</td></tr>
+<tr><td>Mostrar dicas de título compactas ao passar o rato</td><td>Mostrar dicas de título compactas dos widgets. As pré-visualizações das janelas das tarefas são controladas separadamente pela ação de passagem do rato sobre a tarefa.</td></tr>
+<tr><td>Ampliar widgets ao passar o rato</td><td>Permitir que os widgets ampliem com a barra. Desative isto para manter os ícones dos widgets nítidos; os ícones das tarefas e lançadores ainda ampliam.</td></tr>
+<tr><td>Expandir popup através da roda do rato</td><td>Deslize sobre um widget suportado para mostrar ou ocultar o seu popup.</td></tr>
+<tr><td>Ajustar tamanho automaticamente quando necessário</td><td>Reduzir itens quando excederem o comprimento disponível e aumentá-los novamente quando couberem.</td></tr>
+<tr><td>Atalhos globais de ativação baseados na posição</td><td>Permitir que atalhos globais baseados na posição ativem os itens desta barra. Apenas uma barra por layout deve usar isto.</td></tr>
+<tr class="group"><td colspan="2">Flutuante</td></tr>
+<tr><td>Usar sempre o intervalo flutuante para interação do utilizador <span class="advanced">Avançado</span></td><td>Incluir o intervalo flutuante na área utilizada para a interação de widgets e janelas.</td></tr>
+<tr><td>Ocultar o intervalo flutuante para janelas maximizadas <span class="advanced">Avançado</span></td><td>Remover o intervalo flutuante quando uma janela maximizada necessitar da borda do ecrã.</td></tr>
+<tr><td>Atrasar a ocultação do intervalo flutuante até o rato sair <span class="advanced">Avançado</span></td><td>Aguardar até que o ponteiro saia antes de ocultar o intervalo, para evitar cliques acidentais em itens próximos.</td></tr>
+<tr><td>Refletir o intervalo flutuante quando este é mostrado <span class="advanced">Avançado</span></td><td>No modo Sempre Visível, refletir o intervalo no lado oposto da barra de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Ambiente</td></tr>
+<tr><td>Elevar ao mudar de área de trabalho <span class="advanced">Avançado</span></td><td>Revelar temporariamente a barra de tarefas quando a área de trabalho virtual muda. Isto não é utilizado pelo modo Sempre Visível ou Janelas Por Baixo.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Aparência</h3>
+<p class="note">Margens, Cores, Raio/Sombra, Ajustes Dinâmicos de Comprimento, Visibilidade Dinâmica e Exceções requerem o modo Avançado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Itens</td></tr>
+<tr><td>Estilo da Barra de Tarefas</td><td>Escolher Clássico ou Moderno para aplicar uma predefinição. Em qualquer estilo, utilize os interruptores abaixo de Estilo da Barra de Tarefas para definir a disposição dos itens, o fundo contornado, o espaçamento mínimo dos itens, o intervalo flutuante automático e os indicadores de tarefa compactos de forma independente.</td></tr>
+<tr><td>Manter os itens da barra de tarefas juntos</td><td>Utilizar um grupo para os itens da barra de tarefas, incluindo quando o alinhamento da barra de tarefas é Justificado.</td></tr>
+<tr><td>Utilizar o fundo interno com um contorno</td><td>Utilizar o fundo predefinido com um contorno e estilo para o seu espaçamento, cantos arredondados e sombra.</td></tr>
+<tr><td>Utilizar um espaçamento mínimo mais amplo entre itens</td><td>Aumentar o espaçamento mínimo em torno dos itens da barra de tarefas. Os valores maiores definidos pelos controlos de margem ainda se aplicam.</td></tr>
+<tr><td>Usar um intervalo flutuante automático</td><td>Calcular um intervalo na borda do ecrã a partir do tamanho do ícone quando um valor de intervalo específico não está definido.</td></tr>
+<tr><td>Usar indicadores de tarefa compactos</td><td>Usar o layout compacto para os indicadores de tarefa do Latte. Escolha a forma do indicador em Efeitos.</td></tr>
+<tr><td>Restaurar Predefinição</td><td>O botão na parte inferior de Editar Dock restaura imediatamente Comportamento, Aparência, Efeitos e todos os separadores de Tarefas para a predefinição de Dock incluída para o estilo Clássico/Moderno atual, incluindo opções ocultas pelo modo Avançado. O ecrã, a borda do dock, os lançadores e os widgets são mantidos. O alinhamento, a visibilidade e os atrasos são redefinidos. A partilha de lançadores volta ao grupo local predefinido, mantendo uma cópia da lista de lançadores efetiva; as listas partilhadas de outros docks permanecem inalteradas. As cores personalizadas e as substituições de indicadores são redefinidas. A predefinição combina o modelo de Dock Predefinido incluído com os valores predefinidos do esquema de configuração. Isto é separado de simplesmente alternar o Estilo do Dock. O estilo Clássico desativa por predefinição os cinco interruptores de aparência sob Estilo do Dock. O estilo Moderno ativa-os. Ambas as predefinições usam os mesmos valores predefinidos para as opções restantes.</td></tr>
+<tr><td>Tamanho absoluto / Tamanho relativo</td><td>Definir o tamanho do ícone em píxeis ou como uma fração do ecrã. O tamanho relativo é útil em configurações de alta densidade de píxeis (high-DPI) ou de vários ecrãs.</td></tr>
+<tr><td>Zoom ao passar o cursor</td><td>Definir o quanto os itens crescem sob o ponteiro.</td></tr>
+<tr class="group"><td colspan="2">Comprimento</td></tr>
+<tr><td>Máximo / Mínimo / Deslocamento</td><td>Definir o comprimento máximo e mínimo do dock e movê-lo ao longo da borda do ecrã.</td></tr>
+<tr><td>Ajustes Dinâmicos de Comprimento <span class="advanced">Avançado</span></td><td>Maximizar o comprimento do painel na presença de janelas maximizadas: estender o dock até ao comprimento total quando uma janela maximizada está presente. O fundo deve estar ativado.</td></tr>
+<tr class="group"><td colspan="2">Margens</td></tr>
+<tr><td>Margens / Comprimento / Espessura / Espaço flutuante <span class="advanced">Avançado</span></td><td>Definir a margem externa ao longo do dock, a margem através da sua espessura e o intervalo entre o dock e a borda do ecrã.</td></tr>
+<tr><td>Intervalo das janelas maximizadas (px) <span class="advanced">Avançado</span></td><td>Reservar 0–128 pixels adicionais entre as janelas e este dock no modo Sempre Visível. Predefinição: 0. Isto é separado do intervalo flutuante da borda do ecrã e soma-se a qualquer intervalo espelhado; os modos de ocultação automática não reservam este espaço.</td></tr>
+<tr class="group"><td colspan="2">Cores</td></tr>
+<tr><td>Cores / Paleta <span class="advanced">Avançado</span></td><td>Escolher Cores do Tema Plasma, Cores Escuras, Cores Claras, Cores Personalizadas do Layout, Invertido ou Cores Inteligentes Baseadas no Fundo do Ambiente de Trabalho. Cores Personalizadas do Layout usam o esquema de cores do layout; Inteligente segue o papel de parede.</td></tr>
+<tr><td>Usar cor de fundo personalizada / Cor do dia <span class="advanced">Avançado</span></td><td>Substituir o fundo deste dock por uma cor escolhida; o contraste do texto ajusta-se automaticamente. Desativado por predefinição. As paletas derivadas de janelas e a paleta Plasma para applets expandidos mantêm prioridade. A opacidade permanece uma definição de fundo separada.</td></tr>
+<tr><td>Alternar cores de fundo pela hora do dia / Cor da noite / Início do dia (hora local) / Início da noite (hora local) <span class="advanced">Avançado</span></td><td>Opcionalmente, alterne entre duas cores personalizadas usando horários locais de 24 horas. Padrões: dia 07:00, noite 19:00. A hora de início é inclusiva. Os intervalos podem cruzar a meia-noite; horários iguais mantêm a cor do dia durante todo o dia. Desativar a programação mantém a cor do dia. O relógio é verificado a cada segundo, incluindo após a retomada.</td></tr>
+<tr class="group"><td colspan="2">Fundo</td></tr>
+<tr><td>Fundo</td><td>Fundo é um interruptor liga/desliga. Quando ativado, use os controles abaixo para definir espessura, opacidade, raio e sombra.</td></tr>
+<tr><td>Opacidade / Opacidade Ocupada</td><td>Defina a opacidade do fundo. O mesmo controle deslizante é chamado de Opacidade Ocupada quando Ocultar fundo quando não necessário e Preferir fundo opaco ao tocar qualquer janela estão ambos ativados. Def. restaura o padrão do tema.</td></tr>
+<tr><td>Raio / Sombra <span class="advanced">Avançado</span></td><td>Defina o raio dos cantos do fundo e o tamanho da sombra. Def. usa o padrão do tema.</td></tr>
+<tr><td>Desfoque / Sombras / Contorno / Todos os Cantos <span class="advanced">Avançado</span></td><td>Ative o desfoque do fundo, a sombra do fundo, o contorno e os cantos arredondados. Todos os Cantos está disponível apenas para certas geometrias flutuantes/justificadas.</td></tr>
+<tr class="group"><td colspan="2">Visibilidade Dinâmica</td></tr>
+<tr><td>Preferir fundo opaco ao tocar qualquer janela <span class="advanced">Avançado</span></td><td>Remova a transparência do fundo enquanto uma janela toca a barra de tarefas.</td></tr>
+<tr><td>Ocultar fundo quando não necessário <span class="advanced">Avançado</span></td><td>Oculte o fundo exceto quando uma janela toca a barra de tarefas ou o fundo da área de trabalho está ocupado.</td></tr>
+<tr><td>Ocultar sombra do fundo para janelas maximizadas <span class="advanced">Avançado</span></td><td>Oculte a sombra do fundo enquanto uma janela maximizada ativa toca a barra de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Exceções</td></tr>
+<tr><td>Preferir fundo e cores do Plasma para applets expandidos <span class="advanced">Avançado</span></td><td>Usar um fundo opaco no estilo Plasma e cores do Plasma enquanto os popups dos widgets estão expandidos.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efeitos</h3>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sombras</td></tr>
+<tr><td>Sombras</td><td>Ativar ou desativar as sombras dos widgets. Tamanho e Opacidade ficam desativados quando as sombras estão desativadas.</td></tr>
+<tr><td>Tamanho / Opacidade</td><td>Definir o tamanho e a opacidade da sombra do widget.</td></tr>
+<tr><td>Cor Padrão / Cor do Tema / cor personalizada</td><td>Escolher a cor padrão da sombra, uma cor da paleta do tema ou clicar na amostra de cor para escolher uma cor personalizada.</td></tr>
+<tr class="group"><td colspan="2">Animações</td></tr>
+<tr><td>Animações / x1 / x2 / x3</td><td>Ativar ou desativar todas as animações da dock. x1 é velocidade normal, x2 é mais lenta, x3 é a mais lenta.</td></tr>
+<tr class="group"><td colspan="2">Indicadores</td></tr>
+<tr><td>Indicadores</td><td>Ativar ou desativar os indicadores de tarefas ativas. Quando ativados, escolher o indicador Latte ou um plugin de indicador personalizado; as opções específicas do plugin aparecem na sua aba.</td></tr>
+<tr><td>Usar pontos no estilo macOS</td><td>O indicador Latte usa pontos no estilo macOS por padrão quando os indicadores de tarefas compactos estão ativados em Aparência. Desative Usar pontos no estilo macOS em Efeitos para escolher Linha ou Pontos manualmente.</td></tr>
+<tr><td>Usar cores dos ícones das aplicações</td><td>Opcionalmente, colorir os indicadores de tarefas com a cor dominante do ícone de cada aplicação, ajustada para o contraste do fundo. Selecione Linha para sublinhados coloridos. Desativado por padrão; os applets mantêm as cores da paleta.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tarefas</h3>
+<p>Os lançadores de tarefas começam a reordenar-se em outras docas que partilham a lista de lançadores depois de soltar o ícone. A ordem pode demorar um momento a estabilizar. Os espaços dos separadores mantêm-se no lugar quando a doca de destino guarda a nova ordem. Arrastar uma aplicação já fixada mantém o seu lançador existente, incluindo quando esse lançador segue a aplicação predefinida do sistema. Os novos separadores ocupam espaço assim que atingem o intervalo selecionado.</p>
+<p>Ao adicionar ou arrastar um widget ao lado de um separador na extremidade da área de tarefas ou da bandeja do sistema, o widget é colocado no exterior do separador. O separador permanece junto à área de tarefas ou à bandeja.</p>
+<p>Ao fixar uma aplicação a partir do menu de aplicações, o seu ícone aparece antes de quaisquer separadores no final da lista de tarefas. O separador à direita pertence ao grupo de fixados, pelo que as aplicações em execução que não estão fixadas aparecem além dele.</p>
+<p>O espaço da tarefa permanece destacado e o ícone continua visível enquanto o arrasta para reordenar as tarefas. Quando uma nova tarefa desliza para dentro, a doca começa a reservar o seu espaço a partir do tamanho inicial da animação.</p>
+<p class="note">As opções de Insígnias, Animações, Deslocação, Ações e algumas opções de Interação/Filtros requerem o modo Avançado. Mostrar apenas lançadores e ocultar todas as tarefas desativa as ações e filtros relacionados com janelas.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insígnias</td></tr>
+<tr><td>Notificações das tarefas <span class="advanced">Avançado</span></td><td>Mostrar contagens de notificações não lidas nos ícones das tarefas.</td></tr>
+<tr><td>Informação de progresso para as tarefas <span class="advanced">Avançado</span></td><td>Mostrar insígnias de progresso, por exemplo, enquanto o Dolphin copia ficheiros.</td></tr>
+<tr><td>Áudio a ser reproduzido a partir de tarefas <span class="advanced">Avançado</span></td><td>Mostrar uma insígnia de áudio para aplicações que estão a reproduzir som. A correspondência prefere identificadores explícitos de ambiente de trabalho/aplicação. A informação genérica do processo do navegador não é suficiente para identificar uma PWA específica; fluxos ambíguos são deixados sem atribuição em vez de atribuir controlos de áudio a aplicações não relacionadas. Aplicações Electron independentes ainda podem corresponder ao seu próprio processo de áudio. O estado de reprodução e a atividade de saída ocultam fluxos em pausa mesmo quando a aplicação mantém a sua ligação de áudio aberta. Sem o estado do leitor, um breve silêncio é tolerado durante aproximadamente um segundo.</td></tr>
+<tr><td>Cor proeminente para a insígnia de notificação <span class="advanced">Avançado</span></td><td>Usar uma insígnia de notificação mais forte, geralmente vermelha. Requer Notificações de tarefas.</td></tr>
+<tr><td>Alterar o volume ao deslocar a insígnia de áudio <span class="advanced">Avançado</span></td><td>Clique na insígnia de áudio para silenciar/ativar o som, ou desloque sobre ela para alterar o volume. Requer Áudio a ser reproduzido a partir de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Interação</td></tr>
+<tr><td>Os lançadores são adicionados apenas no applet de tarefas atual</td><td>Adicionar lançadores soltos apenas a este widget de tarefas, não como widgets separados ou a outros widgets de tarefas.</td></tr>
+<tr><td>Ações de janela no menu de contexto <span class="advanced">Avançado</span></td><td>Mostrar ações específicas da janela no menu de contexto da tarefa.</td></tr>
+<tr><td>A janela de pré-visualização comporta-se como um popup <span class="advanced">Avançado</span></td><td>Abrir pré-visualizações como um popup em vez de uma dica de ferramenta. A ação ao passar o rato deve solicitar pré-visualizações; isto apenas altera a forma como são exibidas.</td></tr>
+<tr><td>Com base na posição, os atalhos aplicam-se apenas às tarefas atuais <span class="advanced">Avançado</span></td><td>Limitar os atalhos globais baseados na posição a este widget de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Filtros</td></tr>
+<tr><td>Mostrar apenas tarefas do ecrã atual</td><td>Mostrar janelas do ecrã desta barra de tarefas.</td></tr>
+<tr><td>Mostrar apenas tarefas da área de trabalho atual</td><td>Mostrar janelas da área de trabalho virtual atual.</td></tr>
+<tr><td>Mostrar Secção de Janelas Minimizadas</td><td>Desativado por predefinição. Mostra as janelas minimizadas como ícones individuais após as tarefas normais. Passe o cursor ou foque um ícone para ver a aplicação e o título da janela, e ative-o para restaurar a janela. Quando uma aplicação tem várias janelas minimizadas, um pequeno indicador mostra a sequência de cada janela e o total para essa aplicação. A secção segue os filtros de tarefas e partilha o deslocamento de excesso de tarefas. Ativar Deslocamento para aceder às janelas fora do ecrã usando a ação configurada da roda do rato ou do hover na borda. O modo apenas de lançadores oculta esta secção.</td></tr>
+<tr><td>Mostrar apenas tarefas dos lançadores <span class="advanced">Avançado</span></td><td>Mostrar janelas apenas para aplicações já presentes na lista de lançadores.</td></tr>
+<tr><td>Mostrar apenas lançadores e ocultar todas as tarefas <span class="advanced">Avançado</span></td><td>Mostrar ícones de lançadores e ocultar tarefas em execução. Isto também desativa ações e filtros relacionados com janelas.</td></tr>
+<tr><td>Mostrar apenas tarefas agrupadas para a mesma aplicação <span class="advanced">Avançado</span></td><td>Agrupar janelas da mesma aplicação por predefinição.</td></tr>
+<tr class="group"><td colspan="2">Animações</td></tr>
+<tr><td>Fazer saltar os lançadores quando acionados <span class="advanced">Avançado</span></td><td>Animar os lançadores quando são acionados.</td></tr>
+<tr><td>Fazer saltar as tarefas que necessitam de atenção <span class="advanced">Avançado</span></td><td>Animar as tarefas que solicitam atenção.</td></tr>
+<tr><td>Deslizar janelas individuais para dentro e para fora <span class="advanced">Avançado</span></td><td>Animar janelas individuais novas e fechadas.</td></tr>
+<tr><td>As tarefas agrupadas fazem saltar as suas janelas novas <span class="advanced">Avançado</span></td><td>Animar uma nova janela dentro de um grupo de tarefas.</td></tr>
+<tr><td>As tarefas agrupadas deslizam para fora as suas janelas fechadas <span class="advanced">Avançado</span></td><td>Animar uma janela fechada dentro de um grupo de tarefas.</td></tr>
+<tr class="group"><td colspan="2">Lançadores</td></tr>
+<tr><td>Grupo Único</td><td>Atribuir a este widget de tarefas a sua própria lista de lançadores.</td></tr>
+<tr><td>Grupo de Layout</td><td>Partilhar lançadores com widgets de tarefas no mesmo layout. Este botão só é mostrado quando o dock já utiliza Grupo de Layout.</td></tr>
+<tr><td>Grupo Global</td><td>Partilhar lançadores com widgets de tarefas em todos os layouts.</td></tr>
+<tr class="group"><td colspan="2">Deslocação</td></tr>
+<tr><td>Deslocação <span class="advanced">Avançado</span></td><td>Ativar a deslocação quando as tarefas excederem o espaço disponível. Funciona com qualquer predefinição do dock, incluindo quando Manter itens do dock juntos está ativado.</td></tr>
+<tr><td>Manual <span class="advanced">Avançado</span></td><td>Escolher Deslocação Desativada, Apenas deslocação vertical/horizontal, ou Deslocação horizontal e vertical. A escolha de sentido único depende da orientação do dock.</td></tr>
+<tr><td>Automática <span class="advanced">Avançado</span></td><td>Ativar ou desativar a deslocação automática.</td></tr>
+<tr class="group"><td colspan="2">Ações</td></tr>
+<tr><td>Clique Esquerdo <span class="advanced">Avançado</span></td><td>Ação para um clique esquerdo numa tarefa: Nenhuma, Fechar Janela ou Grupo, Nova Instância, Minimizar/Restaurar, Ciclar pelas Tarefas, Alternar Agrupamento de Tarefas, Apresentar Janelas, Pré-visualizar Janelas, Destacar Janelas, ou Pré-visualizar e Destacar Janelas.</td></tr>
+<tr><td>Clique do Meio <span class="advanced">Avançado</span></td><td>Ação para um clique do meio numa tarefa. As opções são as mesmas que para Clique Esquerdo.</td></tr>
+<tr><td>Passagem do rato <span class="advanced">Avançado</span></td><td>Ações ao passar o rato: Nenhuma, Pré-visualizar Janelas, Destacar Janelas, ou Pré-visualizar e Destacar Janelas. As dicas de ferramentas com o título da tarefa são controladas em Comportamento.</td></tr>
+<tr><td>Roda do rato <span class="advanced">Avançado</span></td><td>Ações da roda do rato: Nenhuma, Alternar entre Tarefas ou Alternar e Minimizar Tarefas.</td></tr>
+<tr><td>Modificador + clique <span class="advanced">Avançado</span></td><td>Mantenha Shift, Ctrl, Alt ou Meta pressionados e clique com o botão esquerdo, do meio ou direito para executar uma ação adicional. Escolha o modificador, o botão e a ação; isto é independente das ações principais acima.</td></tr>
+</tbody></table></div>
+<p class="note">O filtro de atividade atual está oculto no Plasma 6 porque o suporte a KActivities não é fiável.</p></section><section id="configure-latte"><h2>Configurar Latte</h2><p class="note">O Editor de Esquemas gerencia esquemas e as suas docas. As Preferências controlam o comportamento da aplicação. Aplicar guarda as alterações pendentes no separador atual; Repor restaura o estado guardado desse separador; Restaurar Predefinições prepara as predefinições para revisão. Ecrãs... gerencia referências de ecrãs guardadas.</p>
+<h3 id="layouts">Editor de Esquemas</h3>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Um único esquema em todos os momentos</td><td>Utilizar um esquema para todas as atividades.</td></tr>
+<tr><td>Vários esquemas baseados em atividades</td><td>Atribuir diferentes esquemas a atividades; vários esquemas podem permanecer carregados.</td></tr>
+<tr><td>Alternar</td><td>Ativar o esquema selecionado. Aplique primeiro as alterações pendentes; o Latte não alternará com alterações não guardadas.</td></tr>
+<tr><td>Atividades...</td><td>Abrir o gestor de Atividades do Plasma. Utilize a coluna Atividades ou Ativo para atribuir este esquema a atividades.</td></tr>
+<tr><td>Novo / Duplicar / Remover</td><td>Criar, copiar ou remover um esquema. Duplicar aqui copia o esquema inteiro, não uma doca individual. Esquemas ativos e bloqueados não podem ser removidos.</td></tr>
+<tr><td>Ativo</td><td>Atribuir este esquema a uma ou mais atividades para que as Atividades do Plasma o possam ativar. Mostrado apenas no modo de vários esquemas.</td></tr>
+<tr><td>Apenas Leitura</td><td>Proteger a configuração do layout contra alterações.</td></tr>
+<tr><td>Detalhes...</td><td>Abrir o diálogo de detalhes do layout para ícone, cores personalizadas, margem do popup e visibilidade do menu de contexto.</td></tr>
+<tr><td>Docks...</td><td>Abrir a lista de docks para este layout: nome, ecrã, borda, alinhamento, widgets incluídos, e novo/duplicar/remover/importar/exportar.</td></tr>
+<tr><td>Importar... / Exportar...</td><td>Importar um layout de um ficheiro local ou da KDE Store; exportá-lo para backup ou como modelo. Ficheiro → Importar Configuração / Exportar Configuração trata de um backup completo da aplicação.</td></tr>
+<tr><td>Nome / No Menu / Atividades</td><td>A lista de layouts tem colunas Nome, No Menu e Atividades. Edite Nome e Atividades diretamente na lista; No Menu controla se o layout aparece no menu de Layouts do dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalhes do Layout</h3>
+<p>Abrir com Editor de Layouts → Detalhes... para editar o layout selecionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Layout</td><td>Escolher qual layout editar.</td></tr>
+<tr><td>Ícone</td><td>Escolher um ícone para o layout. O botão limpar remove-o.</td></tr>
+<tr><td>Cores Personalizadas</td><td>Escolher um ficheiro de esquema de cores personalizado para este layout.</td></tr>
+<tr><td>Margem do PopUp</td><td>Definir a margem usada pelos popups do layout; desativado significa usar o padrão.</td></tr>
+<tr><td>Mostrar no menu de contexto de layouts quando possível</td><td>Mostrar este layout no menu de Layouts do dock quando a atividade atual o permitir.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Diálogo de Docks</h3>
+<p>Abrir com Editor de Layouts → Docks... para gerir os docks no layout selecionado.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Colunas</td></tr>
+<tr><td>Nome</td><td>Nome do dock. Clique duplo para renomeá-lo.</td></tr>
+<tr><td>Ecrã</td><td>Ecrã a que pertence a barra de tarefas, incluindo Principal, Todos os Ecrãs e Todos os Ecrãs Secundários.</td></tr>
+<tr><td>Borda</td><td>Borda do ecrã utilizada pela barra de tarefas.</td></tr>
+<tr><td>Alinhamento</td><td>Alinhamento da barra de tarefas ao longo da sua borda.</td></tr>
+<tr><td>Inclui</td><td>Widgets e subcontentores incluídos na barra de tarefas. Esta coluna é somente de leitura.</td></tr>
+<tr class="group"><td colspan="2">Botões</td></tr>
+<tr><td>Novo</td><td>Criar uma barra de tarefas a partir de um modelo.</td></tr>
+<tr><td>Duplicar</td><td>Criar uma cópia independente da barra de tarefas selecionada, ou outro clone se a barra de tarefas selecionada for um clone.</td></tr>
+<tr><td>Remover</td><td>Remover a barra de tarefas selecionada. Os clones são removidos com o seu original.</td></tr>
+<tr><td>Importar...</td><td>Importar uma barra de tarefas de um ficheiro de modelo local.</td></tr>
+<tr><td>Exportar...</td><td>Exportar a barra de tarefas selecionada para cópia de segurança ou como modelo. O diálogo de modelos permite escolher quais as definições de widgets a incluir; exclua widgets com dados pessoais, como contas de e-mail ou de calendário.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Diálogo de Ecrãs</h3>
+<p>Abra com Ficheiro → Ecrãs... para limpar as referências de ecrã guardadas pelo Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Lista de ecrãs</td><td>Lista as referências de ecrã armazenadas no Latte, incluindo ecrãs que já não estão ligados.</td></tr>
+<tr><td>Selecionar ecrãs obsoletos</td><td>Marque apenas os ecrãs que já não existem. Os ecrãs ativos e os ecrãs utilizados por um esquema não podem ser removidos.</td></tr>
+<tr><td>Desmarcar Tudo</td><td>Limpar a seleção antes de escolher um conjunto diferente.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferências</h3>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Mostrar janela informativa para ativação automática de esquemas</td><td>Mostrar uma janela de informação quando um esquema é ativado automaticamente.</td></tr>
+<tr><td>Efeito Parabólico / Pequeno / Médio / Grande</td><td>Definir a dispersão global do zoom ao passar o rato pelos itens vizinhos.</td></tr>
+<tr><td>Ativar o início automático durante o arranque</td><td>Iniciar o Latte quando iniciar sessão.</td></tr>
+<tr><td>Usar estilo 3D para os indicadores de notificação e atalhos</td><td>Usar um estilo dimensional para os indicadores de notificação e atalhos.</td></tr>
+<tr><td>Premir e manter ⌘ para mostrar os indicadores de atalhos</td><td>Desativado por predefinição. Mantenha a tecla Meta premida durante cerca de um segundo para mostrar as docks ocultas e os indicadores de atalhos das suas tarefas e widgets; solte a tecla para os ocultar novamente. Com as definições predefinidas do Plasma, o seu próprio lançador também abre quando a tecla Meta é solta; altere esse atalho nas Definições do Sistema se não pretender este comportamento.</td></tr>
+<tr><td>Influência da margem de espessura</td><td>Escolha o quanto as margens de espessura dos itens afetam o layout: 0%, 50% ou 100%.</td></tr>
+<tr><td>Informar o ambiente de trabalho Plasma sobre o espaço disponível no ambiente de trabalho</td><td>Publicar o espaço disponível no ambiente de trabalho para o Plasma, para que painéis e janelas o possam utilizar.</td></tr>
+<tr><td>Menu de Contexto / Ações...</td><td>Escolha quais as ações do menu de contexto da dock que são sempre mostradas. As ações omitidas estão disponíveis apenas no modo de edição.</td></tr>
+<tr><td>Ecrãs / atraso de reação a alterações</td><td>Defina quanto tempo o Latte espera antes de reagir a alterações de ecrã, em milissegundos. Aumente este valor se o hardware reportar transições instáveis.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Ações do Menu de Contexto</h3>
+<p>Abra Preferências → Menu de Contexto → Ações... para escolher quais as ações da dock que estão sempre visíveis.</p>
+<div class="table-wrap"><table><thead><tr><th>Opção na janela</th><th>O que controla</th></tr></thead><tbody>
+<tr><td>Acessível sempre</td><td>As ações nesta lista são mostradas no menu de contexto da dock em todos os momentos.</td></tr>
+<tr><td>Acessível apenas no modo de edição</td><td>As ações nesta lista aparecem apenas enquanto a barra de ferramentas está a ser editada. Mova as ações entre as listas para alterar isto.</td></tr>
+<tr><td>Mover entre listas</td><td>Selecione uma ação e use os botões de seta para movê-la. Redefinir e Restaurar Padrões restauram o conjunto padrão.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Cópias Independentes e Clones</h2><p class="note">Uma duplicata e um clone parecem semelhantes no ecrã, mas comportam-se de forma diferente. Uma duplicata é uma nova barra de ferramentas independente. Um clone é a mesma barra de ferramentas mostrada em outro ecrã. Escolha com base em se deseja configurar esta barra de ferramentas separadamente.</p>
+<h3 id="create-independent-copy">Criar uma cópia independente</h3>
+<p>Use qualquer um destes métodos na barra de ferramentas original, não em um clone:</p>
+<ul><li>Clique com o botão direito na barra de ferramentas e escolha <strong>Duplicar Barra de Ferramentas</strong>.</li><li>Abra <strong>Editar Barra de Ferramentas</strong> e escolha <strong>Adicionar… → Duplicar Barra de Ferramentas</strong>.</li><li>Abra <strong>Configurar Latte → Editor de Layouts → Barras de Ferramentas…</strong>, selecione a barra de ferramentas e escolha <strong>Duplicar</strong>.</li></ul>
+<p>A cópia recebe novos IDs de barra de ferramentas e de widget e copia as configurações atuais uma vez. Depois disso, pode alterar o ecrã, a borda, o tamanho, a aparência, o comportamento, os widgets e os lançadores independentemente. É uma entrada separada no layout e pode ser removida com <strong>Remover Barra de Ferramentas</strong>.</p>
+<p>Duplicar um clone a partir do diálogo Barras de Ferramentas cria outro clone do mesmo original, não uma barra de ferramentas independente. Para criar uma barra de ferramentas independente a partir de um clone, primeiro abra <strong>Editar Barra de Ferramentas Original…</strong> e duplique o original.</p>
+<p>Se o original usar <strong>Grupo Global</strong>, a cópia também o usará e compartilhará os lançadores. Escolha <strong>Grupo Único</strong> na cópia se desejar uma lista de lançadores separada. <strong>Grupo de Layout</strong> está disponível apenas quando o dock já o utiliza.</p>
+<h3 id="create-clone">Criar clones</h3>
+<p>Os clones são criados pelo modo de ecrã de um dock original, não por <strong>Duplicar Dock</strong>:</p>
+<ul><li><strong>Editar Dock → Ecrã → Em Todos os Ecrãs</strong>: o original permanece no ecrã principal e o Latte cria um clone em cada ecrã secundário.</li><li><strong>Editar Dock → Ecrã → Em Todos os Ecrãs Secundários</strong>: o original permanece num ecrã secundário e o Latte cria clones nos restantes ecrãs secundários.</li></ul>
+<p>O Latte cria e remove clones automaticamente quando o layout do ecrã muda. Para remover clones, defina o original novamente para <strong>No Ecrã Principal</strong> ou para um ecrã específico. Um clone não tem entrada <strong>Remover Dock</strong> no seu menu de contexto; utilize <strong>Editar Dock Original…</strong> para o configurar.</p>
+<p>Abrir o editor a partir de um clone abre sempre as definições do dock original, porque os clones partilham a configuração do dock. As definições de widgets alteradas num clone também atualizam o original.</p>
+<h3 id="differences">Diferenças de um relance</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspeto</th><th>Cópia independente</th><th>Clone</th></tr></thead><tbody>
+<tr><td>Criado por</td><td>Duplicar Dock</td><td>Ecrã → Em Todos os Ecrãs ou Em Todos os Ecrãs Secundários</td></tr>
+<tr><td>Identidade</td><td>Novos IDs de dock e widget</td><td>Uma vista ligada do dock original</td></tr>
+<tr><td>Definições</td><td>Copiadas uma vez, depois independentes</td><td>Partilhadas: editar o original atualiza todos os clones; as definições de widgets alteradas num clone também atualizam o original</td></tr>
+<tr><td>Ecrã e borda</td><td>Pode ser alterado independentemente</td><td>Segue o original; não pode ser movido nem redimensionado separadamente</td></tr>
+<tr><td>Lançadores</td><td>Copiados na criação; partilha posterior apenas através de Grupo de Layout ou Grupo Global</td><td>Espelhar sempre o original</td></tr>
+<tr><td>Menu de contexto</td><td>Ações completas da doca, incluindo Duplicar e Remover</td><td>Mostra Editar Doca Original…; Duplicar, Mover, Exportar e Remover estão ocultos</td></tr>
+<tr><td>Como remover</td><td>Remover Doca</td><td>Definir o original de volta para um único ecrã</td></tr>
+</tbody></table></div>
+<p><strong>Cores dos ícones do widget:</strong> <strong>Usar Cores do Tema de Ícones</strong> no menu de contexto de um widget impede que o Latte altere a cor do ícone desse widget. A definição é armazenada por widget: os clones partilham-na com o original. Uma cópia independente mantém o valor que tinha quando foi criada e pode alterá-lo separadamente.</p></section></main></div><footer>Latte Dock NG · Documentação offline. Idiomas de interface indisponíveis recorrem ao inglês.</footer></body></html>

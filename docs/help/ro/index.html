@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ghidul utilizatorului Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Ghidul utilizatorului Latte Dock NG</h1><p>Aceste instrucțiuni descriu opțiunile curente. Modul avansat, stilul dock-ului și pluginurile instalate pot modifica controalele vizibile. Opțiunile marcate ca Avansate sunt ascunse în editorul de bază.</p><div class="language-menu"><label for="language-select">Limbă</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html" selected>Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Sunt listate doar ghidurile traduse. Celelalte limbi ale interfeței deschid ghidul în limba engleză.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Pe această pagină</h2><a class="chapter" href="#edit-dock">Editează Dock</a><a class="subsection" href="#behavior">Comportament</a><a class="subsection" href="#appearance">Aspect</a><a class="subsection" href="#effects">Efecte</a><a class="subsection" href="#tasks">Sarcini</a><a class="chapter" href="#configure-latte">Configurează Latte</a><a class="subsection" href="#layouts">Editor de layout-uri</a><a class="subsection" href="#layout-details">Detalii layout</a><a class="subsection" href="#docks-dialog">Dialog Dock-uri</a><a class="subsection" href="#screens-dialog">Dialog Ecrane</a><a class="subsection" href="#preferences">Preferințe</a><a class="subsection" href="#context-menu-actions">Acțiuni meniu contextual</a><a class="chapter" href="#copies-and-clones">Copii și clone independente</a><a class="subsection" href="#create-independent-copy">Creează o copie independentă</a><a class="subsection" href="#create-clone">Creează clone</a><a class="subsection" href="#differences">Diferențe pe scurt</a></nav></aside><main>
+<section id="edit-dock"><h2>Editează Dock</h2><p class="note">Modificările intră în vigoare imediat. Închiderea ascunde editorul; aceasta nu anulează modificările. Fixarea menține editorul deschis. Adaugă… → Duplică Dock creează o copie independentă a unui dock original; Eliminare elimină dock-ul curent. Comutarea taburilor menține fereastra pe loc. Modul avansat dimensionează fereastra pentru cea mai lungă pagină, în spațiul disponibil al ecranului. Paginile mai lungi se derulează în interiorul ferestrei. Trageți colțul de redimensionare pentru a ajusta dimensiunea ferestrei în oricare dintre modurile de editare.</p>
+<p class="note">Modul avansat dezvăluie mai multe controale. Opțiunile marcate ca Avansate sunt ascunse în editorul de bază.</p>
+<h3 id="behavior">Comportament</h3>
+<p class="note">Opțiuni de vizibilitate, întârziere, acțiuni, comportamentul elementelor, spațiu flotant și mediu pentru acest dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Vizibilitate</td></tr>
+<tr><td>Ecran / Locație</td><td>Alegeți ecranul și marginea pentru acest dock. Cu mai multe ecrane, Pe toate ecranele și Pe toate ecranele secundare creează clone legate. Consultați Copii independente și Clone.</td></tr>
+<tr><td>Aliniere</td><td>Poziționați dock-ul de-a lungul marginii ecranului. Alinierea elementelor controlează unde se află widget-urile în interiorul dock-ului.</td></tr>
+<tr><td>Întotdeauna vizibil</td><td>Mențineți dock-ul vizibil și rezervați spațiu pe desktop unde managerul de ferestre îl suportă.</td></tr>
+<tr><td>Ascundere automată</td><td>Ascundeți dock-ul până când cursorul ajunge în zona sa de activare.</td></tr>
+<tr><td>Evită fereastra activă</td><td>Ascundeți când fereastra activă atinge zona dock-ului și afișați dock-ul când cursorul intră.</td></tr>
+<tr><td>Evită ferestrele maximizate</td><td>Ascundeți doar când o fereastră maximizată este activă pe acest ecran și afișați dock-ul când cursorul intră.</td></tr>
+<tr><td>Evită toate ferestrele</td><td>Ascundeți când orice fereastră atinge zona dock-ului și afișați dock-ul când cursorul intră.</td></tr>
+<tr><td>Ferestrele merg sub</td><td>Mențineți dock-ul deasupra ferestrelor; ferestrele pot fi plasate sub el.</td></tr>
+<tr><td>Ferestrele pot acoperi</td><td>Permiteți ferestrelor să acopere dock-ul. Dock-ul vine în față când cursorul ajunge la marginea ecranului.</td></tr>
+<tr><td>Ferestrele acoperă întotdeauna</td><td>Mențineți ferestrele deasupra dock-ului în permanență; dock-ul rămâne în spatele lor.</td></tr>
+<tr class="group"><td colspan="2">Întârziere</td></tr>
+<tr><td>Întârziere / Afișare / Ascundere</td><td>Setează cât timp să aștepte înainte de a afișa sau ascunde, în milisecunde. Întârzierile mai lungi reduc activarea accidentală.</td></tr>
+<tr class="group"><td colspan="2">Acțiuni</td></tr>
+<tr><td>Urmărește <span class="advanced">Avansat</span></td><td>Alege ce acțiuni pe zona goală a ferestrei active urmează: Fereastra activă de pe ecranul curent sau Fereastra activă de pe toate ecranele.</td></tr>
+<tr><td>Buton stânga / Trage fereastra activă <span class="advanced">Avansat</span></td><td>Activează tragerea din spațiul gol al dock-ului pentru a muta sau maximiza/restaura fereastra activă urmărită.</td></tr>
+<tr><td>Buton mijlociu / Închide fereastra activă <span class="advanced">Avansat</span></td><td>Activează click-ul cu butonul din mijloc pe spațiul gol al dock-ului pentru a închide fereastra activă urmărită.</td></tr>
+<tr><td>Rotița mouse-ului <span class="advanced">Avansat</span></td><td>Alege ce face rotița deasupra spațiului gol al dock-ului: Nicio acțiune, Comutare între desktopuri, Comutare între activități, Comutare între sarcini sau Comutare și minimizare sarcini.</td></tr>
+<tr class="group"><td colspan="2">Elemente</td></tr>
+<tr><td>Tooltips subțiri pentru titluri la trecerea cu mouse-ul</td><td>Afișează tooltips compacte pentru titlurile widget-urilor. Previzualizările ferestrelor din sarcini sunt controlate separat de acțiunea Hover pentru sarcini.</td></tr>
+<tr><td>Zoom la widget-uri la trecerea cu mouse-ul</td><td>Permite zoom-ul widget-urilor împreună cu dock-ul. Dezactivează această opțiune pentru a menține iconițele widget-urilor clare; iconițele sarcinilor și lansatoarele vor face totuși zoom.</td></tr>
+<tr><td>Extinde popup-ul prin rotița mouse-ului</td><td>Derulează deasupra unui widget suportat pentru a afișa sau ascunde popup-ul acestuia.</td></tr>
+<tr><td>Ajustează dimensiunea automat când este necesar</td><td>Micșorează elementele când depășesc lungimea disponibilă și le mărește din nou când se încadrează.</td></tr>
+<tr><td>Activează scurtăturile globale bazate pe poziție</td><td>Permite scurtăturilor globale bazate pe poziție să activeze elementele acestui dock. Doar un dock per layout ar trebui să folosească această opțiune.</td></tr>
+<tr class="group"><td colspan="2">Flotant</td></tr>
+<tr><td>Folosește întotdeauna spațiu flotant pentru interacțiunea utilizatorului <span class="advanced">Avansat</span></td><td>Includeți spațiul flotant în zona utilizată pentru interacțiunea cu widgeturile și ferestrele.</td></tr>
+<tr><td>Ascundeți spațiul flotant pentru ferestrele maximizate <span class="advanced">Avansat</span></td><td>Eliminați spațiul flotant atunci când o fereastră maximizată are nevoie de marginea ecranului.</td></tr>
+<tr><td>Întârziați ascunderea spațiului flotant până când mouse-ul părăsește <span class="advanced">Avansat</span></td><td>Așteptați până când pointerul părăsește zona înainte de a ascunde spațiul, pentru a evita clicurile accidentale pe elementele din apropiere.</td></tr>
+<tr><td>Oglindiți spațiul flotant când este afișat <span class="advanced">Avansat</span></td><td>În modul Întotdeauna Vizibil, oglindiți spațiul pe partea opusă a dock-ului.</td></tr>
+<tr class="group"><td colspan="2">Mediu</td></tr>
+<tr><td>Ridicați la schimbarea desktopului <span class="advanced">Avansat</span></td><td>Revelați temporar dock-ul când desktopul virtual se schimbă. Această opțiune nu este utilizată de Întotdeauna Vizibil sau Ferestrele Sub Dock.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Aspect</h3>
+<p class="note">Margini, Culori, Rază/Umbre, Ajustări Dinamice ale Lungimii, Vizibilitate Dinamică și Excepții necesită modul Avansat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elemente</td></tr>
+<tr><td>Stil Dock</td><td>Alegeți Clasic sau Modern pentru a aplica o presetare. În oricare stil, utilizați comutatoarele de sub Stil Dock pentru a configura independent aranjamentul elementelor, fundalul conturat, spațierea minimă a elementelor, spațiul flotant automat și indicatorii compacti ai sarcinilor.</td></tr>
+<tr><td>Păstrați elementele dock-ului împreună</td><td>Utilizați un singur grup pentru elementele dock-ului, inclusiv când alinierea dock-ului este Justificată.</td></tr>
+<tr><td>Utilizați fundalul interior cu o contur</td><td>Utilizați fundalul presetat cu un contur și stilizare pentru spațierea, colțurile rotunjite și umbra sa.</td></tr>
+<tr><td>Utilizați o spațiere minimă mai largă a elementelor</td><td>Creșteți spațierea minimă în jurul elementelor dock-ului. Valorile mai mari setate cu controalele de margini se aplică în continuare.</td></tr>
+<tr><td>Utilizați un spațiu flotant automat</td><td>Calculați un spațiu la marginea ecranului în funcție de dimensiunea pictogramei atunci când o valoare specifică a spațiului nu este setată.</td></tr>
+<tr><td>Utilizați indicatori compacti pentru sarcini</td><td>Utilizați aspectul compact pentru indicatorii de sarcină Latte. Alegeți forma indicatorului în Efecte.</td></tr>
+<tr><td>Restaurare presetare</td><td>Butonul din partea de jos a ferestrei Editare Dock restaurează imediat Comportament, Aspect, Efecte și toate filele Sarcini la presetarea Dock livrată pentru stilul Clasic/Modern curent, inclusiv opțiunile ascunse de modulul Avansat. Ecranul, marginea dock-ului, lansatoarele și widgeturile sunt păstrate. Alinierea, vizibilitatea și întârzierile se resetează. Partajarea lansatoarelor revine la grupul local implicit, păstrând o copie a listei efective de lansatoare; listele partajate ale altor dock-uri rămân neschimbate. Culorile personalizate și suprascrierile indicatorilor se resetează. Presetarea combină șablonul implicit Dock livrat cu valorile implicite ale schemei de configurare. Aceasta este separată de simpla comutare a Stilului Dock. Stilul Clasic dezactivează implicit cele cinci comutatoare de aspect sub Stil Dock. Stilul Modern le activează. Ambele presetări utilizează aceleași valori implicite pentru opțiunile rămase.</td></tr>
+<tr><td>Dimensiune absolută / Dimensiune relativă</td><td>Setați dimensiunea pictogramei în pixeli sau ca o proporție a ecranului. Dimensiunea relativă este utilă în configurațiile cu DPI ridicat sau cu mai multe ecrane.</td></tr>
+<tr><td>Zoom la trecerea cursorului</td><td>Setați cât de mult cresc elementele sub cursor.</td></tr>
+<tr class="group"><td colspan="2">Lungime</td></tr>
+<tr><td>Maxim / Minim / Decalaj</td><td>Setați lungimea maximă și minimă a dock-ului și mutați-l de-a lungul marginii ecranului.</td></tr>
+<tr><td>Ajustări dinamice ale lungimii <span class="advanced">Avansat</span></td><td>Maximizează lungimea panoului în prezența ferestrelor maximizate: extinde dock-ul la lungime completă atunci când este prezentă o fereastră maximizată. Fundalul trebuie să fie activat.</td></tr>
+<tr class="group"><td colspan="2">Margini</td></tr>
+<tr><td>Margini / Lungime / Grosime / Spațiu flotant <span class="advanced">Avansat</span></td><td>Setează marginea externă de-a lungul dock-ului, marginea de-a lungul grosimii sale și spațiul dintre dock și marginea ecranului.</td></tr>
+<tr><td>Spațiu de la ferestrele maximizate (px) <span class="advanced">Avansat</span></td><td>Rezervă un spațiu suplimentar de 0–128 pixeli între ferestre și acest dock în modul Întotdeauna Vizibil. Implicit: 0. Acesta este separat de spațiul flotant de la marginea ecranului și se adaugă la orice spațiu oglindit; modurile de ascundere automată nu rezervă acest spațiu.</td></tr>
+<tr class="group"><td colspan="2">Culori</td></tr>
+<tr><td>Culori / Paletă <span class="advanced">Avansat</span></td><td>Alege Culorile Tematicii Plasma, Culori Întunecate, Culori Deschise, Culori Personalizate de Layout, Inversare sau Culori Inteligente Bazate pe Fundalul Desktop-ului. Culorile Personalizate de Layout utilizează schema de culori a layout-ului; Inteligente urmează tapetul.</td></tr>
+<tr><td>Utilizează culoarea de fundal personalizată / Culoarea de zi <span class="advanced">Avansat</span></td><td>Suprascrie fundalul acestui dock cu o culoare aleasă; contrastul textului se ajustează automat. Dezactivat implicit. Paletele derivate din fereastră și paleta Plasma pentru applet-urile expandate păstrează prioritatea. Opacitatea rămâne o setare separată a fundalului.</td></tr>
+<tr><td>Comută culorile de fundal în funcție de ora din zi / Culoarea de noapte / Ziua începe (ora locală) / Noaptea începe (ora locală) <span class="advanced">Avansat</span></td><td>Opțional, comutați între două culori personalizate folosind ore locale în format 24 de ore. Valori implicite: zi 07:00, noapte 19:00. Ora de început este inclusivă. Intervalele pot traversa miezul nopții; orele egale păstrează culoarea de zi pe toată ziua. Dezactivarea programării păstrează culoarea de zi. Ceasul este verificat în fiecare secundă, inclusiv după reluare.</td></tr>
+<tr class="group"><td colspan="2">Fundal</td></tr>
+<tr><td>Fundal</td><td>Fundalul este un comutator pornit/oprit. Când este activat, utilizați controalele de mai jos pentru a seta grosimea, opacitatea, raza și umbra.</td></tr>
+<tr><td>Opacitate / Opacitate ocupată</td><td>Setați opacitatea fundalului. Același glisor se numește Opacitate ocupată când Ascunde fundalul când nu este necesar și Preferă fundal opac când atinge orice fereastră sunt ambele activate. Def. restaurează valoarea implicită a temei.</td></tr>
+<tr><td>Rază / Umbră <span class="advanced">Avansat</span></td><td>Setați raza colțurilor fundalului și dimensiunea umbrei. Def. utilizează valoarea implicită a temei.</td></tr>
+<tr><td>Estompare / Umbre / Contur / Toate colțurile <span class="advanced">Avansat</span></td><td>Activați estomparea fundalului, umbra fundalului, conturul și colțurile rotunjite. Toate colțurile este disponibil doar pentru anumite geometrii plutitoare/justificate.</td></tr>
+<tr class="group"><td colspan="2">Vizibilitate dinamică</td></tr>
+<tr><td>Preferă fundal opac când atinge orice fereastră <span class="advanced">Avansat</span></td><td>Eliminați transparența fundalului în timp ce o fereastră atinge dock-ul.</td></tr>
+<tr><td>Ascunde fundalul când nu este necesar <span class="advanced">Avansat</span></td><td>Ascunde fundalul cu excepția cazului în care o fereastră atinge dock-ul sau fundalul desktopului este ocupat.</td></tr>
+<tr><td>Ascunde umbra fundalului pentru ferestrele maximizate <span class="advanced">Avansat</span></td><td>Ascunde umbra fundalului în timp ce o fereastră maximizată activă atinge dock-ul.</td></tr>
+<tr class="group"><td colspan="2">Excepții</td></tr>
+<tr><td>Preferă fundalul și culorile Plasma pentru appleturile extinse<span class="advanced">Avansat</span></td><td>Utilizează un fundal opac în stil Plasma și culorile Plasma în timp ce popup-urile widget-urilor sunt extinse.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efecte</h3>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Umbre</td></tr>
+<tr><td>Umbre</td><td>Activează sau dezactivează umbrele widget-urilor. Dimensiunea și Opacitatea sunt dezactivate când umbrele sunt oprite.</td></tr>
+<tr><td>Dimensiune / Opacitate</td><td>Setează dimensiunea și opacitatea umbrei widget-ului.</td></tr>
+<tr><td>Culoare implicită / Culoare temă / culoare personalizată</td><td>Alege culoarea implicită a umbrei, o culoare din paleta temei sau fă clic pe eșantionul de culoare pentru a alege o culoare personalizată.</td></tr>
+<tr class="group"><td colspan="2">Animații</td></tr>
+<tr><td>Animații / x1 / x2 / x3</td><td>Activează sau dezactivează toate animațiile dock-ului. x1 este viteza normală, x2 este mai lentă, x3 este cea mai lentă.</td></tr>
+<tr class="group"><td colspan="2">Indicatoare</td></tr>
+<tr><td>Indicatoare</td><td>Activează sau dezactivează indicatoarele pentru sarcini active. Când sunt activate, alege indicatorul Latte sau un plugin de indicator personalizat; opțiunile specifice plugin-ului apar în fila sa.</td></tr>
+<tr><td>Utilizează puncte în stil macOS</td><td>Indicatorul Latte utilizează implicit puncte în stil macOS când indicatoarele compacte pentru sarcini sunt activate în Aspect. Dezactivează Utilizează puncte în stil macOS în Efecte pentru a alege manual Linie sau Puncte.</td></tr>
+<tr><td>Utilizează culorile iconițelor aplicațiilor</td><td>Opțional, colorează indicatoarele pentru sarcini cu culoarea dominantă a iconiței fiecărei aplicații, ajustată pentru contrastul cu fundalul. Selectează Linie pentru sublinieri colorate. Dezactivat implicit; appleturile păstrează culorile paletei.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Sarcini</h3>
+<p>Lansatoarele de sarcini încep să fie rearanjate pe alte dock-uri care partajează lista de lansatoare după ce plasați pictograma. Ordinea poate dura o clipă pentru a se stabiliza. Spațiile dintre separatoare rămân pe loc atunci când dock-ul receptor salvează noua ordine. Tragerea unei aplicații deja fixate păstrează lansatorul existent, inclusiv atunci când acel lansator urmează aplicația implicită a sistemului. Noile separatoare ocupă spațiu odată ce ajung la spațiul selectat.</p>
+<p>Când adăugați sau trageți un widget lângă un separator la marginea zonei de sarcini sau a tăvii de sistem, widget-ul este plasat în exteriorul separatorului. Separatorul rămâne lângă zona de sarcini sau tavă.</p>
+<p>Când fixați o aplicație din meniul de aplicații, pictograma sa apare înaintea oricăror separatoare de la sfârșitul listei de sarcini. Separatorul din dreapta aparține grupului de aplicații fixate, astfel încât aplicațiile în execuție care nu sunt fixate apar dincolo de acesta.</p>
+<p>Slotul de sarcină rămâne evidențiat și pictograma rămâne vizibilă în timp ce o trageți pentru a rearanja sarcinile. Când o nouă sarcină alunecă în interior, dock-ul începe să îi rezerve slotul de la dimensiunea inițială a animației.</p>
+<p class="note">Insignele, Animațiile, Derularea, Acțiunile și unele opțiuni de Interacțiune/Filtre necesită modul Avansat. Opțiunea de a afișa doar lansatoarele și de a ascunde toate sarcinile dezactivează acțiunile și filtrele legate de ferestre.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insigne</td></tr>
+<tr><td>Notificări din sarcini <span class="advanced">Avansat</span></td><td>Afișează numărul de notificări necitite pe pictogramele sarcinilor.</td></tr>
+<tr><td>Informații de progres pentru sarcini <span class="advanced">Avansat</span></td><td>Afișează insigne de progres, de exemplu în timp ce Dolphin copiază fișiere.</td></tr>
+<tr><td>Redare audio din sarcini <span class="advanced">Avansat</span></td><td>Afișează o insignă audio pentru aplicațiile care redau sunet. Potrivirea preferă identificatori expliciți de desktop/aplicație. Informațiile generice despre procesul browserului nu sunt suficiente pentru a identifica o anumită PWA; fluxurile ambigue sunt lăsate neatribuite, în loc să ofere controale audio aplicațiilor neasociate. Aplicațiile Electron independente se pot potrivi totuși cu propriul proces audio. Starea de redare și activitatea de ieșire ascund fluxurile întrerupte chiar dacă aplicația își menține conexiunea audio deschisă. Fără starea playerului, liniștea scurtă este tolerată timp de aproximativ o secundă.</td></tr>
+<tr><td>Culoare proeminentă pentru insigna de notificare <span class="advanced">Avansat</span></td><td>Utilizează o insignă de notificare mai puternică, de obicei roșie. Necesită Notificări din sarcini.</td></tr>
+<tr><td>Modifică volumul la derularea insignei audio <span class="advanced">Avansat</span></td><td>Faceți clic pe insigna audio pentru a dezactiva/activa sunetul sau derulați peste ea pentru a modifica volumul. Necesită Redare audio din sarcini.</td></tr>
+<tr class="group"><td colspan="2">Interacțiune</td></tr>
+<tr><td>Lansatoarele sunt adăugate doar în applet-ul de sarcini curent</td><td>Adaugă lansatoarele plasate doar în acest widget de sarcini, nu ca widget-uri separate sau în alte widget-uri de sarcini.</td></tr>
+<tr><td>Acțiuni de fereastră în meniul contextual <span class="advanced">Avansat</span></td><td>Afișează acțiuni specifice ferestrei în meniul contextual al sarcinii.</td></tr>
+<tr><td>Previzualizarea ferestrei se comportă ca un popup <span class="advanced">Avansat</span></td><td>Deschide previzualizările ca un popup în loc de un sfat. Acțiunea Hover trebuie să solicite previzualizări; aceasta modifică doar modul în care sunt afișate.</td></tr>
+<tr><td>Bazat pe poziție, scurtăturile se aplică doar sarcinilor curente<span class="advanced">Avansat</span></td><td>Limitează scurtăturile globale bazate pe poziție la acest widget de sarcini.</td></tr>
+<tr class="group"><td colspan="2">Filtre</td></tr>
+<tr><td>Afișează doar sarcinile de pe ecranul curent</td><td>Afișează ferestrele de pe ecranul acestui dock.</td></tr>
+<tr><td>Afișează doar sarcinile de pe desktopul curent</td><td>Afișează ferestrele de pe desktopul virtual curent.</td></tr>
+<tr><td>Afișează secțiunea ferestrelor minimizate</td><td>Implicit dezactivat. Afișează ferestrele minimizate ca pictograme individuale după sarcinile obișnuite. Treci cu mouse-ul sau focalizează o pictogramă pentru a vedea aplicația și titlul ferestrei, și activeaz-o pentru a restaura fereastra. Când o aplicație are mai multe ferestre minimizate, un mic indicator afișează secvența fiecărei ferestre și totalul pentru acea aplicație. Secțiunea respectă filtrele de sarcini și partajează derularea pentru depășirea sarcinilor. Activează Derularea pentru a accesa ferestrele din afara ecranului folosind acțiunea configurată pentru rotița mouse-ului sau pentru trecerea la margine. Modul exclusiv pentru lansatoare ascunde această secțiune.</td></tr>
+<tr><td>Afișează doar sarcinile din lansatoare<span class="advanced">Avansat</span></td><td>Afișează ferestrele doar pentru aplicațiile deja prezente în lista de lansatoare.</td></tr>
+<tr><td>Afișează doar lansatoarele și ascunde toate sarcinile<span class="advanced">Avansat</span></td><td>Afișează pictogramele lansatoarelor și ascunde sarcinile în execuție. Aceasta dezactivează, de asemenea, acțiunile și filtrele legate de ferestre.</td></tr>
+<tr><td>Afișează doar sarcinile grupate pentru aceeași aplicație<span class="advanced">Avansat</span></td><td>Grupează implicit ferestrele aceleiași aplicații.</td></tr>
+<tr class="group"><td colspan="2">Animații</td></tr>
+<tr><td>Animează lansatoarele când sunt declanșate<span class="advanced">Avansat</span></td><td>Animează lansatoarele când sunt declanșate.</td></tr>
+<tr><td>Animează sarcinile care necesită atenție<span class="advanced">Avansat</span></td><td>Animează sarcinile care solicită atenție.</td></tr>
+<tr><td>Animează intrarea și ieșirea ferestrelor individuale<span class="advanced">Avansat</span></td><td>Animați ferestrele noi și închise individuale.</td></tr>
+<tr><td>Sarcinile grupate fac ca ferestrele noi să sară <span class="advanced">Avansat</span></td><td>Animați o fereastră nouă în interiorul unui grup de sarcini.</td></tr>
+<tr><td>Sarcinile grupate alunecă pentru a scoate ferestrele închise <span class="advanced">Avansat</span></td><td>Animați o fereastră închisă în interiorul unui grup de sarcini.</td></tr>
+<tr class="group"><td colspan="2">Lansatoare</td></tr>
+<tr><td>Grup unic</td><td>Atribuiți acestui widget de sarcini propria listă de lansatoare.</td></tr>
+<tr><td>Grup de aspect</td><td>Partajați lansatoarele cu widgeturile de sarcini din același aspect. Acest buton este afișat doar când docul utilizează deja Grup de aspect.</td></tr>
+<tr><td>Grup global</td><td>Partajați lansatoarele cu widgeturile de sarcini din toate aspectele.</td></tr>
+<tr class="group"><td colspan="2">Derulare</td></tr>
+<tr><td>Derulare <span class="advanced">Avansat</span></td><td>Activați derularea când sarcinile depășesc spațiul disponibil. Funcționează cu orice preset de doc, inclusiv când Opțiunea Mențineți elementele docului împreună este activată.</td></tr>
+<tr><td>Manual <span class="advanced">Avansat</span></td><td>Alegeți Derulare dezactivată, Doar derulare verticală/orizontală sau Derulare orizontală și verticală. Alegerea unei singure direcții depinde de orientarea docului.</td></tr>
+<tr><td>Automat <span class="advanced">Avansat</span></td><td>Activați sau dezactivați derularea automată.</td></tr>
+<tr class="group"><td colspan="2">Acțiuni</td></tr>
+<tr><td>Click stânga <span class="advanced">Avansat</span></td><td>Acțiune pentru un click stânga pe o sarcină: Niciuna, Închide fereastra sau grupul, Nouă instanță, Minimizează/Restaurează, Parcurge sarcinile, Comută gruparea sarcinilor, Prezentare ferestre, Previzualizare ferestre, Evidențiere ferestre sau Previzualizare și evidențiere ferestre.</td></tr>
+<tr><td>Click mijlociu <span class="advanced">Avansat</span></td><td>Acțiune pentru un click mijlociu pe o sarcină. Opțiunile sunt aceleași ca pentru Click stânga.</td></tr>
+<tr><td>Hover <span class="advanced">Avansat</span></td><td>Acțiuni la hover: Niciuna, Previzualizare ferestre, Evidențiere ferestre sau Previzualizare și evidențiere ferestre. Sfaturile pentru titlul sarcinii sunt controlate în Comportament.</td></tr>
+<tr><td>Rotița <span class="advanced">Avansat</span></td><td>Acțiuni cu rotița mouse-ului: Niciuna, Parcurgeți sarcinile sau Parcurgeți și minimizați sarcinile.</td></tr>
+<tr><td>Modificator + clic <span class="advanced">Avansat</span></td><td>Țineți apăsat Shift, Ctrl, Alt sau Meta și faceți clic stânga, mijlociu sau dreapta pentru a executa o acțiune suplimentară. Alegeți modificatorul, butonul și acțiunea; aceasta este separată de acțiunile principale de mai sus.</td></tr>
+</tbody></table></div>
+<p class="note">Filtrul de activitate curentă este ascuns în Plasma 6 deoarece suportul KActivities este nesigur.</p></section><section id="configure-latte"><h2>Configurați Latte</h2><p class="note">Editorul de aspecte gestionează aspectele și docurile lor. Preferințele controlează comportamentul la nivelul aplicației. Aplicare salvează modificările în așteptare din fila curentă; Resetare restaurează starea salvată a acelei file; Restaurare valori implicite pregătește valorile implicite pentru revizuire. Ecrane... gestionează referințele de ecran stocate.</p>
+<h3 id="layouts">Editor de aspecte</h3>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr><td>Un singur aspect în orice moment</td><td>Utilizați un singur aspect pentru toate activitățile.</td></tr>
+<tr><td>Aspecte multiple bazate pe activități</td><td>Atribuiți aspecte diferite activităților; mai multe aspecte pot rămâne încărcate.</td></tr>
+<tr><td>Comutare</td><td>Activați aspectul selectat. Aplicați mai întâi modificările în așteptare; Latte nu va comuta dacă există modificări nesalvate.</td></tr>
+<tr><td>Activități...</td><td>Deschideți managerul de Activități din Plasma. Utilizați coloana Activități sau Activat pentru a atribui acest aspect activităților.</td></tr>
+<tr><td>Nou / Duplicare / Eliminare</td><td>Creați, copiați sau eliminați un aspect. Duplicarea aici copiază întregul aspect, nu un doc individual. Aspectele active și blocate nu pot fi eliminate.</td></tr>
+<tr><td>Activat</td><td>Atribuiți acest aspect uneia sau mai multor activități pentru ca Activitățile Plasma să-l poată activa. Afișat doar în modul cu aspecte multiple.</td></tr>
+<tr><td>Doar citire</td><td>Protejați configurația aspectului împotriva modificărilor.</td></tr>
+<tr><td>Detalii...</td><td>Deschideți dialogul de detalii ale aspectului pentru pictogramă, culori personalizate, marginea ferestrei contextuale și vizibilitatea meniului contextual.</td></tr>
+<tr><td>Dock-uri...</td><td>Deschideți lista de dock-uri pentru acest aspect: nume, ecran, margine, aliniere, widgeturi incluse, și adăugare/duplicare/ștergere/import/export.</td></tr>
+<tr><td>Import... / Export...</td><td>Importați un aspect dintr-un fișier local sau din KDE Store; exportați-l pentru backup sau ca șablon. Fișier → Import Configuration / Export Configuration gestionează un backup complet al aplicației.</td></tr>
+<tr><td>Nume / În Meniu / Activități</td><td>Lista de aspecte are coloanele Nume, În Meniu și Activități. Editați Nume și Activități direct în listă; În Meniu controlează dacă aspectul apare în meniul Layouts al dock-ului.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalii Aspect</h3>
+<p>Deschideți cu Layouts Editor → Details... pentru a edita aspectul selectat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr><td>Aspect</td><td>Alegeți ce aspect să editați.</td></tr>
+<tr><td>Pictogramă</td><td>Alegeți o pictogramă pentru aspect. Butonul de ștergere o elimină.</td></tr>
+<tr><td>Culori personalizate</td><td>Alegeți un fișier de schemă de culori personalizat pentru acest aspect.</td></tr>
+<tr><td>Margine PopUp</td><td>Setați marginea utilizată de ferestrele contextuale ale aspectului; dezactivat înseamnă utilizarea valorii implicite.</td></tr>
+<tr><td>Afișează în meniul contextual al aspectelor când este posibil</td><td>Afișează acest aspect în meniul Layouts al dock-ului când activitatea curentă permite acest lucru.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialog Dock-uri</h3>
+<p>Deschideți cu Layouts Editor → Docks... pentru a gestiona dock-urile din aspectul selectat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Coloane</td></tr>
+<tr><td>Nume</td><td>Numele dock-ului. Dublu-clic pentru a-l redenumi.</td></tr>
+<tr><td>Ecran</td><td>Ecranul din care face parte docul, inclusiv Primar, Toate ecranele și Toate ecranele secundare.</td></tr>
+<tr><td>Margine</td><td>Marginea ecranului utilizată de doc.</td></tr>
+<tr><td>Aliniere</td><td>Alinierea docului de-a lungul marginii sale.</td></tr>
+<tr><td>Include</td><td>Widgeturi și subconținuturi incluse în doc. Această coloană este doar pentru citire.</td></tr>
+<tr class="group"><td colspan="2">Butoane</td></tr>
+<tr><td>Nou</td><td>Creați un doc dintr-un șablon.</td></tr>
+<tr><td>Duplicat</td><td>Creați o copie independentă a docului selectat, sau un alt clone dacă docul selectat este un clone.</td></tr>
+<tr><td>Eliminare</td><td>Eliminați docul selectat. Clonele sunt eliminate împreună cu originalul lor.</td></tr>
+<tr><td>Import...</td><td>Importați un doc dintr-un fișier șablon local.</td></tr>
+<tr><td>Export...</td><td>Exportați docul selectat pentru backup sau ca șablon. Dialogul de șablon vă permite să alegeți ce setări ale widgeturilor să fie incluse; excludeți widgeturile cu date personale, cum ar fi conturile de email sau calendar.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialogul Ecrane</h3>
+<p>Deschideți cu File → Screens... pentru a curăța referințele la ecrane salvate de Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr><td>Lista ecranelor</td><td>Listează referințele la ecrane stocate în Latte, inclusiv ecrane care nu mai sunt conectate.</td></tr>
+<tr><td>Selectați ecranele obsolete</td><td>Bifați doar ecranele care nu mai există. Ecranele active și ecranele utilizate de un layout nu pot fi eliminate.</td></tr>
+<tr><td>Deselectați tot</td><td>Goliți selecția înainte de a alege un set diferit.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferințe</h3>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr><td>Afișează fereastra informativă pentru activarea automată a layouturilor</td><td>Afișează o fereastră de informații când un layout se activează automat.</td></tr>
+<tr><td>Efect Parabolic / Mic / Mediu / Mare</td><td>Setați răspândirea globală a zoomului la hover între elementele vecine.</td></tr>
+<tr><td>Activați pornirea automată la pornire</td><td>Porniți Latte la autentificare.</td></tr>
+<tr><td>Utilizați stilul 3D pentru insigne de notificare și comenzi rapide</td><td>Utilizați un stil dimensional pentru insigne de notificare și comenzi rapide.</td></tr>
+<tr><td>Țineți apăsat ⌘ pentru a afișa insigne de comenzi rapide</td><td>Implicit dezactivat. Țineți apăsată tasta Meta timp de aproximativ o secundă pentru a afișa docurile ascunse și insignele de comenzi rapide ale sarcinilor și widgeturilor lor; eliberați tasta pentru a le ascunde din nou. Cu setările implicite Plasma, propriul launcher se deschide și el când Meta este eliberată; modificați acea comandă rapidă în Setări de sistem dacă nu doriți acest lucru.</td></tr>
+<tr><td>Influența marjei de grosime</td><td>Alegeți cât de mult afectează marjele de grosime ale elementelor aspectul: 0%, 50% sau 100%.</td></tr>
+<tr><td>Informați desktopul Plasma despre spațiul desktop disponibil</td><td>Publicați spațiul desktop disponibil către Plasma astfel încât panourile și ferestrele să îl poată utiliza.</td></tr>
+<tr><td>Meniu contextual / Acțiuni...</td><td>Alegeți ce acțiuni din meniul contextual al docului sunt afișate întotdeauna. Acțiunile excluse sunt disponibile doar în modul de editare.</td></tr>
+<tr><td>Ecrane / întârziere de reacție la modificări</td><td>Setați cât timp așteaptă Latte înainte de a reacționa la modificările ecranului, în milisecunde. Creșteți această valoare dacă hardware-ul raportează tranziții instabile.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Acțiuni din meniul contextual</h3>
+<p>Deschideți Preferințe → Meniu contextual → Acțiuni... pentru a alege ce acțiuni ale docului sunt întotdeauna vizibile.</p>
+<div class="table-wrap"><table><thead><tr><th>Opțiune în fereastră</th><th>Ce controlează</th></tr></thead><tbody>
+<tr><td>Accesibil întotdeauna</td><td>Acțiunile din această listă sunt afișate în meniul contextual al docului în orice moment.</td></tr>
+<tr><td>Accesibil doar în modul de editare</td><td>Acțiunile din această listă apar doar în timpul editării docului. Mutați acțiunile între liste pentru a modifica acest lucru.</td></tr>
+<tr><td>Mutați între liste</td><td>Selectați o acțiune și utilizați butoanele cu săgeți pentru a o muta. Resetare și Restaurare la valorile implicite restaurează setul implicit.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Copii independente și clone</h2><p class="note">O copie și un clone arată similar pe ecran, dar se comportă diferit. O copie este un doc nou, independent. Un clone este același doc afișat pe un alt ecran. Alegeți în funcție de dacă doriți să configurați acest doc separat.</p>
+<h3 id="create-independent-copy">Creați o copie independentă</h3>
+<p>Utilizați oricare dintre aceste metode pe docul original, nu pe un clone:</p>
+<ul><li>Faceți clic dreapta pe doc și alegeți <strong>Duplicate Dock</strong>.</li><li>Deschideți <strong>Edit Dock</strong> și alegeți <strong>Add… → Duplicate Dock</strong>.</li><li>Deschideți <strong>Configure Latte → Layouts Editor → Docks…</strong>, selectați docul și alegeți <strong>Duplicate</strong>.</li></ul>
+<p>Copia primește noi ID-uri pentru doc și widget și copiază setările curente o singură dată. După aceea, puteți modifica independent ecranul, marginea, dimensiunea, aspectul, comportamentul, widgeturile și lansatoarele. Este o intrare separată în layout și poate fi eliminată cu <strong>Remove Dock</strong>.</p>
+<p>Duplicarea unui clone din dialogul Docks creează un alt clone al aceluiași original, nu un doc independent. Pentru a crea un doc independent dintr-un clone, deschideți mai întâi <strong>Edit Original Dock…</strong> și duplicați originalul.</p>
+<p>Dacă originalul utilizează <strong>Global Group</strong>, copia utilizează și ea acest grup și partajează lansatoarele. Alegeți <strong>Unique Group</strong> pe copie dacă doriți o listă separată de lansatoare. <strong>Layout Group</strong> este disponibilă doar dacă docul o folosește deja.</p>
+<h3 id="create-clone">Creează clone</h3>
+<p>Clonele sunt create de modulul de ecran al unui doc original, nu de <strong>Duplică Docul</strong>:</p>
+<ul><li><strong>Editează Docul → Ecran → Pe Toate Ecranele</strong>: originalul rămâne pe ecranul principal, iar Latte creează o clonă pe fiecare ecran secundar.</li><li><strong>Editează Docul → Ecran → Pe Toate Ecranele Secundare</strong>: originalul rămâne pe un ecran secundar, iar Latte creează clone pe ecranele secundare rămase.</li></ul>
+<p>Latte creează și elimină automat clonele când se modifică dispunerea ecranelor. Pentru a elimina clonele, setează originalul înapoi la <strong>Pe Ecranul Principal</strong> sau pe un ecran specific. O clonă nu are o opțiune <strong>Elimină Docul</strong> în meniul contextual; folosește <strong>Editează Docul Original…</strong> acolo pentru a o configura.</p>
+<p>Deschiderea editorului dintr-o clonă deschide întotdeauna setările docului original, deoarece clonele partajează configurația docului. Setările widgeturilor modificate pe o clonă actualizează și originalul.</p>
+<h3 id="differences">Diferențe pe scurt</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspect</th><th>Copie independentă</th><th>Clonă</th></tr></thead><tbody>
+<tr><td>Creată de</td><td>Duplică Docul</td><td>Ecran → Pe Toate Ecranele sau Pe Toate Ecranele Secundare</td></tr>
+<tr><td>Identitate</td><td>ID-uri noi pentru doc și widgeturi</td><td>O vizualizare legată a docului original</td></tr>
+<tr><td>Setări</td><td>Copiate o dată, apoi independente</td><td>Partajate: editarea originalului actualizează fiecare clonă; setările widgeturilor modificate pe o clonă actualizează și originalul</td></tr>
+<tr><td>Ecran și margine</td><td>Pot fi modificate independent</td><td>Urmează originalul; nu poate fi mutat sau redimensionat separat</td></tr>
+<tr><td>Lansatoare</td><td>Copiate la creare; partajare ulterioară doar prin Grup de Layout sau Grup Global</td><td>Oglindă mereu originalul</td></tr>
+<tr><td>Meniu contextual</td><td>Acțiuni complete pentru doc, inclusiv Duplică și Elimină</td><td>Afișează Editează docul original…; Duplică, Mută, Exportă și Elimină sunt ascunse</td></tr>
+<tr><td>Cum se elimină</td><td>Elimină docul</td><td>Setează originalul înapoi pe un singur ecran</td></tr>
+</tbody></table></div>
+<p><strong>Culorile pictogramei widgetului:</strong> <strong>Folosește culorile temei de pictograme</strong> în meniul contextual al unui widget împiedică Latte să coloreze pictograma acelui widget. Setarea este stocată per widget: clonele o partajează cu originalul. O copie independentă păstrează valoarea pe care o avea la creare și o poate modifica separat.</p></section></main></div><footer>Latte Dock NG · Documentație offline. Limbile de interfață indisponibile revin la engleză.</footer></body></html>

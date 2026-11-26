@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Benutzerhandbuch</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Benutzerhandbuch</h1><p>Diese Anleitung beschreibt die aktuellen Optionen. Der erweiterte Modus, der Dock-Stil und installierte Plugins können beeinflussen, welche Steuerelemente sichtbar sind. Optionen, die als „Erweitert“ markiert sind, werden im Basis-Editor ausgeblendet.</p><div class="language-menu"><label for="language-select">Sprache</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html" selected>Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Nur übersetzte Handbücher werden aufgelistet. Andere Oberflächensprachen öffnen das englische Handbuch.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Auf dieser Seite</h2><a class="chapter" href="#edit-dock">Dock bearbeiten</a><a class="subsection" href="#behavior">Verhalten</a><a class="subsection" href="#appearance">Darstellung</a><a class="subsection" href="#effects">Effekte</a><a class="subsection" href="#tasks">Aufgaben</a><a class="chapter" href="#configure-latte">Latte konfigurieren</a><a class="subsection" href="#layouts">Layout-Editor</a><a class="subsection" href="#layout-details">Layout-Details</a><a class="subsection" href="#docks-dialog">Dock-Dialog</a><a class="subsection" href="#screens-dialog">Bildschirm-Dialog</a><a class="subsection" href="#preferences">Einstellungen</a><a class="subsection" href="#context-menu-actions">Kontextmenü-Aktionen</a><a class="chapter" href="#copies-and-clones">Unabhängige Kopien und Klone</a><a class="subsection" href="#create-independent-copy">Unabhängige Kopie erstellen</a><a class="subsection" href="#create-clone">Klone erstellen</a><a class="subsection" href="#differences">Unterschiede auf einen Blick</a></nav></aside><main>
+<section id="edit-dock"><h2>Dock bearbeiten</h2><p class="note">Änderungen werden sofort wirksam. Schließen verbirgt den Editor; es werden keine Änderungen rückgängig gemacht. Anheften hält den Editor offen. Hinzufügen… → Dock duplizieren erstellt eine unabhängige Kopie eines ursprünglichen Docks; Entfernen entfernt das aktuelle Dock. Das Wechseln der Tabs hält das Fenster an Ort und Stelle. Der erweiterte Modus passt die Fenstergröße an die längste Seite an, innerhalb des verfügbaren Bildschirmbereichs. Längere Seiten scrollen innerhalb des Fensters. Ziehen Sie die Ecke zum Ändern der Größe, um die Fenstergröße in beiden Bearbeitungsmodi anzupassen.</p>
+<p class="note">Der erweiterte Modus zeigt weitere Steuerelemente an. Optionen, die als Erweitert markiert sind, werden im Basis-Editor ausgeblendet.</p>
+<h3 id="behavior">Verhalten</h3>
+<p class="note">Sichtbarkeit, Verzögerung, Aktionen, Elementverhalten, schwebender Abstand und Umgebungs-Optionen für dieses Dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sichtbarkeit</td></tr>
+<tr><td>Bildschirm / Position</td><td>Wählen Sie den Bildschirm und die Kante für dieses Dock. Bei mehreren Bildschirmen erstellen „Auf allen Bildschirmen“ und „Auf allen sekundären Bildschirmen“ verknüpfte Klone. Siehe Unabhängige Kopien und Klone.</td></tr>
+<tr><td>Ausrichtung</td><td>Positionieren Sie das Dock entlang der Bildschirmkante. Die Elementausrichtung steuert, wo Widgets innerhalb des Docks sitzen.</td></tr>
+<tr><td>Immer sichtbar</td><td>Halten Sie das Dock sichtbar und reservieren Sie Desktop-Speicherplatz, sofern der Fenstermanager dies unterstützt.</td></tr>
+<tr><td>Automatisch ausblenden</td><td>Das Dock ausblenden, bis der Zeiger seinen Aktivierungsbereich erreicht.</td></tr>
+<tr><td>Aktive Fenster umgehen</td><td>Ausblenden, wenn das aktive Fenster den Dock-Bereich berührt, und das Dock anzeigen, wenn der Zeiger eintritt.</td></tr>
+<tr><td>Maximierte Fenster umgehen</td><td>Nur ausblenden, wenn ein maximiertes Fenster auf diesem Bildschirm aktiv ist, und das Dock anzeigen, wenn der Zeiger eintritt.</td></tr>
+<tr><td>Alle Fenster umgehen</td><td>Ausblenden, wenn ein Fenster den Dock-Bereich berührt, und das Dock anzeigen, wenn der Zeiger eintritt.</td></tr>
+<tr><td>Fenster darunter</td><td>Das Dock über Fenstern halten; Fenster können darunter platziert werden.</td></tr>
+<tr><td>Fenster können abdecken</td><td>Lassen Sie Fenster das Dock abdecken. Das Dock kommt nach vorne, wenn der Zeiger den Bildschirmrand erreicht.</td></tr>
+<tr><td>Fenster immer abdecken</td><td>Fenster jederzeit über dem Dock halten; das Dock bleibt dahinter.</td></tr>
+<tr class="group"><td colspan="2">Verzögerung</td></tr>
+<tr><td>Verzögerung / Anzeigen / Ausblenden</td><td>Legen Sie fest, wie lange gewartet wird, bevor Elemente angezeigt oder ausgeblendet werden, in Millisekunden. Längere Verzögerungen reduzieren versehentliche Aktivierungen.</td></tr>
+<tr class="group"><td colspan="2">Aktionen</td></tr>
+<tr><td>Verfolgen <span class="advanced">Erweitert</span></td><td>Wählen Sie aus, welchen aktiven Fenstern die Aktionen für leere Bereiche folgen: Aktives Fenster vom aktuellen Bildschirm oder Aktives Fenster von allen Bildschirmen.</td></tr>
+<tr><td>Linke Maustaste / Aktives Fenster ziehen <span class="advanced">Erweitert</span></td><td>Aktivieren Sie das Ziehen von leerem Dock-Bereich, um das verfolgte aktive Fenster zu verschieben oder zu maximieren/wiederherzustellen.</td></tr>
+<tr><td>Mittlere Maustaste / Aktives Fenster schließen <span class="advanced">Erweitert</span></td><td>Aktivieren Sie das Mittelklicken auf leeren Dock-Bereich, um das verfolgte aktive Fenster zu schließen.</td></tr>
+<tr><td>Mausrad <span class="advanced">Erweitert</span></td><td>Wählen Sie aus, was das Mausrad über leerem Dock-Bereich tut: Keine Aktion, Durch Desktops wechseln, Durch Aktivitäten wechseln, Durch Aufgaben wechseln oder Durch Aufgaben wechseln und minimieren.</td></tr>
+<tr class="group"><td colspan="2">Elemente</td></tr>
+<tr><td>Schlanke Titel-Tooltips beim Überfahren anzeigen</td><td>Kompakte Widget-Titel-Tooltips anzeigen. Die Vorschauen der Task-Fenster werden separat durch die Task-Hover-Aktion gesteuert.</td></tr>
+<tr><td>Widgets beim Überfahren zoomen</td><td>Erlauben Sie Widgets, mit dem Dock zu zoomen. Deaktivieren Sie dies, um die Schärfe der Widget-Symbole zu erhalten; Task-Symbole und Launcher zoomen weiterhin.</td></tr>
+<tr><td>Popup über Mausrad erweitern</td><td>Scrollen Sie über ein unterstütztes Widget, um dessen Popup anzuzeigen oder auszublenden.</td></tr>
+<tr><td>Größe automatisch anpassen, wenn erforderlich</td><td>Elemente verkleinern, wenn sie die verfügbare Länge überschreiten, und wieder vergrößern, wenn sie passen.</td></tr>
+<tr><td>Globale Shortcuts basierend auf Position aktivieren</td><td>Erlauben Sie positionsbasierten globalen Shortcuts, die Elemente dieses Docks zu aktivieren. Nur ein Dock pro Layout sollte dies verwenden.</td></tr>
+<tr class="group"><td colspan="2">Schwebend</td></tr>
+<tr><td>Immer schwebenden Abstand für Benutzerinteraktion verwenden <span class="advanced">Erweitert</span></td><td>Den schwebenden Abstand in den Bereich einbeziehen, der für die Interaktion mit Widgets und Fenstern verwendet wird.</td></tr>
+<tr><td>Schwebenden Abstand für maximierte Fenster ausblenden<span class="advanced">Erweitert</span></td><td>Den schwebenden Abstand entfernen, wenn ein maximiertes Fenster den Bildschirmrand benötigt.</td></tr>
+<tr><td>Ausblenden des schwebenden Abstands verzögern, bis die Maus den Bereich verlässt<span class="advanced">Erweitert</span></td><td>Warten, bis der Zeiger den Bereich verlässt, bevor der Abstand ausgeblendet wird, um versehentliche Klicks auf nahegelegene Elemente zu vermeiden.</td></tr>
+<tr><td>Schwebenden Abstand spiegeln, wenn er angezeigt wird<span class="advanced">Erweitert</span></td><td>Im Modus 'Immer sichtbar' den Abstand auf der gegenüberliegenden Seite des Docks spiegeln.</td></tr>
+<tr class="group"><td colspan="2">Umgebung</td></tr>
+<tr><td>Beim Desktop-Wechsel hervorheben<span class="advanced">Erweitert</span></td><td>Das Dock vorübergehend anzeigen, wenn sich der virtuelle Desktop ändert. Dies wird von 'Immer sichtbar' oder 'Fenster unter Dock' nicht verwendet.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Erscheinungsbild</h3>
+<p class="note">Ränder, Farben, Radius/Schatten, dynamische Längen-Anpassungen, dynamische Sichtbarkeit und Ausnahmen erfordern den erweiterten Modus.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was sie steuert</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elemente</td></tr>
+<tr><td>Dock-Stil</td><td>Wählen Sie 'Klassisch' oder 'Modern', um eine Voreinstellung anzuwenden. In beiden Stilen können Sie über die Schalter unter 'Dock-Stil' die Anordnung der Elemente, den umrandeten Hintergrund, den minimalen Elementabstand, den automatischen schwebenden Abstand und die kompakten Task-Indikatoren unabhängig voneinander einstellen.</td></tr>
+<tr><td>Dock-Elemente zusammenhalten</td><td>Eine Gruppe für Dock-Elemente verwenden, auch wenn die Dock-Ausrichtung 'Rechtfertigen' ist.</td></tr>
+<tr><td>Hintergrund mit Einrückung und Umriss verwenden</td><td>Den Voreinstellungs-Hintergrund mit Umriss und Stil für Abstand, abgerundete Ecken und Schatten verwenden.</td></tr>
+<tr><td>Breiteren minimalen Elementabstand verwenden</td><td>Den minimalen Abstand um Dock-Elemente erhöhen. Größere Werte, die mit den Randsteuerungen festgelegt werden, gelten weiterhin.</td></tr>
+<tr><td>Automatische schwebende Lücke verwenden</td><td>Berechnet eine Bildschirmrand-Lücke basierend auf der Symbolgröße, wenn kein bestimmter Lückenwert festgelegt ist.</td></tr>
+<tr><td>Kompakte Task-Indikatoren verwenden</td><td>Verwenden Sie das kompakte Layout für die Latte-Task-Indikatoren. Wählen Sie die Indikatorform unter Effekte.</td></tr>
+<tr><td>Voreinstellung wiederherstellen</td><td>Die Schaltfläche unten im Dock-Editor stellt sofort Verhalten, Aussehen, Effekte und alle Task-Registerkarten auf die mitgelieferte Dock-Voreinstellung für den aktuellen klassischen/modernen Stil zurück, einschließlich der im erweiterten Modus ausgeblendeten Optionen. Bildschirm, Dock-Rand, Launcher und Widgets bleiben erhalten. Ausrichtung, Sichtbarkeit und Verzögerungen werden zurückgesetzt. Die Launcher-Freigabe kehrt zur Standard-Lokalen-Gruppe zurück, behält jedoch eine Kopie der effektiven Launcher-Liste bei; die freigegebenen Listen anderer Docks bleiben unverändert. Benutzerdefinierte Farben und Indikator-Überschreibungen werden zurückgesetzt. Die Voreinstellung kombiniert die mitgelieferte Standard-Dock-Vorlage mit den Standardwerten des Konfigurationsschemas. Dies ist getrennt vom bloßen Wechseln des Dock-Stils. Klassisch schaltet standardmäßig die fünf Aussehens-Schalter unter Dock-Stil aus. Modern schaltet sie ein. Beide Voreinstellungen verwenden dieselben Standardwerte für die verbleibenden Optionen.</td></tr>
+<tr><td>Absolute Größe / Relative Größe</td><td>Legen Sie die Symbolgröße in Pixeln oder als Anteil des Bildschirms fest. Die relative Größe ist bei High-DPI- oder Mehrbildschirm-Setups nützlich.</td></tr>
+<tr><td>Beim Überfahren zoomen</td><td>Legen Sie fest, wie stark Elemente unter dem Zeiger wachsen.</td></tr>
+<tr class="group"><td colspan="2">Länge</td></tr>
+<tr><td>Maximum / Minimum / Versatz</td><td>Legen Sie die maximale und minimale Länge des Docks fest und verschieben Sie es entlang des Bildschirmrands.</td></tr>
+<tr><td>Dynamische Längen-Anpassungen <span class="advanced">Erweitert</span></td><td>Panel-Länge bei maximierten Fenstern maximieren: Das Dock auf volle Länge erweitern, wenn ein maximiertes Fenster vorhanden ist. Der Hintergrund muss aktiviert sein.</td></tr>
+<tr class="group"><td colspan="2">Ränder</td></tr>
+<tr><td>Ränder / Länge / Dicke / Schwebender Abstand <span class="advanced">Erweitert</span></td><td>Legen Sie den äußeren Rand entlang des Docks, den Rand über seine Dicke und den Abstand zwischen dem Dock und dem Bildschirmrand fest.</td></tr>
+<tr><td>Abstand von maximierten Fenstern (px) <span class="advanced">Erweitert</span></td><td>Reservieren Sie im Modus 'Immer sichtbar' einen zusätzlichen Abstand von 0–128 Pixeln zwischen Fenstern und diesem Dock. Standard: 0. Dies ist getrennt vom schwebenden Abstand zum Bildschirmrand und wird zu einem gespiegelten Abstand addiert; im Modus 'Automatisch ausblenden' wird dieser Platz nicht reserviert.</td></tr>
+<tr class="group"><td colspan="2">Farben</td></tr>
+<tr><td>Farben / Palette <span class="advanced">Erweitert</span></td><td>Wählen Sie Plasma-Theme-Farben, Dunkle Farben, Helle Farben, Layout-Benutzerdefinierte Farben, Umgekehrt oder Intelligente Farben basierend auf dem Desktop-Hintergrund. Layout-Benutzerdefinierte Farben verwenden das Farbschema des Layouts; Intelligente Farben folgen dem Hintergrundbild.</td></tr>
+<tr><td>Benutzerdefinierte Hintergrundfarbe verwenden / Tagesfarbe <span class="advanced">Erweitert</span></td><td>Überschreiben Sie den Hintergrund dieses Docks mit einer gewählten Farbe; der Textkontrast passt sich automatisch an. Standardmäßig deaktiviert. Fensterabgeleitete Paletten und die Plasma-Palette für erweiterte Applets haben Vorrang. Die Deckkraft bleibt eine separate Hintergrund-Einstellung.</td></tr>
+<tr><td>Hintergrundfarben je nach Tageszeit wechseln / Nachtfarbe / Tag beginnt (Ortszeit) / Nacht beginnt (Ortszeit) <span class="advanced">Erweitert</span></td><td>Optionaler Wechsel zwischen zwei benutzerdefinierten Farben anhand lokaler 24-Stunden-Zeiten. Standardwerte: Tag 07:00, Nacht 19:00. Die Startzeit ist inklusiv. Intervalle können Mitternacht überschreiten; bei gleichen Zeiten bleibt die Tagesfarbe den ganzen Tag aktiv. Wenn der Zeitplan deaktiviert ist, bleibt die Tagesfarbe erhalten. Die Uhr wird jede Sekunde überprüft, auch nach dem Aufwachen.</td></tr>
+<tr class="group"><td colspan="2">Hintergrund</td></tr>
+<tr><td>Hintergrund</td><td>Hintergrund ist ein Ein-/Aus-Schalter. Wenn aktiviert, verwenden Sie die untenstehenden Steuerelemente, um Dicke, Deckkraft, Radius und Schatten festzulegen.</td></tr>
+<tr><td>Deckkraft / Deckkraft bei Aktivität</td><td>Legen Sie die Hintergrunddeckkraft fest. Derselbe Schieberegler wird als Deckkraft bei Aktivität bezeichnet, wenn Hintergrund ausblenden, wenn nicht benötigt und Undurchsichtigen Hintergrund bevorzugen, wenn ein Fenster den Dock berührt, beide aktiviert sind. Def. stellt den Standardwert des Themas wieder her.</td></tr>
+<tr><td>Radius / Schatten <span class="advanced">Erweitert</span></td><td>Legen Sie den Eckenradius des Hintergrunds und die Schattengröße fest. Def. verwendet den Standardwert des Themas.</td></tr>
+<tr><td>Unschärfe / Schatten / Kontur / Alle Ecken <span class="advanced">Erweitert</span></td><td>Aktivieren Sie Hintergrundunschärfe, Hintergrundschatten, Kontur und abgerundete Ecken. Alle Ecken ist nur für bestimmte schwebende/ausgerichtete Geometrien verfügbar.</td></tr>
+<tr class="group"><td colspan="2">Dynamische Sichtbarkeit</td></tr>
+<tr><td>Undurchsichtigen Hintergrund bevorzugen, wenn ein Fenster den Dock berührt <span class="advanced">Erweitert</span></td><td>Entfernen Sie die Hintergrundtransparenz, während ein Fenster den Dock berührt.</td></tr>
+<tr><td>Hintergrund ausblenden, wenn nicht benötigt <span class="advanced">Erweitert</span></td><td>Blenden Sie den Hintergrund aus, außer wenn ein Fenster den Dock berührt oder der Desktop-Hintergrund aktiv ist.</td></tr>
+<tr><td>Hintergrundschatten für maximierte Fenster ausblenden <span class="advanced">Erweitert</span></td><td>Blenden Sie den Hintergrundschatten aus, während ein aktives maximiertes Fenster den Dock berührt.</td></tr>
+<tr class="group"><td colspan="2">Ausnahmen</td></tr>
+<tr><td>Plasma-Hintergrund und -Farben für erweiterte Applets bevorzugen<span class="advanced">Erweitert</span></td><td>Undurchsichtigen Hintergrund im Plasma-Stil und Plasma-Farben verwenden, während Widget-Popups erweitert sind.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effekte</h3>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Schatten</td></tr>
+<tr><td>Schatten</td><td>Widget-Schatten ein- oder ausschalten. Größe und Deckkraft sind deaktiviert, wenn Schatten deaktiviert sind.</td></tr>
+<tr><td>Größe / Deckkraft</td><td>Größe und Deckkraft des Widget-Schattens festlegen.</td></tr>
+<tr><td>Standardfarbe / Themenfarbe / benutzerdefinierte Farbe</td><td>Standard-Schattenfarbe, eine Farbe aus der Themenpalette auswählen oder auf das Farbfeld klicken, um eine benutzerdefinierte Farbe zu wählen.</td></tr>
+<tr class="group"><td colspan="2">Animationen</td></tr>
+<tr><td>Animationen / x1 / x2 / x3</td><td>Alle Dock-Animationen ein- oder ausschalten. x1 ist normale Geschwindigkeit, x2 ist langsamer, x3 ist am langsamsten.</td></tr>
+<tr class="group"><td colspan="2">Indikatoren</td></tr>
+<tr><td>Indikatoren</td><td>Aktive Task-Indikatoren ein- oder ausschalten. Wenn aktiviert, den Latte-Indikator oder ein benutzerdefiniertes Indikator-Plugin auswählen; pluginspezifische Optionen erscheinen in dessen Tab.</td></tr>
+<tr><td>Punkte im macOS-Stil verwenden</td><td>Der Latte-Indikator verwendet standardmäßig Punkte im macOS-Stil, wenn kompakte Task-Indikatoren in der Darstellung aktiviert sind. Deaktivieren Sie 'Punkte im macOS-Stil verwenden' in Effekten, um manuell Linie oder Punkte zu wählen.</td></tr>
+<tr><td>Anwendungssymbolfarben verwenden</td><td>Task-Indikatoren optional mit der dominanten Farbe jedes Anwendungssymbols einfärben, angepasst an den Hintergrundkontrast. Wählen Sie Linie für farbige Unterstreichungen. Standardmäßig deaktiviert; Applets behalten die Palettenfarben bei.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tasks</h3>
+<p>Task-Launcher beginnen sich auf anderen Docks, die die Launcher-Liste teilen, neu anzuordnen, nachdem Sie das Symbol abgelegt haben. Die Reihenfolge kann einen Moment brauchen, um sich zu stabilisieren. Trennstrich-Abstände bleiben erhalten, wenn das empfangende Dock die neue Reihenfolge speichert. Das Ziehen einer bereits angehefteten App behält ihren bestehenden Launcher bei, auch wenn dieser der Standardanwendung des Systems folgt. Neue Trennstriche nehmen Platz ein, sobald sie die ausgewählte Lücke erreichen.</p>
+<p>Wenn Sie ein Widget neben einem Trennstrich am Rand des Aufgabenbereichs oder des System-Trays hinzufügen oder ziehen, wird das Widget außerhalb des Trennstrichs platziert. Der Trennstrich bleibt neben dem Aufgabenbereich oder Tray.</p>
+<p>Wenn Sie eine App aus dem Anwendungsmenü anheften, erscheint ihr Symbol vor allen Trennstrichen am Ende der Aufgabenliste. Der rechte Trennstrich gehört zur angehefteten Gruppe, sodass ausgeführte Apps, die nicht angeheftet sind, dahinter erscheinen.</p>
+<p>Der Aufgaben-Slot bleibt hervorgehoben und das Symbol bleibt sichtbar, während Sie es ziehen, um die Aufgaben neu anzuordnen. Wenn eine neue Aufgabe einrutscht, beginnt das Dock, ihren Slot ab der anfänglichen Animationsgröße zu reservieren.</p>
+<p class="note">Abzeichen, Animationen, Scrollen, Aktionen und einige Interaktions-/Filteroptionen erfordern den Erweiterten Modus. Nur Launcher anzeigen und alle Aufgaben ausblenden deaktiviert fensterbezogene Aktionen und Filter.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Abzeichen</td></tr>
+<tr><td>Benachrichtigungen von Aufgaben <span class="advanced">Erweitert</span></td><td>Anzahl ungelesener Benachrichtigungen auf Aufgabensymbolen anzeigen.</td></tr>
+<tr><td>Fortschrittsinformationen für Aufgaben <span class="advanced">Erweitert</span></td><td>Fortschrittsabzeichen anzeigen, z. B. während Dolphin Dateien kopiert.</td></tr>
+<tr><td>Audio-Wiedergabe aus Aufgaben <span class="advanced">Erweitert</span></td><td>Ein Audio-Abzeichen für Anwendungen anzeigen, die Ton wiedergeben. Die Zuordnung bevorzugt explizite Desktop-/Anwendungs-IDs. Allgemeine Browser-Prozessinformationen reichen nicht aus, um eine bestimmte PWA zu identifizieren; mehrdeutige Streams werden nicht zugeordnet, anstatt unrelateden Anwendungen Audio-Steuerungen zu geben. Unabhängige Electron-Anwendungen können weiterhin ihren eigenen Audio-Prozess zuordnen. Wiedergabestatus und Ausgabeaktivität verbergen pausierte Streams, auch wenn die Anwendung ihre Audio-Verbindung offen hält. Ohne Spielerstatus wird kurze Stille für etwa eine Sekunde toleriert.</td></tr>
+<tr><td>Hervorgehobene Farbe für Benachrichtigungsabzeichen <span class="advanced">Erweitert</span></td><td>Ein stärkeres, normalerweise rotes Benachrichtigungsabzeichen verwenden. Erfordert Benachrichtigungen aus Aufgaben.</td></tr>
+<tr><td>Lautstärke beim Scrollen über das Audio-Abzeichen ändern <span class="advanced">Erweitert</span></td><td>Klicken Sie auf das Audio-Abzeichen, um es stumm zu schalten oder die Stummschaltung aufzuheben, oder scrollen Sie darüber, um die Lautstärke zu ändern. Erfordert Audio-Wiedergabe aus Aufgaben.</td></tr>
+<tr class="group"><td colspan="2">Interaktion</td></tr>
+<tr><td>Starter werden nur im aktuellen Aufgaben-Applet hinzugefügt</td><td>Hinzugefügte Starter nur diesem Aufgaben-Widget hinzufügen, nicht als separate Widgets oder zu anderen Aufgaben-Widgets.</td></tr>
+<tr><td>Fensteraktionen im Kontextmenü <span class="advanced">Erweitert</span></td><td>Fensterspezifische Aktionen im Kontextmenü der Aufgabe anzeigen.</td></tr>
+<tr><td>Vorschau-Fenster verhält sich wie ein Popup <span class="advanced">Erweitert</span></td><td>Vorschauen als Popup anstelle eines Tooltip öffnen. Die Hover-Aktion muss Vorschauen anfordern; dies ändert nur, wie sie angezeigt werden.</td></tr>
+<tr><td>Positionsbezogene Tastenkombinationen nur auf aktuelle Aufgaben anwenden<span class="advanced">Erweitert</span></td><td>Positionsbezogene globale Tastenkombinationen auf dieses Aufgaben-Widget beschränken.</td></tr>
+<tr class="group"><td colspan="2">Filter</td></tr>
+<tr><td>Nur Aufgaben vom aktuellen Bildschirm anzeigen</td><td>Fenster vom Bildschirm dieses Docks anzeigen.</td></tr>
+<tr><td>Nur Aufgaben vom aktuellen Desktop anzeigen</td><td>Fenster vom aktuellen virtuellen Desktop anzeigen.</td></tr>
+<tr><td>Abschnitt für minimierte Fenster anzeigen</td><td>Standardmäßig deaktiviert. Zeigt minimierte Fenster als einzelne Symbole nach den regulären Aufgaben an. Bewegen Sie den Mauszeiger über ein Symbol oder fokussieren Sie es, um den Anwendungsnamen und Fenstertitel anzuzeigen, und aktivieren Sie es, um das Fenster wiederherzustellen. Wenn eine Anwendung mehrere minimierte Fenster hat, zeigt ein kleines Abzeichen die Sequenz jedes Fensters und die Gesamtanzahl für diese Anwendung an. Der Abschnitt folgt den Aufgabenfiltern und teilt sich das Überlauf-Scrollen der Aufgaben. Aktivieren Sie das Scrollen, um Fenster außerhalb des sichtbaren Bereichs über die konfigurierte Mausrad- oder Rand-Hover-Aktion zu erreichen. Im reinen Launcher-Modus wird dieser Abschnitt ausgeblendet.</td></tr>
+<tr><td>Nur Aufgaben aus Launchern anzeigen<span class="advanced">Erweitert</span></td><td>Fenster nur für Anwendungen anzeigen, die bereits in der Launcher-Liste enthalten sind.</td></tr>
+<tr><td>Nur Launcher anzeigen und alle Aufgaben ausblenden<span class="advanced">Erweitert</span></td><td>Launcher-Symbole anzeigen und laufende Aufgaben ausblenden. Dies deaktiviert auch fensterbezogene Aktionen und Filter.</td></tr>
+<tr><td>Nur gruppierte Aufgaben für dieselbe Anwendung anzeigen<span class="advanced">Erweitert</span></td><td>Fenster derselben Anwendung standardmäßig gruppieren.</td></tr>
+<tr class="group"><td colspan="2">Animationen</td></tr>
+<tr><td>Launcher bei Auslösung animieren<span class="advanced">Erweitert</span></td><td>Launcher animieren, wenn sie ausgelöst werden.</td></tr>
+<tr><td>Aufgaben, die Aufmerksamkeit erfordern, animieren<span class="advanced">Erweitert</span></td><td>Aufgaben animieren, die Aufmerksamkeit anfordern.</td></tr>
+<tr><td>Einzelne Fenster ein- und ausblenden<span class="advanced">Erweitert</span></td><td>Neue und geschlossene Einzel-Fenster animieren.</td></tr>
+<tr><td>Gruppierte Aufgaben lassen ihre neuen Fenster <span class="advanced">Erweitert</span></td><td>Ein neues Fenster innerhalb einer Aufgabengruppe animieren.</td></tr>
+<tr><td>Gruppierte Aufgaben schieben ihre geschlossenen Fenster <span class="advanced">Erweitert</span></td><td>Ein geschlossenes Fenster innerhalb einer Aufgabengruppe animieren.</td></tr>
+<tr class="group"><td colspan="2">Starter</td></tr>
+<tr><td>Eindeutige Gruppe</td><td>Diesem Aufgaben-Widget eine eigene Starterliste zuweisen.</td></tr>
+<tr><td>Layout-Gruppe</td><td>Starter mit Aufgaben-Widgets im selben Layout teilen. Diese Schaltfläche wird nur angezeigt, wenn das Dock bereits Layout-Gruppe verwendet.</td></tr>
+<tr><td>Globale Gruppe</td><td>Starter mit Aufgaben-Widgets in allen Layouts teilen.</td></tr>
+<tr class="group"><td colspan="2">Scrollen</td></tr>
+<tr><td>Scrollen <span class="advanced">Erweitert</span></td><td>Scrollen aktivieren, wenn Aufgaben den verfügbaren Platz übersteigen. Dies funktioniert mit beiden Dock-Voreinstellungen, auch wenn 'Dock-Elemente zusammenhalten' aktiviert ist.</td></tr>
+<tr><td>Manuell <span class="advanced">Erweitert</span></td><td>Wählen Sie 'Scrollen deaktiviert', 'Nur vertikales/horizontales Scrollen' oder 'Horizontales und vertikales Scrollen'. Die einseitige Auswahl hängt von der Dock-Ausrichtung ab.</td></tr>
+<tr><td>Automatisch <span class="advanced">Erweitert</span></td><td>Automatisches Scrollen ein- oder ausschalten.</td></tr>
+<tr class="group"><td colspan="2">Aktionen</td></tr>
+<tr><td>Linksklick <span class="advanced">Erweitert</span></td><td>Aktion für einen Linksklick auf eine Aufgabe: Keine, Fenster oder Gruppe schließen, Neue Instanz, Minimieren/Wiederherstellen, Durch Aufgaben blättern, Aufgabengruppierung umschalten, Fenster anzeigen, Fenster-Vorschau, Fenster hervorheben oder Vorschau und Fenster hervorheben.</td></tr>
+<tr><td>Mittelklick <span class="advanced">Erweitert</span></td><td>Aktion für einen Mittelklick auf eine Aufgabe. Die Optionen sind dieselben wie bei Linksklick.</td></tr>
+<tr><td>Schweben <span class="advanced">Erweitert</span></td><td>Schweb-Aktionen: Keine, Fenster-Vorschau, Fenster hervorheben oder Vorschau und Fenster hervorheben. Tooltips für Aufgabentitel werden unter Verhalten gesteuert.</td></tr>
+<tr><td>Mausrad <span class="advanced">Erweitert</span></td><td>Mausrad-Aktionen: Keine, Durch Aufgaben blättern oder Durch Aufgaben blättern und minimieren.</td></tr>
+<tr><td>Modifikator + Klick <span class="advanced">Erweitert</span></td><td>Halten Sie Umschalt, Strg, Alt oder Meta gedrückt und klicken Sie mit der linken, mittleren oder rechten Maustaste, um eine zusätzliche Aktion auszuführen. Wählen Sie Modifikator, Taste und Aktion aus; dies ist getrennt von den oben genannten Hauptaktionen.</td></tr>
+</tbody></table></div>
+<p class="note">Der Filter für die aktuelle Aktivität ist in Plasma 6 ausgeblendet, da die Unterstützung für KActivities unzuverlässig ist.</p></section><section id="configure-latte"><h2>Latte konfigurieren</h2><p class="note">Der Layout-Editor verwaltet Layouts und deren Docks. Die Einstellungen steuern das anwendungsweite Verhalten. Anwenden speichert ausstehende Änderungen im aktuellen Tab; Zurücksetzen stellt den gespeicherten Zustand dieses Tabs wieder her; Standardwerte wiederherstellen bereitet die Standardwerte zur Überprüfung vor. Bildschirme... verwaltet gespeicherte Bildschirmreferenzen.</p>
+<h3 id="layouts">Layout-Editor</h3>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr><td>Ein einzelnes Layout zu jeder Zeit</td><td>Verwenden Sie ein Layout für alle Aktivitäten.</td></tr>
+<tr><td>Mehrere Layouts basierend auf Aktivitäten</td><td>Weisen Sie Aktivitäten unterschiedliche Layouts zu; mehrere Layouts können geladen bleiben.</td></tr>
+<tr><td>Wechseln</td><td>Aktivieren Sie das ausgewählte Layout. Wenden Sie ausstehende Änderungen zuerst an; Latte wechselt nicht bei ungespeicherten Änderungen.</td></tr>
+<tr><td>Aktivitäten...</td><td>Öffnen Sie den Aktivitäten-Manager von Plasma. Verwenden Sie die Spalte Aktivitäten oder Aktiviert, um dieses Layout Aktivitäten zuzuweisen.</td></tr>
+<tr><td>Neu / Duplizieren / Entfernen</td><td>Erstellen, kopieren oder entfernen Sie ein Layout. Duplizieren kopiert hier das gesamte Layout, nicht ein einzelnes Dock. Aktive und gesperrte Layouts können nicht entfernt werden.</td></tr>
+<tr><td>Aktiviert</td><td>Weisen Sie dieses Layout einer oder mehreren Aktivitäten zu, damit Plasma Activities es aktivieren kann. Wird nur im Modus mit mehreren Layouts angezeigt.</td></tr>
+<tr><td>Schreibgeschützt</td><td>Schützt die Layoutkonfiguration vor Änderungen.</td></tr>
+<tr><td>Details...</td><td>Öffnet den Dialog für Layoutdetails für Symbol, benutzerdefinierte Farben, Popup-Abstand und Sichtbarkeit des Kontextmenüs.</td></tr>
+<tr><td>Docks...</td><td>Öffnet die Dock-Liste für dieses Layout: Name, Bildschirm, Kante, Ausrichtung, enthaltene Widgets sowie Neu, Duplizieren, Entfernen, Importieren und Exportieren.</td></tr>
+<tr><td>Importieren... / Exportieren...</td><td>Importiert ein Layout aus einer lokalen Datei oder dem KDE Store; exportiert es zur Sicherung oder als Vorlage. Datei → Konfiguration importieren / Konfiguration exportieren erstellt eine vollständige Anwendungssicherung.</td></tr>
+<tr><td>Name / Im Menü / Aktivitäten</td><td>Die Layoutliste enthält die Spalten Name, Im Menü und Aktivitäten. Bearbeiten Sie Name und Aktivitäten direkt in der Liste; Im Menü steuert, ob das Layout im Layout-Menü des Docks angezeigt wird.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Layoutdetails</h3>
+<p>Öffnen mit Layout-Editor → Details..., um das ausgewählte Layout zu bearbeiten.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was sie steuert</th></tr></thead><tbody>
+<tr><td>Layout</td><td>Wählen Sie aus, welches Layout bearbeitet werden soll.</td></tr>
+<tr><td>Symbol</td><td>Wählen Sie ein Symbol für das Layout. Die Schaltfläche zum Löschen entfernt es.</td></tr>
+<tr><td>Benutzerdefinierte Farben</td><td>Wählen Sie eine Datei mit einem benutzerdefinierten Farbschema für dieses Layout.</td></tr>
+<tr><td>Popup-Abstand</td><td>Legen Sie den Abstand fest, der von Layout-Popups verwendet wird; deaktiviert bedeutet, dass der Standardwert verwendet wird.</td></tr>
+<tr><td>Im Kontextmenü der Layouts anzeigen, wenn möglich</td><td>Zeigt dieses Layout im Layout-Menü des Docks an, wenn die aktuelle Aktivität dies zulässt.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dock-Dialog</h3>
+<p>Öffnen mit Layout-Editor → Docks..., um die Docks im ausgewählten Layout zu verwalten.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was sie steuert</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Spalten</td></tr>
+<tr><td>Name</td><td>Dock-Name. Doppelklicken zum Umbenennen.</td></tr>
+<tr><td>Bildschirm</td><td>Bildschirm, dem das Dock zugeordnet ist, einschließlich Primärer Bildschirm, Alle Bildschirme und Alle sekundären Bildschirme.</td></tr>
+<tr><td>Rand</td><td>Bildschirmrand, der vom Dock verwendet wird.</td></tr>
+<tr><td>Ausrichtung</td><td>Dock-Ausrichtung entlang seines Randes.</td></tr>
+<tr><td>Enthält</td><td>Widgets und Untercontainments, die im Dock enthalten sind. Diese Spalte ist schreibgeschützt.</td></tr>
+<tr class="group"><td colspan="2">Schaltflächen</td></tr>
+<tr><td>Neu</td><td>Erstellen Sie ein Dock aus einer Vorlage.</td></tr>
+<tr><td>Duplizieren</td><td>Erstellen Sie eine unabhängige Kopie des ausgewählten Docks oder eine weitere Klon-Kopie, wenn das ausgewählte Dock ein Klon ist.</td></tr>
+<tr><td>Entfernen</td><td>Entfernen Sie das ausgewählte Dock. Klone werden zusammen mit ihrem Original entfernt.</td></tr>
+<tr><td>Importieren...</td><td>Importieren Sie ein Dock aus einer lokalen Vorlagendatei.</td></tr>
+<tr><td>Exportieren...</td><td>Exportieren Sie das ausgewählte Dock zur Sicherung oder als Vorlage. Im Vorlagen-Dialog können Sie auswählen, welche Widget-Einstellungen enthalten sein sollen; lassen Sie Widgets mit persönlichen Daten wie E-Mail- oder Kalenderkonten weg.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Bildschirm-Dialog</h3>
+<p>Öffnen Sie mit Datei → Bildschirme..., um Bildschirmreferenzen zu bereinigen, die von Latte gespeichert wurden.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr><td>Bildschirmliste</td><td>Listet Bildschirmreferenzen auf, die in Latte gespeichert sind, einschließlich Bildschirme, die nicht mehr verbunden sind.</td></tr>
+<tr><td>Veraltete Bildschirme auswählen</td><td>Markieren Sie nur Bildschirme, die nicht mehr existieren. Aktive Bildschirme und Bildschirme, die von einem Layout verwendet werden, können nicht entfernt werden.</td></tr>
+<tr><td>Alle abwählen</td><td>Löschen Sie die Auswahl, bevor Sie einen anderen Satz auswählen.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Einstellungen</h3>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was es steuert</th></tr></thead><tbody>
+<tr><td>Informationsfenster für automatische Layout-Aktivierung anzeigen</td><td>Zeigen Sie ein Informationsfenster an, wenn ein Layout automatisch aktiviert wird.</td></tr>
+<tr><td>Parabolischer Effekt / Klein / Mittel / Groß</td><td>Legen Sie die globale Ausbreitung des Hover-Zooms über benachbarte Elemente fest.</td></tr>
+<tr><td>Autostart beim Start aktivieren</td><td>Latte beim Anmelden starten.</td></tr>
+<tr><td>3D-Stil für Benachrichtigungs- und Verknüpfungsabzeichen verwenden</td><td>Dimensionalen Stil für Benachrichtigungs- und Verknüpfungsabzeichen verwenden.</td></tr>
+<tr><td>⌘ gedrückt halten, um Verknüpfungsabzeichen anzuzeigen</td><td>Standardmäßig deaktiviert. Halten Sie die Meta-Taste etwa eine Sekunde lang gedrückt, um ausgeblendete Docks und die Verknüpfungsabzeichen ihrer Aufgaben und Widgets anzuzeigen; lassen Sie die Taste los, um sie wieder auszublenden. Mit den Standardeinstellungen von Plasma öffnet sich auch der eigene Launcher, wenn Meta losgelassen wird; ändern Sie dieses Tastenkürzel in den Systemeinstellungen, wenn Sie dies nicht möchten.</td></tr>
+<tr><td>Einfluss des Randabstands der Dicke</td><td>Wählen Sie, wie stark die Randabstände der Elementdicke das Layout beeinflussen: 0 %, 50 % oder 100 %.</td></tr>
+<tr><td>Plasma-Desktop über verfügbaren Desktop-Bereich informieren</td><td>Verfügbaren Desktop-Bereich an Plasma veröffentlichen, damit Panels und Fenster ihn nutzen können.</td></tr>
+<tr><td>Kontextmenü / Aktionen...</td><td>Wählen Sie aus, welche Aktionen im Dock-Kontextmenü immer angezeigt werden. Nicht ausgewählte Aktionen sind nur im Bearbeitungsmodus verfügbar.</td></tr>
+<tr><td>Bildschirme / Reaktionsverzögerung bei Änderungen</td><td>Legen Sie fest, wie lange Latte wartet, bevor es auf Bildschirmänderungen reagiert, in Millisekunden. Erhöhen Sie den Wert, wenn die Hardware instabile Übergänge meldet.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontextmenü-Aktionen</h3>
+<p>Öffnen Sie Einstellungen → Kontextmenü → Aktionen..., um auszuwählen, welche Dock-Aktionen immer sichtbar sind.</p>
+<div class="table-wrap"><table><thead><tr><th>Option im Fenster</th><th>Was sie steuert</th></tr></thead><tbody>
+<tr><td>Immer zugänglich</td><td>Aktionen in dieser Liste werden jederzeit im Dock-Kontextmenü angezeigt.</td></tr>
+<tr><td>Nur im Bearbeitungsmodus zugänglich</td><td>Aktionen in dieser Liste werden nur angezeigt, während das Dock bearbeitet wird. Verschieben Sie Aktionen zwischen den Listen, um dies zu ändern.</td></tr>
+<tr><td>Zwischen Listen verschieben</td><td>Wählen Sie eine Aktion aus und verwenden Sie die Pfeiltasten, um sie zu verschieben. Zurücksetzen und Standardwerte wiederherstellen stellt den Standardsatz wieder her.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Unabhängige Kopien und Klone</h2><p class="note">Eine Duplizierung und ein Klon sehen auf dem Bildschirm ähnlich aus, verhalten sich jedoch unterschiedlich. Eine Duplizierung ist ein neues, unabhängiges Dock. Ein Klon ist dasselbe Dock, das auf einem anderen Bildschirm angezeigt wird. Wählen Sie basierend darauf, ob Sie dieses Dock separat konfigurieren möchten.</p>
+<h3 id="create-independent-copy">Eine unabhängige Kopie erstellen</h3>
+<p>Verwenden Sie eine dieser Methoden am ursprünglichen Dock, nicht an einem Klon:</p>
+<ul><li>Klicken Sie mit der rechten Maustaste auf das Dock und wählen Sie <strong>Dock duplizieren</strong>.</li><li>Öffnen Sie <strong>Dock bearbeiten</strong> und wählen Sie <strong>Hinzufügen… → Dock duplizieren</strong>.</li><li>Öffnen Sie <strong>Latte konfigurieren → Layout-Editor → Docks…</strong>, wählen Sie das Dock aus und wählen Sie <strong>Duplizieren</strong>.</li></ul>
+<p>Die Kopie erhält neue Dock- und Widget-IDs und kopiert die aktuellen Einstellungen einmalig. Danach können Sie Bildschirm, Kante, Größe, Aussehen, Verhalten, Widgets und Launcher unabhängig voneinander ändern. Es ist ein separater Eintrag im Layout und kann mit <strong>Dock entfernen</strong> entfernt werden.</p>
+<p>Das Duplizieren eines Klons im Dialog „Docks“ erstellt einen weiteren Klon desselben Originals, kein unabhängiges Dock. Um ein unabhängiges Dock aus einem Klon zu erstellen, öffnen Sie zuerst <strong>Original-Dock bearbeiten…</strong> und duplizieren Sie das Original.</p>
+<p>Wenn das Original <strong>Globale Gruppe</strong> verwendet, verwendet die Kopie diese ebenfalls und teilt sich Launcher. Wählen Sie <strong>Eindeutige Gruppe</strong> an der Kopie, wenn Sie eine separate Launcher-Liste wünschen. <strong>Layout-Gruppe</strong> ist nur verfügbar, wenn das Dock es bereits verwendet.</p>
+<h3 id="create-clone">Klone erstellen</h3>
+<p>Klone werden durch den Bildschirmmodus eines Original-Docks erstellt, nicht durch <strong>Dock duplizieren</strong>:</p>
+<ul><li><strong>Dock bearbeiten → Bildschirm → Auf allen Bildschirmen</strong>: Das Original bleibt auf dem primären Bildschirm, und Latte erstellt einen Klon auf jedem sekundären Bildschirm.</li><li><strong>Dock bearbeiten → Bildschirm → Auf allen sekundären Bildschirmen</strong>: Das Original bleibt auf einem sekundären Bildschirm, und Latte erstellt Klone auf den verbleibenden sekundären Bildschirmen.</li></ul>
+<p>Latte erstellt und entfernt Klone automatisch, wenn sich das Bildschirm-Layout ändert. Um Klone zu entfernen, setzen Sie das Original zurück auf <strong>Auf primärem Bildschirm</strong> oder auf einen bestimmten Bildschirm. Ein Klon hat keinen <strong>Dock entfernen</strong>-Eintrag in seinem Kontextmenü; verwenden Sie dort <strong>Original-Dock bearbeiten…</strong>, um es zu konfigurieren.</p>
+<p>Das Öffnen des Editors von einem Klon aus öffnet immer die Einstellungen des Original-Docks, da Klone die Dock-Konfiguration teilen. Auf einem Klon geänderte Widget-Einstellungen aktualisieren auch das Original.</p>
+<h3 id="differences">Unterschiede auf einen Blick</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Unabhängige Kopie</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Erstellt durch</td><td>Dock duplizieren</td><td>Bildschirm → Auf allen Bildschirmen oder Auf allen sekundären Bildschirmen</td></tr>
+<tr><td>Identität</td><td>Neue Dock- und Widget-IDs</td><td>Eine verknüpfte Ansicht des Original-Docks</td></tr>
+<tr><td>Einstellungen</td><td>Einmal kopiert, dann unabhängig</td><td>Gemeinsam genutzt: Die Bearbeitung des Originals aktualisiert jeden Klon; auf einem Klon geänderte Widget-Einstellungen aktualisieren auch das Original</td></tr>
+<tr><td>Bildschirm und Rand</td><td>Kann unabhängig geändert werden</td><td>Folgt dem Original; kann nicht separat verschoben oder in der Größe geändert werden</td></tr>
+<tr><td>Starter</td><td>Bei Erstellung kopiert; spätere gemeinsame Nutzung nur über Layout-Gruppe oder globale Gruppe</td><td>Original immer spiegeln</td></tr>
+<tr><td>Kontextmenü</td><td>Vollständige Dock-Aktionen, einschließlich Duplizieren und Entfernen</td><td>Zeigt „Original-Dock bearbeiten…“ an; Duplizieren, Verschieben, Exportieren und Entfernen sind ausgeblendet</td></tr>
+<tr><td>So entfernen Sie</td><td>Dock entfernen</td><td>Das Original auf einen einzelnen Bildschirm zurücksetzen</td></tr>
+</tbody></table></div>
+<p><strong>Widget-Symbolfarben:</strong> <strong>Symbolfarbschema verwenden</strong> im Kontextmenü eines Widgets verhindert, dass Latte das Symbol dieses Widgets einfärbt. Die Einstellung wird pro Widget gespeichert: Klone teilen sie mit dem Original. Eine unabhängige Kopie behält den Wert bei, den sie zum Zeitpunkt der Erstellung hatte, und kann ihn separat ändern.</p></section></main></div><footer>Latte Dock NG · Offline-Dokumentation. Nicht verfügbare Oberflächensprachen fallen auf Englisch zurück.</footer></body></html>

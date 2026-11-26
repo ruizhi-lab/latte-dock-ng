@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="et"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG kasutusjuhend</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG kasutusjuhend</h1><p>Need juhised kirjeldavad praegusi võimalusi. Täpne režiim, dokkide stiil ja installitud pluginad võivad mõjutada, millised juhtnupud on nähtavad. Täpseks märgitud valikud on põhiredditorites peidetud.</p><div class="language-menu"><label for="language-select">Keel</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html" selected>Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Loetletud on ainult tõlgitud juhendid. Teised liidese keeled avavad ingliskeelse juhendi.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Sellel lehel</h2><a class="chapter" href="#edit-dock">Muuda dokki</a><a class="subsection" href="#behavior">Käitumine</a><a class="subsection" href="#appearance">Välimus</a><a class="subsection" href="#effects">Efektid</a><a class="subsection" href="#tasks">Ülesanded</a><a class="chapter" href="#configure-latte">Konfigureeri Latte</a><a class="subsection" href="#layouts">Paigutuste redaktor</a><a class="subsection" href="#layout-details">Paigutuse üksikasjad</a><a class="subsection" href="#docks-dialog">Dokkide dialoog</a><a class="subsection" href="#screens-dialog">Ekraanide dialoog</a><a class="subsection" href="#preferences">Eelistused</a><a class="subsection" href="#context-menu-actions">Kontekstimenüü toimingud</a><a class="chapter" href="#copies-and-clones">Sõltumatud koopiad ja kloonid</a><a class="subsection" href="#create-independent-copy">Loo sõltumatu koopia</a><a class="subsection" href="#create-clone">Loo kloonid</a><a class="subsection" href="#differences">Erinevused ülevaates</a></nav></aside><main>
+<section id="edit-dock"><h2>Muuda dokki</h2><p class="note">Muudatused jõustuvad kohe. Sulgemine peidab redaktori; see ei tühista muudatusi. Kinnitamine hoiab redaktorit avatuna. Lisa… → Kopeeri dokk loob algse doki sõltumatu koopia; Eemaldamine eemaldab praeguse doki. Vahekaartide vahetamine hoiab akna kohal. Täpne režiim määrab akna suuruse vastavalt pikimale lehele, arvestades saadaolevat ekraaniruumi. Pikemad lehed keritakse akna sees. Lohista akna suuruse muutmise nurka, et reguleerida akna suurust mõlemas redigeerimisrežiimis.</p>
+<p class="note">Täpne režiim näitab rohkem juhtelemente. Täpseks märgitud valikud on põhiredditoris peidetud.</p>
+<h3 id="behavior">Käitumine</h3>
+<p class="note">Selle doki nähtavuse, viivituse, toimingute, üksuste käitumise, hõljuva vahe ja keskkonna valikud.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see juhib</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Nähtavus</td></tr>
+<tr><td>Ekraan / Asukoht</td><td>Valige selle doki ekraan ja serv. Mitme ekraani korral loovad valikud 'Kõigil ekraanidel' ja 'Kõigil sekundaarsetel ekraanidel' seotud koopiad. Vaadake jaotist 'Sõltumatud koopiad ja kloonid'.</td></tr>
+<tr><td>Joondus</td><td>Paigutage dokki piki ekraani serva. Üksuste joondus määrab, kus vidinad dokis asuvad.</td></tr>
+<tr><td>Alati nähtav</td><td>Hoidke dokki nähtavana ja reserveerige töölaua ruum, kui aknahaldur seda toetab.</td></tr>
+<tr><td>Automaatne peitmine</td><td>Peitke dokk, kuni kursor jõuab selle aktiveerimisalasse.</td></tr>
+<tr><td>Peida aktiivse eest</td><td>Peitke, kui aktiivne aken puutub dokiala, ja näidake dokki, kui kursor siseneb.</td></tr>
+<tr><td>Peida maksimeeritud eest</td><td>Peitke ainult siis, kui maksimeeritud aken on selles ekraanis aktiivne, ja näidake dokki, kui kursor siseneb.</td></tr>
+<tr><td>Peida kõigi akende eest</td><td>Peitke, kui ükskõik milline aken puutub dokiala, ja näidake dokki, kui kursor siseneb.</td></tr>
+<tr><td>Aken jääb alla</td><td>Hoidke dokki akende kohal; aknaid saab paigutada selle alla.</td></tr>
+<tr><td>Aken võib katte</td><td>Laske akendel dokki katta. Dokk tuleb ette, kui kursor jõuab ekraani servani.</td></tr>
+<tr><td>Aken on alati peal</td><td>Hoidke aknad dokist alati kõrgemal; dokk jääb nende taha.</td></tr>
+<tr class="group"><td colspan="2">Viivitus</td></tr>
+<tr><td>Viivitus / Näita / Peida</td><td>Määrake, kui kaua oodata enne kuvamist või peitmist, millisekundites. Pikemad viivitused vähendavad juhuslikku aktiveerimist.</td></tr>
+<tr class="group"><td colspan="2">Toimingud</td></tr>
+<tr><td>Jälgi <span class="advanced">Täpsemad</span></td><td>Valige, millise aktiivse akna tühja ala toimingud järgivad: Aktiivne aken praeguselt ekraanilt või Aktiivne aken kõigilt ekraanidelt.</td></tr>
+<tr><td>Vasak nupp / Lohista aktiivset akent <span class="advanced">Täpsemad</span></td><td>Lubage dokil tühjast kohast lohistamine, et liigutada või maksimeerida/taastada jälgitavat aktiivset akent.</td></tr>
+<tr><td>Keskmise nupu klõps / Sulge aktiivne aken <span class="advanced">Täpsemad</span></td><td>Lubage keskmise hiireklõpsu kasutamine dokil tühjal kohal, et sulgeda jälgitav aktiivne aken.</td></tr>
+<tr><td>Hiire rull <span class="advanced">Täpsemad</span></td><td>Valige, mida rull dokil tühjal kohal teeb: Ei mingit toimingut, Vaheta töölaudu, Vaheta tegevusi, Vaheta ülesandeid või Vaheta ja minimeeri ülesanded.</td></tr>
+<tr class="group"><td colspan="2">Elemendid</td></tr>
+<tr><td>Pealkonna vihjed hiire kohal viibimisel</td><td>Kuvage kompaktseid vidinate pealkonna vihjeid. Ülesannete akende eelvaateid juhitakse eraldi ülesande hiire kohal viibimise toimingu kaudu.</td></tr>
+<tr><td>Suurendage vidinaid hiire kohal viibimisel</td><td>Lubage vidinatel dokiga koos suureneda. Keelake see, et hoida vidinate ikoonid teravad; ülesannete ikoonid ja käivitajad suurenevad siiski.</td></tr>
+<tr><td>Laiendage hüpikakent hiire rulliga</td><td>Kerige toetatud vidina kohal, et kuvada või peita selle hüpikaken.</td></tr>
+<tr><td>Reguleeri suurust automaatselt, kui vaja</td><td>Vähendage elemente, kui need ületavad saadaoleva pikkuse, ja suurendage neid uuesti, kui need sobivad.</td></tr>
+<tr><td>Aktiveerige globaalsete kiirklahvide abil asukoha põhjal</td><td>Lubage asukohapõhistel globaalsetel kiirklahvidel selle doki elemente aktiveerida. Iga paigutuse kohta peaks seda kasutama ainult üks dokk.</td></tr>
+<tr class="group"><td colspan="2">Hõljuv</td></tr>
+<tr><td>Kasutage alati hõljuvat vahekaugust kasutaja interaktsiooniks <span class="advanced">Täpsemad</span></td><td>Kaasa hõljuv vaheala vidinate ja akende interaktsiooni kasutatavasse piirkonda.</td></tr>
+<tr><td>Peida hõljuv vaheala maksimeeritud akende jaoks<span class="advanced">Täpsemad seaded</span></td><td>Eemalda hõljuv vaheala, kui maksimeeritud aken vajab ekraani serva.</td></tr>
+<tr><td>Viivita hõljuva vaheala peitmist, kuni hiir lahkub<span class="advanced">Täpsemad seaded</span></td><td>Oota, kuni kursor lahkub, enne vaheala peitmist, et vältida juhuslikke klõpse lähedalasuvatel elementidel.</td></tr>
+<tr><td>Peegelda hõljuv vaheala, kui see on nähtaval<span class="advanced">Täpsemad seaded</span></td><td>Alati nähtaval oleku režiimis peegelda vaheala dokki vastassuunalisel küljel.</td></tr>
+<tr class="group"><td colspan="2">Keskkond</td></tr>
+<tr><td>Tõsta esile töölaua vahetamisel<span class="advanced">Täpsemad seaded</span></td><td>Ajaline dokki esiletoomine virtuaalse töölaua vahetamisel. Seda ei kasutata Alati nähtaval ega Aknad allpool režiimides.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Välimus</h3>
+<p class="note">Marginaalid, Värvid, Raadius/Varju, Dünaamilised pikkuse kohandused, Dünaamiline nähtavus ja Erandid nõuavad Täpsemad seaded režiimi.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elemendid</td></tr>
+<tr><td>Doki stiil</td><td>Valige Klassikaline või Modernne eelseadistuse rakendamiseks. Mõlemas stiilis kasutage Doki stiili all olevaid lüliteid, et määrata sõltumatult elementide paigutus, kontuuriga taust, elementide minimaalne vahe, automaatne hõljuv vaheala ja kompaktne ülesannete näidik.</td></tr>
+<tr><td>Hoida doki elemendid koos</td><td>Kasutada ühte rühma doki elementide jaoks, sealhulgas kui doki joondus on Õigustatud.</td></tr>
+<tr><td>Kasutada tausta sissepoole nihutatud kontuuriga</td><td>Kasutada eelseadistatud tausta kontuuriga ja selle vahe, ümarate nurkade ning varju stiiliga.</td></tr>
+<tr><td>Kasutada laiemat elementide minimaalset vahet</td><td>Suurendada doki elementide ümbruse minimaalset vahet. Suuremad väärtused, mis on määratud marginaalide juhtnuppudega, jäävad kehtima.</td></tr>
+<tr><td>Kasuta automaatset hõljuvat vahekaugust</td><td>Arvuta ekraaniserva vahekaugus ikooni suuruse põhjal, kui konkreetne vahekauguse väärtus pole määratud.</td></tr>
+<tr><td>Kasuta kompaktseid ülesannete indikaatoreid</td><td>Kasuta Latte ülesannete indikaatorite kompaktset paigutust. Vali indikaatori kuju mõjudes.</td></tr>
+<tr><td>Taasta eelseadistus</td><td>Doki redigeerimise akna alumine nupp taastab käitumise, välimuse, mõjud ja kõik ülesannete vahekaardid praeguse klassikalise/kaasaegse stiili kaasa pandud doki eelseadistusele, sealhulgas täiustatud režiimi poolt peidetud valikud. Ekraan, doki serv, käivitajad ja vidinad jäävad samaks. Joondus, nähtavus ja viivitused lähtestatakse. Käivitajate jagamine naaseb vaikekohalikku rühma, säilitades tõhusa käivitajate loendi koopia; teiste dokide jagatud loendid jäävad muutmata. Kohandatud värvid ja indikaatorite ülekirjutused lähtestatakse. Eelseadistus ühendab kaasa pandud vaike-doki malli konfiguratsiooni skeemi vaikeväärtustega. See on eraldatud lihtsast doki stiili vahetamisest. Klassikaline stiil lülitab vaikimisi välja viis välimuslüliti doki stiili all. Kaasaegne stiil lülitab need sisse. Mõlemad eelseadistused kasutavad ülejäänud valikute jaoks samu vaikeväärtusi.</td></tr>
+<tr><td>Absoluutne suurus / Suhteline suurus</td><td>Määra ikooni suurus pikslites või ekraani osana. Suhteline suurus on kasulik kõrg-DPI või mitme ekraaniga seadistustes.</td></tr>
+<tr><td>Suumi hõljutamisel</td><td>Määra, kui palju elemendid hiirekursori all suurenevad.</td></tr>
+<tr class="group"><td colspan="2">Pikkus</td></tr>
+<tr><td>Maksimaalne / Minimaalne / Nihe</td><td>Määra doki maksimaalne ja minimaalne pikkus ning nihuta seda piki ekraaniserva.</td></tr>
+<tr><td>Dünaamilised pikkuse kohandused <span class="advanced">Täiustatud</span></td><td>Suurenda paneeli pikkust maksimeeritud akende olemasolul: pikenda dokki täispikkusele, kui on maksimeeritud aken. Taust peab olema lubatud.</td></tr>
+<tr class="group"><td colspan="2">Marginaalid</td></tr>
+<tr><td>Marginaalid / Pikkus / Paksus / Ujuv vahe <span class="advanced">Täpsemad seaded</span></td><td>Määra doki välimine marginaal, marginaal üle selle paksuse ja vahe doki ning ekraani serva vahel.</td></tr>
+<tr><td>Vahe maksimeeritud akendest (px) <span class="advanced">Täpsemad seaded</span></td><td>Broneeri täiendav 0–128 pikslit akende ja selle doki vahel režiimis 'Alati nähtav'. Vaikimisi: 0. See on eraldatud ekraaniserva ujuvast vahest ja liitub peegeldatud vahega; automaatse peitmise režiimid ei broneeri seda ruumi.</td></tr>
+<tr class="group"><td colspan="2">Värvid</td></tr>
+<tr><td>Värvid / Palett <span class="advanced">Täpsemad seaded</span></td><td>Valige Plasma teemavärvid, tumedad värvid, heledad värvid, paigutuse kohandatud värvid, pööratud või nutikad värvid, mis põhinevad töölaua taustal. Paigutuse kohandatud värvid kasutavad paigutuse värviskemi; nutikad värvid järgivad taustapilti.</td></tr>
+<tr><td>Kasuta kohandatud taustavärvi / Päevane värv <span class="advanced">Täpsemad seaded</span></td><td>Asenda selle doki taust valitud värviga; teksti kontrast reguleerub automaatselt. Vaikimisi keelatud. Akendest tuletatud paletid ja Plasma palett laiendatud rakendustele säilitavad prioriteedi. Läbipaistmatus jääb eraldi taustaseadeks.</td></tr>
+<tr><td>Vaheta taustavärvid päevasel ajal / Öine värv / Päev algab (kohalik aeg) / Öö algab (kohalik aeg) <span class="advanced">Täpsemad seaded</span></td><td>Valikuline lülitumine kahe kohandatud värvi vahel, kasutades kohalikku 24-tunnist aega. Vaikimisi: päev 07:00, öö 19:00. Algusaeg on kaasa arvatud. Intervallid võivad ületada kesköö; võrdsete aegade korral jääb päevavärv terveks päevaks. Ajakava väljalülitamine säilitab päevavärvi. Kella kontrollitakse iga sekundi järel, sealhulgas pärast taastamist.</td></tr>
+<tr class="group"><td colspan="2">Taust</td></tr>
+<tr><td>Taust</td><td>Taust on sisse/välja lüliti. Kui see on lubatud, kasutage allpool olevaid juhtelemente paksuse, läbipaistmatuse, raadiuse ja varju määramiseks.</td></tr>
+<tr><td>Läbipaistmatus / Hõivatud läbipaistmatus</td><td>Määrake tausta läbipaistmatus. Sama liugurit nimetatakse Hõivatud läbipaistmatus, kui nii Peida taust, kui pole vaja kui ka Eelista läbipaistmatut tausta, kui akna puudutamine on lubatud. Def. taastab teema vaikeseade.</td></tr>
+<tr><td>Raadius / Vari <span class="advanced">Täpsemad seaded</span></td><td>Määrake tausta nurkade raadius ja varju suurus. Def. kasutab teema vaikeseadet.</td></tr>
+<tr><td>Udustamine / Varjud / Kontuur / Kõik nurgad <span class="advanced">Täpsemad seaded</span></td><td>Lubage tausta udustamine, tausta vari, kontuur ja ümarad nurgad. Kõik nurgad on saadaval ainult teatud hõljuvate/õigustatud geomeetriate korral.</td></tr>
+<tr class="group"><td colspan="2">Dünaamiline nähtavus</td></tr>
+<tr><td>Eelista läbipaistmatut tausta, kui akna puudutamine <span class="advanced">Täpsemad seaded</span></td><td>Eemaldage tausta läbipaistvus, kui aken puutub dokki.</td></tr>
+<tr><td>Peida taust, kui pole vaja <span class="advanced">Täpsemad seaded</span></td><td>Peidake taust, välja arvatud juhul, kui aken puutub dokki või töölaua taust on hõivatud.</td></tr>
+<tr><td>Peida tausta vari maksimeeritud akende jaoks <span class="advanced">Täpsemad seaded</span></td><td>Peidake tausta vari, kui aktiivne maksimeeritud aken puutub dokki.</td></tr>
+<tr class="group"><td colspan="2">Erandid</td></tr>
+<tr><td>Eelistage Plasma tausta ja värve laiendatud rakenduste jaoks<span class="advanced">Täpsemad</span></td><td>Kasutage vidinate hüpikakende laiendamisel läbipaistmatut Plasma-stiilis tausta ja Plasma värve.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efektid</h3>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Varjud</td></tr>
+<tr><td>Varjud</td><td>Lülitage vidinate varjud sisse või välja. Suurus ja läbipaistmatus on keelatud, kui varjud on välja lülitatud.</td></tr>
+<tr><td>Suurus / Läbipaistmatus</td><td>Määrake vidinate varju suurus ja läbipaistmatus.</td></tr>
+<tr><td>Vaikimisi värv / Teema värv / kohandatud värv</td><td>Valige vaikimisi varju värv, värv teema paletist või klõpsake värvivaliku ruudul, et valida kohandatud värv.</td></tr>
+<tr class="group"><td colspan="2">Animatsioonid</td></tr>
+<tr><td>Animatsioonid / x1 / x2 / x3</td><td>Lülitage kõik dokki animatsioonid sisse või välja. x1 on normaalne kiirus, x2 on aeglasem, x3 on kõige aeglasem.</td></tr>
+<tr class="group"><td colspan="2">Indikaatorid</td></tr>
+<tr><td>Indikaatorid</td><td>Lülitage aktiivsete ülesannete indikaatorid sisse või välja. Kui lubatud, valige Latte indikaator või kohandatud indikaatori plugin; plugina spetsiifilised valikud kuvatakse selle kaardil.</td></tr>
+<tr><td>Kasutage macOS-stiilis punkte</td><td>Latte indikaator kasutab vaikimisi macOS-stiilis punkte, kui kompaktsete ülesannete indikaatorid on lubatud Välimuses. Lülitage Efektides välja 'Kasuta macOS-stiilis punkte', et valida käsitsi Joon või Punktid.</td></tr>
+<tr><td>Kasutage rakenduse ikoonide värve</td><td>Võimalusel värvige ülesannete indikaatorid iga rakenduse ikooni domineeriva värviga, kohandatud tausta kontrastsusega. Valige Joon värviliste alljoonte jaoks. Vaikimisi keelatud; vidinad säilitavad paleti värvid.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Ülesanded</h3>
+<p>Ülesande käivitajad hakkavad ümber järjestama teistes dokkides, mis jagavad käivitajate loendit, pärast ikooni asetamist. Järjestuse stabiliseerumine võib võtta hetke. Eraldajate tühikud jäävad paika, kui vastuvõttev dokk salvestab uue järjestuse. Juba kinnitatud rakenduse lohistamine säilitab selle olemasoleva käivitaja, sealhulgas juhul, kui see käivitaja järgib süsteemi vaikevalikut. Uued eraldajad võtavad ruumi, kui nad jõuavad valitud tühikuni.</p>
+<p>Kui lisate või lohistate vidina ülesandevaldkonna või süsteemialamendi servas oleva eraldaja kõrvale, paigutub vidin eraldajast väljapoole. Eraldaja jääb ülesandevaldkonna või süsteemialamendi kõrvale.</p>
+<p>Kui kinnitate rakenduse rakenduste menüüst, ilmub selle ikoon ülesandeloendi lõpus olevate eraldajate ette. Parempoolne eraldaja kuulub kinnitatud rühma, seega ilmuvad kinnitamata töötavad rakendused sellest kaugemale.</p>
+<p>Ülesande pesa jääb esile tõstetuks ja ikoon nähtavaks, kui lohistate ülesandeid ümber järjestamiseks. Kui uus ülesanne libiseb sisse, hakkab dokk selle pesa broneerima algsest animatsiooni suurusest.</p>
+<p class="note">Märgid, animatsioonid, kerimine, toimingud ja mõned interaktsiooni/filtrite valikud nõuavad täpsemat režiimi. Ainult käivitajate näitamine ja kõigi ülesannete varjamine keelab akendega seotud toimingud ja filtrid.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Märgid</td></tr>
+<tr><td>Teavitused ülesannetest <span class="advanced">Täpsemad</span></td><td>Näita lugemata teavituste arve ülesannete ikoonidel.</td></tr>
+<tr><td>Edenemisinfo ülesannete kohta <span class="advanced">Täpsemad</span></td><td>Kuvage edusildid, näiteks kui Dolphin faile kopeerib.</td></tr>
+<tr><td>Ülesannetest heli mängitakse <span class="advanced">Täpsemad</span></td><td>Kuvage helisild rakendustele, mis heli mängivad. Sobitamine eelistab selgeid töölaua/rakenduse identifikaatoreid. Üldine brauseri protsessi teave ei piisa konkreetse PWA tuvastamiseks; ebaselged voogud jäetakse määramata, et mitte anda juhuslikele rakendustele heli juhtimist. Sõltumatud Electroni rakendused saavad siiski sobitada oma heliprotsessi. Taasesituse olek ja väljundaktiivsus peidavad peatatud voogud isegi siis, kui rakendus hoiab heliühendust avatuna. Ilma mängija olekuta talutakse lühikest vaikus umbes ühe sekundi jooksul.</td></tr>
+<tr><td>Märguande sildi esiletõstetud värv <span class="advanced">Täpsemad</span></td><td>Kasutage tugevamat, tavaliselt punast märguande silti. Nõuab ülesannete märguandeid.</td></tr>
+<tr><td>Muutke helitugevust helisildil kerides <span class="advanced">Täpsemad</span></td><td>Klõpsake helisildil vaigistamiseks/vaigistuse tühistamiseks või kerige sellel helitugevuse muutmiseks. Nõuab ülesannetest heli mängimist.</td></tr>
+<tr class="group"><td colspan="2">Interaktsioon</td></tr>
+<tr><td>Käivitajad lisatakse ainult praegusesse ülesannete rakendusse</td><td>Lisage lohistatud käivitajad ainult sellesse ülesannete vidinasse, mitte eraldi vidinateni ega teistesse ülesannete vidinatesse.</td></tr>
+<tr><td>Akna toimingud kontekstimenüüs <span class="advanced">Täpsemad</span></td><td>Kuvage aknaspetsiifilised toimingud ülesande kontekstimenüüs.</td></tr>
+<tr><td>Eelvaate aken käitub hüpikaknana <span class="advanced">Täpsemad</span></td><td>Avage eelvaated hüpikaknana, mitte vihjena. Hõljutamise toiming peab nõudma eelvaateid; see muudab ainult nende kuvamise viisi.</td></tr>
+<tr><td>Asukohapõhised otseteed rakenduvad ainult praegustele ülesannetele<span class="advanced">Täpsemad</span></td><td>Piira asukohapõhised globaalsed otseteed selle ülesannete vidinaga.</td></tr>
+<tr class="group"><td colspan="2">Filtrid</td></tr>
+<tr><td>Kuva ainult praeguse ekraani ülesanded</td><td>Kuva selle dokiekraani aknad.</td></tr>
+<tr><td>Kuva ainult praeguse töölaua ülesanded</td><td>Kuva aknad praeguselt virtuaaltöölaualt.</td></tr>
+<tr><td>Kuva minimeeritud akende jaotis</td><td>Vaikimisi välja lülitatud. Näitab minimeeritud aknad üksikute ikoonidena tavaliste ülesannete järel. Hõljutage või keskenduge ikoonile, et näha rakenduse ja akna pealkirja, ning aktiveerige see akna taastamiseks. Kui rakendusel on mitu minimeeritud akent, näitab väike märk iga akna järjekorda ja rakenduse koguarvu. Jaotis järgib ülesannete filtreid ja jagab ülesannete ülevoolu kerimist. Lubage kerimine, et jõuda ekraaniväliste akendeni, kasutades konfigureeritud hiireratta või serva hõljutamise toimingut. Ainult käivitajate režiim peidab selle.</td></tr>
+<tr><td>Kuva ainult käivitajate ülesanded<span class="advanced">Täpsemad</span></td><td>Kuva aknad ainult rakendustele, mis on juba käivitajate loendis.</td></tr>
+<tr><td>Kuva ainult käivitajad ja peida kõik ülesanded<span class="advanced">Täpsemad</span></td><td>Kuva käivitajate ikoonid ja peida jooksvad ülesanded. See keelab ka aknaga seotud toimingud ja filtrid.</td></tr>
+<tr><td>Kuva ainult rühmitatud ülesanded sama rakenduse jaoks<span class="advanced">Täpsemad</span></td><td>Rühmita sama rakenduse aknad vaikimisi.</td></tr>
+<tr class="group"><td colspan="2">Animatsioonid</td></tr>
+<tr><td>Põrka käivitajad, kui need aktiveeritakse<span class="advanced">Täpsemad</span></td><td>Animeeri käivitajad, kui need aktiveeritakse.</td></tr>
+<tr><td>Põrka tähelepanu vajavad ülesanded<span class="advanced">Täpsemad</span></td><td>Animeeri tähelepanu küsivaid ülesandeid.</td></tr>
+<tr><td>Libista üksikaknad sisse ja välja<span class="advanced">Täpsemad</span></td><td>Animeerida uued ja suletud üksikaknad.</td></tr>
+<tr><td>Rühmitatud ülesanded põrkavad oma uued aknad <span class="advanced">Täpsemad</span></td><td>Animeerida uus aken ülesanderühmas.</td></tr>
+<tr><td>Rühmitatud ülesanded libistavad välja oma suletud aknad <span class="advanced">Täpsemad</span></td><td>Animeerida suletud aken ülesanderühmas.</td></tr>
+<tr class="group"><td colspan="2">Käivitajad</td></tr>
+<tr><td>Unikaalne rühm</td><td>Anda sellele ülesandeviidrikule oma käivitajate loend.</td></tr>
+<tr><td>Paigutusrühm</td><td>Jaga käivitajaid ülesandeviidrikutega samas paigutuses. Seda nupku kuvatakse ainult siis, kui dokk kasutab juba Paigutusrühma.</td></tr>
+<tr><td>Globaalne rühm</td><td>Jaga käivitajaid ülesandeviidrikutega kõigis paigutustes.</td></tr>
+<tr class="group"><td colspan="2">Kerimine</td></tr>
+<tr><td>Kerimine <span class="advanced">Täpsemad</span></td><td>Luba kerimine, kui ülesanded ületavad saadaoleva ruumi. See töötab mõlema dokki eelseadistusega, sealhulgas siis, kui Hoida dokki üksused koos on lubatud.</td></tr>
+<tr><td>Käsitsi <span class="advanced">Täpsemad</span></td><td>Valige Keelatud kerimine, Ainult vertikaalne/horisontaalne kerimine või Horisontaalne ja vertikaalne kerimine. Ühesuunaline valik sõltub dokki orientatsioonist.</td></tr>
+<tr><td>Automaatne <span class="advanced">Täpsemad</span></td><td>Lülitage automaatne kerimine sisse või välja.</td></tr>
+<tr class="group"><td colspan="2">Toimingud</td></tr>
+<tr><td>Vasak klõps <span class="advanced">Täpsemad</span></td><td>Toiming vasakklõpsule ülesandel: Puudub, Sulge aken või Rühm, Uus eksemplar, Minimeeri/Taasta, Tsüklita ülesanded, Lülita ülesanderühmitamine, Esita aknad, Eelvaata aknad, Tõsta esile aknad või Eelvaata ja tõsta esile aknad.</td></tr>
+<tr><td>Kesklõps <span class="advanced">Täpsemad</span></td><td>Toiming kesklõpsule ülesandel. Valikud on samad mis Vasak klõps.</td></tr>
+<tr><td>Hõljutamine <span class="advanced">Täpsemad</span></td><td>Hõljutamise toimingud: Puudub, Eelvaata aknad, Tõsta esile aknad või Eelvaata ja tõsta esile aknad. Ülesande pealkirja vihjed on juhitavad Käitumises.</td></tr>
+<tr><td>Rattur <span class="advanced">Täpsemad</span></td><td>Rattatoimingud: Puudub, Vaheta ülesannete vahel või Vaheta ja minimeeri ülesanded.</td></tr>
+<tr><td>Modifikaator + klõps <span class="advanced">Täpsemad</span></td><td>Hoidke all Shift, Ctrl, Alt või Meta ning klõpsake vasaku, keskmise või parema hiireklahviga, et käivitada täiendav toiming. Valige modifikaator, nupp ja toiming; see on eraldatud eelmainitud põhitoimingutest.</td></tr>
+</tbody></table></div>
+<p class="note">Praeguse tegevuse filter on Plasma 6-s peidetud, kuna KActivities tugi on ebausaldusväärne.</p></section><section id="configure-latte"><h2>Konfigureeri Latte</h2><p class="note">Paigutuste redaktor haldab paigutusi ja nende dokke. Eelistused kontrollivad rakenduse üldist käitumist. Rakenda salvestab praeguses kaardil ootel muudatused; Lähtesta taastab selle kaardi salvestatud oleku; Taasta vaikeväärtused valmistab vaikeväärtused ülevaatamiseks. Ekraanid... haldab salvestatud ekraanide viiteid.</p>
+<h3 id="layouts">Paigutuste redaktor</h3>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr><td>Üks paigutus alati</td><td>Kasutage kõigi tegevuste jaoks ühte paigutust.</td></tr>
+<tr><td>Mitmed paigutused tegevuste põhjal</td><td>Määrake tegevustele erinevad paigutused; mitu paigutust võivad jääda laadituks.</td></tr>
+<tr><td>Vaheta</td><td>Aktiveerige valitud paigutus. Rakendage esmalt ootel muudatused; Latte ei vaheta paigutust, kui on salvestamata muudatusi.</td></tr>
+<tr><td>Tegevused...</td><td>Avage Plasma tegevuste haldur. Kasutage veergu Tegevused või Luba, et määrata see paigutus tegevustele.</td></tr>
+<tr><td>Uus / Kopeeri / Eemalda</td><td>Loo, kopeeri või eemalda paigutus. Kopeeri siin kopeerib kogu paigutuse, mitte üksikut dokki. Aktiivseid ja lukustatud paigutusi ei saa eemaldada.</td></tr>
+<tr><td>Lubatud</td><td>Määrake see paigutus ühele või mitmele tegevusele, et Plasma tegevused saaksid selle aktiveerida. Näidatakse ainult mitme paigutuse režiimis.</td></tr>
+<tr><td>Ainult lugemiseks</td><td>Kaitsta paigutuse konfiguratsiooni muudatuste eest.</td></tr>
+<tr><td>Üksikasjad...</td><td>Ava paigutuse üksikasjade dialoog, et hallata ikooni, kohandatud värve, hüpikakna marginaali ja kontekstimenüü nähtavust.</td></tr>
+<tr><td>Dokid...</td><td>Ava selle paigutuse dokkide loend: nimi, ekraan, serv, joondus, sisalduvad vidinad ning uus/koopia/eemalda/impordi/ekspordi.</td></tr>
+<tr><td>Impordi... / Ekspordi...</td><td>Impordi paigutus kohalikust failist või KDE poest; ekspordi see varukoopia või mallina. Fail → Impordi konfiguratsioon / Ekspordi konfiguratsioon tegeleb rakenduse täieliku varukoopiaga.</td></tr>
+<tr><td>Nimi / Menüüs / Tegevused</td><td>Paigutuste loendis on veerud Nimi, Menüüs ja Tegevused. Muuda Nime ja Tegevusi otse loendis; Menüüs määrab, kas paigutus kuvatakse doki Paigutuste menüüs.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Paigutuse üksikasjad</h3>
+<p>Ava Paigutuste redaktor → Üksikasjad..., et muuta valitud paigutust.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr><td>Paigutus</td><td>Valige, millist paigutust muuta.</td></tr>
+<tr><td>Ikoon</td><td>Valige paigutuse jaoks ikoon. Tühjendusnupp eemaldab selle.</td></tr>
+<tr><td>Kohandatud värvid</td><td>Valige selle paigutuse jaoks kohandatud värviskeemi fail.</td></tr>
+<tr><td>Hüpikakna marginaal</td><td>Määrake paigutuse hüpikakende kasutatav marginaal; väljalülitatud tähendab vaikeseadme kasutamist.</td></tr>
+<tr><td>Kuva paigutuste kontekstimenüüs, kui võimalik</td><td>Kuva see paigutus doki Paigutuste menüüs, kui praegune tegevus seda lubab.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dokkide dialoog</h3>
+<p>Ava Paigutuste redaktor → Dokid..., et hallata valitud paigutuse dokke.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Veerud</td></tr>
+<tr><td>Nimi</td><td>Doki nimi. Topeltklõpsake nime muutmiseks.</td></tr>
+<tr><td>Ekraan</td><td>Ekraan, millele dokk kuulub, sealhulgas Peamine, Kõik ekraanid ja Kõik sekundaarsed ekraanid.</td></tr>
+<tr><td>Serv</td><td>Ekraani serv, mida dokk kasutab.</td></tr>
+<tr><td>Joondus</td><td>Doki joondus piki selle serva.</td></tr>
+<tr><td>Sisaldab</td><td>Dokki lisatud vidinad ja alamkonteinerid. See veerg on ainult lugemiseks.</td></tr>
+<tr class="group"><td colspan="2">Nupud</td></tr>
+<tr><td>Uus</td><td>Loo dokk malli põhjal.</td></tr>
+<tr><td>Kopeeri</td><td>Loo valitud doki sõltumatu koopia või veel üks kloon, kui valitud dokk on kloon.</td></tr>
+<tr><td>Eemalda</td><td>Eemalda valitud dokk. Kloonid eemaldatakse koos nende originaaliga.</td></tr>
+<tr><td>Impordi...</td><td>Impordi dokk kohalikust mallifailist.</td></tr>
+<tr><td>Ekspordi...</td><td>Ekspordi valitud dokk varukoopia tegemiseks või mallina. Malli dialoog võimaldab valida, millised vidinate seaded kaasa võtta; jätka välja vidinad, mis sisaldavad isikuandmeid, nagu e-post või kalendrikontod.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Ekraanide dialoog</h3>
+<p>Ava menüüst Fail → Ekraanid..., et puhastada Latte poolt salvestatud ekraaniviited.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr><td>Ekraanide loend</td><td>Loetleb Latte'is salvestatud ekraaniviited, sealhulgas ekraanid, mis ei ole enam ühendatud.</td></tr>
+<tr><td>Vali aegunud ekraanid</td><td>Märgi ainult ekraanid, mida enam ei eksisteeri. Aktiivseid ekraane ja ekraane, mida kasutab paigutus, ei saa eemaldada.</td></tr>
+<tr><td>Tühista kõik valikud</td><td>Tühjenda valik enne teise komplekti valimist.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Eelistused</h3>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr><td>Kuva teavitav aken paigutuste automaatse aktiveerimise korral</td><td>Kuva teavitav aken, kui paigutus aktiveerub automaatselt.</td></tr>
+<tr><td>Paraboolne efekt / Väike / Keskmine / Suur</td><td>Määra hõljumise suumimise globaalne levik naaberobjektide vahel.</td></tr>
+<tr><td>Luba automaatne käivitamine käivitamisel</td><td>Käivita Latte, kui logite sisse.</td></tr>
+<tr><td>Kasuta teavituste ja otseteede märkide jaoks 3D-stiili</td><td>Kasuta teavituste ja otseteede märkide jaoks ruumilist stiili.</td></tr>
+<tr><td>Vajuta ja hoia ⌘ otseteede märkide kuvamiseks</td><td>Vaikimisi väljas. Hoia Meta-klahvi umbes sekund, et kuvada peidetud dokid ning nende ülesannete ja vidinate otseteede märgid; vabasta klahv, et need uuesti peita. Plasma vaikeasetuste korral avaneb Meta-klahvi vabastamisel ka Plasma käivitaja; muuda see otsetee Süsteadisätetes, kui te seda ei soovi.</td></tr>
+<tr><td>Paksuse marginaali mõju</td><td>Valige, kui palju elemendi paksuse marginaalid paigutust mõjutavad: 0%, 50% või 100%.</td></tr>
+<tr><td>Teavita Plasma töölauda saadaval olevast töölaua ruumist</td><td>Avalda Plasma-le saadaval olev töölaua ruum, et paneelid ja aknad saaksid seda kasutada.</td></tr>
+<tr><td>Kontekstimenüü / Toimingud...</td><td>Valige, millised doki kontekstimenüü toimingud on alati nähtavad. Välja jäetud toimingud on saadaval ainult redigeerimisrežiimis.</td></tr>
+<tr><td>Ekraanid / reaktsiooniviivitus muutustele</td><td>Määrake, kui kaua Latte ootab enne ekraanimuutustele reageerimist, millisekundites. Suurendage seda, kui riistvara teatab ebastabiilsetest üleminekutest.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontekstimenüü toimingud</h3>
+<p>Avage Eelistused → Kontekstimenüü → Toimingud..., et valida, millised doki toimingud on alati nähtavad.</p>
+<div class="table-wrap"><table><thead><tr><th>Valik aknas</th><th>Mida see kontrollib</th></tr></thead><tbody>
+<tr><td>Alati ligipääsetav</td><td>Selles loendis olevad toimingud kuvatakse doki kontekstimenüüs alati.</td></tr>
+<tr><td>Ligipääsetav ainult redigeerimisrežiimis</td><td>Selles loendis kuvatavad toimingud on nähtavad ainult dokki redigeerimise ajal. Toimingute vahetamine loendite vahel muudab nende nähtavust.</td></tr>
+<tr><td>Liikumine loendite vahel</td><td>Valige toiming ja kasutage noole nuppe selle liigutamiseks. Nupud Reset ja Restore Defaults taastavad vaikekomplekti.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Sõltumatud koopiad ja kloonid</h2><p class="note">Koopia ja kloon näevad ekraanil sarnased välja, kuid käituvad erinevalt. Koopia on uus, sõltumatu dokk. Kloon on sama dokk, mis kuvatakse teisel ekraanil. Valige vastavalt sellele, kas soovite seda dokki eraldi konfigureerida.</p>
+<h3 id="create-independent-copy">Sõltumatu koopia loomine</h3>
+<p>Kasutage mõnda järgmistest meetoditest algse dokiga, mitte klooni:</p>
+<ul><li>Paremklõpsake dokki ja valige <strong>Duplicate Dock</strong>.</li><li>Avage <strong>Edit Dock</strong> ja valige <strong>Add… → Duplicate Dock</strong>.</li><li>Avage <strong>Configure Latte → Layouts Editor → Docks…</strong>, valige dokk ja valige <strong>Duplicate</strong>.</li></ul>
+<p>Koopia saab uued dokki ja vidina ID-d ning koopeerib praegused seaded korra. Seejärel saate muuta selle ekraani, serva, suurust, välimust, käitumist, vidinaid ja käivitajaid sõltumatult. See on paigutuses eraldi üksus ja seda saab eemaldada käsuga <strong>Remove Dock</strong>.</p>
+<p>Klooni kopeerimine Docks dialoogist loob teise klooni samast algsest dokist, mitte sõltumatu dokki. Sõltumatu dokki loomiseks kloonist avage esmalt <strong>Edit Original Dock…</strong> ja kopeerige algne dokk.</p>
+<p>Kui algne dokk kasutab <strong>Global Group</strong>, kasutab ka koopia seda ja jagab käivitajaid. Valige koopial <strong>Unique Group</strong>, kui soovite eraldi käivitajate loendit. <strong>Layout Group</strong> on saadaval ainult siis, kui dokk seda juba kasutab.</p>
+<h3 id="create-clone">Loo koopiad</h3>
+<p>Koopiad luuakse algse dokki ekraanirežiimi kaudu, mitte <strong>Dupleeri dokk</strong>:</p>
+<ul><li><strong>Muuda dokki → Ekraan → Kõigil ekraanidel</strong>: algne dokk jääb primaarsele ekraanile ja Latte loob koopia igale sekundaarsele ekraanile.</li><li><strong>Muuda dokki → Ekraan → Kõigil sekundaarsetel ekraanidel</strong>: algne dokk jääb ühele sekundaarsele ekraanile ja Latte loob koopiad ülejäänud sekundaarsetele ekraanidele.</li></ul>
+<p>Latte loob ja eemaldab koopiad automaatselt, kui ekraanide paigutus muutub. Koopiate eemaldamiseks määra algne dokk tagasi <strong>Primaarsele ekraanile</strong> või ühele konkreetsele ekraanile. Koopial pole kontekstimenüüs <strong>Eemalda dokk</strong> valikut; kasuta seal <strong>Muuda algset dokki…</strong> selle konfigureerimiseks.</p>
+<p>Redaktori avamine koopialt avab alati algse dokki seaded, kuna koopiad jagavad dokki konfiguratsiooni. Koopial muudetud vidinate seaded uuendavad ka algset dokki.</p>
+<h3 id="differences">Erinevused ülevaates</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Sõltumatu koopia</th><th>Kloon</th></tr></thead><tbody>
+<tr><td>Loodud</td><td>Dupleeri dokk</td><td>Ekraan → Kõigil ekraanidel või Kõigil sekundaarsetel ekraanidel</td></tr>
+<tr><td>Identiteet</td><td>Uued dokki ja vidinate ID-d</td><td>Algse dokki seotud vaade</td></tr>
+<tr><td>Seaded</td><td>Kopeeritud korra, seejärel sõltumatu</td><td>Jagatud: algse dokki muutmine uuendab kõiki kloonid; koopial muudetud vidinate seaded uuendavad ka algset dokki</td></tr>
+<tr><td>Ekraan ja serv</td><td>Seda saab muuta sõltumatult</td><td>Järgib algset dokki; seda ei saa eraldi liigutada ega suurust muuta</td></tr>
+<tr><td>Käivitajad</td><td>Kopeeritud loomisel; hilisem jagamine ainult Layout Group või Global Group kaudu</td><td>Peegelda algselt</td></tr>
+<tr><td>Kontekstimenüü</td><td>Täielikud dokitoimingud, sealhulgas Kopeeri ja Eemalda</td><td>Kuvab 'Muuda algdokki...'; Kopeeri, Liiguta, Ekspordi ja Eemalda on peidetud</td></tr>
+<tr><td>Kuidas eemaldada</td><td>Eemalda dokk</td><td>Määra algdokk tagasi ühele ekraanile</td></tr>
+</tbody></table></div>
+<p><strong>Vidika ikoonide värvid:</strong> <strong>Kasuta ikooniteema värve</strong> vidika kontekstimenüüs takistab Latte'il vidika ikooni värvimist. Seadistus salvestatakse vidika kaupa: koopiad jagavad seda algdokiga. Sõltumatu koopia säilitab loomise hetkel olnud väärtuse ja saab seda eraldi muuta.</p></section></main></div><footer>Latte Dock NG · Võrguühenduseta dokumentatsioon. Saadavalolematud liidesekkeeled kasutavad inglise keelt.</footer></body></html>

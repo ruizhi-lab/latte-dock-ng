@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="lt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG vartotojo vadovas</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG vartotojo vadovas</h1><p>Šiose instrukcijose aprašomos dabartinės parinktys. Išplėstinis režimas, dokų stilius ir įdiegti įskiepiai gali keisti matomus valdiklius. Parinktys, pažymėtos kaip Išplėstinės, yra paslėptos pagrindiniame redaktoriuje.</p><div class="language-menu"><label for="language-select">Kalba</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html" selected>Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Pateikiami tik išversti vadovai. Kitos sąsajos kalbos atidaro anglišką vadovą.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Šiame puslapyje</h2><a class="chapter" href="#edit-dock">Redaguoti doką</a><a class="subsection" href="#behavior">Elgsena</a><a class="subsection" href="#appearance">Išvaizda</a><a class="subsection" href="#effects">Efektai</a><a class="subsection" href="#tasks">Užduotys</a><a class="chapter" href="#configure-latte">Konfigūruoti Latte</a><a class="subsection" href="#layouts">Išdėstymų redaktorius</a><a class="subsection" href="#layout-details">Išdėstymo detalės</a><a class="subsection" href="#docks-dialog">Dokų dialogas</a><a class="subsection" href="#screens-dialog">Ekranų dialogas</a><a class="subsection" href="#preferences">Nuostatos</a><a class="subsection" href="#context-menu-actions">Kontekstinio meniu veiksmai</a><a class="chapter" href="#copies-and-clones">Nepriklausomos kopijos ir klonai</a><a class="subsection" href="#create-independent-copy">Sukurti nepriklausomą kopiją</a><a class="subsection" href="#create-clone">Sukurti klonus</a><a class="subsection" href="#differences">Skirtumai vienoje vietoje</a></nav></aside><main>
+<section id="edit-dock"><h2>Redaguoti doką</h2><p class="note">Pakeitimai įsigalioja nedelsiant. Uždarymas slepia redaktorių; jis neatšaukia pakeitimų. Prisegimas išlaiko redaktorių atidarytą. Pridėti… → Dubliuoti doką sukuria nepriklausomą originalaus doko kopiją; Šalinti pašalina dabartinį doką. Perjungiant skirtukus langas lieka toje pačioje vietoje. Išplėstiniame režime lango dydis pritaikomas jo ilgiausiam puslapiui, esamame ekrano erdvėje. Ilgesni puslapiai slenka lange. Vilkite keitimo kampą, kad sureguliuotumėte lango dydį bet kuriame redagavimo režime.</p>
+<p class="note">Išplėstinis režimas atskleidžia daugiau valdiklių. Parinktys, pažymėtos kaip Išplėstinės, yra paslėptos pagrindiniame redaktoriuje.</p>
+<h3 id="behavior">Elgsena</h3>
+<p class="note">Šio dok'o matomumo, delso, veiksmų, elementų elgsenos, plaukiojančio tarpo ir aplinkos parinktys.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Matomumas</td></tr>
+<tr><td>Ekranas / Vieta</td><td>Pasirinkite ekraną ir kraštą šiam dok'ui. Turint kelis ekranus, „Visuose ekranuose“ ir „Visuose antriniuose ekranuose“ sukuria susietus klonus. Žr. Nepriklausomos kopijos ir klonai.</td></tr>
+<tr><td>Lygiavimas</td><td>Nustatykite dok'o padėtį išilgai ekrano krašto. Elementų lygiavimas valdo, kur valdikliai yra dok'o viduje.</td></tr>
+<tr><td>Visada matomas</td><td>Palikite dok'ą matomą ir rezervuokite darbalaukio vietą, jei langų tvarkyklė tai palaiko.</td></tr>
+<tr><td>Automatinis slėpimas</td><td>Slėpkite dok'ą, kol žymeklis pasiekia jo aktyvavimo sritį.</td></tr>
+<tr><td>Vengti aktyvaus</td><td>Slėpti, kai aktyvus langas liečiasi su dok'o sritimi, ir rodyti dok'ą, kai žymeklis įeina į ją.</td></tr>
+<tr><td>Vengti išdidinto</td><td>Slėpti tik tada, kai šiame ekrane yra aktyvus išdidintas langas, ir rodyti dok'ą, kai žymeklis įeina į jo sritį.</td></tr>
+<tr><td>Vengti visų langų</td><td>Slėpti, kai bet kuris langas liečiasi su dok'o sritimi, ir rodyti dok'ą, kai žymeklis įeina į ją.</td></tr>
+<tr><td>Langai po dok'u</td><td>Palikite dok'ą virš langų; langai gali būti talpinami po juo.</td></tr>
+<tr><td>Langai gali uždengti</td><td>Leiskite langams uždengti dok'ą. Dok'as išeina į priekį, kai žymeklis pasiekia jo ekrano kraštą.</td></tr>
+<tr><td>Langai visada uždengia</td><td>Palikite langus virš dok'o visą laiką; dok'as lieka už jų.</td></tr>
+<tr class="group"><td colspan="2">Delsa</td></tr>
+<tr><td>Delsa / Rodyti / Slėpti</td><td>Nustatykite, kiek laukti prieš rodant ar slepiant, milisekundėmis. Ilgesnės delsos sumažina atsitiktinį aktyvavimą.</td></tr>
+<tr class="group"><td colspan="2">Veiksmai</td></tr>
+<tr><td>Stebėti <span class="advanced">Išplėstiniai</span></td><td>Pasirinkite, kurių aktyvių langų tuščios zonos veiksmai bus taikomi: Aktyvus langas iš dabartinio ekrano arba Aktyvus langas iš visų ekranų.</td></tr>
+<tr><td>Kairysis mygtukas / Vilkite aktyvų langą <span class="advanced">Išplėstiniai</span></td><td>Įgalinkite vilkimą iš tuščios dok'o zonos, kad būtų galima perkelti arba išdidinti/atstatyti stebimą aktyvų langą.</td></tr>
+<tr><td>Vidurinis mygtukas / Uždaryti aktyvų langą <span class="advanced">Išplėstiniai</span></td><td>Įgalinkite vidurinio pelės mygtuko spustelėjimą tuščioje dok'o zonoje, kad būtų uždarytas stebimas aktyvus langas.</td></tr>
+<tr><td>Pelės ratukas <span class="advanced">Išplėstiniai</span></td><td>Pasirinkite, ką ratukas daro virš tuščios dok'o zonos: Jokių veiksmų, Perjungti darbalaukius, Perjungti veiklas, Perjungti užduotis arba Perjungti ir sumažinti užduotis.</td></tr>
+<tr class="group"><td colspan="2">Elementai</td></tr>
+<tr><td>Ploni pavadinimų patarimai užvedus pelę</td><td>Rodyti kompaktiškus valdiklių pavadinimų patarimus. Užduočių langų peržiūros valdomos atskirai per užduoties Užvedimo veiksmą.</td></tr>
+<tr><td>Priartinti valdiklius užvedus pelę</td><td>Leisti valdikliams priartinti kartu su dok'u. Išjunkite tai, kad valdiklių piktogramos išliktų ryškios; užduočių piktogramos ir paleidyklės vis tiek priartinamos.</td></tr>
+<tr><td>Išskleisti iššokantį langą pelės ratuku</td><td>Slinkite virš palaikomo valdiklio, kad parodytumėte arba paslėptumėte jo iššokantį langą.</td></tr>
+<tr><td>Automatiškai reguliuoti dydį, kai reikia</td><td>Sumažinti elementus, kai jie viršija prieinamą ilgį, ir padidinti juos, kai jie telpa.</td></tr>
+<tr><td>Aktyvuoti pagal poziciją globalūs trumpiniai</td><td>Leisti pozicija grįstus globalius trumpinius aktyvuoti šio dok'o elementus. Tik vienas dok'as išdėstyme turėtų tai naudoti.</td></tr>
+<tr class="group"><td colspan="2">Plaukiojantis</td></tr>
+<tr><td>Visada naudoti plaukiojantį tarpą vartotojo sąveikai <span class="advanced">Išplėstiniai</span></td><td>Įtraukti plaukiojantį tarpą į plotą, naudojamas valdikliams ir langų sąveikai.</td></tr>
+<tr><td>Slėpti plaukiojantį tarpą, kai langai yra išdidinti<span class="advanced">Išplėstiniai</span></td><td>Pašalinti plaukiojantį tarpą, kai išdidintam langui reikia ekrano krašto.</td></tr>
+<tr><td>Atidėti plaukiojančio tarpo slėpimą, kol pelė palieka<span class="advanced">Išplėstiniai</span></td><td>Laukti, kol žymeklis paliks, prieš slepiant tarpą, kad būtų išvengta atsitiktinių spustelėjimų ant gretimų elementų.</td></tr>
+<tr><td>Atspindėti plaukiojantį tarpą, kai jis rodomas<span class="advanced">Išplėstiniai</span></td><td>Režimu „Visada matomas“ atspindėti tarpą priešingoje dokų juostos pusėje.</td></tr>
+<tr class="group"><td colspan="2">Aplinka</td></tr>
+<tr><td>Pakelti keičiant darbalaukį<span class="advanced">Išplėstiniai</span></td><td>Laikinai parodyti dokų juostą keičiantis virtualiam darbalaukiui. Tai nenaudojama režimuose „Visada matomas“ arba „Langai po juosta“.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Išvaizda</h3>
+<p class="note">Paraštės, spalvos, spindulys/šešėlis, dinaminis ilgio koregavimas, dinaminis matomumas ir išimtys reikalauja išplėstinio režimo.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementai</td></tr>
+<tr><td>Dokų juostos stilius</td><td>Pasirinkite „Klasikinis“ arba „Modernus“, kad būtų taikomas išankstinis nustatymas. Bet kuriame stiliuje naudokite jungiklius po „Dokų juostos stilius“, kad nepriklausomai nustatytumėte elementų išdėstymą, kontūrinį foną, minimalų elementų tarpą, automatinį plaukiojantį tarpą ir kompaktiškas užduočių indikacijas.</td></tr>
+<tr><td>Laikyti dokų juostos elementus kartu</td><td>Naudoti vieną grupę dokų juostos elementams, taip pat kai dokų juostos lygiavimas yra „Išlyginti“.</td></tr>
+<tr><td>Naudoti įdubtą foną su kontūru</td><td>Naudoti iš anksto nustatytą foną su kontūru ir stiliu jo tarpams, apvalintiems kampams ir šešėliui.</td></tr>
+<tr><td>Naudoti platesnį minimalų elementų tarpą</td><td>Padidinti minimalų tarpą aplink dokų juostos elementus. Didesnės reikšmės, nustatytos paraščių valdikliais, vis tiek taikomos.</td></tr>
+<tr><td>Naudoti automatinį plaukiojantį tarpą</td><td>Apskaičiuoti ekrano krašto tarpą pagal piktogramos dydį, kai nėra nustatyta konkreti tarpo reikšmė.</td></tr>
+<tr><td>Naudoti kompaktiškas užduočių indikacijas</td><td>Naudoti kompaktinį išdėstymą Latte užduočių indikacijoms. Indikacijos formą pasirinkite skiltyje „Efektai“.</td></tr>
+<tr><td>Atkurti išankstinį nustatymą</td><td>Redaguoti doką mygtukas apačioje nedelsiant atkuria Elgseną, Išvaizdą, Efektus ir visas Užduočių skirtukas į pradinį Doko išankstinį nustatymą dabartiniam Klasikiniam/Moderniam stiliui, įskaitant parinktis, paslėptas Išplėstiniame režime. Ekranas, doko kraštas, paleidyklės ir valdikliai išsaugomi. Lygiavimas, matomumas ir delsimai atstatomi. Paleidyklių bendrinimas grįžta į numatytąją vietinę grupę, išsaugant galiojančio paleidyklių sąrašo kopiją; kitų dokų bendrinami sąrašai lieka nepakeisti. Pasirinktinės spalvos ir indikacijų perrašymai atstatomi. Išankstinis nustatymas sujungia pradinį Numatytąjį Doko šabloną su konfigūracijos schemos numatytosiomis reikšmėmis. Tai atskira nuo paprasto Doko stiliaus keitimo. Klasikinis režimas pagal numatytuosius nustatymus išjungia penkis išvaizdos jungiklius po Doko stiliu. Modernus režimas juos įjungia. Abi išankstiniai nustatymai naudoja tas pačias numatytąsias reikšmes likusiems parametrams.</td></tr>
+<tr><td>Absoliutus dydis / Santykinis dydis</td><td>Nustatyti piktogramos dydį pikseliais arba kaip ekrano dalį. Santykinis dydis naudingas aukštos DPI arba kelių ekranų konfigūracijose.</td></tr>
+<tr><td>Mastelis užvedus pelę</td><td>Nustatyti, kiek elementai padidėja po žymekliu.</td></tr>
+<tr class="group"><td colspan="2">Ilgis</td></tr>
+<tr><td>Maksimumas / Minimumas / Poslinkis</td><td>Nustatyti maksimalų ir minimalų doko ilgį bei perkelti jį išilgai ekrano krašto.</td></tr>
+<tr><td>Dinaminiai ilgio koregavimai <span class="advanced">Išplėstinis</span></td><td>Padidinti skydelio ilgį esant išdidintiems langams: išplėsti doką iki pilno ilgio, kai yra išdidintas langas. Fonas turi būti įjungtas.</td></tr>
+<tr class="group"><td colspan="2">Paraštės</td></tr>
+<tr><td>Paraštės / Ilgis / Storis / Plaukiojantis tarpas <span class="advanced">Išplėstiniai</span></td><td>Nustatyti išorinę paraštę išilgai doko, paraštę per jo storį ir tarpą tarp doko bei ekrano krašto.</td></tr>
+<tr><td>Tarpas nuo išdidintų langų (px) <span class="advanced">Išplėstiniai</span></td><td>Rezervuoti papildomus 0–128 pikselius tarp langų ir šio doko režimu „Visada matomas“. Numatytoji reikšmė: 0. Tai atskira nuo plaukiojančio tarpo nuo ekrano krašto ir pridedama prie bet kokio atspindėto tarpo; automatinio slėpimo režimai šios vietos nerezervuoja.</td></tr>
+<tr class="group"><td colspan="2">Spalvos</td></tr>
+<tr><td>Spalvos / Paletė <span class="advanced">Išplėstiniai</span></td><td>Pasirinkti „Plasma Theme Colors“, „Dark Colors“, „Light Colors“, „Layout Custom Colors“, „Reverse“ arba „Smart Colors Based On Desktop Background“. „Layout Custom Colors“ naudoja išdėstymo spalvų schemą; „Smart“ seka darbalaukio foną.</td></tr>
+<tr><td>Naudoti pasirinktinę fono spalvą / Dienos spalva <span class="advanced">Išplėstiniai</span></td><td>Perrašyti šio doko foną pasirinkta spalva; teksto kontrastas koreguojamas automatiškai. Numatytai išjungta. Langų kilmės paletės ir „Plasma“ paletė išplėstoms programėlėms turi prioritetą. Nepermatomumas lieka atskiru fono nustatymu.</td></tr>
+<tr><td>Keisti fono spalvas pagal paros laiką / Nakties spalva / Dienos pradžia (vietinis laikas) / Nakties pradžia (vietinis laikas) <span class="advanced">Išplėstiniai</span></td><td>Galima pasirinkti perjungimą tarp dviejų pasirinktinių spalvų naudojant vietinį 24 valandų laiką. Numatytosios reikšmės: diena 07:00, naktis 19:00. Pradžios laikas įtraukiamas. Intervalai gali tęstis per vidurnaktį; jei laikai sutampa, dienos spalva išlieka visą dieną. Išjungus tvarkaraštį, išlieka dienos spalva. Laikrodis tikrinamas kas sekundę, taip pat ir po atnaujinimo.</td></tr>
+<tr class="group"><td colspan="2">Fonas</td></tr>
+<tr><td>Fonas</td><td>Fonas yra įjungimo/išjungimo jungiklis. Kai įjungta, naudokite žemiau esančius valdiklius, kad nustatytumėte storį, nepermatomumą, spindulį ir šešėlį.</td></tr>
+<tr><td>Nepermatomumas / Užimtumo nepermatomumas</td><td>Nustatykite fono nepermatomumą. Tas pats slankiklis vadinamas Užimtumo nepermatomumu, kai abu parametrai Slėpti foną, kai nereikia ir Preferuoti nepermatomą foną, kai liečiamas bet kuris langas, yra įjungti. Numat. atkuria temos numatytąją reikšmę.</td></tr>
+<tr><td>Spindulys / Šešėlis <span class="advanced">Išplėstiniai</span></td><td>Nustatykite fono kampų spindulį ir šešėlio dydį. Numat. naudoja temos numatytąją reikšmę.</td></tr>
+<tr><td>Suliejimas / Šešėliai / Kontūras / Visi kampai <span class="advanced">Išplėstiniai</span></td><td>Įgalinkite fono suliejimą, fono šešėlį, kontūrą ir apvalius kampus. Visi kampai yra prieinami tik tam tikroms plaukiojančioms/lygiuojamoms geometrijoms.</td></tr>
+<tr class="group"><td colspan="2">Dinaminis matomumas</td></tr>
+<tr><td>Preferuoti nepermatomą foną, kai liečiamas bet kuris langas <span class="advanced">Išplėstiniai</span></td><td>Pašalinkite fono skaidrumą, kol langas liečiasi su dokais.</td></tr>
+<tr><td>Slėpti foną, kai nereikia <span class="advanced">Išplėstiniai</span></td><td>Slėpkite foną, nebent langas liečiasi su dokais arba darbalaukio fonas yra užimtas.</td></tr>
+<tr><td>Slėpti fono šešėlį maksimalizuotiems langams <span class="advanced">Išplėstiniai</span></td><td>Slėpkite fono šešėlį, kol aktyvus maksimalizuotas langas liečiasi su dokais.</td></tr>
+<tr class="group"><td colspan="2">Išimtys</td></tr>
+<tr><td>Naudoti „Plasma“ foną ir spalvas išskleistoms programėlėms<span class="advanced">Išplėstiniai</span></td><td>Naudoti nepermatomą „Plasma“ stiliaus foną ir „Plasma“ spalvas, kai valdiklio iššokantys langai yra išskleisti.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efektai</h3>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Šešėliai</td></tr>
+<tr><td>Šešėliai</td><td>Įjungti arba išjungti valdiklio šešėlius. Dydis ir skaidrumas yra išjungti, kai šešėliai yra išjungti.</td></tr>
+<tr><td>Dydis / Skaidrumas</td><td>Nustatyti valdiklio šešėlio dydį ir skaidrumą.</td></tr>
+<tr><td>Numatytoji spalva / Temos spalva / Pasirinktinė spalva</td><td>Pasirinkite numatytąją šešėlio spalvą, spalvą iš temos paletės arba spustelėkite spalvos pavyzdį, kad pasirinktumėte pasirinktinę spalvą.</td></tr>
+<tr class="group"><td colspan="2">Animacijos</td></tr>
+<tr><td>Animacijos / x1 / x2 / x3</td><td>Įjungti arba išjungti visas dokų animacijas. x1 yra įprastas greitis, x2 yra lėtesnis, x3 yra lėčiausias.</td></tr>
+<tr class="group"><td colspan="2">Indikatoriai</td></tr>
+<tr><td>Indikatoriai</td><td>Įjungti arba išjungti aktyvių užduočių indikatorius. Kai įjungta, pasirinkite „Latte“ indikatorių arba pasirinktinį indikatoriaus įskiepį; įskiepui specifinės parinktys rodomos jo skirtuke.</td></tr>
+<tr><td>Naudoti „macOS“ stiliaus taškus</td><td>„Latte“ indikatorius pagal numatytuosius nustatymus naudoja „macOS“ stiliaus taškus, kai kompaktiški užduočių indikatoriai yra įjungti Išvaizdoje. Išjunkite „Naudoti „macOS“ stiliaus taškus“ EFEKTAI skiltyje, kad galėtumėte rankiniu būdu pasirinkti Liniją arba Taškus.</td></tr>
+<tr><td>Naudoti programų piktogramų spalvas</td><td>Galima spalvinti užduočių indikatorius pagal kiekvienos programos piktogramos dominuojančią spalvą, pakoreguotą pagal fono kontrastą. Pasirinkite Liniją, kad būtų spalvotos pabraukimo linijos. Pagal numatytuosius nustatymus išjungta; programėlės išlaiko paletės spalvas.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Užduotys</h3>
+<p>Užduočių paleidyklės pradeda keisti tvarką kitose dokų juostose, kurios dalijasi paleidyklių sąrašu, po to, kai numesite piktogramą. Tvarka gali šiek tiek užtrukti, kol nusistovi. Atskyrimo tarpai lieka savo vietose, kai priimanti doko juosta išsaugo naują tvarką. Vilkant jau prisegta programą, jos esama paleidyklė išlieka, įskaitant atvejus, kai ta paleidyklė atitinka sistemos numatytąją programą. Nauji atskyrimai užima vietą, kai pasiekia pasirinktą tarpą.</p>
+<p>Kai pridedate arba vilkiate valdiklį šalia atskyrimo užduočių srities arba sistemos dėklo krašte, valdiklis patenka į atskyrimo išorę. Atskyrimas lieka šalia užduočių srities arba dėklo.</p>
+<p>Kai prisegate programą iš programų meniu, jos piktograma atsiranda prieš bet kokius atskyrimus užduočių sąrašo pabaigoje. Dešinysis atskyrimas priklauso prisegtų programų grupei, todėl neprieseptos veikiančios programos rodomos už jo.</p>
+<p>Užduoties langelis lieka paryškintas, o piktograma matoma, kol vilkiate ją, kad pakeistumėte užduočių tvarką. Kai nauja užduotis pasislenka į vidų, doko juosta pradeda rezervuoti jos langelį nuo pradinio animacijos dydžio.</p>
+<p class="note">Ženkliukai, animacijos, slinktis, veiksmai ir kai kurios sąveikos/filtrų parinktys reikalauja išplėstinio režimo. Rodant tik paleidykles ir slepiant visas užduotis, langų susiję veiksmai ir filtrai išjungiami.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką ji valdo</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Ženkliukai</td></tr>
+<tr><td>Pranešimai iš užduočių <span class="advanced">Išplėstinis</span></td><td>Rodyti neperskaitytų pranešimų skaičių užduočių piktogramose.</td></tr>
+<tr><td>Pažangos informacija užduotims <span class="advanced">Išplėstinis</span></td><td>Rodyti progreso žymeklius, pavyzdžiui, kai „Dolphin“ kopijuoja failus.</td></tr>
+<tr><td>Garso atkūrimas iš užduočių <span class="advanced">Išplėstiniai</span></td><td>Rodyti garso žymeklį programoms, kurios groja garsą. Atitikimas pirmiausia naudoja aiškius darbalaukio/programos identifikatorius. Bendra naršyklės proceso informacija nepakanka konkrečiai PWA identifikuoti; dviprasmiškos srovės paliekamos nepriskirtos, vietoj to, kad būtų suteikti garso valdikliai nesusijusioms programoms. Nepriklausomos „Electron“ programos vis tiek gali atitikti savo garso procesą. Atkūrimo būsena ir išvesties veikla slepia sustabdytas sroves, net kai programa išlaiko garso ryšį atvirą. Be grotuvo būsenos, trumpa tyla toleruojama apie vieną sekundę.</td></tr>
+<tr><td>Išskirtinė spalva pranešimų žymekliui <span class="advanced">Išplėstiniai</span></td><td>Naudoti ryškesnį, dažniausiai raudoną pranešimų žymeklį. Reikalauja „Pranešimai iš užduočių“.</td></tr>
+<tr><td>Keisti garsumį slenkant garso žymeklį <span class="advanced">Išplėstiniai</span></td><td>Spustelėkite garso žymeklį, kad įjungtumėte/išjungtumėte garsą, arba slinkite virš jo, kad pakeistumėte garsumą. Reikalauja „Garso atkūrimas iš užduočių“.</td></tr>
+<tr class="group"><td colspan="2">Sąveika</td></tr>
+<tr><td>Paleidyklės pridedamos tik dabartiniame užduočių applete</td><td>Pridėti numestus paleidykles tik šiam užduočių valdikliui, o ne kaip atskirus valdiklius ar į kitus užduočių valdiklius.</td></tr>
+<tr><td>Langų veiksmai kontekstiniame meniu <span class="advanced">Išplėstiniai</span></td><td>Rodyti konkrečius langų veiksmus užduoties kontekstiniame meniu.</td></tr>
+<tr><td>Peržiūros langas elgiasi kaip iššokantysis langas <span class="advanced">Išplėstiniai</span></td><td>Atidaryti peržiūras kaip iššokantįjį langą vietoj patarimo. Užvedimo veiksmas turi reikalauti peržiūrų; tai tik keičia būdą, kaip jos yra rodomos.</td></tr>
+<tr><td>Priklausomai nuo pozicijos, sparčiosios klavišų kombinacijos taikomos tik dabartinėms užduotims<span class="advanced">Išplėstiniai</span></td><td>Apriboti pozicija pagrįstas globalias sparčiąsias klavišų kombinacijas šiam užduočių valdikliui.</td></tr>
+<tr class="group"><td colspan="2">Filtrai</td></tr>
+<tr><td>Rodyti tik užduotis iš dabartinio ekrano</td><td>Rodyti šio dok'o ekrano langus.</td></tr>
+<tr><td>Rodyti tik užduotis iš dabartinio darbalaukio</td><td>Rodyti langus iš dabartinio virtualaus darbalaukio.</td></tr>
+<tr><td>Rodyti sumažintų langų skiltį</td><td>Pagal numatytuosius nustatymus išjungta. Rodo sumažintus langus kaip atskiras piktogramas po įprastomis užduotimis. Užvedus pelę arba sukoncentravus dėmesį ant piktogramos, rodoma jos programa ir lango pavadinimas; aktyvinus piktogramą, langas atkuriamas. Kai programoje yra keli sumažinti langai, mažas ženklelis rodo kiekvieno lango numerį ir bendrą skaičių tai programai. Ši skiltis atitinka užduočių filtrus ir dalijasi užduočių perpildymo slinkimu. Įgalinkite slinkimą, kad pasiektumėte už ekrano ribų esančius langus naudodami sukonfigūruotą ratuko arba krašto užvedimo veiksmą. Tik paleidimo priemonių režimas slepia šią skiltį.</td></tr>
+<tr><td>Rodyti tik užduotis iš paleidimo priemonių<span class="advanced">Išplėstiniai</span></td><td>Rodyti langus tik programoms, jau esančioms paleidimo priemonių sąraše.</td></tr>
+<tr><td>Rodyti tik paleidimo priemones ir slėpti visas užduotis<span class="advanced">Išplėstiniai</span></td><td>Rodyti paleidimo priemonių piktogramas ir slėpti vykdomas užduotis. Tai taip pat išjungia su langais susijusius veiksmus ir filtrus.</td></tr>
+<tr><td>Rodyti tik sugrupuotas užduotis tai pačiai programai<span class="advanced">Išplėstiniai</span></td><td>Pagal numatytuosius nustatymus sugrupuoti tos pačios programos langus.</td></tr>
+<tr class="group"><td colspan="2">Animacijos</td></tr>
+<tr><td>Atšokti paleidimo priemonės, kai jos suaktyvinamos<span class="advanced">Išplėstiniai</span></td><td>Animuoti paleidimo priemones, kai jos suaktyvinamos.</td></tr>
+<tr><td>Atšokti užduotys, kurioms reikia dėmesio<span class="advanced">Išplėstiniai</span></td><td>Animuoti užduotis, prašančias dėmesio.</td></tr>
+<tr><td>Slinkti vienišus langus į vidų ir išorę<span class="advanced">Išplėstiniai</span></td><td>Animuoti naujus ir uždarytus atskirus langus.</td></tr>
+<tr><td>Grupuotos užduotys atšoka savo naujus langus <span class="advanced">Išplėstiniai</span></td><td>Animuoti naują langą užduočių grupėje.</td></tr>
+<tr><td>Grupuotos užduotys išstumia savo uždarytus langus <span class="advanced">Išplėstiniai</span></td><td>Animuoti uždarytą langą užduočių grupėje.</td></tr>
+<tr class="group"><td colspan="2">Paleidyklės</td></tr>
+<tr><td>Unikali grupė</td><td>Suteikti šiam užduočių valdikliui savo paleidyklių sąrašą.</td></tr>
+<tr><td>Išdėstymo grupė</td><td>Bendrinti paleidykles su užduočių valdikliais tame pačiame išdėstyme. Šis mygtukas rodomas tik tada, kai dokas jau naudoja Išdėstymo grupę.</td></tr>
+<tr><td>Globali grupė</td><td>Bendrinti paleidykles su užduočių valdikliais visuose išdėstymuose.</td></tr>
+<tr class="group"><td colspan="2">Slinkimas</td></tr>
+<tr><td>Slinkimas <span class="advanced">Išplėstiniai</span></td><td>Įgalinti slinkimą, kai užduotys nebetelpa į turimą erdvę. Tai veikia su bet kuriuo doko išankstiniu nustatymu, taip pat kai įjungta Laikyti doko elementus kartu.</td></tr>
+<tr><td>Rankinis <span class="advanced">Išplėstiniai</span></td><td>Pasirinkite Išjungtas slinkimas, Tik vertikalus/horizontalus slinkimas arba Horizontalus ir vertikalus slinkimas. Vienkryptis pasirinktis priklauso nuo doko orientacijos.</td></tr>
+<tr><td>Automatinis <span class="advanced">Išplėstiniai</span></td><td>Įjungti arba išjungti automatinį slinkimą.</td></tr>
+<tr class="group"><td colspan="2">Veiksmai</td></tr>
+<tr><td>Kairysis spustelėjimas <span class="advanced">Išplėstiniai</span></td><td>Veiksmas spustelėjus kairiuoju pelės klavišu ant užduoties: Nėra, Uždaryti langą arba Grupę, Naujas egzempliorius, Sumažinti/Atkurti, Perjungti užduotis, Perjungti užduočių grupavimą, Pateikti langus, Peržiūrėti langus, Paryškinti langus arba Peržiūrėti ir paryškinti langus.</td></tr>
+<tr><td>Vidurinis spustelėjimas <span class="advanced">Išplėstiniai</span></td><td>Veiksmas spustelėjus viduriniuoju pelės klavišu ant užduoties. Pasirinkimai yra tokie patys kaip ir Kairysis spustelėjimas.</td></tr>
+<tr><td>Užvedimas <span class="advanced">Išplėstiniai</span></td><td>Užvedimo veiksmai: Nėra, Peržiūrėti langus, Paryškinti langus arba Peržiūrėti ir paryškinti langus. Užduočių pavadinimų patarimai valdomi skiltyje Elgsena.</td></tr>
+<tr><td>Ratukas <span class="advanced">Išplėstiniai</span></td><td>Ratuko veiksmai: Nėra, Perjungti užduotis arba Perjungti ir sumažinti užduotis.</td></tr>
+<tr><td>Modifikatorius + spustelėjimas <span class="advanced">Išplėstiniai</span></td><td>Laikykite Shift, Ctrl, Alt arba Meta ir spustelėkite kairįjį, vidurinį arba dešinįjį pelės mygtuką, kad paleistumėte papildomą veiksmą. Pasirinkite modifikatorių, mygtuką ir veiksmą; tai yra atskira nuo pagrindinių aukščiau nurodytų veiksmų.</td></tr>
+</tbody></table></div>
+<p class="note">Dabartinės veiklos filtras yra paslėptas „Plasma 6“, nes „KActivities“ palaikymas yra nepatikimas.</p></section><section id="configure-latte"><h2>Konfigūruoti „Latte“</h2><p class="note">„Layouts Editor“ tvarko išdėstymus ir jų dokus. „Preferences“ valdo viso programos elgesį. „Apply“ išsaugo laukiančius pakeitimus dabartinėje kortelėje; „Reset“ atkuria tos kortelės išsaugotą būseną; „Restore Defaults“ paruošia numatytuosius parametrus peržiūrai. „Screens...“ tvarko saugomas ekrano nuorodas.</p>
+<h3 id="layouts">„Layouts Editor“</h3>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr><td>Vienas išdėstymas visada</td><td>Naudoti vieną išdėstymą visoms veikloms.</td></tr>
+<tr><td>Keli išdėstymai pagal veiklas</td><td>Priskirti skirtingus išdėstymus veikloms; keli išdėstymai gali likti įkelti.</td></tr>
+<tr><td>Perjungti</td><td>Aktyvuoti pasirinktą išdėstymą. Pirmiausia taikykite laukiančius pakeitimus; „Latte“ neperjungs neišsaugotų pakeitimų.</td></tr>
+<tr><td>Veiklos...</td><td>Atidaryti „Plasma“ veiklų tvarkyklę. Naudokite „Activities“ stulpelį arba „Enabled“, kad priskirtumėte šį išdėstymą veikloms.</td></tr>
+<tr><td>Naujas / Dublikuoti / Šalinti</td><td>Sukurti, kopijuoti arba šalinti išdėstymą. „Duplicate“ čia kopijuoja visą išdėstymą, o ne atskirą doką. Aktyvūs ir užrakinti išdėstymai negali būti šalinami.</td></tr>
+<tr><td>Įjungta</td><td>Priskirti šį išdėstymą vienai ar kelioms veikloms, kad „Plasma Activities“ galėtų jį aktyvuoti. Rodoma tik kelių išdėstymų režimu.</td></tr>
+<tr><td>Tik skaityti</td><td>Apsaugoti išdėstymo konfigūraciją nuo pakeitimų.</td></tr>
+<tr><td>Išsami informacija...</td><td>Atidaryti išdėstymo išsamią informaciją skirtą piktogramai, pasirinktinėms spalvoms, iššokančiojo lango paraštėms ir kontekstinio meniu matomumui.</td></tr>
+<tr><td>Dokai...</td><td>Atidaryti šio išdėstymo dokų sąrašą: pavadinimas, ekranas, kraštas, lygiavimas, įtraukti valdikliai bei naujas/dubliuoti/šalinti/importuoti/eksportuoti.</td></tr>
+<tr><td>Importuoti... / Eksportuoti...</td><td>Importuoti išdėstymą iš vietinio failo arba KDE parduotuvės; eksportuoti atsarginei kopijai arba kaip šabloną. Failas → Importuoti konfigūraciją / Eksportuoti konfigūraciją apima visos programos atsarginę kopiją.</td></tr>
+<tr><td>Pavadinimas / Meniu / Veiklos</td><td>Išdėstymų sąraše yra stulpeliai Pavadinimas, Meniu ir Veiklos. Pavadinimą ir Veiklas galima redaguoti tiesiogiai sąraše; Meniu nustato, ar išdėstymas bus rodomas doko Išdėstymų meniu.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Išdėstymo išsami informacija</h3>
+<p>Atidarykite Išdėstymų redaktorius → Išsami informacija..., kad redaguotumėte pasirinktą išdėstymą.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr><td>Išdėstymas</td><td>Pasirinkite, kurį išdėstymą redaguoti.</td></tr>
+<tr><td>Piktograma</td><td>Pasirinkite išdėstymo piktogramą. Mygtukas Išvalyti ją pašalina.</td></tr>
+<tr><td>Pasirinktinės spalvos</td><td>Pasirinkite pasirinktinės spalvų schemos failą šiam išdėstymui.</td></tr>
+<tr><td>Iššokančiojo lango paraštė</td><td>Nustatykite paraštę, naudojamą išdėstymo iššokančiuose languose; išjungus naudojama numatytoji reikšmė.</td></tr>
+<tr><td>Rodyti išdėstymų kontekstiniame meniu, kai įmanoma</td><td>Rodyti šį išdėstymą doko Išdėstymų meniu, kai tai leidžia dabartinė veikla.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dokų dialogas</h3>
+<p>Atidarykite Išdėstymų redaktorius → Dokai..., kad valdytumėte pasirinkto išdėstymo dokus.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Stulpeliai</td></tr>
+<tr><td>Pavadinimas</td><td>Doko pavadinimas. Dukart spustelėkite, kad pervadintumėte.</td></tr>
+<tr><td>Ekranas</td><td>Ekranas, kuriam priklauso dokas, įskaitant Pagrindinį, Visus ekranus ir Visus antrinius ekranus.</td></tr>
+<tr><td>Kraštas</td><td>Ekrano kraštas, kurį naudoja dokas.</td></tr>
+<tr><td>Lygiavimas</td><td>Doko lygiavimas palei jo kraštą.</td></tr>
+<tr><td>Apima</td><td>Valdikliai ir poerdviai, įtraukti į doką. Šis stulpelis yra tik skaitomas.</td></tr>
+<tr class="group"><td colspan="2">Mygtukai</td></tr>
+<tr><td>Naujas</td><td>Sukurti doką iš šablono.</td></tr>
+<tr><td>Dubliuoti</td><td>Sukurti nepriklausomą pasirinkto doko kopiją arba kitą kloną, jei pasirinktas dokas yra klonas.</td></tr>
+<tr><td>Pašalinti</td><td>Pašalinti pasirinktą doką. Klonai pašalinami kartu su jų originalu.</td></tr>
+<tr><td>Importuoti...</td><td>Importuoti doką iš vietinio šablono failo.</td></tr>
+<tr><td>Eksportuoti...</td><td>Eksportuoti pasirinktą doką atsarginei kopijai arba kaip šabloną. Šablono dialoge galite pasirinkti, kuriuos valdiklių nustatymus įtraukti; neįtraukite valdiklių su asmeniniais duomenimis, pvz., el. pašto ar kalendoriaus paskyras.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Ekranų dialogas</h3>
+<p>Atidarykite per Failas → Ekranai..., kad išvalytumėte Latte išsaugotas ekranų nuorodas.</p>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr><td>Ekranų sąrašas</td><td>Rodo Latte saugomas ekranų nuorodas, įskaitant ekranus, kurie nebėra prijungti.</td></tr>
+<tr><td>Pasirinkti pasenusius ekranus</td><td>Pažymėkite tik tuos ekranus, kurių nebėra. Aktyvūs ekranai ir ekranai, naudojami išdėstyme, negali būti pašalinti.</td></tr>
+<tr><td>Atžymėti viską</td><td>Išvalykite pasirinkimą prieš pasirinkdami kitą rinkinį.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Nuostatos</h3>
+<div class="table-wrap"><table><thead><tr><th>Parinktis lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr><td>Rodyti informacinį langą automatiniam išdėstymų aktyvavimui</td><td>Rodyti informacinį langą, kai išdėstymas aktyvuojamas automatiškai.</td></tr>
+<tr><td>Parabolinis efektas / Mažas / Vidutinis / Didelis</td><td>Nustatykite globalų artimojo priartinimo plitimą tarp gretimų elementų.</td></tr>
+<tr><td>Įgalinti automatinį paleidimą paleidimo metu</td><td>Paleisti Latte prisijungus.</td></tr>
+<tr><td>Naudoti 3D stilių pranešimų ir sparčiųjų klavišų ženkliukams</td><td>Naudoti erdvinį stilių pranešimų ir sparčiųjų klavišų ženkliukams.</td></tr>
+<tr><td>Laikyti ⌘ norint rodyti sparčiųjų klavišų ženkliukus</td><td>Pagal numatytuosius nustatymus išjungta. Laikykite Meta klavišą apie sekundę, kad būtų rodomi paslėpti dokai ir jų užduočių bei valdiklių sparčiųjų klavišų ženkliukai; atleiskite klavišą, kad jie vėl būtų paslėpti. Pagal numatytuosius Plasma nustatymus, atleidus Meta klavišą, taip pat atidaromas pats paleidyklė; jei to nenorite, pakeiskite šį sparčiąjį klavišą sistemos nustatymuose.</td></tr>
+<tr><td>Elementų storio paraščių įtaka</td><td>Pasirinkite, kaip stipriai elementų storio paraštės veikia išdėstymą: 0%, 50% arba 100%.</td></tr>
+<tr><td>Informuoti Plasma darbalaukį apie laisvą darbalaukio erdvę</td><td>Paskelbkite laisvą darbalaukio erdvę Plasma, kad skydeliai ir langai galėtų ją naudoti.</td></tr>
+<tr><td>Kontekstinis meniu / Veiksmai...</td><td>Pasirinkite, kurie doko kontekstinio meniu veiksmai visada rodomi. Neįtraukti veiksmai yra prieinami tik redagavimo režimu.</td></tr>
+<tr><td>Ekranai / reakcijos vėlavimas keičiantis</td><td>Nustatykite, kiek laiko Latte laukia prieš reaguodamas į ekrano pakeitimus, milisekundėmis. Padidinkite, jei aparatinė įranga praneša apie nestabilus perėjimus.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontekstinio meniu veiksmai</h3>
+<p>Atidarykite Nuostatos → Kontekstinis meniu → Veiksmai..., kad pasirinktumėte, kurie doko veiksmai yra visada matomi.</p>
+<div class="table-wrap"><table><thead><tr><th>Paranga lange</th><th>Ką tai valdo</th></tr></thead><tbody>
+<tr><td>Visada prieinama</td><td>Šiame sąraše esantys veiksmai visada rodomi doko kontekstiniame meniu.</td></tr>
+<tr><td>Prieinama tik redagavimo režimu</td><td>Šiame sąraše esantys veiksmai rodomi tik redaguojant doką. Perkelkite veiksmus tarp sąrašų, kad pakeistumėte šią savybę.</td></tr>
+<tr><td>Perkėlimas tarp sąrašų</td><td>Pasirinkite veiksmą ir naudokite rodyklių mygtukus, kad jį perkeltumėte. Mygtukai „Atstatyti“ ir „Atkurti numatytuosius“ grąžina numatytąjį rinkinį.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Nepriklausomos kopijos ir klonai</h2><p class="note">Dublikatas ir klonas ekrane atrodo panašiai, tačiau elgiasi skirtingai. Dublikatas yra naujas, nepriklausomas dokas. Klonas yra tas pats dokas, rodomas kitame ekrane. Pasirinkite pagal tai, ar norite konfigūruoti šį doką atskirai.</p>
+<h3 id="create-independent-copy">Sukurkite nepriklausomą kopiją</h3>
+<p>Naudokite bet kurį iš šių būdų originaliam dokui, o ne klonui:</p>
+<ul><li>Dešiniuoju pelės mygtuku spustelėkite doką ir pasirinkite <strong>Dublikuoti doką</strong>.</li><li>Atidarykite <strong>Redaguoti doką</strong> ir pasirinkite <strong>Pridėti… → Dublikuoti doką</strong>.</li><li>Atidarykite <strong>Konfigūruoti Latte → Išdėstymų redaktorius → Dokai…</strong>, pasirinkite doką ir pasirinkite <strong>Dublikuoti</strong>.</li></ul>
+<p>Kopija gauna naujus doko ir valdiklio ID bei vieną kartą nukopijuoja dabartinius nustatymus. Po to galite nepriklausomai keisti jos ekraną, kraštą, dydį, išvaizdą, elgseną, valdiklius ir paleidykles. Tai atskiras įrašas išdėstyme, kurį galima pašalinti naudojant <strong>Pašalinti doką</strong>.</p>
+<p>Klono dublikavimas iš dialogo lango „Dokai“ sukuria dar vieną to paties originalo kloną, o ne nepriklausomą doką. Norėdami sukurti nepriklausomą doką iš klono, pirmiausia atidarykite <strong>Redaguoti originalų doką…</strong> ir dublikuokite originalą.</p>
+<p>Jei originalas naudoja <strong>Globalią grupę</strong>, kopija taip pat ją naudoja ir dalijasi paleidyklėmis. Pasirinkite <strong>Unikalią grupę</strong> kopijoje, jei norite atskiro paleidyklių sąrašo. <strong>Išdėstymo grupė</strong>yra prieinamas tik tada, kai dokas jį jau naudoja.</p>
+<h3 id="create-clone">Sukurti klonus</h3>
+<p>Klonai kuriami pagal originalaus doko ekrano režimą, o ne pagal <strong>Dokas dubliuoti</strong>:</p>
+<ul><li><strong>Redaguoti doką → Ekranas → Visuose ekranuose</strong>: originalas lieka pagrindiniame ekrane, o Latte sukuria kloną kiekviename antriniame ekrane.</li><li><strong>Redaguoti doką → Ekranas → Visuose antriniuose ekranuose</strong>: originalas lieka viename antriniame ekrane, o Latte sukuria klonus likusiuose antriniuose ekranuose.</li></ul>
+<p>Latte automatiškai sukuria ir pašalina klonus, kai pasikeičia ekranų išdėstymas. Norėdami pašalinti klonus, nustatykite originalą atgal į <strong>Pagrindiniame ekrane</strong> arba į konkretų ekraną. Klone kontekstiniame meniu nėra <strong>Pašalinti doką</strong> punkto; naudokite <strong>Redaguoti originalų doką…</strong> ten, kad jį konfigūruotumėte.</p>
+<p>Atidarius redaktorių iš klono, visada atidaromi originalaus doko nustatymai, nes klonai dalijasi doko konfigūracija. Klone pakeisti valdiklio nustatymai taip pat atnaujina originalą.</p>
+<h3 id="differences">Skirtumai vienoje vietoje</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspektas</th><th>Nepriklausoma kopija</th><th>Klonas</th></tr></thead><tbody>
+<tr><td>Sukūrė</td><td>Dokas dubliuoti</td><td>Ekranas → Visuose ekranuose arba Visuose antriniuose ekranuose</td></tr>
+<tr><td>Tapatybė</td><td>Nauji doko ir valdiklio ID</td><td>Susietas originalaus doko vaizdas</td></tr>
+<tr><td>Nustatymai</td><td>Kopijuojami vieną kartą, tada nepriklausomi</td><td>Bendrinami: redaguojant originalą atnaujinami visi klonai; klone pakeisti valdiklio nustatymai taip pat atnaujina originalą</td></tr>
+<tr><td>Ekranas ir kraštas</td><td>Gali būti keičiami nepriklausomai</td><td>Sekama originalo; negalima atskirai perkelti ar keisti dydžio</td></tr>
+<tr><td>Paleidimo priemonės</td><td>Kopijuojamos kuriant; vėliau bendrinamos tik per „Layout Group“ arba „Global Group“</td><td>Visada atkartoti originalą</td></tr>
+<tr><td>Kontekstinis meniu</td><td>Visi dokų veiksmai, įskaitant „Dubliuoti“ ir „Pašalinti“</td><td>Rodo „Redaguoti originalų doką…“; „Dubliuoti“, „Perkelti“, „Eksportuoti“ ir „Pašalinti“ yra paslėpti</td></tr>
+<tr><td>Kaip pašalinti</td><td>Pašalinti doką</td><td>Grąžinti originalą į vieną ekraną</td></tr>
+</tbody></table></div>
+<p><strong>Valdiklio piktogramų spalvos:</strong> <strong>Naudoti piktogramų temos spalvas</strong> valdiklio kontekstiniame meniu nebeleis „Latte“ spalvinti to valdiklio piktogramos. Nustatymas saugomas kiekvienam valdikliui atskirai: klonai dalijasi juo su originalu. Nepriklausoma kopija išlaiko vertę, kurią turėjo sukūrimo metu, ir gali ją keisti atskirai.</p></section></main></div><footer>Latte Dock NG · Neprisijungusio dokumentacija. Neprieinamos sąsajos kalbos grįžta į anglų kalbą.</footer></body></html>

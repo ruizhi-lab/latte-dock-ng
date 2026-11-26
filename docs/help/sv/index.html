@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Användarhandbok för Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Användarhandbok för Latte Dock NG</h1><p>Dessa instruktioner beskriver de aktuella alternativen. Avancerat läge, dockstil och installerade plugins kan påverka vilka kontroller som visas. Alternativ markerade som Avancerat är dolda i den grundläggande editorn.</p><div class="language-menu"><label for="language-select">Språk</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html" selected>Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Endast översatta handböcker listas. Andra gränssnittsspråk öppnar den engelska handboken.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>På denna sida</h2><a class="chapter" href="#edit-dock">Redigera dock</a><a class="subsection" href="#behavior">Beteende</a><a class="subsection" href="#appearance">Utseende</a><a class="subsection" href="#effects">Effekter</a><a class="subsection" href="#tasks">Aktiviteter</a><a class="chapter" href="#configure-latte">Konfigurera Latte</a><a class="subsection" href="#layouts">Layouteditor</a><a class="subsection" href="#layout-details">Layoutdetaljer</a><a class="subsection" href="#docks-dialog">Dockdialog</a><a class="subsection" href="#screens-dialog">Skärmdialog</a><a class="subsection" href="#preferences">Inställningar</a><a class="subsection" href="#context-menu-actions">Åtgärder i kontextmenyn</a><a class="chapter" href="#copies-and-clones">Oberoende kopior och kloner</a><a class="subsection" href="#create-independent-copy">Skapa en oberoende kopia</a><a class="subsection" href="#create-clone">Skapa kloner</a><a class="subsection" href="#differences">Skillnader i korthet</a></nav></aside><main>
+<section id="edit-dock"><h2>Redigera dock</h2><p class="note">Ändringar träder i kraft omedelbart. Stäng döljer editorn; det ångrar inte ändringar. Fäst håller editorn öppen. Lägg till… → Duplicera dock skapar en oberoende kopia av en ursprunglig dock; Ta bort tar bort den aktuella docken. Att byta flikar behåller fönstret på plats. Avancerat läge anpassar fönstrets storlek efter dess längsta sida, inom det tillgängliga skärmutrymmet. Längre sidor rullar inuti fönstret. Dra i hörnet för att ändra fönsterstorleken i båda redigeringslägena.</p>
+<p class="note">Avancerat läge visar fler kontroller. Alternativ markerade som Avancerat är dolda i den grundläggande redigeraren.</p>
+<h3 id="behavior">Beteende</h3>
+<p class="note">Synlighet, fördröjning, åtgärder, objektbeteende, flytande mellanrum och miljöalternativ för denna docka.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Synlighet</td></tr>
+<tr><td>Skärm / Placering</td><td>Välj skärm och kant för denna docka. Med flera skärmar skapar På alla skärmar och På alla sekundära skärmar länkade kloner. Se Oberoende kopior och Kloner.</td></tr>
+<tr><td>Justering</td><td>Placera dockan längs skärmkanten. Objektjustering styr var widgetar placeras inuti dockan.</td></tr>
+<tr><td>Alltid synlig</td><td>Håll dockan synlig och reservera skrivbordssutrymme där fönsterhanteraren stöder det.</td></tr>
+<tr><td>Auto-dölj</td><td>Dölj dockan tills pekaren når dess aktiveringsområde.</td></tr>
+<tr><td>Undvik aktivt</td><td>Dölj när det aktiva fönstret rör dockans område, och visa dockan när pekaren kommer in.</td></tr>
+<tr><td>Undvik maximerade</td><td>Dölj endast när ett maximerat fönster är aktivt på denna skärm, och visa dockan när pekaren kommer in.</td></tr>
+<tr><td>Undvik alla fönster</td><td>Dölj när något fönster rör dockans område, och visa dockan när pekaren kommer in.</td></tr>
+<tr><td>Fönster går under</td><td>Håll dockan ovanför fönster; fönster kan placeras under den.</td></tr>
+<tr><td>Fönster kan täcka</td><td>Låt fönster täcka dockan. Dockan kommer framåt när pekaren når dess skärmkant.</td></tr>
+<tr><td>Fönster täcker alltid</td><td>Håll fönster ovanför dockan hela tiden; dockan stannar bakom dem.</td></tr>
+<tr class="group"><td colspan="2">Fördröjning</td></tr>
+<tr><td>Fördröjning / Visa / Dölj</td><td>Ange hur länge det ska vänta innan det visas eller döljs, i millisekunder. Längre fördröjningar minskar oavsiktlig aktivering.</td></tr>
+<tr class="group"><td colspan="2">Åtgärder</td></tr>
+<tr><td>Spåra <span class="advanced">Avancerat</span></td><td>Välj vilken aktiv fönster tom-yta-åtgärder följer: Aktivt fönster från aktuell skärm eller Aktivt fönster från alla skärmar.</td></tr>
+<tr><td>Vänster musknapp / Dra aktivt fönster <span class="advanced">Avancerat</span></td><td>Aktivera dra från tom dock-yta för att flytta eller maximera/återställa det spårade aktiva fönstret.</td></tr>
+<tr><td>Mittenmusknapp / Stäng aktivt fönster <span class="advanced">Avancerat</span></td><td>Aktivera mittenklick på tom dock-yta för att stänga det spårade aktiva fönstret.</td></tr>
+<tr><td>Mushjul <span class="advanced">Avancerat</span></td><td>Välj vad hjulet gör över tom dock-yta: Ingen åtgärd, Cykla genom skrivbord, Cykla genom aktiviteter, Cykla genom uppgifter, eller Cykla och minimera uppgifter.</td></tr>
+<tr class="group"><td colspan="2">Objekt</td></tr>
+<tr><td>Smala titelverktygstips vid hovring</td><td>Visa kompakta widgettitelverktygstips. Fönsterförhandsvisningar för uppgifter styrs separat av uppgiftens Hover-åtgärd.</td></tr>
+<tr><td>Zooma widgets vid hovring</td><td>Tillåt att widgets zoomar med dockan. Inaktivera detta för att hålla widgetikoner skarpa; uppgiftsikoner och startprogram zoomar fortfarande.</td></tr>
+<tr><td>Utöka popup via mushjul</td><td>Skrolla över en kompatibel widget för att visa eller dölja dess popup.</td></tr>
+<tr><td>Justera storlek automatiskt vid behov</td><td>Krymp objekt när de överskrider tillgänglig längd och expandera dem igen när de passar.</td></tr>
+<tr><td>Aktivera positionbaserade globala genvägar</td><td>Tillåt att positionbaserade globala genvägar aktiverar denna dockas objekt. Endast en docka per layout bör använda detta.</td></tr>
+<tr class="group"><td colspan="2">Flytande</td></tr>
+<tr><td>Använd alltid flytande mellanrum för användarinteraktion <span class="advanced">Avancerat</span></td><td>Inkludera det flytande gapet i området som används för widget- och fönsterinteraktion.</td></tr>
+<tr><td>Dölj flytande gap för maximerade fönster <span class="advanced">Avancerat</span></td><td>Ta bort det flytande gapet när ett maximerat fönster behöver skärmkanten.</td></tr>
+<tr><td>Fördröj döljandet av flytande gap tills muspekaren lämnar <span class="advanced">Avancerat</span></td><td>Vänta tills pekaren lämnar innan gapet döljs, för att undvika oavsiktliga klick på närliggande objekt.</td></tr>
+<tr><td>Spegla flytande gap när det visas <span class="advanced">Avancerat</span></td><td>I läget Alltid synlig, spegla gapet på dockans motsatta sida.</td></tr>
+<tr class="group"><td colspan="2">Miljö</td></tr>
+<tr><td>Höj vid ändring av skrivbord <span class="advanced">Avancerat</span></td><td>Tillfälligt visa dockan när det virtuella skrivbordet ändras. Detta används inte av Alltid synlig eller Fönster under.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Utseende</h3>
+<p class="note">Marginaler, Färger, Radie/Skugga, Dynamisk längdjustering, Dynamisk synlighet och Undantag kräver Avancerat läge.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Objekt</td></tr>
+<tr><td>Dockstil</td><td>Välj Klassisk eller Modern för att tillämpa en förinställning. I båda stilarna, använd reglagen nedanför Dockstil för att ställa in objektarrangemang, markerad bakgrund, minsta objektavstånd, automatiskt flytande gap och kompakta aktivitetsindikatorer oberoende av varandra.</td></tr>
+<tr><td>Håll dockobjekt tillsammans</td><td>Använd en grupp för dockobjekt, inklusive när dockans justering är Justera.</td></tr>
+<tr><td>Använd inset bakgrund med en kontur</td><td>Använd den förinställda bakgrunden med en kontur och stil för dess avstånd, rundade hörn och skugga.</td></tr>
+<tr><td>Använd bredare minsta objektavstånd</td><td>Öka minsta avståndet runt dockobjekt. Större värden som ställs in med marginalkontrollerna gäller fortfarande.</td></tr>
+<tr><td>Använd automatiskt flytande mellanrum</td><td>Beräkna ett skärmkantmellanrum från ikonstorleken när ett specifikt mellanrumsvärde inte är inställt.</td></tr>
+<tr><td>Använd kompakta aktivitetsindikatorer</td><td>Använd den kompakta layouten för Latte-aktivitetsindikatorer. Välj indikatorform i Effekter.</td></tr>
+<tr><td>Återställ förinställning</td><td>Knappen längst ner i Redigera dock återställer omedelbart Beteende, Utseende, Effekter och alla Aktivitetsflikar till den medföljande dock-förinställningen för aktuell Klassisk/Modern stil, inklusive alternativ som döljs av Avancerat-läget. Skärmen, dock-kanten, startprogrammen och widgetarna behålls. Justering, synlighet och fördröjningar nollställs. Delning av startprogram återgår till standardlokalgruppen medan en kopia av den effektiva startprogramlistan behålls; andra docks delade listor förblir oförändrade. Anpassade färger och indikatoröverstyrningar nollställs. Förinställningen kombinerar den medföljande Standarddock-mallen med konfigurationsschemats standardvärden. Detta är separat från att bara byta Dock-stil. Klassisk stänger av de fem utseendeväxlarna under Dock-stil som standard. Modern slår på dem. Båda förinställningarna använder samma standardvärden för de återstående alternativen.</td></tr>
+<tr><td>Absolut storlek / Relativ storlek</td><td>Ange ikonstorlek i pixlar eller som en andel av skärmen. Relativ storlek är användbart vid höga DPI-inställningar eller flerskärmssystem.</td></tr>
+<tr><td>Zooma vid hovring</td><td>Ange hur mycket objekten växer under pekaren.</td></tr>
+<tr class="group"><td colspan="2">Längd</td></tr>
+<tr><td>Maximal / Minimal / Förskjutning</td><td>Ange dockens maximala och minimala längd och flytta den längs skärmkanten.</td></tr>
+<tr><td>Dynamiska längdjusteringar <span class="advanced">Avancerat</span></td><td>Maximera panelens längd vid maximerade fönster: förläng dockan till full längd när ett maximerat fönster finns. Bakgrunden måste vara aktiverad.</td></tr>
+<tr class="group"><td colspan="2">Marginaler</td></tr>
+<tr><td>Marginaler / Längd / Tjocklek / Flytande mellanrum <span class="advanced">Avancerat</span></td><td>Ange den externa marginalen längs dockan, marginalen över dess tjocklek och mellanrummet mellan dockan och skärmkanten.</td></tr>
+<tr><td>Mellanrum från maximerade fönster (px) <span class="advanced">Avancerat</span></td><td>Reservera ytterligare 0–128 pixlar mellan fönster och denna docka i Alltid synligt-läge. Standard: 0. Detta är separat från det flytande mellanrummet vid skärmkanten och läggs till eventuella speglade mellanrum; auto-dölj-lägen reserverar inte detta utrymme.</td></tr>
+<tr class="group"><td colspan="2">Färger</td></tr>
+<tr><td>Färger / Palett <span class="advanced">Avancerat</span></td><td>Välj Plasma-temafärger, Mörka färger, Ljusa färger, Layouts anpassade färger, Omvänd, eller Smarta färger baserat på skrivbordsbakgrund. Layouts anpassade färger använder layoutens färgschema; Smart följer bakgrundsbilden.</td></tr>
+<tr><td>Använd anpassad bakgrundsfärg / Dagsfärg <span class="advanced">Avancerat</span></td><td>Åsidosätt denna dockas bakgrund med en vald färg; textkontrasten justeras automatiskt. Inaktiverat som standard. Färgpaletter härledda från fönster och Plasma-paletten för utökade applets behåller prioritet. Opacitet förblir en separat bakgrundsinställning.</td></tr>
+<tr><td>Byt bakgrundsfärger efter tid på dygnet / Nattfärg / Dag börjar (lokal tid) / Natt börjar (lokal tid) <span class="advanced">Avancerat</span></td><td>Växla valfritt mellan två anpassade färger med hjälp av lokala 24-timmarsklockslag. Standardvärden: dag 07:00, natt 19:00. Starttiden är inkluderande. Intervall kan korsa midnatt; lika tider behåller dagsfärgen hela dagen. Om schemat inaktiveras behålls dagsfärgen. Klockan kontrolleras varje sekund, även efter återupptagning.</td></tr>
+<tr class="group"><td colspan="2">Bakgrund</td></tr>
+<tr><td>Bakgrund</td><td>Bakgrund är en på/av-knapp. När den är aktiverad, använd kontrollerna nedan för att ställa in tjocklek, opacitet, radie och skugga.</td></tr>
+<tr><td>Opacitet / Upptagen opacitet</td><td>Ställ in bakgrundsopacitet. Samma reglage kallas Upptagen opacitet när Dölj bakgrund när den inte behövs och Föredra opakt bakgrund när ett fönster rör dockan båda är aktiverade. Def. återställer temats standardvärde.</td></tr>
+<tr><td>Radie / Skugga <span class="advanced">Avancerat</span></td><td>Ställ in hörnradien för bakgrunden och skuggstorleken. Def. använder temats standardvärde.</td></tr>
+<tr><td>Suddighet / Skuggor / Kontur / Alla hörn <span class="advanced">Avancerat</span></td><td>Aktivera bakgrundssuddighet, bakgrundsskugga, kontur och rundade hörn. Alla hörn är endast tillgängligt för vissa flytande/justerade geometrier.</td></tr>
+<tr class="group"><td colspan="2">Dynamisk synlighet</td></tr>
+<tr><td>Föredra opakt bakgrund när ett fönster rör dockan <span class="advanced">Avancerat</span></td><td>Ta bort bakgrundstransparens medan ett fönster rör dockan.</td></tr>
+<tr><td>Dölj bakgrund när den inte behövs <span class="advanced">Avancerat</span></td><td>Dölj bakgrunden utom när ett fönster rör dockan eller skrivbordets bakgrund är upptagen.</td></tr>
+<tr><td>Dölj bakgrundsskugga för maximerade fönster <span class="advanced">Avancerat</span></td><td>Dölj bakgrundsskuggan medan ett aktivt maximerat fönster rör dockan.</td></tr>
+<tr class="group"><td colspan="2">Undantag</td></tr>
+<tr><td>Föredra Plasma-bakgrund och färger för utökade applets<span class="advanced">Avancerat</span></td><td>Använd en opak bakgrund i Plasma-stil och Plasma-färger medan widget-popups är utökade.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effekter</h3>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Skuggor</td></tr>
+<tr><td>Skuggor</td><td>Slå på eller av widget-skuggor. Storlek och Opacitet är inaktiverade när skuggor är avstängda.</td></tr>
+<tr><td>Storlek / Opacitet</td><td>Ange storlek och opacitet för widget-skuggor.</td></tr>
+<tr><td>Standardfärg / Temafärg / anpassad färg</td><td>Välj standardfärgen för skuggan, en färg från temapaletten, eller klicka på färgprovet för att välja en anpassad färg.</td></tr>
+<tr class="group"><td colspan="2">Animationer</td></tr>
+<tr><td>Animationer / x1 / x2 / x3</td><td>Slå på eller av alla dock-animationer. x1 är normal hastighet, x2 är långsammare, x3 är långsammast.</td></tr>
+<tr class="group"><td colspan="2">Indikatorer</td></tr>
+<tr><td>Indikatorer</td><td>Slå på eller av indikatorer för aktiva uppgifter. När aktiverat, välj Latte-indikatorn eller en anpassad indikatorplugin; pluginspecifika alternativ visas i dess flik.</td></tr>
+<tr><td>Använd prickar i macOS-stil</td><td>Latte-indikatorn använder prickar i macOS-stil som standard när kompakta uppgiftsindikatorer är aktiverade i Utseende. Stäng av Använd prickar i macOS-stil i Effekter för att manuellt välja Linje eller Prickar.</td></tr>
+<tr><td>Använd applikationsikoners färger</td><td>Valfritt: färglägg uppgiftsindikatorer med varje applikationsikons dominerande färg, justerad för bakgrundskontrast. Välj Linje för färgade understrykningar. Inaktiverat som standard; applets behåller palettfärger.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Uppgifter</h3>
+<p>Startprogrammen börjar omordna sig på andra dockor som delar startprogramlistan efter att du släpper ikonen. Ordningen kan ta ett ögonblick att stabilisera sig. Separatoravstånd behålls när den mottagande dockan sparar den nya ordningen. Om du drar en redan fäst app behålls dess befintliga startprogram, även när det startprogrammet följer systemets standardapplikation. Nya separatorer tar upp plats när de når det valda avståndet.</p>
+<p>När du lägger till eller drar en widget bredvid en separator vid kanten av aktivitetsområdet eller systemfältet, placeras widgeten på utsidan av separatorn. Separatorn förblir intill aktivitetsområdet eller fältet.</p>
+<p>När du fäster en app från applikationsmenyn visas dess ikon före alla separatorer i slutet av aktivitetslistan. Den högra separatorn tillhör den fästa gruppen, så körda appar som inte är fästa visas bortom den.</p>
+<p>Aktivitetsslotten förblir markerad och ikonen synlig medan du drar den för att omordna aktiviteter. När en ny aktivitet glider in, börjar dockan reservera dess slot från den ursprungliga animationsstorleken.</p>
+<p class="note">Emblem, Animationer, Rullning, Åtgärder och vissa Alternativ för Interaktion/Filtrering kräver Avancerat läge. Att visa endast startprogram och dölja alla aktiviteter inaktiverar fönsterrelaterade åtgärder och filter.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Emblem</td></tr>
+<tr><td>Aviseringar från aktiviteter <span class="advanced">Avancerat</span></td><td>Visa antal olästa aviseringar på aktivitetsikoner.</td></tr>
+<tr><td>Förloppsinformation för aktiviteter <span class="advanced">Avancerat</span></td><td>Visa förloppsindikatorer, till exempel medan Dolphin kopierar filer.</td></tr>
+<tr><td>Ljud spelas från uppgifter <span class="advanced">Avancerat</span></td><td>Visa en ljudindikator för program som spelar upp ljud. Matchning föredrar uttryckliga skrivbords-/programidentifierare. Allmän information om webbläsarprocesser räcker inte för att identifiera en specifik PWA; tvetydiga strömmar lämnas oallokerade istället för att ge obefintliga program ljudkontroller. Oberoende Electron-program kan fortfarande matcha sin egen ljudprocess. Uppspelningsstatus och utmatningsaktivitet döljer pausade strömmar även när programmet behåller sin ljudanslutning öppen. Utan spelarstatus tolereras kort tystnad i cirka en sekund.</td></tr>
+<tr><td>Framträdande färg för notifieringsindikator <span class="advanced">Avancerat</span></td><td>Använd en starkare, vanligtvis röd, notifieringsindikator. Kräver Notifieringar från uppgifter.</td></tr>
+<tr><td>Ändra volym när du skrollar över ljudindikatorn <span class="advanced">Avancerat</span></td><td>Klicka på ljudindikatorn för att stänga av/på ljudet, eller skrolla över den för att ändra volymen. Kräver Ljud spelas från uppgifter.</td></tr>
+<tr class="group"><td colspan="2">Interaktion</td></tr>
+<tr><td>Startprogram läggs till endast i aktuella uppgiftsappleten</td><td>Lägg till släppta startprogram endast i denna uppgiftswidget, inte som separata widgets eller i andra uppgiftswidgets.</td></tr>
+<tr><td>Fönsteråtgärder i kontextmenyn <span class="advanced">Avancerat</span></td><td>Visa fönsterspecifika åtgärder i uppgiftens kontextmeny.</td></tr>
+<tr><td>Förhandsvisningsfönster beter sig som popup <span class="advanced">Avancerat</span></td><td>Öppna förhandsvisningar som en popup istället för en verktygstips. Hover-åtgärden måste begära förhandsvisningar; detta ändrar endast hur de visas.</td></tr>
+<tr><td>Baserat på position tillämpas genvägar endast på aktuella uppgifter<span class="advanced">Avancerat</span></td><td>Begränsa positionsbaserade globala genvägar till denna uppgiftswidget.</td></tr>
+<tr class="group"><td colspan="2">Filter</td></tr>
+<tr><td>Visa endast uppgifter från aktuell skärm</td><td>Visa fönster från denna docks skärm.</td></tr>
+<tr><td>Visa endast uppgifter från aktuellt skrivbord</td><td>Visa fönster från aktuellt virtuellt skrivbord.</td></tr>
+<tr><td>Visa sektion för minimerade fönster</td><td>Av som standard. Visar minimerade fönster som individuella ikoner efter de vanliga uppgifterna. Hovra eller fokusera en ikon för dess applikation och fönstertitel, och aktivera den för att återställa fönstret. När en applikation har flera minimerade fönster visas en liten märkning med varje fönsters sekvens och totalen för den applikationen. Sektionen följer uppgiftsfiltreringen och delar uppgiftsöverflödsskrollning. Aktivera skrollning för att nå fönster utanför skärmen med din konfigurerade hjul- eller kant-hovringsåtgärd. Startprogramläge döljer den.</td></tr>
+<tr><td>Visa endast uppgifter från startprogram<span class="advanced">Avancerat</span></td><td>Visa fönster endast för applikationer som redan finns i startprogramlistan.</td></tr>
+<tr><td>Visa endast startprogram och dölj alla uppgifter<span class="advanced">Avancerat</span></td><td>Visa startprogramikoner och dölj körande uppgifter. Detta inaktiverar även fönsterrelaterade åtgärder och filter.</td></tr>
+<tr><td>Visa endast grupperade uppgifter för samma applikation<span class="advanced">Avancerat</span></td><td>Gruppera fönster för samma applikation som standard.</td></tr>
+<tr class="group"><td colspan="2">Animationer</td></tr>
+<tr><td>Studsa startprogram när de utlöses<span class="advanced">Avancerat</span></td><td>Animera startprogram när de utlöses.</td></tr>
+<tr><td>Studsa uppgifter som behöver uppmärksamhet<span class="advanced">Avancerat</span></td><td>Animera uppgifter som begär uppmärksamhet.</td></tr>
+<tr><td>Glida in och ut för enskilda fönster<span class="advanced">Avancerat</span></td><td>Animera nya och stängda enskilda fönster.</td></tr>
+<tr><td>Grupperade uppgifter studsar sina nya fönster <span class="advanced">Avancerat</span></td><td>Animera ett nytt fönster inuti en uppgiftsgrupp.</td></tr>
+<tr><td>Grupperade uppgifter glider ut sina stängda fönster <span class="advanced">Avancerat</span></td><td>Animera ett stängt fönster inuti en uppgiftsgrupp.</td></tr>
+<tr class="group"><td colspan="2">Startprogram</td></tr>
+<tr><td>Unik grupp</td><td>Ge denna uppgiftswidget sin egen startprogramlista.</td></tr>
+<tr><td>Layoutgrupp</td><td>Dela startprogram med uppgiftswidgets i samma layout. Denna knapp visas endast när dockan redan använder Layoutgrupp.</td></tr>
+<tr><td>Global grupp</td><td>Dela startprogram med uppgiftswidgets i alla layouter.</td></tr>
+<tr class="group"><td colspan="2">Skrollning</td></tr>
+<tr><td>Skrollning <span class="advanced">Avancerat</span></td><td>Aktivera skrollning när uppgifterna överskrider det tillgängliga utrymmet. Detta fungerar med båda dockförinställningarna, inklusive när Håll dockobjekt tillsammans är aktiverat.</td></tr>
+<tr><td>Manuell <span class="advanced">Avancerat</span></td><td>Välj Inaktiverad skrollning, Endast vertikal/horisontell skrollning, eller Horisontell och vertikal skrollning. Valet av enkel riktning beror på dockans orientering.</td></tr>
+<tr><td>Automatisk <span class="advanced">Avancerat</span></td><td>Slå på eller av automatisk skrollning.</td></tr>
+<tr class="group"><td colspan="2">Åtgärder</td></tr>
+<tr><td>Vänsterklick <span class="advanced">Avancerat</span></td><td>Åtgärd för vänsterklick på en uppgift: Ingen, Stäng fönster eller grupp, Ny instans, Minimera/Återställ, Cykla genom uppgifter, Växla uppgiftsgruppering, Visa fönster, Förhandsvisa fönster, Markera fönster, eller Förhandsvisa och markera fönster.</td></tr>
+<tr><td>Mittenklick <span class="advanced">Avancerat</span></td><td>Åtgärd för mittenklick på en uppgift. Valen är desamma som för Vänsterklick.</td></tr>
+<tr><td>Hovra <span class="advanced">Avancerat</span></td><td>Hovringsåtgärder: Ingen, Förhandsvisa fönster, Markera fönster, eller Förhandsvisa och markera fönster. Verktygstips för uppgiftstitlar styrs i Beteende.</td></tr>
+<tr><td>Hjul <span class="advanced">Avancerat</span></td><td>Hjulåtgärder: Inget, Bläddra bland uppgifter eller Bläddra och minimera uppgifter.</td></tr>
+<tr><td>Modifierare + klick <span class="advanced">Avancerat</span></td><td>Håll Shift, Ctrl, Alt eller Meta och klicka vänster, mitten eller höger för att utföra en ytterligare åtgärd. Välj modifierare, knapp och åtgärd; detta är separat från huvudåtgärderna ovan.</td></tr>
+</tbody></table></div>
+<p class="note">Aktivitetsfiltret är dolt i Plasma 6 eftersom stödet för KActivities är otillförlitligt.</p></section><section id="configure-latte"><h2>Konfigurera Latte</h2><p class="note">Layoutredigeraren hanterar layouter och deras dockor. Inställningar styr beteendet för hela programmet. Tillämpa sparar väntande ändringar i aktuell flik; Återställ återställer den sparade statusen för den fliken; Återställ standardvärden förbereder standardvärden för granskning. Skärmar... hanterar lagrade skärmreferenser.</p>
+<h3 id="layouts">Layoutredigerare</h3>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr><td>En enda layout hela tiden</td><td>Använd en layout för alla aktiviteter.</td></tr>
+<tr><td>Flera layouter baserat på aktiviteter</td><td>Tilldela olika layouter till aktiviteter; flera layouter kan förbli inlästa.</td></tr>
+<tr><td>Byt</td><td>Aktivera den valda layouten. Tillämpa väntande ändringar först; Latte byter inte layout om det finns osparade ändringar.</td></tr>
+<tr><td>Aktiviteter...</td><td>Öppna Plasmas aktivitetshanterare. Använd kolumnen Aktiviteter eller Aktiverad för att tilldela denna layout till aktiviteter.</td></tr>
+<tr><td>Ny / Duplicera / Ta bort</td><td>Skapa, kopiera eller ta bort en layout. Duplicera här kopierar hela layouten, inte en enskild docka. Aktiva och låsta layouter kan inte tas bort.</td></tr>
+<tr><td>Aktiverad</td><td>Tilldela denna layout till en eller flera aktiviteter så att Plasma-aktiviteter kan aktivera den. Visas endast i läget med flera layouter.</td></tr>
+<tr><td>Endast läsning</td><td>Skydda layoutkonfigurationen från ändringar.</td></tr>
+<tr><td>Detaljer...</td><td>Öppna dialogrutan för layoutdetaljer för ikon, anpassade färger, popup-marginal och synlighet av kontextmeny.</td></tr>
+<tr><td>Dockor...</td><td>Öppna docklistan för denna layout: namn, skärm, kant, justering, inkluderade widgets, samt ny/duplicera/ta bort/importera/exportera.</td></tr>
+<tr><td>Importera... / Exportera...</td><td>Importera en layout från en lokal fil eller KDE Store; exportera den för säkerhetskopiering eller som en mall. Fil → Importera konfiguration / Exportera konfiguration hanterar en fullständig programbackup.</td></tr>
+<tr><td>Namn / I meny / Aktiviteter</td><td>Layoutlistan har kolumnerna Namn, I meny och Aktiviteter. Redigera Namn och Aktiviteter direkt i listan; I meny styr om layouten visas i dockans Layouts-meny.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Layoutdetaljer</h3>
+<p>Öppna med Layouteditor → Detaljer... för att redigera den valda layouten.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr><td>Layout</td><td>Välj vilken layout som ska redigeras.</td></tr>
+<tr><td>Ikon</td><td>Välj en ikon för layouten. Rensa-knappen tar bort den.</td></tr>
+<tr><td>Anpassade färger</td><td>Välj en fil för anpassat färgschema för denna layout.</td></tr>
+<tr><td>PopUp-marginal</td><td>Ange marginalen som används av layout-popups; inaktiverad betyder att standardvärdet används.</td></tr>
+<tr><td>Visa i layouts-kontextmenyn när möjligt</td><td>Visa denna layout i dockans Layouts-meny när den aktuella aktiviteten tillåter det.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dockdialog</h3>
+<p>Öppna med Layouteditor → Dockor... för att hantera dockorna i den valda layouten.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolumner</td></tr>
+<tr><td>Namn</td><td>Docknamn. Dubbelklicka för att byta namn.</td></tr>
+<tr><td>Skärm</td><td>Skärmen som dockan tillhör, inklusive Primär, Alla skärmar och Alla sekundära skärmar.</td></tr>
+<tr><td>Kant</td><td>Skärmkant som dockan använder.</td></tr>
+<tr><td>Justering</td><td>Dockans justering längs kanten.</td></tr>
+<tr><td>Innehåller</td><td>Widgetar och underinnehåll som ingår i dockan. Denna kolumn är skrivskyddad.</td></tr>
+<tr class="group"><td colspan="2">Knappar</td></tr>
+<tr><td>Ny</td><td>Skapa en docka från en mall.</td></tr>
+<tr><td>Duplicera</td><td>Skapa en oberoende kopia av den valda dockan, eller en annan klon om den valda dockan är en klon.</td></tr>
+<tr><td>Ta bort</td><td>Ta bort den valda dockan. Kloner tas bort tillsammans med sin originaldocka.</td></tr>
+<tr><td>Importera...</td><td>Importera en docka från en lokal mallfil.</td></tr>
+<tr><td>Exportera...</td><td>Exportera den valda dockan för säkerhetskopiering eller som en mall. Mall-dialogrutan låter dig välja vilka widgetinställningar som ska inkluderas; utelämna widgetar med personlig data som e-post- eller kalenderkonton.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Skärmdialog</h3>
+<p>Öppna via Arkiv → Skärmar... för att rensa skärmreferenser som sparats av Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr><td>Skärmlista</td><td>Listar skärmreferenser som lagras i Latte, inklusive skärmar som inte längre är anslutna.</td></tr>
+<tr><td>Markera föråldrade skärmar</td><td>Markera endast skärmar som inte längre finns. Aktiva skärmar och skärmar som används av en layout kan inte tas bort.</td></tr>
+<tr><td>Avmarkera alla</td><td>Rensa markeringen innan du väljer en annan uppsättning.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Inställningar</h3>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr><td>Visa informationsfönster för automatisk aktivering av layouter</td><td>Visa ett informationsfönster när en layout aktiveras automatiskt.</td></tr>
+<tr><td>Parabolisk effekt / Liten / Medel / Stor</td><td>Ange den globala spridningen av hover-zoom över intilliggande objekt.</td></tr>
+<tr><td>Aktivera autostart vid start</td><td>Starta Latte när du loggar in.</td></tr>
+<tr><td>Använd 3D-stil för meddelande- och genvägsbrickor</td><td>Använd en dimensionell stil för meddelande- och genvägsbrickor.</td></tr>
+<tr><td>Håll ⌘ intryckt för att visa genvägsbrickor</td><td>Av som standard. Håll Meta-tangenten intryckt i cirka en sekund för att visa dolda dockor och genvägsbrickorna för deras uppgifter och widgets; släpp tangenten för att dölja dem igen. Med Plasmas standardinställningar öppnas dess egen startmeny också när Meta släpps; ändra den genvägen i Systeminställningar om du inte vill ha detta.</td></tr>
+<tr><td>Påverkan av tjockleksmarginal</td><td>Välj hur mycket objektens tjockleksmarginaler påverkar layouten: 0 %, 50 % eller 100 %.</td></tr>
+<tr><td>Informera Plasma-skrivbordet om tillgängligt skrivbordsutrymme</td><td>Publicera tillgängligt skrivbordsutrymme till Plasma så att paneler och fönster kan använda det.</td></tr>
+<tr><td>Kontextmeny / Åtgärder...</td><td>Välj vilka dock-kontextmenyåtgärder som alltid visas. Åtgärder som inte är valda är endast tillgängliga i redigeringsläge.</td></tr>
+<tr><td>Skärmar / reaktionsfördröjning för ändringar</td><td>Ange hur länge Latte väntar innan det reagerar på skärmändringar, i millisekunder. Öka värdet om hårdvaran rapporterar instabila övergångar.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontextmenyåtgärder</h3>
+<p>Öppna via Inställningar → Kontextmeny → Åtgärder... för att välja vilka dock-åtgärder som alltid är synliga.</p>
+<div class="table-wrap"><table><thead><tr><th>Alternativ i fönstret</th><th>Vad det styr</th></tr></thead><tbody>
+<tr><td>Alltid åtkomlig</td><td>Åtgärder i den här listan visas alltid i dock-kontextmenyn.</td></tr>
+<tr><td>Endast åtkomlig i redigeringsläge</td><td>Åtgärder i den här listan visas endast medan dockan redigeras. Flytta åtgärder mellan listorna för att ändra detta.</td></tr>
+<tr><td>Flytta mellan listor</td><td>Välj en åtgärd och använd pilknapparna för att flytta den. Återställ och Återställ standardvärden återställer standardsamlingen.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Oberoende kopior och kloner</h2><p class="note">En dubblett och en klon ser likadana ut på skärmen men beter sig olika. En dubblett är en ny, oberoende docka. En klon är samma docka som visas på en annan skärm. Välj baserat på om du vill konfigurera den här dockan separat.</p>
+<h3 id="create-independent-copy">Skapa en oberoende kopia</h3>
+<p>Använd någon av dessa metoder på den ursprungliga dockan, inte på en klon:</p>
+<ul><li>Högerklicka på dockan och välj <strong>Duplicera docka</strong>.</li><li>Öppna <strong>Redigera docka</strong> och välj <strong>Lägg till… → Duplicera docka</strong>.</li><li>Öppna <strong>Konfigurera Latte → Layoutredigerare → Dockor…</strong>, välj dockan och välj <strong>Duplicera</strong>.</li></ul>
+<p>Kopian får nya dock- och widget-ID:n och kopierar de aktuella inställningarna en gång. Därefter kan du ändra dess skärm, kant, storlek, utseende, beteende, widgets och startprogram oberoende. Det är en separat post i layouten och kan tas bort med <strong>Ta bort docka</strong>.</p>
+<p>Att duplicera en klon från dialogrutan Dockor skapar en annan klon av samma original, inte en oberoende docka. För att bygga en oberoende docka från en klon, öppna först <strong>Redigera originaldocka…</strong> och duplicera originalen.</p>
+<p>Om originalen använder <strong>Global grupp</strong>, använder kopian också den och delar startprogram. Välj <strong>Unik grupp</strong> på kopian om du vill ha en separat startprogramlista. <strong>Layoutgrupp</strong>är endast tillgängligt när dockan redan använder det.</p>
+<h3 id="create-clone">Skapa kloner</h3>
+<p>Kloner skapas av skärmläget för en originaldocka, inte av <strong>Duplicera docka</strong>:</p>
+<ul><li><strong>Redigera docka → Skärm → På alla skärmar</strong>: originalen stannar på huvudskärmen, och Latte skapar en klon på varje sekundär skärm.</li><li><strong>Redigera docka → Skärm → På alla sekundära skärmar</strong>: originalen stannar på en sekundär skärm, och Latte skapar kloner på de återstående sekundära skärmarna.</li></ul>
+<p>Latte skapar och tar bort kloner automatiskt när skärmlayouten ändras. För att ta bort kloner, ställ in originalen tillbaka till <strong>På huvudskärmen</strong> eller till en specifik skärm. En klon har inget <strong>Ta bort docka</strong>-objekt i sin kontextmeny; använd <strong>Redigera originaldocka…</strong> där för att konfigurera den.</p>
+<p>Att öppna redigeraren från en klon öppnar alltid inställningarna för originaldockan, eftersom kloner delar dockkonfigurationen. Widgetinställningar som ändras på en klon uppdaterar också originalen.</p>
+<h3 id="differences">Skillnader i överblick</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Oberoende kopia</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Skapas av</td><td>Duplicera docka</td><td>Skärm → På alla skärmar eller På alla sekundära skärmar</td></tr>
+<tr><td>Identitet</td><td>Nya dock- och widget-ID:n</td><td>En länkad vy av originaldockan</td></tr>
+<tr><td>Inställningar</td><td>Kopieras en gång, sedan oberoende</td><td>Delade: redigering av originalen uppdaterar varje klon; widgetinställningar som ändras på en klon uppdaterar också originalen</td></tr>
+<tr><td>Skärm och kant</td><td>Kan ändras oberoende</td><td>Följer originalen; kan inte flyttas eller ändra storlek separat</td></tr>
+<tr><td>Startprogram</td><td>Kopieras vid skapandet; senare delning endast via Layoutgrupp eller Global grupp</td><td>Speglar alltid originalet</td></tr>
+<tr><td>Kontextmeny</td><td>Fullständiga dockningsåtgärder, inklusive Duplicera och Ta bort</td><td>Visar Redigera originaldockning…; Duplicera, Flytta, Exportera och Ta bort är dolda</td></tr>
+<tr><td>Så här tar du bort</td><td>Ta bort dockning</td><td>Återställ originalet till en enda skärm</td></tr>
+</tbody></table></div>
+<p><strong>Widgetikonfärger:</strong> <strong>Använd ikonfärger från ikontema</strong> i en widgets kontextmeny förhindrar att Latte färglägger den widgetens ikon. Inställningen lagras per widget: kloner delar den med originalet. En oberoende kopia behåller det värde den hade när den skapades och kan ändra det separat.</p></section></main></div><footer>Latte Dock NG · Offline-dokumentation. Otillgängliga gränssnittsspråk faller tillbaka till engelska.</footer></body></html>

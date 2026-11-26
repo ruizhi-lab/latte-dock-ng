@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="eo"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gvidilo por Uzantoj de Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Gvidilo por Uzantoj de Latte Dock NG</h1><p>Ĉi tiuj instrukcioj priskribas la nunajn opciojn. Altnivela reĝimo, doko-stilo kaj instalitaj kromaĵoj povas ŝanĝi kiujn regilojn oni vidas. Opcioj markitaj kiel Altnivelaj estas kaŝitaj en la baza redaktilo.</p><div class="language-menu"><label for="language-select">Lingvo</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html" selected>Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Nur tradukitaj gvidiloj estas listigitaj. Aliaj interfacaj lingvoj malfermas la anglalingvan gvidilon.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>En ĉi tiu paĝo</h2><a class="chapter" href="#edit-dock">Redakti Doko</a><a class="subsection" href="#behavior">Konduto</a><a class="subsection" href="#appearance">Aspekto</a><a class="subsection" href="#effects">Efektoj</a><a class="subsection" href="#tasks">Taskoj</a><a class="chapter" href="#configure-latte">Agordi Latte</a><a class="subsection" href="#layouts">Redaktilo de Aranĝoj</a><a class="subsection" href="#layout-details">Detaloj de Aranĝo</a><a class="subsection" href="#docks-dialog">Dialogo de Doko</a><a class="subsection" href="#screens-dialog">Dialogo de Ekranoj</a><a class="subsection" href="#preferences">Preferoj</a><a class="subsection" href="#context-menu-actions">Agoj de Kunteksta Menuo</a><a class="chapter" href="#copies-and-clones">Sendependaj Kopioj kaj Klonoj</a><a class="subsection" href="#create-independent-copy">Krei sendependan kopion</a><a class="subsection" href="#create-clone">Krei klonojn</a><a class="subsection" href="#differences">Diferencoj je unu rigardo</a></nav></aside><main>
+<section id="edit-dock"><h2>Redakti Doko</h2><p class="note">Ŝanĝoj efektiviĝas tuj. Fermi kaŝas la redaktilon; ĝi ne malfaras ŝanĝojn. Alpingli tenas la redaktilon malfermita. Aldoni… → Duplikati Doko kreas sendependan kopion de originala doko; Forigi forigas la nunan dokon. Ŝanĝado de langetoj tenas la fenestron en sia loko. Altnivela reĝimo grandigas la fenestron por ĝia plej longa paĝo, ene de la havebla ekranspaco. Pli longaj paĝoj rulumas ene de la fenestro. Trenu la angulon de redimensiigo por agordi la fenestran grandecon en ambaŭ redaktilaj reĝimoj.</p>
+<p class="note">Altnivela reĝimo montras pli da kontroloj. Opcioj markitaj kiel Altnivelaj estas kaŝitaj en la baza redaktilo.</p>
+<h3 id="behavior">Konduto</h3>
+<p class="note">Videbleco, prokrasto, agoj, eroj-konduto, ŝveba spaco kaj medio-opcioj por ĉi tiu doko.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Videbleco</td></tr>
+<tr><td>Ekrano / Loko</td><td>Elektu la ekranon kaj randon por ĉi tiu doko. Kun pluraj ekranoj, 'Sur Ĉiuj Ekranoj' kaj 'Sur Ĉiuj Sekundaraj Ekranoj' kreas ligitajn klonojn. Vidu Sendependaj Kopioj kaj Klonado.</td></tr>
+<tr><td>Alĝustigo</td><td>Poziciu la dokon laŭ la ekrana rando. Eroj-alĝustigo kontrolas kie fenestraĵoj sidas ene de la doko.</td></tr>
+<tr><td>Ĉiam Videbla</td><td>Teni la dokon videbla kaj rezervi labortablan spacon kie la fenestra administranto subtenas ĝin.</td></tr>
+<tr><td>Aŭtomata Kaŝado</td><td>Kaŝi la dokon ĝis la kursoro atingas ĝian aktivigan areon.</td></tr>
+<tr><td>Eviti Aktivan</td><td>Kaŝi kiam la aktiva fenestro tuŝas la dokan areon, kaj montri la dokon kiam la kursoro eniras.</td></tr>
+<tr><td>Eviti Maksimumigitan</td><td>Kaŝi nur kiam maksimumigita fenestro estas aktiva sur ĉi tiu ekrano, kaj montri la dokon kiam la kursoro eniras.</td></tr>
+<tr><td>Eviti Ĉiujn Fenestrojn</td><td>Kaŝi kiam ajna fenestro tuŝas la dokan areon, kaj montri la dokon kiam la kursoro eniras.</td></tr>
+<tr><td>Fenestroj Suben</td><td>Teni la dokon super fenestroj; fenestroj povas esti metitaj sub ĝin.</td></tr>
+<tr><td>Fenestroj Povas Kovri</td><td>Permesi al fenestroj kovri la dokon. La doko venas antaŭen kiam la kursoro atingas ĝian ekranan randon.</td></tr>
+<tr><td>Fenestroj Ĉiam Kovras</td><td>Teni fenestrojn super la doko ĉiam; la doko restas malantaŭ ili.</td></tr>
+<tr class="group"><td colspan="2">Prokrasto</td></tr>
+<tr><td>Prokrasto / Montri / Kaŝi</td><td>Agordu kiom longe atendi antaŭ montri aŭ kaŝi, en milisekundoj. Pli longaj prokrastoj reduktas hazardan aktivigon.</td></tr>
+<tr class="group"><td colspan="2">Agoj</td></tr>
+<tr><td>Spuri <span class="advanced">Altnivelaj</span></td><td>Elektu, kiuj agoj de malplena areo de la aktiva fenestro sekvas: Aktiva Fenestro de Nuna Ekrano aŭ Aktiva Fenestro de Ĉiuj Ekranoj.</td></tr>
+<tr><td>Maldekstra Butono / Treni Aktivan Fenestron <span class="advanced">Altnivelaj</span></td><td>Ebligu trenadon de malplena spaco de la dokto por movi aŭ maksimumi/reŭtigi la spuratan aktivan fenestron.</td></tr>
+<tr><td>Meza Butono / Fermi Aktivan Fenestron <span class="advanced">Altnivelaj</span></td><td>Ebligu mezan klakon sur malplena spaco de la dokto por fermi la spuratan aktivan fenestron.</td></tr>
+<tr><td>Rado de muso <span class="advanced">Altnivelaj</span></td><td>Elektu, kion la rado faras super malplena spaco de la dokto: Neniu Ago, Cikli Tra Labortabloj, Cikli Tra Agadoj, Cikli Tra Taskoj, aŭ Cikli kaj Minimumigi Taskojn.</td></tr>
+<tr class="group"><td colspan="2">Elementoj</td></tr>
+<tr><td>Maldensaj titolaj ŝvebaj konsiletoj dum ŝvebado</td><td>Montru kompaktajn titolajn ŝvebajn konsiletojn de fenestraĵoj. Antaŭrigardoj de taskfenestroj estas kontrolataj aparte de la ago de tasko dum ŝvebado.</td></tr>
+<tr><td>Zomi fenestraĵojn dum ŝvebado</td><td>Permesu al fenestraĵoj zomi kun la dokto. Malŝaltu ĉi tion por teni ikonojn de fenestraĵoj akraj; ikonoj de taskoj kaj lanĉiloj ankoraŭ zomas.</td></tr>
+<tr><td>Etendi ŝprucfenestron tra musa rado</td><td>Rulumu super subtenata fenestraĵo por montri aŭ kaŝi ĝian ŝprucfenestron.</td></tr>
+<tr><td>Aŭtomate agordi grandecon kiam necesas</td><td>Malgrandigu elementojn kiam ili superas la haveblan longon kaj grandigu ilin denove kiam ili taŭgas.</td></tr>
+<tr><td>Aktivigi bazitajn sur pozicio globalaj rapidklavoj</td><td>Permesu al globalaj rapidklavoj bazitaj sur pozicio aktivigi la elementojn de ĉi tiu dokto. Nur unu dokto por aranĝo devus uzi ĉi tion.</td></tr>
+<tr class="group"><td colspan="2">Ŝveba</td></tr>
+<tr><td>Ĉiam uzi ŝveban interspacon por uzanta interago <span class="advanced">Altnivelaj</span></td><td>Inkluzivu la flosantan spacon en la areon uzatan por interago kun fenestroj kaj fenestraĵoj.</td></tr>
+<tr><td>Kaŝi flosantan spacon por maksimumigitaj fenestroj <span class="advanced">Altnivelaj</span></td><td>Forigi la flosantan spacon kiam maksimumigita fenestro bezonas la ekranan randon.</td></tr>
+<tr><td>Prokrasti kaŝadon de la flosanta spaco ĝis la muso forlasas <span class="advanced">Altnivelaj</span></td><td>Atendi ĝis la kursoro forlasas antaŭ ol kaŝi la spacon, por eviti hazardajn klakojn sur proksimaj eroj.</td></tr>
+<tr><td>Speguli flosantan spacon kiam ĝi estas montrata <span class="advanced">Altnivelaj</span></td><td>En la reĝimo Ĉiam Videbla, spegulu la spacon sur la kontraŭa flanko de la dokto.</td></tr>
+<tr class="group"><td colspan="2">Medio</td></tr>
+<tr><td>Levi sur ŝanĝo de labortablo <span class="advanced">Altnivelaj</span></td><td>Tempore montri la dokton kiam la virtuala labortablo ŝanĝiĝas. Tio ne estas uzata de Ĉiam Videbla aŭ Fenestroj Sube.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Aspekto</h3>
+<p class="note">Marĝenoj, Koloroj, Radiuso/Ombro, Dinamikaj Longaj Agordoj, Dinamika Videbleco kaj Esceptoj postulas Altnivelan reĝimon.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Eroj</td></tr>
+<tr><td>Stilo de Dokto</td><td>Elektu Klasika aŭ Moderna por apliki antaŭagorditan stilon. En ambaŭ stiloj, uzu la ŝaltilojn sub Stilo de Dokto por sendepende agordi la aranĝon de eroj, konturitan fonon, minimuman interspacon inter eroj, aŭtomatan flosantan spacon kaj kompaktajn taskajn indikilojn.</td></tr>
+<tr><td>Teni doktajn erojn kune</td><td>Uzu unu grupon por doktaj eroj, ankaŭ kiam la alĝustigo de la dokto estas Ĝustigita.</td></tr>
+<tr><td>Uzu la enŝovitan fonon kun konturo</td><td>Uzu la antaŭagorditan fonon kun konturo kaj stilo por ĝia interspaco, rondigitaj anguloj kaj ombro.</td></tr>
+<tr><td>Uzu pli larĝan minimuman interspacon inter eroj</td><td>Pliigu la minimuman interspacon ĉirkaŭ doktaj eroj. Pli grandaj valoroj agorditaj per la marĝenaj kontroliloj ankoraŭ validas.</td></tr>
+<tr><td>Uzu aŭtomatan flosantan spacon</td><td>Kalkulu spacon je la ekrano-rando de la ikona grandeco kiam specifa spaca valoro ne estas agordita.</td></tr>
+<tr><td>Uzu kompaktajn taskajn indikilojn</td><td>Uzu la kompaktan aranĝon por la taskaj indikiloj de Latte. Elektu la formon de la indikilo en Efikoj.</td></tr>
+<tr><td>Restarigi Antaŭagordon</td><td>La butono ĉe la malsupro de Redakti Dokon tuj restarigas Konduton, Aspekton, Efikojn kaj ĉiujn Taskajn langetojn al la ŝipita Doka antaŭagordo por la nuna Klasika/Moderna stilo, inkluzive de opcioj kaŝitaj de Altnivela reĝimo. La ekrano, doka rando, lanĉiloj kaj fenestraĵoj estas konservitaj. Alĝustigo, videbleco kaj prokrastoj restarigas. Lanĉila kompartado revenas al la defaŭlta loka grupo dum konservado de kopio de la efika lanĉila listo; la kompartitaj listoj de aliaj dokoj restas neŝanĝitaj. Propraj koloroj kaj indikilaj anstataŭigoj restarigas. La antaŭagordo kombinas la ŝipitan Defaŭltan Dokan ŝablonon kun defaŭltoj de la konfiguracia skemo. Tio estas aparta de simple ŝanĝi Doka Stilo. Klasika defaŭlte malŝaltas la kvin aspekto-ŝaltilojn sub Doka Stilo. Moderna defaŭlte ŝaltas ilin. Ambaŭ antaŭagordoj uzas la samajn defaŭltojn por la restaj opcioj.</td></tr>
+<tr><td>Absoluta grandeco / Relativa grandeco</td><td>Agordu ikongrandecon en pikseloj aŭ kiel parton de la ekrano. Relativa grandeco estas utila en alt-DPI aŭ plurekrana agordoj.</td></tr>
+<tr><td>Zomi ŝvebe</td><td>Agordu kiom multe eroj kreskas sub la kursoro.</td></tr>
+<tr class="group"><td colspan="2">Longo</td></tr>
+<tr><td>Maksimuma / Minimuma / Deŝovo</td><td>Agordu la maksimuman kaj minimuman longon de la doko kaj movu ĝin laŭ la ekrano-rando.</td></tr>
+<tr><td>Dinamikaj Longaj Agordoj <span class="advanced">Altnivela</span></td><td>Maksimumigi la longon de la panelo ĉe la ĉeesto de maksimumigitaj fenestroj: etendi la dokon al plena longo kiam maksimumigita fenestro estas ĉeesta. La fono devas esti ebligita.</td></tr>
+<tr class="group"><td colspan="2">Marĝenoj</td></tr>
+<tr><td>Marĝenoj / Longo / Dikeco / Ŝveba spaco <span class="advanced">Altnivelaj</span></td><td>Agordi la eksteran marĝenon laŭ la doko, la marĝenon tra ĝia dikeco, kaj la spacon inter la doko kaj la rando de la ekrano.</td></tr>
+<tr><td>Spaco de maksimumigitaj fenestroj (px) <span class="advanced">Altnivelaj</span></td><td>Rezervi aldonajn 0–128 pikselojn inter fenestroj kaj ĉi tiu doko en reĝimo Ĉiam Videbla. Defaŭlte: 0. Tio estas aparta de la ŝveba spaco de la ekrana rando kaj aldoniĝas al iu ajn spegulita spaco; aŭtomatkaŝaj reĝimoj ne rezervas ĉi tiun spacon.</td></tr>
+<tr class="group"><td colspan="2">Koloroj</td></tr>
+<tr><td>Koloroj / Paletro <span class="advanced">Altnivelaj</span></td><td>Elekti Kolorojn de Plasma Temo, Malhelajn Kolorojn, Helajn Kolorojn, Kolorojn laŭ Aranĝo, Inversajn, aŭ Saĝajn Kolorojn Bazitajn sur Labortabula Fono. Koloroj laŭ Aranĝo uzas la kolorskemon de la aranĝo; Saĝaj sekvas la tapeton.</td></tr>
+<tr><td>Uzi propran fonan koloron / Taga koloro <span class="advanced">Altnivelaj</span></td><td>Anstataŭigi la fonon de ĉi tiu doko per elektita koloro; la teksta kontrasto aŭtomate adaptiĝas. Defaŭlte malŝaltita. Paletroj derivitaj de fenestroj kaj la Plasma paletro por etenditaj apletoj retenas prioritaton. Opakeco restas aparta fona agordo.</td></tr>
+<tr><td>Ŝanĝi fonajn kolorojn laŭ la horo de la tago / Nokta koloro / Tago komenciĝas (loka tempo) / Nokto komenciĝas (loka tempo) <span class="advanced">Altnivelaj</span></td><td>Laŭvole ŝanĝu inter du propraj koloroj uzante lokajn 24-horajn tempojn. Defaŭltoj: tago 07:00, nokto 19:00. La komenca tempo estas inkluziva. Intervaloj povas transiri noktomezon; egalaj tempoj tenas la tagan koloron dum la tuta tago. Malŝaltado de la horaro tenas la tagan koloron. La horloĝo estas kontrolata ĉiun sekuncon, ankaŭ post reaktivigo.</td></tr>
+<tr class="group"><td colspan="2">Fono</td></tr>
+<tr><td>Fono</td><td>Fono estas ŝaltilo por ŝalti/malŝalti. Kiam ebligita, uzu la kontrolilojn sube por agordi dikecon, opakecon, radiuson kaj ombron.</td></tr>
+<tr><td>Opakeco / Okupata Opakeco</td><td>Agordu la fonan opakecon. La sama glitilo nomiĝas Okupata Opakeco kiam Kaŝi fonon kiam ne bezonata kaj Preferi neopakan fonon kiam tuŝas iun fenestron ambaŭ estas ebligitaj. Def. restarigas la temo-defaŭlton.</td></tr>
+<tr><td>Radiuso / Ombro <span class="advanced">Altnivelaj</span></td><td>Agordu la angulan radiuson de la fono kaj la grandecon de la ombro. Def. uzas la temo-defaŭlton.</td></tr>
+<tr><td>Malklarigo / Ombroj / Konturo / Ĉiuj Anguloj <span class="advanced">Altnivelaj</span></td><td>Ebligu fonan malklarigon, fonan ombron, konturon kaj rondigitajn angulojn. Ĉiuj Anguloj estas disponebla nur por certaj flosantaj/ĝustigitaj geometrioj.</td></tr>
+<tr class="group"><td colspan="2">Dinamika Videbleco</td></tr>
+<tr><td>Preferi neopakan fonon kiam tuŝas iun fenestron <span class="advanced">Altnivelaj</span></td><td>Forigu fonan travideblecon dum fenestro tuŝas la dokon.</td></tr>
+<tr><td>Kaŝi fonon kiam ne bezonata <span class="advanced">Altnivelaj</span></td><td>Kaŝu la fonon krom kiam fenestro tuŝas la dokon aŭ la labortabla fono estas okupata.</td></tr>
+<tr><td>Kaŝi fonan ombron por maksimumigitaj fenestroj <span class="advanced">Altnivelaj</span></td><td>Kaŝu la fonan ombron dum aktiva maksimumigita fenestro tuŝas la dokon.</td></tr>
+<tr class="group"><td colspan="2">Esceptoj</td></tr>
+<tr><td>Preferi fonon kaj kolorojn de Plasma por etenditaj apletoj<span class="advanced">Altnivelaj</span></td><td>Uzi nevideblan fonon en stilo de Plasma kaj kolorojn de Plasma dum fenestroj de fenestraĵoj estas etenditaj.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efektoj</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Ombroj</td></tr>
+<tr><td>Ombroj</td><td>Ŝalti aŭ malŝalti ombrojn de fenestraĵoj. Grandeco kaj Opakeco estas malŝaltitaj kiam ombroj estas malŝaltitaj.</td></tr>
+<tr><td>Grandeco / Opakeco</td><td>Agordi grandecon kaj opakecon de ombro de fenestraĵo.</td></tr>
+<tr><td>Defaŭlta Koloro / Koloro de Temo / propra koloro</td><td>Elekti la defaŭltan koloron de ombro, koloron el la paletro de la temo, aŭ klaki la koloran kvadrateton por elekti propran koloron.</td></tr>
+<tr class="group"><td colspan="2">Animacioj</td></tr>
+<tr><td>Animacioj / x1 / x2 / x3</td><td>Ŝalti aŭ malŝalti ĉiujn animaciojn de la doko. x1 estas normala rapido, x2 estas pli malrapida, x3 estas la plej malrapida.</td></tr>
+<tr class="group"><td colspan="2">Indikiloj</td></tr>
+<tr><td>Indikiloj</td><td>Ŝalti aŭ malŝalti indikilojn de aktivaj taskoj. Kiam ebligita, elektu la indikilon de Latte aŭ propran kromprogramon de indikilo; opcioj specifaj por la kromprogramo aperas en ĝia langeto.</td></tr>
+<tr><td>Uzi punktojn en stilo de macOS</td><td>La indikilo de Latte uzas punktojn en stilo de macOS defaŭlte kiam kompaktaj indikiloj de taskoj estas ebligitaj en Aspekto. Malŝaltu Uzi punktojn en stilo de macOS en Efektoj por elekti Linion aŭ Punktojn mane.</td></tr>
+<tr><td>Uzi kolorojn de aplikaj ikonoj</td><td>Laŭvole kolorigi indikilojn de taskoj per la dominanta koloro de ĉiu aplikaja ikono, adaptita por kontrasto kun la fono. Elektu Linion por kolorigitaj substrekoj. Defaŭlte malŝaltita; apletoj retenas kolorojn de la paletro.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Taskoj</h3>
+<p>Taskaj lanĉiloj komencas rearanĝiĝi sur aliaj dokoj, kiuj kunhavas la lanĉilan liston, post kiam vi faligas la piktogramon. La ordo povas postuli momenton por stabiliziĝi. Separilaj interspacoj restas en sia loko, kiam la riceva doko savas la novan ordon. Trenado de jam fiksita aplikaĵo konservas ĝian ekzistantan lanĉilon, ankaŭ kiam tiu lanĉilo sekvas la sisteman defaŭltan aplikaĵon. Novaj separiloj okupas spacon, kiam ili atingas la elektitan interspacon.</p>
+<p>Kiam vi aldonas aŭ trenas fenestraĵon apud separilo ĉe la rando de la taska areo aŭ sistemujo, la fenestraĵo iras eksteren de la separilo. La separilo restas apud la taska areo aŭ sistemujo.</p>
+<p>Kiam vi fiksas aplikaĵon de la aplikmenuo, ĝia piktogramo aperas antaŭ iuj ajn separiloj ĉe la fino de la taskolisto. La dekstra separilo apartenas al la fiksitaj grupo, do funkciantaj aplikaĵoj, kiuj ne estas fiksitaj, aperas preter ĝi.</p>
+<p>La taska fako restas markita kaj la piktogramo videblas dum vi trenas ĝin por rearanĝi taskojn. Kiam nova tasko glitas en, la doko komencas rezervi sian fakon de la komenca animacia grandeco.</p>
+<p class="note">Insignoj, Animacioj, Rulumado, Agoj kaj kelkaj opcioj de Interago/Filtriloj postulas Altnivelan reĝimon. Montri nur lanĉilojn kaj kaŝi ĉiujn taskojn malaktivigas kunfenestrajn agojn kaj filtrilojn.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insignoj</td></tr>
+<tr><td>Sciigoj el taskoj <span class="advanced">Altnivela</span></td><td>Montri nelegitajn sciigajn nombrojn sur taskaj piktogramoj.</td></tr>
+<tr><td>Progresinformoj por taskoj <span class="advanced">Altnivela</span></td><td>Montru progresajn insignojn, ekzemple dum Dolphin kopias dosierojn.</td></tr>
+<tr><td>Sono ludata de taskoj <span class="advanced">Altnivelaj</span></td><td>Montru sonan insignon por aplikacioj, kiuj ludas sonon. Kongruado preferas eksplicitajn labortabulajn/aplikaciajn identigilojn. Ĝeneralaj informoj pri retumilaj procezoj ne sufiĉas por identigi apartan PWA; ambigua fluoj restas neasignitaj anstataŭ doni sonregilojn al senrilataj aplikacioj. Sendependaj Electron-aplikacioj ankoraŭ povas kongrui kun siaj propraj sonprocezoj. Ludada stato kaj eliga aktiveco kaŝas paŭzitajn fluojn eĉ kiam la aplikacio tenas sian sonan konekton malfermita. Sen ludada stato, mallonga silento estas tolerata dum ĉirkaŭ unu sekundo.</td></tr>
+<tr><td>Elstara koloro por sciiga insigno <span class="advanced">Altnivelaj</span></td><td>Uzu pli fortan, kutime ruĝan sciigan insignon. Postulas Sciigoj de taskoj.</td></tr>
+<tr><td>Ŝanĝu laŭtecon rulumante la sonan insignon <span class="advanced">Altnivelaj</span></td><td>Klaku la sonan insignon por silentigi/malsilentigi, aŭ rulumu super ĝi por ŝanĝi laŭtecon. Postulas Sono ludata de taskoj.</td></tr>
+<tr class="group"><td colspan="2">Interago</td></tr>
+<tr><td>Lanĉiloj estas aldonitaj nur en la nuna taska apleto</td><td>Aldonu faligitajn lanĉilojn nur al ĉi tiu taska fenestraĵo, ne kiel apartaj fenestraĵoj aŭ al aliaj taskaj fenestraĵoj.</td></tr>
+<tr><td>Fenestraj agoj en la kunteksta menuo <span class="advanced">Altnivelaj</span></td><td>Montru fenestrajn specifajn agojn en la taska kunteksta menuo.</td></tr>
+<tr><td>Antaŭrigarda fenestro kondutas kiel ŝprucfenestro <span class="advanced">Altnivelaj</span></td><td>Malfermu antaŭrigardojn kiel ŝprucfenestro anstataŭ kiel ŝveba konsileto. La Ŝveba ago devas postuli antaŭrigardojn; tio nur ŝanĝas kiel ili estas montrataj.</td></tr>
+<tr><td>Surbaze de poziciaj ŝparvojoj aplikiĝas nur al nunaj taskoj<span class="advanced">Altnivelaj</span></td><td>Limigi poziciajn tutmondajn ŝparvojojn al ĉi tiu taska fenestraĵo.</td></tr>
+<tr class="group"><td colspan="2">Filtriloj</td></tr>
+<tr><td>Montri nur taskojn de la nuna ekrano</td><td>Montri fenestrojn de la ekrano de ĉi tiu doklingo.</td></tr>
+<tr><td>Montri nur taskojn de la nuna labortablo</td><td>Montri fenestrojn de la nuna virtuala labortablo.</td></tr>
+<tr><td>Montri Sekcion de Minimigitaj Fenestroj</td><td>Defaŭlte malŝaltita. Montras minimigitajn fenestrojn kiel individuajn ikonojn post la ordinaraj taskoj. Ŝvebu aŭ fokusu ikonon por ĝia aplikaĵo kaj fenestra titolo, kaj aktivigu ĝin por restarigi la fenestron. Kiam aplikaĵo havas plurajn minimigitajn fenestrojn, malgranda insigno montras la sekvencon de ĉiu fenestro kaj la sumon por tiu aplikaĵo. La sekcio sekvas la taskajn filtrilojn kaj dividas taskan trofluan rulumadon. Ebligu Rulumadon por atingi ekster-ekranajn fenestrojn uzante vian agorditan radan aŭ rando-ŝveban agon. Lanĉila-nura reĝimo kaŝas ĝin.</td></tr>
+<tr><td>Montri nur taskojn de lanĉiloj<span class="advanced">Altnivelaj</span></td><td>Montri fenestrojn nur por aplikaĵoj jam en la lanĉila listo.</td></tr>
+<tr><td>Montri nur lanĉilojn kaj kaŝi ĉiujn taskojn<span class="advanced">Altnivelaj</span></td><td>Montri lanĉilajn ikonojn kaj kaŝi funkciantajn taskojn. Tio ankaŭ malaktivigas fenestro-rilatajn agojn kaj filtrilojn.</td></tr>
+<tr><td>Montri nur grupigitajn taskojn por sama aplikaĵo<span class="advanced">Altnivelaj</span></td><td>Grupigi fenestrojn de la sama aplikaĵo defaŭlte.</td></tr>
+<tr class="group"><td colspan="2">Animacioj</td></tr>
+<tr><td>Saltigi lanĉilojn kiam ili estas ekigitaj<span class="advanced">Altnivelaj</span></td><td>Animacii lanĉilojn kiam ili estas ekigitaj.</td></tr>
+<tr><td>Saltigi taskojn kiuj bezonas atenton<span class="advanced">Altnivelaj</span></td><td>Animacii taskojn kiuj petas atenton.</td></tr>
+<tr><td>Gliti unuopajn fenestrojn enen kaj eksteren<span class="advanced">Altnivelaj</span></td><td>Animu novajn kaj fermitajn unuopajn fenestrojn.</td></tr>
+<tr><td>Grupitaj taskoj saltigas siajn novajn fenestrojn <span class="advanced">Altnivelaj</span></td><td>Animu novan fenestron ene de taskgrupo.</td></tr>
+<tr><td>Grupitaj taskoj glitas siajn fermitajn fenestrojn <span class="advanced">Altnivelaj</span></td><td>Animu fermitan fenestron ene de taskgrupo.</td></tr>
+<tr class="group"><td colspan="2">Lanĉiloj</td></tr>
+<tr><td>Unika Grupo</td><td>Donu al ĉi tiu taska fenestraĵo sian propran lanĉilan liston.</td></tr>
+<tr><td>Aranĝa Grupo</td><td>Kunhavas lanĉilojn kun taskaj fenestraĵoj en la sama aranĝo. Ĉi tiu butono estas montrata nur kiam la doketo jam uzas Aranĝan Grupon.</td></tr>
+<tr><td>Globala Grupo</td><td>Kunhavas lanĉilojn kun taskaj fenestraĵoj en ĉiuj aranĝoj.</td></tr>
+<tr class="group"><td colspan="2">Rulumado</td></tr>
+<tr><td>Rulumado <span class="advanced">Altnivelaj</span></td><td>Ebligu rulumadon kiam taskoj superas la haveblan spacon. Ĉi tio funkcias kun iu ajn doketa antaŭagordo, inkluzive kiam 'Teni doketajn erojn kune' estas ebligita.</td></tr>
+<tr><td>Mana <span class="advanced">Altnivelaj</span></td><td>Elektu Malaktivigitan rulumadon, Nur vertikalan/horizontalan rulumadon, aŭ Horizontalan kaj vertikalan rulumadon. La elekto de unu direkto dependas de la doketa orientiĝo.</td></tr>
+<tr><td>Aŭtomata <span class="advanced">Altnivelaj</span></td><td>Ŝaltu aŭ malŝaltu aŭtomatan rulumadon.</td></tr>
+<tr class="group"><td colspan="2">Agoj</td></tr>
+<tr><td>Maldekstra Klako <span class="advanced">Altnivelaj</span></td><td>Ago por maldekstra klako sur tasko: Neniu, Fermi Fenestron aŭ Grupon, Nova Instanco, Minimizigi/Restarigi, Cikli Tra Taskoj, Ŝanĝi Taskan Grupadon, Prezenti Fenestrojn, Antaŭrigardi Fenestrojn, Emfazi Fenestrojn, aŭ Antaŭrigardi kaj Emfazi Fenestrojn.</td></tr>
+<tr><td>Meza Klako <span class="advanced">Altnivelaj</span></td><td>Ago por meza klako sur tasko. La elektoj estas la samaj kiel por Maldekstra Klako.</td></tr>
+<tr><td>Ŝvebado <span class="advanced">Altnivelaj</span></td><td>Ŝvebadaj agoj: Neniu, Antaŭrigardi Fenestrojn, Emfazi Fenestrojn, aŭ Antaŭrigardi kaj Emfazi Fenestrojn. Taskaj titolaj ŝvebaj konsiletoj estas kontrolitaj en Konduto.</td></tr>
+<tr><td>Rado <span class="advanced">Altnivelaj</span></td><td>Agoj de la rado: Neniu, Cikli Tra Taskoj, aŭ Cikli kaj Minimumigi Taskojn.</td></tr>
+<tr><td>Modifilo + klako <span class="advanced">Altnivelaj</span></td><td>Teni Ŝovon, Kontrolon, Alton aŭ Metan kaj klaki maldekstre, meze aŭ dekstre por plenumi aldonan agon. Elektu la modifilon, butonon kaj agon; tio estas aparta de la ĉefaj agoj supre.</td></tr>
+</tbody></table></div>
+<p class="note">La filtrilo de nuna aktiveco estas kaŝita en Plasma 6 ĉar subteno de KActivities estas nefidinda.</p></section><section id="configure-latte"><h2>Agordi Latte</h2><p class="note">La Redaktoro de Aranĝoj administras aranĝojn kaj iliajn dokojn. Preferoj kontrolas aplikadon-larĝan konduton. Apliki konservas ŝvebajn ŝanĝojn en la nuna langeto; Restarigi restarigas la konservitan staton de tiu langeto; Restarigi Defaŭltojn preparas defaŭltojn por revizio. Ekranoj... administras konservitajn ekrano-referencojn.</p>
+<h3 id="layouts">Redaktoro de Aranĝoj</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr><td>Unu aranĝo ĉiam</td><td>Uzu unu aranĝon por ĉiuj aktivecoj.</td></tr>
+<tr><td>Pluraj aranĝoj bazitaj sur aktivecoj</td><td>Asignu malsamajn aranĝojn al aktivecoj; pluraj aranĝoj povas resti ŝarĝitaj.</td></tr>
+<tr><td>Ŝanĝi</td><td>Aktivigu la elektitan aranĝon. Unue apliku ŝvebajn ŝanĝojn; Latte ne ŝanĝos kun nesavitaj ŝanĝoj.</td></tr>
+<tr><td>Aktivecoj...</td><td>Malfermu la Administranton de Aktivecoj de Plasma. Uzu la kolumnon Aktivecoj aŭ Ebligita por asigni tiun aranĝon al aktivecoj.</td></tr>
+<tr><td>Nova / Duplikata / Forigi</td><td>Krei, kopii aŭ forigi aranĝon. Duplikati ĉi tie kopias la tutan aranĝon, ne individualan dokon. Aktivaj kaj ŝlositaj aranĝoj ne povas esti forigitaj.</td></tr>
+<tr><td>Ebligita</td><td>Asignu tiun aranĝon al unu aŭ pluraj aktivecoj por ke Plasma Aktivecoj povu aktivigi ĝin. Montrata nur en pluraranĝa reĝimo.</td></tr>
+<tr><td>Nur-Legi</td><td>Protekti la aranĝan konfiguradon de ŝanĝoj.</td></tr>
+<tr><td>Detaloj...</td><td>Malfermi la dialogon de aranĝaj detaloj por ikono, propraj koloroj, ŝveba marĝeno kaj videbleco de kunteksta menuo.</td></tr>
+<tr><td>Dokoj...</td><td>Malfermi la liston de dokoj por ĉi tiu aranĝo: nomo, ekrano, rando, alĝustigo, inkluzivitaj fenestraĵoj, kaj nova/duplikata/forigi/enporti/eksporti.</td></tr>
+<tr><td>Enporti... / Eksporti...</td><td>Enporti aranĝon el loka dosiero aŭ el la KDE Store; eksporti ĝin por sekurkopio aŭ kiel ŝablono. Dosiero → Enporti Konfiguradon / Eksporti Konfiguradon prizorgas plenan aplikaĵan sekurkopion.</td></tr>
+<tr><td>Nomo / En Menuo / Agadoj</td><td>La listo de aranĝoj havas kolumnojn Nomo, En Menuo kaj Agadoj. Redaktu Nomon kaj Agadojn rekte en la listo; En Menuo kontrolas ĉu la aranĝo aperas en la menuo de Aranĝoj de la doko.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Aranĝaj Detaloj</h3>
+<p>Malfermu per Aranĝa Redaktilo → Detaloj... por redakti la elektitan aranĝon.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr><td>Aranĝo</td><td>Elektu kiun aranĝon redakti.</td></tr>
+<tr><td>Ikono</td><td>Elektu ikonon por la aranĝo. La klara butono forigas ĝin.</td></tr>
+<tr><td>Propraj Koloroj</td><td>Elektu dosieron de propraj koloraj skemoj por ĉi tiu aranĝo.</td></tr>
+<tr><td>Ŝveba Marĝeno</td><td>Agordi la marĝenon uzatan de ŝveboj de la aranĝo; malŝaltita signifas uzi la defaŭltan.</td></tr>
+<tr><td>Montri en kunteksta menuo de aranĝoj kiam eble</td><td>Montri ĉi tiun aranĝon en la menuo de Aranĝoj de la doko kiam la nuna agado permesas ĝin.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialogo de Dokoj</h3>
+<p>Malfermu per Aranĝa Redaktilo → Dokoj... por administri la dokojn en la elektita aranĝo.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolumnoj</td></tr>
+<tr><td>Nomo</td><td>Nomo de la doko. Duoble klaku por renomi ĝin.</td></tr>
+<tr><td>Ekrano</td><td>Ekrano, al kiu la dok apartenas, inkluzive de Ĉefa Ekrano, Ĉiuj Ekranoj kaj Ĉiuj Sekundaraj Ekranoj.</td></tr>
+<tr><td>Rando</td><td>Ekrana rando uzata de la dok.</td></tr>
+<tr><td>Alĝustigo</td><td>Alĝustigo de la dok laŭ ĝia rando.</td></tr>
+<tr><td>Inkluzivas</td><td>Fenestraĵoj kaj subenhavoj inkluzivitaj en la dok. Ĉi tiu kolumno estas nur-legebla.</td></tr>
+<tr class="group"><td colspan="2">Butonoj</td></tr>
+<tr><td>Nova</td><td>Krei dokon de ŝablono.</td></tr>
+<tr><td>Duplikati</td><td>Krei sendependan kopion de la elektita dok, aŭ alian klonon se la elektita dok estas klono.</td></tr>
+<tr><td>Forigi</td><td>Forigi la elektitan dok. Klonoj estas forigitaj kun sia originalo.</td></tr>
+<tr><td>Importi...</td><td>Importi dokon de loka ŝablonodosiero.</td></tr>
+<tr><td>Eksporti...</td><td>Eksporti la elektitan dok por sekurkopio aŭ kiel ŝablonon. La ŝablona dialogo permesas al vi elekti kiujn fenestraĵajn agordojn inkluzivi; lasu eksteren fenestraĵojn kun personaj datumoj kiel retpoŝto aŭ kalendaraj kontoj.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialogo pri Ekranoj</h3>
+<p>Malfermu per Dosiero → Ekranoj... por purigi ekranaĵajn referencojn konservitajn de Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr><td>Ekrana listo</td><td>Listigas ekranaĵajn referencojn stokitajn en Latte, inkluzive de ekranoj kiuj ne plu estas konektitaj.</td></tr>
+<tr><td>Elekti malnoviĝintajn ekranojn</td><td>Marku nur ekranojn kiuj ne plu ekzistas. Aktivaj ekranoj kaj ekranoj uzataj de aranĝo ne povas esti forigitaj.</td></tr>
+<tr><td>Malmarki Ĉiujn</td><td>Viŝu la elekton antaŭ ol elekti alian aron.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferoj</h3>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr><td>Montri informan fenestron por aŭtomata aktivigo de aranĝoj</td><td>Montri informan fenestron kiam aranĝo aktiviĝas aŭtomate.</td></tr>
+<tr><td>Parabola Efiko / Malgranda / Meza / Granda</td><td>Agordu la tutmondan disvastiĝon de hover-zoom inter najbaraj eroj.</td></tr>
+<tr><td>Ebligi aŭtomatan lanĉon dum ekigo</td><td>Lanĉi Latte kiam vi ensalutas.</td></tr>
+<tr><td>Uzi 3D-stilon por sciigoj kaj ŝparvojo-emblemoj</td><td>Uzi dimensian stilon por sciigoj kaj ŝparvojo-emblemoj.</td></tr>
+<tr><td>Premi kaj teni ⌘ por montri ŝparvojo-emblemojn</td><td>Defaŭlte malŝaltita. Teni la Meta-klavon dum ĉirkaŭ unu sekundo por montri kaŝitajn dokojn kaj la ŝparvojo-emblemojn de iliaj taskoj kaj fenestraĵoj; lasi la klavon por denove kaŝi ilin. Kun la defaŭltaj agordoj de Plasma, ĝia propra lanĉilo ankaŭ malfermiĝas kiam Meta estas lasita; ŝanĝu tiun ŝparvojon en Sistemaj Agordoj se vi ne volas tion.</td></tr>
+<tr><td>Influo de dika marĝeno</td><td>Elektu kiom la dika marĝenoj de eroj influas la aranĝon: 0%, 50% aŭ 100%.</td></tr>
+<tr><td>Informi Plasma-labortablon pri disponebla labortabla spaco</td><td>Publikigi disponeblan labortablan spacon al Plasma por ke paneloj kaj fenestroj povu uzi ĝin.</td></tr>
+<tr><td>Kunteksta Menuo / Agoj...</td><td>Elektu kiuj agoj de la kunteksta menuo de la doko estas ĉiam montrataj. Agoj ne elektitaj estas disponeblaj nur en redakta reĝimo.</td></tr>
+<tr><td>Ekranoj / reakcia prokrasto por ŝanĝoj</td><td>Agordi kiom longe Latte atendas antaŭ ol reagi al ekranoŝanĝoj, en milisekundoj. Pliigu ĝin se la aparataro raportas nestabilajn transirojn.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Agoj en Kunteksta Menuo</h3>
+<p>Malfermu Preferoj → Kunteksta Menuo → Agoj... por elekti kiuj agoj de la doko estas ĉiam videblaj.</p>
+<div class="table-wrap"><table><thead><tr><th>Opcio en la fenestro</th><th>Kion ĝi kontrolas</th></tr></thead><tbody>
+<tr><td>Alirebla ĉiam</td><td>Agoj en ĉi tiu listo estas montrataj en la kunteksta menuo de la doko ĉiam.</td></tr>
+<tr><td>Alirebla nur en redakta reĝimo</td><td>Agoj en ĉi tiu listo aperas nur dum la doko estas redaktata. Movu agojn inter la listoj por ŝanĝi ĉi tion.</td></tr>
+<tr><td>Movu inter listoj</td><td>Elektu agon kaj uzu la sagobutonojn por movi ĝin. Restarigi kaj Restarigi Defaŭltojn restarigas la defaŭltan aron.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Sendependaj Kopioj kaj Klonoj</h2><p class="note">Duplikato kaj klono aspektas simile sur la ekrano sed kondutas malsame. Duplikato estas nova, sendependa doko. Klono estas la sama doko montrata sur alia ekrano. Elektu laŭ ĉu vi volas agordi ĉi tiun dokon aparte.</p>
+<h3 id="create-independent-copy">Kreu sendependan kopion</h3>
+<p>Uzu iun ajn el ĉi tiuj metodoj sur la originala doko, ne sur klono:</p>
+<ul><li>Dekstra-klaku la dokon kaj elektu <strong>Duplikati Doko</strong>.</li><li>Malfermu <strong>Redakti Doko</strong> kaj elektu <strong>Aldoni… → Duplikati Doko</strong>.</li><li>Malfermu <strong>Agordi Latte → Redaktoro de Aranĝoj → Doko…</strong>, elektu la dokon, kaj elektu <strong>Duplikati</strong>.</li></ul>
+<p>La kopio ricevas novajn dok- kaj widget-ID-ojn kaj kopias la nunajn agordojn unufoje. Post tio, vi povas ŝanĝi ĝian ekranon, randon, grandecon, aspekton, konduton, widgetojn kaj lanĉilojn sendepende. Ĝi estas aparta eniro en la aranĝo kaj povas esti forigita per <strong>Forigi Doko</strong>.</p>
+<p>Duplikatado de klono el la Doko-dialogo kreas alian klonon de la sama originalo, ne sendependan dokon. Por konstrui sendependan dokon el klono, unue malfermu <strong>Redakti Originalan Doko…</strong> kaj duplikatu la originalon.</p>
+<p>Se la originalo uzas <strong>Globala Grupo</strong>, la kopio ankaŭ uzas ĝin kaj dividas lanĉilojn. Elektu <strong>Unika Grupo</strong> sur la kopio se vi volas apartan lanĉilan liston. <strong>Aranĝa Grupo</strong> estas disponebla nur kiam la doko jam uzas ĝin.</p>
+<h3 id="create-clone">Krei klonojn</h3>
+<p>Klonoj estas kreitaj de la ekrana reĝimo de originala doko, ne de <strong>Duplikata Doko</strong>:</p>
+<ul><li><strong>Redakti Doko → Ekrano → Sur Ĉiuj Ekranoj</strong>: la originalo restas sur la ĉefa ekrano, kaj Latte kreas klonon sur ĉiu dua ekrano.</li><li><strong>Redakti Doko → Ekrano → Sur Ĉiuj Duarangaj Ekranoj</strong>: la originalo restas sur unu dua ekrano, kaj Latte kreas klonojn sur la restaj duarangaj ekranoj.</li></ul>
+<p>Latte aŭtomate kreas kaj forigas klonojn kiam la ekrana aranĝo ŝanĝiĝas. Por forigi klonojn, agordu la originalon reen al <strong>Sur Ĉefa Ekrano</strong> aŭ al unu specifa ekrano. Klono ne havas <strong>Forigi Doko</strong> eniron en sia kunteksta menuo; uzu <strong>Redakti Originalan Doko…</strong> tie por agordi ĝin.</p>
+<p>Malfermi la redaktiston de klono ĉiam malfermas la agordojn de la originala doko, ĉar klonoj dividas la dokan agordon. Agordoj de fenestraĵoj ŝanĝitaj sur klono ankaŭ ĝisdatigas la originalon.</p>
+<h3 id="differences">Diferencoj je unu rigardo</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekto</th><th>Sendependa kopio</th><th>Klono</th></tr></thead><tbody>
+<tr><td>Kreita de</td><td>Duplikata Doko</td><td>Ekrano → Sur Ĉiuj Ekranoj aŭ Sur Ĉiuj Duarangaj Ekranoj</td></tr>
+<tr><td>Identeco</td><td>Novaj dokaj kaj fenestraĵaj ID-oj</td><td>Ligita vido de la originala doko</td></tr>
+<tr><td>Agordoj</td><td>Kopiita unufoje, poste sendependa</td><td>Dividita: redakti la originalon ĝisdatigas ĉiun klonon; fenestraĵaj agordoj ŝanĝitaj sur klono ankaŭ ĝisdatigas la originalon</td></tr>
+<tr><td>Ekrano kaj rando</td><td>Povas esti ŝanĝita sendepende</td><td>Sekvas la originalon; ne povas esti movita aŭ redimensiita aparte</td></tr>
+<tr><td>Lanĉiloj</td><td>Kopiitaj je kreo; posta dividado nur tra Layout Group aŭ Global Group</td><td>Ĉiam speguli la originalon</td></tr>
+<tr><td>Kunteksta menuo</td><td>Plenaj dokaj agoj, inkluzive de Duplikato kaj Forigo</td><td>Montras Redakti Originalan Dokon…; Duplikato, Movado, Eksporto kaj Forigo estas kaŝitaj</td></tr>
+<tr><td>Kiel forigi</td><td>Forigi Dokon</td><td>Agordi la originalon reen al unu ekrano</td></tr>
+</tbody></table></div>
+<p><strong>Koloroj de widget-ikonoj:</strong> <strong>Uzi Kolorojn de Ikona Temo</strong> en la kunteksta menuo de widget malpermesas al Latte kolorigi la ikonon de tiu widget. La agordo estas konservita por ĉiu widget: klonoj dividas ĝin kun la originalo. Sendependa kopio konservas la valoron kiun ĝi havis kiam ĝi estis kreita kaj povas ŝanĝi ĝin aparte.</p></section></main></div><footer>Latte Dock NG · Senreta dokumentaro. Nedisponeblaj interfacaj lingvoj revenas al la angla.</footer></body></html>

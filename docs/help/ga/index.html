@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ga"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Treoir Úsáideora Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Treoir Úsáideora Latte Dock NG</h1><p>Déanann na treoracha seo cur síos ar na roghanna reatha. Is féidir le mód chun cinn, stíl an dhoic agus breiseáin suiteáilte a athrú cén rialtáin a bhíonn le feiceáil. Tá roghanna a bhfuil an lipéad 'Chun cinn' orthu i bhfolach sa eagarthóir bunúsach.</p><div class="language-menu"><label for="language-select">Teanga</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html" selected>Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Ní liostaítear ach treoracha a bhfuil aistriúchán déanta orthu. Osclaíonn teangacha comhéadain eile an treoir i mBéarla.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Ar an leathanach seo</h2><a class="chapter" href="#edit-dock">Cuir an Doic in Eagar</a><a class="subsection" href="#behavior">Iompar</a><a class="subsection" href="#appearance">Cuma</a><a class="subsection" href="#effects">Éifeachtaí</a><a class="subsection" href="#tasks">Tascanna</a><a class="chapter" href="#configure-latte">Cumraigh Latte</a><a class="subsection" href="#layouts">Eagarthóir Leaganacha Amach</a><a class="subsection" href="#layout-details">Sonraí an Leagain Amach</a><a class="subsection" href="#docks-dialog">Dialóg Doic</a><a class="subsection" href="#screens-dialog">Dialóg Scáileáin</a><a class="subsection" href="#preferences">Sainroghanna</a><a class="subsection" href="#context-menu-actions">Gníomhartha an Chláir Comhthéacs</a><a class="chapter" href="#copies-and-clones">Cóipeanna Neamhspleácha agus Clóin</a><a class="subsection" href="#create-independent-copy">Cruthaigh cóip neamhspleách</a><a class="subsection" href="#create-clone">Cruthaigh clóin</a><a class="subsection" href="#differences">Difríochtaí ar an gcéad amharc</a></nav></aside><main>
+<section id="edit-dock"><h2>Cuir an Doic in Eagar</h2><p class="note">Tagann athruithe i bhfeidhm láithreach. Folaíonn Dún an t-eagarthóir; ní chealaíonn sé na hathruithe. Coinníonn Pin an t-eagarthóir oscailte. Cruthaíonn Cuir… → Doic Dhúbailte cóip neamhspleách de doic bhunaidh; Baineann Bain an doic reatha. Coinníonn athrú cluaisíní an fhuinneog ina háit. Méadaíonn mód chun cinn an fhuinneog dá leathanach is faide, laistigh den spás scáileáin atá ar fáil. Scrollaíonn leathanaigh níos faide laistigh den fhuinneog. Tarraing an coirnéil athmhéadaithe chun méid na fuinneoige a choigeartú i gceachtar de na móid eagarthóireachta.</p>
+<p class="note">Nochtann an mód chun cinn níos mó rialtán. Tá roghanna atá marcáilte Chun cinn i bhfolach sa eagarthóir bunúsach.</p>
+<h3 id="behavior">Iompar</h3>
+<p class="note">Roghanna infheictheachta, moill, gníomhartha, iompar míre, bearna snámh agus timpeallachta don dóg seo.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Infheictheacht</td></tr>
+<tr><td>Scáileán / Suíomh</td><td>Roghnaigh an scáileán agus an imeall don dóg seo. Le scáileáin iolracha, cruthaíonn Ar Gach Scáileán agus Ar Gach Scáileán Tánaisteach clóin nascailte. Féach Cóipeanna Neamhspleácha agus Clóin.</td></tr>
+<tr><td>Ailíniú</td><td>Suíomh an dóg feadh imeall an scáileáin. Rialaíonn ailíniú míreanna cá suíonn na widgets laistigh den dóg.</td></tr>
+<tr><td>Infheicthe I gcónaí</td><td>Coinnigh an dóg infheicthe agus coinnigh spás deisce áirithe nuair a thacaíonn an bainisteoir fuinneog leis.</td></tr>
+<tr><td>Folaigh go hUathoibríoch</td><td>Folaigh an dóg go dtí go sroicheann an tairiseach a chrios gníomhachtaithe.</td></tr>
+<tr><td>Seachain Gníomhach</td><td>Folaigh nuair a bhuaileann an fhuinneog ghníomhach limistéar an dóg, agus taispeáin an dóg nuair a thagann an tairiseach isteach.</td></tr>
+<tr><td>Seachain Uasmhéadaithe</td><td>Folaigh ach amháin nuair a bhíonn fuinneog uasmhéadaithe gníomhach ar an scáileán seo, agus taispeáin an dóg nuair a thagann an tairiseach isteach.</td></tr>
+<tr><td>Seachain Gach Fuinneog</td><td>Folaigh nuair a bhuaileann aon fhuinneog limistéar an dóg, agus taispeáin an dóg nuair a thagann an tairiseach isteach.</td></tr>
+<tr><td>Fuinneoga Faoi Bhun</td><td>Coinnigh an dóg os cionn na bhfuinneog; is féidir fuinneoga a chur faoi.</td></tr>
+<tr><td>Is Féidir le Fuinneoga Clúdach</td><td>Lig do fhuinneoga clúdach a dhéanamh ar an dóg. Tagann an dóg chun cinn nuair a shroicheann an tairiseach imeall an scáileáin.</td></tr>
+<tr><td>Clúdaíonn Fuinneoga I gcónaí</td><td>Coinnigh fuinneoga os cionn an dóg i gcónaí; fanann an dóg taobh thiar díobh.</td></tr>
+<tr class="group"><td colspan="2">Moill</td></tr>
+<tr><td>Moill / Taispeáin / Folaigh</td><td>Socraigh an t-am fanachta sula dtaispeántar nó sula bhfolachtaítear, i milleasoicind. Laghdaíonn moill níos faide gníomhachtú thimpisteach.</td></tr>
+<tr class="group"><td colspan="2">Gníomhartha</td></tr>
+<tr><td>Rian <span class="advanced">Ardleibhéal</span></td><td>Roghnaigh cén gníomh spás folamh a leanann an fhuinneog ghníomhach: Fuinneog Ghníomhach ón Scáileán Reatha nó Fuinneog Ghníomhach ó Gach Scáileán.</td></tr>
+<tr><td>Cliceáil Chlé / Tarraing Fuinneog Ghníomhach <span class="advanced">Ardleibhéal</span></td><td>Cumasaigh tarraingt ó spás folamh an dóg chun an fhuinneog ghníomhach rianaithe a bhogadh nó a uasmhéadú/a athchóiriú.</td></tr>
+<tr><td>Cliceáil Lár / Dún Fuinneog Ghníomhach <span class="advanced">Ardleibhéal</span></td><td>Cumasaigh cliceáil lár ar spás folamh an dóg chun an fhuinneog ghníomhach rianaithe a dhúnadh.</td></tr>
+<tr><td>Roth luiche <span class="advanced">Ardleibhéal</span></td><td>Roghnaigh cad a dhéanann an roth os cionn spás folamh an dóg: Gníomh ar Bith, Timthriall Tríd na Deasctóirí, Timthriall Tríd na nGníomhaíochtaí, Timthriall Tríd na Tascanna, nó Timthriall agus Íoslaghdú Tascanna.</td></tr>
+<tr class="group"><td colspan="2">Míreanna</td></tr>
+<tr><td>Uirlisí teidil tanaí ar chur os cionn</td><td>Taispeáin uirlisí teidil widget comhtháite. Rialaítear réamhamharcanna fuinneog tasc go deighilte ag gníomh Hover an tasc.</td></tr>
+<tr><td>Zúmáil widgets ar chur os cionn</td><td>Ceadaigh do widgets zúmáil leis an dóg. Díchumasaigh é seo chun deilbhíní widget a choinneáil géar; zúmálann deilbhíní tasc agus seoltóirí fós.</td></tr>
+<tr><td>Leathnú pop-up tríd an roth luiche</td><td>Scrollaigh os cionn widget tacaíthe chun a pop-up a thaispeáint nó a fholach.</td></tr>
+<tr><td>Coigeartaigh méid go huathoibríoch nuair is gá</td><td>Laghdaigh míreanna nuair a sháraíonn siad an fad atá ar fáil agus fás arís iad nuair a oireann siad.</td></tr>
+<tr><td>Gníomhachtaigh de réir gearrthóga domhanda bunaithe ar shuíomh</td><td>Ceadaigh do ghearrthóga domhanda bunaithe ar shuíomh míreanna an dóg seo a ghníomhachtú. Ba cheart d'ach amháin dóg in aghaidh an leagan amach é seo a úsáid.</td></tr>
+<tr class="group"><td colspan="2">Snámhach</td></tr>
+<tr><td>Úsáid bearna snámhach i gcónaí idirghníomhaíocht úsáideora <span class="advanced">Ardleibhéal</span></td><td>Cuir an bhearna snámh san áireamh sa limistéar a úsáidtear idirghníomhaíocht le widgets agus fuinneoga.</td></tr>
+<tr><td>Folaigh an bhearna snámh do fhuinneoga uasmhéadaithe <span class="advanced">Ardleibhéal</span></td><td>Bain an bhearna snámh nuair a bhíonn gá ag fuinneog uasmhéadaithe le himill na scáileáin.</td></tr>
+<tr><td>Moilligh folú na bearna snámh go dtí go bhfágann an luch <span class="advanced">Ardleibhéal</span></td><td>Fan go dtí go bhfágann an t-indeacsóir sula bhfolóidh tú an bhearna, chun cliceáil thimpisteach ar mhíreanna in aice láimhe a sheachaint.</td></tr>
+<tr><td>Frithchaitheamh na bearna snámh nuair a thaispeántar í <span class="advanced">Ardleibhéal</span></td><td>Sa mhód I gcónaí Le feiceáil, frithchaitheamh an bhearna ar an taobh eile den dóg.</td></tr>
+<tr class="group"><td colspan="2">Timpeallacht</td></tr>
+<tr><td>Ardaigh ar athrú deisce <span class="advanced">Ardleibhéal</span></td><td>Nocht an dóg go sealadach nuair a athraíonn an deasc fhíorúil. Ní úsáidtear é seo le I gcónaí Le feiceáil nó Fuinneoga Faoi.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Cuma</h3>
+<p class="note">Teastaíonn mód Ardleibhéal do Imill, Dathanna, Ga/Fo, Coigeartuithe Faid Dinimiciúla, Infheictheacht Dinimiciúil agus Eisceachtaí.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Míreanna</td></tr>
+<tr><td>Stíl an Dóig</td><td>Roghnaigh Clasaiceach nó Nua-aimseartha chun réamhshocrú a chur i bhfeidhm. Sa stíl ar bith, úsáid na lascanna faoi Stíl an Dóig chun socrú na míreanna, cúlra líneáilte, spásáil íosta míre, bearna snámh uathoibríoch agus táscairí tasc comhchruinnithe a shocrú go neamhspleách.</td></tr>
+<tr><td>Coinnigh míreanna an dóig le chéile</td><td>Úsáid grúpa amháin do mhíreanna an dóig, lena n-áirítear nuair a bhíonn ailíniú an dóig Cothromaithe.</td></tr>
+<tr><td>Úsáid an cúlra istigh le líneáil</td><td>Úsáid an cúlra réamhshocraithe le líneáil agus stíliú dá spásáil, coirnéil chruinne agus scáth.</td></tr>
+<tr><td>Úsáid spásáil íosta míre níos leithne</td><td>Méadaigh an spásáil íosta timpeall míreanna an dóig. Fós i bhfeidhm luachanna níos mó a shocraítear le rialtáin na n-imill.</td></tr>
+<tr><td>Úsáid bearna snámhach uathoibríoch</td><td>Ríomh bearna imeall scáileáin ó mhéid na deilbhíní nuair nach bhfuil luach bearna sonrach socraithe.</td></tr>
+<tr><td>Úsáid táscairí cúram dlúth</td><td>Úsáid an leagan amach dlúth do tháscairí cúram Latte. Roghnaigh cruth an táscaire i Míreanna Éifeachta.</td></tr>
+<tr><td>Athchóirigh Réamhshocruithe</td><td>Athchóiríonn an cnaipe ag bun Cuir in Eagar Bearna iompar, cuma, éifeachtaí agus gach cluaisín Cúram go dtí an réamhshocrú Bearna seachanta don stíl Clasaiceach/Nua-aimseartha reatha, lena n-áirítear roghanna atá folaithe ag an mód Ardleibhéal. Coinnítear an scáileán, imeall na bearna, seoltóirí agus widgets. Athshocraítear ailíniú, infheictheacht agus moill. Filleann comhroinnt seoltóirí chuig an ngrúpa áitiúil réamhshocraithe agus coinnítear cóip den liosta seoltóirí éifeachtach; ní athraítear liostaí comhroinnte bearneanna eile. Athshocraítear dathanna saincheaptha agus sárshocruithe táscaire. Cuireann an réamhshocrú teimpléad Bearna Réamhshocraithe seachanta le réamhshocruithe scéimra cumraíochta. Tá sé seo ar leithligh ó athrú Stíl Bearna amháin. Asaíonn Clasaiceach na cúig chasadh cuma faoi Stíl Bearna de réir réamhshocraithe. Asaíonn Nua-aimseartha iad. Úsáideann an dá réamhshocrú na réamhshocruithe céanna do na roghanna eile.</td></tr>
+<tr><td>Méid absalóideach / Méid coibhneasta</td><td>Socraigh méid na deilbhíní i bpicsil nó mar chuid den scáileán. Tá méid coibhneasta úsáideach ar shocruithe ard-DPI nó ilscáileáin.</td></tr>
+<tr><td>Zúmáil ar chur in aghaidh</td><td>Socraigh cé chomh mór is a fhásann míreanna faoin tairiseach.</td></tr>
+<tr class="group"><td colspan="2">Fad</td></tr>
+<tr><td>Uasmhéid / Íosmhéid / Fritháireamh</td><td>Socraigh fad uasta agus íosfad na bearna agus bog í feadh imeall an scáileáin.</td></tr>
+<tr><td>Coigeartuithe Fad Dinimiciúla <span class="advanced">Ardleibhéal</span></td><td>Uasmhéadaigh fad an phainéil i láthair fuinneoga uasmhéadaithe: leathnaigh an dóg go fad iomlán nuair a bhíonn fuinneog uasmhéadaithe i láthair. Caithfear an cúlra a chumasú.</td></tr>
+<tr class="group"><td colspan="2">Imill</td></tr>
+<tr><td>Imill / Fad / Tiús / Bearna snámhach <span class="advanced">Ardleibhéal</span></td><td>Socraigh an t-imill sheachtrach feadh an dóg, an t-imill trasna a thiúis, agus an bhearna idir an dóg agus imeall an scáileáin.</td></tr>
+<tr><td>Bearna ó fhuinneoga uasmhéadaithe (px) <span class="advanced">Ardleibhéal</span></td><td>Cuir 0–128 picteilín breise in áirithe idir fuinneoga agus an dóg seo sa mhód I gcónaí Le Feiceáil. Réamhshocrú: 0. Tá sé seo ar leithligh ón mbearna snámhach imeall scáileáin agus cuirtear leis aon bhearna scáthánaithe; ní choinníonn móid folaigh uathoibríoch an spás seo.</td></tr>
+<tr class="group"><td colspan="2">Dathanna</td></tr>
+<tr><td>Dathanna / Pailéad <span class="advanced">Ardleibhéal</span></td><td>Roghnaigh Dathanna Téama Plasma, Dathanna Dorcha, Dathanna Éadroma, Dathanna Saincheaptha Leagan Amach, Droim ar Ais, nó Dathanna Cliste Bunaithe ar Chúlra an Deisce. Úsáideann Dathanna Saincheaptha Leagan Amach scéim dathanna an leagan amach; leanann Dathanna Cliste an páipéar balla.</td></tr>
+<tr><td>Úsáid dath cúlra saincheaptha / Dath an lae <span class="advanced">Ardleibhéal</span></td><td>Sáraigh cúlra an dóg seo le dath roghnaithe; coigeartaíonn an codarsnacht téacs go huathoibríoch. Díchumasaithe de réir réamhshocraithe. Tá tosaíocht ag pailéid díorthaithe ó fhuinneoga agus ag pailéad Plasma do applets leathnaithe. Fanann trédhearcacht mar shocrú cúlra ar leithligh.</td></tr>
+<tr><td>Athraigh dathanna cúlra de réir am an lae / Dath na hoíche / Tosaíonn an lá (am áitiúil) / Tosaíonn an oíche (am áitiúil) <span class="advanced">Ardleibhéal</span></td><td>Roghnaigh aistriú idir dhá dhath saincheaptha ag baint úsáide as amanna áitiúla 24-uaire. Réamhshocruithe: lá 07:00, oíche 19:00. Tá an t-am tosaithe san áireamh. Is féidir le tréimhsí meán oíche a thrasnú; coinníonn amanna cothroma an dath lá ar feadh an lae. Coinníonn díchumasú an sceideal an dath lá. Seiceáiltear an clog gach soicind, lena n-áirítear tar éis athghabháil.</td></tr>
+<tr class="group"><td colspan="2">Cúlra</td></tr>
+<tr><td>Cúlra</td><td>Is lasc air/as é an Cúlra. Nuair atá sé cumasaithe, úsáid na rialtáin thíos chun tiús, teimhneacht, ga agus scáth a shocrú.</td></tr>
+<tr><td>Teimhneacht / Teimhneacht Gnóthach</td><td>Socraigh teimhneacht an chúlra. Tugtar Teimhneacht Gnóthach ar an sleamhnán céanna nuair atá Folaigh an cúlra nuair nach bhfuil sé ag teastáil agus Prefer opaque background when touching any window cumasaithe araon. Athchóiríonn Def. réamhshocrú an téama.</td></tr>
+<tr><td>Ga / Scáth <span class="advanced">Ardleibhéal</span></td><td>Socraigh ga cúinne an chúlra agus méid an scátha. Úsáideann Def. réamhshocrú an téama.</td></tr>
+<tr><td>Doiléiriú / Scáthanna / Imlíne / Gach Cúinne <span class="advanced">Ardleibhéal</span></td><td>Cumasaigh doiléiriú cúlra, scáth cúlra, imlíne agus cúinní cruinne. Tá Gach Cúinne ar fáil ach amháin do gheometríonna snámhach/fíoraithe áirithe.</td></tr>
+<tr class="group"><td colspan="2">Feictheacht Dinimiciúil</td></tr>
+<tr><td>Prefer opaque background when touching any window <span class="advanced">Ardleibhéal</span></td><td>Bain trédhearcacht an chúlra de réir mar a bhíonn fuinneog ag teagmháil leis an dóg.</td></tr>
+<tr><td>Folaigh an cúlra nuair nach bhfuil sé ag teastáil <span class="advanced">Ardleibhéal</span></td><td>Folaigh an cúlra seachas nuair a bhíonn fuinneog ag teagmháil leis an dóg nó nuair a bhíonn cúlra an deisce gnóthach.</td></tr>
+<tr><td>Folaigh scáth cúlra do fhuinneoga uasmhéadaithe <span class="advanced">Ardleibhéal</span></td><td>Folaigh scáth an chúlra de réir mar a bhíonn fuinneog uasmhéadaithe ghníomhach ag teagmháil leis an dóg.</td></tr>
+<tr class="group"><td colspan="2">Eisceachtaí</td></tr>
+<tr><td>Is fearr cúlra agus dathanna Plasma a úsáid le haghaidh applets leathnaithe<span class="advanced">Ardleibhéal</span></td><td>Úsáid cúlra teimhneach i stíl Plasma agus dathanna Plasma agus popups widget leathnaithe.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Éifeachtaí</h3>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Scáthanna</td></tr>
+<tr><td>Scáthanna</td><td>Cuir scáthanna widget ar siúl nó as siúl. Tá Méid agus Teimhneacht díchumasaithe nuair a bhíonn scáthanna as siúl.</td></tr>
+<tr><td>Méid / Teimhneacht</td><td>Socraigh méid agus teimhneacht scáth widget.</td></tr>
+<tr><td>Dath Réamhshocraithe / Dath Téama / dath saincheaptha</td><td>Roghnaigh an dath scáth réamhshocraithe, dath ón bpailéad téama, nó cliceáil ar an sampla datha chun dath saincheaptha a roghnú.</td></tr>
+<tr class="group"><td colspan="2">Beochtaí</td></tr>
+<tr><td>Beochtaí / x1 / x2 / x3</td><td>Cuir gach beocht dóg ar siúl nó as siúl. Is é x1 an gnáthluas, x2 níos moille, x3 is moille.</td></tr>
+<tr class="group"><td colspan="2">Táscairí</td></tr>
+<tr><td>Táscairí</td><td>Cuir táscairí gníomh-tasc ar siúl nó as siúl. Nuair atá siad cumasaithe, roghnaigh táscaire Latte nó breiseán táscaire saincheaptha; feicfear roghanna sainiúla an bhreiseáin sa chluaisín aige.</td></tr>
+<tr><td>Úsáid poncanna i stíl macOS</td><td>Úsáideann táscaire Latte poncanna i stíl macOS de réir réamhshocraithe nuair a bhíonn táscairí tasc dlúthchumais cumasaithe in Cuma. As siúl Úsáid poncanna i stíl macOS in Éifeachtaí chun Líne nó Poncanna a roghnú de láimh.</td></tr>
+<tr><td>Úsáid dathanna deilbhíní feidhmchláir</td><td>Dath táscairí tasc le dath ceannasach deilbhín gach feidhmchláir, coigeartaithe le haghaidh codarsnacht cúlra, go roghnach. Roghnaigh Líne le haghaidh línte faoi bhun dathaithe. Díchumasaithe de réir réamhshocraithe; coinníonn applets dathanna an phailéid.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tascanna</h3>
+<p>Tosaíonn seoltóirí tascanna athshocrú ar dhocsanna eile a roinneann an liosta seoltóirí tar éis duit an deilbhín a scaoileadh. D’fhéadfadh sé nóiméad a ghlacadh leis an ord le cobhsú. Fanann bearnaí scarthóirí ina n-áit nuair a shábhálann an doc glacadh an ord nua. Coinníonn tarraingt feidhmchláir atá pinnte cheana a seoltóir atá ann cheana, lena n-áirítear nuair a leanann an seoltóir sin an feidhmchlár réamhshocraithe córais. Glacann scarthóirí nua spás a luaithe is a shroicheann siad an bhearna roghnaithe.</p>
+<p>Nuair a chuireann tú nó nuair a tharraingíonn tú widget in aice le scarthóir ag imeall an limir tascanna nó an tráidire córais, téann an widget ar an taobh amuigh den scarthóir. Fanann an scarthóir in aice leis an limir tascanna nó an tráidire.</p>
+<p>Nuair a phinneálann tú feidhmchlár ón roghchlár feidhmchlár, feictear a dheilbhín roimh aon scarthóirí ag deireadh an liosta tascanna. Is leis an ngrúpa pinnte an scarthóir deas, mar sin feictear feidhmchláir atá ag rith nach bhfuil pinnte thar a chúl.</p>
+<p>Fanann an slót tascanna aibhsithe agus fanann an deilbhín le feiceáil agus tú ag tarraingt chun tascanna a athshocrú. Nuair a sleamhnaíonn tasc nua isteach, tosaíonn an doc ag cur a shlóta in áirithe ó mhéid tosaigh na hanamhnaithe.</p>
+<p class="note">Teastaíonn Mód Ardchumais do Badaí, Animálacha, Scrollú, Gníomhartha agus roghanna idirghníomhaíochta/scagairí áirithe. Cuireann 'Taispeáin seoltóirí amháin agus cuir tascanna i bhfolach' gníomhartha agus scagairí a bhaineann le fuinneoga ar fáil.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Badaí</td></tr>
+<tr><td>Fógraí ó thascanna <span class="advanced">Ardchumas</span></td><td>Taispeáin líon fógraí neamhléite ar dheilbhíní tascanna.</td></tr>
+<tr><td>Eolas dul chun cinn do thascanna <span class="advanced">Ardchumas</span></td><td>Taispeáin béistí dul chun cinn, mar shampla agus Dolphin ag cóipeáil comhaid.</td></tr>
+<tr><td>Fuaim ag seinm ó thascanna <span class="advanced">Ardleibhéal</span></td><td>Taispeáin béiste fuaime d’fheidhmchláir atá ag seinm fuaim. Is fearr a oireann do sainaithnithe deisce/feidhmchláir sainráite. Níl go leor faisnéise próisis brabhsálaí ginearálta chun PWA ar leith a shainaithint; fágtar sruthanna débhríocha gan sannadh in ionad rialtúin fuaime a thabhairt do fheidhmchláir neamhghaolmhara. Is féidir le feidhmchláir Electron neamhspleácha a bpróiseas fuaime féin a oiriúnú. Folaíonn stádas seinn agus gníomhaíocht aschuir sruthanna ar sos fiú má choinníonn an feidhmchlár a cheangal fuaime oscailte. Gan stádas an tseinn, tá ciúnas gairid ceadaithe ar feadh thart ar soicind amháin.</td></tr>
+<tr><td>Dath suntasach do béiste fógraí <span class="advanced">Ardleibhéal</span></td><td>Úsáid béiste fógraí níos láidre, de ghnáth dearg. Teastaíonn Fógraí ó thascanna.</td></tr>
+<tr><td>Athraigh toirt agus tú ag scrolláil thar an mbéiste fuaime <span class="advanced">Ardleibhéal</span></td><td>Cliceáil ar an mbéiste fuaime chun é a chur faoi shíocháin/a chur ar siúl, nó scrolláil thar an mbéiste chun an toirt a athrú. Teastaíonn Fuaim ag seinm ó thascanna.</td></tr>
+<tr class="group"><td colspan="2">Idirghníomhaíocht</td></tr>
+<tr><td>Cuirtear seoltóirí leis ach amháin sa applet thascanna reatha</td><td>Cuir seoltóirí a thitfidh leis an widget thascanna seo amháin, ní mar widgets ar leith ná le widgets thascanna eile.</td></tr>
+<tr><td>Gníomhartha fuinneoga sa chomhthéacs-roghchlár <span class="advanced">Ardleibhéal</span></td><td>Taispeáin gníomhartha ar leith do fhuinneoga sa chomhthéacs-roghchlár tasc.</td></tr>
+<tr><td>Iompraíonn réamhamharc na fuinneoige mar pop-up <span class="advanced">Ardleibhéal</span></td><td>Oscail réamhamhairc mar pop-up in ionad leideanna uirlise. Caithfidh an Ghníomh Ar Fhéith réamhamhairc a iarraidh; ní athraíonn sé seo ach an chaoi a dtaispeántar iad.</td></tr>
+<tr><td>Bunaithe ar suíomh, ní chuirtear na haicearraí i bhfeidhm ach amháin ar na tascanna reatha<span class="advanced">Ardleibhéal</span></td><td>Srian a chur le haicearraí domhanda bunaithe ar shuíomh chun iad a chur i bhfeidhm ar an widget tascanna seo amháin.</td></tr>
+<tr class="group"><td colspan="2">Scagairí</td></tr>
+<tr><td>Taispeáin tascanna ón scáileán reatha amháin</td><td>Taispeáin fuinneoga ó scáileán an dhoic seo.</td></tr>
+<tr><td>Taispeáin tascanna ón deasc reatha amháin</td><td>Taispeáin fuinneoga ón deasc fhíorúil reatha.</td></tr>
+<tr><td>Taispeáin Rannóg na bhFuinneog Íoslaghdaithe</td><td>As réamhshocrú. Taispeánann sé fuinneoga íoslaghdaithe mar deilbhíní aonair tar éis na dtascanna gnáth. Cuir an luch os cionn nó díriú ar dheilbhín chun ainm an fheidhmchláir agus teideal na fuinneoige a fheiceáil, agus gníomhaigh é chun an fhuinneog a athchóiriú. Nuair a bhíonn roinnt fuinneoga íoslaghdaithe ag feidhmchlár, taispeánann brúchta beag seicheamh gach fuinneoige agus an t-iomlán don fheidhmchlár sin. Leanann an rannóg scagairí na dtascanna agus roinneann sé scrollú forshreabhadh na dtascanna. Cumasaigh Scrollú chun fuinneoga lasmuigh den scáileán a bhaint amach ag baint úsáide as do ghníomh roth na luiche nó os cionn an imeall atá cumraithe agat. Folaíonn mód an seoltóra amháin é.</td></tr>
+<tr><td>Taispeáin tascanna ó sheoltóirí amháin<span class="advanced">Ardleibhéal</span></td><td>Taispeáin fuinneoga do fheidhmchláir atá sa liosta seoltóirí cheana féin amháin.</td></tr>
+<tr><td>Taispeáin seoltóirí amháin agus folaigh gach tasc<span class="advanced">Ardleibhéal</span></td><td>Taispeáin deilbhíní seoltóirí agus folaigh tascanna atá ag rith. Díchumasaíonn sé seo gníomhartha agus scagairí a bhaineann le fuinneoga freisin.</td></tr>
+<tr><td>Taispeáin tascanna grúpáilte amháin don fheidhmchlár céanna<span class="advanced">Ardleibhéal</span></td><td>Grúpáil fuinneoga den fheidhmchlár céanna de réir réamhshocraithe.</td></tr>
+<tr class="group"><td colspan="2">Beochtaí</td></tr>
+<tr><td>Preab seoltóirí nuair a thionscnaítear iad<span class="advanced">Ardleibhéal</span></td><td>Beochtaigh seoltóirí nuair a thionscnaítear iad.</td></tr>
+<tr><td>Preab tascanna a theastaíonn aird orthu<span class="advanced">Ardleibhéal</span></td><td>Beochtaigh tascanna a iarrann aird.</td></tr>
+<tr><td>Slíde isteach agus amach fuinneoga aonair<span class="advanced">Ardleibhéal</span></td><td>Beochan na fuinneoga aonair nua agus dúnta.</td></tr>
+<tr><td>Buaileann tascanna grúpáilte a bhfuinneoga nua <span class="advanced">Ardleibhéal</span></td><td>Beochan fuinneog nua laistigh de ghrúpa tascanna.</td></tr>
+<tr><td>Sleamhnaíonn tascanna grúpáilte a bhfuinneoga dúnta amach <span class="advanced">Ardleibhéal</span></td><td>Beochan fuinneog dhúnta laistigh de ghrúpa tascanna.</td></tr>
+<tr class="group"><td colspan="2">Seoltóirí</td></tr>
+<tr><td>Grúpa Uathúil</td><td>Tabhair liosta seoltóirí féin don widget tascanna seo.</td></tr>
+<tr><td>Grúpa Leagan Amach</td><td>Comhroinn seoltóirí le widgets tascanna sa leagan amach céanna. Ní thaispeántar an cnaipe seo ach amháin nuair a úsáideann an dóg Grúpa Leagan Amach cheana féin.</td></tr>
+<tr><td>Grúpa Domhanda</td><td>Comhroinn seoltóirí le widgets tascanna i ngach leagan amach.</td></tr>
+<tr class="group"><td colspan="2">Scrollú</td></tr>
+<tr><td>Scrollú <span class="advanced">Ardleibhéal</span></td><td>Cumasaigh scrollú nuair a sháraíonn tascanna an spás atá ar fáil. Oibríonn sé seo le haon réamhshocrú dóg, lena n-áirítear nuair a bhíonn 'Coinnigh míreanna dóg le chéile' cumasaithe.</td></tr>
+<tr><td>De láimh <span class="advanced">Ardleibhéal</span></td><td>Roghnaigh Scrollú Díchumasaithe, Scrollú ingearach/cothrománach amháin, nó Scrollú cothrománach agus ingearach. Braitheann an rogha aontreo ar threoshuíomh an dóg.</td></tr>
+<tr><td>Uathoibríoch <span class="advanced">Ardleibhéal</span></td><td>Cuir scrollú uathoibríoch air nó as.</td></tr>
+<tr class="group"><td colspan="2">Gníomhartha</td></tr>
+<tr><td>Cliceáil Clé <span class="advanced">Ardleibhéal</span></td><td>Gníomh do chliceáil chlé ar thasc: Neamh, Dún Fuinneog nó Grúpa, Cás Nua, Íoslaghdaigh/Athchóirigh, Timthriall Tascanna, Scagair Grúpáil Tascanna, Láithrigh Fuinneoga, Réamhamharc Fuinneoga, Aibhsigh Fuinneoga, nó Réamhamharc agus Aibhsigh Fuinneoga.</td></tr>
+<tr><td>Cliceáil Meán <span class="advanced">Ardleibhéal</span></td><td>Gníomh do chliceáil mheán ar thasc. Tá na roghanna mar an gcéanna le Cliceáil Clé.</td></tr>
+<tr><td>Cúrsóir os cionn <span class="advanced">Ardleibhéal</span></td><td>Gníomhartha cúrsóra os cionn: Neamh, Réamhamharc Fuinneoga, Aibhsigh Fuinneoga, nó Réamhamharc agus Aibhsigh Fuinneoga. Rialaítear uirlisí leide teidil tascanna i nIompar.</td></tr>
+<tr><td>Roth <span class="advanced">Ardleibhéal</span></td><td>Gníomhartha rotha: None, Cycle Through Tasks, nó Cycle And Minimize Tasks.</td></tr>
+<tr><td>Módaitheoir + cliceáil <span class="advanced">Ardleibhéal</span></td><td>Coinnigh Shift, Ctrl, Alt nó Meta agus cliceáil ar chlé, lár nó deas chun gníomh breise a rith. Roghnaigh an módaitheoir, an cnaipe agus an gníomh; tá sé seo ar leithligh ó na gníomhartha príomha thuas.</td></tr>
+</tbody></table></div>
+<p class="note">Tá an scagaire gníomhaíochta reatha folaithe i Plasma 6 toisc go bhfuil tacaíocht KActivities neamhiontaofa.</p></section><section id="configure-latte"><h2>Cumraigh Latte</h2><p class="note">Bainníonn Layouts Editor le leaganacha agus a ndoic. Rialaíonn Preferences iompar feidhmchláir ar fud an fheidhmchláir. Sábhálann Apply athruithe ar feitheamh sa chluaisín reatha; Athshocraíonn Reset staid shábháilte an chluaisín sin; Ullmhaíonn Restore Defaults réamhshocruithe le haghaidh athbhreithnithe. Bainníonn Screens... le tagairtí scáileáin stóráilte.</p>
+<h3 id="layouts">Layouts Editor</h3>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr><td>Leagan amháin i gcónaí</td><td>Úsáid leagan amháin do gach gníomhaíocht.</td></tr>
+<tr><td>Leaganacha iolracha bunaithe ar ghníomhaíochtaí</td><td>Sann leaganacha éagsúla do ghníomhaíochtaí; is féidir le roinnt leaganacha fanacht luchtaithe.</td></tr>
+<tr><td>Athraigh</td><td>Gníomhachtaigh an leagan roghnaithe. Cuir athruithe ar feitheamh i bhfeidhm ar dtús; ní athróidh Latte le hathruithe neamhshábháilte.</td></tr>
+<tr><td>Gníomhaíochtaí...</td><td>Oscail Bainisteoir Gníomhaíochtaí Plasma. Úsáid an colún Gníomhaíochtaí nó Enabled chun an leagan seo a shannadh do ghníomhaíochtaí.</td></tr>
+<tr><td>Nua / Cóipeáil / Bain</td><td>Cruthaigh, cóipeáil nó bain leagan. Cóipeáil anseo cóipeáil an leagan iomlán, ní doic aonair. Ní féidir leaganacha gníomhacha agus faoi ghlas a bhaint.</td></tr>
+<tr><td>Cumasaíthe</td><td>Sann an leagan seo do ghníomhaíocht amháin nó níos mó ionas gur féidir le Gníomhaíochtaí Plasma é a ghníomhachtú. Taispeántar é i mód leaganacha iolracha amháin.</td></tr>
+<tr><td>Léamh Amháin</td><td>Cosnaigh cumraíocht an leagan ó athruithe.</td></tr>
+<tr><td>Sonraí...</td><td>Oscail an dialóg sonraí leagain le haghaidh deilbhín, dathanna saincheaptha, imeall an phop-up agus infheictheacht an chomhthéacs-roghchláir.</td></tr>
+<tr><td>Docks...</td><td>Oscail an liosta dockanna don leagan seo: ainm, scáileán, imeall, ailíniú, widgets san áireamh, agus nua/dúbailt/baint/impórt/easpórt.</td></tr>
+<tr><td>Impórt... / Easpórt...</td><td>Impórt leagan ó chomhad áitiúil nó ón KDE Store; easpórt é le haghaidh cúltaca nó mar theimpléad. Déanann File → Impórt Cumraíocht / Easpórt Cumraíocht cúltaca iomlán an fheidhmchláir.</td></tr>
+<tr><td>Ainm / Sa Roghchlár / Gníomhaíochtaí</td><td>Tá colúin Ainm, Sa Roghchlár agus Gníomhaíochtaí sa liosta leaganacha. Cuir Ainm agus Gníomhaíochtaí in eagar go díreach sa liosta; rialaíonn Sa Roghchlár an bhfeictear an leagan i roghchlár Leaganacha an dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Sonraí an Leagain</h3>
+<p>Oscail le Leaganacha Editor → Sonraí... chun an leagan roghnaithe a chur in eagar.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr><td>Leagan</td><td>Roghnaigh cén leagan a chur in eagar.</td></tr>
+<tr><td>Deilbhín</td><td>Roghnaigh deilbhín don leagan. Baineann an cnaipe glan é.</td></tr>
+<tr><td>Dathanna Saincheaptha</td><td>Roghnaigh comhad scéim dathanna saincheaptha don leagan seo.</td></tr>
+<tr><td>Imeall PopUp</td><td>Socraigh an t-imeall a úsáideann pop-ups an leagain; ciallaíonn míchumasaithe úsáid a bhaint as an réamhshocruithe.</td></tr>
+<tr><td>Taispeáin i roghchlár comhthéacs na leaganacha nuair is féidir</td><td>Taispeáin an leagan seo i roghchlár Leaganacha an dock nuair a cheadaíonn an ghníomhaíocht reatha é.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialóg Dockanna</h3>
+<p>Oscail le Leaganacha Editor → Dockanna... chun na dockanna sa leagan roghnaithe a bhainistiú.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Colúin</td></tr>
+<tr><td>Ainm</td><td>Ainm an dock. Cliceáil faoi dhó chun é a athainmniú.</td></tr>
+<tr><td>Scáileán</td><td>An scáileán a mbaineann an dóg leis, lena n-áirítear Príomhscáileán, Gach Scáileán agus Gach Dara Scáileán.</td></tr>
+<tr><td>Imill</td><td>Imill an scáileáin a úsáideann an dóg.</td></tr>
+<tr><td>Ailíniú</td><td>Ailíniú an dóg feadh a imill.</td></tr>
+<tr><td>Cuimsíonn</td><td>Widgets agus fo-chomhtháthuithe atá san áireamh sa dóg. Tá an colún seo inléite amháin.</td></tr>
+<tr class="group"><td colspan="2">Cnaipí</td></tr>
+<tr><td>Nua</td><td>Cruthaigh dóg ó theimpléad.</td></tr>
+<tr><td>Dúbláil</td><td>Cruthaigh cóip neamhspleách den dóg roghnaithe, nó clón eile má tá an dóg roghnaithe ina chlon.</td></tr>
+<tr><td>Bain</td><td>Bain an dóg roghnaithe. Baintear clóin lena mbun.</td></tr>
+<tr><td>Iompórtáil...</td><td>Iompórtáil dóg ó chomhad teimpléid áitiúil.</td></tr>
+<tr><td>Easpórtáil...</td><td>Easpórtáil an dóg roghnaithe le haghaidh cúltaca nó mar theimpléad. Ligeann an dialóg teimpléid duit roghnú cén socrú widget a chur san áireamh; fág amach widgets a bhfuil sonraí pearsanta acu mar chuntais ríomhphoist nó féilire.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialóg Scáileáin</h3>
+<p>Oscail le Comhad → Scáileáin... chun tagairtí scáileáin a shábháil Latte a ghlanadh.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr><td>Liosta scáileáin</td><td>Liostaíonn sé tagairtí scáileáin a stóráiltear i Latte, lena n-áirítear scáileáin nach bhfuil ceangailte a thuilleadh.</td></tr>
+<tr><td>Roghnaigh scáileáin atá as dáta</td><td>Seiceáil scáileáin nach bhfuil ann a thuilleadh amháin. Ní féidir scáileáin ghníomhacha ná scáileáin a úsáideann leagan a bhaint.</td></tr>
+<tr><td>Díroghnaigh Gach</td><td>Glan an roghnú sula roghnaíonn tú tacar difriúil.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Socruithe</h3>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr><td>Taispeáin fuinneog faisnéise le haghaidh gníomhachtú uathoibríoch leagan</td><td>Taispeáin fuinneog faisnéise nuair a ghníomhachtaíonn leagan go huathoibríoch.</td></tr>
+<tr><td>Éifeacht Pharabóileach / Beag / Meán / Mór</td><td>Socraigh scaipeadh domhanda an zúmála ar chogadh thar mionsamhlacha comharsanacha.</td></tr>
+<tr><td>Cumasaigh tús uathoibríoch le linn tosaithe</td><td>Tosaigh Latte nuair a shíníonn tú isteach.</td></tr>
+<tr><td>Úsáid stíl 3D do bhaiscí fógraí agus aicearraí</td><td>Úsáid stíl toirtmheas do bhaiscí fógraí agus aicearraí.</td></tr>
+<tr><td>Brúigh agus Coinnigh ⌘ chun baiscí aicearraí a thaispeáint</td><td>As réamhshocrú. Coinnigh an eochair Meta síos ar feadh thart ar soicind chun dogaí folaithe agus baiscí aicearraí a dtascanna agus a gcuid widgets a thaispeáint; scaoil an eochair chun iad a chur i bhfolach arís. Le socruithe réamhshocraithe Plasma, osclaíonn a launseoir féin freisin nuair a scaoiltear Meta; athraigh an t-aicearr sin i Socruithe an Chórais mura dteastaíonn é seo uait.</td></tr>
+<tr><td>Tionchar imill tiús</td><td>Roghnaigh cé chomh mór is a mbíonn tionchar ag imill tiús na míreanna ar an leagan amach: 0%, 50% nó 100%.</td></tr>
+<tr><td>Fógraigh spás deisce atá ar fáil do Plasma</td><td>Foilsigh spás deisce atá ar fáil do Plasma ionas gur féidir le painéil agus fuinneoga é a úsáid.</td></tr>
+<tr><td>Menu Comhthéacs / Gníomhartha...</td><td>Roghnaigh cén gníomhartha menu comhthéacs an doga a thaispeántar i gcónaí. Níl gníomhartha a fhágáil amach ar fáil ach i mód eagarthóireachta.</td></tr>
+<tr><td>Scáileáin / moill imoibrithe do athruithe</td><td>Socraigh cé chomh fada is a fhanann Latte sula n-imoibríonn sé d’athruithe scáileáin, i milleasoicindí. Méadaigh é má thuairiscíonn an crua-earraí aistrithe éagobhsaí.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Gníomhartha Menu Comhthéacs</h3>
+<p>Oscail le Roghanna → Menu Comhthéacs → Gníomhartha... chun roghnú cén gníomhartha doga a bhíonn le feiceáil i gcónaí.</p>
+<div class="table-wrap"><table><thead><tr><th>Rogha sa fhuinneog</th><th>Cad a rialaíonn sé</th></tr></thead><tbody>
+<tr><td>Inrochtana i gcónaí</td><td>Taispeántar gníomhartha sa liosta seo i menu comhthéacs an doga i gcónaí.</td></tr>
+<tr><td>Inrochtana i mód eagarthóireachta amháin</td><td>Ní thaispeántar gníomhartha sa liosta seo ach amháin agus an dóg á chur in eagar. Bog gníomhartha idir na liostaí chun é seo a athrú.</td></tr>
+<tr><td>Bog idir liostaí</td><td>Roghnaigh gníomh agus úsáid na cnaipí saighde chun é a bhogadh. Athshocraigh agus Athchóirigh Réamhshocruithe chun an tacar réamhshocraithe a athchóiriú.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Cóipeanna Neamhspleácha agus Clóin</h2><p class="note">Breathnaíonn cóip agus clón cosúil ar an scáileán ach iompraíonn siad go difriúil. Is dóg nua neamhspleách í cóip. Is an dóg céanna í clón a thaispeántar ar scáileán eile. Roghnaigh bunaithe ar an bhfáth an bhfuil tú ag iarraidh an dóg seo a chumrú ar leithligh.</p>
+<h3 id="create-independent-copy">Cruthaigh cóip neamhspleách</h3>
+<p>Úsáid ceann ar bith de na modhanna seo ar an dóg bunaidh, ní ar chlóin:</p>
+<ul><li>Cliceáil ar dheis ar an dóg agus roghnaigh <strong>Duplicate Dock</strong>.</li><li>Oscail <strong>Edit Dock</strong> agus roghnaigh <strong>Add… → Duplicate Dock</strong>.</li><li>Oscail <strong>Configure Latte → Layouts Editor → Docks…</strong>, roghnaigh an dóg, agus roghnaigh <strong>Duplicate</strong>.</li></ul>
+<p>Faigheann an cóip IDanna dóg agus widget nua agus cóipeálann sí na socruithe reatha uair amháin. Tar éis sin, is féidir leat a scáileán, imeall, méid, cuma, iompar, widgets agus seoltóirí a athrú go neamhspleách. Is iontráil ar leith sa leagan amach í agus is féidir í a bhaint le <strong>Remove Dock</strong>.</p>
+<p>Cruthaíonn dúbailt clóin ón dialóg Docks clón eile den bhunaidh céanna, ní dóg neamhspleách. Chun dóg neamhspleách a thógáil ó chlóin, oscail <strong>Edit Original Dock…</strong> ar dtús agus déan dúbailt ar an mbunaidh.</p>
+<p>Má úsáideann an bunaidh <strong>Global Group</strong>, úsáideann an cóip é freisin agus roinneann sé seoltóirí. Roghnaigh <strong>Unique Group</strong> ar an gcóip má theastaíonn liosta seoltóirí ar leith uait. <strong>Layout Group</strong> tá ar fáil amháin nuair a bhíonn an dóg in úsáid aige cheana féin.</p>
+<h3 id="create-clone">Cruthaigh clóin</h3>
+<p>Cruthaítear clóin de réir modh scáileáin dóg bunaidh, ní de réir <strong>Dóg Dúbailte</strong>:</p>
+<ul><li><strong>Cuir Dóg in Eagar → Scáileán → Ar Gach Scáileán</strong>: fanann an bunleagan ar an bpríomhscáileán, agus cruthaíonn Latte clón ar gach scáileán tánaisteach.</li><li><strong>Cuir Dóg in Eagar → Scáileán → Ar Gach Scáileán Tánaisteach</strong>: fanann an bunleagan ar scáileán tánaisteach amháin, agus cruthaíonn Latte clóin ar na scáileáin thánaisteacha eile.</li></ul>
+<p>Cruthaíonn agus baineann Latte clóin go huathoibríoch nuair a athraíonn leagan amach na scáileán. Chun clóin a bhaint, socraigh an bunleagan ar ais go <strong>Ar an bPríomhscáileán</strong> nó go scáileán sonrach amháin. Níl iontráil <strong>Bain Dóg</strong> ag clón ina chomhthéacs-roghchlár; úsáid <strong>Cuir an Bun-Dóg in Eagar…</strong> ann chun é a chumrú.</p>
+<p>Nuair a osclaítear an t-eagarthóir ó chlon, osclaíonn sé socruithe an bhun-dóg i gcónaí, mar roinneann clóin cumraíocht an dóg. Nuair a athraítear socruithe widget ar chlon, nuashonraíonn sé an bunleagan freisin.</p>
+<h3 id="differences">Difríochtaí ar a ghlanceáil</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Gné</th><th>Cóip neamhspleách</th><th>Clón</th></tr></thead><tbody>
+<tr><td>Cruthaithe ag</td><td>Dóg Dúbailte</td><td>Scáileán → Ar Gach Scáileán nó Ar Gach Scáileán Tánaisteach</td></tr>
+<tr><td>Aitheantóir</td><td>IDanna nua dóg agus widget</td><td>Amharc nasctha den bhun-dóg</td></tr>
+<tr><td>Socruithe</td><td>Cóipeáilte uair amháin, ansin neamhspleách</td><td>Roinnte: nuair a chuirtear an bunleagan in eagar, nuashonraíonn sé gach clón; nuair a athraítear socruithe widget ar chlon, nuashonraíonn sé an bunleagan freisin</td></tr>
+<tr><td>Scáileán agus imeall</td><td>Is féidir é a athrú go neamhspleách</td><td>Leanann sé an bunleagan; ní féidir é a bhogadh ná a athmhéadú ar leithligh</td></tr>
+<tr><td>Seoltóirí</td><td>Cóipeáilte ag an gcruthú; roinnt níos déanaí trí Ghrúpa Leagan Amach nó Grúpa Domhanda amháin</td><td>Mirrorigh an bunleagan i gcónaí</td></tr>
+<tr><td>Comhthéacs-roghchlár</td><td>Gníomhartha iomlána an dhoic, lena n-áirítear Macasamhlú agus Bain</td><td>Taispeánann Cuir Bunleagan an Dhoic in Eagar…; tá Macasamhlú, Bog, Easpórtáil agus Bain folaithe</td></tr>
+<tr><td>Conas a bhaintear</td><td>Bain an Doic</td><td>Socraigh an bunleagan ar ais go dtí scáileán amháin</td></tr>
+</tbody></table></div>
+<p><strong>Dathanna deilbhíní an widget:</strong> <strong>Úsáid Dathanna an Téama Deilbhíní</strong> i gcomhthéacs-roghchlár an widget stopann sé Latte ó dhathú deilbhín an widget sin. Stóráiltear an socrú in aghaidh an widget: roinneann clóin é leis an mbunleagan. Coinníonn cóip neamhspleách an luach a bhí aige nuair a cruthaíodh é agus is féidir leis é a athrú ar leithligh.</p></section></main></div><footer>Latte Dock NG · Doiciméadacht as líne. Titeann teangacha comhéadana atá ar fáil ar ais go Béarla.</footer></body></html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Brugerhåndbog</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Brugerhåndbog</h1><p>Disse instruktioner beskriver de aktuelle muligheder. Avanceret tilstand, dock-stil og installerede plugins kan ændre, hvilke kontroller der er synlige. Muligheder markeret som Avanceret er skjult i den grundlæggende editor.</p><div class="language-menu"><label for="language-select">Sprog</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html" selected>Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Kun oversatte vejledninger er listet. Andre grænsefladesprog åbner den engelske vejledning.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>På denne side</h2><a class="chapter" href="#edit-dock">Rediger Dock</a><a class="subsection" href="#behavior">Adfærd</a><a class="subsection" href="#appearance">Udseende</a><a class="subsection" href="#effects">Effekter</a><a class="subsection" href="#tasks">Opgaver</a><a class="chapter" href="#configure-latte">Konfigurer Latte</a><a class="subsection" href="#layouts">Layout-editor</a><a class="subsection" href="#layout-details">Layoutdetaljer</a><a class="subsection" href="#docks-dialog">Docks-dialog</a><a class="subsection" href="#screens-dialog">Skærme-dialog</a><a class="subsection" href="#preferences">Indstillinger</a><a class="subsection" href="#context-menu-actions">Handlinger i kontekstmenu</a><a class="chapter" href="#copies-and-clones">Uafhængige kopier og kloner</a><a class="subsection" href="#create-independent-copy">Opret en uafhængig kopi</a><a class="subsection" href="#create-clone">Opret kloner</a><a class="subsection" href="#differences">Forskelle ved et øjekast</a></nav></aside><main>
+<section id="edit-dock"><h2>Rediger Dock</h2><p class="note">Ændringer træder i kraft med det samme. Luk skjuler editoren; det fortryder ikke ændringerne. Fastgør holder editoren åben. Tilføj… → Dupliker Dock opretter en uafhængig kopi af en original dock; Fjern fjerner den aktuelle dock. Skift af faner holder vinduet på plads. Avanceret tilstand tilpasser vinduets størrelse til dets længste side, inden for den tilgængelige skærmplads. Længere sider ruller inde i vinduet. Træk i hjørnet for at justere vinduets størrelse i begge redigeringstilstande.</p>
+<p class="note">Avanceret tilstand viser flere kontroller. Valgmarkeret som Avanceret er skjult i den grundlæggende editor.</p>
+<h3 id="behavior">Adfærd</h3>
+<p class="note">Synlighed, forsinkelse, handlinger, elementadfærd, flydende mellemrum og miljøvalgmuligheder for denne dock.</p>
+<div class="table-wrap"><table><thead><tr><th>Valg i vinduet</th><th>Hvad det styrer</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Synlighed</td></tr>
+<tr><td>Skærm / Placering</td><td>Vælg skærm og kant for denne dock. Med flere skærme opretter På alle skærme og På alle sekundære skærme klonede kopier. Se Uafhængige kopier og Kloner.</td></tr>
+<tr><td>Justering</td><td>Placer docken langs skærmkanten. Justering af elementer styrer, hvor widgets sidder inde i docken.</td></tr>
+<tr><td>Altid synlig</td><td>Hold docken synlig og reserver skrivebordsplads, hvor vindueshåndteringen understøtter det.</td></tr>
+<tr><td>Auto-skjul</td><td>Skjul docken, indtil markøren når dens aktiveringsområde.</td></tr>
+<tr><td>Undvig aktiv</td><td>Skjul, når det aktive vindue rører dockens område, og vis docken, når markøren bevæger sig ind.</td></tr>
+<tr><td>Undvig maksimeret</td><td>Skjul kun, når et maksimeret vindue er aktivt på denne skærm, og vis docken, når markøren bevæger sig ind.</td></tr>
+<tr><td>Undvig alle vinduer</td><td>Skjul, når ethvert vindue rører dockens område, og vis docken, når markøren bevæger sig ind.</td></tr>
+<tr><td>Vinduer går under</td><td>Hold docken over vinduer; vinduer kan placeres under den.</td></tr>
+<tr><td>Vinduer kan dække over</td><td>Lad vinduer dække over docken. Docken kommer frem, når markøren når skærmkanten.</td></tr>
+<tr><td>Vinduer dækker altid over</td><td>Hold vinduer over docken til enhver tid; docken forbliver bag dem.</td></tr>
+<tr class="group"><td colspan="2">Forsinkelse</td></tr>
+<tr><td>Forsinkelse / Vis / Skjul</td><td>Indstil hvor længe der skal ventes før visning eller skjulning, i millisekunder. Længere forsinkelser reducerer utilsigtede aktiveringer.</td></tr>
+<tr class="group"><td colspan="2">Handlinger</td></tr>
+<tr><td>Spor <span class="advanced">Avanceret</span></td><td>Vælg hvilke tomme-område-handlinger for det aktive vindue der skal følges: Aktivt vindue fra nuværende skærm eller Aktivt vindue fra alle skærme.</td></tr>
+<tr><td>Venstre musknap / Træk aktivt vindue <span class="advanced">Avanceret</span></td><td>Aktivér trækning fra tom dock-plads for at flytte eller maksimere/gendanne det sporede aktive vindue.</td></tr>
+<tr><td>Midterknap / Luk aktivt vindue <span class="advanced">Avanceret</span></td><td>Aktivér midterklik på tom dock-plads for at lukke det sporede aktive vindue.</td></tr>
+<tr><td>Musehjul <span class="advanced">Avanceret</span></td><td>Vælg hvad hjulet gør over tom dock-plads: Ingen handling, Skift mellem skriveborde, Skift mellem aktiviteter, Skift mellem opgaver, eller Skift og minimer opgaver.</td></tr>
+<tr class="group"><td colspan="2">Elementer</td></tr>
+<tr><td>Tynde værktøjstip for titler ved hover</td><td>Vis kompakte værktøjstip for widgettitler. Vinduesforhåndsvisninger for opgaver styres separat af handlingen for hover på opgaver.</td></tr>
+<tr><td>Zoom widgets ved hover</td><td>Tillad at widgets zoomer sammen med docken. Deaktiver dette for at holde widgetikoner skarpe; opgaveikoner og launchers zoomer stadig.</td></tr>
+<tr><td>Udvid popup via musehjul</td><td>Rul over en understøttet widget for at vise eller skjule dens popup.</td></tr>
+<tr><td>Justér størrelse automatisk når nødvendigt</td><td>Formindsk elementer når de overskrider den tilgængelige længde, og forstør dem igen når de passer.</td></tr>
+<tr><td>Aktivér baseret på position globale genveje</td><td>Tillad at positionsbaserede globale genveje aktiverer dette docks elementer. Kun ét dock pr. layout bør bruge dette.</td></tr>
+<tr class="group"><td colspan="2">Flydende</td></tr>
+<tr><td>Brug altid flydende mellemrum til brugerinteraktion <span class="advanced">Avanceret</span></td><td>Inkludér det flydende mellemrum i området, der bruges til widget- og vinduesinteraktion.</td></tr>
+<tr><td>Skjul flydende mellemrum for maksimerede vinduer <span class="advanced">Avanceret</span></td><td>Fjern det flydende mellemrum, når et maksimeret vindue har brug for skærmkanten.</td></tr>
+<tr><td>Forsink skjulning af flydende mellemrum, indtil musen forlader <span class="advanced">Avanceret</span></td><td>Vent, indtil markøren forlader området, før mellemrummet skjules, for at undgå utilsigtede klik på nærliggende elementer.</td></tr>
+<tr><td>Spejlvend flydende mellemrum, når det vises <span class="advanced">Avanceret</span></td><td>I tilstanden Altid synlig, spejlvend mellemrummet på den modsatte side af docken.</td></tr>
+<tr class="group"><td colspan="2">Miljø</td></tr>
+<tr><td>Hæv ved ændring af skrivebord <span class="advanced">Avanceret</span></td><td>Afdæk midlertidigt docken, når det virtuelle skrivebord ændres. Dette bruges ikke af Altid synlig eller Vinduer bagved.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Udseende</h3>
+<p class="note">Margener, Farver, Radius/Skygge, Dynamisk længdejustering, Dynamisk synlighed og Undtagelser kræver Avanceret tilstand.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementer</td></tr>
+<tr><td>Dock-stil</td><td>Vælg Klassisk eller Moderne for at anvende en forudindstilling. Uanset stil, brug kontakterne under Dock-stil til uafhængigt at indstille elementarrangement, omrisset baggrund, minimumsafstand mellem elementer, automatisk flydende mellemrum og kompakte opgaveindikatorer.</td></tr>
+<tr><td>Hold dock-elementer sammen</td><td>Brug én gruppe for dock-elementer, også når dock-justeringen er Justér.</td></tr>
+<tr><td>Brug indlejret baggrund med omrids</td><td>Brug forudindstillet baggrund med omrids og stil for dets afstand, afrundede hjørner og skygge.</td></tr>
+<tr><td>Brug bredere minimumsafstand mellem elementer</td><td>Øg minimumsafstanden omkring dock-elementer. Større værdier indstillet med margin-kontrollerne gælder stadig.</td></tr>
+<tr><td>Brug automatisk flydende mellemrum</td><td>Beregn et skærmkant-mellemrum ud fra ikonstørrelsen, når en bestemt mellemrumsværdi ikke er angivet.</td></tr>
+<tr><td>Brug kompakte opgaveindikatorer</td><td>Brug det kompakte layout for Latte-opgaveindikatorer. Vælg indikatorformen under Effekter.</td></tr>
+<tr><td>Gendan forudindstilling</td><td>Knappen nederst i Rediger dock gendanner øjeblikkeligt Adfærd, Udseende, Effekter og alle faner for Opgaver til den medsendte dock-forudindstilling for den aktuelle Klassisk/Moderne-stil, inklusive indstillinger skjult af Avanceret tilstand. Skærmen, dock-kanten, launchere og widgets bevares. Justering, synlighed og forsinkelser nulstilles. Launcher-deling vender tilbage til standard lokal gruppe, mens en kopi af den effektive launcher-liste bevares; delte lister på andre docks ændres ikke. Brugerdefinerede farver og indikator-tilsidesættelser nulstilles. Forudindstillingen kombinerer den medsendte Standard dock-skabelon med standardværdier for konfigurationsskemaet. Dette er adskilt fra blot at skifte Dock-stil. Klassisk slår som standard de fem udseendekontakter under Dock-stil fra. Moderne slår dem til. Begge forudindstillinger bruger de samme standardværdier for de øvrige indstillinger.</td></tr>
+<tr><td>Absolut størrelse / Relativ størrelse</td><td>Angiv ikonstørrelse i pixels eller som en andel af skærmen. Relativ størrelse er nyttig på høj-DPI- eller flerskærmsopsætninger.</td></tr>
+<tr><td>Zoom ved hover</td><td>Angiv hvor meget elementer vokser under markøren.</td></tr>
+<tr class="group"><td colspan="2">Længde</td></tr>
+<tr><td>Maksimum / Minimum / Forskydning</td><td>Angiv dockens maksimale og minimale længde og flyt den langs skærmkanten.</td></tr>
+<tr><td>Dynamiske længdejusteringer <span class="advanced">Avanceret</span></td><td>Maksimer panelens længde ved maksimerede vinduer: udvid docken til fuld længde, når der er et maksimeret vindue. Baggrunden skal være aktiveret.</td></tr>
+<tr class="group"><td colspan="2">Marginer</td></tr>
+<tr><td>Marginer / Længde / Tykkelse / Flydende mellemrum <span class="advanced">Avanceret</span></td><td>Indstil den ydre margin langs docken, marginen på tværs af tykkelsen og mellemrummet mellem docken og skærmkanten.</td></tr>
+<tr><td>Mellemrum fra maksimerede vinduer (px) <span class="advanced">Avanceret</span></td><td>Reserver yderligere 0–128 pixels mellem vinduer og denne dock i tilstanden Altid synlig. Standard: 0. Dette er separat fra det flydende mellemrum ved skærmkanten og lægges oven i eventuelle spejlede mellemrum; auto-skjul-tilstande reserverer ikke denne plads.</td></tr>
+<tr class="group"><td colspan="2">Farver</td></tr>
+<tr><td>Farver / Palet <span class="advanced">Avanceret</span></td><td>Vælg Plasma-temafarver, Mørke farver, Lyse farver, Brugerdefinerede farver for layout, Omvendt eller Smarte farver baseret på skrivebordshintergrund. Brugerdefinerede farver for layout bruger layoutets farveskema; Smart følger baggrundsbilledet.</td></tr>
+<tr><td>Brug brugerdefineret baggrundsfarve / Dagsfarve <span class="advanced">Avanceret</span></td><td>Tilsidesæt denne docks baggrund med en valgt farve; tekstkontrasten justeres automatisk. Deaktiveret som standard. Paletter afledt af vinduer og Plasma-paletten for udvidede applets har forrang. Opacitet forbliver en separat baggrundsindstilling.</td></tr>
+<tr><td>Skift baggrundsfarver efter tidspunkt på dagen / Natfarve / Dag starter (lokal tid) / Nat starter (lokal tid) <span class="advanced">Avanceret</span></td><td>Skift valgfrit mellem to brugerdefinerede farver ved hjælp af lokale 24-timers tider. Standardværdier: dag 07:00, nat 19:00. Starttiden er inkluderet. Intervaller kan krydse midnat; lige tider beholder dagfarven hele dagen. Hvis du deaktiverer planen, beholdes dagfarven. Uret tjekkes hvert sekund, også efter genoptagelse.</td></tr>
+<tr class="group"><td colspan="2">Baggrund</td></tr>
+<tr><td>Baggrund</td><td>Baggrund er en tænd/sluk-kontakt. Når den er aktiveret, skal du bruge kontrollerne nedenfor til at indstille tykkelse, opacitet, radius og skygge.</td></tr>
+<tr><td>Opacitet / Travl opacitet</td><td>Indstil baggrundsopacitet. Den samme skyder hedder Travl opacitet, når Skjul baggrund, når den ikke er nødvendig og Foretræk uigennemsigtig baggrund, når du rører et vindue begge er aktiveret. Def. gendanner temastandarden.</td></tr>
+<tr><td>Radius / Skygge <span class="advanced">Avanceret</span></td><td>Indstil baggrundshjørneradius og skyggestørrelse. Def. bruger temastandarden.</td></tr>
+<tr><td>Sløring / Skygger / Kontur / Alle hjørner <span class="advanced">Avanceret</span></td><td>Aktiver baggrundssløring, baggrundsskygge, kontur og afrundede hjørner. Alle hjørner er kun tilgængelig for visse flydende/justerede geometrier.</td></tr>
+<tr class="group"><td colspan="2">Dynamisk synlighed</td></tr>
+<tr><td>Foretræk uigennemsigtig baggrund, når du rører et vindue <span class="advanced">Avanceret</span></td><td>Fjern baggrundstransparens, mens et vindue rører docken.</td></tr>
+<tr><td>Skjul baggrund, når den ikke er nødvendig <span class="advanced">Avanceret</span></td><td>Skjul baggrunden, undtagen når et vindue rører docken eller skrivebordets baggrund er travl.</td></tr>
+<tr><td>Skjul baggrundsskygge for maksimerede vinduer <span class="advanced">Avanceret</span></td><td>Skjul baggrundsskyggen, mens et aktivt maksimeret vindue rører docken.</td></tr>
+<tr class="group"><td colspan="2">Undtagelser</td></tr>
+<tr><td>Foretræk Plasma-baggrund og farver for udvidede applets<span class="advanced">Avanceret</span></td><td>Brug en opak baggrund i Plasma-stil og Plasma-farver, mens widget-popups er udvidede.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Effekter</h3>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Skygger</td></tr>
+<tr><td>Skygger</td><td>Slå widget-skygger til eller fra. Størrelse og Opacitet er deaktiveret, når skygger er slået fra.</td></tr>
+<tr><td>Størrelse / Opacitet</td><td>Indstil størrelse og opacitet for widget-skygger.</td></tr>
+<tr><td>Standardfarve / Temafarve / brugerdefineret farve</td><td>Vælg standard skyggefarve, en farve fra temapaletten, eller klik på farveprøven for at vælge en brugerdefineret farve.</td></tr>
+<tr class="group"><td colspan="2">Animationer</td></tr>
+<tr><td>Animationer / x1 / x2 / x3</td><td>Slå alle dock-animationer til eller fra. x1 er normal hastighed, x2 er langsommere, x3 er langsomst.</td></tr>
+<tr class="group"><td colspan="2">Indikatorer</td></tr>
+<tr><td>Indikatorer</td><td>Slå indikatorer for aktive opgaver til eller fra. Når aktiveret, vælg Latte-indikatoren eller et brugerdefineret indikator-plugin; pluginspecifikke indstillinger vises i dets faneblad.</td></tr>
+<tr><td>Brug prikker i macOS-stil</td><td>Latte-indikatoren bruger som standard prikker i macOS-stil, når kompakte opgaveindikatorer er aktiveret under Udseende. Slå fra Brug prikker i macOS-stil under Effekter for manuelt at vælge Linje eller Prikker.</td></tr>
+<tr><td>Brug applikationsikonfarver</td><td>Farv valgfrit opgaveindikatorer med hver applikationsikons dominerende farve, justeret for baggrundskontrast. Vælg Linje for farvede understregninger. Deaktiveret som standard; applets beholder paletfarver.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Opgaver</h3>
+<p>Startprogrammer begynder at omarrangere sig på andre dokker, der deler startprogramlisten, efter at du slipper ikonet. Rækkefølgen kan tage et øjeblik at falde til ro. Separatorafstande forbliver på plads, når det modtagende dok gemmer den nye rækkefølge. Hvis du trækker en allerede fastgjort app, beholdes dens eksisterende startprogram, også når det startprogram følger systemets standardapplikation. Nye separatorer optager plads, når de når den valgte afstand.</p>
+<p>Når du tilføjer eller trækker en widget ved siden af en separator ved kanten af opgaveområdet eller systembakken, placeres widgetten uden for separatoren. Separatoren forbliver ved siden af opgaveområdet eller bakken.</p>
+<p>Når du fastgør en app fra applikationsmenuen, vises dens ikon før eventuelle separatorer i slutningen af opgavelisten. Den højre separator tilhører den fastgjorte gruppe, så kørende apps, der ikke er fastgjorte, vises efter den.</p>
+<p>Opgavepladsen forbliver fremhævet, og ikonet forbliver synligt, mens du trækker det for at omarrangere opgaver. Når en ny opgave glider ind, begynder dokket at reservere sin plads fra den oprindelige animationsstørrelse.</p>
+<p class="note">Mærker, Animationer, Rulning, Handlinger og nogle Interaktion/Filtre-indstillinger kræver Avanceret tilstand. Hvis du kun viser startprogrammer og skjuler alle opgaver, deaktiveres vinduesrelaterede handlinger og filtre.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Mærker</td></tr>
+<tr><td>Notifikationer fra opgaver <span class="advanced">Avanceret</span></td><td>Vis antal ulæste notifikationer på opgaveikoner.</td></tr>
+<tr><td>Fremgangsinformation for opgaver <span class="advanced">Avanceret</span></td><td>Vis fremdriftsmærkater, for eksempel mens Dolphin kopierer filer.</td></tr>
+<tr><td>Afspilning af lyd fra opgaver <span class="advanced">Avanceret</span></td><td>Vis et lydmærke for applikationer, der afspiller lyd. Matchning foretrækker eksplicitte desktop-/applikationsidentifikatorer. Generisk browserprocesinformation er ikke tilstrækkelig til at identificere en bestemt PWA; tvetydige streams lades være utildelte i stedet for at give urelaterede applikationer lydkontroller. Uafhængige Electron-applikationer kan stadig matche deres egen lydproces. Afspilningsstatus og outputaktivitet skjuler pauserede streams, selv når applikationen holder sin lydforbindelse åben. Uden afspillerstatus tolereres kortvarig stilhed i cirka et sekund.</td></tr>
+<tr><td>Fremtrædende farve for notifikationsmærke <span class="advanced">Avanceret</span></td><td>Brug et stærkere, normalt rødt notifikationsmærke. Kræver Notifikationer fra opgaver.</td></tr>
+<tr><td>Ændr volumen ved rulning over lydmærke <span class="advanced">Avanceret</span></td><td>Klik på lydmærket for at slå lyd til/fra, eller rul over det for at ændre volumen. Kræver Afspilning af lyd fra opgaver.</td></tr>
+<tr class="group"><td colspan="2">Interaktion</td></tr>
+<tr><td>Launchers tilføjes kun i nuværende opgave-applet</td><td>Tilføj droppede launchers kun til denne opgave-widget, ikke som separate widgets eller til andre opgave-widgets.</td></tr>
+<tr><td>Vindueshandlinger i kontekstmenuen <span class="advanced">Avanceret</span></td><td>Vis vinduesspecifikke handlinger i opgavens kontekstmenu.</td></tr>
+<tr><td>Forhåndsvisningsvindue opfører sig som popup <span class="advanced">Avanceret</span></td><td>Åbn forhåndsvisninger som en popup i stedet for et værktøjstip. Hover-handlingen skal anmode om forhåndsvisninger; dette ændrer kun, hvordan de vises.</td></tr>
+<tr><td>Baseret på position genveje gælder kun for aktuelle opgaver<span class="advanced">Avanceret</span></td><td>Begræns positionsbaserede globale genveje til denne opgave-widget.</td></tr>
+<tr class="group"><td colspan="2">Filtre</td></tr>
+<tr><td>Vis kun opgaver fra den aktuelle skærm</td><td>Vis vinduer fra denne docks skærm.</td></tr>
+<tr><td>Vis kun opgaver fra den aktuelle skrivebord</td><td>Vis vinduer fra den aktuelle virtuelle skrivebord.</td></tr>
+<tr><td>Vis sektion for minimerede vinduer</td><td>Deaktiveret som standard. Viser minimerede vinduer som individuelle ikoner efter de almindelige opgaver. Hold musen over eller fokuser et ikon for at se dets applikation og vinduestitel, og aktiver det for at gendanne vinduet. Når en applikation har flere minimerede vinduer, viser et lille badge hver vindues sekvens og det samlede antal for den applikation. Sektionen følger opgavefiltrene og deler opgave-overløbsrulning. Aktiver rulning for at nå vinduer uden for skærmen ved hjælp af din konfigurerede hjul- eller kant-hover-handling. Launcher-tilstand skjuler den.</td></tr>
+<tr><td>Vis kun opgaver fra launchers<span class="advanced">Avanceret</span></td><td>Vis vinduer kun for applikationer, der allerede er i launcher-listen.</td></tr>
+<tr><td>Vis kun launchers og skjul alle opgaver<span class="advanced">Avanceret</span></td><td>Vis launcher-ikoner og skjul kørende opgaver. Dette deaktiverer også vinduesrelaterede handlinger og filtre.</td></tr>
+<tr><td>Vis kun grupperede opgaver for samme applikation<span class="advanced">Avanceret</span></td><td>Gruppér vinduer for samme applikation som standard.</td></tr>
+<tr class="group"><td colspan="2">Animationer</td></tr>
+<tr><td>Bounce launchers når de udløses<span class="advanced">Avanceret</span></td><td>Animer launchers, når de udløses.</td></tr>
+<tr><td>Bounce opgaver, der kræver opmærksomhed<span class="advanced">Avanceret</span></td><td>Animer opgaver, der anmoder om opmærksomhed.</td></tr>
+<tr><td>Glid ind og ud for enkelte vinduer<span class="advanced">Avanceret</span></td><td>Animer nye og lukkede enkeltvinduer.</td></tr>
+<tr><td>Grupperede opgaver hopper deres nye vinduer <span class="advanced">Avanceret</span></td><td>Animer et nyt vindue inde i en opgavegruppe.</td></tr>
+<tr><td>Grupperede opgader glider deres lukkede vinduer ud <span class="advanced">Avanceret</span></td><td>Animer et lukket vindue inde i en opgavegruppe.</td></tr>
+<tr class="group"><td colspan="2">Launchere</td></tr>
+<tr><td>Unik gruppe</td><td>Giv denne opgave-widget sin egen launcherliste.</td></tr>
+<tr><td>Layoutgruppe</td><td>Del launchere med opgave-widgets i samme layout. Denne knap vises kun, når docken allerede bruger Layoutgruppe.</td></tr>
+<tr><td>Global gruppe</td><td>Del launchere med opgave-widgets i alle layouts.</td></tr>
+<tr class="group"><td colspan="2">Rulning</td></tr>
+<tr><td>Rulning <span class="advanced">Avanceret</span></td><td>Aktivér rulning, når opgaverne overskrider den tilgængelige plads. Dette virker med begge dock-presets, inklusive når Hold dock-elementer sammen er aktiveret.</td></tr>
+<tr><td>Manuel <span class="advanced">Avanceret</span></td><td>Vælg Deaktiveret rulning, Kun lodret/vandret rulning eller Vandret og lodret rulning. Valget af enkeltretning afhænger af dockens orientering.</td></tr>
+<tr><td>Automatisk <span class="advanced">Avanceret</span></td><td>Slå automatisk rulning til eller fra.</td></tr>
+<tr class="group"><td colspan="2">Handlinger</td></tr>
+<tr><td>Venstre klik <span class="advanced">Avanceret</span></td><td>Handling for venstre klik på en opgave: Ingen, Luk vindue eller gruppe, Ny instans, Minimer/Gendan, Cykl gennem opgaver, Slå opgavegruppering til/fra, Vis vinduer, Forhåndsvis vinduer, Fremhæv vinduer eller Forhåndsvis og fremhæv vinduer.</td></tr>
+<tr><td>Midterklik <span class="advanced">Avanceret</span></td><td>Handling for midterklik på en opgave. Valgene er de samme som for Venstre klik.</td></tr>
+<tr><td>Hover <span class="advanced">Avanceret</span></td><td>Hover-handlinger: Ingen, Forhåndsvis vinduer, Fremhæv vinduer eller Forhåndsvis og fremhæv vinduer. Værktøjstip for opgavetitel styres i Adfærd.</td></tr>
+<tr><td>Hjul <span class="advanced">Avanceret</span></td><td>Hjulklik-handlinger: Ingen, Skift mellem opgaver eller Skift og minimer opgaver.</td></tr>
+<tr><td>Modifikator + klik <span class="advanced">Avanceret</span></td><td>Hold Shift, Ctrl, Alt eller Meta nede og klik venstre, midterste eller højre for at udføre en ekstra handling. Vælg modifikator, knap og handling; dette er adskilt fra de primære handlinger ovenfor.</td></tr>
+</tbody></table></div>
+<p class="note">Filteret for nuværende aktivitet er skjult i Plasma 6, fordi understøttelsen af KActivities er upålidelig.</p></section><section id="configure-latte"><h2>Konfigurer Latte</h2><p class="note">Layouteditoren administrerer layouts og deres docks. Indstillinger styrer applikationsomfattende adfærd. Anvend gemmer ventende ændringer i den aktuelle fane; Nulstil gendanner den gemte tilstand for den fane; Gendan standarder forbereder standardindstillinger til gennemgang. Skærme... administrerer gemte skærmreferencer.</p>
+<h3 id="layouts">Layouteditor</h3>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr><td>Enkelt layout til enhver tid</td><td>Brug ét layout til alle aktiviteter.</td></tr>
+<tr><td>Flere layouts baseret på aktiviteter</td><td>Tildel forskellige layouts til aktiviteter; flere layouts kan forblive indlæste.</td></tr>
+<tr><td>Skift</td><td>Aktivér det valgte layout. Anvend ventende ændringer først; Latte skifter ikke med ikke-gemte ændringer.</td></tr>
+<tr><td>Aktiviteter...</td><td>Åbn Plasmas Aktivitetsadministrator. Brug kolonnen Aktiviteter eller Aktiveret til at tildele dette layout til aktiviteter.</td></tr>
+<tr><td>Ny / Dupliker / Fjern</td><td>Opret, kopier eller fjern et layout. Dupliker her kopierer hele layoutet, ikke et enkelt dock. Aktive og låste layouts kan ikke fjernes.</td></tr>
+<tr><td>Aktiveret</td><td>Tildel dette layout til en eller flere aktiviteter, så Plasma-aktiviteter kan aktivere det. Vises kun i multi-layout-tilstand.</td></tr>
+<tr><td>Skrivebeskyttet</td><td>Beskyt layoutkonfigurationen mod ændringer.</td></tr>
+<tr><td>Detaljer...</td><td>Åbn layoutdetaljedialogen for ikon, brugerdefinerede farver, popup-margin og synlighed af kontekstmenu.</td></tr>
+<tr><td>Dokker...</td><td>Åbn doklisten for dette layout: navn, skærm, kant, justering, inkluderede widgets samt ny/kopier/fjern/import/eksport.</td></tr>
+<tr><td>Import... / Eksport...</td><td>Importer et layout fra en lokal fil eller KDE Store; eksporter det som sikkerhedskopi eller skabelon. Fil → Importer konfiguration / Eksporter konfiguration håndterer en fuld applikationssikkerhedskopi.</td></tr>
+<tr><td>Navn / I menu / Aktiviteter</td><td>Layoutlisten har kolonnerne Navn, I menu og Aktiviteter. Rediger Navn og Aktiviteter direkte i listen; I menu styrer, om layoutet vises i dokkens Layouts-menu.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Layoutdetaljer</h3>
+<p>Åbn med Layouteditor → Detaljer... for at redigere det valgte layout.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr><td>Layout</td><td>Vælg hvilket layout der skal redigeres.</td></tr>
+<tr><td>Ikon</td><td>Vælg et ikon til layoutet. Ryd-knappen fjerner det.</td></tr>
+<tr><td>Brugerdefinerede farver</td><td>Vælg en farveskabelonfil for dette layout.</td></tr>
+<tr><td>PopUp-margin</td><td>Angiv marginen, der bruges af layout-popups; deaktiveret betyder, at standardværdien bruges.</td></tr>
+<tr><td>Vis i layouts-kontekstmenu, når det er muligt</td><td>Vis dette layout i dokkens Layouts-menu, når den nuværende aktivitet tillader det.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dok-dialog</h3>
+<p>Åbn med Layouteditor → Dokker... for at administrere dokkerne i det valgte layout.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolonner</td></tr>
+<tr><td>Navn</td><td>Doknavn. Dobbeltklik for at omdøbe det.</td></tr>
+<tr><td>Skærm</td><td>Skærmen som docken tilhører, inklusive Primær, Alle skærme og Alle sekundære skærme.</td></tr>
+<tr><td>Kant</td><td>Skærmkant som docken bruger.</td></tr>
+<tr><td>Justering</td><td>Dockens justering langs kanten.</td></tr>
+<tr><td>Indeholder</td><td>Widgets og undercontainments inkluderet i docken. Denne kolonne er skrivebeskyttet.</td></tr>
+<tr class="group"><td colspan="2">Knapper</td></tr>
+<tr><td>Ny</td><td>Opret en dock fra en skabelon.</td></tr>
+<tr><td>Dupliker</td><td>Opret en uafhængig kopi af den valgte dock, eller en anden klon hvis den valgte dock er en klon.</td></tr>
+<tr><td>Fjern</td><td>Fjern den valgte dock. Kloner fjernes sammen med deres original.</td></tr>
+<tr><td>Importer...</td><td>Importer en dock fra en lokal skabelonfil.</td></tr>
+<tr><td>Eksporter...</td><td>Eksporter den valgte dock til sikkerhedskopiering eller som skabelon. Skabelondialogen lader dig vælge hvilke widgetindstillinger der skal inkluderes; udelad widgets med personlige data såsom e-mail- eller kalenderkonti.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Skærmdialog</h3>
+<p>Åbn med Fil → Skærme... for at rydde op i skærmreferencer gemt af Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr><td>Skærmliste</td><td>Viser skærmreferencer gemt i Latte, inklusive skærme der ikke længere er tilsluttet.</td></tr>
+<tr><td>Vælg forældede skærme</td><td>Marker kun skærme der ikke længere eksisterer. Aktive skærme og skærme brugt af et layout kan ikke fjernes.</td></tr>
+<tr><td>Fravælg alle</td><td>Ryd markeringen før du vælger et andet sæt.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Indstillinger</h3>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr><td>Vis informativt vindue for automatisk aktivering af layouts</td><td>Vis et informationsvindue når et layout aktiveres automatisk.</td></tr>
+<tr><td>Parabolisk effekt / Lille / Mellem / Stor</td><td>Indstil den globale spredning af hover-zoom på tværs af naboelementer.</td></tr>
+<tr><td>Aktiver autostart ved opstart</td><td>Start Latte, når du logger ind.</td></tr>
+<tr><td>Brug 3D-stil for notifikations- og genvejsmærkater</td><td>Brug en dimensionel stil for notifikations- og genvejsmærkater.</td></tr>
+<tr><td>Tryk og hold ⌘ nede for at vise genvejsmærkater</td><td>Deaktiveret som standard. Hold Meta-tasten nede i cirka et sekund for at skjule docke og deres opgave- og widgetgenvejsmærkater; slip tasten for at skjule dem igen. Med Plasmas standardindstillinger åbner dens egen launcher også, når Meta slippes; ændr denne genvej i Systemindstillinger, hvis du ikke ønsker dette.</td></tr>
+<tr><td>Påvirkning af tykkelsesmargin</td><td>Vælg, hvor meget elementernes tykkelsesmarginer påvirker layoutet: 0%, 50% eller 100%.</td></tr>
+<tr><td>Informér Plasma-skrivebordet om tilgængeligt skrivebordsrum</td><td>Udgiv tilgængeligt skrivebordsrum til Plasma, så paneler og vinduer kan bruge det.</td></tr>
+<tr><td>Kontekstmenu / Handlinger...</td><td>Vælg, hvilke kontekstmenuhandlinger for docken altid vises. Handlinger, der ikke er valgt, er kun tilgængelige i redigeringstilstand.</td></tr>
+<tr><td>Skærme / reaktionsforsinkelse for ændringer</td><td>Indstil, hvor længe Latte venter, før det reagerer på skærmændringer, i millisekunder. Øg denne værdi, hvis hardwaren rapporterer ustabile overgange.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontekstmenuhandlinger</h3>
+<p>Åbn med Indstillinger → Kontekstmenu → Handlinger... for at vælge, hvilke dockhandlinger der altid er synlige.</p>
+<div class="table-wrap"><table><thead><tr><th>Indstilling i vinduet</th><th>Hvad den styrer</th></tr></thead><tbody>
+<tr><td>Tilgængelig altid</td><td>Handlinger på denne liste vises altid i dockens kontekstmenu.</td></tr>
+<tr><td>Kun tilgængelig i redigeringstilstand</td><td>Handlinger på denne liste vises kun, mens docken redigeres. Flyt handlinger mellem listerne for at ændre dette.</td></tr>
+<tr><td>Flyt mellem lister</td><td>Vælg en handling og brug pilknapperne til at flytte den. Nulstil og Gendan standardindstillinger gendanner standardsættet.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Uafhængige kopier og kloner</h2><p class="note">En kopi og en klon ser ens ud på skærmen, men opfører sig forskelligt. En kopi er en ny, uafhængig dock. En klon er den samme dock vist på en anden skærm. Vælg baseret på, om du vil konfigurere denne dock separat.</p>
+<h3 id="create-independent-copy">Opret en uafhængig kopi</h3>
+<p>Brug en af disse metoder på den oprindelige dock, ikke på en klon:</p>
+<ul><li>Højreklik på docken og vælg <strong>Dupliker Dock</strong>.</li><li>Åbn <strong>Rediger Dock</strong> og vælg <strong>Tilføj… → Dupliker Dock</strong>.</li><li>Åbn <strong>Konfigurer Latte → Layouteditor → Docks…</strong>, vælg docken, og vælg <strong>Dupliker</strong>.</li></ul>
+<p>Kopien får nye dock- og widget-ID'er og kopierer de aktuelle indstillinger én gang. Derefter kan du ændre dens skærm, kant, størrelse, udseende, adfærd, widgets og launchere uafhængigt. Det er en separat post i layoutet og kan fjernes med <strong>Fjern Dock</strong>.</p>
+<p>At duplikere en klon fra Docks-dialogen opretter en anden klon af den samme oprindelige, ikke en uafhængig dock. For at opbygge en uafhængig dock fra en klon skal du først åbne <strong>Rediger oprindelig Dock…</strong> og duplikere den oprindelige.</p>
+<p>Hvis den oprindelige bruger <strong>Global gruppe</strong>, bruger kopien også den og deler launchere. Vælg <strong>Unik gruppe</strong> på kopien, hvis du vil have en separat launcherliste. <strong>Layoutgruppe</strong> er kun tilgængelig, når docken allerede bruger den.</p>
+<h3 id="create-clone">Opret kopier</h3>
+<p>Kopier oprettes af skærmtilstanden for en original dock, ikke af <strong>Dupliker dock</strong>:</p>
+<ul><li><strong>Rediger dock → Skærm → På alle skærme</strong>: originalen forbliver på hovedskærmen, og Latte opretter en kopi på hver sekundær skærm.</li><li><strong>Rediger dock → Skærm → På alle sekundære skærme</strong>: originalen forbliver på én sekundær skærm, og Latte opretter kopier på de resterende sekundære skærme.</li></ul>
+<p>Latte opretter og fjerner kopier automatisk, når skærmlayoutet ændres. For at fjerne kopier skal du sætte originalen tilbage til <strong>På hovedskærm</strong> eller til én bestemt skærm. En kopi har ingen <strong>Fjern dock</strong>-indgang i sin kontekstmenu; brug <strong>Rediger original dock…</strong> der for at konfigurere den.</p>
+<p>Når du åbner editoren fra en kopi, åbnes altid indstillingerne for den originale dock, fordi kopier deler dock-konfigurationen. Widget-indstillinger, der ændres på en kopi, opdaterer også originalen.</p>
+<h3 id="differences">Forskelle ved et øjekast</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspekt</th><th>Uafhængig kopi</th><th>Kopi</th></tr></thead><tbody>
+<tr><td>Oprettet af</td><td>Dupliker dock</td><td>Skærm → På alle skærme eller På alle sekundære skærme</td></tr>
+<tr><td>Identitet</td><td>Nye dock- og widget-ID'er</td><td>Et linket visning af den originale dock</td></tr>
+<tr><td>Indstillinger</td><td>Kopieret én gang, derefter uafhængig</td><td>Delt: redigering af originalen opdaterer alle kopier; widget-indstillinger, der ændres på en kopi, opdaterer også originalen</td></tr>
+<tr><td>Skærm og kant</td><td>Kan ændres uafhængigt</td><td>Følger originalen; kan ikke flyttes eller ændres størrelse på separat</td></tr>
+<tr><td>Launchers</td><td>Kopieret ved oprettelse; senere deling kun gennem Layout Group eller Global Group</td><td>Spejl altid originalen</td></tr>
+<tr><td>Kontekstmenu</td><td>Fulde dok-handlinger, herunder Dupliker og Fjern</td><td>Viser Rediger originaldok…; Dupliker, Flyt, Eksportér og Fjern er skjult</td></tr>
+<tr><td>Sådan fjerner du</td><td>Fjern dok</td><td>Sæt originalen tilbage til én skærm</td></tr>
+</tbody></table></div>
+<p><strong>Widget-ikonfarver:</strong> <strong>Brug ikontemafarver</strong> i en widgets kontekstmenu forhindrer Latte i at farvelægge den pågældende widgets ikon. Indstillingen gemmes pr. widget: kopier deler den med originalen. En uafhængig kopi beholder den værdi, den havde, da den blev oprettet, og kan ændre den separat.</p></section></main></div><footer>Latte Dock NG · Offline-dokumentation. Utilgængelige grænsefladesprog falder tilbage til engelsk.</footer></body></html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="eu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Erabiltzailearen Gida</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Erabiltzailearen Gida</h1><p>Argibide hauek uneko aukerak deskribatzen dituzte. Aurreratutako moduak, dokaren estiloak eta instalatutako plugin-ek ikusgai dauden kontrolak alda ditzakete. Aurreratua markatutako aukerak ezkutatuta daude editore oinarrizkoan.</p><div class="language-menu"><label for="language-select">Hizkuntza</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html" selected>Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Itzulitako gidak bakarrik zerrendatzen dira. Bestelako interfaze-hizkuntzek gida ingelesea irekitzen dute.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Orri honetan</h2><a class="chapter" href="#edit-dock">Editatu Dock-a</a><a class="subsection" href="#behavior">Portaera</a><a class="subsection" href="#appearance">Itxura</a><a class="subsection" href="#effects">Efektuak</a><a class="subsection" href="#tasks">Zereginak</a><a class="chapter" href="#configure-latte">Konfiguratu Latte</a><a class="subsection" href="#layouts">Diseinu-Editorea</a><a class="subsection" href="#layout-details">Diseinuaren Xehetasunak</a><a class="subsection" href="#docks-dialog">Dock-en Elkarrizketa</a><a class="subsection" href="#screens-dialog">Pantailen Elkarrizketa</a><a class="subsection" href="#preferences">Hobespenak</a><a class="subsection" href="#context-menu-actions">Testuinguru-menuaren Ekintzak</a><a class="chapter" href="#copies-and-clones">Kopia Independenteak eta Klonak</a><a class="subsection" href="#create-independent-copy">Sortu kopia independente bat</a><a class="subsection" href="#create-clone">Sortu klonak</a><a class="subsection" href="#differences">Desberdintasunak begirada batean</a></nav></aside><main>
+<section id="edit-dock"><h2>Editatu Dock-a</h2><p class="note">Aldaketek berehala eragiten dute. Itxi-k editorea ezkutatzen du; ez du aldaketak desegiten. Pinatu-k editorea irekita mantentzen du. Gehitu… → Bikoiztu Dock-a jatorrizko dokaren kopia independente bat sortzen du; Kendu-k uneko dock-a kentzen du. Fitxak aldatzeak leihoa lekuan bertan mantentzen du. Aurreratutako moduak leihoa bere orririk luzeenera egokitzen du, pantailan dagoen espazio erabilgarriaren barruan. Orri luzeagoak leihoaren barruan mugitzen dira. Arrastatu tamaina-aldaketaren izkina leihoaren tamaina doitzen modu bietan.</p>
+<p class="note">Aurreratutako moduak kontrol gehiago erakusten ditu. Aurreratutzat markatutako aukerak ezkutatuta daude oinarrizko editorean.</p>
+<h3 id="behavior">Portaera</h3>
+<p class="note">Ikusgarritasuna, atzerapena, ekintzak, elementuen portaera, tarte flotantea eta ingurune-aukerak dokatu honentzat.</p>
+<div class="table-wrap"><table><thead><tr><th>Leihoaren aukera</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Ikusgarritasuna</td></tr>
+<tr><td>Pantaila / Kokapena</td><td>Hautatu dokatu honentzat pantaila eta ertza. Pantaila anitzekin, Pantaila guztietan eta Pantaila bigarren guztietan aukerek klon lotuak sortzen dituzte. Ikusi Kopia Independenteak eta Klonak.</td></tr>
+<tr><td>Lerrokatzea</td><td>Kokatu dokatua pantailaren ertzean. Elementuen lerrokatzeak kontrolatzen du widgetak dokatuaren barruan non kokatzen diren.</td></tr>
+<tr><td>Betik Ikusgai</td><td>Mantendu dokatua ikusgai eta erreserbatu mahaigaineko espazioa leiho-kudeatzaileak hori onartzen duenean.</td></tr>
+<tr><td>Ezkutatu Automatikoa</td><td>Ezkutatu dokatua punteadorea aktibazio-eremura iritsi arte.</td></tr>
+<tr><td>Saihestu Aktiboa</td><td>Ezkutatu leiho aktiboak dokatuaren eremua ukitzen duenean, eta erakutsi dokatua punteadorea sartzen denean.</td></tr>
+<tr><td>Saihestu Maximizatua</td><td>Ezkutatu soilik leiho maximizatu bat aktibo dagoenean pantaila honetan, eta erakutsi dokatua punteadorea sartzen denean.</td></tr>
+<tr><td>Saihestu Leiho Guztiak</td><td>Ezkutatu edozein leiho dokatuaren eremua ukitzen duenean, eta erakutsi dokatua punteadorea sartzen denean.</td></tr>
+<tr><td>Leihoak Beherago</td><td>Mantendu dokatua leihoen gainean; leihoak bere azpian kokatu daitezke.</td></tr>
+<tr><td>Leihoak Estali Dezakete</td><td>Utzi leihoek dokatua estaltzen. Dokatua aurrera dator punteadorea pantailaren ertzera iristen denean.</td></tr>
+<tr><td>Leihoak Beti Estaltzen</td><td>Mantendu leihoak dokatuaren gainean beti; dokatua atzean geratzen da.</td></tr>
+<tr class="group"><td colspan="2">Atzerapena</td></tr>
+<tr><td>Atzerapena / Erakutsi / Ezkutatu</td><td>Ezarri zenbat itxaron erakutsi edo ezkutatu aurretik, milisegundotan. Atzerapen luzeagoek aktibazio akzidentalak murrizten dituzte.</td></tr>
+<tr class="group"><td colspan="2">Ekintzak</td></tr>
+<tr><td>Jarraipena <span class="advanced">Aurreratua</span></td><td>Aukeratu zein leiho aktiboren hutsune-eremuko ekintzak jarraituko dituen: Pantaila unekoaren leiho aktiboa edo Pantaila guztietako leiho aktiboa.</td></tr>
+<tr><td>Ezker botoia / Arrastatu leiho aktiboa <span class="advanced">Aurreratua</span></td><td>Gaitu dokaren hutsune-eremutik arrastatzea jarraipenean dagoen leiho aktiboa mugitzeko edo maximizatzeko/berreskuratzeko.</td></tr>
+<tr><td>Erdiko botoia / Itxi leiho aktiboa <span class="advanced">Aurreratua</span></td><td>Gaitu dokaren hutsune-eremuan erdiko klik egitea jarraipenean dagoen leiho aktiboa ixteko.</td></tr>
+<tr><td>Sagu-gurpila <span class="advanced">Aurreratua</span></td><td>Aukeratu zer egiten duen gurpilak dokaren hutsune-eremuan: Ekintzarik ez, Mahaigainak txandakatu, Jarduera txandakatu, Zereginak txandakatu, edo Txandakatu eta minimizatu zereginak.</td></tr>
+<tr class="group"><td colspan="2">Elementuak</td></tr>
+<tr><td>Meheago izenburu-pizgarriak sagua gainean dagoenean</td><td>Erakutsi widget-en izenburu-pizgarri trinkoak. Zereginen leiho-aurrebistak zereginen Hover ekintzak kontrolatzen ditu bereizita.</td></tr>
+<tr><td>Zoomatu widget-ak sagua gainean dagoenean</td><td>Baimendu widget-ak dokarekin zoomatzea. Desaktibatu hau widget-en ikonoak zorrotz mantentzeko; zereginen ikonoek eta abiarazleek zoomatzen jarraitzen dute.</td></tr>
+<tr><td>Zabaldu lasterketa sagu-gurpilaren bidez</td><td>Korritu onartutako widget baten gainean bere lasterketa erakusteko edo ezkutatzeko.</td></tr>
+<tr><td>Doitu tamaina automatikoki behar denean</td><td>Txikitu elementuak eskuragarri dagoen luzera gainditzen dutenean eta handitu berriro sartzen direnean.</td></tr>
+<tr><td>Aktibatu kokapenean oinarritutako lasterbide globalen bidez</td><td>Baimendu kokapenean oinarritutako lasterbide globalek dokaren elementu hauek aktibatzea. Layout bakoitzeko dokak bakarrik erabili behar du hau.</td></tr>
+<tr class="group"><td colspan="2">Flotagarria</td></tr>
+<tr><td>Erabili beti flotazio-tartea erabiltzailearen interakziorako <span class="advanced">Aurreratua</span></td><td>Sartu flotatze-tartea widgeteen eta leihoen interakzioan erabiltzen den eremuan.</td></tr>
+<tr><td>Ezkutatu flotatze-tartea maximizatutako leihoetarako <span class="advanced">Aurreratua</span></td><td>Kendu flotatze-tartea maximizatutako leiho batek pantailaren ertza behar duenean.</td></tr>
+<tr><td>Atzeratu flotatze-tartearen ezkutatzea sagua irten arte <span class="advanced">Aurreratua</span></td><td>Itxaron erakuslea irten arte tartea ezkutatu aurretik, inguruko elementuetan klik akzidentala saihesteko.</td></tr>
+<tr><td>Islatu flotatze-tartea erakusten denean <span class="advanced">Aurreratua</span></td><td>Beti Ikusgai moduan, islatu tartea dokaren beste aldean.</td></tr>
+<tr class="group"><td colspan="2">Ingurunea</td></tr>
+<tr><td>Igo mahaigain-aldaketa gertatzean <span class="advanced">Aurreratua</span></td><td>Erakutsi aldi baterako doka mahaigain birtuala aldatzen denean. Hau ez da erabiltzen Beti Ikusgai edo Leihoak Behean moduetan.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Itxura</h3>
+<p class="note">Marjinak, Koloreak, Erradioa/Itzala, Luzera Doikuntza Dinamikoak, Ikusgarritasun Dinamikoa eta Salbuespenak Aurreratua modua behar dute.</p>
+<div class="table-wrap"><table><thead><tr><th>Leihoaren aukera</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elementuak</td></tr>
+<tr><td>Dokaren Estiloa</td><td>Aukeratu Klasikoa edo Modernoa aurrezarpen bat aplikatzeko. Edozein estiloetan, erabili Dokaren Estiloaren azpiko etengailuak elementuen antolamendua, ertzarekin atzeko planoak, elementuen gutxieneko tartea, flotatze-tarte automatikoa eta ataza-indikatzaile trinkoak modu independentean ezartzeko.</td></tr>
+<tr><td>Mantendu dokaren elementuak batera</td><td>Erabili talde bat dokaren elementuentzat, dokaren lerrokatzea Justifikatua denean ere.</td></tr>
+<tr><td>Erabili atzeko plano txertatua ertzarekin</td><td>Erabili aurrezarritako atzeko planoa ertzarekin eta bere tartearen, izkin biribilduen eta itzalaren estiloarekin.</td></tr>
+<tr><td>Erabili elementuen gutxieneko tartea zabalagoa</td><td>Handitu dokaren elementuen inguruko gutxieneko tartea. Marjinen kontrolen bidez ezarritako balio handiagoek indarrean jarraitzen dute.</td></tr>
+<tr><td>Erabili automatikoki flotatzen duen tarte bat</td><td>Kalkulatu pantailaren ertzeko tarte bat ikonoaren tamainatik tarte-balio zehatz bat ezarri gabe dagoenean.</td></tr>
+<tr><td>Erabili ataza-indikatzaile trinkoak</td><td>Erabili Latte ataza-indikatzaileen diseinu trinkoa. Aukeratu indikatzailearen forma Efektuetan.</td></tr>
+<tr><td>Leheneratu Aurrezarpena</td><td>Editatu Dock-en beheko botoiak berehala leheneratzen du Portaera, Itxura, Efektuak eta Ataza fitxa guztiak uneko Klasiko/Modernoa estiloarentzat bidalitako Dock aurrezarpenarekin, Aurreratua moduak ezkutatutako aukerak barne. Pantaila, dock-aren ertza, abiarazleak eta widget-ak mantentzen dira. Lerrokatzea, ikusgarritasuna eta atzerapenak berrezartzen dira. Abiarazleen partekatzea lehenetsitako talde lokalera itzultzen da, abiarazle-zerrenda eraginkorraren kopia bat mantenduz; beste dock-en partekatutako zerrendak ez dira aldatzen. Kolore pertsonalizatuak eta indikatzaile-gainidazteak berrezartzen dira. Aurrezarpenak bidalitako Dock lehenetsiaren txantiloia eta konfigurazio-eskemaren lehenetsiak konbinatzen ditu. Hau Dock Estiloa aldatzea baino bereizita dago. Klasikoak Dock Estiloaren azpiko itxura-algortailu bostak itzaltzen ditu lehenetsita. Modernoak pizten ditu. Bi aurrezarpenek lehenetsi berdinak erabiltzen dituzte gainerako aukerentzat.</td></tr>
+<tr><td>Tamaina absolutua / Tamaina erlatiboa</td><td>Ezarri ikonoen tamaina pixel-tan edo pantailaren zatien gisa. Tamaina erlatiboa erabilgarria da DPI altuko edo pantaila anitzeko konfigurazioetan.</td></tr>
+<tr><td>Zooma saguaren gainean</td><td>Ezarri elementuak saguaren azpian zenbat hazten diren.</td></tr>
+<tr class="group"><td colspan="2">Luzera</td></tr>
+<tr><td>Gehienezkoa / Gutxienekoa / Desplazamendua</td><td>Ezarri dock-aren gehienezko eta gutxieneko luzera eta mugitu pantailaren ertzean zehar.</td></tr>
+<tr><td>Luzera Doikuntza Dinamikoak <span class="advanced">Aurreratua</span></td><td>Panelaren luzera maximizatu leiho maximizatuen aurrean: hedatu dok-a luzera osoan leiho maximizatu bat dagoenean. Atzeko planoa gaituta egon behar da.</td></tr>
+<tr class="group"><td colspan="2">Marjinak</td></tr>
+<tr><td>Marjinak / Luzera / Lodiera / Tarte flotagarria <span class="advanced">Aurreratua</span></td><td>Ezarri dok-aren kanpo-marjina, bere lodierako marjina, eta dok-aren eta pantailaren ertzaren arteko tartea.</td></tr>
+<tr><td>Leiho maximizatuetatik tartea (px) <span class="advanced">Aurreratua</span></td><td>Gorde 0–128 pixel gehigarri leihoen eta dok honen artean Beti Ikusgai moduan. Lehenetsia: 0. Hau pantailaren ertzeko tarte flotagarriarengandik bereizia dago eta ispilu-tarteetara gehitzen da; ezkutatzeko modu automatikoek ez dute espazio hau gordetzen.</td></tr>
+<tr class="group"><td colspan="2">Koloreak</td></tr>
+<tr><td>Koloreak / Paleta <span class="advanced">Aurreratua</span></td><td>Aukeratu Plasma gaiaren koloreak, Kolore ilunak, Kolore argiak, Diseinuaren kolore pertsonalizatuak, Alderantziz, edo Mahaigaineko atzeko planoan oinarritutako kolore adimendunak. Diseinuaren kolore pertsonalizatuek diseinuaren kolore-eskema erabiltzen dute; Adimendunek horma-paperari jarraitzen diote.</td></tr>
+<tr><td>Erabili atzeko planoaren kolore pertsonalizatua / Eguneko kolorea <span class="advanced">Aurreratua</span></td><td>Gainidatzi dok honen atzeko plano hautatutako kolore batekin; testuaren kontrastea automatikoki doitzen da. Desgaituta lehenetsita. Leihoetatik eratorritako paletak eta applet hedatuen Plasma paletak lehentasuna mantentzen dute. Opakutasuna atzeko planoen ezarpen bereizi bat izaten jarraitzen du.</td></tr>
+<tr><td>Aldatu atzeko planoaren koloreak eguneko orduaren arabera / Gaueko kolorea / Egunaren hasiera (tokiko ordua) / Gauaren hasiera (tokiko ordua) <span class="advanced">Aurreratua</span></td><td>Aukeran, bi kolore pertsonalizaturen artean aldatu 24 orduko tokiko orduak erabiliz. Lehenetsiak: eguna 07:00, gaua 19:00. Hasierako ordua barne hartzen da. Tarteeak medianoitea zeharka dezakete; ordu berdinak eguneko kolorea egun osoan mantentzen dute. Ordutegi desgaitzeak eguneko kolorea mantentzen du. Ordularia segundo bakoitzean egiaztatzen da, berreskuratzearen ondoren ere.</td></tr>
+<tr class="group"><td colspan="2">Atzeko planoa</td></tr>
+<tr><td>Atzeko planoa</td><td>Atzeko planoa piztu/itzali etengailua da. Gaituta dagoenean, erabili beheko kontrolak lodiera, opakutasuna, erradioa eta itzala ezartzeko.</td></tr>
+<tr><td>Opakutasuna / Opakutasuna lanpetuta</td><td>Ezarri atzeko planoaren opakutasuna. Labain bera Opakutasuna lanpetuta deitzen da Ezkutatu atzeko planoa beharrezkoa ez denean eta Preferitu atzeko plano opakua edozein leiho ukitzen denean biak gaituta daudenean. Def. gaiaren lehenetsia berreskuratzen du.</td></tr>
+<tr><td>Erradioa / Itzala <span class="advanced">Aurreratua</span></td><td>Ezarri atzeko planoaren izkinen erradioa eta itzalaren tamaina. Def. gaiaren lehenetsia erabiltzen du.</td></tr>
+<tr><td>Lausotzea / Itzalak / Marra / Izkin guztiak <span class="advanced">Aurreratua</span></td><td>Gaitu atzeko planoaren lausotzea, atzeko planoaren itzala, marra eta izkin biribilduak. Izkin guztiak aukera geometria flotagarri/justifikatu jakin batzuetan bakarrik dago erabilgarri.</td></tr>
+<tr class="group"><td colspan="2">Ikusgarritasun dinamikoa</td></tr>
+<tr><td>Preferitu atzeko plano opakua edozein leiho ukitzen denean <span class="advanced">Aurreratua</span></td><td>Kendu atzeko planoaren gardentasuna leiho bat dokari ukitzen zaionean.</td></tr>
+<tr><td>Ezkutatu atzeko planoa beharrezkoa ez denean <span class="advanced">Aurreratua</span></td><td>Ezkutatu atzeko planoa leiho bat dokari ukitzen zaionean edo mahaigainaren atzeko planoa lanpetuta dagoenean izan ezik.</td></tr>
+<tr><td>Ezkutatu atzeko planoaren itzala maximizatutako leihoentzat <span class="advanced">Aurreratua</span></td><td>Ezkutatu atzeko planoaren itzala leiho maximizatu aktibo bat dokari ukitzen zaionean.</td></tr>
+<tr class="group"><td colspan="2">Salbuespenak</td></tr>
+<tr><td>Erabili Plasma atzeko planoak eta koloreak applet hedatuetan<span class="advanced">Aurreratua</span></td><td>Erabili Plasma estiloko atzeko plano opakua eta Plasma koloreak widgeten lasterkorriak hedatuta dauden bitartean.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efektuak</h3>
+<div class="table-wrap"><table><thead><tr><th>Leihoaren aukera</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Itzalak</td></tr>
+<tr><td>Itzalak</td><td>Piztu edo itzali widgeten itzalak. Tamaina eta Opakotasuna desgaituta daude itzalak itzalita daudenean.</td></tr>
+<tr><td>Tamaina / Opakotasuna</td><td>Ezarri widgeten itzalen tamaina eta opakotasuna.</td></tr>
+<tr><td>Kolore lehenetsia / Gaiko kolorea / Kolore pertsonalizatua</td><td>Aukeratu itzalaren kolore lehenetsia, gaiko paletako kolore bat, edo egin klik kolore-laginkorrean kolore pertsonalizatu bat hautatzeko.</td></tr>
+<tr class="group"><td colspan="2">Animazioak</td></tr>
+<tr><td>Animazioak / x1 / x2 / x3</td><td>Piztu edo itzali dokaren animazio guztiak. x1 abiadura normala da, x2 motelagoa, x3 motelena.</td></tr>
+<tr class="group"><td colspan="2">Adierazleak</td></tr>
+<tr><td>Adierazleak</td><td>Piztu edo itzali zeregin aktiboen adierazleak. Gaituta dagoenean, aukeratu Latte adierazlea edo adierazle-plugin pertsonalizatu bat; pluginari dagozkion aukerak bere fitxan agertzen dira.</td></tr>
+<tr><td>Erabili macOS estiloko puntuak</td><td>Latte adierazleak macOS estiloko puntuak erabiltzen ditu lehenetsita, agerpeneko zeregin adierazle trinkoak gaituta daudenean. Itzali 'Erabili macOS estiloko puntuak' Efektuetan Lerroa edo Puntuak eskuz hautatzeko.</td></tr>
+<tr><td>Erabili aplikazio-ikonoen koloreak</td><td>Aukeran, koloreztatu zeregin-adierazleak aplikazio bakoitzaren ikonoaren kolore nagusiarekin, atzeko planoaren kontrasturako doituta. Hautatu Lerroa azpimarrak koloreztatuak izateko. Desgaituta dago lehenetsita; appletek paletako koloreak mantentzen dituzte.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Zereginak</h3>
+<p>Zeregin-abiarazleak beste doketan berrantolatzen hasten dira abiarazle-zerrenda partekatzen dutenetan, ikonoa askatu ondoren. Ordena egonkortzeko une bat behar izan daiteke. Bereizle-tarteak lekuan mantentzen dira jasotzaile-dokak ordena berria gordetzen duenean. Dagoeneko pinatutako aplikazio bat arrastatzeak bere abiarazle existitzena mantentzen du, abiarazle hori aplikazio lehenetsiaren sistemaren balio lehenetsia jarraitzen duenean ere. Bereizle berriek espazioa hartzen dute hautatutako tartea lortzen dutenean.</p>
+<p>Tresna bat gehitzen edo arrastatzen duzunean bereizle baten ondoan, zeregin-eremuaren edo sistemaren erretiluaren ertzean, tresna bereizlearen kanpoaldean kokatzen da. Bereizlea zeregin-eremuaren edo erretiluaren ondoan geratzen da.</p>
+<p>Aplikazio bat aplikazio-menuetik pinatzen duzunean, bere ikonoa zeregin-zerrendaren amaierako edozein bereizleren aurretik agertzen da. Eskuineko bereizlea pinatutako taldeari dagokio, beraz, pinatu gabeko aplikazio exekutatzen direak bere atzean agertzen dira.</p>
+<p>Zeregin-slotak nabarmenduta jarraitzen du eta ikonoa ikusgai mantentzen da zereginak berrantolatzeko arrastatzen duzun bitartean. Zeregin berri bat sartzen denean, dokak bere slot-a erreserbatzen hasten da hasierako animazio-tamainatik.</p>
+<p class="note">Ikurrak, Animazioak, Korritzea, Ekintzak eta Interakzioa/Iragazkiak aukera batzuek Aurreratua modua behar dute. Abiarazleak bakarrik erakutsi eta zeregin guztiak ezkutatzeak leihoekin lotutako ekintzak eta iragazkiak desgaitzen ditu.</p>
+<div class="table-wrap"><table><thead><tr><th>Leihoaren aukera</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Ikurrak</td></tr>
+<tr><td>Zereginen jakinarazpenak <span class="advanced">Aurreratua</span></td><td>Erakutsi irakurri gabeko jakinarazpen kopuruak zeregin-ikonoetan.</td></tr>
+<tr><td>Zereginen aurrerapen-informazioa <span class="advanced">Aurreratua</span></td><td>Erakutsi aurrerapen-ikurrak, adibidez, Dolphin fitxategiak kopiatzen ari den bitartean.</td></tr>
+<tr><td>Atazetako aplikazioetatik entzuten den audioa <span class="advanced">Aurreratua</span></td><td>Erakutsi audio-ikur bat soinua entzuten ari diren aplikazioentzat. Bat etortzeak desktop/aplikazio identifikatzaile esplizituak nahiago ditu. Nabigatzaile prozesuaren informazio orokorra ez da nahikoa PWA zehatz bat identifikatzeko; korronte anbiguoak esleitu gabe uzten dira aplikazio erlaziorik gabekoei audio-kontrolak eman beharrean. Electron aplikazio independenteek beren audio-prozesuarekin bat etor daitezke. Erreprodukzio-egoerak eta irteera-jarduerak pausatutako korronteak ezkutatzen ditu aplikazioak audio-konexioa irekita mantentzen duenean ere. Erreproduktore-egoerarik gabe, isiltasun laburra onartzen da gutxi gorabehera segundo batzuetan.</td></tr>
+<tr><td>Jakinarazpen-ikurraren kolore nabarmena <span class="advanced">Aurreratua</span></td><td>Erabili jakinarazpen-ikur indartsuagoa, normalean gorria. Eskatzen du Atazetako jakinarazpenak.</td></tr>
+<tr><td>Aldatu bolumena audio-ikurraren gainean korritzean <span class="advanced">Aurreratua</span></td><td>Egin klik audio-ikurrean isilarazteko/isilaraztea kentzeko, edo korritu gainean bolumena aldatzeko. Eskatzen du Atazetako aplikazioetatik entzuten den audioa.</td></tr>
+<tr class="group"><td colspan="2">Interakzioa</td></tr>
+<tr><td>Abiarazleak atazetako aplikazioaren uneko elementuan bakarrik gehitzen dira</td><td>Gehitu jaregindako abiarazleak atazetako widget honetan bakarrik, ez widget bereizi gisa edo beste ataza-widget batzuetan.</td></tr>
+<tr><td>Leiho-ekintzak testuinguru-menuan <span class="advanced">Aurreratua</span></td><td>Erakutsi leihoari zuzendutako ekintzak atazaren testuinguru-menuan.</td></tr>
+<tr><td>Aurrebista-leihoa lasterkorri gisa jokatzen du <span class="advanced">Aurreratua</span></td><td>Ireki aurrebistak lasterkorri gisa, argibide gisa beharrean. Hover ekintzak aurrebistak eskatu behar ditu; honek erakusteko modua bakarrik aldatzen du.</td></tr>
+<tr><td>Posizio-lasterbideak uneko atazetan bakarrik aplikatzen dira<span class="advanced">Aurreratua</span></td><td>Mugatu posizioan oinarritutako lasterbide globalak ataza-trepete honetara.</td></tr>
+<tr class="group"><td colspan="2">Iragazkiak</td></tr>
+<tr><td>Erakutsi uneko pantailako atazak bakarrik</td><td>Erakutsi dokatu honen pantailako leihoak.</td></tr>
+<tr><td>Erakutsi uneko mahaigaineko atazak bakarrik</td><td>Erakutsi uneko mahaigain birtualeko leihoak.</td></tr>
+<tr><td>Erakutsi Minimizatutako Leihoen Atala</td><td>Lehenetsita desaktibatuta. Minimizatutako leihoak ikono indibidual gisa erakusten ditu ataza arrunten ondoren. Pasatu sagua gainetik edo fokatu ikonoa bere aplikazioa eta leihoaren izenburua ikusteko, eta aktibatu leihoa leheneratzeko. Aplikazio batek hainbat leiho minimizatzen dituenean, txartel txiki batek leiho bakoitzaren sekuentzia eta aplikazio horren guztizkoa erakusten ditu. Atalak atazen iragazkiak jarraitzen ditu eta atazen gainfluxuaren korritzea partekatzen du. Gaitu Korritzea pantailatik kanpoko leihoetara iristeko konfiguratutako gurpila edo ertzetik pasatzeko ekintza erabiliz. Abiarazle-modu hutsak ezkutatzen du.</td></tr>
+<tr><td>Erakutsi abiarazleetako atazak bakarrik<span class="advanced">Aurreratua</span></td><td>Erakutsi leihoak abiarazle zerrendan dagoen aplikazioetarako bakarrik.</td></tr>
+<tr><td>Erakutsi abiarazleak bakarrik eta ezkutatu ataza guztiak<span class="advanced">Aurreratua</span></td><td>Erakutsi abiarazle-ikonoak eta ezkutatu exekutatzen ari diren atazak. Honek leihoekin lotutako ekintzak eta iragazkiak ere desgaitzen ditu.</td></tr>
+<tr><td>Erakutsi aplikazio berdinaren ataza multzoak bakarrik<span class="advanced">Aurreratua</span></td><td>Multzokatu lehenetsita aplikazio berdinaren leihoak.</td></tr>
+<tr class="group"><td colspan="2">Animazioak</td></tr>
+<tr><td>Egin salto abiarazleak aktibatzean<span class="advanced">Aurreratua</span></td><td>Animatu abiarazleak aktibatzen direnean.</td></tr>
+<tr><td>Egin salto arreta behar duten atazek<span class="advanced">Aurreratua</span></td><td>Animatu arreta eskatzen duten atazak.</td></tr>
+<tr><td>Irristatu leiho bakarrak sartzeko eta ateratzeko<span class="advanced">Aurreratua</span></td><td>Animatu leiho bakarreko berriak eta itxiak.</td></tr>
+<tr><td>Taldekatutako zereginak beren leiho berriak mugitzen dituzte <span class="advanced">Aurreratua</span></td><td>Animatu leiho berri bat zeregin talde baten barruan.</td></tr>
+<tr><td>Taldekatutako zereginak beren itxitako leihoak irristatzen dituzte <span class="advanced">Aurreratua</span></td><td>Animatu itxitako leiho bat zeregin talde baten barruan.</td></tr>
+<tr class="group"><td colspan="2">Abiarazleak</td></tr>
+<tr><td>Talde bakarra</td><td>Eman zereginen widget honi bere abiarazle zerrenda.</td></tr>
+<tr><td>Diseinu taldea</td><td>Partekatu abiarazleak diseinu bereko zereginen widgetekin. Botoi hau soilik erakusten da dokak jada Diseinu taldea erabiltzen badu.</td></tr>
+<tr><td>Talde globala</td><td>Partekatu abiarazleak diseinu guztietako zereginen widgetekin.</td></tr>
+<tr class="group"><td colspan="2">Korritzea</td></tr>
+<tr><td>Korritzea <span class="advanced">Aurreratua</span></td><td>Gaitu korritzea zereginak espazio erabilgarria gainditzen dutenean. Honek dokaren aurrezarpen bakoitzarekin funtzionatzen du, 'Mantendu dokako elementuak batera' gaituta dagoenean barne.</td></tr>
+<tr><td>Eskuz <span class="advanced">Aurreratua</span></td><td>Aukeratu Desaktibatutako korritzea, Korritze bertikala/horizontal bakarra, edo Korritze horizontala eta bertikala. Norabide bakarreko aukera dokaren orientazioaren araberakoa da.</td></tr>
+<tr><td>Automatikoa <span class="advanced">Aurreratua</span></td><td>Aktibatu edo desaktibatu korritze automatikoa.</td></tr>
+<tr class="group"><td colspan="2">Ekintzak</td></tr>
+<tr><td>Ezkerreko klik <span class="advanced">Aurreratua</span></td><td>Zeregin batean ezkerreko klik egiteko ekintza: Batere, Itxi leihoa edo Taldea, Instantzia berria, Minimizatu/Berrezarri, Txandaka zereginen artean, Txandakatu zereginen taldekatzea, Aurkeztu leihoak, Aurreikusi leihoak, Nabarmendu leihoak, edo Aurreikusi eta Nabarmendu leihoak.</td></tr>
+<tr><td>Erdiko klik <span class="advanced">Aurreratua</span></td><td>Zeregin batean erdiko klik egiteko ekintza. Aukerak Ezkerreko klik-ekoak bezalakoak dira.</td></tr>
+<tr><td>Sagua gainean <span class="advanced">Aurreratua</span></td><td>Sagua gainean ekintzak: Batere, Aurreikusi leihoak, Nabarmendu leihoak, edo Aurreikusi eta Nabarmendu leihoak. Zereginen izenburuen argibideak Portaeran kontrolatzen dira.</td></tr>
+<tr><td>Gurpila <span class="advanced">Aurreratua</span></td><td>Gurpil-ekintzak: Hutsa, Zirkulatu zereginen artean, edo Zirkulatu eta minimizatu zereginak.</td></tr>
+<tr><td>Aldatzailea + klik <span class="advanced">Aurreratua</span></td><td>Eduki Shift, Ctrl, Alt edo Meta eta egin klik ezkerrera, erdian edo eskuinera ekintza gehigarri bat exekutatzeko. Aukeratu aldatzailea, botoia eta ekintza; hau goiko ekintza nagusietatik bereizita dago.</td></tr>
+</tbody></table></div>
+<p class="note">Jardueren iragazkia ezkutatuta dago Plasma 6-n, KActivities euskarria fidagarria ez delako.</p></section><section id="configure-latte"><h2>Konfiguratu Latte</h2><p class="note">Diseinu-egileak diseinuak eta haien dokak kudeatzen ditu. Hobespenek aplikazio osoaren portaera kontrolatzen dute. Aplikatu gorde gabeko aldaketak gordetzen ditu uneko fitxan; Berrezarri fitxa horren gordetako egoera leheneratzen du; Berrezarri lehenetsiak berrikusteko lehenetsiak prestatzen ditu. Pantailak... gordetako pantaila-erreferentziak kudeatzen ditu.</p>
+<h3 id="layouts">Diseinu-egilea</h3>
+<div class="table-wrap"><table><thead><tr><th>Leihoaren aukera</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr><td>Diseinu bakarra beti</td><td>Erabili diseinu bakarra jarduera guztietarako.</td></tr>
+<tr><td>Hainbat diseinu jarduera oinarrituta</td><td>Esleitu desberdinak jardueretara; hainbat diseinu kargatuta egon daitezke.</td></tr>
+<tr><td>Aldatu</td><td>Aktibatu hautatutako diseinua. Aplikatu gorde gabeko aldaketak lehenik; Latte-k ez du aldatuko gorde gabeko aldaketekin.</td></tr>
+<tr><td>Jarduerak...</td><td>Ireki Plasma-ren Jarduera-kudeatzailea. Erabili Jarduera zutabea edo Gaituta diseinu hau jardueretara esleitzeko.</td></tr>
+<tr><td>Berria / Bikoiztu / Kendu</td><td>Sortu, kopiatu edo kendu diseinu bat. Bikoiztu hemen diseinu osoa kopiatzen du, ez doka indibidual bat. Aktibo eta blokeatutako diseinuak ezin dira kendu.</td></tr>
+<tr><td>Gaituta</td><td>Esleitu diseinu hau jarduera bat edo gehiagori Plasma Jarduerak aktiba dezan. Jarduera anitzeko moduan bakarrik erakusten da.</td></tr>
+<tr><td>Irakurri soilik</td><td>Babestu diseinuaren konfigurazioa aldaketetatik.</td></tr>
+<tr><td>Xehetasunak...</td><td>Ireki diseinuaren xehetasunen elkarrizketa-koadroa ikonoa, kolore pertsonalizatuak, lasterketa-marjina eta testuinguru-menuaren ikusgarritasuna aldatzeko.</td></tr>
+<tr><td>Dokak...</td><td>Ireki dokaren zerrenda diseinu honentzat: izena, pantaila, ertza, lerrokatzea, barne hartutako widgetak, eta berria/errepikatu/kendu/inportatu/esportatu.</td></tr>
+<tr><td>Inportatu... / Esportatu...</td><td>Inportatu diseinu bat fitxategi lokal batetik edo KDE Store-tik; esportatu babes-kopia gisa edo txantiloi gisa. Fitxategia → Inportatu konfigurazioa / Esportatu konfigurazioa aplikazioaren babes-kopia osoa kudeatzen du.</td></tr>
+<tr><td>Izena / Menuan / Jarduerak</td><td>Diseinuen zerrendak Izena, Menuan eta Jarduerak zutabeak ditu. Editatu Izena eta Jarduerak zuzenean zerrendan; Menuan aukerak diseinua dokaren Diseinuak menuan agertzen den kontrolatzen du.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Diseinuaren xehetasunak</h3>
+<p>Ireki Diseinuak editorea → Xehetasunak... hautatutako diseinua editatzeko.</p>
+<div class="table-wrap"><table><thead><tr><th>Aukera leihoan</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr><td>Diseinua</td><td>Aukeratu zein diseinu editatu.</td></tr>
+<tr><td>Ikonoa</td><td>Aukeratu ikono bat diseinurako. Garbitu botoiak kendu egiten du.</td></tr>
+<tr><td>Kolore pertsonalizatuak</td><td>Aukeratu kolore-eskema pertsonalizatuen fitxategi bat diseinu honentzat.</td></tr>
+<tr><td>Lasterketa-marjina</td><td>Ezarri diseinuaren lasterketek erabiltzen duten marjina; desgaituta dagoenean, lehenetsia erabiltzen da.</td></tr>
+<tr><td>Erakutsi diseinuen testuinguru-menuan ahal denean</td><td>Erakutsi diseinu hau dokaren Diseinuak menuan uneko jarduerak uzten duenean.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Doken elkarrizketa-koadroa</h3>
+<p>Ireki Diseinuak editorea → Dokak... hautatutako diseinuko dokak kudeatzeko.</p>
+<div class="table-wrap"><table><thead><tr><th>Aukera leihoan</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Zutabeak</td></tr>
+<tr><td>Izena</td><td>Dokaren izena. Egin klik bikoitza izena aldatzeko.</td></tr>
+<tr><td>Pantaila</td><td>Dock-a dagokion pantaila, Primary, All Screens eta All Secondary Screens barne.</td></tr>
+<tr><td>Ertza</td><td>Dock-ak erabiltzen duen pantaila-ertza.</td></tr>
+<tr><td>Lerrokatzea</td><td>Dock-aren lerrokatzea bere ertzean zehar.</td></tr>
+<tr><td>Barne hartzen du</td><td>Dock-ean sartutako widgetak eta azpikonposizioak. Zutabe hau irakurtzeko soilik da.</td></tr>
+<tr class="group"><td colspan="2">Botoiak</td></tr>
+<tr><td>Berria</td><td>Sortu dock bat txantiloi batetik.</td></tr>
+<tr><td>Bikoiztu</td><td>Sortu hautatutako dock-aren kopia independente bat, edo beste klon bat hautatutako dock-a klon bat bada.</td></tr>
+<tr><td>Kendu</td><td>Kendu hautatutako dock-a. Klonak jatorrizkoarekin batera kentzen dira.</td></tr>
+<tr><td>Inportatu...</td><td>Inportatu dock bat txantiloi-fitxategi lokal batetik.</td></tr>
+<tr><td>Esportatu...</td><td>Esportatu hautatutako dock-a babes-kopia gisa edo txantiloi gisa. Txantiloiaren elkarrizketak widget-en ezarpenak zein sartu aukeratzen uzten dizu; utzi kanpo datu pertsonalak dituzten widgetak, hala nola posta elektronikoko edo egutegiko kontuak.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Pantailen Elkarrizketa</h3>
+<p>Ireki Fitxategia → Pantailak... aukerarekin Latte-k gordetako pantaila-erreferentziak garbitzeko.</p>
+<div class="table-wrap"><table><thead><tr><th>Aukera leihoan</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr><td>Pantaila zerrenda</td><td>Latte-n gordetako pantaila-erreferentziak zerrendatzen ditu, jada konektatuta ez dauden pantailak barne.</td></tr>
+<tr><td>Hautatu pantaila zaharkituak</td><td>Markatu jada existitzen ez diren pantailak soilik. Ezin dira kendu pantaila aktiboak edo diseinu batek erabiltzen dituen pantailak.</td></tr>
+<tr><td>Desautatu Guztiak</td><td>Garbitu hautaketa multzo desberdin bat aukeratu aurretik.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Hobespenak</h3>
+<div class="table-wrap"><table><thead><tr><th>Aukera leihoan</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr><td>Erakutsi leiho informatiboa diseinuen aktibazio automatikorako</td><td>Erakutsi informazio-leihoa diseinu bat automatikoki aktibatzen denean.</td></tr>
+<tr><td>Paraboliko Efektua / Txikia / Ertaina / Handia</td><td>Ezarri hover zoom-aren hedapen globala alboko elementuen artean.</td></tr>
+<tr><td>Gaitu automatikoki abiaraztea abioan</td><td>Abiarazi Latte saioa hasten duzunean.</td></tr>
+<tr><td>Erabili 3D estiloa jakinarazpenetarako eta lasterbideetarako bereizgarrietan</td><td>Erabili estilo dimentsionala jakinarazpenetarako eta lasterbideetarako bereizgarrietan.</td></tr>
+<tr><td>Sakatu eta mantendu ⌘ lasterbideen bereizgarriak erakusteko</td><td>Lehenetsita desaktibatuta. Mantendu Meta tekla segundo bat inguru ezkutuko dokak eta haien zereginen eta widgeten lasterbideen bereizgarriak erakusteko; askatu tekla berriro ezkutatzeko. Plasma-ren lehenetsitako ezarpenekin, bere abiarazlea ere irekitzen da Meta askatzean; aldatu lasterbide hori Sistemaren Ezarpenetan hau nahi ez baduzu.</td></tr>
+<tr><td>Elementuen lodierako marjinen eragina</td><td>Aukeratu zenbat eragiten duten elementuen lodierako marjinek diseinuan: %0, %50 edo %100.</td></tr>
+<tr><td>Informatu Plasma mahaigainari mahaigaineko espazio erabilgarriaz</td><td>Argitaratu mahaigaineko espazio erabilgarria Plasma-ri panelak eta leihoak erabil ditzaten.</td></tr>
+<tr><td>Testuinguru-menua / Ekintzak...</td><td>Aukeratu dokaren testuinguru-menuko ekintza zeintzuk erakusten diren beti. Kanpoan utzitako ekintzak editatzeko moduan bakarrik daude erabilgarri.</td></tr>
+<tr><td>Pantailak / aldaketei erantzuteko atzerapena</td><td>Ezarri zenbat denbora itxaroten duen Latte-k pantaila-aldaketei erantzuteko, milisegundotan. Handitu hardware-ak trantsizio ezegonkorrak ematen baditu.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Testuinguru-menuko ekintzak</h3>
+<p>Ireki Hobespenak → Testuinguru-menua → Ekintzak... dokaren ekintza zeintzuk ikusgai egongo diren beti aukeratzeko.</p>
+<div class="table-wrap"><table><thead><tr><th>Aukera leihoan</th><th>Zer kontrolatzen duen</th></tr></thead><tbody>
+<tr><td>Beti irisgarria</td><td>Zerrenda honetako ekintzak dokaren testuinguru-menuan erakusten dira uneoro.</td></tr>
+<tr><td>Editatzeko moduan bakarrik irisgarria</td><td>Zerrenda honetako ekintzak dokak editatzen ari denean bakarrik agertzen dira. Mugitu ekintzak zerrenden artean hau aldatzeko.</td></tr>
+<tr><td>Mugitu zerrenden artean</td><td>Hautatu ekintza bat eta erabili gezi-botoiak mugitzeko. Berrezarri eta Berrezarri lehenetsiak multzo lehenetsia berreskuratzen dute.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Kopia independenteak eta klonak</h2><p class="note">Kopia bat eta klon bat antzekoak dira pantailan, baina desberdin jokatzen dute. Kopia dokak independente berria da. Klon dokak berdinak dira beste pantaila batean erakusten dituena. Aukeratu dokak hau bereizita konfiguratu nahi duzun ala ez oinarrituta.</p>
+<h3 id="create-independent-copy">Sortu kopia independente bat</h3>
+<p>Erabili metodo hauetako bat jatorrizko dokan, ez klonean:</p>
+<ul><li>Egin eskuin-klik dokan eta hautatu <strong>Dokaren kopia egin</strong>.</li><li>Ireki <strong>Dokak editatu</strong> eta hautatu <strong>Gehitu… → Dokaren kopia egin</strong>.</li><li>Ireki <strong>Latte konfiguratu → Diseinu-egilea → Dokak…</strong>, hautatu dokak, eta hautatu <strong>Kopia egin</strong>.</li></ul>
+<p>Kopiak dokak eta widget-en ID berriak jasotzen ditu eta unezko ezarpenak behin kopiatzen ditu. Horren ondoren, bere pantaila, ertza, tamaina, itxura, portaera, widgetak eta abiarazleak modu independentean alda ditzakezu. Diseinuan sarrera bereizia da eta <strong>Dokak kendu</strong> erabiliz kendu daiteke.</p>
+<p>Klon bat Dokak elkarrizketatik klonatzeak jatorrizko beraren beste klon bat sortzen du, ez dokak independente bat. Dokak independente bat klon batetik eraikitzeko, lehenik ireki <strong>Jatorrizko dokak editatu…</strong> eta egin jatorrizkoaren kopia.</p>
+<p>Jatorrizkoak <strong>Talde globala</strong> erabiltzen badu, kopiak ere erabiltzen du eta abiarazleak partekatzen ditu. Hautatu <strong>Talde bakarra</strong> kopian abiarazle-zerrenda bereizia nahi baduzu. <strong>Diseinu-taldea</strong>erabilgarri dago dock-a jada erabiltzen ari denean bakarrik.</p>
+<h3 id="create-clone">Sortu klonak</h3>
+<p>Klonak jatorrizko dock baten pantaila moduak sortzen ditu, ez <strong>Bikoiztu Dock-a</strong>:</p>
+<ul><li><strong>Editatu Dock-a → Pantaila → Pantaila guztietan</strong>: jatorrizkoa pantaila nagusian geratzen da, eta Lattek klon bat sortzen du pantaila bigarren mailako guztietan.</li><li><strong>Editatu Dock-a → Pantaila → Pantaila bigarren mailako guztietan</strong>: jatorrizkoa pantaila bigarren mailako batean geratzen da, eta Lattek klonak sortzen ditu geratzen diren pantaila bigarren mailakoetan.</li></ul>
+<p>Lattek klonak automatikoki sortzen eta kentzen ditu pantaila antolamendua aldatzen denean. Klonak kentzeko, jatorrizkoa berriro <strong>Pantaila Nagusian</strong> edo pantaila zehatz batean ezarri. Klonak ez du <strong>Kendu Dock-a</strong> sarreraren testuinguru menuan; erabili <strong>Editatu Jatorrizko Dock-a…</strong> bertan konfiguratzeko.</p>
+<p>Editorea klon batetik irekitzeak beti irekitzen du jatorrizko dock-en ezarpenak, klonak dock konfigurazioa partekatzen dutelako. Klon batean aldatutako widget-en ezarpenek jatorrizkoa ere eguneratzen dute.</p>
+<h3 id="differences">Desberdintasunak begirada azkar batean</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Ikuspuntua</th><th>Kopia independentea</th><th>Klona</th></tr></thead><tbody>
+<tr><td>Nork sortua</td><td>Bikoiztu Dock-a</td><td>Pantaila → Pantaila guztietan edo Pantaila bigarren mailako guztietan</td></tr>
+<tr><td>Identitatea</td><td>Dock eta widget ID berriak</td><td>Jatorrizko dock-en ikuspegi lotu bat</td></tr>
+<tr><td>Ezarpenak</td><td>Behin kopiatua, gero independentea</td><td>Partekatua: jatorrizkoa editatzeak klon guztiak eguneratzen ditu; klon batean aldatutako widget-en ezarpenek jatorrizkoa ere eguneratzen dute</td></tr>
+<tr><td>Pantaila eta ertza</td><td>Modu independentean alda daiteke</td><td>Jatorrizkoari jarraitzen dio; ezin da bereizita mugitu edo tamaina aldatu</td></tr>
+<tr><td>Abiarazleak</td><td>Sortzean kopiatuak; geroago partekatzea Layout Group edo Global Group-en bidez bakarrik</td><td>Beti jatorrizkoa islatu</td></tr>
+<tr><td>Testuinguru-menua</td><td>Dock-en ekintza osoak, Kopiatu eta Kendu barne</td><td>Jatorrizko Dock-a Editatu… erakusten du; Kopiatu, Mugitu, Esportatu eta Kendu ezkutatuta daude</td></tr>
+<tr><td>Nola kendu</td><td>Dock-a Kendu</td><td>Jatorrizkoa berriro pantaila bakar batean ezarri</td></tr>
+</tbody></table></div>
+<p><strong>Widget-en ikonoen koloreak:</strong> <strong>Erabili Ikono Gaia Koloreak</strong> widget baten testuinguru-menuan Latte-k widget horren ikonoa koloreztatzea eragozten du. Ezarpena widget bakoitzeko gordetzen da: klonak jatorrizkoarekin partekatzen dute. Kopia independente batek sortu zenean zuen balioa mantentzen du eta bereizita alda dezake.</p></section></main></div><footer>Latte Dock NG · Dokumentazio lineaz kanpo. Eskuragarri ez dauden interfaze hizkuntzek ingelesera itzultzen dira.</footer></body></html>

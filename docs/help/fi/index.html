@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latte Dock NG Käyttöopas</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Latte Dock NG Käyttöopas</h1><p>Nämä ohjeet kuvaavat nykyisiä vaihtoehtoja. Edistynyt tila, telakan tyyli ja asennetut laajennukset voivat muuttaa näkyviä säätimiä. Edistyneeksi merkityt vaihtoehdot ovat piilotettu peruseditorissa.</p><div class="language-menu"><label for="language-select">Kieli</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html" selected>Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Vain käännettyjä oppaita on lueteltu. Muut käyttöliittymän kielet avaavat englanninkielisen oppaan.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Tällä sivulla</h2><a class="chapter" href="#edit-dock">Muokkaa telakkaa</a><a class="subsection" href="#behavior">Toiminta</a><a class="subsection" href="#appearance">Ulkoasu</a><a class="subsection" href="#effects">Tehosteet</a><a class="subsection" href="#tasks">Tehtävät</a><a class="chapter" href="#configure-latte">Määritä Latte</a><a class="subsection" href="#layouts">Asettelueditori</a><a class="subsection" href="#layout-details">Asettelun tiedot</a><a class="subsection" href="#docks-dialog">Telakkavalintaikkuna</a><a class="subsection" href="#screens-dialog">Näytöt-valintaikkuna</a><a class="subsection" href="#preferences">Asetukset</a><a class="subsection" href="#context-menu-actions">Kontekstivalikon toiminnot</a><a class="chapter" href="#copies-and-clones">Itsenäiset kopiot ja kloonit</a><a class="subsection" href="#create-independent-copy">Luo itsenäinen kopio</a><a class="subsection" href="#create-clone">Luo kloonit</a><a class="subsection" href="#differences">Erot pikaisesti</a></nav></aside><main>
+<section id="edit-dock"><h2>Muokkaa telakkaa</h2><p class="note">Muutokset tulevat voimaan välittömästi. Sulje piilottaa editorin; se ei kumoa muutoksia. Kiinnitä pitää editorin auki. Lisää… → Monista telakka luo itsenäisen kopion alkuperäisestä telakasta; Poista poistaa nykyisen telakan. Välilehtien vaihtaminen pitää ikkunan paikallaan. Edistynyt tila sovittaa ikkunan koon sen pisimmälle sivulle, käytettävissä olevan näyttötilan puitteissa. Pidemmät sivut vierittyvät ikkunan sisällä. Vedä koonmuutospistettä säätääksesi ikkunan kokoa kummassakin muokkaustilassa.</p>
+<p class="note">Tarkennettu tila paljastaa lisää säätimiä. Tarkennetut vaihtoehdot ovat piilotettu peruseditorissa.</p>
+<h3 id="behavior">Toiminta</h3>
+<p class="note">Näkyvyys, viive, toiminnot, kohtien toiminta, kelluva aukko ja ympäristöasetukset tälle telakalle.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Näkyvyys</td></tr>
+<tr><td>Näyttö / Sijainti</td><td>Valitse näyttö ja reuna tälle telakalle. Useilla näytöillä Kaikilla näytöillä ja Kaikilla toissijaisilla näytöillä luovat linkitettyjä klooneja. Katso Itsenäiset kopiot ja klooneja.</td></tr>
+<tr><td>Tasaus</td><td>Sijoita telakka näytön reunaa pitkin. Kohtien tasaus ohjaa, missä widgetit sijaitsevat telakan sisällä.</td></tr>
+<tr><td>Aina näkyvissä</td><td>Pidä telakka näkyvissä ja varaa työpöydän tila, jos ikkunanhallinta tukee sitä.</td></tr>
+<tr><td>Automaattinen piilotus</td><td>Piilota telakka, kunnes osoitin saavuttaa sen aktivointialueen.</td></tr>
+<tr><td>Väistä aktiivista</td><td>Piilota, kun aktiivinen ikkuna koskettaa telakan aluetta, ja näytä telakka, kun osoitin siirtyy sisään.</td></tr>
+<tr><td>Väistä suurennettuja</td><td>Piilota vain, kun suurennettu ikkuna on aktiivinen tällä näytöllä, ja näytä telakka, kun osoitin siirtyy sisään.</td></tr>
+<tr><td>Väistä kaikkia ikkunoita</td><td>Piilota, kun mikä tahansa ikkuna koskettaa telakan aluetta, ja näytä telakka, kun osoitin siirtyy sisään.</td></tr>
+<tr><td>Ikkunat menevät alapuolelle</td><td>Pidä telakka ikkunoiden yläpuolella; ikkunat voidaan sijoittaa sen alapuolelle.</td></tr>
+<tr><td>Ikkunat voivat peittää</td><td>Anna ikkunoiden peittää telakka. Telakka tulee eteen, kun osoitin saavuttaa sen näytön reunan.</td></tr>
+<tr><td>Ikkunat peittävät aina</td><td>Pidä ikkunat telakan yläpuolella koko ajan; telakka pysyy niiden takana.</td></tr>
+<tr class="group"><td colspan="2">Viive</td></tr>
+<tr><td>Viive / Näytä / Piilota</td><td>Määritä viive millisekunteina ennen näkymistä tai piilottamista. Pidemmät viiveet vähentävät tahatonta aktivointia.</td></tr>
+<tr class="group"><td colspan="2">Toiminnot</td></tr>
+<tr><td>Seuraa <span class="advanced">Lisäasetukset</span></td><td>Valitse, mitä aktiivista ikkunaa tyhjän alueen toiminnot seuraavat: Aktiivinen ikkuna nykyiseltä näytöltä tai Aktiivinen ikkuna kaikilta näytöiltä.</td></tr>
+<tr><td>Vasen painike / Vedä aktiivista ikkunaa <span class="advanced">Lisäasetukset</span></td><td>Ota käyttöön vetäminen telakan tyhjästä tilasta seurattavan aktiivisen ikkunan siirtämiseksi tai suurentamiseksi/palauttamiseksi.</td></tr>
+<tr><td>Keskipainike / Sulje aktiivinen ikkuna <span class="advanced">Lisäasetukset</span></td><td>Ota käyttöön keskipainikkeen napsautus telakan tyhjään tilaan seurattavan aktiivisen ikkunan sulkemiseksi.</td></tr>
+<tr><td>Hiiren rulla <span class="advanced">Lisäasetukset</span></td><td>Valitse, mitä rulla tekee telakan tyhjän tilan yläpuolella: Ei toimintoa, Vaihtoehto työpöytien välillä, Vaihtoehto toimintojen välillä, Vaihtoehto tehtävien välillä tai Vaihtoehto ja pienennä tehtävät.</td></tr>
+<tr class="group"><td colspan="2">Kohteet</td></tr>
+<tr><td>Ohuet otsikkotyökaluvinkit kohdistettaessa</td><td>Näytä tiiviit widgettien otsikkotyökaluvinkit. Tehtävien ikkunoiden esikatselut ohjataan erikseen tehtävän Hover-toiminnolla.</td></tr>
+<tr><td>Suurenna widgettejä kohdistettaessa</td><td>Salli widgettien suurentaminen telakan mukana. Poista tämä käytöstä pitääksesi widgettien kuvakkeet terävinä; tehtäväkuvakkeet ja käynnistimet suurentuvat silti.</td></tr>
+<tr><td>Laajenna ponnahdusikkuna hiiren rullalla</td><td>Vieritä tuetun widgetin yläpuolella näyttääksesi tai piilottaaksesi sen ponnahdusikkunan.</td></tr>
+<tr><td>Säädä kokoa automaattisesti tarvittaessa</td><td>Pienennä kohteita, kun ne ylittävät käytettävissä olevan pituuden, ja suurenna ne uudelleen, kun ne mahtuvat.</td></tr>
+<tr><td>Aktivoi sijaintipohjaiset yleiset pikanäppäimet</td><td>Salli sijaintipohjaisten yleisten pikanäppäinten aktivoida tämän telakan kohteet. Vain yksi telakka per asettelu tulisi käyttää tätä.</td></tr>
+<tr class="group"><td colspan="2">Kelluva</td></tr>
+<tr><td>Käytä aina kelluvaa väliä käyttäjän vuorovaikutuksessa <span class="advanced">Lisäasetukset</span></td><td>Sisällytä kelluva aukko alueeseen, jota käytetään widgettien ja ikkunoiden vuorovaikutukseen.</td></tr>
+<tr><td>Piilota kelluva aukko suurennetuille ikkunoille <span class="advanced">Lisäasetukset</span></td><td>Poista kelluva aukko, kun suurennettu ikkuna tarvitsee näytön reunan.</td></tr>
+<tr><td>Viiväytä kelluvan aukon piilottamista, kunnes hiiri poistuu <span class="advanced">Lisäasetukset</span></td><td>Odota, että osoitin poistuu, ennen aukon piilottamista, jotta vältetään tahattomat napsautukset lähellä olevissa kohteissa.</td></tr>
+<tr><td>Peilaa kelluva aukko, kun se näytetään <span class="advanced">Lisäasetukset</span></td><td>Aina näkyvissä -tilassa peilaa aukko telakan vastakkaiselle puolelle.</td></tr>
+<tr class="group"><td colspan="2">Ympäristö</td></tr>
+<tr><td>Nosta työpöydän vaihdon yhteydessä <span class="advanced">Lisäasetukset</span></td><td>Paljasta telakka tilapäisesti, kun virtuaalinen työpöytä vaihtuu. Tätä ei käytetä Aina näkyvissä tai Ikkunat telakan alla -tiloissa.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Ulkoasu</h3>
+<p class="note">Marginaalit, Värit, Säde/Varjo, Dynaamiset pituuden säädöt, Dynaaminen näkyvyys ja Poikkeukset vaativat Lisäasetukset-tilan.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kohteet</td></tr>
+<tr><td>Telakan tyyli</td><td>Valitse Klassinen tai Moderni esiasetuksen soveltamiseksi. Kummassakin tyylissä voit käyttää Telakan tyyli -kohdan alla olevia kytkimiä määrittääksesi kohteiden järjestelyn, ääriviivoitetun taustan, kohteiden vähimmäisvälin, automaattisen kelluvan aukon ja tiiviit tehtäväindikaattorit itsenäisesti.</td></tr>
+<tr><td>Pidä telakan kohteet yhdessä</td><td>Käytä yhtä ryhmää telakan kohteille, myös kun telakan kohdistus on Tasaa.</td></tr>
+<tr><td>Käytä upotettua taustaa ääriviivalla</td><td>Käytä esiasetettua taustaa ääriviivalla sekä tyylittelyä sen väleille, pyöristetyille kulmille ja varjolle.</td></tr>
+<tr><td>Käytä leveämpää kohteiden vähimmäisväliä</td><td>Lisää telakan kohteiden ympärillä olevaa vähimmäisväliä. Marginaalivalitsimilla asetetut suuremmat arvot ovat edelleen voimassa.</td></tr>
+<tr><td>Käytä automaattista kelluvaa väliä</td><td>Laske ruudun reunan väli kuvakkeen koon perusteella, kun tiettyä väliarvoa ei ole asetettu.</td></tr>
+<tr><td>Käytä tiiviitä tehtäväindikaattoreita</td><td>Käytä tiivistä asettelua Latte-tehtäväindikaattoreille. Valitse indikaattorin muoto tehosteista.</td></tr>
+<tr><td>Palauta esiasetus</td><td>Muokkaa telakkaa -ikkunan alareunan painike palauttaa käyttäytymisen, ulkonäön, tehosteet ja kaikki tehtävävälilehdet nykyisen Klassisen/Moderan tyylin toimitettuun telakkaesiasetukseen, mukaan lukien edistyneen tilan piilottamat vaihtoehdot. Näyttö, telakan reuna, käynnistimet ja widgetit säilyvät. Kohdistus, näkyvyys ja viiveet nollautuvat. Käynnistimien jako palautuu oletuspaikalliseen ryhmään säilyttäen kopion tehokkaasta käynnistineluettelosta; muiden telakoiden jaetut luettelot eivät muutu. Mukautetut värit ja indikaattorin ohitukset nollautuvat. Esiasetus yhdistää toimitetun oletustelakkamallin ja konfiguraation skeeman oletusarvot. Tämä on erillinen pelkästä telakkatyylivaihdosta. Klassinen tyyli kytkee oletuksena pois viisi ulkonäkökytkintä telakkatyylissä. Moderni tyyli kytkee ne päälle. Molemmat esiasetukset käyttävät samoja oletusarvoja jäljellä oleville asetuksille.</td></tr>
+<tr><td>Absoluuttinen koko / Suhteellinen koko</td><td>Aseta kuvakkeen koko pikseleinä tai osuutena näytöstä. Suhteellinen koko on hyödyllinen korkean DPI:n tai moninäyttöasetuksissa.</td></tr>
+<tr><td>Suurenna osoittimen ollessa päällä</td><td>Aseta, kuinka paljon kohteet kasvavat osoittimen alla.</td></tr>
+<tr class="group"><td colspan="2">Pituus</td></tr>
+<tr><td>Maksimi / Minimi / Siirtymä</td><td>Aseta telakan enimmäis- ja vähimmäispituus ja siirrä sitä näytön reunaa pitkin.</td></tr>
+<tr><td>Dynaamiset pituussäädöt <span class="advanced">Edistynyt</span></td><td>Pidentä paneelin pituutta maksimoidun ikkunan ollessa auki: pidentää telakka täyteen pituuteen, kun maksimoitu ikkuna on läsnä. Taustan on oltava käytössä.</td></tr>
+<tr class="group"><td colspan="2">Marginaalit</td></tr>
+<tr><td>Marginaalit / Pituus / Paksuus / Kelluva aukko <span class="advanced">Lisäasetukset</span></td><td>Aseta telakan ulkoinen marginaali, marginaali sen paksuuden suunnassa ja aukko telakan ja näytön reunan välillä.</td></tr>
+<tr><td>Aukko maksimoiduista ikkunoista (px) <span class="advanced">Lisäasetukset</span></td><td>Varaa ylimääräiset 0–128 pikseliä ikkunoiden ja tämän telakan välille Tilassa Aina näkyvissä. Oletus: 0. Tämä on erillinen näytön reunan kelluvasta aukosta ja lisätään peilattuun aukkoon; automaattisen piilotuksen tilat eivät varaa tätä tilaa.</td></tr>
+<tr class="group"><td colspan="2">Värit</td></tr>
+<tr><td>Värit / Paletti <span class="advanced">Lisäasetukset</span></td><td>Valitse Plasma-teeman värit, Tummat värit, Vaaleat värit, Asettelun mukautetut värit, Käänteiset värit tai Älykkäät värit työpöydän taustan perusteella. Asettelun mukautetut värit käyttää asettelun väriteemaa; Älykkäät seuraa taustakuvaa.</td></tr>
+<tr><td>Käytä mukautettua taustaväriä / Päivän väri <span class="advanced">Lisäasetukset</span></td><td>Korvaa tämän telakan tausta valitulla värillä; tekstikontrasti säätyy automaattisesti. Ei käytössä oletuksena. Ikkunaperäiset paletit ja Plasma-paletti laajennetuille sovelletuille säilyttävät prioriteettinsa. Läpinäkyvyys on erillinen tausta-asetus.</td></tr>
+<tr><td>Vaihda taustavärit vuorokaudenajan mukaan / Yön väri / Päivä alkaa (paikallinen aika) / Yö alkaa (paikallinen aika) <span class="advanced">Lisäasetukset</span></td><td>Vaihtoehtoisesti voit vaihtaa kahden mukautetun värin välillä paikallisen 24-tuntisen ajan perusteella. Oletukset: päivä 07:00, yö 19:00. Alkuaika on sisällytetty. Aikavälit voivat ylittää keskiyön; samat ajat pitävät päivävärin koko päivän. Aikataulun poistaminen käytöstä säilyttää päivävärin. Kelloa tarkistetaan joka sekunti, myös palautuksen jälkeen.</td></tr>
+<tr class="group"><td colspan="2">Tausta</td></tr>
+<tr><td>Tausta</td><td>Tausta on päällä/pois-kytkin. Kun se on käytössä, käytä alla olevia säätimiä paksuuden, peittävyyden, säteen ja varjon asettamiseen.</td></tr>
+<tr><td>Peittävyys / Kiireinen peittävyys</td><td>Aseta taustan peittävyys. Samaa liukusäädintä kutsutaan Kiireinen peittävyys -nimiseksi, kun Piilota tausta, kun sitä ei tarvita ja Suosi läpinäkymätöntä taustaa, kun minkä tahansa ikkunan kanssa kosketuksissa ovat molemmat käytössä. Def. palauttaa teeman oletusarvon.</td></tr>
+<tr><td>Säde / Varjo <span class="advanced">Lisäasetukset</span></td><td>Aseta taustan kulmien säde ja varjon koko. Def. käyttää teeman oletusarvoa.</td></tr>
+<tr><td>Sumennus / Varjot / Ääriviiva / Kaikki kulmat <span class="advanced">Lisäasetukset</span></td><td>Ota käyttöön taustan sumennus, taustavarjo, ääriviiva ja pyöristetyt kulmat. Kaikki kulmat on käytettävissä vain tietyille kelluville/tasattaville geometrioille.</td></tr>
+<tr class="group"><td colspan="2">Dynaaminen näkyvyys</td></tr>
+<tr><td>Suosi läpinäkymätöntä taustaa, kun minkä tahansa ikkunan kanssa kosketuksissa <span class="advanced">Lisäasetukset</span></td><td>Poista taustan läpinäkyvyys, kun ikkuna koskettaa telakkaa.</td></tr>
+<tr><td>Piilota tausta, kun sitä ei tarvita <span class="advanced">Lisäasetukset</span></td><td>Piilota tausta, paitsi kun ikkuna koskettaa telakkaa tai työpöydän tausta on kiireinen.</td></tr>
+<tr><td>Piilota taustavarjo suurennetuille ikkunoille <span class="advanced">Lisäasetukset</span></td><td>Piilota taustavarjo, kun aktiivinen suurennettu ikkuna koskettaa telakkaa.</td></tr>
+<tr class="group"><td colspan="2">Poikkeukset</td></tr>
+<tr><td>Suosi Plasma-taustaa ja värejä laajennetuissa sovelmissa<span class="advanced">Lisäasetukset</span></td><td>Käytä läpinäkymätöntä Plasma-tyylistä taustaa ja Plasma-värejä widget-ponnahdusikkunoiden ollessa laajennettuna.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Tehosteet</h3>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Varjostimet</td></tr>
+<tr><td>Varjostimet</td><td>Ota widget-varjostimet käyttöön tai poista ne käytöstä. Koko ja peittävyys ovat poissa käytöstä, kun varjostimet ovat pois päältä.</td></tr>
+<tr><td>Koko / Peittävyys</td><td>Aseta widget-varjostimen koko ja peittävyys.</td></tr>
+<tr><td>Oletusväri / Teemaväri / mukautettu väri</td><td>Valitse oletusvarjostusväri, väri teeman paletista tai napsauta väriruutua valitaksesi mukautetun värin.</td></tr>
+<tr class="group"><td colspan="2">Animaatiot</td></tr>
+<tr><td>Animaatiot / x1 / x2 / x3</td><td>Ota kaikki telakan animaatiot käyttöön tai poista ne käytöstä. x1 on normaali nopeus, x2 on hitaampi, x3 on hitain.</td></tr>
+<tr class="group"><td colspan="2">Indikaattorit</td></tr>
+<tr><td>Indikaattorit</td><td>Ota aktiivisten tehtävien indikaattorit käyttöön tai poista ne käytöstä. Kun käytössä, valitse Latte-indikaattori tai mukautettu indikaattoriliitännäinen; liitännäiseen liittyvät asetukset näkyvät sen välilehdellä.</td></tr>
+<tr><td>Käytä macOS-tyylisiä pisteitä</td><td>Latte-indikaattori käyttää oletusarvoisesti macOS-tyylisiä pisteitä, kun tiiviit tehtäväindikaattorit on otettu käyttöön Ulkoasu-asetuksissa. Poista macOS-tyyliset pisteet käytöstä Tehosteet-asetuksissa valitaksesi Viiva tai Pisteet manuaalisesti.</td></tr>
+<tr><td>Käytä sovelluskuvakkeiden värejä</td><td>Värjää tehtäväindikaattorit valinnaisesti kunkin sovelluskuvakkeen hallitsevalla värillä, säädetty taustakontrastin mukaan. Valitse Viiva värillisten alleviivausten saamiseksi. Pois käytöstä oletusarvoisesti; sovellet säilyttävät palettivärit.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tehtävät</h3>
+<p>Tehtäväkäynnistimet alkavat järjestää uudelleen muissa telakoissa, jotka jakavat käynnistysluettelon, kun pudotat kuvakkeen. Järjestyksen vakiintuminen voi kestää hetken. Erottimet pysyvät paikoillaan, kun vastaanottava telakka tallentaa uuden järjestyksen. Jo kiinnitetyn sovelluksen vetäminen säilyttää sen olemassa olevan käynnistimen, myös silloin, kun käynnistin seuraa järjestelmän oletussovellusta. Uudet erottimet vievät tilaa, kun ne saavuttavat valitun aukon.</p>
+<p>Kun lisäät tai vedät widgetin erottimen viereen tehtäväalueen tai järjestelmäpalkin reunalla, widget sijoittuu erottimen ulkopuolelle. Erotin pysyy tehtäväalueen tai palkin vieressä.</p>
+<p>Kun kiinnität sovelluksen sovellusvalikosta, sen kuvake näkyy ennen tehtäväluettelon lopussa olevia erottimia. Oikea erotin kuuluu kiinnitettyyn ryhmään, joten käynnissä olevat, ei-kiinnitetyt sovellukset näkyvät sen jälkeen.</p>
+<p>Tehtäväpaikka pysyy korostettuna ja kuvake näkyy, kun vedät sitä tehtävien järjestämiseksi uudelleen. Kun uusi tehtävä liukuu sisään, telakka alkaa varata sille paikan alkuperäisen animaation koon perusteella.</p>
+<p class="note">Merkit, animaatiot, vieritys, toiminnot ja jotkin vuorovaikutus/suodatusvaihtoehdot edellyttävät edistynyttä tilaa. Jos näytetään vain käynnistimet ja piilotetaan kaikki tehtävät, ikkunaan liittyvät toiminnot ja suodattimet poistetaan käytöstä.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Merkit</td></tr>
+<tr><td>Tehtävien ilmoitukset <span class="advanced">Edistynyt</span></td><td>Näyttää lukemattomien ilmoitusten määrät tehtäväkuvakkeissa.</td></tr>
+<tr><td>Tehtävien etenemistiedot <span class="advanced">Edistynyt</span></td><td>Näytä edistymismerkit, esimerkiksi kun Dolphin kopioi tiedostoja.</td></tr>
+<tr><td>Tehtävien äänentoisto <span class="advanced">Lisäasetukset</span></td><td>Näytä äänimerkki sovelluksille, jotka toistavat ääntä. Vastaavuus suosii eksplisiittisiä työpöytä-/sovellustunnisteita. Yleinen selaimen prosessitieto ei riitä tietyn PWA:n tunnistamiseen; epäselvät suoratoistot jätetään määrittämättä sen sijaan, että niille annettaisiin ääniohjaimet epäolennaisille sovelluksille. Itsenäiset Electron-sovellukset voivat silti vastata omaa ääniprosessiaan. Toistotila ja tulostusaktiivisuus piilottavat keskeytetyt suoratoistot, vaikka sovellus pitäisi ääniyhteytensä auki. Ilman soittimen tilaa lyhyt hiljaisuus hyväksytään noin sekunnin ajan.</td></tr>
+<tr><td>Huomiovärinen ilmoitusmerkki <span class="advanced">Lisäasetukset</span></td><td>Käytä vahvempaa, yleensä punaista ilmoitusmerkkiä. Vaatii Tehtävien ilmoitukset -ominaisuuden.</td></tr>
+<tr><td>Muuta äänenvoimakkuutta vierittämällä äänimerkkiä <span class="advanced">Lisäasetukset</span></td><td>Napsauta äänimerkkiä mykistääksesi/poistaaksesi mykistyksen, tai vieritä sen yli muuttaaksesi äänenvoimakkuutta. Vaatii Tehtävien äänentoisto -ominaisuuden.</td></tr>
+<tr class="group"><td colspan="2">Vuorovaikutus</td></tr>
+<tr><td>Käynnistimet lisätään vain nykyiseen tehtävien sovellettuun</td><td>Lisää pudotetut käynnistimet vain tähän tehtäväwidgettiin, ei erillisinä widgetteinä tai muihin tehtäväwidgetteihin.</td></tr>
+<tr><td>Ikkunatoiminnot kontekstivalikossa <span class="advanced">Lisäasetukset</span></td><td>Näytä ikkunakohtaiset toiminnot tehtävän kontekstivalikossa.</td></tr>
+<tr><td>Esikatseluikkuna käyttäytyy ponnahdusikkunana <span class="advanced">Lisäasetukset</span></td><td>Avaa esikatselut ponnahdusikkunana työkaluvinkkien sijaan. Osoittimen toiminnon on pyydettävä esikatseluja; tämä muuttaa vain tapaa, jolla ne näytetään.</td></tr>
+<tr><td>Sijaintiin perustuvat pikanäppäimet koskevat vain nykyisiä tehtäviä<span class="advanced">Lisäasetukset</span></td><td>Rajoita sijaintiin perustuvat yleiset pikanäppäimet tähän tehtäväwidgettiin.</td></tr>
+<tr class="group"><td colspan="2">Suodattimet</td></tr>
+<tr><td>Näytä vain nykyisen näytön tehtävät</td><td>Näytä tämän telakan näytön ikkunat.</td></tr>
+<tr><td>Näytä vain nykyisen työpöydän tehtävät</td><td>Näytä nykyisen virtuaalisen työpöydän ikkunat.</td></tr>
+<tr><td>Näytä pienennettyjen ikkunoiden osio</td><td>Oletuksena pois päältä. Näyttää pienennetyt ikkunat yksittäisinä kuvakkeina tavallisten tehtävien jälkeen. Vie osoitin kuvakkeen päälle tai kohdista se nähdäksesi sovelluksen ja ikkunan otsikon, ja aktivoi se palauttaaksesi ikkunan. Kun sovelluksella on useita pienennettyjä ikkunoita, pieni merkki näyttää kunkin ikkunan järjestysnumeron ja sovelluksen ikkunoiden kokonaismäärän. Osio noudattaa tehtäväsuodattimia ja jakaa tehtävien ylivuodon vierityksen. Ota vieritys käyttöön, jos haluat siirtyä ruudun ulkopuolella oleviin ikkunoihin määritetyllä rullalla tai reunan päällä viipyilyllä. Käynnistimet vain -tila piilottaa tämän osion.</td></tr>
+<tr><td>Näytä vain käynnistimien tehtävät<span class="advanced">Lisäasetukset</span></td><td>Näytä ikkunat vain sovelluksille, jotka ovat jo käynnistimien luettelossa.</td></tr>
+<tr><td>Näytä vain käynnistimet ja piilota kaikki tehtävät<span class="advanced">Lisäasetukset</span></td><td>Näytä käynnistinkuvakkeet ja piilota käynnissä olevat tehtävät. Tämä poistaa myös ikkunaan liittyvät toiminnot ja suodattimet käytöstä.</td></tr>
+<tr><td>Näytä vain ryhmitellyt tehtävät samalle sovellukselle<span class="advanced">Lisäasetukset</span></td><td>Ryhmittele saman sovelluksen ikkunat oletuksena.</td></tr>
+<tr class="group"><td colspan="2">Animaatiot</td></tr>
+<tr><td>Heijastakaa käynnistimet, kun niitä käytetään<span class="advanced">Lisäasetukset</span></td><td>Animoi käynnistimet, kun niitä käytetään.</td></tr>
+<tr><td>Heijastakaa huomiota vaativat tehtävät<span class="advanced">Lisäasetukset</span></td><td>Animoi tehtävät, jotka pyytävät huomiota.</td></tr>
+<tr><td>Liukukaa yksittäiset ikkunat sisään ja ulos<span class="advanced">Lisäasetukset</span></td><td>Animoi uudet ja suljetut yksittäiset ikkunat.</td></tr>
+<tr><td>Ryhmätyt tehtävät pomauttavat uusia ikkunoita <span class="advanced">Lisäasetukset</span></td><td>Animoi uusi ikkuna tehtäväryhmän sisällä.</td></tr>
+<tr><td>Ryhmätyt tehtävät liukuvat ulos suljetuista ikkunoista <span class="advanced">Lisäasetukset</span></td><td>Animoi suljettu ikkuna tehtäväryhmän sisällä.</td></tr>
+<tr class="group"><td colspan="2">Käynnistimet</td></tr>
+<tr><td>Yksilöllinen ryhmä</td><td>Anna tälle tehtäväwidgetille oma käynnistysluettelo.</td></tr>
+<tr><td>Asetteluryhmä</td><td>Jaa käynnistimet samassa asettelussa olevien tehtäväwidgettien kanssa. Tämä painike näkyy vain, jos telakka käyttää jo Asetteluryhmää.</td></tr>
+<tr><td>Yleinen ryhmä</td><td>Jaa käynnistimet kaikkien asetteluiden tehtäväwidgettien kanssa.</td></tr>
+<tr class="group"><td colspan="2">Vieritys</td></tr>
+<tr><td>Vieritys <span class="advanced">Lisäasetukset</span></td><td>Ota vieritys käyttöön, kun tehtävät ylittävät käytettävissä olevan tilan. Tämä toimii kummassakin telakan esiasetuksessa, myös kun Pidä telakan kohteet yhdessä on käytössä.</td></tr>
+<tr><td>Manuaalinen <span class="advanced">Lisäasetukset</span></td><td>Valitse Ei vieritystä, Vain pysty- tai vaakasuuntainen vieritys tai Vaaka- ja pystysuuntainen vieritys. Yksisuuntainen valinta riippuu telakan suuntauksesta.</td></tr>
+<tr><td>Automaattinen <span class="advanced">Lisäasetukset</span></td><td>Ota automaattinen vieritys käyttöön tai poista se käytöstä.</td></tr>
+<tr class="group"><td colspan="2">Toiminnot</td></tr>
+<tr><td>Vasen klikkaus <span class="advanced">Lisäasetukset</span></td><td>Toiminto vasemmalla klikkauksella tehtävään: Ei mitään, Sulje ikkuna tai ryhmä, Uusi instanssi, Pienennä/Palauta, Kierrä tehtävien läpi, Vaihda tehtäväryhmittely, Esittele ikkunat, Esikatsele ikkunoita, Korosta ikkunoita tai Esikatsele ja korosta ikkunoita.</td></tr>
+<tr><td>Keskihiiren klikkaus <span class="advanced">Lisäasetukset</span></td><td>Toiminto keskihiiren klikkauksella tehtävään. Vaihtoehdot ovat samat kuin Vasen klikkaus.</td></tr>
+<tr><td>Osoitin <span class="advanced">Lisäasetukset</span></td><td>Osoittimen toiminnot: Ei mitään, Esikatsele ikkunoita, Korosta ikkunoita tai Esikatsele ja korosta ikkunoita. Tehtävän otsikon työkaluvihjeet ohjataan Toiminta-asetuksissa.</td></tr>
+<tr><td>Rulla <span class="advanced">Lisäasetukset</span></td><td>Rullan toiminnot: Ei mitään, Vaihtele tehtävien välillä tai Vaihtele ja minimoi tehtävät.</td></tr>
+<tr><td>Muunnosnäppäin + klikkaus <span class="advanced">Lisäasetukset</span></td><td>Pidä Shift-, Ctrl-, Alt- tai Meta-näppäintä painettuna ja klikkaa vasenta, keski- tai oikeaa hiiren painiketta suorittaaksesi lisätoiminnon. Valitse muunnosnäppäin, painike ja toiminto; tämä on erillinen yllä olevista päätoiminnoista.</td></tr>
+</tbody></table></div>
+<p class="note">Nykyisen aktiviteetin suodatin on piilotettu Plasma 6:ssa, koska KActivities-tuki on epäluotettava.</p></section><section id="configure-latte"><h2>Määritä Latte</h2><p class="note">Asetteluiden muokkaus hallinnoi asetteluita ja niiden telakoita. Asetukset ohjaa sovelluksen laajuisia toimintoja. Tallenna tallentaa nykyisen välilehden odottavat muutokset; Palauta palauttaa kyseisen välilehden tallennetun tilan; Palauta oletukset valmistelee oletusarvot tarkistettavaksi. Näytöt... hallinnoi tallennettuja näyttöviittauksia.</p>
+<h3 id="layouts">Asetteluiden muokkaus</h3>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr><td>Yksi asettelu aina</td><td>Käytä yhtä asettelua kaikissa aktiviteeteissa.</td></tr>
+<tr><td>Useita asetteluita aktiviteettien perusteella</td><td>Määritä eri asettelut aktiviteeteille; useita asetteluita voi pysyä ladattuna.</td></tr>
+<tr><td>Vaihda</td><td>Aktivoi valittu asettelu. Tallenna odottavat muutokset ensin; Latte ei vaihda tallentamattomien muutosten kanssa.</td></tr>
+<tr><td>Aktiviteetit...</td><td>Avaa Plasman Aktiviteettien hallinta. Käytä Aktiviteetit-saraketta tai Ota käyttöön -valintaa määrittääksesi tämän asettelun aktiviteeteille.</td></tr>
+<tr><td>Uusi / Monista / Poista</td><td>Luo, kopioi tai poista asettelu. Monista tässä kopioi koko asettelun, ei yksittäistä telakkaa. Aktiivisia ja lukittuja asetteluita ei voi poistaa.</td></tr>
+<tr><td>Ota käyttöön</td><td>Määritä tämä asettelu yhdelle tai useammalle aktiviteetille, jotta Plasman Aktiviteetit voi aktivoida sen. Näkyy vain usean asettelun tilassa.</td></tr>
+<tr><td>Vain luku</td><td>Suojaa asettelun konfiguraatiota muutoksilta.</td></tr>
+<tr><td>Tiedot...</td><td>Avaa asettelun tiedot -valintaikkuna kuvakkeen, mukautettujen värien, ponnahdusikkunan marginaalin ja kontekstivalikon näkyvyyden muokkaamista varten.</td></tr>
+<tr><td>Telakat...</td><td>Avaa tämän asettelun telakkalista: nimi, näyttö, reuna, kohdistus, sisällytetyt widgetit sekä uuden telakan luominen, kopiointi, poisto, tuonti ja vienti.</td></tr>
+<tr><td>Tuo... / Vie...</td><td>Tuo asettelu paikallisesta tiedostosta tai KDE Storesta; vie se varmuuskopiota tai mallia varten. Tiedosto → Tuo konfiguraatio / Vie konfiguraatio hoitaa koko sovelluksen varmuuskopioinnin.</td></tr>
+<tr><td>Nimi / Valikossa / Aktiviteetit</td><td>Aettelulista sisältää Nimi, Valikossa ja Aktiviteetit -sarakkeet. Muokkaa Nimeä ja Aktiviteetteja suoraan listassa; Valikossa määrittää, näkyykö asettelu telakan Aettelut-valikossa.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Aettelun tiedot</h3>
+<p>Avaa Aettelueditori → Tiedot... muokataksesi valittua asettelua.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr><td>Aettelu</td><td>Valitse, mitä asettelua muokataan.</td></tr>
+<tr><td>Kuvake</td><td>Valitse asettelulle kuvake. Tyhjennä-painike poistaa sen.</td></tr>
+<tr><td>Mukautetut värit</td><td>Valitse mukautettu värimallitiedosto tälle asettelulle.</td></tr>
+<tr><td>Ponnahdusikkunan marginaali</td><td>Aseta asettelun ponnahdusikkunoiden käyttämä marginaali; pois käytöstä tarkoittaa oletusarvon käyttöä.</td></tr>
+<tr><td>Näytä asettelujen kontekstivalikossa, kun mahdollista</td><td>Näytä tämä asettelu telakan Aettelut-valikossa, kun nykyinen aktiviteetti sen sallii.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Telakkavalintaikkuna</h3>
+<p>Avaa Aettelueditori → Telakat... hallitaksesi valitun asettelun telakoita.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Sarakkeet</td></tr>
+<tr><td>Nimi</td><td>Telakan nimi. Kaksoisnapsauta nimetäksesi sen.</td></tr>
+<tr><td>Näyttö</td><td>Näyttö, johon telakka kuuluu, mukaan lukien Ensisijainen, Kaikki näytöt ja Kaikki toissijaiset näytöt.</td></tr>
+<tr><td>Reuna</td><td>Näytön reuna, jota telakka käyttää.</td></tr>
+<tr><td>Kohdistus</td><td>Telakan kohdistus reunansa suuntaan.</td></tr>
+<tr><td>Sisältää</td><td>Telakkaan sisältyvät widgetit ja alisisällöt. Tämä sarake on vain luku -tilassa.</td></tr>
+<tr class="group"><td colspan="2">Painikkeet</td></tr>
+<tr><td>Uusi</td><td>Luo telakka mallista.</td></tr>
+<tr><td>Monista</td><td>Luo valitusta telakasta riippumaton kopio, tai toinen klooni, jos valittu telakka on klooni.</td></tr>
+<tr><td>Poista</td><td>Poista valittu telakka. Kloonit poistetaan alkuperäisen mukana.</td></tr>
+<tr><td>Tuo...</td><td>Tuo telakka paikallisesta mallitiedostosta.</td></tr>
+<tr><td>Vie...</td><td>Vie valittu telakka varmuuskopiota tai mallia varten. Malli-ikkunassa voit valita, mitkä widget-asetukset sisällytetään; jätä pois widgetit, joissa on henkilökohtaista dataa, kuten sähköposti- tai kalenteritilit.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Näyttöikkuna</h3>
+<p>Avaa valitsemalla Tiedosto → Näytöt... siivottaaksesi Latteen tallennetut näyttöviittaukset.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr><td>Näyttöluettelo</td><td>Luettelee Latteen tallennetut näyttöviittaukset, mukaan lukien näytöt, jotka eivät ole enää yhdistettyinä.</td></tr>
+<tr><td>Valitse vanhentuneet näytöt</td><td>Valitse vain näytöt, joita ei enää ole. Aktiivisia näyttöjä ja asettelussa käytettyjä näyttöjä ei voi poistaa.</td></tr>
+<tr><td>Poista kaikki valinnat</td><td>Tyhjennä valinta ennen toisen joukon valitsemista.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Asetukset</h3>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr><td>Näytä informaatioikkuna asettelujen automaattisesta aktivoinnista</td><td>Näytä informaatioikkuna, kun asettelu aktivoituu automaattisesti.</td></tr>
+<tr><td>Parabolinen efekti / Pieni / Keski / Suuri</td><td>Aseta hover-zoomauksen globaali leviäminen viereisiin kohteisiin.</td></tr>
+<tr><td>Ota automaattinen käynnistys käyttöön käynnistyksen yhteydessä</td><td>Käynnistä Latte, kun kirjaudut sisään.</td></tr>
+<tr><td>Käytä 3D-tyyliä ilmoitus- ja pikakuvakemerkeille</td><td>Käytä kolmiulotteista tyyliä ilmoitus- ja pikakuvakemerkeille.</td></tr>
+<tr><td>Pidä ⌘-näppäintä painettuna näyttääksesi pikakuvakemerkit</td><td>Oletuksena pois päältä. Pidä Meta-näppäintä painettuna noin sekunnin ajan näyttääksesi piilotetut telakat ja niiden tehtävien sekä widgettien pikakuvakemerkit; vapauta näppäin piilottaaksesi ne uudelleen. Plasman oletusasetuksilla oma käynnistysikkuna avautuu myös Meta-näppäintä vapautettaessa; muuta tämä pikakuvake Järjestelmäasetuksissa, jos et halua tätä.</td></tr>
+<tr><td>Paksuusmarginaalin vaikutus</td><td>Valitse, kuinka paljon kohteiden paksuusmarginaalit vaikuttavat asetteluun: 0 %, 50 % tai 100 %.</td></tr>
+<tr><td>Ilmoita Plasman työpöydälle käytettävissä oleva työpöytätila</td><td>Julkaise käytettävissä oleva työpöytätila Plasman käyttöön, jotta paneelit ja ikkunat voivat käyttää sitä.</td></tr>
+<tr><td>Kontekstivalikko / Toiminnot...</td><td>Valitse, mitkä telakan kontekstivalikon toiminnot näytetään aina. Jätetyt toiminnot ovat käytettävissä vain muokkaustilassa.</td></tr>
+<tr><td>Näytöt / reaktioviive muutoksille</td><td>Määritä, kuinka kauan Latte odottaa ennen kuin reagoi näyttömuutoksiin millisekunteina. Lisää arvoa, jos laitteisto ilmoittaa epävakaista siirtymistä.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Kontekstivalikon toiminnot</h3>
+<p>Avaa Asetukset → Kontekstivalikko → Toiminnot... valitaksesi, mitkä telakan toiminnot ovat aina näkyvissä.</p>
+<div class="table-wrap"><table><thead><tr><th>Vaihtoehto ikkunassa</th><th>Mitä se ohjaa</th></tr></thead><tbody>
+<tr><td>Käytettävissä aina</td><td>Tämän luettelon toiminnot näytetään telakan kontekstivalikossa koko ajan.</td></tr>
+<tr><td>Käytettävissä vain muokkaustilassa</td><td>Toimintojen luettelossa näkyvät toiminnot vain telakkaa muokattaessa. Siirrä toimintoja luetteloiden välillä muuttaaksesi tätä.</td></tr>
+<tr><td>Siirtyminen luetteloiden välillä</td><td>Valitse toiminto ja käytä nuolipainikkeita siirtääksesi sen. Nollaa ja Palauta oletukset palauttavat oletusjoukon.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Itsenäiset kopiot ja kloonit</h2><p class="note">Kopio ja klooni näyttävät ruudulla samalta, mutta käyttäytyvät eri tavalla. Kopio on uusi, itsenäinen telakka. Klooni on sama telakka näytettynä toisella näytöllä. Valitse sen perusteella, haluatko määrittää tämän telakan erikseen.</p>
+<h3 id="create-independent-copy">Luo itsenäinen kopio</h3>
+<p>Käytä mitä tahansa näistä menetelmistä alkuperäisessä telakassa, ei kloonissa:</p>
+<ul><li>Klikkaa telakkaa hiiren kakkospainikkeella ja valitse <strong>Monista telakka</strong>.</li><li>Avaa <strong>Muokkaa telakkaa</strong> ja valitse <strong>Lisää… → Monista telakka</strong>.</li><li>Avaa <strong>Määritä Latte → Asettelueditori → Telakat…</strong>, valitse telakka ja valitse <strong>Monista</strong>.</li></ul>
+<p>Kopio saa uudet telakan ja widgetin tunnisteet ja kopioi nykyiset asetukset kerran. Sen jälkeen voit muuttaa sen näyttöä, reunaa, kokoa, ulkoasua, toimintaa, widgettejä ja käynnistimiä itsenäisesti. Se on erillinen merkintä asettelussa ja voidaan poistaa <strong>Poista telakka</strong>.</p>
+<p>Kloonin monistaminen Telakat-valintaikkunasta luo toisen kloonin samasta alkuperäisestä, ei itsenäistä telakkaa. Itsenäisen telakan luomiseksi kloonista, avaa ensin <strong>Muokkaa alkuperäistä telakkaa…</strong> ja monista alkuperäinen.</p>
+<p>Jos alkuperäinen käyttää <strong>Yleisryhmää</strong>, kopio käyttää sitä myös ja jakaa käynnistimet. Valitse <strong>Yksilöllinen ryhmä</strong> kopiossa, jos haluat erillisen käynnistysluettelon. <strong>Asetteluryhmä</strong> on käytettävissä vain, jos telakka käyttää sitä jo.</p>
+<h3 id="create-clone">Luo klooneja</h3>
+<p>Kloonit luodaan alkuperäisen telakan näyttötilan, ei <strong>Monista telakka</strong>:</p>
+<ul><li><strong>Muokkaa telakkaa → Näyttö → Kaikilla näytöillä</strong>: alkuperäinen pysyy ensisijaisella näytöllä, ja Latte luo klooneja jokaiselle toissijaiselle näytölle.</li><li><strong>Muokkaa telakkaa → Näyttö → Kaikilla toissijaisilla näytöillä</strong>: alkuperäinen pysyy yhdellä toissijaisella näytöllä, ja Latte luo klooneja jäljellä oleville toissijaisille näytöille.</li></ul>
+<p>Latte luo ja poistaa kloonit automaattisesti, kun näyttöasetelma muuttuu. Poistaaksesi kloonit, aseta alkuperäinen takaisin <strong>Ensisijaisella näytöllä</strong> tai yhdelle tietylle näytölle. Kloonilla ei ole <strong>Poista telakka</strong> -kohtaa kontekstivalikossaan; käytä <strong>Muokkaa alkuperäistä telakkaa…</strong> siinä määrittääksesi sen.</p>
+<p>Editorin avaaminen kloonista avaa aina alkuperäisen telakan asetukset, koska kloonit jakavat telakan kokoonpanon. Kloonissa tehdyt widget-asetusten muutokset päivittävät myös alkuperäisen.</p>
+<h3 id="differences">Erot pikaisesti</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Näkökulma</th><th>Itsenäinen kopio</th><th>Klooni</th></tr></thead><tbody>
+<tr><td>Luonut</td><td>Monista telakka</td><td>Näyttö → Kaikilla näytöillä tai Kaikilla toissijaisilla näytöillä</td></tr>
+<tr><td>Identiteetti</td><td>Uudet telakka- ja widget-ID:t</td><td>Linkitetty näkymä alkuperäiseen telakkaan</td></tr>
+<tr><td>Asetukset</td><td>Kopioitu kerran, sitten itsenäinen</td><td>Jaettu: alkuperäisen muokkaaminen päivittää jokaisen kloonin; kloonissa tehdyt widget-asetusten muutokset päivittävät myös alkuperäisen</td></tr>
+<tr><td>Näyttö ja reuna</td><td>Voidaan muuttaa itsenäisesti</td><td>Seuraa alkuperäistä; ei voi siirtää tai muuttaa kokoa erikseen</td></tr>
+<tr><td>Käynnistimet</td><td>Kopioitu luomisen yhteydessä; myöhemmin jakaminen vain Layout Groupin tai Global Groupin kautta</td><td>Peilaa alkuperäinen aina</td></tr>
+<tr><td>Pikavalikko</td><td>Täydelliset telakan toiminnot, mukaan lukien Monista ja Poista</td><td>Näyttää Muokkaa alkuperäistä telakkaa…; Monista, Siirrä, Vie ja Poista ovat piilotettuja</td></tr>
+<tr><td>Miten poistetaan</td><td>Poista telakka</td><td>Palauta alkuperäinen yksittäiselle näytölle</td></tr>
+</tbody></table></div>
+<p><strong>Pienoisohjelman kuvakkeen värit:</strong> <strong>Käytä kuvaketeeman värejä</strong> pienoisohjelman pikavalikossa estää Latten värittämästä kyseisen pienoisohjelman kuvaketta. Asetus tallennetaan pienoisohjelma kerrallaan: klooneilla se on sama kuin alkuperäisellä. Itsenäinen kopio säilyttää luomishetkellä olleen arvon ja voi muuttaa sitä erikseen.</p></section></main></div><footer>Latte Dock NG · Offline-dokumentaatio. Ei-käytettävissä olevat käyttöliittymäkielet palautuvat englantiin.</footer></body></html>

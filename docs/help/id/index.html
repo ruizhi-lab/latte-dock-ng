@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Panduan Pengguna Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Panduan Pengguna Latte Dock NG</h1><p>Instruksi ini menjelaskan opsi saat ini. Mode lanjutan, gaya dock, dan plugin yang terinstal dapat mengubah kontrol yang terlihat. Opsi yang ditandai Lanjutan disembunyikan dalam editor dasar.</p><div class="language-menu"><label for="language-select">Bahasa</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html">Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html" selected>Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Hanya panduan yang diterjemahkan yang tercantum. Bahasa antarmuka lainnya membuka panduan dalam bahasa Inggris.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>Di halaman ini</h2><a class="chapter" href="#edit-dock">Edit Dock</a><a class="subsection" href="#behavior">Perilaku</a><a class="subsection" href="#appearance">Tampilan</a><a class="subsection" href="#effects">Efek</a><a class="subsection" href="#tasks">Tugas</a><a class="chapter" href="#configure-latte">Konfigurasi Latte</a><a class="subsection" href="#layouts">Editor Tata Letak</a><a class="subsection" href="#layout-details">Detail Tata Letak</a><a class="subsection" href="#docks-dialog">Dialog Dock</a><a class="subsection" href="#screens-dialog">Dialog Layar</a><a class="subsection" href="#preferences">Preferensi</a><a class="subsection" href="#context-menu-actions">Aksi Menu Konteks</a><a class="chapter" href="#copies-and-clones">Salinan dan Klon Independen</a><a class="subsection" href="#create-independent-copy">Buat salinan independen</a><a class="subsection" href="#create-clone">Buat klon</a><a class="subsection" href="#differences">Perbedaan sekilas</a></nav></aside><main>
+<section id="edit-dock"><h2>Edit Dock</h2><p class="note">Perubahan berlaku segera. Menutup menyembunyikan editor; tidak membatalkan perubahan. Pin menjaga editor tetap terbuka. Tambahkan… → Duplikat Dock membuat salinan independen dari dock asli; Hapus menghapus dock saat ini. Beralih tab menjaga jendela tetap di tempatnya. Mode lanjutan menyesuaikan ukuran jendela untuk halaman terpanjangnya, dalam ruang layar yang tersedia. Halaman yang lebih panjang dapat digulir di dalam jendela. Seret sudut ubah ukuran untuk menyesuaikan ukuran jendela dalam kedua mode pengeditan.</p>
+<p class="note">Mode lanjutan menampilkan lebih banyak kontrol. Opsi yang ditandai Lanjutan disembunyikan dalam editor dasar.</p>
+<h3 id="behavior">Perilaku</h3>
+<p class="note">Opsi visibilitas, penundaan, aksi, perilaku item, celah mengambang, dan lingkungan untuk dock ini.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilitas</td></tr>
+<tr><td>Layar / Lokasi</td><td>Pilih layar dan tepi untuk dock ini. Dengan beberapa layar, Di Semua Layar dan Di Semua Layar Sekunder membuat klon tertaut. Lihat Salinan Independen dan Klon.</td></tr>
+<tr><td>Perataan</td><td>Posisikan dock di sepanjang tepi layar. Perataan item mengontrol di mana widget berada di dalam dock.</td></tr>
+<tr><td>Selalu Terlihat</td><td>Tetap tampilkan dock dan sisakan ruang desktop jika pengelola jendela mendukungnya.</td></tr>
+<tr><td>Sembunyikan Otomatis</td><td>Sembunyikan dock sampai pointer mencapai area aktivasi.</td></tr>
+<tr><td>Hindari Aktif</td><td>Sembunyikan saat jendela aktif menyentuh area dock, dan tampilkan dock saat pointer masuk.</td></tr>
+<tr><td>Hindari Dimaksimalkan</td><td>Sembunyikan hanya saat jendela yang dimaksimalkan aktif di layar ini, dan tampilkan dock saat pointer masuk.</td></tr>
+<tr><td>Hindari Semua Jendela</td><td>Sembunyikan saat jendela apa pun menyentuh area dock, dan tampilkan dock saat pointer masuk.</td></tr>
+<tr><td>Jendela Di Bawah</td><td>Tetap tampilkan dock di atas jendela; jendela dapat ditempatkan di bawahnya.</td></tr>
+<tr><td>Jendela Dapat Menutupi</td><td>Biarkan jendela menutupi dock. Dock muncul ke depan saat pointer mencapai tepi layar.</td></tr>
+<tr><td>Jendela Selalu Menutupi</td><td>Tetap tampilkan jendela di atas dock setiap saat; dock tetap berada di belakangnya.</td></tr>
+<tr class="group"><td colspan="2">Penundaan</td></tr>
+<tr><td>Penundaan / Tampilkan / Sembunyikan</td><td>Atur berapa lama menunggu sebelum menampilkan atau menyembunyikan, dalam milidetik. Penundaan yang lebih lama mengurangi aktivasi yang tidak disengaja.</td></tr>
+<tr class="group"><td colspan="2">Aksi</td></tr>
+<tr><td>Lacak <span class="advanced">Lanjutan</span></td><td>Pilih aksi area kosong jendela aktif mana yang diikuti: Jendela Aktif Dari Layar Saat Ini atau Jendela Aktif Dari Semua Layar.</td></tr>
+<tr><td>Tombol Kiri / Seret Jendela Aktif <span class="advanced">Lanjutan</span></td><td>Aktifkan seret dari ruang dock kosong untuk memindahkan atau memaksimalkan/memulihkan jendela aktif yang dilacak.</td></tr>
+<tr><td>Tombol Tengah / Tutup Jendela Aktif <span class="advanced">Lanjutan</span></td><td>Aktifkan klik tengah pada ruang dock kosong untuk menutup jendela aktif yang dilacak.</td></tr>
+<tr><td>Roda mouse <span class="advanced">Lanjutan</span></td><td>Pilih apa yang dilakukan roda mouse di atas ruang dock kosong: Tidak Ada Aksi, Siklus Melalui Desktop, Siklus Melalui Aktivitas, Siklus Melalui Tugas, atau Siklus Dan Minimalkan Tugas.</td></tr>
+<tr class="group"><td colspan="2">Item</td></tr>
+<tr><td>Tooltip judul tipis saat mengarahkan kursor</td><td>Tampilkan tooltip judul widget yang ringkas. Pratinjau jendela tugas dikendalikan secara terpisah oleh aksi Hover tugas.</td></tr>
+<tr><td>Perbesar widget saat mengarahkan kursor</td><td>Izinkan widget untuk diperbesar bersama dock. Nonaktifkan ini untuk menjaga ikon widget tetap tajam; ikon tugas dan peluncur masih diperbesar.</td></tr>
+<tr><td>Perluas popup melalui roda mouse</td><td>Gulir di atas widget yang didukung untuk menampilkan atau menyembunyikan popup-nya.</td></tr>
+<tr><td>Sesuaikan ukuran secara otomatis saat diperlukan</td><td>Perkecil item ketika mereka melebihi panjang yang tersedia dan perbesar kembali ketika mereka muat.</td></tr>
+<tr><td>Aktifkan pintasan global berdasarkan posisi</td><td>Izinkan pintasan global berdasarkan posisi untuk mengaktifkan item dock ini. Hanya satu dock per tata letak yang harus menggunakan ini.</td></tr>
+<tr class="group"><td colspan="2">Mengambang</td></tr>
+<tr><td>Selalu gunakan celah mengambang untuk interaksi pengguna <span class="advanced">Lanjutan</span></td><td>Sertakan celah mengambang dalam area yang digunakan untuk interaksi widget dan jendela.</td></tr>
+<tr><td>Sembunyikan celah mengambang untuk jendela yang dimaksimalkan <span class="advanced">Lanjutan</span></td><td>Hapus celah mengambang ketika jendela yang dimaksimalkan membutuhkan tepi layar.</td></tr>
+<tr><td>Tunda penyembunyian celah mengambang hingga mouse keluar <span class="advanced">Lanjutan</span></td><td>Tunggu hingga pointer keluar sebelum menyembunyikan celah, untuk menghindari klik tidak sengaja pada item terdekat.</td></tr>
+<tr><td>Cerminkan celah mengambang saat ditampilkan <span class="advanced">Lanjutan</span></td><td>Dalam mode Selalu Terlihat, cerminkan celah di sisi berlawanan dari dock.</td></tr>
+<tr class="group"><td colspan="2">Lingkungan</td></tr>
+<tr><td>Tampilkan saat perubahan desktop <span class="advanced">Lanjutan</span></td><td>Tampilkan dock sementara saat desktop virtual berubah. Ini tidak digunakan oleh Selalu Terlihat atau Jendela Di Bawah.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Tampilan</h3>
+<p class="note">Margin, Warna, Radius/Bayangan, Penyesuaian Panjang Dinamis, Visibilitas Dinamis dan Pengecualian memerlukan mode Lanjutan.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Item</td></tr>
+<tr><td>Gaya Dock</td><td>Pilih Klasik atau Modern untuk menerapkan preset. Dalam gaya apa pun, gunakan sakelar di bawah Gaya Dock untuk mengatur penataan item, latar belakang bergaris, jarak minimum antar item, celah mengambang otomatis, dan indikator tugas kompak secara terpisah.</td></tr>
+<tr><td>Jaga item dock tetap bersama</td><td>Gunakan satu grup untuk item dock, termasuk ketika perataan dock adalah Justify.</td></tr>
+<tr><td>Gunakan latar belakang inset dengan garis luar</td><td>Gunakan latar belakang preset dengan garis luar dan gaya untuk jarak, sudut melengkung, dan bayangannya.</td></tr>
+<tr><td>Gunakan jarak minimum antar item yang lebih lebar</td><td>Tingkatkan jarak minimum di sekitar item dock. Nilai yang lebih besar yang diatur dengan kontrol margin tetap berlaku.</td></tr>
+<tr><td>Gunakan celah mengambang otomatis</td><td>Hitung celah tepi layar dari ukuran ikon saat nilai celah tertentu tidak diatur.</td></tr>
+<tr><td>Gunakan indikator tugas ringkas</td><td>Gunakan tata letak ringkas untuk indikator tugas Latte. Pilih bentuk indikator di Efek.</td></tr>
+<tr><td>Pulihkan Preset</td><td>Tombol di bagian bawah Edit Dock segera memulihkan Perilaku, Tampilan, Efek, dan semua tab Tugas ke preset Dock bawaan untuk gaya Klasik/Modern saat ini, termasuk opsi yang disembunyikan oleh mode Lanjutan. Layar, tepi dock, peluncur, dan widget dipertahankan. Perataan, visibilitas, dan penundaan diatur ulang. Berbagi peluncur kembali ke grup lokal default sambil mempertahankan salinan daftar peluncur yang efektif; daftar bersama dock lain tidak berubah. Warna kustom dan penggantian indikator diatur ulang. Preset ini menggabungkan template Default Dock bawaan dengan default skema konfigurasi. Ini terpisah dari sekadar mengganti Gaya Dock. Klasik secara default mematikan lima sakelar tampilan di bawah Gaya Dock. Modern mengaktifkannya. Kedua preset menggunakan default yang sama untuk opsi lainnya.</td></tr>
+<tr><td>Ukuran absolut / Ukuran relatif</td><td>Atur ukuran ikon dalam piksel atau sebagai bagian dari layar. Ukuran relatif berguna pada pengaturan DPI tinggi atau multi-layar.</td></tr>
+<tr><td>Perbesaran saat kursor di atas</td><td>Atur seberapa besar item membesar di bawah kursor.</td></tr>
+<tr class="group"><td colspan="2">Panjang</td></tr>
+<tr><td>Maksimum / Minimum / Offset</td><td>Atur panjang maksimum dan minimum dock dan gerakkan sepanjang tepi layar.</td></tr>
+<tr><td>Penyesuaian Panjang Dinamis <span class="advanced">Lanjutan</span></td><td>Maksimalkan panjang panel saat ada jendela yang dimaksimalkan: perpanjang dock hingga panjang penuh ketika ada jendela yang dimaksimalkan. Latar belakang harus diaktifkan.</td></tr>
+<tr class="group"><td colspan="2">Margin</td></tr>
+<tr><td>Margin / Panjang / Ketebalan / Celah Mengambang <span class="advanced">Lanjutan</span></td><td>Atur margin eksternal di sepanjang dock, margin melintasi ketebalannya, dan celah antara dock dan tepi layar.</td></tr>
+<tr><td>Celah dari jendela yang dimaksimalkan (px) <span class="advanced">Lanjutan</span></td><td>Cadangkan tambahan 0–128 piksel antara jendela dan dock ini dalam mode Selalu Tampil. Default: 0. Ini terpisah dari celah mengambang tepi layar dan ditambahkan ke celah cermin apa pun; mode sembunyi otomatis tidak mencadangkan ruang ini.</td></tr>
+<tr class="group"><td colspan="2">Warna</td></tr>
+<tr><td>Warna / Palet <span class="advanced">Lanjutan</span></td><td>Pilih Warna Tema Plasma, Warna Gelap, Warna Terang, Warna Kustom Tata Letak, Terbalik, atau Warna Cerdas Berdasarkan Latar Belakang Desktop. Warna Kustom Tata Letak menggunakan skema warna tata letak; Warna Cerdas mengikuti wallpaper.</td></tr>
+<tr><td>Gunakan warna latar belakang kustom / Warna Siang <span class="advanced">Lanjutan</span></td><td>Ganti latar belakang dock ini dengan warna yang dipilih; kontras teks menyesuaikan secara otomatis. Dinonaktifkan secara default. Palet turunan jendela dan palet Plasma untuk applet yang diperluas tetap memiliki prioritas. Opasitas tetap menjadi pengaturan latar belakang terpisah.</td></tr>
+<tr><td>Ganti warna latar belakang berdasarkan waktu hari / Warna Malam / Siang dimulai (waktu lokal) / Malam dimulai (waktu lokal) <span class="advanced">Lanjutan</span></td><td>Secara opsional beralih antara dua warna kustom menggunakan waktu lokal 24 jam. Default: siang 07:00, malam 19:00. Waktu mulai bersifat inklusif. Interval dapat melewati tengah malam; waktu yang sama mempertahankan warna siang sepanjang hari. Menonaktifkan jadwal mempertahankan warna siang. Jam diperiksa setiap detik, termasuk setelah resume.</td></tr>
+<tr class="group"><td colspan="2">Latar Belakang</td></tr>
+<tr><td>Latar Belakang</td><td>Latar Belakang adalah sakelar on/off. Saat diaktifkan, gunakan kontrol di bawah untuk mengatur ketebalan, opasitas, radius, dan bayangan.</td></tr>
+<tr><td>Opasitas / Opasitas Sibuk</td><td>Atur opasitas latar belakang. Slider yang sama disebut Opasitas Sibuk saat Sembunyikan latar belakang saat tidak diperlukan dan Utamakan latar belakang buram saat menyentuh jendela apa pun keduanya diaktifkan. Def. memulihkan default tema.</td></tr>
+<tr><td>Radius / Bayangan <span class="advanced">Lanjutan</span></td><td>Atur radius sudut latar belakang dan ukuran bayangan. Def. menggunakan default tema.</td></tr>
+<tr><td>Blur / Bayangan / Garis Luar / Semua Sudut <span class="advanced">Lanjutan</span></td><td>Aktifkan blur latar belakang, bayangan latar belakang, garis luar, dan sudut membulat. Semua Sudut hanya tersedia untuk geometri mengambang/justify tertentu.</td></tr>
+<tr class="group"><td colspan="2">Visibilitas Dinamis</td></tr>
+<tr><td>Utamakan latar belakang buram saat menyentuh jendela apa pun <span class="advanced">Lanjutan</span></td><td>Hapus transparansi latar belakang saat jendela menyentuh dock.</td></tr>
+<tr><td>Sembunyikan latar belakang saat tidak diperlukan <span class="advanced">Lanjutan</span></td><td>Sembunyikan latar belakang kecuali saat jendela menyentuh dock atau latar belakang desktop sibuk.</td></tr>
+<tr><td>Sembunyikan bayangan latar belakang untuk jendela yang dimaksimalkan <span class="advanced">Lanjutan</span></td><td>Sembunyikan bayangan latar belakang saat jendela aktif yang dimaksimalkan menyentuh dock.</td></tr>
+<tr class="group"><td colspan="2">Pengecualian</td></tr>
+<tr><td>Utamakan latar belakang dan warna Plasma untuk applet yang diperluas<span class="advanced">Lanjutan</span></td><td>Gunakan latar belakang gaya Plasma yang buram dan warna Plasma saat popup widget diperluas.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efek</h3>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Bayangan</td></tr>
+<tr><td>Bayangan</td><td>Aktifkan atau nonaktifkan bayangan widget. Ukuran dan Opasitas dinonaktifkan saat bayangan dimatikan.</td></tr>
+<tr><td>Ukuran / Opasitas</td><td>Atur ukuran dan opasitas bayangan widget.</td></tr>
+<tr><td>Warna Default / Warna Tema / warna kustom</td><td>Pilih warna bayangan default, warna dari palet tema, atau klik kotak warna untuk memilih warna kustom.</td></tr>
+<tr class="group"><td colspan="2">Animasi</td></tr>
+<tr><td>Animasi / x1 / x2 / x3</td><td>Aktifkan atau nonaktifkan semua animasi dock. x1 adalah kecepatan normal, x2 lebih lambat, x3 paling lambat.</td></tr>
+<tr class="group"><td colspan="2">Indikator</td></tr>
+<tr><td>Indikator</td><td>Aktifkan atau nonaktifkan indikator tugas aktif. Saat diaktifkan, pilih indikator Latte atau plugin indikator kustom; opsi khusus plugin muncul di tabnya.</td></tr>
+<tr><td>Gunakan titik gaya macOS</td><td>Indikator Latte menggunakan titik gaya macOS secara default saat indikator tugas kompak diaktifkan di Tampilan. Matikan 'Gunakan titik gaya macOS' di Efek untuk memilih Garis atau Titik secara manual.</td></tr>
+<tr><td>Gunakan warna ikon aplikasi</td><td>Opsional, warnai indikator tugas dengan warna dominan ikon setiap aplikasi, disesuaikan dengan kontras latar belakang. Pilih Garis untuk garis bawah berwarna. Dinonaktifkan secara default; applet tetap menggunakan warna palet.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tugas</h3>
+<p>Peluncur tugas mulai menyusun ulang pada dock lain yang berbagi daftar peluncur setelah Anda menjatuhkan ikon. Urutan mungkin memerlukan waktu untuk stabil. Celah pemisah tetap berada di tempatnya saat dock penerima menyimpan urutan baru. Menyeret aplikasi yang sudah disematkan mempertahankan peluncur yang ada, termasuk ketika peluncur tersebut mengikuti aplikasi default sistem. Pemisah baru mengambil ruang setelah mencapai celah yang dipilih.</p>
+<p>Saat Anda menambahkan atau menyeret widget di samping pemisah di tepi area tugas atau baki sistem, widget ditempatkan di luar pemisah. Pemisah tetap berada di sebelah area tugas atau baki.</p>
+<p>Saat Anda menyematkan aplikasi dari menu aplikasi, ikonnya muncul sebelum pemisah apa pun di akhir daftar tugas. Pemisah kanan termasuk dalam grup yang disematkan, sehingga aplikasi yang sedang berjalan tetapi tidak disematkan muncul setelahnya.</p>
+<p>Slot tugas tetap disorot dan ikon tetap terlihat saat Anda menyeretnya untuk menyusun ulang tugas. Saat tugas baru masuk, dock mulai menyisihkan slotnya dari ukuran animasi awal.</p>
+<p class="note">Lencana, Animasi, Gulir, Aksi, dan beberapa opsi Interaksi/Filter memerlukan mode Lanjutan. Menampilkan hanya peluncur dan menyembunyikan semua tugas akan menonaktifkan aksi dan filter terkait jendela.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Lencana</td></tr>
+<tr><td>Notifikasi dari tugas <span class="advanced">Lanjutan</span></td><td>Tampilkan jumlah notifikasi yang belum dibaca pada ikon tugas.</td></tr>
+<tr><td>Informasi kemajuan untuk tugas <span class="advanced">Lanjutan</span></td><td>Tampilkan lencana kemajuan, misalnya saat Dolphin menyalin file.</td></tr>
+<tr><td>Audio diputar dari tugas <span class="advanced">Lanjutan</span></td><td>Tampilkan lencana audio untuk aplikasi yang memutar suara. Pencocokan lebih mengutamakan pengenal desktop/aplikasi yang eksplisit. Informasi proses browser generik tidak cukup untuk mengidentifikasi PWA tertentu; aliran yang ambigu dibiarkan tidak terpasang daripada memberikan kontrol audio ke aplikasi yang tidak terkait. Aplikasi Electron independen masih dapat mencocokkan proses audio mereka sendiri. Status pemutaran dan aktivitas output menyembunyikan aliran yang dijeda bahkan ketika aplikasi tetap menjaga koneksi audio mereka terbuka. Tanpa status pemutar, keheningan singkat ditoleransi selama sekitar satu detik.</td></tr>
+<tr><td>Warna menonjol untuk lencana notifikasi <span class="advanced">Lanjutan</span></td><td>Gunakan lencana notifikasi yang lebih kuat, biasanya berwarna merah. Memerlukan Notifikasi dari tugas.</td></tr>
+<tr><td>Ubah volume saat menggulir lencana audio <span class="advanced">Lanjutan</span></td><td>Klik lencana audio untuk membisukan/membatalkan bisu, atau gulir di atasnya untuk mengubah volume. Memerlukan Audio diputar dari tugas.</td></tr>
+<tr class="group"><td colspan="2">Interaksi</td></tr>
+<tr><td>Peluncur ditambahkan hanya di applet tugas saat ini</td><td>Tambahkan peluncur yang dijatuhkan hanya ke widget tugas ini, bukan sebagai widget terpisah atau ke widget tugas lainnya.</td></tr>
+<tr><td>Aksi jendela di menu konteks <span class="advanced">Lanjutan</span></td><td>Tampilkan aksi khusus jendela di menu konteks tugas.</td></tr>
+<tr><td>Pratinjau jendela berperilaku sebagai popup <span class="advanced">Lanjutan</span></td><td>Buka pratinjau sebagai popup alih-alih tooltip. Aksi Hover harus meminta pratinjau; ini hanya mengubah cara pratinjau ditampilkan.</td></tr>
+<tr><td>Berdasarkan posisi, pintasan hanya berlaku pada tugas saat ini<span class="advanced">Lanjutan</span></td><td>Batasi pintasan global berbasis posisi ke widget tugas ini.</td></tr>
+<tr class="group"><td colspan="2">Filter</td></tr>
+<tr><td>Tampilkan hanya tugas dari layar saat ini</td><td>Tampilkan jendela dari layar dock ini.</td></tr>
+<tr><td>Tampilkan hanya tugas dari desktop saat ini</td><td>Tampilkan jendela dari desktop virtual saat ini.</td></tr>
+<tr><td>Tampilkan Bagian Jendela yang Dikecilkan</td><td>Secara default nonaktif. Menampilkan jendela yang dikecilkan sebagai ikon individual setelah tugas biasa. Arahkan kursor atau fokuskan pada ikon untuk melihat judul aplikasi dan jendelanya, dan aktifkan untuk memulihkan jendela. Ketika sebuah aplikasi memiliki beberapa jendela yang dikecilkan, lencana kecil menunjukkan urutan setiap jendela dan total untuk aplikasi tersebut. Bagian ini mengikuti filter tugas dan berbagi gulir overflow tugas. Aktifkan Gulir untuk menjangkau jendela di luar layar menggunakan aksi roda mouse atau hover tepi yang dikonfigurasi. Mode hanya-peluncur menyembunyikannya.</td></tr>
+<tr><td>Tampilkan hanya tugas dari peluncur<span class="advanced">Lanjutan</span></td><td>Tampilkan jendela hanya untuk aplikasi yang sudah ada dalam daftar peluncur.</td></tr>
+<tr><td>Tampilkan hanya peluncur dan sembunyikan semua tugas<span class="advanced">Lanjutan</span></td><td>Tampilkan ikon peluncur dan sembunyikan tugas yang sedang berjalan. Ini juga menonaktifkan aksi terkait jendela dan filter.</td></tr>
+<tr><td>Tampilkan hanya tugas yang dikelompokkan untuk aplikasi yang sama<span class="advanced">Lanjutan</span></td><td>Kelompokkan jendela dari aplikasi yang sama secara default.</td></tr>
+<tr class="group"><td colspan="2">Animasi</td></tr>
+<tr><td>Pantulkan peluncur saat dipicu<span class="advanced">Lanjutan</span></td><td>Animasikan peluncur saat dipicu.</td></tr>
+<tr><td>Pantulkan tugas yang memerlukan perhatian<span class="advanced">Lanjutan</span></td><td>Animasikan tugas yang meminta perhatian.</td></tr>
+<tr><td>Geser masuk dan keluar jendela tunggal<span class="advanced">Lanjutan</span></td><td>Animasikan jendela tunggal baru dan yang ditutup.</td></tr>
+<tr><td>Tugas yang dikelompokkan memantulkan jendela barunya <span class="advanced">Lanjutan</span></td><td>Animasikan jendela baru di dalam kelompok tugas.</td></tr>
+<tr><td>Tugas yang dikelompokkan menggeser keluar jendela yang ditutup <span class="advanced">Lanjutan</span></td><td>Animasikan jendela yang ditutup di dalam kelompok tugas.</td></tr>
+<tr class="group"><td colspan="2">Peluncur</td></tr>
+<tr><td>Kelompok Unik</td><td>Berikan widget tugas ini daftar peluncurnya sendiri.</td></tr>
+<tr><td>Kelompok Tata Letak</td><td>Bagikan peluncur dengan widget tugas dalam tata letak yang sama. Tombol ini hanya ditampilkan ketika dock sudah menggunakan Kelompok Tata Letak.</td></tr>
+<tr><td>Kelompok Global</td><td>Bagikan peluncur dengan widget tugas di semua tata letak.</td></tr>
+<tr class="group"><td colspan="2">Gulir</td></tr>
+<tr><td>Gulir <span class="advanced">Lanjutan</span></td><td>Aktifkan pengguliran ketika tugas meluap dari ruang yang tersedia. Ini berfungsi dengan preset dock mana pun, termasuk ketika Gabungkan item dock diaktifkan.</td></tr>
+<tr><td>Manual <span class="advanced">Lanjutan</span></td><td>Pilih Gulir Dinonaktifkan, Hanya gulir vertikal/horizontal, atau Gulir horizontal dan vertikal. Pilihan satu arah bergantung pada orientasi dock.</td></tr>
+<tr><td>Otomatis <span class="advanced">Lanjutan</span></td><td>Aktifkan atau nonaktifkan gulir otomatis.</td></tr>
+<tr class="group"><td colspan="2">Aksi</td></tr>
+<tr><td>Klik Kiri <span class="advanced">Lanjutan</span></td><td>Aksi untuk klik kiri pada tugas: Tidak Ada, Tutup Jendela atau Kelompok, Instance Baru, Minimalkan/Pulihkan, Siklus Melalui Tugas, Alihkan Pengelompokan Tugas, Tampilkan Jendela, Pratinjau Jendela, Sorot Jendela, atau Pratinjau dan Sorot Jendela.</td></tr>
+<tr><td>Klik Tengah <span class="advanced">Lanjutan</span></td><td>Aksi untuk klik tengah pada tugas. Pilihannya sama dengan Klik Kiri.</td></tr>
+<tr><td>Arahkan Kursor <span class="advanced">Lanjutan</span></td><td>Aksi saat mengarahkan kursor: Tidak Ada, Pratinjau Jendela, Sorot Jendela, atau Pratinjau dan Sorot Jendela. Tooltip judul tugas dikontrol di Perilaku.</td></tr>
+<tr><td>Roda <span class="advanced">Lanjutan</span></td><td>Aksi roda: Tidak ada, Beralih Antar Tugas, atau Beralih dan Minimalkan Tugas.</td></tr>
+<tr><td>Modifier + klik <span class="advanced">Lanjutan</span></td><td>Tahan Shift, Ctrl, Alt, atau Meta dan klik kiri, tengah, atau kanan untuk menjalankan aksi tambahan. Pilih modifier, tombol, dan aksi; ini terpisah dari aksi utama di atas.</td></tr>
+</tbody></table></div>
+<p class="note">Filter aktivitas saat ini disembunyikan di Plasma 6 karena dukungan KActivities tidak andal.</p></section><section id="configure-latte"><h2>Konfigurasi Latte</h2><p class="note">Editor Tata Letak mengelola tata letak dan doknya. Preferensi mengontrol perilaku seluruh aplikasi. Terapkan menyimpan perubahan yang tertunda di tab saat ini; Reset memulihkan keadaan tersimpan tab tersebut; Pulihkan Default menyiapkan default untuk ditinjau. Layar... mengelola referensi layar yang tersimpan.</p>
+<h3 id="layouts">Editor Tata Letak</h3>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr><td>Satu tata letak setiap saat</td><td>Gunakan satu tata letak untuk semua aktivitas.</td></tr>
+<tr><td>Beberapa tata letak berdasarkan aktivitas</td><td>Tetapkan tata letak berbeda ke aktivitas; beberapa tata letak dapat tetap dimuat.</td></tr>
+<tr><td>Beralih</td><td>Aktifkan tata letak yang dipilih. Terapkan perubahan yang tertunda terlebih dahulu; Latte tidak akan beralih jika ada perubahan yang belum disimpan.</td></tr>
+<tr><td>Aktivitas...</td><td>Buka pengelola Aktivitas Plasma. Gunakan kolom Aktivitas atau Diaktifkan untuk menetapkan tata letak ini ke aktivitas.</td></tr>
+<tr><td>Baru / Duplikat / Hapus</td><td>Buat, salin, atau hapus tata letak. Duplikat di sini menyalin seluruh tata letak, bukan dok individual. Tata letak aktif dan terkunci tidak dapat dihapus.</td></tr>
+<tr><td>Diaktifkan</td><td>Tetapkan tata letak ini ke satu atau lebih aktivitas agar Aktivitas Plasma dapat mengaktifkannya. Hanya ditampilkan dalam mode tata letak ganda.</td></tr>
+<tr><td>Hanya Baca</td><td>Lindungi konfigurasi tata letak dari perubahan.</td></tr>
+<tr><td>Detail...</td><td>Buka dialog detail tata letak untuk ikon, warna kustom, margin popup, dan visibilitas menu konteks.</td></tr>
+<tr><td>Docks...</td><td>Buka daftar dock untuk tata letak ini: nama, layar, tepi, perataan, widget yang disertakan, serta baru/duplikat/hapus/impor/ekspor.</td></tr>
+<tr><td>Impor... / Ekspor...</td><td>Impor tata letak dari file lokal atau KDE Store; ekspor untuk cadangan atau sebagai template. File → Impor Konfigurasi / Ekspor Konfigurasi menangani cadangan aplikasi penuh.</td></tr>
+<tr><td>Nama / Di Menu / Aktivitas</td><td>Daftar tata letak memiliki kolom Nama, Di Menu, dan Aktivitas. Edit Nama dan Aktivitas langsung di daftar; Di Menu mengontrol apakah tata letak muncul di menu Layouts dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detail Tata Letak</h3>
+<p>Buka dengan Editor Tata Letak → Detail... untuk mengedit tata letak yang dipilih.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr><td>Tata Letak</td><td>Pilih tata letak mana yang akan diedit.</td></tr>
+<tr><td>Ikon</td><td>Pilih ikon untuk tata letak. Tombol hapus akan menghapusnya.</td></tr>
+<tr><td>Warna Kustom</td><td>Pilih file skema warna kustom untuk tata letak ini.</td></tr>
+<tr><td>Margin PopUp</td><td>Atur margin yang digunakan oleh popup tata letak; dinonaktifkan berarti menggunakan default.</td></tr>
+<tr><td>Tampilkan di menu konteks tata letak jika memungkinkan</td><td>Tampilkan tata letak ini di menu Layouts dock ketika aktivitas saat ini mengizinkannya.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Dialog Dock</h3>
+<p>Buka dengan Editor Tata Letak → Dock... untuk mengelola dock dalam tata letak yang dipilih.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Kolom</td></tr>
+<tr><td>Nama</td><td>Nama dock. Klik dua kali untuk mengubah namanya.</td></tr>
+<tr><td>Layar</td><td>Layar tempat dock berada, termasuk Layar Utama, Semua Layar, dan Semua Layar Sekunder.</td></tr>
+<tr><td>Sisi</td><td>Sisi layar yang digunakan oleh dock.</td></tr>
+<tr><td>Perataan</td><td>Perataan dock di sepanjang sisinya.</td></tr>
+<tr><td>Termasuk</td><td>Widget dan subkonten yang disertakan dalam dock. Kolom ini hanya untuk dibaca.</td></tr>
+<tr class="group"><td colspan="2">Tombol</td></tr>
+<tr><td>Baru</td><td>Buat dock dari template.</td></tr>
+<tr><td>Duplikat</td><td>Buat salinan independen dari dock yang dipilih, atau klon lain jika dock yang dipilih adalah klon.</td></tr>
+<tr><td>Hapus</td><td>Hapus dock yang dipilih. Klon dihapus bersama aslinya.</td></tr>
+<tr><td>Impor...</td><td>Impor dock dari file template lokal.</td></tr>
+<tr><td>Ekspor...</td><td>Ekspor dock yang dipilih untuk cadangan atau sebagai template. Dialog template memungkinkan Anda memilih pengaturan widget mana yang akan disertakan; kecualikan widget dengan data pribadi seperti akun email atau kalender.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Dialog Layar</h3>
+<p>Buka dengan File → Layar... untuk membersihkan referensi layar yang disimpan oleh Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr><td>Daftar layar</td><td>Mencantumkan referensi layar yang disimpan di Latte, termasuk layar yang tidak lagi terhubung.</td></tr>
+<tr><td>Pilih layar usang</td><td>Centang hanya layar yang tidak lagi ada. Layar aktif dan layar yang digunakan oleh tata letak tidak dapat dihapus.</td></tr>
+<tr><td>Batalkan Semua Pilihan</td><td>Hapus pilihan sebelum memilih set yang berbeda.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferensi</h3>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr><td>Tampilkan jendela informatif untuk aktivasi tata letak otomatis</td><td>Tampilkan jendela informasi ketika tata letak diaktifkan secara otomatis.</td></tr>
+<tr><td>Efek Parabolik / Kecil / Sedang / Besar</td><td>Atur penyebaran global zoom saat hover di antara item yang berdekatan.</td></tr>
+<tr><td>Aktifkan autostart saat startup</td><td>Mulai Latte saat Anda masuk.</td></tr>
+<tr><td>Gunakan gaya 3D untuk lencana notifikasi dan pintasan</td><td>Gunakan gaya dimensional untuk lencana notifikasi dan pintasan.</td></tr>
+<tr><td>Tekan dan tahan ⌘ untuk menampilkan lencana pintasan</td><td>Nonaktif secara default. Tahan tombol Meta selama sekitar satu detik untuk menampilkan dock tersembunyi dan lencana pintasan dari tugas serta widget mereka; lepaskan tombol untuk menyembunyikannya kembali. Dengan pengaturan default Plasma, peluncur bawaannya juga terbuka saat Meta dilepaskan; ubah pintasan tersebut di Pengaturan Sistem jika Anda tidak menginginkan ini.</td></tr>
+<tr><td>Pengaruh margin ketebalan</td><td>Pilih seberapa besar margin ketebalan item memengaruhi tata letak: 0%, 50%, atau 100%.</td></tr>
+<tr><td>Informasikan ruang desktop yang tersedia ke Plasma desktop</td><td>Publikasikan ruang desktop yang tersedia ke Plasma sehingga panel dan jendela dapat menggunakannya.</td></tr>
+<tr><td>Menu Konteks / Aksi...</td><td>Pilih aksi menu konteks dock mana yang selalu ditampilkan. Aksi yang tidak dipilih hanya tersedia dalam mode edit.</td></tr>
+<tr><td>Layar / jeda reaksi untuk perubahan</td><td>Atur berapa lama Latte menunggu sebelum bereaksi terhadap perubahan layar, dalam milidetik. Tingkatkan jika perangkat keras melaporkan transisi yang tidak stabil.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Aksi Menu Konteks</h3>
+<p>Buka dengan Preferensi → Menu Konteks → Aksi... untuk memilih aksi dock mana yang selalu terlihat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opsi di jendela</th><th>Apa yang dikontrolnya</th></tr></thead><tbody>
+<tr><td>Selalu dapat diakses</td><td>Aksi dalam daftar ini selalu ditampilkan di menu konteks dock.</td></tr>
+<tr><td>Hanya dapat diakses dalam mode edit</td><td>Aksi dalam daftar ini hanya muncul saat dok sedang diedit. Pindahkan aksi antar daftar untuk mengubah ini.</td></tr>
+<tr><td>Pindahkan antar daftar</td><td>Pilih sebuah aksi dan gunakan tombol panah untuk memindahkannya. Reset dan Restore Defaults memulihkan set default.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Salinan Independen dan Klon</h2><p class="note">Salinan dan klon terlihat mirip di layar tetapi berperilaku berbeda. Salinan adalah dok baru yang independen. Klon adalah dok yang sama yang ditampilkan di layar lain. Pilih berdasarkan apakah Anda ingin mengonfigurasi dok ini secara terpisah.</p>
+<h3 id="create-independent-copy">Buat salinan independen</h3>
+<p>Gunakan salah satu metode ini pada dok asli, bukan pada klon:</p>
+<ul><li>Klik kanan dok dan pilih <strong>Duplicate Dock</strong>.</li><li>Buka <strong>Edit Dock</strong> dan pilih <strong>Add… → Duplicate Dock</strong>.</li><li>Buka <strong>Configure Latte → Layouts Editor → Docks…</strong>, pilih dok, dan pilih <strong>Duplicate</strong>.</li></ul>
+<p>Salinan menerima ID dok dan widget baru dan menyalin pengaturan saat ini sekali. Setelah itu, Anda dapat mengubah layar, tepi, ukuran, tampilan, perilaku, widget, dan peluncurnya secara independen. Ini adalah entri terpisah dalam tata letak dan dapat dihapus dengan <strong>Remove Dock</strong>.</p>
+<p>Menduplikasi klon dari dialog Docks membuat klon lain dari yang asli yang sama, bukan dok independen. Untuk membangun dok independen dari klon, pertama buka <strong>Edit Original Dock…</strong> dan duplikasi yang asli.</p>
+<p>Jika yang asli menggunakan <strong>Global Group</strong>, salinan juga menggunakannya dan berbagi peluncur. Pilih <strong>Unique Group</strong> pada salinan jika Anda ingin daftar peluncur terpisah. <strong>Layout Group</strong> hanya tersedia jika dock sudah menggunakannya.</p>
+<h3 id="create-clone">Buat klon</h3>
+<p>Klon dibuat oleh mode layar dari dock asli, bukan oleh <strong>Duplikat Dock</strong>:</p>
+<ul><li><strong>Edit Dock → Layar → Di Semua Layar</strong>: dock asli tetap di layar utama, dan Latte membuat klon di setiap layar sekunder.</li><li><strong>Edit Dock → Layar → Di Semua Layar Sekunder</strong>: dock asli tetap di satu layar sekunder, dan Latte membuat klon di layar sekunder lainnya.</li></ul>
+<p>Latte secara otomatis membuat dan menghapus klon ketika tata letak layar berubah. Untuk menghapus klon, atur dock asli kembali ke <strong>Di Layar Utama</strong> atau ke satu layar tertentu. Klon tidak memiliki entri <strong>Hapus Dock</strong> di menu konteksnya; gunakan <strong>Edit Dock Asli…</strong> di sana untuk mengonfigurasinya.</p>
+<p>Membuka editor dari klon selalu membuka pengaturan dock asli, karena klon berbagi konfigurasi dock. Pengaturan widget yang diubah pada klon juga memperbarui dock asli.</p>
+<h3 id="differences">Perbedaan sekilas</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspek</th><th>Salinan independen</th><th>Klon</th></tr></thead><tbody>
+<tr><td>Dibuat oleh</td><td>Duplikat Dock</td><td>Layar → Di Semua Layar atau Di Semua Layar Sekunder</td></tr>
+<tr><td>Identitas</td><td>ID dock dan widget baru</td><td>Tampilan tertaut dari dock asli</td></tr>
+<tr><td>Pengaturan</td><td>Disalin sekali, lalu independen</td><td>Berbagi: mengedit dock asli memperbarui setiap klon; pengaturan widget yang diubah pada klon juga memperbarui dock asli</td></tr>
+<tr><td>Layar dan tepi</td><td>Dapat diubah secara independen</td><td>Mengikuti dock asli; tidak dapat dipindahkan atau diubah ukurannya secara terpisah</td></tr>
+<tr><td>Peluncur</td><td>Disalin saat pembuatan; berbagi kemudian hanya melalui Grup Tata Letak atau Grup Global</td><td>Selalu cerminkan yang asli</td></tr>
+<tr><td>Menu konteks</td><td>Aksi dock penuh, termasuk Duplikat dan Hapus</td><td>Menampilkan Edit Dock Asli…; Duplikat, Pindahkan, Ekspor, dan Hapus disembunyikan</td></tr>
+<tr><td>Cara menghapus</td><td>Hapus Dock</td><td>Kembalikan dock asli ke satu layar</td></tr>
+</tbody></table></div>
+<p><strong>Warna ikon widget:</strong> <strong>Gunakan Warna Tema Ikon</strong> dalam menu konteks widget menghentikan Latte dari mewarnai ikon widget tersebut. Pengaturan disimpan per widget: klon berbagi pengaturan dengan yang asli. Salinan independen mempertahankan nilai yang dimilikinya saat dibuat dan dapat mengubahnya secara terpisah.</p></section></main></div><footer>Latte Dock NG · Dokumentasi offline. Bahasa antarmuka yang tidak tersedia akan kembali ke bahasa Inggris.</footer></body></html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ca@valencia"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guia d'usuari de Latte Dock NG</title><link rel="stylesheet" href="../style.css"></head><body>
+<header><div class="eyebrow">LATTE DOCK NG</div><h1>Guia d'usuari de Latte Dock NG</h1><p>Aquestes instruccions descriuen les opcions actuals. El mode avançat, l'estil del dock i els connectors instal·lats poden canviar quins controls són visibles. Les opcions marcades com a Avançades estan ocultes a l'editor bàsic.</p><div class="language-menu"><label for="language-select">Idioma</label><select id="language-select" onchange="location.href=this.options[this.selectedIndex].dataset.href"><option data-lang="en" data-href="../en/index.html">English</option><option data-lang="ar" data-href="../ar/index.html">العربية</option><option data-lang="az" data-href="../az/index.html">Azərbaycan</option><option data-lang="ca" data-href="../ca/index.html">Català</option><option data-lang="ca@valencia" data-href="../ca@valencia/index.html" selected>Català (valencià)</option><option data-lang="cs" data-href="../cs/index.html">Čeština</option><option data-lang="da" data-href="../da/index.html">Dansk</option><option data-lang="de" data-href="../de/index.html">Deutsch</option><option data-lang="el" data-href="../el/index.html">Ελληνικά</option><option data-lang="en_GB" data-href="../en_GB/index.html">British English</option><option data-lang="eo" data-href="../eo/index.html">Esperanto</option><option data-lang="es" data-href="../es/index.html">Español</option><option data-lang="et" data-href="../et/index.html">Eesti</option><option data-lang="eu" data-href="../eu/index.html">Euskara</option><option data-lang="fi" data-href="../fi/index.html">Suomi</option><option data-lang="fr" data-href="../fr/index.html">Français</option><option data-lang="ga" data-href="../ga/index.html">Gaeilge</option><option data-lang="gl" data-href="../gl/index.html">Galego</option><option data-lang="he" data-href="../he/index.html">עברית</option><option data-lang="hsb" data-href="../hsb/index.html">Hornjoserbšćina</option><option data-lang="ia" data-href="../ia/index.html">Interlingua</option><option data-lang="id" data-href="../id/index.html">Bahasa Indonesia</option><option data-lang="it" data-href="../it/index.html">Italiano</option><option data-lang="ja" data-href="../ja/index.html">日本語</option><option data-lang="ka" data-href="../ka/index.html">ქართული</option><option data-lang="ko" data-href="../ko/index.html">한국어</option><option data-lang="lt" data-href="../lt/index.html">Lietuvių</option><option data-lang="nl" data-href="../nl/index.html">Nederlands</option><option data-lang="nn" data-href="../nn/index.html">Norsk nynorsk</option><option data-lang="pl" data-href="../pl/index.html">Polski</option><option data-lang="pt" data-href="../pt/index.html">Português</option><option data-lang="pt_BR" data-href="../pt_BR/index.html">Português (Brasil)</option><option data-lang="ro" data-href="../ro/index.html">Română</option><option data-lang="ru" data-href="../ru/index.html">Русский</option><option data-lang="sk" data-href="../sk/index.html">Slovenčina</option><option data-lang="sl" data-href="../sl/index.html">Slovenščina</option><option data-lang="sv" data-href="../sv/index.html">Svenska</option><option data-lang="tr" data-href="../tr/index.html">Türkçe</option><option data-lang="uk" data-href="../uk/index.html">Українська</option><option data-lang="zh_CN" data-href="../zh_CN/index.html">简体中文</option><option data-lang="zh_TW" data-href="../zh_TW/index.html">繁體中文</option></select><small class="language-note">Només es llisten les guies traduïdes. Altres idiomes de la interfície obren la guia en anglès.</small></div></header><div class="guide-layout"><aside class="toc"><nav aria-label="On this page"><h2>En aquesta pàgina</h2><a class="chapter" href="#edit-dock">Edita el Dock</a><a class="subsection" href="#behavior">Comportament</a><a class="subsection" href="#appearance">Aparença</a><a class="subsection" href="#effects">Efectes</a><a class="subsection" href="#tasks">Tasques</a><a class="chapter" href="#configure-latte">Configura Latte</a><a class="subsection" href="#layouts">Editor de Dispositius</a><a class="subsection" href="#layout-details">Detalls del Dispositiu</a><a class="subsection" href="#docks-dialog">Diàleg de Docks</a><a class="subsection" href="#screens-dialog">Diàleg de Pantalles</a><a class="subsection" href="#preferences">Preferències</a><a class="subsection" href="#context-menu-actions">Accions del Menú Contextual</a><a class="chapter" href="#copies-and-clones">Còpies Independents i Clons</a><a class="subsection" href="#create-independent-copy">Crea una còpia independent</a><a class="subsection" href="#create-clone">Crea clons</a><a class="subsection" href="#differences">Diferències d'un cop d'ull</a></nav></aside><main>
+<section id="edit-dock"><h2>Edita el Dock</h2><p class="note">Els canvis tenen efecte immediatament. Tancar oculta l'editor; no desfà els canvis. Fixar manté l'editor obert. Afegeix… → Duplica el Dock crea una còpia independent d'un dock original; Elimina elimina el dock actual. Canviar de pestanya manté la finestra al seu lloc. El mode avançat dimensiona la finestra per a la seva pàgina més llarga, dins de l'espai de pantalla disponible. Les pàgines més llarges es desplacen dins de la finestra. Arrossega la cantonada de redimensionament per ajustar la mida de la finestra en qualsevol mode d'edició.</p>
+<p class="note">El mode avançat revela més controls. Les opcions marcades com a Avançades s'amaguen a l'editor bàsic.</p>
+<h3 id="behavior">Comportament</h3>
+<p class="note">Opcions de visibilitat, retard, accions, comportament dels elements, espai flotant i entorn per a aquest panell.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Visibilitat</td></tr>
+<tr><td>Pantalla / Ubicació</td><td>Trieu la pantalla i la vora per a aquest panell. Amb múltiples pantalles, A totes les pantalles i A totes les pantalles secundàries creen clons vinculats. Vegeu Còpies independents i Clons.</td></tr>
+<tr><td>Alineació</td><td>Posicioneu el panell al llarg de la vora de la pantalla. L'alineació dels elements controla on se situen els ginys dins del panell.</td></tr>
+<tr><td>Sempre visible</td><td>Mantén el panell visible i reserva espai d'escriptori quan el gestor de finestres ho admeti.</td></tr>
+<tr><td>Ocultació automàtica</td><td>Amaga el panell fins que el punter arriba a la seva àrea d'activació.</td></tr>
+<tr><td>Esquiva activa</td><td>Amaga quan la finestra activa toca l'àrea del panell, i mostra el panell quan el punter hi entra.</td></tr>
+<tr><td>Esquiva maximitzada</td><td>Amaga només quan una finestra maximitzada està activa en aquesta pantalla, i mostra el panell quan el punter hi entra.</td></tr>
+<tr><td>Esquiva totes les finestres</td><td>Amaga quan qualsevol finestra toca l'àrea del panell, i mostra el panell quan el punter hi entra.</td></tr>
+<tr><td>Les finestres van per sota</td><td>Mantén el panell per sobre de les finestres; les finestres es poden col·locar per sota d'ell.</td></tr>
+<tr><td>Les finestres poden cobrir</td><td>Deixa que les finestres cobrin el panell. El panell passa al davant quan el punter arriba a la vora de la pantalla.</td></tr>
+<tr><td>Les finestres sempre cobren</td><td>Mantén les finestres per sobre del panell en tot moment; el panell es queda darrere d'elles.</td></tr>
+<tr class="group"><td colspan="2">Retard</td></tr>
+<tr><td>Retard / Mostra / Amaga</td><td>Estableix el temps d'espera abans de mostrar o ocultar, en mil·lisegons. Els retards més llargs redueixen l'activació accidental.</td></tr>
+<tr class="group"><td colspan="2">Accions</td></tr>
+<tr><td>Seguir <span class="advanced">Avançat</span></td><td>Tria quines accions d'àrea buida de la finestra activa segueix: Finestra activa de la pantalla actual o Finestra activa de totes les pantalles.</td></tr>
+<tr><td>Botó esquerre / Arrossegar finestra activa <span class="advanced">Avançat</span></td><td>Activa arrossegar des de l'espai buit del dock per moure o maximitzar/restaurar la finestra activa seguida.</td></tr>
+<tr><td>Botó del mig / Tancar finestra activa <span class="advanced">Avançat</span></td><td>Activa fer clic amb el botó del mig a l'espai buit del dock per tancar la finestra activa seguida.</td></tr>
+<tr><td>Roda del ratolí <span class="advanced">Avançat</span></td><td>Tria què fa la roda sobre l'espai buit del dock: Cap acció, Cicle per escriptoris, Cicle per activitats, Cicle per tasques o Cicle i minimitza tasques.</td></tr>
+<tr class="group"><td colspan="2">Elements</td></tr>
+<tr><td>Mostra informació sobre eines del títol en passar el ratolí</td><td>Mostra informació sobre eines compacta del títol del widget. Les previsualitzacions de finestres de tasca es controlen per separat mitjançant l'acció de passar el ratolí sobre la tasca.</td></tr>
+<tr><td>Amplia widgets en passar el ratolí</td><td>Permet que els widgets s'ampliïn amb el dock. Desactiva això per mantenir les icones dels widgets nítides; les icones de tasques i els llançadors encara s'amplien.</td></tr>
+<tr><td>Expandeix la finestra emergent amb la roda del ratolí</td><td>Desplaça sobre un widget compatible per mostrar o ocultar la seva finestra emergent.</td></tr>
+<tr><td>Ajusta la mida automàticament quan sigui necessari</td><td>Redueix els elements quan superen la longitud disponible i torna a ampliar-los quan hi caben.</td></tr>
+<tr><td>Activa dreceres globals basades en la posició</td><td>Permet que les dreceres globals basades en la posició activin els elements d'aquest dock. Només un dock per disseny hauria d'utilitzar això.</td></tr>
+<tr class="group"><td colspan="2">Flotant</td></tr>
+<tr><td>Utilitza sempre l'espai flotant per a la interacció de l'usuari <span class="advanced">Avançat</span></td><td>Inclou l'espai flotant en l'àrea utilitzada per a la interacció amb ginys i finestres.</td></tr>
+<tr><td>Amaga l'espai flotant per a les finestres maximitzades <span class="advanced">Avançat</span></td><td>Elimina l'espai flotant quan una finestra maximitzada necessita la vora de la pantalla.</td></tr>
+<tr><td>Retarda l'amagament de l'espai flotant fins que el ratolí surt <span class="advanced">Avançat</span></td><td>Espera que el punter surti abans d'amagar l'espai, per evitar clics accidentals en elements propers.</td></tr>
+<tr><td>Reflecteix l'espai flotant quan es mostra <span class="advanced">Avançat</span></td><td>En el mode Sempre visible, reflecteix l'espai al costat oposat del panell.</td></tr>
+<tr class="group"><td colspan="2">Entorn</td></tr>
+<tr><td>Eleva en canviar d'escriptori <span class="advanced">Avançat</span></td><td>Mostra temporalment el panell quan canvia l'escriptori virtual. No s'utilitza en els modes Sempre visible o Finestres per darrere.</td></tr>
+</tbody></table></div>
+<h3 id="appearance">Aparença</h3>
+<p class="note">Marges, Colors, Radi/Ombra, Ajustos dinàmics de longitud, Visibilitat dinàmica i Excepcions requereixen el mode Avançat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Elements</td></tr>
+<tr><td>Estil del panell</td><td>Trieu Clàssic o Modern per aplicar un predefinit. En qualsevol estil, utilitzeu els interruptors sota Estil del panell per configurar independentment la disposició dels elements, el fons contornat, l'espaiat mínim entre elements, l'espai flotant automàtic i els indicadors de tasca compactes.</td></tr>
+<tr><td>Mantén els elements del panell junts</td><td>Utilitza un sol grup per als elements del panell, incloent-hi quan l'alineació del panell és Justificar.</td></tr>
+<tr><td>Utilitza el fons inserit amb un contorn</td><td>Utilitza el fons predefinit amb un contorn i estil per al seu espaiat, cantonades arrodonides i ombra.</td></tr>
+<tr><td>Utilitza un espaiat mínim més ample entre elements</td><td>Augmenta l'espaiat mínim al voltant dels elements del panell. Els valors més grans establerts amb els controls de marge encara s'apliquen.</td></tr>
+<tr><td>Utilitzar un espaiat flotant automàtic</td><td>Calcular un espaiat al cantó de la pantalla a partir de la mida de la icona quan no s'ha definit un valor d'espaiat específic.</td></tr>
+<tr><td>Utilitzar indicadors de tasca compactes</td><td>Utilitzar el disseny compacte per als indicadors de tasca de Latte. Trieu la forma de l'indicador a Efectes.</td></tr>
+<tr><td>Restaurar el preajust</td><td>El botó a la part inferior d'Editar Dock restaura immediatament Comportament, Aparença, Efectes i totes les pestanyes de Tasques al preajust de Dock inclòs per a l'estil Clàssic/Modern actual, incloent-hi les opcions ocultes pel mode Avançat. Es mantenen la pantalla, el cantó del dock, els llançadors i els ginys. L'alineació, la visibilitat i els retards es reinicialitzen. La compartició de llançadors torna al grup local predeterminat mantenint una còpia de la llista efectiva de llançadors; les llistes compartides d'altres docks no canvien. Els colors personalitzats i les substitucions d'indicadors es reinicialitzen. El preajust combina la plantilla de Dock per defecte inclosa amb els valors predeterminats de l'esquema de configuració. Això és independent de simplement canviar l'Estil del Dock. Clàssic desactiva per defecte els cinc interruptors d'aparença sota Estil del Dock. Modern els activa. Ambdós preajustos utilitzen els mateixos valors predeterminats per a les opcions restants.</td></tr>
+<tr><td>Mida absoluta / Mida relativa</td><td>Definir la mida de la icona en píxels o com una proporció de la pantalla. La mida relativa és útil en configuracions d'alta densitat de píxels (DPI) o de pantalla múltiple.</td></tr>
+<tr><td>Ampliar en passar el punter</td><td>Definir quant creixen els elements sota el punter.</td></tr>
+<tr class="group"><td colspan="2">Longitud</td></tr>
+<tr><td>Màxim / Mínim / Desplaçament</td><td>Definir la longitud màxima i mínima del dock i moure'l al llarg del cantó de la pantalla.</td></tr>
+<tr><td>Ajustos dinàmics de longitud <span class="advanced">Avançat</span></td><td>Maximitza la longitud del panell en presència de finestres maximitzades: estén el dock a la longitud completa quan hi ha una finestra maximitzada. El fons ha d'estar activat.</td></tr>
+<tr class="group"><td colspan="2">Marges</td></tr>
+<tr><td>Marges / Longitud / Gruix / Espai flotant <span class="advanced">Avançat</span></td><td>Estableix el marge extern al llarg del dock, el marge a través del seu gruix i l'espai entre el dock i la vora de la pantalla.</td></tr>
+<tr><td>Espai des de les finestres maximitzades (px) <span class="advanced">Avançat</span></td><td>Reserva entre 0 i 128 píxels addicionals entre les finestres i aquest dock en el mode Sempre Visible. Predeterminat: 0. Això és independent de l'espai flotant de la vora de la pantalla i se suma a qualsevol espai reflectit; els modes d'ocultació automàtica no reserven aquest espai.</td></tr>
+<tr class="group"><td colspan="2">Colors</td></tr>
+<tr><td>Colors / Paleta <span class="advanced">Avançat</span></td><td>Tria Colors del Tema de Plasma, Colors Foscos, Colors Clar, Colors Personalitzats del Disseny, Invertits o Colors Intel·ligents Basats en el Fons de l'Escriptori. Els Colors Personalitzats del Disseny utilitzen l'esquema de colors del disseny; els Intel·ligents segueixen el fons de pantalla.</td></tr>
+<tr><td>Utilitza un color de fons personalitzat / Color de dia <span class="advanced">Avançat</span></td><td>Substitueix el fons d'aquest dock amb un color triat; el contrast del text s'ajusta automàticament. Desactivat per defecte. Les paletes derivades de la finestra i la paleta de Plasma per als applets expandits mantenen la prioritat. L'opacitat continua sent una configuració de fons separada.</td></tr>
+<tr><td>Canvia els colors de fons segons l'hora del dia / Color de nit / Inici del dia (hora local) / Inici de la nit (hora local) <span class="advanced">Avançat</span></td><td>Opcionalment, canvia entre dos colors personalitzats utilitzant horaris locals de 24 hores. Per defecte: dia 07:00, nit 19:00. L'hora d'inici és inclusiva. Els intervals poden creuar la mitjanit; si les hores són iguals, es manté el color de dia tot el dia. Desactivar la programació manté el color de dia. El rellotge es comprova cada segon, també després de reprendre.</td></tr>
+<tr class="group"><td colspan="2">Fons</td></tr>
+<tr><td>Fons</td><td>El Fons és un interruptor d'activació/desactivació. Quan està activat, utilitzeu els controls següents per establir el gruix, l'opacitat, el radi i l'ombra.</td></tr>
+<tr><td>Opacitat / Opacitat Ocupada</td><td>Estableix l'opacitat del fons. El mateix control lliscant s'anomena Opacitat Ocupada quan estan activades tant Amaga el fons quan no és necessari com Prefereix fons opac quan toca qualsevol finestra. Def. restaura el valor predeterminat del tema.</td></tr>
+<tr><td>Radi / Ombra <span class="advanced">Avançat</span></td><td>Estableix el radi de les cantonades del fons i la mida de l'ombra. Def. utilitza el valor predeterminat del tema.</td></tr>
+<tr><td>Difuminat / Ombres / Contorn / Totes les cantonades <span class="advanced">Avançat</span></td><td>Activa el difuminat del fons, l'ombra del fons, el contorn i les cantonades arrodonides. Totes les cantonades només està disponible per a certes geometries flotants/justificades.</td></tr>
+<tr class="group"><td colspan="2">Visibilitat Dinàmica</td></tr>
+<tr><td>Prefereix fons opac quan toca qualsevol finestra <span class="advanced">Avançat</span></td><td>Elimina la transparència del fons mentre una finestra toca el dock.</td></tr>
+<tr><td>Amaga el fons quan no és necessari <span class="advanced">Avançat</span></td><td>Amaga el fons excepte quan una finestra toca el dock o el fons de l'escriptori està ocupat.</td></tr>
+<tr><td>Amaga l'ombra del fons per a finestres maximitzades <span class="advanced">Avançat</span></td><td>Amaga l'ombra del fons mentre una finestra maximitzada activa toca el dock.</td></tr>
+<tr class="group"><td colspan="2">Excepcions</td></tr>
+<tr><td>Preferir el fons i els colors de Plasma per als applets ampliats <span class="advanced">Avançat</span></td><td>Utilitzar un fons opac d'estil Plasma i els colors de Plasma mentre les finestres emergents dels widgets estan ampliades.</td></tr>
+</tbody></table></div>
+<h3 id="effects">Efectes</h3>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Ombres</td></tr>
+<tr><td>Ombres</td><td>Activar o desactivar les ombres dels widgets. La mida i l'opacitat es desactiven quan les ombres estan desactivades.</td></tr>
+<tr><td>Mida / Opacitat</td><td>Establir la mida i l'opacitat de l'ombra del widget.</td></tr>
+<tr><td>Color predeterminat / Color del tema / color personalitzat</td><td>Trieu el color d'ombra predeterminat, un color de la paleta del tema o feu clic a la mostra de color per triar un color personalitzat.</td></tr>
+<tr class="group"><td colspan="2">Animacions</td></tr>
+<tr><td>Animacions / x1 / x2 / x3</td><td>Activar o desactivar totes les animacions de la barra de tasques. x1 és la velocitat normal, x2 és més lenta i x3 és la més lenta.</td></tr>
+<tr class="group"><td colspan="2">Indicadors</td></tr>
+<tr><td>Indicadors</td><td>Activar o desactivar els indicadors de tasca activa. Quan estan activats, trieu l'indicador de Latte o un connector d'indicador personalitzat; les opcions específiques del connector apareixeran a la seva pestanya.</td></tr>
+<tr><td>Utilitzar punts d'estil macOS</td><td>L'indicador de Latte utilitza punts d'estil macOS per defecte quan els indicadors de tasca compactes estan activats a l'aparença. Desactiveu «Utilitzar punts d'estil macOS» a Efectes per triar manualment Línia o Punts.</td></tr>
+<tr><td>Utilitzar els colors de la icona de l'aplicació</td><td>Opcionalment, acolorir els indicadors de tasca amb el color dominant de la icona de cada aplicació, ajustat per al contrast amb el fons. Seleccioneu Línia per a subratllats acolorits. Desactivat per defecte; els applets mantenen els colors de la paleta.</td></tr>
+</tbody></table></div>
+<h3 id="tasks">Tasques</h3>
+<p>Els llançadors de tasques comencen a reordenar-se en altres panells que comparteixen la llista de llançadors després de deixar anar la icona. L'ordre pot trigar un moment a estabilitzar-se. Els espais dels separadors es mantenen en el seu lloc quan el panell receptor desa l'ordre nova. Arrossegar una aplicació ja fixada manté el seu llançador existent, incloent-hi quan aquest llançador segueix l'aplicació predeterminada del sistema. Els nous separadors ocupen espai una vegada arriben a l'espai seleccionat.</p>
+<p>Quan afegiu o arrossegueu un giny al costat d'un separador a la vora de l'àrea de tasques o de la safata del sistema, el giny es col·loca a l'exterior del separador. El separador es manté al costat de l'àrea de tasques o de la safata.</p>
+<p>Quan fixeu una aplicació des del menú d'aplicacions, la seva icona apareix abans de qualsevol separador al final de la llista de tasques. El separador de la dreta pertany al grup fixat, de manera que les aplicacions en execució que no estan fixades apareixen més enllà.</p>
+<p>L'espai de la tasca es manté ressaltat i la icona roman visible mentre l'arrossegueu per reordenar les tasques. Quan entra una nova tasca, el panell comença a reservar el seu espai des de la mida inicial de l'animació.</p>
+<p class="note">Les opcions Insígnies, Animacions, Desplaçament, Accions i algunes opcions d'Interacció/Filtres requereixen el mode Avançat. Mostrar només els llançadors i amagar totes les tasques desactiva les accions i els filtres relacionats amb les finestres.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Insígnies</td></tr>
+<tr><td>Notificacions de les tasques <span class="advanced">Avançat</span></td><td>Mostra el nombre de notificacions no llegides a les icones de les tasques.</td></tr>
+<tr><td>Informació de progrés per a les tasques <span class="advanced">Avançat</span></td><td>Mostra insígnies de progrés, per exemple mentre Dolphin copia fitxers.</td></tr>
+<tr><td>Àudio reproduint-se des de les tasques <span class="advanced">Avançat</span></td><td>Mostra una insígnia d'àudio per a les aplicacions que estan reproduint so. La coincidència prefereix identificadors explícits d'escriptori/aplicació. La informació genèrica del procés del navegador no és suficient per identificar una PWA concreta; els fluxos ambigus es deixen sense assignar en lloc d'assignar controls d'àudio a aplicacions no relacionades. Les aplicacions Electron independents encara poden coincidir amb el seu propi procés d'àudio. L'estat de reproducció i l'activitat de sortida amaguen els fluxos en pausa fins i tot quan l'aplicació manté oberta la seva connexió d'àudio. Sense l'estat del reproductor, es tolera un silenci breu d'aproximadament un segon.</td></tr>
+<tr><td>Color destacat per a la insígnia de notificació <span class="advanced">Avançat</span></td><td>Utilitza una insígnia de notificació més forta, normalment vermella. Requereix Notificacions des de les tasques.</td></tr>
+<tr><td>Canvia el volum en desplaçar la insígnia d'àudio <span class="advanced">Avançat</span></td><td>Fes clic a la insígnia d'àudio per silenciar/activar el so, o desplaça el ratolí sobre ella per canviar el volum. Requereix Àudio reproduint-se des de les tasques.</td></tr>
+<tr class="group"><td colspan="2">Interacció</td></tr>
+<tr><td>Els llançadors s'afegeixen només a l'applet de tasques actual</td><td>Afegeix els llançadors soltats només a aquest widget de tasques, no com a widgets separats ni a altres widgets de tasques.</td></tr>
+<tr><td>Accions de finestra al menú contextual <span class="advanced">Avançat</span></td><td>Mostra accions específiques de la finestra al menú contextual de la tasca.</td></tr>
+<tr><td>La finestra de previsualització es comporta com una finestra emergent <span class="advanced">Avançat</span></td><td>Obre les previsualitzacions com una finestra emergent en lloc d'un consell d'eina. L'acció en passar el ratolí ha de sol·licitar previsualitzacions; això només canvia com es mostren.</td></tr>
+<tr><td>Els dreceres basades en la posició s'apliquen només a les tasques actuals<span class="advanced">Avançat</span></td><td>Limita les dreceres globals basades en la posició a aquest giny de tasques.</td></tr>
+<tr class="group"><td colspan="2">Filtres</td></tr>
+<tr><td>Mostra només les tasques de la pantalla actual</td><td>Mostra les finestres de la pantalla d'aquest dock.</td></tr>
+<tr><td>Mostra només les tasques de l'escriptori actual</td><td>Mostra les finestres de l'escriptori virtual actual.</td></tr>
+<tr><td>Mostra la secció de finestres minimitzades</td><td>Desactivat per defecte. Mostra les finestres minimitzades com a icones individuals després de les tasques ordinàries. Passa el cursor o centra el focus en una icona per veure el títol de l'aplicació i de la finestra, i activa-la per restaurar la finestra. Quan una aplicació té diverses finestres minimitzades, una insignia petita mostra la seqüència de cada finestra i el total per a aquesta aplicació. La secció segueix els filtres de tasques i comparteix el desplaçament per desbordament de tasques. Activa el desplaçament per accedir a les finestres fora de la pantalla utilitzant l'acció configurada de la roda del ratolí o del pas del cursor per la vora. El mode només de llançadors l'amaga.</td></tr>
+<tr><td>Mostra només les tasques dels llançadors<span class="advanced">Avançat</span></td><td>Mostra finestres només per a aplicacions que ja estan a la llista de llançadors.</td></tr>
+<tr><td>Mostra només els llançadors i amaga totes les tasques<span class="advanced">Avançat</span></td><td>Mostra les icones dels llançadors i amaga les tasques en execució. Això també desactiva les accions i els filtres relacionats amb les finestres.</td></tr>
+<tr><td>Mostra només les tasques agrupades per a la mateixa aplicació<span class="advanced">Avançat</span></td><td>Agrupa les finestres de la mateixa aplicació per defecte.</td></tr>
+<tr class="group"><td colspan="2">Animacions</td></tr>
+<tr><td>Fes rebotar els llançadors quan es desencadenen<span class="advanced">Avançat</span></td><td>Anima els llançadors quan es desencadenen.</td></tr>
+<tr><td>Fes rebotar les tasques que necessiten atenció<span class="advanced">Avançat</span></td><td>Anima les tasques que sol·liciten atenció.</td></tr>
+<tr><td>Fes lliscar les finestres individuals cap a dins i cap a fora<span class="advanced">Avançat</span></td><td>Anima les finestres individuals noves i tancades.</td></tr>
+<tr><td>Les tasques agrupades fan rebotar les seves finestres noves <span class="advanced">Avançat</span></td><td>Anima una finestra nova dins d'un grup de tasques.</td></tr>
+<tr><td>Les tasques agrupades fan lliscar les seves finestres tancades <span class="advanced">Avançat</span></td><td>Anima una finestra tancada dins d'un grup de tasques.</td></tr>
+<tr class="group"><td colspan="2">Llançadors</td></tr>
+<tr><td>Grup únic</td><td>Donar a aquest giny de tasques la seva pròpia llista de llançadors.</td></tr>
+<tr><td>Grup de disseny</td><td>Compartir llançadors amb ginys de tasques en el mateix disseny. Aquest botó només es mostra quan el dock ja utilitza Grup de disseny.</td></tr>
+<tr><td>Grup global</td><td>Compartir llançadors amb ginys de tasques en tots els dissenys.</td></tr>
+<tr class="group"><td colspan="2">Desplaçament</td></tr>
+<tr><td>Desplaçament <span class="advanced">Avançat</span></td><td>Activa el desplaçament quan les tasques superen l'espai disponible. Això funciona amb qualsevol preconfiguració del dock, incloent-hi quan Mantén els elements del dock junts està activat.</td></tr>
+<tr><td>Manual <span class="advanced">Avançat</span></td><td>Tria Desplaçament desactivat, Només desplaçament vertical/horizontal, o Desplaçament horitzontal i vertical. L'opció de direcció única depèn de l'orientació del dock.</td></tr>
+<tr><td>Automàtic <span class="advanced">Avançat</span></td><td>Activa o desactiva el desplaçament automàtic.</td></tr>
+<tr class="group"><td colspan="2">Accions</td></tr>
+<tr><td>Clic esquerre <span class="advanced">Avançat</span></td><td>Acció per a un clic esquerre en una tasca: Cap, Tancar finestra o grup, Nova instància, Minimitzar/Restaurar, Cicle entre tasques, Alternar agrupament de tasques, Presentar finestres, Previsualitzar finestres, Ressaltar finestres, o Previsualitzar i ressaltar finestres.</td></tr>
+<tr><td>Clic central <span class="advanced">Avançat</span></td><td>Acció per a un clic central en una tasca. Les opcions són les mateixes que per a Clic esquerre.</td></tr>
+<tr><td>Passar el ratolí <span class="advanced">Avançat</span></td><td>Accions en passar el ratolí: Cap, Previsualitzar finestres, Ressaltar finestres, o Previsualitzar i ressaltar finestres. Les descripcions emergents del títol de la tasca es controlen a Comportament.</td></tr>
+<tr><td>Roda del ratolí <span class="advanced">Avançat</span></td><td>Accions de la roda: Cap, Cicle per les tasques o Cicle i minimitza les tasques.</td></tr>
+<tr><td>Modificador + clic <span class="advanced">Avançat</span></td><td>Manteniu premut Shift, Ctrl, Alt o Meta i feu clic esquerre, central o dret per executar una acció addicional. Trieu el modificador, el botó i l'acció; això és independent de les accions principals anteriors.</td></tr>
+</tbody></table></div>
+<p class="note">El filtre d'activitat actual està ocult a Plasma 6 perquè el suport de KActivities no és fiable.</p></section><section id="configure-latte"><h2>Configura Latte</h2><p class="note">L'Editor de dissenys gestiona els dissenys i els seus panells. Les Preferències controlen el comportament de tota l'aplicació. Aplicar desa els canvis pendents a la pestanya actual; Restablir recupera l'estat desat d'aquesta pestanya; Restaurar els valors per defecte prepara els valors per defecte per a la seva revisió. Pantalles... gestiona les referències de pantalla emmagatzemades.</p>
+<h3 id="layouts">Editor de dissenys</h3>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr><td>Un sol disseny en tot moment</td><td>Utilitza un sol disseny per a totes les activitats.</td></tr>
+<tr><td>Diversos dissenys basats en activitats</td><td>Assigna diferents dissenys a les activitats; diversos dissenys poden romandre carregats.</td></tr>
+<tr><td>Canvia</td><td>Activa el disseny seleccionat. Apliqueu primer els canvis pendents; Latte no canviarà si hi ha canvis no desats.</td></tr>
+<tr><td>Activitats...</td><td>Obre el gestor d'Activitats de Plasma. Utilitzeu la columna Activitats o Activat per assignar aquest disseny a les activitats.</td></tr>
+<tr><td>Nou / Duplica / Elimina</td><td>Crea, copia o elimina un disseny. Duplicar aquí copia tot el disseny, no un panell individual. Els dissenys actius i bloquejats no es poden eliminar.</td></tr>
+<tr><td>Activat</td><td>Assigna aquest disseny a una o més activitats perquè les Activitats de Plasma el puguin activar. Només es mostra en el mode de diversos dissenys.</td></tr>
+<tr><td>Només lectura</td><td>Protegeix la configuració del disseny de canvis.</td></tr>
+<tr><td>Detalls...</td><td>Obre el diàleg de detalls del disseny per a icona, colors personalitzats, marge de la finestra emergent i visibilitat del menú contextual.</td></tr>
+<tr><td>Docks...</td><td>Obre la llista de docks per a aquest disseny: nom, pantalla, vora, alineació, ginys inclosos, i nou/duplicar/eliminar/importar/exportar.</td></tr>
+<tr><td>Importar... / Exportar...</td><td>Importa un disseny des d'un fitxer local o de la KDE Store; exporta'l per a còpia de seguretat o com a plantilla. Fitxer → Importar Configuració / Exportar Configuració gestiona una còpia de seguretat completa de l'aplicació.</td></tr>
+<tr><td>Nom / Al Menú / Activitats</td><td>La llista de dissenys té les columnes Nom, Al Menú i Activitats. Edita Nom i Activitats directament a la llista; Al Menú controla si el disseny apareix al menú de Dissenys del dock.</td></tr>
+</tbody></table></div>
+<h3 id="layout-details">Detalls del Dissenys</h3>
+<p>Obre amb Editor de Dissenys → Detalls... per a editar el disseny seleccionat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr><td>Disseny</td><td>Trieu quin disseny editar.</td></tr>
+<tr><td>Icona</td><td>Trieu una icona per al disseny. El botó d'esborrar l'elimina.</td></tr>
+<tr><td>Colors Personalitzats</td><td>Trieu un fitxer d'esquema de colors personalitzat per a aquest disseny.</td></tr>
+<tr><td>Marge de la Finestra Emergent</td><td>Estableix el marge utilitzat per les finestres emergents del disseny; desactivat significa utilitzar el predeterminat.</td></tr>
+<tr><td>Mostra al menú contextual de dissenys quan sigui possible</td><td>Mostra aquest disseny al menú de Dissenys del dock quan l'activitat actual ho permeti.</td></tr>
+</tbody></table></div>
+<h3 id="docks-dialog">Diàleg de Docks</h3>
+<p>Obre amb Editor de Dissenys → Docks... per a gestionar els docks del disseny seleccionat.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr class="group"><td colspan="2">Columnes</td></tr>
+<tr><td>Nom</td><td>Nom del dock. Feu doble clic per a reanomenar-lo.</td></tr>
+<tr><td>Pantalla</td><td>Pantalla a la qual pertany el panell, incloent-hi Primària, Totes les pantalles i Totes les pantalles secundàries.</td></tr>
+<tr><td>Vora</td><td>Vora de la pantalla utilitzada pel panell.</td></tr>
+<tr><td>Alineació</td><td>Alineació del panell al llarg de la seva vora.</td></tr>
+<tr><td>Inclou</td><td>Eines i subcontenidors inclosos al panell. Aquesta columna és de només lectura.</td></tr>
+<tr class="group"><td colspan="2">Botons</td></tr>
+<tr><td>Nou</td><td>Crea un panell a partir d'una plantilla.</td></tr>
+<tr><td>Duplica</td><td>Crea una còpia independent del panell seleccionat, o un altre clon si el panell seleccionat és un clon.</td></tr>
+<tr><td>Elimina</td><td>Elimina el panell seleccionat. Els clons s'eliminen amb el seu original.</td></tr>
+<tr><td>Importa...</td><td>Importa un panell des d'un fitxer de plantilla local.</td></tr>
+<tr><td>Exporta...</td><td>Exporta el panell seleccionat per a còpia de seguretat o com a plantilla. El diàleg de plantilles permet triar quina configuració d'eines incloure; omet les eines amb dades personals com ara comptes de correu electrònic o calendari.</td></tr>
+</tbody></table></div>
+<h3 id="screens-dialog">Diàleg de Pantalles</h3>
+<p>Obre amb Fitxer → Pantalles... per netejar les referències de pantalla desades per Latte.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr><td>Llista de pantalles</td><td>Llista les referències de pantalla emmagatzemades a Latte, incloent-hi les pantalles que ja no estan connectades.</td></tr>
+<tr><td>Selecciona pantalles obsoletes</td><td>Marca només les pantalles que ja no existeixen. No es poden eliminar les pantalles actives ni les utilitzades per un disseny.</td></tr>
+<tr><td>Desmarca-ho tot</td><td>Neteja la selecció abans de triar un conjunt diferent.</td></tr>
+</tbody></table></div>
+<h3 id="preferences">Preferències</h3>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr><td>Mostra una finestra informativa per a l'activació automàtica dels dissenys</td><td>Mostra una finestra d'informació quan un disseny s'activa automàticament.</td></tr>
+<tr><td>Efecte Parabòlic / Petit / Mitjà / Gran</td><td>Estableix la dispersió global del zoom en passar el ratolí sobre els elements veïns.</td></tr>
+<tr><td>Activa l'inici automàtic durant l'arrencada</td><td>Inicia Latte quan inicies sessió.</td></tr>
+<tr><td>Utilitza l'estil 3D per a les insígnies de notificació i dreceres</td><td>Utilitza un estil dimensional per a les insígnies de notificació i dreceres.</td></tr>
+<tr><td>Mantén premut ⌘ per mostrar les insígnies de dreceres</td><td>Desactivat per defecte. Mantén premuda la tecla Meta durant aproximadament un segon per mostrar els docks ocults i les insígnies de dreceres de les seves tasques i ginys; deixa anar la tecla per ocultar-los de nou. Amb la configuració predeterminada de Plasma, el seu propi llançador també s'obre quan es deixa anar Meta; canvia aquesta drecera a Configuració del sistema si no vols això.</td></tr>
+<tr><td>Influència del marge de gruix</td><td>Tria com afecten els marges de gruix dels elements al disseny: 0%, 50% o 100%.</td></tr>
+<tr><td>Informa l'escriptori de Plasma sobre l'espai d'escriptori disponible</td><td>Publica l'espai d'escriptori disponible a Plasma perquè els panells i les finestres el puguin utilitzar.</td></tr>
+<tr><td>Menú contextual / Accions...</td><td>Tria quines accions del menú contextual del dock es mostren sempre. Les accions excloses només estan disponibles en mode d'edició.</td></tr>
+<tr><td>Pantalles / retard de reacció als canvis</td><td>Estableix quant de temps espera Latte abans de reaccionar als canvis de pantalla, en mil·lisegons. Augmenta'l si el maquinari informa de transicions inestables.</td></tr>
+</tbody></table></div>
+<h3 id="context-menu-actions">Accions del menú contextual</h3>
+<p>Obre amb Preferències → Menú contextual → Accions... per triar quines accions del dock són sempre visibles.</p>
+<div class="table-wrap"><table><thead><tr><th>Opció a la finestra</th><th>Què controla</th></tr></thead><tbody>
+<tr><td>Accessible sempre</td><td>Les accions d'aquesta llista es mostren al menú contextual del dock en tot moment.</td></tr>
+<tr><td>Accessible només en mode d'edició</td><td>Les accions d'aquesta llista apareixen només mentre es modifica el panell. Mou les accions entre les llistes per canviar això.</td></tr>
+<tr><td>Mou entre llistes</td><td>Selecciona una acció i utilitza els botons de fletxa per moure-la. Restableix i Restaura els valors predeterminats recuperen el conjunt predeterminat.</td></tr>
+</tbody></table></div></section><section id="copies-and-clones"><h2>Còpies independents i clons</h2><p class="note">Un duplicat i un clon semblen similars a la pantalla, però es comporten de manera diferent. Un duplicat és un panell nou i independent. Un clon és el mateix panell mostrat en una altra pantalla. Tria segons si vols configurar aquest panell per separat.</p>
+<h3 id="create-independent-copy">Crea una còpia independent</h3>
+<p>Utilitza qualsevol d'aquests mètodes en el panell original, no en un clon:</p>
+<ul><li>Fes clic amb el botó dret al panell i tria <strong>Duplica el panell</strong>.</li><li>Obre <strong>Edita el panell</strong> i tria <strong>Afegeix… → Duplica el panell</strong>.</li><li>Obre <strong>Configura Latte → Editor de dissenys → Panells…</strong>, selecciona el panell i tria <strong>Duplica</strong>.</li></ul>
+<p>La còpia rep nous IDs de panell i de giny i copia la configuració actual una sola vegada. Després d'això, pots canviar-ne la pantalla, la vora, la mida, l'aparença, el comportament, els ginys i els llançadors de manera independent. És una entrada separada en el disseny i es pot eliminar amb <strong>Elimina el panell</strong>.</p>
+<p>Duplicar un clon des del diàleg de Panells crea un altre clon del mateix original, no un panell independent. Per crear un panell independent a partir d'un clon, primer obre <strong>Edita el panell original…</strong> i duplica l'original.</p>
+<p>Si l'original utilitza <strong>Grup global</strong>, la còpia també l'utilitza i comparteix els llançadors. Tria <strong>Grup únic</strong> en la còpia si vols una llista de llançadors separada. <strong>Grup de disseny</strong> només està disponible quan el dock ja l'utilitza.</p>
+<h3 id="create-clone">Crea clons</h3>
+<p>Els clons es creen pel mode de pantalla d'un dock original, no per <strong>Duplicar Dock</strong>:</p>
+<ul><li><strong>Edita Dock → Pantalla → En Totes les Pantalles</strong>: l'original es queda a la pantalla principal, i Latte crea un clon a cada pantalla secundària.</li><li><strong>Edita Dock → Pantalla → En Totes les Pantalles Secundàries</strong>: l'original es queda a una pantalla secundària, i Latte crea clons a les pantalles secundàries restants.</li></ul>
+<p>Latte crea i elimina clons automàticament quan canvia la disposició de les pantalles. Per eliminar els clons, configura l'original de nou a <strong>En Pantalla Principal</strong> o a una pantalla específica. Un clon no té una entrada <strong>Eliminar Dock</strong> al seu menú contextual; utilitza <strong>Edita Dock Original…</strong> allà per configurar-lo.</p>
+<p>Obrir l'editor des d'un clon sempre obre la configuració del dock original, perquè els clons comparteixen la configuració del dock. Els ajustos dels widgets canviats en un clon també actualitzen l'original.</p>
+<h3 id="differences">Diferències d'un cop d'ull</h3>
+<div class="table-wrap"><table class="comparison"><thead><tr><th>Aspecte</th><th>Còpia independent</th><th>Clon</th></tr></thead><tbody>
+<tr><td>Creat per</td><td>Duplicar Dock</td><td>Pantalla → En Totes les Pantalles o En Totes les Pantalles Secundàries</td></tr>
+<tr><td>Identitat</td><td>Nous IDs de dock i widget</td><td>Una vista vinculada del dock original</td></tr>
+<tr><td>Configuració</td><td>Copiada una vegada, després independent</td><td>Compartida: editar l'original actualitza tots els clons; els ajustos dels widgets canviats en un clon també actualitzen l'original</td></tr>
+<tr><td>Pantalla i vora</td><td>Es pot canviar independentment</td><td>Segueix l'original; no es pot moure ni redimensionar per separat</td></tr>
+<tr><td>Llançadors</td><td>Copiats en la creació; compartició posterior només mitjançant Grup de Disposició o Grup Global</td><td>Sempre reflecteix l'original</td></tr>
+<tr><td>Menú contextual</td><td>Accions completes del dock, incloent-hi Duplicar i Eliminar</td><td>Mostra Editar Dock Original…; Duplicar, Moure, Exportar i Eliminar estan ocults</td></tr>
+<tr><td>Com eliminar</td><td>Eliminar Dock</td><td>Restableix l'original a una sola pantalla</td></tr>
+</tbody></table></div>
+<p><strong>Colors de la icona del giny:</strong> <strong>Utilitza els colors del tema d'icones</strong> al menú contextual d'un giny evita que Latte acolorisca la icona d'aquest giny. La configuració es guarda per giny: els clons la comparteixen amb l'original. Una còpia independent manté el valor que tenia quan es va crear i el pot canviar per separat.</p></section></main></div><footer>Latte Dock NG · Documentació fora de línia. Els idiomes d'interfície no disponibles es mostren en anglès.</footer></body></html>
