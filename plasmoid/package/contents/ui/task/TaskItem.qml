@@ -27,7 +27,18 @@ AbilityItem.BasicItem {
     // cannot first add a full-width slot and then collapse it.
     property bool initialTaskGeometryReady: false
     property bool waitingForLauncherPosition: tasksExtendedManager.launcherPositionIsPending(launcherUrl)
-    occupiesLayoutSlot: taskItem.initialTaskGeometryReady && !waitingForLauncherPosition && !waitingForTaskRowReplacement && !checkingTaskRowReplacement
+    // Keep the original delegate and group identity for wheel actions and
+    // launcher moves. Only its ordinary layout slot follows the section.
+    readonly property int movedWindowCount: {
+        const section = root.minimizedWindows;
+        const ids = model.WinIdList;
+        return section && ids ? ids.filter(id => section.includesWindow([id])).length : 0;
+    }
+    readonly property bool movedToMinimizedSection: movedWindowCount > 0 && !hasShown
+            && !root.minimizedWindows.hasLauncher(launcherUrl, launcherUrlWithIcon)
+    clip: movedToMinimizedSection
+    enabled: !movedToMinimizedSection
+    occupiesLayoutSlot: !movedToMinimizedSection && taskItem.initialTaskGeometryReady && !waitingForLauncherPosition && !waitingForTaskRowReplacement && !checkingTaskRowReplacement
 
     // Keep the last settled separator gap until removal can determine whether
     // a replacement owns this slot. Ordinary removals release it when they start.
@@ -283,10 +294,11 @@ AbilityItem.BasicItem {
                                                                      && (windowsPreviewDlg.activeItem === taskItem)) )
 
     indicator.isGroup: !root.disableAllWindowsFunctionality && taskItem.isGroupParent
+                       && (taskItem.movedWindowCount === 0 || taskItem.windowsCount - taskItem.movedWindowCount > 1)
     indicator.isHovered: taskItem.visualContainsMouse
                          || (windowsPreviewDlg.containsMouse && toolTipDelegate
                              && (toolTipDelegate.parentTask === taskItem))
-    indicator.isMinimized: !root.disableAllWindowsFunctionality && taskItem.isMinimized
+    indicator.isMinimized: !root.disableAllWindowsFunctionality && taskItem.isMinimized && taskItem.movedWindowCount === 0
     indicator.isPressed: taskItem.pressed && taskItem.visualContainsMouse
     indicator.inAttention: !root.disableAllWindowsFunctionality && taskItem.inAttention
     indicator.inRemoving: taskItem.inRemoveStage
@@ -295,11 +307,13 @@ AbilityItem.BasicItem {
 
     indicator.hasActive: !root.disableAllWindowsFunctionality && taskItem.hasActive
     indicator.hasMinimized: !root.disableAllWindowsFunctionality && taskItem.hasMinimized
+                            && (taskItem.movedWindowCount === 0 || taskItem.windowsMinimizedCount > taskItem.movedWindowCount)
     indicator.hasShown: !root.disableAllWindowsFunctionality && taskItem.hasShown
-    indicator.windowsCount: !root.disableAllWindowsFunctionality ? taskItem.windowsCount : 0
-    indicator.windowsMinimizedCount: !root.disableAllWindowsFunctionality ? taskItem.windowsMinimizedCount : 0
+    indicator.windowsCount: !root.disableAllWindowsFunctionality ? Math.max(0, taskItem.windowsCount - taskItem.movedWindowCount) : 0
+    indicator.windowsMinimizedCount: !root.disableAllWindowsFunctionality ? Math.max(0, taskItem.windowsMinimizedCount - taskItem.movedWindowCount) : 0
     indicator.activeWindowIndex: !root.disableAllWindowsFunctionality ? taskItem.activeWindowIndex : -1
-    indicator.windowsMinimizedList: !root.disableAllWindowsFunctionality ? taskItem.windowsMinimizedList : []
+    indicator.windowsMinimizedList: !root.disableAllWindowsFunctionality ? (taskItem.movedWindowCount > 0 ? taskItem.windowsMinimizedList.filter(minimized => !minimized)
+                                                        : taskItem.windowsMinimizedList) : []
 
     indicator.scaleFactor: taskItem.parabolicItem.zoom
     indicator.panelOpacity: taskItem.abilities.myView.backgroundOpacity
@@ -738,7 +752,8 @@ AbilityItem.BasicItem {
     }
     function updateIsolatedPreview() {
         var windows = isGroupParent ? subWindows.previewWindows() : [];
-        if (!isGroupParent && model.WinIdList && model.WinIdList.length > 0) {
+        if (!isGroupParent && !root.minimizedWindows?.includesWindow(model.WinIdList)
+                && model.WinIdList && model.WinIdList.length > 0) {
             windows.push({uuid: String(model.WinIdList[0]), appName: String(model.AppName || appName || ""),
                 title: String(model.display || appName),
                 launcherUrl: String(model.LauncherUrlWithoutIcon || model.LauncherUrl || launcherUrl || ""),
@@ -1009,7 +1024,11 @@ AbilityItem.BasicItem {
                 }
             }
 
-            tasksModel.requestPublishDelegateGeometry(taskItem.modelIndex(), globalChoords, taskItem);
+            if (movedWindowCount === 0) {
+                tasksModel.requestPublishDelegateGeometry(taskItem.modelIndex(), globalChoords, taskItem);
+            } else if (isGroupParent) {
+                subWindows.publishOrdinaryGeometries(globalChoords);
+            }
         }
     }
 

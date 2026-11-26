@@ -10,6 +10,7 @@
 #include <QQuickItem>
 #include <QQuickView>
 #include <QSignalSpy>
+#include <QStandardItemModel>
 #include <QWheelEvent>
 #include <QtQml/qqml.h>
 
@@ -75,6 +76,7 @@ private Q_SLOTS:
     void indicatorShapeFollowsSavedOption_data();
     void indicatorShapeFollowsSavedOption();
     void taskIconRasterSizeStaysStableDuringZoom();
+    void minimizedSectionTracksGroupedWindows();
     void containerWheelPreservesTaskCyclingWithOverflow();
     void containmentWheelScrollsTaskViewport();
     void editModeBlockerLeavesRightClicksToContextMenu();
@@ -4369,6 +4371,93 @@ Item {
     QCOMPARE(raster->property("source").toString(), QStringLiteral("folder"));
     QVERIFY(icon->setProperty("active", true));
     QCOMPARE(raster->property("active").toBool(), true);
+}
+
+class MinimizedSectionTestModel : public QStandardItemModel
+{
+    Q_OBJECT
+    Q_PROPERTY(QStringList launcherList READ launcherList CONSTANT)
+
+  public:
+    enum Role
+    {
+        Window = Qt::UserRole + 1,
+        Minimized,
+        Group,
+        WindowIds,
+        LauncherUrl
+    };
+
+    QHash<int, QByteArray> roleNames() const override
+    {
+        auto roles = QStandardItemModel::roleNames();
+        roles.insert(Window, "IsWindow");
+        roles.insert(Minimized, "IsMinimized");
+        roles.insert(Group, "IsGroupParent");
+        roles.insert(WindowIds, "WinIdList");
+        roles.insert(LauncherUrl, "LauncherUrlWithoutIcon");
+        return roles;
+    }
+
+    QStringList launcherList() const { return { QStringLiteral("pinned") }; }
+    Q_INVOKABLE int launcherPosition(const QString &url) const { return launcherList().indexOf(url); }
+    Q_INVOKABLE bool inCurrentActivity(const QString &url) const { return launcherList().contains(url); }
+    Q_INVOKABLE QModelIndex makeModelIndex(int row, int child = -1) const
+    {
+        const auto parent = index(row, 0);
+        return child < 0 ? parent : index(child, 0, parent);
+    }
+    Q_INVOKABLE void requestToggleMinimized(const QModelIndex &index) { setData(index, !index.data(Minimized).toBool(), Minimized); }
+    Q_INVOKABLE void requestActivate(const QModelIndex &index) { activatedWindow = index.data(WindowIds).toList().value(0).toString(); }
+
+    QString activatedWindow;
+};
+
+void
+QmlSmokeTest::minimizedSectionTracksGroupedWindows()
+{
+    MinimizedSectionTestModel model;
+    const auto addWindow = [](QStandardItem *parent, const QString &id, bool minimized) {
+        auto *window = new QStandardItem(id);
+        window->setData(true, MinimizedSectionTestModel::Window);
+        window->setData(minimized, MinimizedSectionTestModel::Minimized);
+        window->setData(QVariantList{ id }, MinimizedSectionTestModel::WindowIds);
+        parent->appendRow(window);
+        return window;
+    };
+
+    auto *group = new QStandardItem(QStringLiteral("Pinned application"));
+    group->setData(true, MinimizedSectionTestModel::Group);
+    group->setData(QStringLiteral("pinned"), MinimizedSectionTestModel::LauncherUrl);
+    model.appendRow(group);
+    auto *ordinary = addWindow(group, QStringLiteral("ordinary"), false);
+    addWindow(group, QStringLiteral("minimized"), true);
+    addWindow(model.invisibleRootItem(), QStringLiteral("unpinned"), true);
+
+    QQmlEngine engine;
+    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/MinimizedWindows.qml")));
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+    const QVariant source = QVariant::fromValue(static_cast<QObject *>(&model));
+    std::unique_ptr<QObject> section(component.createWithInitialProperties({
+      { QStringLiteral("sourceModel"), source },
+      { QStringLiteral("launcherAbility"), source },
+      { QStringLiteral("activity"), QStringLiteral("activity") },
+      { QStringLiteral("onlyFromLaunchers"), false },
+    }));
+    QVERIFY2(section, qPrintable(component.errorString()));
+    QObject *entries = section->property("orderedWindows").value<QObject *>();
+    QVERIFY(entries);
+    QTRY_COMPARE(entries->property("count").toInt(), 2);
+
+    section->setProperty("onlyFromLaunchers", true);
+    QTRY_COMPARE(entries->property("count").toInt(), 1);
+    ordinary->setData(true, MinimizedSectionTestModel::Minimized);
+    QTRY_COMPARE(entries->property("count").toInt(), 2);
+
+    QVERIFY(QMetaObject::invokeMethod(section.get(), "activate", Q_ARG(QVariant, QStringLiteral("minimized"))));
+    QCOMPARE(model.activatedWindow, QStringLiteral("minimized"));
+    QVERIFY(ordinary->data(MinimizedSectionTestModel::Minimized).toBool());
+    QTRY_COMPARE(entries->property("count").toInt(), 1);
 }
 
 QTEST_MAIN(QmlSmokeTest)

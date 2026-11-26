@@ -227,12 +227,23 @@ Item{
         return true;
     }
 
+    function publishOrdinaryGeometries(geometry) {
+        windowsLocalModel.rootIndex = taskItem.modelIndex();
+        for (let i = 0; i < windowsLocalModel.items.count; ++i) {
+            const child = windowsLocalModel.items.get(i);
+            if (isActivatableChild(child) && !root.minimizedWindows?.includesWindow(child.model.WinIdList)) {
+                tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(taskItem.itemIndex, i),
+                                                          geometry, taskItem);
+            }
+        }
+    }
+
     function previewWindows() {
         windowsLocalModel.rootIndex = taskItem.modelIndex();
         var windows = [];
         for (var i = 0; i < windowsLocalModel.items.count; ++i) {
             var kid = windowsLocalModel.items.get(i);
-            if (isActivatableChild(kid)) {
+            if (isActivatableChild(kid) && !root.minimizedWindows?.includesWindow(kid.model.WinIdList)) {
                 windows.push({uuid: String(kid.model.WinIdList[0]),
                     appName: String(kid.model.AppName || ""),
                     title: String(kid.model.display || ""),

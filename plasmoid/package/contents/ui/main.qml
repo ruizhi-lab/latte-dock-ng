@@ -6,6 +6,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls as QtControls
 
 import QtQuick.Effects
 
@@ -801,6 +802,48 @@ PlasmoidItem {
         }
     }
 
+    readonly property Task.MinimizedWindows minimizedWindows: minimizedWindowsLoader.item as Task.MinimizedWindows
+
+    Loader {
+        id: minimizedWindowsLoader
+        active: plasmoid.configuration.showMinimizedWindowSection && !root.disableAllWindowsFunctionality
+        sourceComponent: Task.MinimizedWindows {
+            sourceModel: tasksModel
+            launcherAbility: root.appletAbilities.launchers
+            onlyFromLaunchers: root.showWindowsOnlyFromLaunchers
+            activity: root.tasksModelActivityId
+        }
+    }
+
+    function wheelOnMinimizedWindow(x, y, deltaX, deltaY, sourceItem) {
+        const footer = icList.footerItem;
+        if (!footer || !footer.visible || root.inEditMode || root.inDraggingPhase
+                || !root.appletAbilities.myView.isShownFully)
+            return false;
+
+        const viewportPoint = scrollableList.mapFromItem(sourceItem, x, y);
+        if (root.scrollingEnabled && !scrollableList.contains(viewportPoint))
+            return false;
+
+        const point = footer.mapFromItem(sourceItem, x, y);
+        const entry = footer.childAt(point.x, point.y);
+        if (!entry || !entry.windowId)
+            return false;
+
+        if (root.scrollTaskViewport(x, y, deltaX, deltaY, sourceItem))
+            return true;
+        if (root.taskScrollAction === LatteTasks.types.ScrollNone)
+            return false;
+
+        const delta = Math.abs(deltaY) > Math.abs(deltaX) ? deltaY : deltaX;
+        if (!viewportWheelDelayer.running) {
+            viewportWheelDelayer.start();
+            if (Math.abs(delta) > 96)
+                root.minimizedWindows?.activate(entry.windowId);
+        }
+        return true;
+    }
+
     // Wheel task cycling support: taskList Repeater mirrors the visual ordering
     Item {
         id: taskList
@@ -1115,10 +1158,10 @@ PlasmoidItem {
         // For vertical docks the panel thickness should follow task thickness,
         // not a fixed tiny fallback size.
         width: (icList.orientation === Qt.Horizontal)
-               ? icList.width + spacing
+               ? (icList.hasMinimizedEntries ? root.tasksLength : icList.width) + spacing
                : Math.max(icList.width + spacing, scrollableList.thickness, smallSize)
         height: (icList.orientation === Qt.Vertical)
-                ? icList.height + spacing
+                ? (icList.hasMinimizedEntries ? root.tasksLength : icList.height) + spacing
                 : Math.max(icList.height + spacing, scrollableList.thickness, smallSize)
 
         property int spacing: root.latteBridge ? 0 : root.appletAbilities.metrics.iconSize / 2
@@ -1288,8 +1331,8 @@ PlasmoidItem {
             id: scrollableList
             width: !root.vertical ? length : thickness
             height: root.vertical ? length : thickness
-            contentWidth: icList.width
-            contentHeight: icList.height
+            contentWidth: icList.hasMinimizedEntries && !root.vertical ? root.tasksLength : icList.width
+            contentHeight: icList.hasMinimizedEntries && root.vertical ? root.tasksLength : icList.height
 
             //onCurrentPosChanged: console.log("CP :: "+ currentPos + " icW:"+icList.width + " rw: "+root.width + " w:" +width);
 
@@ -1342,9 +1385,117 @@ PlasmoidItem {
                 ListView {
                     id:icList
                     model: tasksModel
+                    readonly property bool hasMinimizedEntries: (root.minimizedWindows?.orderedWindows.count ?? 0) > 0
+                    width: hasMinimizedEntries ? (root.vertical ? scrollableList.thickness : root.width) : 0
+                    height: hasMinimizedEntries ? (root.vertical ? root.height : scrollableList.thickness) : 0
+                    interactive: !hasMinimizedEntries
                     orientation: root.vertical ? ListView.Vertical : ListView.Horizontal
                     delegate: Task.TaskItem{
                         abilities: appletAbilities
+                    }
+
+                    footer: root.minimizedWindows ? minimizedFooter : null
+
+                    Component {
+                        id: minimizedFooter
+
+                        Grid {
+                            id: footer
+                            visible: entries.count > 0
+                            columns: root.vertical ? 1 : entries.count + 1
+                            readonly property real slotLength: root.appletAbilities.metrics.totals.length
+                            readonly property real slotThickness: root.appletAbilities.metrics.totals.thickness
+
+                            Item {
+                                width: !footer.visible ? 0 : root.vertical ? footer.slotThickness : Math.max(8, footer.slotLength / 4)
+                                height: !footer.visible ? 0 : root.vertical ? Math.max(8, footer.slotLength / 4) : footer.slotThickness
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: root.vertical ? root.appletAbilities.metrics.iconSize / 2 : 1
+                                    height: root.vertical ? 1 : root.appletAbilities.metrics.iconSize / 2
+                                    color: Kirigami.Theme.textColor
+                                    opacity: 0.35
+                                }
+                            }
+
+                            Repeater {
+                                id: entries
+                                model: root.minimizedWindows?.orderedWindows ?? null
+
+                                delegate: QtControls.AbstractButton {
+                                    id: entry
+                                    required property string windowId
+                                    readonly property var entryWindow: root.minimizedWindows?.windowFor(windowId) ?? null
+                                    width: root.vertical ? footer.slotThickness : footer.slotLength
+                                    height: root.vertical ? footer.slotLength : footer.slotThickness
+                                    enabled: entryWindow !== null && !root.inEditMode && !root.inDraggingPhase
+                                    hoverEnabled: true
+                                    activeFocusOnTab: true
+                                    Accessible.name: entryWindow?.title ?? ""
+                                    QtControls.ToolTip.text: Accessible.name
+                                    QtControls.ToolTip.delay: hovered ? 400 : 0
+                                    QtControls.ToolTip.visible: enabled && (hovered || visualFocus)
+
+                                    background: Rectangle {
+                                        color: Kirigami.Theme.highlightColor
+                                        opacity: entry.down || entry.visualFocus ? 0.5 : entry.hovered ? 0.25 : 0
+                                        radius: 4
+                                    }
+
+                                    Kirigami.Icon {
+                                        anchors.centerIn: parent
+                                        width: root.appletAbilities.metrics.iconSize
+                                        height: width
+                                        source: entry.entryWindow?.icon ?? "application-x-executable"
+                                    }
+
+                                    function publishGeometry() {
+                                        const current = root.minimizedWindows?.windowFor(windowId);
+                                        if (!current || !visible || root.appletAbilities.myView.isHidden)
+                                            return;
+
+                                        const index = current.sourceIndex();
+                                        if (index.valid) {
+                                            const origin = mapToGlobal(0, 0);
+                                            tasksModel.requestPublishDelegateGeometry(index,
+                                                Qt.rect(origin.x, origin.y, width, height), entry);
+                                        }
+                                    }
+
+                                    // Publish after layout settles. The entry owns the timer so
+                                    // restoring a window also cancels its pending geometry update.
+                                    Timer {
+                                        id: publishEntryGeometry
+                                        interval: 0
+                                        onTriggered: entry.publishGeometry()
+                                    }
+
+                                    Connections {
+                                        target: root
+                                        function onPublishTasksGeometries() { publishEntryGeometry.restart(); }
+                                    }
+
+                                    Component.onCompleted: publishEntryGeometry.restart()
+                                    onEntryWindowChanged: publishEntryGeometry.restart()
+                                    onClicked: root.minimizedWindows?.activate(windowId)
+                                    Keys.onReturnPressed: root.minimizedWindows?.activate(windowId)
+                                    onActiveFocusChanged: {
+                                        if (activeFocus && root.scrollingEnabled) {
+                                            scrollableList.focusOn(entry);
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        acceptedButtons: Qt.NoButton
+                                        onWheel: wheel => {
+                                            wheel.accepted = root.wheelOnMinimizedWindow(wheel.x, wheel.y,
+                                                wheel.angleDelta.x, wheel.angleDelta.y, entry);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     property int currentSpot : -1000

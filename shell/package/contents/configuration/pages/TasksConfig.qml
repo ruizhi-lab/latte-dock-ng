@@ -235,6 +235,14 @@ PlasmaComponents.Page {
 
                 LatteComponents.CheckBox {
                     Layout.maximumWidth: _tasksPage.dialog.optionsWidth
+                    text: i18n("Show Minimized Window Section")
+                    enabled: !_tasksPage.disableAllWindowsFunctionality
+                    value: _tasksPage.cfg.showMinimizedWindowSection
+                    onClicked: _tasksPage.cfg.showMinimizedWindowSection = !value
+                }
+
+                LatteComponents.CheckBox {
+                    Layout.maximumWidth: _tasksPage.dialog.optionsWidth
                     text: i18n("Show only tasks from launchers")
                     visible: _tasksPage.dialog.advancedLevel
                     enabled: !_tasksPage.disableAllWindowsFunctionality

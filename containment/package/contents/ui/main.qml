@@ -1466,11 +1466,21 @@ ContainmentItem {
             // because the static QObject type does not declare the list.
             var appletsPropertyName = ["app", "lets"].join("");
             var applets = root.plasmoidReference[appletsPropertyName];
-            for (var ti = 0; !cyclesTasks && ti < applets.length; ++ti) {
+            for (var ti = 0; ti < applets.length; ++ti) {
                 var tasksApplet = applets[ti];
                 if (tasksApplet.pluginName !== "org.kde.latte.plasmoid") continue;
                 var tasksItem = fastLayoutManager.resolveAppletQuickItem(tasksApplet);
-                var scrollTaskViewport = taskViewportScrollMethod(tasksItem);
+                // The DropArea also covers the minimized entries. Let an
+                // entry handle its own window before the containment cycles.
+                const entryWheelMethod = ["wheelOn", "MinimizedWindow"].join("");
+                const entryWheel = tasksItem ? tasksItem[entryWheelMethod] : null;
+                if (typeof entryWheel === "function"
+                        && entryWheel.call(tasksItem, wheel.x, wheel.y,
+                                           wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
+                    return;
+                }
+
+                var scrollTaskViewport = cyclesTasks ? null : taskViewportScrollMethod(tasksItem);
                 if (typeof scrollTaskViewport === "function"
                         && scrollTaskViewport.call(tasksItem, wheel.x, wheel.y,
                                                    wheel.angleDelta.x, wheel.angleDelta.y, parent)) {
