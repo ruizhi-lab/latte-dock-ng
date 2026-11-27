@@ -1,4 +1,5 @@
-execute_process(COMMAND find ../shell ../containment ../plasmoid -name "*.qml" -o -name "*.js"
+execute_process(COMMAND find "${CMAKE_SOURCE_DIR}/shell" "${CMAKE_SOURCE_DIR}/containment"
+    "${CMAKE_SOURCE_DIR}/plasmoid" -name "*.qml" -o -name "*.js"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE QML_SRCS_STRING)
 
@@ -9,16 +10,18 @@ add_custom_target(fake-target
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     SOURCES ${QML_SRCS})
 
-# qmllint: qml static syntax checker
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ECM_ENABLE_SANITIZERS)
     find_program(QMLLINT NAMES qmllint-qt6 qmllint HINTS /usr/lib64/qt6/bin /usr/lib/qt6/bin)
 
     if(EXISTS "${QMLLINT}")
-        message(STATUS "Found qmllint: ${QMLLINT}")
+        # Standalone syntax validation works without the Latte host. The
+        # build-aware analyzer and its diagnostics run separately in CI.
+        list(FILTER QML_SRCS EXCLUDE REGEX "^$")
         add_custom_command(TARGET latte-dock-ng PRE_BUILD
-            COMMAND ${QMLLINT} ${QML_SRCS}
+            COMMAND bash "${CMAKE_SOURCE_DIR}/scripts/qmllint.sh" ${QML_SRCS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            COMMENT "Running qmllint")
+            COMMENT "Checking QML syntax"
+            VERBATIM)
     else()
         message(STATUS "qmllint: QML Syntax verifier not found")
     endif()

@@ -308,6 +308,13 @@ def run_fake_session() -> int:
         def isShuttingDown(self):
             return self.shutting_down
 
+    class PortalRegistry(dbus.service.Object):
+        # Qt registers its desktop ID on Wayland. The private bus has no
+        # desktop portal and the shutdown scenarios only need registration.
+        @dbus.service.method("org.freedesktop.host.portal.Registry", in_signature="sa{sv}", out_signature="")
+        def Register(self, app_id, options):
+            pass
+
     class Control(dbus.service.Object):
         def __init__(self, bus, ksmserver):
             super().__init__(bus, CONTROL_PATH)
@@ -335,11 +342,14 @@ def run_fake_session() -> int:
 
     DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
-    names = [dbus.service.BusName("org.kde.ksmserver", bus), dbus.service.BusName(CONTROL_SERVICE, bus)]
+    names = [dbus.service.BusName(name, bus) for name in (
+        "org.kde.ksmserver", CONTROL_SERVICE, "org.freedesktop.portal.Desktop",
+    )]
+    portal = PortalRegistry(names[-1], "/org/freedesktop/portal/desktop")
     control = Control(bus, KsmServer(bus))
     print("fake session ready", flush=True)
     GLib.MainLoop().run()
-    del names, control
+    del names, control, portal
     return 0
 
 
@@ -439,10 +449,7 @@ class Simulation:
     def start_latte(self) -> None:
         env = self.env(client=True)
         env["QT_LOGGING_RULES"] = "latte*=true"
-        env_script = self.home / ".config/latte-dock-ng/dev-env.sh"
-        # dev-env.sh points a user-mode install at its own QML modules.
-        command = ["bash", "-c", 'if [ -f "$1" ]; then source "$1"; fi; exec "$2" --debug', "latte-dock-simulation", str(env_script), str(self.latte_binary)]
-        self.spawn("latte", command, env, self.latte_log)
+        self.spawn("latte", [str(self.latte_binary), "--debug"], env, self.latte_log)
 
     def start_blocker(self) -> None:
         tool = qml_runtime()
@@ -711,7 +718,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0], formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--scenario", action="append", choices=SCENARIOS, help="scenario to run; repeat for several (default: all)")
     parser.add_argument("--home", type=Path, help="simulation HOME (default: <work dir>/home)")
-    parser.add_argument("--latte", type=Path, help="dock binary (default: <home>/.local/bin/latte-dock-ng)")
+    parser.add_argument("--latte", type=Path, help="dock binary (default: <home>/.local/bin/latte-dock-ng-dev)")
     parser.add_argument("--install", action="store_true", help="first install this checkout into the simulation HOME with install.sh --user Debug")
     parser.add_argument("--no-kdeglobals", action="store_true", help="leave the simulation HOME without kdeglobals, as for a new account (use an empty --home)")
     parser.add_argument("--jobs", type=int, default=8, help="build jobs for --install (default: 8)")
@@ -730,7 +737,7 @@ def orchestrate(args: argparse.Namespace) -> int:
     scenarios = args.scenario or list(SCENARIOS)
     home.mkdir(parents=True, exist_ok=True)
 
-    latte = (args.latte or home / ".local/bin/latte-dock-ng").expanduser().resolve()
+    latte = (args.latte or home / ".local/bin/latte-dock-ng-dev").expanduser().resolve()
 
     def require_dock() -> None:
         if not (latte.is_file() and os.access(latte, os.X_OK)):

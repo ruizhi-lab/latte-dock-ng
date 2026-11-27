@@ -49,6 +49,26 @@ target_link_libraries(lattecoreplugin PRIVATE
     KF6::GuiAddons
 )
 
+# Plasma publishes Dialog's QML description, but does not export its moc
+# metadata through PlasmaQuick. Generate the foreign metadata from the
+# installed public header so qmltyperegistrar can resolve Latte's base class.
+get_target_property(_plasmaquick_includes Plasma::PlasmaQuick INTERFACE_INCLUDE_DIRECTORIES)
+find_file(_plasma_dialog_header plasmaquick/dialog.h HINTS ${_plasmaquick_includes} REQUIRED)
+set(_plasma_dialog_moc "${CMAKE_CURRENT_BINARY_DIR}/plasma_dialog_moc")
+set(_plasma_dialog_metatypes "${CMAKE_CURRENT_BINARY_DIR}/plasma_dialog_metatypes.json")
+add_custom_command(
+    OUTPUT "${_plasma_dialog_metatypes}"
+    BYPRODUCTS "${_plasma_dialog_moc}" "${_plasma_dialog_moc}.json"
+    COMMAND Qt6::moc --output-json
+            "-I$<JOIN:$<TARGET_PROPERTY:lattecoreplugin,INCLUDE_DIRECTORIES>,;-I>"
+            -o "${_plasma_dialog_moc}" "${_plasma_dialog_header}"
+    COMMAND Qt6::moc --collect-json -o "${_plasma_dialog_metatypes}" "${_plasma_dialog_moc}.json"
+    DEPENDS "${_plasma_dialog_header}"
+    COMMAND_EXPAND_LISTS
+    VERBATIM
+)
+target_sources(lattecoreplugin PRIVATE "${_plasma_dialog_metatypes}")
+
 install(TARGETS lattecoreplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)
 
 install(FILES ${LATTE_CORE_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/core)

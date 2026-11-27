@@ -104,22 +104,18 @@ When testing changes to latte-dock-ng, follow this exact workflow:
    rm -f /tmp/latte-ng.log
    ```
 
-4. **Source user-mode environment variables**
-   ```bash
-   source ~/.config/latte-dock-ng/dev-env.sh
-   ```
+4. **Use the isolated Debug launcher** at `~/.local/bin/latte-dock-ng-dev`.
+   It applies the generated developer environment before starting the binary
+   under `~/.local/opt/latte-dock-ng-dev`.
 
-5. **Launch the USER-MODE Debug binary (~/.local/bin), NOT the system
-   /usr/bin binary** (user explicitly corrected this; the dev-env.sh sourcing
-   enables locally-built QML module overrides). Must survive shell timeout —
+5. **Launch the USER-MODE Debug build**. To survive a shell timeout,
    use script + nohup in a separate session. The explicit `setsid` prevents
    command-runner session cleanup from terminating an otherwise nohup-protected
    process:
    ```bash
    cat > /tmp/launch-latte.sh << 'SCRIPT'
    #!/bin/bash
-   source ~/.config/latte-dock-ng/dev-env.sh
-   exec ~/.local/bin/latte-dock-ng --replace --debug > /tmp/latte-ng.log 2>&1
+   exec ~/.local/bin/latte-dock-ng-dev --replace --debug > /tmp/latte-ng.log 2>&1
    SCRIPT
    chmod +x /tmp/launch-latte.sh
    setsid -f nohup /tmp/launch-latte.sh > /dev/null 2>&1
@@ -148,11 +144,9 @@ When testing changes to latte-dock-ng, follow this exact workflow:
    SIGTERM, and a logout test no longer exercises its teardown.
    `pkill -x latte-dock-ng` still stops it, and `--collect` removes the unit.
 
-   Note: `bash install.sh --user Debug` already installs all plasmoid QML to
-   ~/.local/share/plasma/plasmoids/ — a manual `cp` overlay of QML files is
-   usually not needed. (If DESTDIR causes prefix duplication like
-   ~/.local/home/user/.local/..., install directly with
-   `cmake --install build --prefix ~/.local`.)
+   The Debug install includes its own plasmoids and indicators. For an old
+   shared-prefix install, run `bash uninstall.sh --legacy-user` to remove its
+   overrides while retaining the separate Debug install.
 
 6. **Wait for user retest feedback**, then automatically analyze debug log for warnings/errors
 

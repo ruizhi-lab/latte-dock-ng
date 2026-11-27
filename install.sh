@@ -3,7 +3,7 @@
 # Summary: Installation script for Latte Dock NG
 #
 # Run as root / sudo  → system install to /usr        (needs write access)
-# Run as normal user  → user install to ~/.local      (no sudo needed)
+# Run as normal user  → user install under ~/.local (no sudo needed)
 # Override with --system or --user flags.
 
 set -euo pipefail
@@ -77,7 +77,7 @@ Usage:
   bash install.sh [OPTIONS] [BuildType]
 
 Install mode (auto-detected from EUID when not specified):
-  --user      Install to ~/.local  (no sudo; for debugging)
+  --user      Install to ~/.local (Debug uses ~/.local/opt/latte-dock-ng-dev)
   --system    Install to /usr      (requires root/sudo)
 
 Build options:
@@ -163,7 +163,13 @@ echo "Info: install mode = ${install_mode}"
 
 if [[ "$install_mode" == "user" ]]; then
     install_prefix="${HOME}/.local"
+    if [[ "$build_type" == "Debug" ]]; then
+        install_prefix="${HOME}/.local/opt/latte-dock-ng-dev"
+    fi
     build_dir="${script_dir}/build-user-${USER:-user}"
+    if [[ "$build_type" == "Debug" ]]; then
+        build_dir+="-debug"
+    fi
 
     # Detect the Qt QML relative path (lib, lib64, or Debian multiarch) by
     # querying the system path and mirroring it under ~/.local.
@@ -191,6 +197,12 @@ if [[ "$install_mode" == "user" ]]; then
     sudo_cmd=()   # Never need sudo for user-local install
 else
     install_prefix="/usr"
+    for package_db in /var/db/pkg/kde-misc/latte-dock-ng-*/CONTENTS; do
+        if [[ -f "$package_db" ]]; then
+            echo "Error: Portage manages the system Latte Dock NG installation." >&2
+            exit 1
+        fi
+    done
     build_dir="${script_dir}/build"
     kde_install_qmldir=""   # Use cmake/KDE defaults for system install
 
@@ -213,7 +225,10 @@ fi
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 mkdir -p "$build_dir"
+build_dir="$(cd "$build_dir" && pwd)"
 cd "$build_dir"
+exec {build_lock}< "$build_dir"
+flock --exclusive "$build_lock"
 
 cmake_args=(
     -DCMAKE_INSTALL_PREFIX="${install_prefix}"
@@ -243,6 +258,9 @@ fi
 
 if [[ -n "$kde_install_qmldir" ]]; then
     cmake_args+=(-DKDE_INSTALL_QMLDIR="${kde_install_qmldir}")
+    if [[ "$build_type" == "Debug" ]]; then
+        cmake_args+=(-DKDE_INSTALL_QTPLUGINDIR="${kde_install_qmldir%/qml}/plugins")
+    fi
 fi
 
 if [[ "$l10n_auto_translations" == "ON" ]]; then
@@ -286,24 +304,6 @@ run_as_user() {
     fi
 }
 
-# File mutations must propagate failures and run as the home owner under sudo.
-# Cache refresh remains best-effort through run_as_user above.
-run_user_file_command() {
-    local target_user="$1"
-    shift
-    if [[ "${EUID}" -eq 0 && "$target_user" != "root" ]]; then
-        if command -v runuser >/dev/null 2>&1; then
-            runuser -u "$target_user" -- "$@"
-        else
-            local quoted_command
-            printf -v quoted_command '%q ' "$@"
-            su "$target_user" -c "$quoted_command"
-        fi
-    else
-        "$@"
-    fi
-}
-
 resolve_username() {
     local user_home="$1"
 
@@ -318,65 +318,6 @@ resolve_username() {
     fi
 
     stat -c '%U' "$user_home" 2>/dev/null || basename "$user_home"
-}
-
-sync_tree() {
-    local src="$1"
-    local dst="$2"
-
-    if [[ ! -d "$src" ]]; then
-        echo "Warning: source directory not found, skipping sync: $src" >&2
-        return
-    fi
-
-    run_as_root mkdir -p "$dst"
-
-    if command -v rsync >/dev/null 2>&1; then
-        run_as_root rsync -a --delete "$src"/ "$dst"/
-    else
-        run_as_root rm -rf "$dst"
-        run_as_root mkdir -p "$dst"
-        run_as_root cp -a "$src"/. "$dst"/
-    fi
-}
-
-sync_tree_if_exists() {
-    local src="$1"
-    local dst="$2"
-    local target_home="$3"
-
-    [[ -d "$src" ]] || return 0
-    [[ -d "$dst" ]] || return 0
-
-    echo "Info: syncing existing user override: $dst"
-    local owner
-    owner="$(resolve_username "$target_home")"
-    if command -v rsync >/dev/null 2>&1; then
-        run_user_file_command "$owner" rsync -a --no-owner --no-group --delete "$src"/ "$dst"/
-    else
-        run_user_file_command "$owner" rm -rf "$dst"
-        run_user_file_command "$owner" mkdir -p "$dst"
-        run_user_file_command "$owner" cp -R --preserve=mode,timestamps "$src"/. "$dst"/
-    fi
-}
-
-# latte/indicators also holds indicators installed through "Get New
-# Indicators" (KNewStuff). Mirror each shipped package directory on its own, so
-# --delete prunes stale files inside Latte's packages but never touches a
-# downloaded sibling. Mirroring the whole source directory deleted downloads and
-# copied CMakeLists.txt and Messages.sh into the data directory.
-# Usage: sync_indicator_packages <sync function> <indicators dir> [extra args...]
-sync_indicator_packages() {
-    local sync_function="$1"
-    local indicators_dir="$2"
-    shift 2
-
-    local package
-    for package in "${script_dir}"/indicators/*/; do
-        [[ -d "$package" ]] || continue
-        package="${package%/}"
-        "$sync_function" "$package" "${indicators_dir}/${package##*/}" "$@"
-    done
 }
 
 refresh_service_caches() {
@@ -411,92 +352,172 @@ refresh_service_caches() {
 # ── Install ───────────────────────────────────────────────────────────────────
 detect_user_homes
 
-# Build failures must leave the installed application intact. Cleanup starts
-# only after configuration and compilation have both completed successfully.
-# ── Pre-install cleanup ───────────────────────────────────────────────────────
+publish_shared_install() {
+    run_as_root bash -s -- "$staged_prefix" "$install_prefix" "$stage_dir" "$preclean_install" <<'PUBLISH'
+set -euo pipefail
+staged_prefix="$1"
+prefix="$2"
+work_dir="$3"
+clean="$4"
+manifest="share/latte-dock-ng/install-manifest.txt"
+mkdir -p "$prefix" "$work_dir/previous-files"
+
+list_files() {
+    local list="$1"
+    local path parent
+    [[ -f "$list" ]] || return 0
+    while IFS= read -r path || [[ -n "$path" ]]; do
+        [[ "$path" == "$prefix"/* && "${path##*/}" != "." && "${path##*/}" != ".." ]] || continue
+        parent="$(realpath -m -- "${path%/*}")"
+        case "$parent" in
+            "$prefix"|"$prefix"/*) printf '%s\n' "${path#"$prefix"/}" ;;
+            *) echo "Error: install path escapes the prefix: $path" >&2; return 1 ;;
+        esac
+    done < "$list" | LC_ALL=C sort -u
+}
+
+list_files "$staged_prefix/$manifest" > "$work_dir/new-list"
+list_files "$prefix/$manifest" > "$work_dir/old-list"
+if [[ "$clean" == "true" ]]; then
+    LC_ALL=C comm -23 "$work_dir/old-list" "$work_dir/new-list" > "$work_dir/obsolete-list"
+else
+    : > "$work_dir/obsolete-list"
+fi
+
+# Snapshot every affected file before publishing any part of the new build.
+LC_ALL=C sort -u "$work_dir/new-list" "$work_dir/obsolete-list" > "$work_dir/affected-list"
+cd "$prefix"
+while IFS= read -r path; do
+    if [[ -e "$path" || -L "$path" ]]; then
+        if [[ ! -f "$path" && ! -L "$path" ]]; then
+            echo "Error: install target is not a file: $prefix/$path" >&2
+            exit 1
+        fi
+        cp -a --parents -- "$path" "$work_dir/previous-files"
+    fi
+done < "$work_dir/affected-list"
+
+rollback() {
+    local status=$?
+    local restore_failed=false
+    trap - EXIT
+    if ((status != 0)); then
+        echo "Info: restoring the previous installation." >&2
+        while IFS= read -r path; do
+            if [[ -e "$work_dir/previous-files/$path" || -L "$work_dir/previous-files/$path" ]]; then
+                cp -a --remove-destination -- "$work_dir/previous-files/$path" "$path" || restore_failed=true
+            else
+                rm -f -- "$path" || restore_failed=true
+            fi
+        done < "$work_dir/affected-list"
+        if [[ "$restore_failed" == true ]]; then
+            touch "$work_dir/retain-backup"
+            echo "Error: restore failed. Backup files remain in $work_dir." >&2
+        fi
+    fi
+    exit "$status"
+}
+
+trap rollback EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+while IFS= read -r path; do
+    if [[ ! -e "$staged_prefix/$path" && ! -L "$staged_prefix/$path" ]]; then
+        continue
+    fi
+    if [[ "$path" == */* && ! -d "${path%/*}" ]]; then
+        mkdir -p -- "${path%/*}"
+    fi
+    cp -a --remove-destination --no-preserve=ownership -- "$staged_prefix/$path" "$path"
+done < "$work_dir/new-list"
+while IFS= read -r path; do
+    rm -f -- "$path"
+done < "$work_dir/obsolete-list"
+PUBLISH
+}
+
+# Complete the install into a staging tree before touching the active prefix.
+# Keep it on the same filesystem for the isolated Debug directory swap.
+stage_parent="${TMPDIR:-/tmp}"
+if [[ "$install_mode" == "user" && "$build_type" == "Debug" ]]; then
+    stage_parent="${install_prefix%/*}"
+    mkdir -p "$stage_parent"
+fi
+stage_dir="$(mktemp -d "${stage_parent}/latte-install.XXXXXXXX")"
+trap '[[ -f "$stage_dir/retain-backup" ]] || rm -rf -- "$stage_dir" 2>/dev/null || run_as_root rm -rf -- "$stage_dir"' EXIT
+DESTDIR="$stage_dir" cmake --install .
+staged_prefix="${stage_dir}${install_prefix}"
+for artifact in \
+        bin/latte-dock-ng \
+        share/applications/org.kde.latte-dock.desktop \
+        share/plasma/plasmoids/org.kde.latte.plasmoid/metadata.json \
+        share/plasma/plasmoids/org.kde.latte.containment/metadata.json \
+        share/plasma/shells/org.kde.latte.shell/metadata.json \
+        share/latte/indicators/default/metadata.json; do
+    if [[ ! -s "${staged_prefix}/${artifact}" ]]; then
+        echo "Error: staged install is missing ${artifact}." >&2
+        exit 1
+    fi
+done
+if [[ -n "$kde_install_qmldir" && ! -s "${stage_dir}${kde_install_qmldir}/org/kde/latte/core/qmldir" ]]; then
+    echo "Error: staged install is missing the Latte core QML module." >&2
+    exit 1
+fi
+mkdir -p "${staged_prefix}/share/latte-dock-ng"
+
+# The installed manifest includes only this staged payload. Use CMake's
+# installation rules for package resources so ebuild and script installs agree.
+staged_manifest="${staged_prefix}/share/latte-dock-ng/install-manifest.txt"
+(
+    cd "$staged_prefix"
+    find . \( -type f -o -type l \) -print | while IFS= read -r entry; do
+        printf '%s/%s\n' "$install_prefix" "${entry#./}"
+    done
+) | LC_ALL=C sort -u > "$staged_manifest"
+
+# Serialize publication with other installs and uninstalls of this prefix.
+lock_dir="$install_prefix"
+if [[ "$install_mode" == "user" ]]; then
+    lock_dir="${HOME}/.local"
+    mkdir -p "$lock_dir"
+fi
+exec {install_lock}< "$lock_dir"
+flock --exclusive "$install_lock"
+
 if [[ "$preclean_install" == "true" ]]; then
-    uninstall_cmd=(bash "${script_dir}/uninstall.sh" "--${install_mode}")
-    if [[ -f "${build_dir}/install_manifest.txt" ]]; then
-        uninstall_cmd+=(--manifest "${build_dir}/install_manifest.txt")
-    fi
-    # Never purge user data by default during pre-clean (updating should not
-    # delete user config).  Only purge when the user explicitly requests it.
+    cleanup_cmd=(bash "${script_dir}/uninstall.sh" "--${install_mode}" --keep-install)
     if [[ "$purge_user_data" == "true" ]]; then
-        uninstall_cmd+=(--purge-user-data)
-    else
-        uninstall_cmd+=(--no-purge-user-data)
-        # The XDG autostart entry is user preference, not an installed file.
-        # Preserve it while replacing the application package during upgrades.
-        uninstall_cmd+=(--preserve-autostart)
+        cleanup_cmd+=(--purge-user-data)
     fi
-    echo "Info: running pre-install cleanup: ${uninstall_cmd[*]}"
-    "${uninstall_cmd[@]}"
+    "${cleanup_cmd[@]}"
 elif [[ "$purge_user_data" == "true" ]]; then
     echo "Warning: --purge-user-data is ignored when --no-clean is set."
 fi
 
-run_as_root cmake --install .
-
-# Sync full package trees (CMake may leave directories incomplete)
-share_dir="${install_prefix}/share"
-sync_tree "${script_dir}/containment/package" "${share_dir}/plasma/plasmoids/org.kde.latte.containment"
-sync_tree "${script_dir}/plasmoid/package"    "${share_dir}/plasma/plasmoids/org.kde.latte.plasmoid"
-sync_tree "${script_dir}/separator/package"   "${share_dir}/plasma/plasmoids/org.kde.latte.separator"
-sync_tree "${script_dir}/shell/package"       "${share_dir}/plasma/shells/org.kde.latte.shell"
-sync_indicator_packages sync_tree "${share_dir}/latte/indicators"
-
-if [[ "$install_mode" == "system" ]]; then
-    # For system installs, keep any user-local overrides in sync to avoid stale QML
-    for user_home in "${user_homes[@]:-}"; do
-        sync_tree_if_exists "${script_dir}/containment/package" "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" "$user_home"
-        sync_tree_if_exists "${script_dir}/plasmoid/package"    "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" "$user_home"
-        sync_tree_if_exists "${script_dir}/separator/package"   "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" "$user_home"
-        sync_tree_if_exists "${script_dir}/shell/package"       "${user_home}/.local/share/plasma/shells/org.kde.latte.shell" "$user_home"
-        # Only a shipped package the user already overrides is refreshed;
-        # downloaded indicators in the same directory are left alone.
-        sync_indicator_packages sync_tree_if_exists "${user_home}/.local/share/latte/indicators" "$user_home"
-    done
-
-    # Create a ~/.local/bin symlink to the system binary for convenience
-    ensure_user_local_launcher() {
-        local user_home="$1"
-        local local_bin_dir="${user_home}/.local/bin"
-        local local_bin="${local_bin_dir}/latte-dock-ng"
-        local system_bin="${install_prefix}/bin/latte-dock-ng"
-
-        [[ -x "$system_bin" ]] || return 0
-
-        if [[ -e "$local_bin" ]]; then
-            local resolved_local
-            resolved_local="$(readlink -f "$local_bin" 2>/dev/null || true)"
-            if [[ "$resolved_local" != "$system_bin" ]]; then
-                local backup_path="${local_bin}.stale.$(date +%Y%m%d-%H%M%S)"
-                echo "Info: found conflicting user-local launcher '${local_bin}', moving to '${backup_path}'."
-                run_user_file_command "$(resolve_username "$user_home")" mv -f "$local_bin" "$backup_path"
-            fi
+if [[ "$install_mode" == "user" && "$build_type" == "Debug" ]]; then
+    # Replacing a dedicated prefix keeps every binary and package on one build.
+    # Keep the previous tree outside the staging trap until promotion succeeds.
+    backup="$(mktemp -d "${stage_parent}/latte-previous.XXXXXXXX")"
+    if [[ -e "$install_prefix" || -L "$install_prefix" ]]; then
+        mv -T -- "$install_prefix" "$backup/install"
+    fi
+    if ! mv -T -- "$staged_prefix" "$install_prefix"; then
+        if [[ -e "$backup/install" || -L "$backup/install" ]]; then
+            mv -T -- "$backup/install" "$install_prefix"
         fi
-
-        run_user_file_command "$(resolve_username "$user_home")" mkdir -p "$local_bin_dir"
-        run_user_file_command "$(resolve_username "$user_home")" ln -sfn "$system_bin" "$local_bin"
-        echo "Info: linked '${local_bin}' -> '${system_bin}'."
-    }
-
-    for user_home in "${user_homes[@]:-}"; do
-        ensure_user_local_launcher "$user_home"
-    done
+        rmdir -- "$backup"
+        exit 1
+    fi
+    rm -rf -- "$backup"
+else
+    previous_manifest="${install_prefix}/share/latte-dock-ng/install-manifest.txt"
+    if [[ "$preclean_install" != "true" && -f "$previous_manifest" ]]; then
+        LC_ALL=C sort -u "$staged_manifest" "$previous_manifest" > "$stage_dir/overlay-manifest"
+        mv -- "$stage_dir/overlay-manifest" "$staged_manifest"
+    fi
+    publish_shared_install
+    refresh_service_caches
 fi
-
-# Ensure desktop files and Plasma kicker action services are visible right away.
-refresh_service_caches
-
-# ── Compat QML modules (org.kde.latte.compat.taskmanager) ──
-# Installed by cmake --install via compat/qml/CMakeLists.txt into latte's
-# own namespace — no Plasma system directories are touched.
-
-# Keep the authoritative file list under the prefix: build directories may be
-# external or deleted before uninstall. Package-tree extras use fallback cleanup.
-run_as_root mkdir -p "${install_prefix}/share/latte-dock-ng"
-run_as_root cp "${build_dir}/install_manifest.txt" "${install_prefix}/share/latte-dock-ng/install-manifest.txt"
 
 # ── Save install metadata ─────────────────────────────────────────────────────
 printf '%s\n' "$install_mode"   > "${build_dir}/.install-mode"
@@ -504,12 +525,21 @@ printf '%s\n' "$install_prefix" > "${build_dir}/.install-prefix"
 [[ -n "$kde_install_qmldir" ]] && printf '%s\n' "$kde_install_qmldir" > "${build_dir}/.install-qmldir"
 
 # ── Post-install instructions ─────────────────────────────────────────────────
-if [[ "$install_mode" == "user" ]]; then
+if [[ "$install_mode" == "user" && "$build_type" == "Debug" ]]; then
     env_file="${HOME}/.config/latte-dock-ng/dev-env.sh"
     mkdir -p "${HOME}/.config/latte-dock-ng"
     cat > "$env_file" <<ENVEOF
 # latte-dock-ng user-local install environment
 # Generated by install.sh — source this before running latte-dock-ng
+export XDG_DATA_DIRS="${install_prefix}/share:\${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export QT_PLUGIN_PATH="${kde_install_qmldir%/qml}/plugins\${QT_PLUGIN_PATH:+:\${QT_PLUGIN_PATH}}"
+export LATTE_DISABLE_USER_LOCAL_QML_IMPORTS=1
+# KSycoca hashes the data search path. Debug's extra directory would otherwise
+# invalidate the cache used by the desktop session on each alternating launch.
+latte_debug_cache="\${XDG_CACHE_HOME:-\${HOME}/.cache}/latte-dock-ng-dev"
+mkdir -p -- "\$latte_debug_cache" || return
+export KDESYCOCA="\$latte_debug_cache/ksycoca"
+unset latte_debug_cache
 export QML2_IMPORT_PATH="${kde_install_qmldir}\${QML2_IMPORT_PATH:+:\${QML2_IMPORT_PATH}}"
 export QML_IMPORT_PATH="${kde_install_qmldir}\${QML_IMPORT_PATH:+:\${QML_IMPORT_PATH}}"
 export QT_QML_IMPORT_PATH="${kde_install_qmldir}\${QT_QML_IMPORT_PATH:+:\${QT_QML_IMPORT_PATH}}"
@@ -545,33 +575,30 @@ if [[ -f "\${HOME}/.config/plasma-localerc" ]]; then
 fi
 ENVEOF
 
-    # Keep desktop Exec as direct latte binary path. KWin resolves privileged
-    # Wayland interfaces from desktop files by comparing the executable path
-    # against the first Exec token; wrapping with `env ...` breaks that lookup.
-
-    cat <<EOF
-Info: User-local installation complete.
-Info: Binary:   ${install_prefix}/bin/latte-dock-ng
-Info: QML path: ${kde_install_qmldir}
-
-To run latte-dock-ng, execute directly:
-
-  ${install_prefix}/bin/latte-dock-ng --replace
-
-No environment variables are needed — latte-dock-ng auto-detects
-its install location and sets up QML import paths internally.
-
-The file below is for development only (overrides system QML with
-locally-built modules for debugging).  Do NOT add it to shell config.
-
-  source ${env_file}  # development/debug only
-
-EOF
+    # KWin uses the real executable in Exec to authorize Wayland protocols.
+    # Register only desktop metadata, without exporting the Debug data tree.
+    applications_dir="${HOME}/.local/share/applications"
+    mkdir -p "$applications_dir" "${HOME}/.local/bin"
+    awk '
+        /^\[Desktop Entry\]$/ { print; print "NoDisplay=true"; next }
+        !/^NoDisplay=/
+    ' "${install_prefix}/share/applications/org.kde.latte-dock.desktop" \
+        > "${applications_dir}/org.kde.latte-dock.dev.desktop"
+    if [[ -f "${install_prefix}/share/applications/org.kde.latte-dock.preview.desktop" ]]; then
+        cp -- "${install_prefix}/share/applications/org.kde.latte-dock.preview.desktop" \
+            "${applications_dir}/org.kde.latte-dock.preview.dev.desktop"
+    fi
+    cat > "${HOME}/.local/bin/latte-dock-ng-dev" <<'LAUNCHER'
+#!/usr/bin/env bash
+set -e
+source "${HOME}/.config/latte-dock-ng/dev-env.sh"
+exec "${HOME}/.local/opt/latte-dock-ng-dev/bin/latte-dock-ng" "$@"
+LAUNCHER
+    chmod +x "${HOME}/.local/bin/latte-dock-ng-dev"
+    refresh_service_caches
+    printf 'Info: Run the isolated build with %s/.local/bin/latte-dock-ng-dev --replace\n' "$HOME"
+elif [[ "$install_mode" == "user" ]]; then
+    printf 'Info: Run the user build with %s/bin/latte-dock-ng --replace\n' "$install_prefix"
 else
-    cat <<'EOF'
-Info: System installation complete.
-Info: If your shell has a cached binary path, refresh it:
-  zsh:  rehash
-  bash: hash -r
-EOF
+    echo "Info: System installation complete."
 fi

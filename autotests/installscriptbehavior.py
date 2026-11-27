@@ -12,7 +12,12 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     home = test_root / "home"
     home.mkdir()
     prefix = home / ".local"
-    environment = dict(os.environ, HOME=str(home), USER="isolated", SUDO_USER="")
+    cache_home = test_root / "custom-cache"
+    runtime_dir = test_root / "runtime"
+    environment = dict(
+        os.environ, HOME=str(home), USER="isolated", SUDO_USER="",
+        XDG_CACHE_HOME=str(cache_home), XDG_RUNTIME_DIR=str(runtime_dir),
+    )
 
     files = [
         "lib64/plugins/kf6/packagestructure/latte_indicator.so",
@@ -34,10 +39,14 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     cache_files = [
         home / ".cache/latte-dock/legacy-cache",
         home / ".cache/lattedock/qmlcache/compiled.qmlc",
+        cache_home / "lattedock/qmlcache/compiled.qmlc",
+        runtime_dir / "cache/lattedock/qmlcache/compiled.qmlc",
     ]
     for cache_file in cache_files:
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         cache_file.write_text("rebuildable")
+    unrelated_cache = runtime_dir / "cache/plasmashell"
+    unrelated_cache.mkdir()
 
     config = home / ".config/lattedockrc"
     config.parent.mkdir(parents=True, exist_ok=True)
@@ -59,6 +68,7 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     assert config.exists()
     assert not guide.exists()
     assert all(not cache_file.parent.exists() for cache_file in cache_files)
+    assert unrelated_cache.is_dir()
 
     # Only explicitly marked legacy taskmanager modules belong to Latte.
     legacy_module = prefix / "lib64/qml/org/kde/plasma/private/taskmanager"
@@ -144,9 +154,40 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     install_tools = test_root / "install-tools"
     install_tools.mkdir()
     succeeding_tools = {
-        # Configure, build and install succeed; install writes the manifest
-        # that install.sh copies under the prefix.
-        "cmake": '#!/bin/bash\n[[ "${1:-}" != "--install" ]] || : > install_manifest.txt\nexit 0\n',
+        # Emulate CMake's DESTDIR output without building the application.
+        "cmake": """#!/bin/bash
+set -eu
+case "$1" in
+    --install)
+        [[ "${LATTE_TEST_STAGE_FAIL:-0}" == 0 ]] || exit 75
+        [[ "${LATTE_TEST_STAGE_INCOMPLETE:-0}" == 0 ]] || exit 0
+        install_prefix=$(cat .test-prefix)
+        qml_dir=$(cat .test-qml-dir)
+        staged="${DESTDIR:?}$install_prefix"
+        install -d "$staged/bin" "$staged/share/applications" "$DESTDIR$qml_dir/org/kde/latte/core"
+        printf '#!/bin/bash\nprintf "%%s\\n" "$XDG_DATA_DIRS"\n' > "$staged/bin/latte-dock-ng"
+        chmod +x "$staged/bin/latte-dock-ng"
+        printf '[Desktop Entry]\nExec=%s/bin/latte-dock-ng\n' "$install_prefix" > "$staged/share/applications/org.kde.latte-dock.desktop"
+        printf 'module org.kde.latte.core\n' > "$DESTDIR$qml_dir/org/kde/latte/core/qmldir"
+        for package in plasmoids/org.kde.latte.plasmoid plasmoids/org.kde.latte.containment shells/org.kde.latte.shell; do
+            mkdir -p "$staged/share/plasma/$package"
+            printf '{}\n' > "$staged/share/plasma/$package/metadata.json"
+        done
+        source_dir="${LATTE_TEST_INSTALL_SOURCE:?}"
+        mkdir -p "$staged/share/latte/indicators"
+        cp -R "$source_dir"/indicators/default "$source_dir"/indicators/org.kde.latte.plasmatabstyle "$staged/share/latte/indicators/"
+        ;;
+    --build) ;;
+    *)
+        for arg in "$@"; do
+            case "$arg" in
+                -DCMAKE_INSTALL_PREFIX=*) printf '%s' "${arg#*=}" > .test-prefix ;;
+                -DKDE_INSTALL_QMLDIR=*) printf '%s' "${arg#*=}" > .test-qml-dir ;;
+            esac
+        done
+        ;;
+esac
+""",
         "kbuildsycoca6": "#!/bin/bash\nexit 0\n",
         "update-desktop-database": "#!/bin/bash\nexit 0\n",
     }
@@ -154,7 +195,10 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         tool = install_tools / name
         tool.write_text(script)
         tool.chmod(0o755)
-    install_environment = dict(environment, PATH=f"{install_tools}:{os.environ['PATH']}")
+    install_environment = dict(
+        environment, PATH=f"{install_tools}:{os.environ['PATH']}",
+        LATTE_TEST_INSTALL_SOURCE=str(install_source),
+    )
 
     indicators = prefix / "share/latte/indicators"
     downloaded = indicators / "org.example.downloaded/metadata.json"
@@ -175,8 +219,8 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         assert downloaded.exists()
         assert (indicators / "default/metadata.json").exists()
         assert (indicators / "org.kde.latte.plasmatabstyle/metadata.json").exists()
-        assert not stale_shipped_file.exists()
-        assert all(not path.exists() for path in stray_build_files)
+        assert stale_shipped_file.exists()
+        assert stray_build_files[0].exists()
 
     for clean_option in ["--clean", "--no-clean"]:
         seed_indicators(with_stray_build_files=(clean_option == "--clean"))
@@ -189,6 +233,37 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         )
         assert_installed_indicators()
 
+    # Clean upgrades remove files owned by the old manifest, preserving
+    # unknown neighboring files. Publishing failure rolls back changed files.
+    installed_manifest = prefix / "share/latte-dock-ng/install-manifest.txt"
+    obsolete = prefix / "share/latte-dock-ng/obsolete"
+    obsolete.write_text("obsolete")
+    with installed_manifest.open("a") as handle:
+        handle.write(f"{obsolete}\n")
+    previous_binary = prefix / "bin/latte-dock-ng"
+    previous_binary.write_text("previous binary")
+    bad_copy = install_tools / "cp"
+    bad_copy.write_text(
+        '#!/bin/bash\n'
+        'if [[ "${LATTE_TEST_PUBLISH_FAIL:-}" == 1 && "${@: -1}" == share/applications/org.kde.latte-dock.desktop '
+        '&& "$*" == *--no-preserve=ownership* ]]; then exit 76; fi\n'
+        f'exec "{shutil.which("cp")}" "$@"\n'
+    )
+    bad_copy.chmod(0o755)
+    release_install = [
+        "bash", str(install_source / "install.sh"), "--user", "--clean",
+        "--build-dir", str(test_root / "install-build"), "--jobs", "1",
+    ]
+    failed = subprocess.run(
+        release_install, env=dict(install_environment, LATTE_TEST_PUBLISH_FAIL="1"),
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    assert failed.returncode == 76
+    assert previous_binary.read_text() == "previous binary"
+    assert obsolete.exists()
+    subprocess.run(release_install, env=install_environment, check=True, stdout=subprocess.DEVNULL)
+    assert not obsolete.exists()
+
     seed_indicators()
     subprocess.run(
         ["bash", str(install_source / "uninstall.sh"), "--user", "--no-purge-user-data"],
@@ -197,9 +272,10 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         stdout=subprocess.DEVNULL,
     )
     assert downloaded.exists()
-    assert not (indicators / "default").exists()
+    assert not (indicators / "default/metadata.json").exists()
     assert not (indicators / "org.kde.latte.plasmatabstyle").exists()
-    assert all(not path.exists() for path in stray_build_files)
+    assert stale_shipped_file.exists()
+    assert all(path.exists() for path in stray_build_files)
 
     # An explicit purge still removes all user data, downloads included.
     subprocess.run(
@@ -209,6 +285,49 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
         stdout=subprocess.DEVNULL,
     )
     assert not (prefix / "share/latte").exists()
+
+    debug_prefix = prefix / "opt/latte-dock-ng-dev"
+    debug_wrapper = prefix / "bin/latte-dock-ng-dev"
+    debug_desktop = prefix / "share/applications/org.kde.latte-dock.dev.desktop"
+    autostart = home / ".config/autostart/org.kde.latte-dock.desktop"
+    autostart.parent.mkdir()
+    autostart.write_text("Exec=/usr/bin/latte-dock-ng")
+    debug_command = [
+        "bash", str(install_source / "install.sh"), "--user", "Debug",
+        "--build-dir", str(test_root / "debug-build"), "--jobs", "1",
+    ]
+    subprocess.run(debug_command, env=install_environment, check=True, stdout=subprocess.DEVNULL)
+    assert debug_wrapper.is_file()
+    assert "NoDisplay=true" in debug_desktop.read_text()
+    assert f"Exec={debug_prefix}/bin/latte-dock-ng" in debug_desktop.read_text()
+    assert not (prefix / "bin/latte-dock-ng").exists()
+    assert not (prefix / "share/plasma/plasmoids/org.kde.latte.plasmoid").exists()
+    assert not (indicators / "default").exists()
+    manifest = (debug_prefix / "share/latte-dock-ng/install-manifest.txt").read_text()
+    assert f"{debug_prefix}/share/plasma/plasmoids/org.kde.latte.plasmoid/metadata.json" in manifest
+    launched = subprocess.run(
+        [str(debug_wrapper)], env=dict(install_environment, XDG_DATA_DIRS="/system/share"),
+        check=True, capture_output=True, text=True,
+    )
+    assert launched.stdout.strip() == f"{debug_prefix}/share:/system/share", launched.stdout
+
+    for variable, expected_status in [("LATTE_TEST_STAGE_FAIL", 75), ("LATTE_TEST_STAGE_INCOMPLETE", 1)]:
+        result = subprocess.run(
+            debug_command, env=dict(install_environment, **{variable: "1"}),
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        assert result.returncode == expected_status
+        assert (debug_prefix / "bin/latte-dock-ng").exists()
+        assert debug_wrapper.exists()
+
+    subprocess.run(
+        ["bash", str(install_source / "uninstall.sh"), "--user"],
+        env=install_environment, check=True, stdout=subprocess.DEVNULL,
+    )
+    assert not debug_prefix.exists()
+    assert not debug_wrapper.exists()
+    assert not debug_desktop.exists()
+    assert autostart.exists()
 
     # The generated dev-env.sh must not turn an unset XDG_CONFIG_DIRS into the
     # bare "kdedefaults:/etc/xdg" overlay: a dock started from a bare SSH shell
@@ -225,7 +344,7 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
     dev_env_root = test_root / "dev-env"
     dev_env_root.mkdir()
     render = dev_env_root / "render.sh"
-    render.write_text("kde_install_qmldir=/x\ncat <<ENVEOF\n" + dev_env_template + "ENVEOF\n", encoding="utf-8")
+    render.write_text("install_prefix=/x\nkde_install_qmldir=/x/qml\ncat <<ENVEOF\n" + dev_env_template + "ENVEOF\n", encoding="utf-8")
     dev_env = dev_env_root / "dev-env.sh"
     dev_env.write_text(
         subprocess.run(["bash", str(render)], check=True, capture_output=True, text=True).stdout,
@@ -287,6 +406,6 @@ with tempfile.TemporaryDirectory(prefix="latte-script-test-") as temporary_direc
 
 print(
     "PASS: manifestless cleanup, config/shared-module preservation, "
-    "persisted manifest, escaping-path rejection, build-failure preservation, "
-    "downloaded-indicator preservation, and dev-env XDG_CONFIG_DIRS handling"
+    "persisted manifest, escaping-path rejection, staged failure preservation, "
+    "downloaded-indicator preservation, Debug isolation, and dev-env XDG_CONFIG_DIRS handling"
 )

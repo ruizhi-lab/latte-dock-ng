@@ -197,8 +197,8 @@ which is what the Dock gets when Plasma autostarts it:
 systemd-run --user --unit=latte-dock-ng-dev-$(date +%s) --collect ~/launch-latte-session.sh
 ```
 
-where the launcher sources `~/.config/latte-dock-ng/dev-env.sh` (Debug only) and
-`exec`s `~/.local/bin/latte-dock-ng --replace` with the wanted flags. For a test
+where the launcher executes `~/.local/bin/latte-dock-ng-dev --replace` with the
+wanted flags. For a test
 that includes a logout, add `-p PartOf=graphical-session.target` and
 `-p After=graphical-session.target` as AGENTS.md step 5 does: without them the
 end of the session does not stop the unit. Importing
@@ -232,17 +232,23 @@ KSycoca database and the language (`XDG_CONFIG_DIRS`, `XDG_DATA_DIRS`,
 installer selects the QML and plugin roots for its install prefix. Verify the
 launch log and the user-mode executable path before judging shell behavior.
 
-Use the standard per-user install path for both Debug retests and Release
-measurements. Debug uses `bash install.sh --user Debug`; Release measurement
-builds can use `bash install.sh --user Release --jobs 8 --no-clean`. Launch
-`~/.local/bin/latte-dock-ng` from the captured Plasma session. The Debug
-developer environment is generated for local module overrides; Release's
-installed binary detects its own QML prefix. Do not launch a separate `/tmp`
+Install Debug with `bash install.sh --user Debug` and launch it with
+`~/.local/bin/latte-dock-ng-dev` from the captured Plasma session. Its binary,
+QML modules and packages live under `~/.local/opt/latte-dock-ng-dev`. The launcher
+applies the developer environment. To remove old Debug overlays installed in
+the shared user prefix, use `bash uninstall.sh --legacy-user`. A Release build
+installed with `bash install.sh --user Release --jobs 8 --no-clean` still uses
+`~/.local/bin/latte-dock-ng`. Do not launch a separate `/tmp`
 prefix for compositor integration tests: Fedora 44 KWin denied the
 PlasmaWindowManagement protocol to a directly launched `/tmp` binary even
 though the process started, which invalidated that run. KWin matches privileged
 Plasma interfaces against the first executable token in the registered desktop
 entry; the temporary prefix did not match it.
+
+`bash uninstall.sh --user` removes the isolated Debug installation when present.
+`--legacy-user` selects the shared user prefix explicitly. Both preserve layouts,
+downloaded indicators and autostart entries by default. Use the package manager
+for Portage-managed system installations.
 
 For detached launches that cannot use `systemd-run`, save the session variables
 in a small launcher, source `dev-env.sh` only for Debug, and use `setsid -f nohup`
@@ -260,8 +266,7 @@ select the KSycoca database (see above), and then applies the Debug overrides:
 ```bash
 while IFS= read -r line; do export "$line"; done \
   < <(systemctl --user show-environment | grep -E '^(DISPLAY|WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS|XAUTHORITY|XDG_CONFIG_DIRS|XDG_DATA_DIRS|XDG_CURRENT_DESKTOP|XDG_MENU_PREFIX|KDE_FULL_SESSION|KDE_SESSION_VERSION|DESKTOP_SESSION|LANG|LANGUAGE)=')
-source ~/.config/latte-dock-ng/dev-env.sh
-exec ~/.local/bin/latte-dock-ng --replace --debug --log-file /tmp/latte-ng.log
+exec ~/.local/bin/latte-dock-ng-dev --replace --debug --log-file /tmp/latte-ng.log
 ```
 
 For repeatable pointer injection, set `YDOTOOL_SOCKET` to the temporary
@@ -432,7 +437,7 @@ clean quit:
 1. Install the modified code for the current user (Debug keeps symbols for
    later core analysis). A user-local install is not tracked by the package
    manager, so repeat it after a Plasma update that changes the `libplasma`
-   soname; `ldd ~/.local/bin/latte-dock-ng | grep "not found"` reports a build
+   soname; `ldd ~/.local/opt/latte-dock-ng-dev/bin/latte-dock-ng | grep "not found"` reports a build
    that was linked against the previous soname.
 
    ```bash
@@ -447,8 +452,7 @@ clean quit:
    ```bash
    pkill -x latte-dock-ng || true
    rm -f /tmp/latte-ng.log
-   source ~/.config/latte-dock-ng/dev-env.sh
-   nohup ~/.local/bin/latte-dock-ng --replace --debug > /tmp/latte-ng.log 2>&1 &
+   nohup ~/.local/bin/latte-dock-ng-dev --replace --debug > /tmp/latte-ng.log 2>&1 &
    ```
 
    An AI agent starts the dock through `systemd-run --user` instead (AGENTS.md,

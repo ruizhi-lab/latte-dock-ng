@@ -2,20 +2,19 @@
 # Author: Ruizhi Zhong <ruizhi.zhong88@gmail.com>
 # Summary: Uninstallation script for Latte Dock NG
 #
-# Run as root / sudo  → removes system install from /usr  and invoking-user data
-# Run as normal user  → removes user install from ~/.local only
-# Override with --system / --user and --no-purge-user-data flags.
+# Run as root / sudo  → remove the source installation from /usr
+# Run as normal user  → remove the user installation under ~/.local
+# User data and autostart entries are preserved by default.
 
 set -euo pipefail
 
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dry_run="false"
-manifest_provided="false"
+manifest_file=""
 purge_user_data="false"
-preserve_autostart="false"
+legacy_user="false"
+keep_install="false"
 install_mode="auto"   # auto | user | system
 
-declare -a manifest_paths=()
 declare -a user_homes=()
 
 add_user_home() {
@@ -48,16 +47,18 @@ usage() {
 Usage:
   bash uninstall.sh [OPTIONS]
 
-Install mode (auto-detected from EUID / saved metadata when not specified):
-  --user      Remove user-local install from ~/.local  (no sudo needed)
-  --system    Remove system install from /usr and invoking-user data (requires root/sudo)
+Install mode (auto-detected from EUID when not specified):
+  --user      Remove the isolated Debug install, or the legacy user install
+  --legacy-user  Target the legacy ~/.local install when both are present
+  --system    Remove the source installation from /usr (requires root/sudo)
 
 Options:
-  --manifest <path>     Use a specific install manifest
+  --manifest <path>     Use a manifest for a shared-prefix installation
+  --keep-install        Clear caches without removing the installation
   --dry-run             Print what would be removed without deleting
-  --purge-user-data     Also remove user config/layout data (default ON for --system)
+  --purge-user-data     Also remove user config/layout data
   --no-purge-user-data  Keep user config/layout data; app caches are always removed
-  --preserve-autostart  Keep user XDG autostart entries (used during upgrades)
+  --preserve-autostart  Keep user XDG autostart entries (default)
 EOF
 }
 
@@ -65,16 +66,17 @@ while (($# > 0)); do
     case "$1" in
         --user)          install_mode="user" ;;
         --system)        install_mode="system" ;;
+        --legacy-user)   install_mode="user"; legacy_user="true" ;;
         --manifest)
             shift
             (($# > 0)) || { echo "Error: --manifest requires a path." >&2; usage; exit 2; }
-            manifest_paths=("$1")
-            manifest_provided="true"
+            manifest_file="$1"
             ;;
+        --keep-install)       keep_install="true" ;;
         --dry-run)            dry_run="true" ;;
         --purge-user-data)    purge_user_data="true" ;;
-        --no-purge-user-data) purge_user_data="no" ;;
-        --preserve-autostart) preserve_autostart="true" ;;
+        --no-purge-user-data) purge_user_data="false" ;;
+        --preserve-autostart) ;;
         --help|-h)            usage; exit 0 ;;
         *)
             echo "Error: unknown option '$1'." >&2; usage; exit 2 ;;
@@ -84,31 +86,11 @@ done
 
 # ── Resolve install mode ──────────────────────────────────────────────────────
 if [[ "$install_mode" == "auto" ]]; then
-    # 1. Try reading saved metadata from build directory
-    saved_mode=""
-    for meta_candidate in \
-            "${script_dir}/build/.install-mode" \
-            "${script_dir}/build-user-${USER:-user}/.install-mode" \
-            "${script_dir}"/build-*/.install-mode; do
-        if [[ -f "$meta_candidate" ]]; then
-            saved_mode="$(cat "$meta_candidate" 2>/dev/null || true)"
-            break
-        fi
-    done
-
-    if [[ "$saved_mode" == "user" || "$saved_mode" == "system" ]]; then
-        install_mode="$saved_mode"
-        echo "Info: detected previous install mode from metadata: ${install_mode}"
-    elif [[ "${EUID}" -eq 0 ]]; then
+    if [[ "${EUID}" -eq 0 ]]; then
         install_mode="system"
     else
         install_mode="user"
     fi
-fi
-
-# System mode defaults to full purge; user can override with --no-purge-user-data
-if [[ "$install_mode" == "system" && "$purge_user_data" != "no" ]]; then
-    purge_user_data="true"
 fi
 
 echo "Info: uninstall mode = ${install_mode}, purge user data = ${purge_user_data}"
@@ -116,29 +98,17 @@ echo "Info: uninstall mode = ${install_mode}, purge user data = ${purge_user_dat
 # ── Resolve install prefix ────────────────────────────────────────────────────
 if [[ "$install_mode" == "user" ]]; then
     install_prefix="${HOME}/.local"
-    build_dir_pattern="${script_dir}/build-user-${USER:-user}"
     sudo_cmd=()
-
-    # Load saved QML dir if available
-    kde_install_qmldir=""
-    for qml_meta in \
-            "${script_dir}/build-user-${USER:-user}/.install-qmldir" \
-            "${script_dir}/build/.install-qmldir"; do
-        if [[ -f "$qml_meta" ]]; then
-            kde_install_qmldir="$(cat "$qml_meta" 2>/dev/null || true)"
-            break
-        fi
-    done
-    # Fallback: derive from lib name
-    if [[ -z "$kde_install_qmldir" ]]; then
-        qml_lib_name="lib"
-        [[ -d "${install_prefix}/lib64/qt6" ]] && qml_lib_name="lib64"
-        kde_install_qmldir="${install_prefix}/${qml_lib_name}/qt6/qml"
-    fi
 else
     install_prefix="/usr"
-    build_dir_pattern="${script_dir}/build"
-    kde_install_qmldir=""
+    if [[ "$keep_install" != "true" ]]; then
+        for package_db in /var/db/pkg/kde-misc/latte-dock-ng-*/CONTENTS; do
+            if [[ -f "$package_db" ]]; then
+                echo "Error: Portage manages the system Latte Dock NG installation." >&2
+                exit 1
+            fi
+        done
+    fi
 
     if [[ "${EUID}" -ne 0 ]]; then
         sudo_cmd=(sudo)
@@ -147,58 +117,7 @@ else
     fi
 fi
 
-# ── Collect manifests ─────────────────────────────────────────────────────────
-if [[ "$manifest_provided" == "false" ]]; then
-    shopt -s nullglob
-    declare -a raw_candidates=()
-    [[ -f "${install_prefix}/share/latte-dock-ng/install-manifest.txt" ]] && raw_candidates+=("${install_prefix}/share/latte-dock-ng/install-manifest.txt")
-
-    # Separate manifests by build directory convention (matches install.sh):
-    #   build/           → system installs
-    #   build-user-*/    → user installs
-    if [[ "$install_mode" == "user" ]]; then
-        for candidate in "${script_dir}"/build-user-*/install_manifest.txt; do
-            [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
-        done
-    else
-        for candidate in "${script_dir}/build/install_manifest.txt" "${script_dir}"/build-*/install_manifest.txt; do
-            [[ "$(cat "${candidate%/*}/.install-mode" 2>/dev/null || true)" == "system" ]] || continue
-            [[ -f "$candidate" ]] && raw_candidates+=("$candidate")
-        done
-    fi
-    shopt -u nullglob
-
-    # Dedupe by canonical path
-    for raw in "${raw_candidates[@]:-}"; do
-        canonical="$(readlink -f "$raw" 2>/dev/null || echo "$raw")"
-        local_dup="false"
-        for existing in "${manifest_paths[@]:-}"; do
-            [[ "$existing" == "$canonical" ]] && { local_dup="true"; break; }
-        done
-        [[ "$local_dup" == "false" ]] && manifest_paths+=("$canonical")
-    done
-
-    [[ ${#manifest_paths[@]} -eq 0 ]] && \
-        manifest_paths=("${build_dir_pattern}/install_manifest.txt")
-fi
-
-# ── Check manifests ───────────────────────────────────────────────────────────
 detect_user_homes
-
-existing_manifest_count=0
-for mp in "${manifest_paths[@]}"; do
-    [[ -f "$mp" ]] && existing_manifest_count=$((existing_manifest_count + 1))
-done
-
-if [[ "$existing_manifest_count" -eq 0 ]]; then
-    echo "Warning: uninstall manifests not found — doing package directory cleanup only."
-    printf '  - %s\n' "${manifest_paths[@]}"
-elif [[ ${#manifest_paths[@]} -eq 1 ]]; then
-    echo "Using uninstall manifest: ${manifest_paths[0]}"
-else
-    echo "Using uninstall manifests:"
-    printf '  - %s\n' "${manifest_paths[@]}"
-fi
 
 [[ "$dry_run" == "true" ]] && echo "Dry-run mode — no files will be deleted."
 
@@ -232,6 +151,39 @@ remove_user_tree() {
     rm -rf -- "$path"
 }
 
+remove_latte_caches() {
+    local user_home="$1"
+    local cache_root runtime_dir account_home
+    local -a cache_roots=("${user_home}/.cache")
+
+    if [[ "$user_home" == "${HOME:-}" && -O "$user_home" ]]; then
+        if [[ "${XDG_CACHE_HOME:-}" == /* && -O "$XDG_CACHE_HOME" ]]; then
+            cache_roots+=("$XDG_CACHE_HOME")
+        fi
+
+        # Plasma can put its cache under the per-user runtime directory even
+        # when this script runs from a shell without the session environment.
+        runtime_dir="${XDG_RUNTIME_DIR:-}"
+        if [[ -z "$runtime_dir" ]]; then
+            # An alternate HOME, such as a test profile, does not own the
+            # account's graphical session cache.
+            account_home="$(getent passwd "$EUID" | cut -d: -f6 || true)"
+            if [[ "$user_home" == "$account_home" ]]; then
+                runtime_dir="/run/user/${EUID}"
+            fi
+        fi
+        if [[ "$runtime_dir" == /* && -d "$runtime_dir/cache" && -O "$runtime_dir/cache" ]]; then
+            cache_roots+=("$runtime_dir/cache")
+        fi
+    fi
+
+    for cache_root in "${cache_roots[@]}"; do
+        remove_user_tree "${cache_root}/latte-dock"
+        remove_user_tree "${cache_root}/lattedock"
+        remove_user_tree "${cache_root}/latte-dock-ng-dev"
+    done
+}
+
 # latte/indicators also holds indicators installed through "Get New Indicators"
 # (KNewStuff) in the user's data directory, and distribution packages may add
 # their own under /usr. Only Latte's entries are removed here: the shipped
@@ -257,10 +209,67 @@ remove_latte_indicator_packages() {
     done
 }
 
+purge_latte_user_data() {
+    local user_home="$1"
+    local purge_path
+    if [[ "$purge_user_data" == "true" ]]; then
+        for purge_path in \
+                "${user_home}/.config/latte" \
+                "${user_home}/.config/lattedockrc" \
+                "${user_home}/.local/share/latte-layouts" \
+                "${user_home}/.local/share/latte" \
+                "${user_home}/.local/state/latte"; do
+            if [[ -d "$purge_path" ]]; then
+                [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $purge_path"; continue; }
+                rm -rf -- "$purge_path"
+            elif [[ -e "$purge_path" ]]; then
+                [[ "$dry_run" == "true" ]] && { echo "rm -f -- $purge_path"; continue; }
+                rm -f -- "$purge_path"
+            fi
+        done
+    fi
+}
+
+if [[ "$keep_install" == "true" ]]; then
+    for user_home in "${user_homes[@]}"; do
+        remove_latte_caches "$user_home"
+        purge_latte_user_data "$user_home"
+    done
+    exit 0
+fi
+
+if [[ "$dry_run" != "true" && -d "$install_prefix" ]]; then
+    exec {install_lock}< "$install_prefix"
+    flock --exclusive "$install_lock"
+fi
+
+debug_prefix="${HOME}/.local/opt/latte-dock-ng-dev"
+if [[ "$install_mode" == "user" && "$legacy_user" != "true" && -z "$manifest_file" ]] \
+        && [[ -d "$debug_prefix" || -f "${HOME}/.local/bin/latte-dock-ng-dev" ]]; then
+    remove_user_tree "$debug_prefix"
+    remove_file "${HOME}/.local/bin/latte-dock-ng-dev"
+    remove_file "${HOME}/.config/latte-dock-ng/dev-env.sh"
+    remove_file "${HOME}/.local/share/applications/org.kde.latte-dock.dev.desktop"
+    remove_file "${HOME}/.local/share/applications/org.kde.latte-dock.preview.dev.desktop"
+    remove_latte_caches "$HOME"
+    purge_latte_user_data "$HOME"
+    if [[ "$dry_run" != "true" ]] && command -v kbuildsycoca6 >/dev/null 2>&1; then
+        kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
+    fi
+    exit 0
+fi
+
 # ── Remove manifest-listed files ─────────────────────────────────────────────
-for manifest_file in "${manifest_paths[@]}"; do
-    [[ -f "$manifest_file" ]] || continue
-    while IFS= read -r file; do
+installed_manifest="${install_prefix}/share/latte-dock-ng/install-manifest.txt"
+manifest_file="${manifest_file:-$installed_manifest}"
+complete_manifest="false"
+if [[ "$manifest_file" == "$installed_manifest" && -f "$installed_manifest" ]] &&
+        grep -Fxq -- "$installed_manifest" "$installed_manifest"; then
+    complete_manifest="true"
+fi
+if [[ -f "$manifest_file" ]]; then
+    echo "Using uninstall manifest: $manifest_file"
+    while IFS= read -r file || [[ -n "$file" ]]; do
         [[ -z "$file" ]] && continue
         # Skip old fallback taskmanager files that may still appear in
         # manifests from previous builds. These are handled safely by
@@ -270,14 +279,29 @@ for manifest_file in "${manifest_paths[@]}"; do
         fi
         # A stale or supplied manifest must never remove files outside this
         # install prefix. Canonicalization also rejects escaping parent links.
-        normalized="$(realpath -m -- "$file")"
-        case "$normalized" in
-            "${install_prefix}"/*) remove_file "$file" ;;
+        if [[ "$file" != /* || "${file##*/}" == "." || "${file##*/}" == ".." ]]; then
+            continue
+        fi
+        parent_dir="$(realpath -m -- "${file%/*}")"
+        case "$parent_dir" in
+            "${install_prefix}"|"${install_prefix}"/*)
+                remove_file "$parent_dir/${file##*/}"
+                if [[ "$complete_manifest" == "true" ]]; then
+                    # Stop at the top-level prefix directories, which are shared.
+                    while [[ "${parent_dir#"$install_prefix"/}" == */* && "$parent_dir" != "$install_prefix" ]]; do
+                        remove_dir_if_empty "$parent_dir"
+                        parent_dir="${parent_dir%/*}"
+                    done
+                fi
+                ;;
             *) echo "Warning: skipping manifest path outside install prefix: $file" >&2 ;;
         esac
     done < "$manifest_file"
-done
+else
+    echo "Warning: uninstall manifest not found. Using legacy package cleanup."
+fi
 
+if [[ "$complete_manifest" != "true" ]]; then
 # ── Remove managed install-prefix directories and files ───────────────────────
 managed_dirs=(
     "${install_prefix}/share/plasma/plasmoids/org.kde.latte.containment"
@@ -368,7 +392,9 @@ if [[ "$install_mode" == "system" ]]; then
     done
 fi
 
-# ── Remove user-local overrides (both modes clean user dirs) ──────────────────
+fi
+
+# ── Clean the user's cache and optional data ──────────────────────────────────
 remove_user_local_launcher_link() {
     local user_home="$1"
     local local_bin="${user_home}/.local/bin/latte-dock-ng"
@@ -394,113 +420,35 @@ remove_user_stale_launchers() {
 }
 
 for user_home in "${user_homes[@]:-}"; do
-    remove_file "${user_home}/.config/latte-dock-ng/dev-env.sh"
+    if [[ "$install_mode" == "user" && ! -d "${user_home}/.local/opt/latte-dock-ng-dev" ]]; then
+        remove_file "${user_home}/.config/latte-dock-ng/dev-env.sh"
+    fi
 
     # Compiled QML and graphics caches can survive an upgrade with stale
     # runtime artifacts, so clear application-owned caches on every uninstall
     # and install pre-clean. These caches are reproducible, unlike user data.
-    remove_tree "${user_home}/.cache/latte-dock"
-    remove_tree "${user_home}/.cache/lattedock"
+    remove_latte_caches "$user_home"
 
-    if [[ "$install_mode" == "user" ]]; then
-        # Full removal of user-local managed dirs
-        for dir_path in \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
-                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"; do
-            [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }
-            rm -rf -- "$dir_path"
-        done
-        remove_latte_indicator_packages "${user_home}/.local/share/latte/indicators" remove_user_tree
-
-        for file_path in \
-                "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
-                "${user_home}/.local/bin/latte-dock-ng-preview" \
-                "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
-                "${user_home}/.local/share/applications/org.kde.latte-dock.preview.desktop" \
-                "${user_home}/.local/share/applications/latte-dock.desktop" \
-                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
-            [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
-            rm -f -- "$file_path"
-        done
-    else
-        # System uninstall: clean shadowing user-local overrides too
-        for dir_path in \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.containment" \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.plasmoid" \
-                "${user_home}/.local/share/plasma/plasmoids/org.kde.latte.separator" \
-                "${user_home}/.local/share/plasma/shells/org.kde.latte.shell"; do
-            [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $dir_path"; continue; }
-            rm -rf -- "$dir_path"
-        done
-        remove_latte_indicator_packages "${user_home}/.local/share/latte/indicators" remove_user_tree
-
-        for file_path in \
-                "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
-                "${user_home}/.local/bin/latte-dock-ng-preview" \
-                "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
-                "${user_home}/.local/share/applications/org.kde.latte-dock.preview.desktop" \
-                "${user_home}/.local/share/applications/latte-dock.desktop" \
-                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
-            [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
-            rm -f -- "$file_path"
-        done
-    fi
-
-    if [[ "$preserve_autostart" != "true" ]]; then
-        for file_path in \
-                "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
-                "${user_home}/.config/autostart/latte-dock.desktop"; do
-            [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
-            rm -f -- "$file_path"
-        done
+    if [[ "$install_mode" == "system" && "$purge_user_data" != "true" ]]; then
+        continue
     fi
 
     remove_user_local_launcher_link "$user_home"
     remove_user_stale_launchers "$user_home"
 
-    # Clean KNS compat QML overrides — both the current private directory
-    # and the old shared paths that could crash other Qt applications
-    # (e.g. systemsettings). See commit 8e7cbbd66.
-    remove_tree "${user_home}/.local/share/latte-dock-ng/qml-kns-compat"
+    # This private compatibility tree is generated by Latte. Shared Qt
+    # module directories can belong to other installations.
+    remove_user_tree "${user_home}/.local/share/latte-dock-ng/qml-kns-compat"
     remove_file "${user_home}/.local/share/latte-dock-ng/kns-compat.stamp"
     remove_dir_if_empty "${user_home}/.local/share/latte-dock-ng"
-    for qml_lib in lib64 lib; do
-        for old_dir in \
-                "${user_home}/.local/${qml_lib}/qt6/qml/org/kde/kirigami/templates" \
-                "${user_home}/.local/${qml_lib}/qt6/qml/org/kde/kirigami/controls" \
-                "${user_home}/.local/${qml_lib}/qt6/qml/org/kde/newstuff"; do
-            remove_tree "$old_dir"
-        done
-        remove_dir_if_empty "${user_home}/.local/${qml_lib}/qt6/qml/org/kde/kirigami"
-        remove_dir_if_empty "${user_home}/.local/${qml_lib}/qt6/qml/org/kde"
-    done
 
-    if [[ "$purge_user_data" == "true" ]]; then
-        for purge_path in \
-                "${user_home}/.config/latte" \
-                "${user_home}/.config/lattedockrc" \
-                "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
-                "${user_home}/.config/latte-dock-ng" \
-                "${user_home}/.local/share/latte-layouts" \
-                "${user_home}/.local/share/latte" \
-                "${user_home}/.local/state/latte"; do
-            if [[ -d "$purge_path" ]]; then
-                [[ "$dry_run" == "true" ]] && { echo "rm -rf -- $purge_path"; continue; }
-                rm -rf -- "$purge_path"
-            elif [[ -e "$purge_path" ]]; then
-                [[ "$dry_run" == "true" ]] && { echo "rm -f -- $purge_path"; continue; }
-                rm -f -- "$purge_path"
-            fi
-        done
-    fi
+    purge_latte_user_data "$user_home"
 done
 
+if [[ "$complete_manifest" != "true" ]]; then
 # ── Remove QML plugins ────────────────────────────────────────────────────────
 if [[ "$install_mode" == "user" ]]; then
     qml_dirs=(
-        "$kde_install_qmldir"
         "${install_prefix}/lib64/qt6/qml"
         "${install_prefix}/lib/qt6/qml"
         "${install_prefix}/lib/x86_64-linux-gnu/qt6/qml"
@@ -514,10 +462,6 @@ else
         "/usr/lib/x86_64-linux-gnu/qt6/qml"
         "/usr/lib64/qml"
         "/usr/lib/qml"
-        "/usr/local/lib64/qt6/qml"
-        "/usr/local/lib/qt6/qml"
-        "/usr/local/lib64/qml"
-        "/usr/local/lib/qml"
     )
     if command -v qtpaths6 >/dev/null 2>&1; then
         qml_dirs+=("$(qtpaths6 --query QT_INSTALL_QML 2>/dev/null || true)")
@@ -527,7 +471,12 @@ else
 fi
 
 for qml_dir in "${qml_dirs[@]}"; do
-    [[ -z "$qml_dir" ]] && continue
+    [[ -n "$qml_dir" ]] || continue
+    resolved_qml_dir="$(realpath -m -- "$qml_dir")"
+    case "$resolved_qml_dir" in
+        "${install_prefix}"/lib/*|"${install_prefix}"/lib64/*) ;;
+        *) continue ;;
+    esac
 
     for qml_module_dir in \
             "${qml_dir}/org/kde/latte/core" \
@@ -593,6 +542,8 @@ for user_home in "${user_homes[@]:-}"; do
         rmdir --ignore-fail-on-non-empty -- "${user_home}/.local/share/plasma/shells" 2>/dev/null || true
     fi
 done
+
+fi
 
 # ── Refresh application menu caches ──────────────────────────────────────────
 # Run kbuildsycoca6 (KDE menu cache) and update-desktop-database (XDG) so
@@ -663,18 +614,5 @@ if [[ "$install_mode" == "system" ]]; then
         fi
     fi
 fi
-
-# ── Remove build metadata ─────────────────────────────────────────────────────
-for meta_file in \
-        "${script_dir}/build/.install-mode" \
-        "${script_dir}/build/.install-prefix" \
-        "${script_dir}/build/.install-qmldir" \
-        "${script_dir}/build-user-${USER:-user}/.install-mode" \
-        "${script_dir}/build-user-${USER:-user}/.install-prefix" \
-        "${script_dir}/build-user-${USER:-user}/.install-qmldir"; do
-    [[ -f "$meta_file" ]] || continue
-    [[ "$dry_run" == "true" ]] && { echo "rm -f -- $meta_file"; continue; }
-    rm -f -- "$meta_file"
-done
 
 [[ "$dry_run" == "true" ]] && echo "Dry run complete." || echo "Uninstall complete."
