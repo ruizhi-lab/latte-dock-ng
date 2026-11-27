@@ -5,17 +5,6 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-/**Documented API
-Inherits:
-        Item
-Imports:
-        QtQuick 2.1
-        org.kde.plasma.core
-Description:
-TODO i need more info here
-Properties:
-**/
-
 import QtQuick
 import org.kde.ksvg as KSvg
 

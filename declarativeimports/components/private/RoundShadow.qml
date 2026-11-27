@@ -3,19 +3,6 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-/**Documented API
-Inherits:
-        Item
-Imports:
-        QtQuick 2.1
-        org.kde.plasma.core
-Description:
-        It is a simple Radio button which is using the plasma theme.
-        TODO Do we need more info?
-Properties:
-        TODO needs more info??
-**/
-
 import QtQuick
 import org.kde.ksvg as KSvg
 

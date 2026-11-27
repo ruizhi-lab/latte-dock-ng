@@ -225,9 +225,6 @@ ContainmentItem {
     property bool mouseWheelActions: plasmoid.configuration.mouseWheelActions
     property bool onlyAddingStarup: true //is used for the initialization phase in startup where there aren't removals, this variable provides a way to grow icon size
 
-    //FIXME: possibly this is going to be the default behavior, this user choice
-    //has been dropped from the Dock Configuration Window
-    //property bool smallAutomaticIconJumps: plasmoid.configuration.smallAutomaticIconJumps
     property bool smallAutomaticIconJumps: true
 
     property bool userShowPanelBackground: LatteCore.WindowSystem.compositingActive ? plasmoid.configuration.useThemePanel : true

@@ -1,3 +1,17 @@
+## [v1.3.7] - 2026-11-27
+
+### Fixed
+
+- Task icons stay centered and their hover highlight remains sharp throughout
+  parabolic zoom, including when badges are visible.
+- Scrollable task lists can use the remaining dock space without resizing
+  surrounding tasks, and edge fades follow the actual remaining scroll distance.
+
+### Changed
+
+- Remove obsolete comments and resolved release incident history, and correct
+  duplicate and misplaced changelog entries.
+
 ## [v1.3.6] - 2026-11-27
 
 ### Added
@@ -711,10 +725,6 @@ not meant to change behavior.
   EffectsConfig button values, the applet shadow fade, the widget-zoom
   option scope, and the default template launchers.
 
-# Changelog
-
-All notable changes to Latte Dock NG are documented in this file.
-
 ## [v1.2.36] - 2026-08-02
 
 ### Fixed
@@ -918,11 +928,6 @@ All notable changes to Latte Dock NG are documented in this file.
 
 ### Fixed
 - Volume widget and systray volume icon no longer show incorrect muted state when first added after a cold system boot. PulseAudio output device (SinkModel) subscription is now primed at startup alongside the existing stream subscription.
-
-## [v1.1.22] - 2026-06-13
-
-### Fixed
-- Updating/reinstalling no longer silently deletes user custom dock configurations. The pre-clean step now preserves `~/.config/latte/` and saved layouts unless `--purge-user-data` is explicitly passed.
 
 ## [v1.1.21] - 2026-06-13
 

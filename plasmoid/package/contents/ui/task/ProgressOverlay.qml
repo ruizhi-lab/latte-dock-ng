@@ -110,8 +110,8 @@ Item {
                 return 0;
             }
 
-            readonly property color prominentBackColor: "#cc0000" //redish  (deprecated: theme.negativeTextColor)
-            readonly property color prominentTextColor: "#f3f3f3" //whitish (deprecated: root.lightTextColor)
+            readonly property color prominentBackColor: "#cc0000"
+            readonly property color prominentTextColor: "#f3f3f3"
 
             readonly property bool showsInfoBadge: ((taskItem.badgeIndicator > 0)
                                                     || (taskIcon.smartLauncherItem && taskIcon.smartLauncherItem.countVisible && !taskIcon.smartLauncherItem.progressVisible))
