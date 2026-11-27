@@ -15,6 +15,8 @@
 - Launcher synchronization, separator placement and containment startup reuse
   committed ordering and indexing to reduce transient movement and redundant
   restoration work.
+- Code quality: the reviewed deep QML lint baseline covers 245 files and 707
+  diagnostic identities, including the minimized-window section.
 
 ### Fixed
 
