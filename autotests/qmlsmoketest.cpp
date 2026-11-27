@@ -2178,6 +2178,7 @@ Item {
         id: taskItem
         visible: false
         property bool initialTaskGeometryReady: false
+        property bool movedToMinimizedSection: false
         property bool waitingForTaskRowReplacement: false
         property bool checkingTaskRowReplacement: false
         property bool waitingForLauncherPosition: false

@@ -1,3 +1,27 @@
+## [v1.3.6] - 2026-11-27
+
+### Added
+
+- Tasks can optionally show minimized windows in a separate section. The
+  section follows task filters and overflow scrolling, shows window titles and
+  sequence badges, and restores a window when its icon is activated.
+
+### Changed
+
+- The offline handbook is now available in every interface language, with a
+  language selector on every page and right-to-left layout for Arabic and
+  Hebrew.
+- The dock editor keeps its window position when switching tabs.
+- Launcher synchronization, separator placement and containment startup reuse
+  committed ordering and indexing to reduce transient movement and redundant
+  restoration work.
+
+### Fixed
+
+- New tasks and grouped windows retain their layout slots during entrance,
+  replacement and minimized-section transitions, preventing surrounding tasks
+  from shifting unexpectedly.
+
 ## [v1.3.5] - 2026-11-21
 
 ### Fixed
