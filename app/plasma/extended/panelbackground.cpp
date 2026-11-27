@@ -241,8 +241,6 @@ PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
                     }
                 }
 
-                // qCDebug(lattePlasma) << "   -> calculations: " << ", tail row :" <<  tailLimitR << " | head row: " << headLimitR;
-
                 if (headLimitR != tailLimitR) {
                     roundnessLines = tailLimitR - headLimitR + 1;
                 }
@@ -303,8 +301,6 @@ PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
                         break;
                     }
                 }
-
-                // qCDebug(lattePlasma) << "   -> calculations: " << ", tail row :" <<  tailLimitR << " | head row: " << headLimitR;
 
                 if (headLimitR != tailLimitR) {
                     roundnessLines = headLimitR - tailLimitR + 1;
@@ -426,8 +422,6 @@ PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                     roundnessLines = 0;
                 }
 
-                // qCDebug(lattePlasma) << "    -> line: " << r << ", low transparency pixels :" << transPixels << " | " << " rowMaxOpacity :"<< rowMaxOpacity << ", " << (transPixels !=
-                // baseLineLength);
             }
         }
     } else {
@@ -493,8 +487,6 @@ PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                     roundnessLines = 0;
                 }
 
-                // qCDebug(lattePlasma) << "    -> line: " << r << ", low transparency pixels :" << transPixels << " | " << " rowMaxOpacity :"<< rowMaxOpacity << ", " << (transPixels !=
-                // baseLineLength);
             }
         }
     }

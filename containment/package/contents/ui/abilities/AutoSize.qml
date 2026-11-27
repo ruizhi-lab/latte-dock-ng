@@ -184,9 +184,6 @@ Item {
             var layoutLength;
             var maxLength = root.maxLength;
 
-            //console.log("------Entered check-----");
-            //console.log("max length: "+ maxLength);
-
             layoutLength = (plasmoid.configuration.alignment === LatteCore.types.Justify) ?
                         layouts.startLayout.length+layouts.mainLayout.length+layouts.endLayout.length : layouts.mainLayout.length
 
@@ -198,12 +195,8 @@ Item {
             //! not create endless loops from early calculations
             var toGrowLimit = maxLength - (1.2 * parabolic.factor.zoom * itemLength);
 
-            //console.log("toShrinkLimit: "+ toShrinkLimit);
-            //console.log("toGrowLimit: "+ toGrowLimit);
-
             var newIconSizeFound = false;
             if (layoutLength > toShrinkLimit) { //must shrink
-                // console.log("step3");
                 var nextIconSize = metrics.maxIconSize;
 
                 do {
@@ -220,10 +213,8 @@ Item {
                 newIconSizeFound = true;
 
                 addPrediction(intLength, intNextLength);
-                // console.log("Step 3 - found:"+iconSize);
             } else if ((layoutLength<toGrowLimit
                         && (metrics.iconSize === iconSize)) ) { //must grow probably
-                // console.log("step4");
                 var nextIconSize2 = iconSize;
                 var foundGoodSize = -1;
 
@@ -249,9 +240,7 @@ Item {
                     newIconSizeFound = true
 
                     addPrediction(intLength2, intNextLength2);
-                    //        console.log("Step 4 - found:"+iconSize);
                 } else {
-                    //       console.log("Step 4 - did not found...");
                 }
             }
         }

@@ -58,10 +58,6 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
 
     connect(this, &AbstractWindowInterface::windowRemoved, this, &AbstractWindowInterface::windowRemovedSlot);
 
-    // connect(this, &AbstractWindowInterface::windowChanged, this, [this](WindowId wid) {
-    //     qCDebug(latteWm) << "WINDOW CHANGED ::: " << wid;
-    // });
-
     connect(m_activities.data(), &KActivities::Consumer::currentActivityChanged, this, [this](const QString & id) {
         m_currentActivity = id;
         Q_EMIT currentActivityChanged();

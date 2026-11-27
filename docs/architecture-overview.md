@@ -115,11 +115,8 @@ a maintenance constraint with focused tests, not a general-purpose public API.
 For popup geometry, follow the hard rule in AGENTS.md and the implementation in
 [dialog.cpp](../declarativeimports/core/dialog.cpp).
 
-The [modernization plan](architecture-modernization-plan.md) and
-[implementation guide](architecture-modernization-implementation.md) describe
-future improvements. Revalidate their dated baseline against this map and the
-current source before implementing a package; neither plans nor this overview
-override concrete ownership and compatibility comments beside the code.
+The [modernization queue](modernization-execution-queue.md) records the
+evidence required to revisit deferred architecture and performance candidates.
 
 ## Qt reference semantics
 

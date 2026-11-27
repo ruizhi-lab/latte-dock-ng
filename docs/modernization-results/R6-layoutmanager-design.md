@@ -1,6 +1,6 @@
 # R6 design study: typed interfaces for the containment `LayoutManager`
 
-Status: **design only.** No source file was changed, nothing was built or run, the desktop was not touched, and Debian 13 was not verified (deferred by the user). Source read: `HEAD` of branch `claude/r6-layoutmgr-design-a6f582`, cut from `main` at `e18a0f9a7` (v1.3.0). This record belongs to ledger row R6 in [architecture-modernization-plan.md](../architecture-modernization-plan.md#assessment-refresh-r-track); the main session updates the ledger. Line numbers are of this checkout; `file:line` citations are plain code spans so they do not go stale in links.
+Status: **design only.** No source file was changed, nothing was built or run, the desktop was not touched, and Debian 13 was not verified (deferred by the user). Source read: `HEAD` of branch `claude/r6-layoutmgr-design-a6f582`, cut from `main` at `e18a0f9a7` (v1.3.0). Line numbers are of this checkout; `file:line` citations are plain code spans so they do not go stale in links.
 
 ## 1. Summary
 
@@ -353,7 +353,7 @@ Option 1 keeps the module layout, adds one interface, and lets each slice ship o
 
 - **Files:** `containment/plugin/layoutmanager.h` (interface, `Q_INTERFACES`, `override`); `containment/plugin/layoutmanager.cpp` (`override` markers only); `app/view/containmentinterface.{h,cpp}` (typed member next to `m_layoutManager`; obtained in `setLayoutManager()`; cleared when the object is destroyed; about 38 string sites replaced; the notify connects at `:1029-1066` stay); `app/view/view.cpp` (10 LayoutManager sites in the drag and drop functions); `app/declarativeimports/contextmenulayerquickitem.cpp` (5 sites, obtained through a new `ContainmentInterface::layoutManagerApi()` accessor); `autotests/sourcecontracttest.cpp:5218`, which pins `m_layoutManager->property("rootItem")` and must be updated.
 - **Tests that call production code:** `containmentlayoutunittest` gains (a) `qobject_cast<LayoutManagerApi *>` returns the constructed `LayoutManager`; (b) the typed getters equal the property values after `requestAppletsOrder()` and `setOption()`; (c) the cached interface pointer in `ContainmentInterface` is cleared when the object is destroyed. A test that builds `ContainmentInterface` without a view is not verified as possible; if it is not, the check moves to the desktop retest.
-- **Gates:** S1 gates; the full `ctest` list on both compilers (the testing guide asks that fresh configurations list the expected tests, `docs/architecture-modernization-plan.md:136-160`); no QML change.
+- **Gates:** S1 gates; the full `ctest` list on both compilers (compare the test inventory in fresh configurations); no QML change.
 - **Desktop retest:** the list in 7.4.
 
 ### 7.3 S3: retire the dead legacy Justify-splitter branches (after a consumer trace)

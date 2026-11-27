@@ -48,29 +48,21 @@ function restoreLaunchers(){
         values = values.split(";");
         var returnedStringList = [];
 
-    //    console.log("----------------------- Restoring ---------------------");
-     //   console.log("Full Restoration:"+values);
         var type = values.splice(0,1);
 
-        //  console.log("Pass 1 - " +type);
         if (type == indicator){
-            //  console.log("Pass 2");
             while (values.length > 2){
-                //   console.log("Pass 3 - "+values);
                 var actId = values[0];
                 var subLaunchers = values.splice(2,values[1]);
-            //  console.log("To Be Restored launchers, "+actId+ ", "+subLaunchers.length+", "+subLaunchers);
 
                 var activityRecord = get(actId);
                 if(activityRecord){
-                    //      console.log("Activity item found...");
                     if(activityRecord.launchers)
                         activityRecord.launchers.splice(0,activityRecord.launchers.length);
 
                     activityRecord.launchers = subLaunchers;
                 }
                 else{
-                    //      console.log("Activity item is added...");
                     var res = {id:values[0], launchers:subLaunchers};
                     launchersOnActivities.push(res);
                 }
@@ -90,8 +82,6 @@ function restoreLaunchers(){
         if (get(currentActivity))
             returnedStringList = returnedStringList.concat(get(currentActivity).launchers);
 
-        //     console.log("Restored Strings:"+returnedStringList);
-
         return returnedStringList;
     }
     else
@@ -99,16 +89,12 @@ function restoreLaunchers(){
 }
 
 function saveLaunchers(){
-  //  console.log("----------------------- Saving ---------------------");
-
     var returnedStringList = [];
     returnedStringList.push(indicator);
 
-    //  console.log("Array Size:"+launchersOnActivities.length);
     var size = launchersOnActivities.length;
     for(var i=size-1; i>=0; --i){
         var activitySaving = get(launchersOnActivities[i].id);
-     //   console.log("Saving, "+activitySaving.id + " - "+activitySaving.launchers.length+" - "+activitySaving.launchers);
         if(activitySaving.launchers.length>0){
         /*    console.log("------- "+activitySaving.id+" ----------");
             for(var j=0; j<activitySaving.launchers.length; ++j){
@@ -137,14 +123,10 @@ function saveLaunchers(){
         console.log(i+". "+returnedStringList[i]);
     }*/
 
-    // console.log("IMPORTANT SAVED LIST: "+returnedStringList);
-
     plasmoid.configuration.launchers = returnedStringList.join(";");
 }
 
 function updateLaunchers(launcherList){
-    //console.log("----------------------- Updating ---------------------");
-    //console.log("---- Full Launchers ------");
     for(var j=0; j<launcherList.length; ++j){
         console.log(launcherList[j]);
     }
@@ -157,16 +139,12 @@ function updateLaunchers(launcherList){
         tempList =[];
     }
 
-    // console.log("IMPORTANT SENT LIST: "+tempList.length+" - "+launcherList.length+" - "+tempList);
     //
-    //  console.log("In memory Defaults:" + get('*').launchers);
     //  if(get(currentActivity))
-    //    console.log("In memory Current: "+get(currentActivity).launchers.length+ ' - ' + get(currentActivity).launchers);
 
     var currentList = get(currentActivity);
 
     var resultedCurrent = [];
-    // console.log("-------------");
 
     for(var i=tempList.length-1; i>=0; --i){
         var index=-1;
@@ -179,8 +157,6 @@ function updateLaunchers(launcherList){
             resultedCurrent.unshift(String(result));
         }
     }
-
-   // console.log("Resulted Current: "+resultedCurrent);
 
  /*   console.log("---- To Be Set List ------");
     for(var j=0; j<resultedCurrent.length; ++j){
@@ -234,7 +210,6 @@ function isOnAllActivities(id){
     if (index>=0)
         return true;
 
-    //  console.log("Check exists:"+id+ " - "+ "pos:"+index+" ,,, "+ get('*').activities);
     return false;
 }
 
@@ -254,7 +229,6 @@ function isInSpecificActivity(id){
 
 
 function setDefaultLaunchers(launchersList){
-  //  console.log("Set Default Launchers");
     if(!get('*')){
         var result = {id:'*', launchers:launchersList};
         launchersOnActivities.push(result);
@@ -264,24 +238,17 @@ function setDefaultLaunchers(launchersList){
             get('*').launchers.splice(0,get('*').launchers.length);
         get('*').launchers=launchersList;
     }
-
-    // console.log("Default:::: "+get('*').launchers);
 }
 
 function setActivityLaunchers(launchersList, actId){
-   // console.log("Set Activity Launchers");
     var currentList = get(actId);
-    //  console.log("-------------");
-    //  console.log("ResultedForMemory: "+launchersList);
     if(currentList){
         if(currentList.launchers)
             currentList.launchers.splice(0,currentList.launchers.length);
 
-      //  console.log("list exists");
         currentList.launchers=launchersList;
     }
     else{
-    //    console.log("new list");
         var res = {id:actId, launchers:launchersList};
         launchersOnActivities.push(res);
     }

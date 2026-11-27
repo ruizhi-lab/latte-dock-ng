@@ -380,10 +380,7 @@ QString Storage::newUniqueIdsFile(QString originFile, const Layout::GenericLayou
     QHash<QString, QString> subParentContainmentIds;
     QHash<QString, QString> subAppletIds;
 
-    //qCDebug(latteLayout) << "Ids:" << allIds;
 
-    //qCDebug(latteLayout) << "to copy containments: " << toCopyContainmentIds;
-    //qCDebug(latteLayout) << "to copy applets: " << toCopyAppletIds;
 
     QStringList assignedIds;
     QHash<QString, QString> assigned;

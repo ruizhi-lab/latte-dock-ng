@@ -51,8 +51,6 @@ public:
     void setExistsWindowMaximized(bool maximized);
 
     bool isTrackingCurrentActivity() const;
-    bool isTrackingActivity(const QString &activity);
-
     LastActiveWindow *lastActiveWindow() const;
 
     SchemeColors *activeWindowScheme() const;

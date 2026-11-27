@@ -639,7 +639,6 @@ void Positioner::immediateSyncGeometry()
 
     qCDebug(latteView) << "syncGeometry() ended...";
 
-    // qCDebug(latteView) << "dock geometry:" << qRectToStr(geometry());
 }
 
 void Positioner::validateDockGeometry()

@@ -133,7 +133,6 @@ MouseArea {
     }
 
     onPressed: (mouse) => {
-        //console.log("Pressed Task Delegate..");
         // In edit mode the containment owns right-clicks. Rejecting the press
         // lets it reach the containment's context menu layer, which offers the
         // edit-only dock actions and the Latte Tasks applet entries such as
@@ -170,7 +169,6 @@ MouseArea {
     }
 
     onReleased: (mouse) => {
-        //console.log("Released Task Delegate...");
         _resistanerTimer.stop();
         dragReady = false;
 

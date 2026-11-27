@@ -204,7 +204,6 @@ SequentialAnimation{
 
     Component.onDestruction: {
         if (animationSent){
-            //console.log("SAFETY REMOVAL 2: animation removing ended");
             animationSent = false;
             taskItem.abilities.animations.needLength.removeEvent(needLengthEvent);
         }

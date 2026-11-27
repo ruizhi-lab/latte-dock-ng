@@ -76,8 +76,6 @@ void ScreensDialog::initRemoveNowButton()
 
 void ScreensDialog::initSignals()
 {
-    //connect(m_handler, &Handler::ExportTemplateHandler::dataChanged, this, &ScreensDialog::onDataChanged);
-    //connect(m_handler, &Handler::ExportTemplateHandler::exportSucceeded, this, &ScreensDialog::onExportSucceeded);
 }
 
 QPushButton *ScreensDialog::removeNowButton() const

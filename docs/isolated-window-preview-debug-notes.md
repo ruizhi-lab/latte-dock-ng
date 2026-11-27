@@ -1,8 +1,8 @@
 # Isolated Window Preview — Implementation & Debug Notes
 
-Companion to `docs/isolated-window-preview-implementation-plan.md`. This file
-records what was built, the failure modes found during runtime retests, and the
-root cause of each. Keep it updated when the isolated preview path changes.
+This guide records the preview helper protocol and the root causes of runtime
+failures. Use the [development testing guide](development-testing-guide.md) for
+compiler presets, automated tests, and desktop retests.
 
 ## Architecture
 
@@ -202,9 +202,13 @@ and cross the validated helper protocol.
 
 ## Verification checklist
 
-- GCC 15.3 and Clang 22: `latte-dock-ng`, `latte-dock-ng-preview`,
-  `lattasksplugin`, autotests build with zero warnings.
-- Full autotest suite: 42/42 on both compilers.
+- Build the dock, preview helper and tasks plugin with GCC and Clang. Run the
+  preview process test and source contracts before the full CTest suites.
+- Confirm that the default hover action leaves previews disabled. Enable a
+  preview action and check single-window, grouped and minimized tasks, rapid
+  hover transitions, window closure and dock exit with the preview visible.
+  Check that helper termination or capture failure restores the title tooltip
+  and leaves the dock responsive.
 - `sourcecontracttest` protects: hover-setting gating, protocol types, bounded frames,
   LayerShellQt margins, FrameAnimation, and `moveIsolatedPreview`.
 - `previewprocessunittest` drives the real asynchronous `QProcess` transport

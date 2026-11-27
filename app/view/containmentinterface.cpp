@@ -2220,7 +2220,6 @@ void ContainmentInterface::initAppletConfigurationSignals(const int &id, QQmlPro
 
     connect(configuration, &QQmlPropertyMap::valueChanged,
     this, [ &, id](const QString & key, const QVariant & value) {
-        //qCDebug(latteView) << "org.kde.sync applet property changed : " << currentAppletId << " __ " << m_appletData[currentAppletId].plugin << " __ " << key << " __ " << value;
         Q_EMIT appletConfigPropertyChanged(id, key, value);
     });
 }
@@ -2480,7 +2479,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                                    << "id" << data.id
                                    << "plugin" << data.plugin;
                 Q_EMIT appletRemoved(data.id);
-                //qCDebug(latteView) << "org.kde.sync: removing applet ::: " << data.id << " __ " << data.plugin << " remained : " << m_appletData.keys();
                 m_appletData.remove(data.id);
             });
         }

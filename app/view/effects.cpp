@@ -301,7 +301,6 @@ void Effects::setMask(QRect area)
     m_mask = area;
     updateMask();
 
-    // qCDebug(latteView) << "dock mask set:" << m_mask;
     Q_EMIT maskChanged();
 }
 

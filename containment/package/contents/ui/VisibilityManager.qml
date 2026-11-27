@@ -276,9 +276,6 @@ Item{
                         animations.needThickness.count + ", " + latteView.visibility.isHidden);
         }
 
-        //console.log("reached updating geometry ::: "+dock.maskArea);
-
-
         if (!latteView.visibility.isHidden && updateIsEnabled && inNormalState) {
             //! Important: Local Geometry must not be updated when view ISHIDDEN
             //! because it breaks Dodge(s) modes in such case
@@ -324,7 +321,6 @@ Item{
             localGeometry.width = Math.min(localGeometry.width, latteView.width);
             localGeometry.height = Math.min(localGeometry.height, latteView.height);
 
-            //console.log("update geometry ::: "+localGeometry);
             latteView.localGeometry = localGeometry;
         }
 

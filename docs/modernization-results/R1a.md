@@ -67,8 +67,3 @@ SIGABRT used to capture the pre-existing quit hang fixed in R1b.
 - Two-output and VM behavior were not retested for this slice.
 - Remote CI for the pushed commits was still running when this record was
   written; its QML lint job had passed.
-
-## Next action
-
-None for R1a. Continue with R2a in the
-[R track ledger](../architecture-modernization-plan.md#assessment-refresh-r-track).

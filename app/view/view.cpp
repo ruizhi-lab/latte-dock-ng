@@ -1393,11 +1393,9 @@ void View::showHiddenViewFromActivityStopping()
             m_effects->updateEnabledBorders();
         }
 
-        //qCDebug(latteView) << "View:: Enforce reshow from timer 1...";
         Q_EMIT forcedShown();
     } else if (m_layout && isVisible()) {
         m_inDelete = false;
-        //qCDebug(latteView) << "View:: No needed reshow from timer 1...";
     }
 }
 

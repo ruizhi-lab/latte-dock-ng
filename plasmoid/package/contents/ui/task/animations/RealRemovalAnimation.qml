@@ -102,10 +102,6 @@ SequentialAnimation {
                 }
             }
 
-            //console.log("1." + taskItem.launcherUrl + " - " + taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrl) + "__" +
-            //            animation1 + ":" + animation4 + "=>" + taskRealRemovalAnimation.enabledAnimation + "  index:" + taskItem.lastValidIndex);
-            //console.log("2." + taskItem.isLauncher);
-
             taskItem.abilities.animations.needLength.addEvent(needLengthEvent);
 
             if (taskItem.parabolicItem.zoom > 1 && !taskRealRemovalAnimation.enabledAnimation
@@ -180,7 +176,6 @@ SequentialAnimation {
     ScriptAction{
         script:{
             if (showWindowAnimation.animationSent){
-                //console.log("SAFETY REMOVAL 1: animation removing ended");
                 showWindowAnimation.animationSent = false;
                 taskItem.abilities.animations.needLength.removeEvent(showWindowAnimation.needLengthEvent);
             }

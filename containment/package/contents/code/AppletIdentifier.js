@@ -12,7 +12,6 @@ var blacklistedApplets = ["org.kde.redshiftControl",
 function typeOf(obj, className){
     var name = obj.toString();
     //if (applet.pluginName === "org.kde.plasma.kicker") //"set a plugin name to debug"
-    //    console.log(name);
     return ((name.indexOf(className + "(") === 0) || (name.indexOf(className + "_QML") === 0));
 }
 

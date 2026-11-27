@@ -228,11 +228,6 @@ QString Importer::standardPath(QString subPath, bool localfirst)
     return QString();
 }
 
-QString Importer::storageTmpDir() const
-{
-    return m_storageTmpDir.path();
-}
-
 QString Importer::layoutCanBeImported(QString oldAppletsPath, QString newName, QString exportDirectory)
 {
     QFile oldAppletsrc(oldAppletsPath);

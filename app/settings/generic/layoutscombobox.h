@@ -22,7 +22,6 @@ class LayoutsComboBox : public QComboBox
 public:
     LayoutsComboBox(QWidget *parent = nullptr);
 
-    Latte::Data::LayoutIcon layoutIcon() const;
     void setLayoutIcon(const Latte::Data::LayoutIcon &icon);
 
 protected:

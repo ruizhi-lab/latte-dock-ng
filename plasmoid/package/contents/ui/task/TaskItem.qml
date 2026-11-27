@@ -590,12 +590,10 @@ AbilityItem.BasicItem {
 
     ///// Handlers for Signals /////
     function animationStarted(){
-        //    console.log("Animation started: " + index);
         inAnimation = true;
     }
 
     function animationEnded(){
-        //   console.log("Animation ended: " + index);
         inAnimation = false;
     }
 

@@ -606,7 +606,6 @@ void ClonedView::updateContainmentConfigProperty(const QString &key, const QVari
     if (!CONTAINMENTMANUALSYNCEDPROPERTIES.contains(key)) {
         extendedInterface()->updateContainmentConfigProperty(key, value);
     } else {
-        //qCDebug(latteView) << "org.kde.sync :: containment config value syncing blocked :: " << key;
     }
 }
 

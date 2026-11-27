@@ -117,7 +117,6 @@ void GlobalShortcuts::init()
         action->setShortcut(metaShortcut);
         KGlobalAccel::setGlobalShortcut(action, metaShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
-            // qCDebug(latteLayout) << "meta action...";
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::META));
         });
@@ -149,7 +148,6 @@ void GlobalShortcuts::init()
         action->setText(i18n("New Instance for Entry %1", entryNumber));
         KGlobalAccel::setGlobalShortcut(action, newInstanceShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
-            // qCDebug(latteLayout) << "meta + ctrl + action...";
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::CTRL));
         });
@@ -547,7 +545,6 @@ void GlobalShortcuts::hideViewsTimerSlot()
         m_metaShowedViews = false;
     };
 
-    // qCDebug(latteLayout) << "MEMORY ::: " << m_hideViews.count() << " _ " << m_viewItemsCalled.count() << " _ " << m_showShortcutBadgesMethods.count();
 
     // TODO: improve modifier release tracking for Wayland.
     initParameters();

@@ -496,7 +496,6 @@ void LastActiveWindow::applicationDataChanged(const WindowId &wid)
 void LastActiveWindow::windowChanged(const WindowId &wid)
 {
     if (!m_trackedInfo->enabled()) {
-        // qCDebug(latteWm) << " Last Active Window, Window Changed : TrackedInfo is disabled...";
         setIsValid(false);
         return;
     }
@@ -518,7 +517,6 @@ void LastActiveWindow::windowChanged(const WindowId &wid)
             setInformation(historyitem);
         }
     } else {
-        //qCDebug(latteWm) << " LastActiveWindow : window is not in history";
     }
 }
 

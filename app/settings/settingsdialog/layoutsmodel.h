@@ -160,8 +160,6 @@ private:
     QString sortingPriority(const SortingPriority &priority, const int &row) const;
     QString sortableText(const int &priority, const int &row) const;
 
-    QStringList cleanStrings(const QStringList &original, const QStringList &occupied);
-
     Latte::Data::LayoutIcon icon(const int &row) const;
 
 private:

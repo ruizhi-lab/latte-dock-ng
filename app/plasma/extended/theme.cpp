@@ -488,10 +488,6 @@ const CornerRegions &Theme::cornersMask(const int &radius)
     corners.bottomLeft = transform.map(corners.bottomRight);
     corners.bottomLeft.translate(corners.topLeft.boundingRect().width(), 0);
 
-    //qCDebug(lattePlasma) << " reg top;: " << corners.topLeft;
-    //qCDebug(lattePlasma) << " reg topr: " << corners.topRight;
-    //qCDebug(lattePlasma) << " reg bottomr: " << corners.bottomRight;
-    //qCDebug(lattePlasma) << " reg bottoml: " << corners.bottomLeft;
 
     m_cornerRegions[radius] = corners;
     return m_cornerRegions[radius];

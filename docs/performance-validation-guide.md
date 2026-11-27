@@ -1,13 +1,10 @@
 # Performance Measurement and Regression Acceptance
 
-Use for P0 and every implemented P batch in the
-[modernization plan](architecture-modernization-plan.md). It supplements the
-[development testing guide](development-testing-guide.md); it does not replace
-the user-mode Debug retest and clean-quit procedure in AGENTS.md.
+Use this guide with the [development testing guide](development-testing-guide.md)
+and the user-mode Debug retest procedure in AGENTS.md.
 
-The 2026-09-29 source assessment contains no live performance measurement.
-Profile before choosing a fix; reduced source size, fewer timer declarations
-or a smaller binary is not proof of reduced resource consumption.
+Profile the affected workload before choosing a fix. Measure resource use on
+comparable builds before attributing a change to the implementation.
 
 ## Comparable artifacts
 

@@ -508,7 +508,6 @@ PlasmoidItem {
 
 
     function forcePreviewsHiding(debug) {
-        // console.log(" org.kde.latte   Tasks: Force hide previews event called: "+debug);
         windowsPreviewDlg.activeItem = null;
         windowsPreviewDlg.visible = false;
     }
@@ -613,7 +612,6 @@ PlasmoidItem {
         }
 
         function hide(debug){
-            //console.log("   Tasks: hide previews event called: "+debug);
             if (containsMouse || !root.visible) {
                 return;
             }
@@ -641,10 +639,7 @@ PlasmoidItem {
 
             hidePreviewWinTimer.stop();
 
-            // console.log("preview show called...");
             if ((!activeItem || (activeItem !== taskItem)) && !root.contextMenu) {
-                //console.log("preview show called: accepted...");
-
                 //this can be used from others to hide their appearance
                 //e.g but applets from the dock to hide themselves
                 if (!root.visible) {
@@ -1335,8 +1330,6 @@ PlasmoidItem {
             contentWidth: icList.width
             contentHeight: icList.height
 
-            //onCurrentPosChanged: console.log("CP :: "+ currentPos + " icW:"+icList.width + " rw: "+root.width + " w:" +width);
-
             layer.enabled: contentsExceed && root.scrollingEnabled
             layer.effect: MultiEffect {
                 maskEnabled: true
@@ -1831,7 +1824,6 @@ PlasmoidItem {
     }
 
     function containsMouse(){
-        //console.log("s1...");
         if (disableRestoreZoom && (root.contextMenu || windowsPreviewDlg.visible)) {
             return;
         } else {
@@ -1844,14 +1836,12 @@ PlasmoidItem {
         if (previewContainsMouse())
             return true;
 
-        //console.log("s3...");
         var tasks = icList.contentItem.children;
 
         for(var i=0; i<tasks.length; ++i){
             var task = tasks[i];
 
             if(task && task.containsMouse){
-                // console.log("Checking "+i+" - "+task.index+" - "+task.containsMouse);
                 return true;
             }
         }

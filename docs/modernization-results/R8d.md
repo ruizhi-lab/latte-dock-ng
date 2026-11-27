@@ -426,8 +426,7 @@ trim returned 34 % and 43 % of their first-use growth, below the 50 % line for a
 retention. The numbered steps below were the plan that R8j ran; the result is above.
 
 R8d is complete as a measurement. The 12-hour series answers its question: the dock does
-not grow while it idles, and it holds memory after some desktop activity. Telling a leak
-from allocator retention is slice R8j in the [plan](../architecture-modernization-plan.md):
+not grow while it idles, and it holds memory after some desktop activity. The follow-up used these steps to distinguish a leak from allocator retention:
 
 1. In the nested session (`R8d-tools/launch.py`) with a Release dock of current `main`,
    repeat one fixed cycle, such as opening and closing an application window, about ten

@@ -235,7 +235,6 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    //qCDebug(latteQml) << "2 ...";
     //the plugin can be a single action or a context menu
     //Don't have an action list? execute as single action
     //and set the event position as action data
@@ -309,7 +308,6 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         applet = m_latteView->containment();
     }
 
-    //qCDebug(latteQml) << "3 ...";
 
     QMenu *desktopMenu = new QMenu;
 
@@ -329,16 +327,13 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     //end workaround
     //!end of plasma official code(workaround)
 
-    //qCDebug(latteQml) << "5 ...";
 
     Q_EMIT m_latteView->containment()->contextualActionsAboutToShow();
 
     if (applet && applet != m_latteView->containment()) {
-        //qCDebug(latteQml) << "5.3 ...";
         Q_EMIT applet->contextualActionsAboutToShow();
         addAppletActions(desktopMenu, applet, event);
     } else {
-        //qCDebug(latteQml) << "5.6 ...";
         addContainmentActions(desktopMenu, event);
     }
 
@@ -375,10 +370,8 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         globalPos = popUpRelevantToGlobalPoint(QRect(0, 0, 0, 0), popUpRect);
     }
 
-    //qCDebug(latteQml) << "7...";
 
     if (desktopMenu->isEmpty()) {
-        //qCDebug(latteQml) << "7.5 ...";
         delete desktopMenu;
         event->accept();
         return;
@@ -403,7 +396,6 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         }
     }
 
-    //qCDebug(latteQml) << "8 ...";
     desktopMenu->popup(globalPos);
     event->setAccepted(true);
 }
@@ -593,7 +585,6 @@ void ContextMenuLayerQuickItem::addContainmentActions(QMenu *desktopMenu, QEvent
 
     if (m_latteView->containment()->corona()->immutability() != Plasma::Types::Mutable &&
         !KAuthorized::authorizeAction(QStringLiteral("plasma/containment_actions"))) {
-        //qCDebug(latteQml) << "immutability";
         return;
     }
 

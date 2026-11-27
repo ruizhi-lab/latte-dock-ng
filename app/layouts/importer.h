@@ -61,7 +61,6 @@ public:
 
     bool exportFullConfiguration(QString file);
 
-    QString storageTmpDir() const;
     //! imports the specific layout and return the new layout name.
     //! if the function didn't succeed returns an empty string
     QString importLayout(const QString &fileName, const QString &suggestedName = QString());

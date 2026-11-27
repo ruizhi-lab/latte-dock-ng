@@ -971,7 +971,6 @@ void Layouts::save()
         Latte::Data::Layout iLayoutOriginalData = m_model->originalData(iLayoutCurrentData.id);
         iLayoutOriginalData = iLayoutOriginalData.isEmpty() ? iLayoutCurrentData : iLayoutOriginalData;
 
-        //qCDebug(latteSettings) << i << ". " << id << " - " << color << " - " << name << " - " << menu << " - " << lActivities;
         //! update the generic parts of the layouts
         bool isOriginalLayout = m_model->originalLayoutsData().containsId(iLayoutCurrentData.id);
         Latte::CentralLayout *centralActive = isOriginalLayout ? m_handler->corona()->layoutsManager()->synchronizer()->centralLayout(iLayoutOriginalData.name) : nullptr;

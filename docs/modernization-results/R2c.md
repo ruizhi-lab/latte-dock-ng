@@ -433,9 +433,7 @@ the KDE Neon signing key (the key URL answered 502 at the time and 200 later),
 and the package binding job was skipped. CI run 40683601580 at `14d705a5d`, the
 next push, passed all 23 jobs ([CI validation](#ci-validation)).
 
-Two sessions implemented the batch of the
-[implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
-in parallel from `09b030e61`, on disjoint source files. Batch A
+Two sessions expanded the clazy gate in parallel from `09b030e61`, on disjoint source files. Batch A
 (`claude/r2c-batch-a-a5a9fa`) merged into `main` in `1dd485bc1` and batch B
 (`claude/r2c-batch-b-c113e5`) in `fc8b803d0`. The only file both changed is
 `scripts/test-clazy.py`, where each added names to `GATED_CHECKS`; git merged it
@@ -520,9 +518,7 @@ Status: Complete. Every check on `main` passed, the host desktop smoke passed ex
 for check 9, whose Meta reveal could not be reproduced later (see the table), and CI
 run 40683601580 at `14d705a5d` passed all 23 jobs ([CI validation](#ci-validation)).
 
-Two sessions implemented the batch of the
-[implementation plan](../architecture-modernization-implementation.md#r2c-clazy-inventory-and-zero-finding-gate)
-in parallel from `eba91a3e6`, on disjoint files. Batch C
+Two sessions expanded the clazy gate in parallel from `eba91a3e6`, on disjoint files. Batch C
 (`claude/r2c-batch-c-bca59f`, 20 sources) merged into `main` in `181b7f871` and
 batch D (`claude/r2c-batch-d-a6a9f7`, 13 headers and 3 sources) in `382e55cd2`.
 Neither branch changed a file outside its list. Both added names next to each

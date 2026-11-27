@@ -55,7 +55,6 @@ void ScreenPool::load()
         QString serialized = m_configGroup.readEntry(key, QString());
 
         Data::Screen screenRecord(key, serialized);
-        //qCDebug(latteApp) << "org.kde.latte ::: " << screenRecord.id << ":" << screenRecord.serialize();
 
         if (!key.isEmpty() && !serialized.isEmpty() && !m_screensTable.containsId(key)) {
             m_screensTable << screenRecord;

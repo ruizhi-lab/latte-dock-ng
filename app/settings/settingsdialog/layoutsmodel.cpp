@@ -581,19 +581,6 @@ QVariant Layouts::data(const QModelIndex &index, int role) const
     return QVariant{};
 }
 
-QStringList Layouts::cleanStrings(const QStringList &original, const QStringList &occupied)
-{
-    QStringList result;
-
-    for (int i = 0; i < original.count(); ++i) {
-        if (!occupied.contains(original[i])) {
-            result << original[i];
-        }
-    }
-
-    return result;
-}
-
 void Layouts::setOriginalActivitiesForLayout(const Latte::Data::Layout &layout)
 {
     if (o_layoutsTable.containsId(layout.id) && m_layoutsTable.containsId(layout.id)) {

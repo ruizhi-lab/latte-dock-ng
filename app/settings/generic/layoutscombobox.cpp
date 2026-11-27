@@ -25,11 +25,6 @@ LayoutsComboBox::LayoutsComboBox(QWidget *parent)
 {
 }
 
-Latte::Data::LayoutIcon LayoutsComboBox::layoutIcon() const
-{
-    return m_layoutIcon;
-}
-
 void LayoutsComboBox::setLayoutIcon(const Latte::Data::LayoutIcon &icon)
 {
     if (m_layoutIcon == icon) {

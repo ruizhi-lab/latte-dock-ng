@@ -14,10 +14,8 @@ The current component map and integration boundaries are documented in
 `docs/architecture-overview.md`. Read the relevant entries before changing
 ownership, QML registration, layout coordination or process boundaries.
 
-The staged architecture and tooling improvement backlog is documented in
-`docs/architecture-modernization-plan.md`; execution and handoff requirements
-are in `docs/architecture-modernization-implementation.md`. These documents
-describe planned work, not completed capabilities or permission to commit/push.
+Deferred architecture and performance candidates are documented in
+`docs/modernization-execution-queue.md`.
 
 The rules below are always in effect. Consult the later knowledge-base sections
 when working on releases, compatibility problems or known runtime behavior.

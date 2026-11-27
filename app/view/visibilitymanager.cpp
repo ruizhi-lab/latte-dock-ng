@@ -115,7 +115,6 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
 
     connect(&m_timerShow, &QTimer::timeout, this, [this]() {
         if (m_isHidden ||  m_isBelowLayer) {
-            //   qCDebug(latteView) << "must be shown";
             Q_EMIT mustBeShown();
         }
     });
@@ -589,8 +588,6 @@ bool VisibilityManager::hasBlockHidingEvent(const QString &type)
 
 void VisibilityManager::addBlockHidingEvent(const QString &type)
 {
-    //qCDebug(latteView) << " org.kde.late {{ ++++ adding block hiding event :: " << type;
-
     if (m_blockHidingEvents.addEvent(type)) {
         Q_EMIT hidingIsBlockedChanged();
     }
@@ -598,8 +595,6 @@ void VisibilityManager::addBlockHidingEvent(const QString &type)
 
 void VisibilityManager::removeBlockHidingEvent(const QString &type)
 {
-    //qCDebug(latteView) << " org.kde.latte {{ ---- remove block hiding event :: " << type;
-
     if (m_blockHidingEvents.removeEvent(type)) {
         Q_EMIT hidingIsBlockedChanged();
     }

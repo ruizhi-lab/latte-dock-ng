@@ -792,7 +792,6 @@ void Windows::cleanupFaultyWindows()
 
         //! garbage windows removing
         if (winfo.wid().isEmpty() || winfo.geometry() == QRect(0, 0, 0, 0)) {
-            //qCDebug(latteWm) << "Faulty Geometry ::: " << winfo.wid();
             m_windows.remove(key);
         }
     }
@@ -967,7 +966,6 @@ void Windows::updateExtraViewHints()
                 }
             }
 
-            //qCDebug(latteWm) << " Touching Busy Vertical View :: " << horView->location() << " - " << horView->positioner()->currentScreenId() << " :: " << touchingBusyVerticalView;
 
             setIsTouchingBusyVerticalView(horView, touchingBusyVerticalView);
         }
@@ -1000,7 +998,6 @@ void Windows::updateHints(Latte::View *view)
     WindowId activeTouchWinId;
     WindowId activeTouchEdgeWinId;
 
-    //qCDebug(latteWm) << " -- TRACKING REPORT (SCREEN)--";
 
     //! First Pass
     for (const auto &winfo : std::as_const(m_windows)) {
@@ -1179,7 +1176,6 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout)
             maxWinId = winfo.wid();
         }
 
-        //qCDebug(latteWm) << "window geometry ::: " << winfo.geometry();
     }
 
     if (existsFaultyWindow) {

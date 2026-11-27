@@ -274,7 +274,6 @@ Item {
         arraysGarbageCollectorTimer.restart();
 
         if (!immediateLauncherExists(launch)) {
-            //console.log("Immediate Launcher Added::: "+launch);
             immediateLaunchers.push(launch);
         }
     }
@@ -283,7 +282,6 @@ Item {
         for(var i=0; i<immediateLaunchers.length; ++i){
             if (immediateLaunchers[i]===launch) {
                 immediateLaunchers.splice(i,1);
-                //console.log("Immediate Launcher Removed::: "+launch);
                 return;
             }
         }
@@ -330,7 +328,6 @@ Item {
         arraysGarbageCollectorTimer.restart();
 
         var frozenTaskExists = false;
-        //console.log("SET FROZEN :: "+identifier+" - "+scale);
         var frozenTask = getFrozenTask(identifier);
 
         if (frozenTask) {
