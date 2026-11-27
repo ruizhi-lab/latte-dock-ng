@@ -137,7 +137,6 @@ AbilityDefinition.Indexer {
                         && !item.isSeparator /*not using "separators" array to avoid binding loops*/
                         && !item.isHidden /*not using "hidden" array to avoid binding loops*/
                         && item.itemIndex > ind) {
-                     //console.log("org/kde/latte SETTING UP ::: " + item.itemIndex + " / " + layout.children.length);
                     ind = item.itemIndex;
                 }
             }

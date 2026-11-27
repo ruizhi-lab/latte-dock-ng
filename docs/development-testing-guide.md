@@ -200,8 +200,8 @@ systemd-run --user --unit=latte-dock-ng-dev-$(date +%s) --collect ~/launch-latte
 where the launcher executes `~/.local/bin/latte-dock-ng-dev --replace` with the
 wanted flags. For a test
 that includes a logout, add `-p PartOf=graphical-session.target` and
-`-p After=graphical-session.target` as AGENTS.md step 5 does: without them the
-end of the session does not stop the unit. Importing
+`-p After=graphical-session.target` as the Runtime Retest Workflow does:
+without them the end of the session does not stop the unit. Importing
 only the display and bus variables into an SSH launch is not enough: the
 [R5 report](modernization-results/R5.md) traced the 20 % idle CPU that P0
 measured in this VM to such a launch. `dev-env.sh` prepends `kdedefaults:/etc/xdg`
@@ -445,19 +445,33 @@ clean quit:
    ```
 
 2. Stop the running dock and launch the user-mode binary with a fresh debug
-   log from a terminal. Do not use `pkill -f` on a command line that also
-   contains "latte-dock-ng" (it matches the shell itself); use the exact
+   log through the user manager. Do not use `pkill -f` on a command line that
+   also contains "latte-dock-ng" (it matches the shell itself); use the exact
    process name:
 
    ```bash
    pkill -x latte-dock-ng || true
    rm -f /tmp/latte-ng.log
-   nohup ~/.local/bin/latte-dock-ng-dev --replace --debug > /tmp/latte-ng.log 2>&1 &
+   cat > /tmp/launch-latte.sh << 'SCRIPT'
+   #!/bin/bash
+   exec ~/.local/bin/latte-dock-ng-dev --replace --debug > /tmp/latte-ng.log 2>&1
+   SCRIPT
+   chmod +x /tmp/launch-latte.sh
+   systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" \
+     -p PartOf=graphical-session.target -p After=graphical-session.target \
+     -p TimeoutStopSec=5s /tmp/launch-latte.sh
+   sleep 5
+   pgrep -x latte-dock-ng
    ```
 
-   An AI agent starts the dock through `systemd-run --user` instead (AGENTS.md,
-   step 5 of the Development Debug & Retest Workflow). Otherwise the dock, and
-   every application it launches, inherits the agent's environment.
+   An AI agent must use this user-manager launch instead of `setsid` or `nohup`
+   from its shell. Otherwise the dock, and every application it launches,
+   inherits the agent's session tokens, proxy settings and other variables, and
+   stopping the agent's cgroup can stop the dock. The transient unit receives
+   the Plasma session environment and has its own cgroup. `PartOf=` is required
+   for logout testing: without it, a lingering user manager can leave the dock
+   running until it loses its Wayland connection instead of exercising SIGTERM
+   teardown. `--collect` removes the unit after it stops.
 
 3. Exercise the changed behavior, then drive the exact scenario the fix
    targets (dock restart, applet popups and submenus, KDE logout or reboot).

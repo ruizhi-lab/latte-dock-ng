@@ -7,7 +7,6 @@
 #define TASKTOOLS_H
 
 #include <QIcon>
-#include <QModelIndex>
 #include <QUrl>
 
 #include <KService>
@@ -24,11 +23,6 @@ struct AppData
     QIcon icon;
     QUrl url;
     bool skipTaskbar = false;
-};
-
-enum UrlComparisonMode {
-    Strict = 0,
-    IgnoreQueryItems
 };
 
 /**
@@ -136,46 +130,6 @@ KService::List servicesFromCmdLine(const QString &cmdLine, const QString &proces
  **/
 QString defaultApplication(const QUrl &url);
 
-/**
- * Convenience function to compare two launcher URLs either strictly
- * or ignoring their query strings.
- *
- * @see LauncherTasksModel
- * @param a The first launcher URL.
- * @param b The second launcher URL.
- * @param mode The comparison mode. Either Strict or IgnoreQueryItems.
- * @returns @c true if the URLs match.
- **/
-//bool launcherUrlsMatch(const QUrl &a, const QUrl &b, UrlComparisonMode mode = Strict);
-
-/**
- * Determines whether tasks model entries belong to the same app.
- *
- * @param a The first model index.
- * @param b The second model index.
- * @returns @c true if the model entries belong to the same app.
- **/
-//bool appsMatch(const QModelIndex &a, const QModelIndex &b);
-
-/**
- * Given global coordinates, returns the geometry of the screen they are
- * on, or the geometry of the screen they are closest to.
- *
- * @param pos Coordinates in global space.
- * @return The geometry of the screen containing pos or closest to pos.
- */
-//QRect screenGeometry(const QPoint &pos);
-
-/**
- * Attempts to run the application described by the AppData struct that
- * is passed in, optionally also handing the application a list of URLs
- * to open.
- *
- * @param appData An application data struct.
- * @param urls A list of URLs for the application to open.
- */
-//void runApp(const AppData &appData,
-//    const QList<QUrl> &urls = QList<QUrl>());
 }
 }
 

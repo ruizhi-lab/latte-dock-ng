@@ -1266,17 +1266,11 @@ Item {
         var wrapperContainsMouse = choords.x>=0 && choords.y>=0 && choords.x<appletItem.appletWrapper.width && choords.y<appletItem.appletWrapper.height;
         var appletItemContainsMouse = mouse.x>=0 && mouse.y>=0 && mouse.x<width && mouse.y<height;
 
-        //console.warn(" APPLET :: " + mouse.x +  " _ " + mouse.y);
-        //console.warn(" WRAPPER :: " + choords.x + " _ " + choords.y);
-
         var inThicknessNeutralArea = !wrapperContainsMouse && (appletItem.metrics.margin.screenEdge>0);
         var appletNeutralAreaEnabled = !(inThicknessNeutralArea && root.dragActiveWindowEnabled);
 
         if (appletItemContainsMouse && !wrapperContainsMouse && appletNeutralAreaEnabled) {
-            //console.warn("PASSED");
             latteView.extendedInterface.toggleAppletExpanded(applet.id);
-        } else {
-            //console.warn("REJECTED");
         }
     }
 

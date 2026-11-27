@@ -783,7 +783,6 @@ PlasmoidItem {
             ActivitiesTools.currentActivity = String(activityInfo.currentActivity);
             ActivitiesTools.plasmoid = root.plasmoid;
 
-            //var loadedLaunchers = ActivitiesTools.restoreLaunchers();
             ActivitiesTools.importLaunchersToNewArchitecture();
 
             root.appletAbilities.launchers.importLauncherListInModel();
@@ -1827,9 +1826,6 @@ PlasmoidItem {
         } else {
             disableRestoreZoom = false;
         }
-
-        //if (previewContainsMouse())
-        //  windowsPreviewDlg.hide(4);
 
         if (previewContainsMouse())
             return true;

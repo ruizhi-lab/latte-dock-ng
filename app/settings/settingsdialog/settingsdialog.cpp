@@ -55,8 +55,6 @@ SettingsDialog::SettingsDialog(QWidget *parent, Latte::Corona *corona)
     setAcceptDrops(true);
     m_ui->setupUi(this);
 
-    //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-
     //! load window size
     loadConfig();
 

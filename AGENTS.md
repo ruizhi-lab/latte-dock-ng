@@ -1,7 +1,7 @@
 # Latte Dock NG — Universal AI Instructions & Knowledge Base
 
-This is the repository's single source of truth for AI coding rules,
-architecture principles and workflows. It is tool-neutral and intended for
+This file defines repository-wide AI rules and links to the canonical
+architecture, testing and release guides. It is tool-neutral and intended for
 pi, Claude Code, OpenAI Codex, Cursor and every other AGENTS.md-aware assistant.
 Keep cross-component rules here and local design knowledge beside its
 implementation; do not create tool-specific `CLAUDE.md` or `CODEX.md` files.
@@ -85,85 +85,24 @@ part of local mirror maintenance.
 
 ## Development Debug & Retest Workflow
 
-When testing changes to latte-dock-ng, follow this exact workflow:
+For runtime changes, follow the canonical
+[Runtime Retest Workflow](docs/development-testing-guide.md#runtime-retest-workflow).
+It covers the isolated user-mode Debug installation, session-correct launch,
+log analysis and clean-quit/coredump A/B verification.
 
-1. **User-mode install modified code**
-   ```bash
-   cd /data/projects/latte-dock-ng && bash install.sh --user Debug >/tmp/latte-install-user.log 2>&1; tail -n 80 /tmp/latte-install-user.log
-   ```
+Use `~/.local/bin/latte-dock-ng-dev`, which applies the generated developer
+environment before starting the binary under `~/.local/opt/latte-dock-ng-dev`.
+An AI agent must launch it through `systemd-run --user`, bound to the graphical
+session, rather than inheriting the agent shell's environment and cgroup.
+Stop the dock with `pkill -x latte-dock-ng`; never use `pkill -f` in a command
+that also contains `latte-dock-ng`.
 
-2. **Kill old latte-dock-ng process** (CAUTION: never use `pkill -f` in a
-   command line that also contains "latte-dock-ng" elsewhere — it matches the
-   shell's own command line and kills the shell; prefer `pkill -x latte-dock-ng`)
-   ```bash
-   pkill -x latte-dock-ng || true
-   ```
+After retesting, inspect `/tmp/latte-ng.log` for new warnings and errors. Crash
+fixes also require the guide's coredump baseline and A/B check against the
+pre-fix binary.
 
-3. **Remove old log file**
-   ```bash
-   rm -f /tmp/latte-ng.log
-   ```
-
-4. **Use the isolated Debug launcher** at `~/.local/bin/latte-dock-ng-dev`.
-   It applies the generated developer environment before starting the binary
-   under `~/.local/opt/latte-dock-ng-dev`.
-
-5. **Launch the USER-MODE Debug build**. To survive a shell timeout,
-   use script + nohup in a separate session. The explicit `setsid` prevents
-   command-runner session cleanup from terminating an otherwise nohup-protected
-   process:
-   ```bash
-   cat > /tmp/launch-latte.sh << 'SCRIPT'
-   #!/bin/bash
-   exec ~/.local/bin/latte-dock-ng-dev --replace --debug > /tmp/latte-ng.log 2>&1
-   SCRIPT
-   chmod +x /tmp/launch-latte.sh
-   setsid -f nohup /tmp/launch-latte.sh > /dev/null 2>&1
-   sleep 5
-   ps aux | grep latte-dock-ng | grep -v grep || echo "DOCK FAILED TO START"
-   ```
-
-   An AI agent starts the launcher through the user manager instead of
-   `setsid -f nohup`, bound to the graphical session like the autostart unit:
-   ```bash
-   systemd-run --user --collect --unit="latte-dock-ng-debug-$(date +%Y%m%d-%H%M%S)" \
-     -p PartOf=graphical-session.target -p After=graphical-session.target \
-     -p TimeoutStopSec=5s /tmp/launch-latte.sh
-   ```
-   The agent's shell carries the agent's own variables (session tokens, account
-   identifiers, proxy settings, `NO_AT_BRIDGE`) and runs in the agent
-   application's cgroup. The dock passes its environment to every application
-   it launches, and stopping that cgroup stops the dock with it. On 2026-11-10 a
-   dock started with `setsid` from an agent shell had 70 variables more than
-   plasmashell and handed them to Thunderbird. A transient user unit gets the
-   session environment, as an autostarted dock does, and a cgroup of its own;
-   compare `/proc/<pid>/environ` with plasmashell's when in doubt. The three
-   properties copy the autostart unit's. Without `PartOf=` the end of the
-   session does not stop the unit, because a lingering user manager outlives the
-   session: at logout the dock loses its Wayland connection instead of receiving
-   SIGTERM, and a logout test no longer exercises its teardown.
-   `pkill -x latte-dock-ng` still stops it, and `--collect` removes the unit.
-
-   The Debug install includes its own plasmoids and indicators. For an old
-   shared-prefix install, run `bash uninstall.sh --legacy-user` to remove its
-   overrides while retaining the separate Debug install.
-
-6. **Wait for user retest feedback**, then automatically analyze debug log for warnings/errors
-
-7. **Analyze debug log** (`/tmp/latte-ng.log`) for warning/error entries. If found, record them as issues that need fixing.
-
-8. **Verify clean-quit scenarios (logout/shutdown/restart fixes)** — follow
-   the Runtime Retest Workflow in `docs/development-testing-guide.md`: record a
-   `coredumpctl` baseline, drive the quit scenario, then confirm no new
-   latte-dock-ng core appears, the log shows the expected teardown markers and
-   no Fatal/ASSERT, and run an A/B check against the pre-fix binary for crash
-   fixes.
-
-9. **Commit/push according to branch policy** — On `main`, stop after
-   validation and request the separate commit and push approvals described
-   above. On another branch, commit and push the requested implementation
-   after validation without an additional approval, unless the user explicitly
-   asks for a draft-only result or the action would rewrite published history.
+Commit and push according to the branch policy above. On `main`, stop after
+validation and request the required approvals.
 
 ## Quick references
 
@@ -175,11 +114,9 @@ When testing changes to latte-dock-ng, follow this exact workflow:
   `docs/development-testing-guide.md` (Runtime Retest Workflow) — canonical
   steps for crash fixes are kept there, not duplicated here.
 - **Remote VM launches**: start the dock with `systemd-run --user` so it gets the
-  whole Plasma session environment. A launch from a bare SSH shell that sources
-  `dev-env.sh` has a shorter `XDG_CONFIG_DIRS` than the session and starts a KSycoca
-  rebuild loop (the dock, plasmashell and KWin burn 18 %, 22 % and 26 % of a core
-  at idle; this was P0's 20 %); see `docs/development-testing-guide.md` and
-  `docs/modernization-results/R5.md`.
+  whole Plasma session environment. Do not launch from a bare SSH shell that only
+  sources `dev-env.sh`; the testing guide documents the resulting KSycoca rebuild
+  loop and the required session environment.
 - **GitHub proxy**: if git push/ls-remote hangs, retry through the local HTTP
   proxy configured in the shell environment (machine-local; exact address is
   not committed to the repo).
@@ -198,27 +135,6 @@ preparation, package publication, repository availability and current
 validation status. Do not duplicate release-specific platform status here.
 The main-branch commit/push rules above still apply; release tags require their
 own explicit authorization and are not implied by approval to commit or push.
-
-### Help documentation gate
-
-Before dispatching a release build, compare `docs/help/` with the user-visible
-changes since the previous release. Update the English guide, every translated
-page and the language `<select>` entries, and verify that UI languages without a
-translated guide still fall back to English. Run `handbookdocumenttest` with the
-release autotests and manually check that changed settings, dialogs,
-Advanced-mode gates, copy/clone behavior and launcher sharing are described
-accurately. A source-contract test passing does not prove the visible behavior
-is documented; review the guide text against the UI.
-
-### Gentoo overlay
-
-- Work in the local checkout of `ruizhi-lab/gentoo-overlay`, branch `main`, at
-  `kde-misc/latte-dock-ng/`.
-- Copy the previous ebuild, ensure `SRC_URI` uses `v${PV}`, remove the obsolete
-  ebuild, and regenerate the Manifest with a temporary writable `DISTDIR`.
-- Generate the Manifest only after the release tag is final. Moving a tag
-  changes GitHub tarballs; delete the stale Manifest and regenerate it or
-  emerge will report a filesize mismatch. Never use sudo for this workflow.
 
 ## Architecture & Compatibility Notes
 
@@ -249,23 +165,21 @@ is documented; review the guide text against the UI.
   compatibility and runtime capability checks for compositor services; use
   version checks for behavior-specific workarounds with documented evidence.
   Preserve the preview helper's process isolation and failure fallback.
-- The application is one large executable assembled by `app/CMakeLists.txt`.
-  Large runtime sources include `layoutmanager.cpp`, `containmentinterface.cpp`,
-  `view.cpp`, `storage.cpp`, and `AppletItem.qml`.
+- Most application runtime sources are assembled into the main `latte-dock-ng`
+  executable by `app/CMakeLists.txt`; the preview and add-launcher helpers are
+  separate processes.
 - Use `-j8` for project builds unless a command has a specific resource limit.
-- User configuration normally disables window previews and retains only title
-  tooltips; the task hover-action setting is the authoritative preview gate.
+- The user's `debian-stable` and `archlinux` VMs are available as project
+  development environments for GCC/Clang build and runtime validation across
+  Qt/Plasma versions. Use them for dependency upgrades and compatibility
+  investigations; this is project memory, not user-facing documentation.
 - The application icon is `latte-dock-ng`; never fall back to the legacy
   `latte-dock` name because third-party themes may supply old artwork for it.
 - Debian Plasma 6.3 lacks a filesystem `org.kde.plasma.plasmoid` QML module.
   Register it lazily; an attached-type stub breaks Qt 6.8 Behavior resolution.
-- On minimal Fedora Wayland systems, use `--log-file` and
-  `QT_LOGGING_RULES='latte*=true'` to capture Latte's own logs.
 - Keep detailed component invariants next to their implementation. In
   particular, `TaskItem.qml` documents the task-tooltip ownership, hover and
   enable-state contract; its source-contract autotests protect that design.
-- Treat `AGENTS.md` as the high-level index, architecture charter and policy
-  document.
 
 ## Coding Standards
 

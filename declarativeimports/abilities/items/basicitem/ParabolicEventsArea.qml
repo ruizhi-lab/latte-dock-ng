@@ -55,8 +55,7 @@ Item {
                 abilityItem.abilities.parabolic.setCurrentParabolicItemIndex(vIndex);
             }
 
-            // mouseX/Y can not be trusted at this point
-            //_parabolicArea.parabolicEntered(mouseX, mouseY);
+            // mouseX/Y cannot be trusted at this point.
         }
 
         onPositionChanged: {

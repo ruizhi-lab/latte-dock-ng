@@ -29,11 +29,6 @@ ScreensDialog::ScreensDialog(SettingsDialog *parent, Controller::Layouts *contro
     initRemoveNowButton();
     //! we must create handlers after creating/adjusting the ui
     m_handler = new Handler::ScreensHandler(this);
-    initSignals();
-}
-
-ScreensDialog::~ScreensDialog()
-{
 }
 
 Latte::Corona *ScreensDialog::corona() const
@@ -73,24 +68,14 @@ void ScreensDialog::initRemoveNowButton()
     m_ui->buttonBox->addButton(m_removeNowButton, QDialogButtonBox::AcceptRole);
 }
 
-void ScreensDialog::initSignals()
-{
-}
-
 QPushButton *ScreensDialog::removeNowButton() const
 {
     return m_removeNowButton;
 }
 
-void ScreensDialog::onDataChanged()
-{
-}
-
-
 void ScreensDialog::accept()
 {
     qCDebug(latteSettings) << Q_FUNC_INFO;
-    //close();
 }
 
 void ScreensDialog::onCancel()

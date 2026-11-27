@@ -97,8 +97,6 @@ Item {
                 //! check if the applet does not provide any valid metrics and for that case
                 //! the system must decide what space to be given after the applets that provide
                 //! nice metrics are assigned their sizes
-                //var systemDecide = ((minSize<0) && (prefSize<0) && (maxSize<0));
-
                 var staticsize = (minSize>=0 && (maxSize === minSize) && (maxSize !== Infinity));
                 var systemDecide = (prefSize<0 && !staticsize);
 

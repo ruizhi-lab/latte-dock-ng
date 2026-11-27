@@ -63,8 +63,7 @@ Manager::~Manager()
     m_importer->deleteLater();
     m_syncedLaunchers->deleteLater();
 
-    //! no needed because Latte:Corona is calling it at better place
-    // unload();
+    // Corona coordinates the layout unload during shutdown.
 
     m_synchronizer->deleteLater();
 }

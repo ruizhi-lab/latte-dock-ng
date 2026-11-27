@@ -307,10 +307,6 @@ WaylandInterface::~WaylandInterface()
 {
 }
 
-void WaylandInterface::init()
-{
-}
-
 void WaylandInterface::initWindowManagement(KWayland::Client::PlasmaWindowManagement *windowManagement)
 {
     if (m_windowManagement == windowManagement) {

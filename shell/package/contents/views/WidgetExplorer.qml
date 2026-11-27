@@ -539,9 +539,7 @@ PC3.Page {
                 }
             }
 
-            //if we are adding other items into the view use the same animation as normal adding
-            //this makes everything slide in together
-            //if we make it move everything ends up weird
+            // Reuse the insertion animation so added and displaced items slide together.
             addDisplaced: list.add
 
             //moved due to filtering

@@ -113,7 +113,6 @@ private Q_SLOTS:
     void windowUnmapped();
 
 private:
-    void init();
     bool isAcceptableWindow(const KWayland::Client::PlasmaWindow *w);
     bool isValidWindow(const KWayland::Client::PlasmaWindow *w);
     bool isFullScreenWindow(const KWayland::Client::PlasmaWindow *w) const;

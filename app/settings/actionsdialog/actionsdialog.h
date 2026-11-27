@@ -35,7 +35,6 @@ class ActionsDialog : public GenericDialog
 
 public:
     ActionsDialog(QDialog *parent, Handler::TabPreferences *handler);
-    ~ActionsDialog() override;
 
     Ui::ActionsDialog *ui() const;
     Handler::TabPreferences *preferencesHandler() const;
@@ -45,7 +44,6 @@ protected:
 
 private Q_SLOTS:
     void onCancel();
-    // void onDataChanged();
     void onReset();
 
 private:

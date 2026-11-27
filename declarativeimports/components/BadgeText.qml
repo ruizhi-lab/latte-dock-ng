@@ -44,7 +44,7 @@ Rectangle {
 
     color: hasTheme && theme.backgroundColor !== undefined ? theme.backgroundColor : fallbackBackgroundColor
     radius: (radiusPerCentage / 100) * (height / 2)
-    border.width: 0 //Math.max(1,width/64)
+    border.width: 0
 
     property int borderWidth: 1
     property real borderOpacity: 1
@@ -59,10 +59,8 @@ Rectangle {
             previousProportion = 0;
         }
 
-        //console.log(previousProportion + " - "+proportion);
         var currentStep = (proportion - previousProportion);
         if ((currentStep >= 0.01) || (proportion>=1 && previousProportion !==1)) {
-            //   console.log("request repaint...");
             previousProportion = proportion;
             repaint();
         }

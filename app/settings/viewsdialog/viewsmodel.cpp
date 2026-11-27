@@ -338,8 +338,6 @@ void Views::resetData()
 
 void Views::appendTemporaryView(const Latte::Data::View &view)
 {
-    //int newRow = m_layoutsTable.sortedPosForName(layout.name);
-
     beginInsertRows(QModelIndex(), m_viewsTable.rowCount(), m_viewsTable.rowCount());
     m_viewsTable.appendTemporaryView(view);
     endInsertRows();
@@ -428,7 +426,6 @@ Latte::Data::Screen Views::screenData(const QString &viewId) const
         return Latte::Data::Screen();
     }
 
-    // QString primaryid = QString::number(m_corona->screenPool()->primaryScreenId());
     QString explicitid = QString::number(m_viewsTable[row].screen);
 
     Data::Screen scrData = s_screens[0]; //default
@@ -795,7 +792,6 @@ QVariant Views::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
     int column = index.column();
-    //bool isNewLayout = !o_layoutsTable.containsId(m_layoutsTable[row].id);
 
     if (!m_viewsTable.rowExists(row)) {
         return QVariant{};

@@ -1,7 +1,7 @@
 # Performance Measurement and Regression Acceptance
 
-Use this guide with the [development testing guide](development-testing-guide.md)
-and the user-mode Debug retest procedure in AGENTS.md.
+Use this guide with the development testing guide's
+[Runtime Retest Workflow](development-testing-guide.md#runtime-retest-workflow).
 
 Profile the affected workload before choosing a fix. Measure resource use on
 comparable builds before attributing a change to the implementation.
@@ -148,8 +148,9 @@ feature support. Include the relevant combinations of:
   hover changes and idle exit when the preview path is touched. Do not enable
   the legacy preview Loader or change user feature choices for convenience.
 
-Use the exact AGENTS.md Debug install and detached user-mode launch, wait for
-user feedback, then inspect the fresh log for new warnings/errors. Teardown
+Use the exact Debug install and detached user-mode launch from the Runtime
+Retest Workflow, wait for user feedback, then inspect the fresh log for new
+warnings/errors. Teardown
 changes require coredump baseline and expected teardown markers. Crash fixes
 also require pre-fix/fixed reproduction, separately from performance comparison.
 Do not drive actual logout/shutdown without the appropriate user coordination.

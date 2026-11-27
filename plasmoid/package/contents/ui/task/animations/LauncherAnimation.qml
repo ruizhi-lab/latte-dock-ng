@@ -58,7 +58,6 @@ Item{
     }
 
     function init(){
-        //console.log ("Nooo 1 : "+root.noTasksInAnimation);
         if(!launchedAlready) {
 
             // Do not reset parabolic zoom via invkClearZoom — let zoom stay at

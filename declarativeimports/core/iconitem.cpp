@@ -207,7 +207,6 @@ void IconItem::setSource(const QVariant &source)
                     m_svgIconName = sourceString;
                     //fail, use QIcon
                 } else {
-                    //if we started with a QIcon use that.
                     m_icon = source.value<QIcon>();
 
                     if (m_icon.isNull()) {

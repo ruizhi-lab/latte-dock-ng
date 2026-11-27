@@ -362,7 +362,6 @@ MouseArea {
                     tasksModel.requestActivate(taskIndex);
                 }
 
-                // hidePreviewWindow();
             }
         } else if (negativeDirection) {
             slotPublishGeometries();
@@ -398,7 +397,6 @@ MouseArea {
                     }
                 }
 
-                // hidePreviewWindow();
             }
         }
     }

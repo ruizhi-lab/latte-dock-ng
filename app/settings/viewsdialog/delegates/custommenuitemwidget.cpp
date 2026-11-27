@@ -151,7 +151,6 @@ void CustomMenuItemWidget::paintEvent(QPaintEvent *)
         opt.text = QStringLiteral("<b>") + opt.text + QStringLiteral("</b>");
     }
 
-    //style()->drawControl(QStyle::CE_MenuItem, &opt, &painter, this);
     Latte::drawFormattedText(&painter, opt);
 
     painter.restore();

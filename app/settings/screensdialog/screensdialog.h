@@ -43,7 +43,6 @@ class ScreensDialog : public GenericDialog
 
 public:
     ScreensDialog(SettingsDialog *parent, Controller::Layouts *controller);
-    ~ScreensDialog();
 
     Ui::ScreensDialog *ui() const;
     Latte::Corona *corona() const;
@@ -56,12 +55,10 @@ protected:
 
 private Q_SLOTS:
     void onCancel();
-    void onDataChanged();
     void onReset();
 
     void initButtons();
     void initRemoveNowButton();
-    void initSignals();
 
 private:
     void init();

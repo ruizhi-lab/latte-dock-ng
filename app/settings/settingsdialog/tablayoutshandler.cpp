@@ -806,8 +806,7 @@ bool TabLayouts::isHoveringLayoutsTable(const QPoint &pos)
 
 void TabLayouts::onCurrentPageChanged()
 {
-    //int page = m_dialog->currentPage();
-    Dialog::ConfigurationPage cPage = m_parentDialog->currentPage(); // static_cast<Dialog::ConfigurationPage>(page);
+    Dialog::ConfigurationPage cPage = m_parentDialog->currentPage();
 
     if (cPage == Dialog::LayoutPage) {
         m_layoutMenu->setEnabled(true);

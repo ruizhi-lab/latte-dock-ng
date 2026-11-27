@@ -27,10 +27,6 @@ ActionsDialog::ActionsDialog(QDialog *parent, Handler::TabPreferences *handler)
     init();
 }
 
-ActionsDialog::~ActionsDialog()
-{
-}
-
 Ui::ActionsDialog *ActionsDialog::ui() const
 {
     return m_ui;
@@ -50,7 +46,6 @@ void ActionsDialog::init()
 void ActionsDialog::accept()
 {
     qCDebug(latteSettings) << Q_FUNC_INFO;
-    //close();
 }
 
 void ActionsDialog::onCancel()

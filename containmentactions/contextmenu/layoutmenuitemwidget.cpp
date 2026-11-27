@@ -138,7 +138,6 @@ void LayoutMenuItemWidget::paintEvent(QPaintEvent *)
 
     //! text
     opt.text.remove(QStringLiteral("&"));
-    //style()->drawControl(QStyle::CE_MenuItem, &opt, &painter, this);
     Latte::drawFormattedText(&painter, opt);
 
     painter.restore();

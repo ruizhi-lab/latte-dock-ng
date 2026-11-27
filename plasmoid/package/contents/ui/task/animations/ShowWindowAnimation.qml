@@ -136,14 +136,12 @@ SequentialAnimation{
         //startup without launcher, animation should be blocked
         var launcherExists = !(!hasShownLauncher || !taskItem.abilities.launchers.inCurrentActivity(taskItem.launcherUrl));
 
-        //var hideStartup =  launcherExists && taskItem.isStartup; //! fix #976
         var hideWindow =  (root.showWindowsOnlyFromLaunchers || root.disableAllWindowsFunctionality) && !launcherExists && taskItem.isWindow;
 
         if (tasksExtendedManager.immediateLauncherExists(taskItem.launcherUrl) && taskItem.isLauncher) {
             tasksExtendedManager.removeImmediateLauncher(taskItem.launcherUrl);
         }
 
-        //if (hideStartup || hideWindow) { //fix #976
         if (hideWindow) {
             isForcedHidden = true;
             taskItem.visible = false;

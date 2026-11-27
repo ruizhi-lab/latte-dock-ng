@@ -241,7 +241,6 @@ void SchemeColors::updateScheme()
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(m_schemeFile);
     KConfigGroup wmGroup = KConfigGroup(filePtr, QStringLiteral("WM"));
     KConfigGroup selGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Selection"));
-    //KConfigGroup viewGroup = KConfigGroup(filePtr, QStringLiteral("Colors:View"));
     KConfigGroup windowGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Window"));
     KConfigGroup buttonGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Button"));
 

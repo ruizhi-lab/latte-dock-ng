@@ -132,7 +132,6 @@ void ExportTemplateDialog::onExportSucceeded()
 void ExportTemplateDialog::accept()
 {
     qCDebug(latteSettings) << Q_FUNC_INFO;
-    //close();
 }
 
 void ExportTemplateDialog::onCancel()

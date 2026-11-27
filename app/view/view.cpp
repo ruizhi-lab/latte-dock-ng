@@ -133,8 +133,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
       m_parabolic(new ViewPart::Parabolic(this)),
       m_sink(new ViewPart::EventsSink(this))
 {
-    //this is disabled because under wayland breaks Views positioning
-    //setVisible(false);
+    // Do not hide the view here; doing so breaks Wayland view positioning.
 
     m_corona = qobject_cast<Latte::Corona *>(corona);
 
