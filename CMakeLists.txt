@@ -82,10 +82,8 @@ endif()
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
 
-# Qt 6.8+ moved the default QML resource prefix to :/qt/qml/; adopt the new
-# behavior project-wide so qt_add_qml_module stops warning about QTP0001.
-# qt_policy comes with the Qt6::Core macros loaded by the find_package call
-# above (QTP0001 exists since Qt 6.5; our minimum is 6.7).
+# QTP0001 was introduced in Qt 6.5. Select NEW to default QML module
+# resources to :/qt/qml/, which is on the engine's default import path.
 qt_policy(SET QTP0001 NEW)
 if(BUILD_TESTING)
     find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Test)

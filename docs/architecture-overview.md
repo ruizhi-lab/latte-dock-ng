@@ -1,7 +1,6 @@
 # Architecture Overview
 
-This is a navigation map of the current implementation, checked on 2026-09-20.
-It describes existing boundaries, not completion of the modernization backlog.
+This map describes the boundaries of the current implementation.
 [AGENTS.md](../AGENTS.md) defines the architecture charter and coding rules;
 local comments and tests define detailed behavior. Update this map when a
 component boundary changes; keep workaround histories beside their implementation.
@@ -42,8 +41,9 @@ a standalone QML runner is not an equivalent test of that host-dependent module.
 The separate `latte-dock-ng-preview` process contains window preview rendering.
 `PreviewProcess` mediates its protocol and failure fallback; preserve serial
 validation, bounded traffic and watchdog behavior described in its source.
-The saved task hover action remains the feature authority, while helper failure
-state may temporarily prevent rendering. `latte-dock-ng-add-launcher` is a
+The saved task hover action enables previews. The helper falls back to the title
+tooltip on failure. Repeated failures disable previews for the affected task
+applet until its preview controller is recreated. `latte-dock-ng-add-launcher` is a
 separate D-Bus client helper rather than another dock runtime.
 
 ## QML module map

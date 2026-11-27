@@ -25,7 +25,6 @@ ViewsDialog::ViewsDialog(SettingsDialog *parent, Controller::Layouts *controller
     setAttribute(Qt::WA_DeleteOnClose, true);
     loadConfig();
 
-    //! first we need to setup the ui
     m_ui->setupUi(this);
     //! we must create handlers after creating/adjusting the ui
     m_handler = new Handler::ViewsHandler(this);

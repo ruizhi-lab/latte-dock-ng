@@ -88,9 +88,9 @@ PreviewProcess::PreviewProcess(QObject *parent)
 PreviewProcess::PreviewProcess(const QString &executable, bool enabled, QObject *parent)
     : QObject(parent), m_enabled(enabled), m_executable(executable)
 {
-    // The saved hover action is authoritative in QML. This process-side gate
-    // only closes after repeated helper failures; otherwise the visible Dock
-    // setting would claim previews are enabled while silently doing nothing.
+    // QML uses the saved hover action to decide when to request previews.
+    // Repeated helper failures disable requests for this process instance
+    // to avoid a restart loop without changing the saved setting.
     m_watchdog.setInterval(WatchdogMs);
     m_watchdog.setSingleShot(true);
     connect(&m_watchdog, &QTimer::timeout, this, &PreviewProcess::fail);

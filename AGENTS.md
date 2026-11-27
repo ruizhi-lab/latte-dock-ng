@@ -53,11 +53,11 @@ part of local mirror maintenance.
    removal; keep working features intact even if they share code; verify
    compilation AND runtime behavior afterwards; check the debug log for new
    errors/warnings.
-6. **Release requires autotest** — Before every release run
-   `cd build && ctest --output-on-failure` (50+ registered autotest targets
-   incl. 170+ source-contract checks on GCC and Clang; fragile areas: digital
-   clock, systray, volume, appmenu, clipboard, separator/spacer, middle-click
-   close, auto-pin on drag, scroll minimize).
+6. **Release requires autotest** — Before every release, build the
+   `gcc-release` and `clang-release` presets and run `ctest --preset gcc-release`
+   and `ctest --preset clang-release`. The suites include source contracts for
+   digital clock, systray, volume, appmenu, clipboard, separator/spacer, middle-click
+   close, auto-pin on drag and scroll minimize.
 7. **Document non-obvious design constraints** — Add concise English code
    comments for runtime workarounds and subtle ownership, lifecycle, timing or
    cross-component state logic. Explain why the code exists, identify the

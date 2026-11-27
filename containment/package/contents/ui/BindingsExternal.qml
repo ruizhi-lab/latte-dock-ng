@@ -29,21 +29,13 @@ Item {
                                    && !visibilityManager.inSlidingOut
                                    && !visibilityManager.inRelocationHiding
 
-    //! The Bindings below whose `when` follows a transient state (sliding,
-    //! relocation, non-normal visibility) must keep the last published value
-    //! while disabled. Qt 6 restores the target's value from before the
-    //! Binding by default, i.e. the C++ initial value (256 for the
-    //! thicknesses): every slide in/out then published a wrong thickness,
-    //! the vertical docks recomputed the area left by the horizontal ones and
-    //! jumped up or down before hiding. Qt 5 kept the value, which this code
-    //! was written for.
-
-    //! Latte::View Main Bindings 
+    // RestoreNone keeps the last published geometry during transient states.
+    // Restoring the initial thickness while sliding makes adjacent docks jump.
     Binding{
         target: latteView
         property:"maxThickness"
-        //! prevents updating window geometry during closing window in wayland and such fixes a crash
-        when: latteView && !visibilityManager.inRelocationHiding && !visibilityManager.inClientSideScreenEdgeSliding //&& !inStartup
+        // Suppress geometry updates while the Wayland surface is closing.
+        when: latteView && !visibilityManager.inRelocationHiding && !visibilityManager.inClientSideScreenEdgeSliding
         value: metrics.maxThicknessForView
         restoreMode: Binding.RestoreNone
     }

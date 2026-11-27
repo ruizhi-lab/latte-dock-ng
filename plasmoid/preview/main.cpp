@@ -275,8 +275,8 @@ int main(int argc, char **argv)
             const auto request = QJsonDocument::fromJson(input.left(end)).object();
             input.remove(0, end + 1);
             const QString type = request.value(QStringLiteral("type")).toString();
-            // Malformed or unknown frames are ignored: the helper must survive
-            // a bad request and let the dock's watchdog decide.
+            // Ignore malformed or unknown requests that fit in the receive
+            // buffer. The size guard above closes the helper on overflow.
             if (!request.contains(QStringLiteral("serial"))) {
                 continue;
             }

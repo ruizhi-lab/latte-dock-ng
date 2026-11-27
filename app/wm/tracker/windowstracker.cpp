@@ -987,8 +987,7 @@ void Windows::updateHints(Latte::View *view)
 
     bool foundActiveGroupTouchInCurScreen{false};
 
-    //! the notification window is not sending a remove signal and creates windows of geometry (0x0 0,0),
-    //! maybe a garbage collector here is a good idea!!!
+    // Some notification windows leave invalid entries without a removal signal.
     bool existsFaultyWindow{false};
 
     WindowId maxWinId;
@@ -998,8 +997,6 @@ void Windows::updateHints(Latte::View *view)
     WindowId activeTouchWinId;
     WindowId activeTouchEdgeWinId;
 
-
-    //! First Pass
     for (const auto &winfo : std::as_const(m_windows)) {
         if (m_wm->isShowingDesktop()) {
             break;
@@ -1020,14 +1017,11 @@ void Windows::updateHints(Latte::View *view)
             activeWinId = winfo.wid();
         }
 
-        //! Maximized windows flags
         if ((winfo.isActive() && isMaximizedInViewScreen(view, winfo)) //! active maximized windows have higher priority than the rest maximized windows
             || (!foundMaximizedInCurScreen && isMaximizedInViewScreen(view, winfo))) {
             foundMaximizedInCurScreen = true;
             maxWinId = winfo.wid();
         }
-
-        //! Touching windows flags
 
         bool touchingViewEdge = isTouchingViewEdge(view, winfo);
         bool touchingView =  isTouchingView(view, winfo);
@@ -1057,10 +1051,8 @@ void Windows::updateHints(Latte::View *view)
         cleanupFaultyWindows();
     }
 
-    //! PASS 2
+    // A window in the active window's group may still touch the dock.
     if (!m_wm->isShowingDesktop() && foundActiveInCurScreen && !foundActiveTouchInCurScreen) {
-        //! Second Pass to track also Child windows if needed
-
         WindowInfoWrap activeInfo = m_windows[activeWinId];
         WindowId mainWindowId = activeInfo.isChildWindow() ? activeInfo.parentId() : activeWinId;
 
@@ -1086,18 +1078,6 @@ void Windows::updateHints(Latte::View *view)
         }
     }
 
-
-    //! HACK: KWin Effects such as ShowDesktop have no way to be identified and as such
-    //! create issues with identifying properly touching and maximized windows. BUT when
-    //! they are enabled then NO ACTIVE window is found. This is a way to identify these
-    //! effects triggering and disable the touch flags.
-    //! BUG: 404483
-    //! Disabled because it has fault identifications, e.g. when a window is maximized and
-    //! Latte or Plasma are showing their View settings
-    //foundMaximizedInCurScreen = foundMaximizedInCurScreen && foundActive;
-    //foundTouchInCurScreen = foundTouchInCurScreen && foundActive;
-
-    //! assign flags
     setExistsWindowActive(view, foundActiveInCurScreen);
     setActiveWindowTouching(view, foundActiveTouchInCurScreen || foundActiveGroupTouchInCurScreen);
     setActiveWindowTouchingEdge(view, foundActiveEdgeTouchInCurScreen);
@@ -1106,7 +1086,6 @@ void Windows::updateHints(Latte::View *view)
     setExistsWindowTouching(view, (foundTouchInCurScreen || foundActiveTouchInCurScreen || foundActiveGroupTouchInCurScreen));
     setExistsWindowTouchingEdge(view, (foundActiveEdgeTouchInCurScreen || foundTouchEdgeInCurScreen));
 
-    //! update color schemes for active and touching windows
     setActiveWindowScheme(view, (foundActiveInCurScreen ? m_wm->schemesTracker()->schemeForWindow(activeWinId) : nullptr));
 
     if (foundActiveTouchInCurScreen) {
@@ -1123,7 +1102,6 @@ void Windows::updateHints(Latte::View *view)
         setTouchingWindowScheme(view, nullptr);
     }
 
-    //! update LastActiveWindow
     if (foundActiveInCurScreen) {
         m_views[view]->setActiveWindow(activeWinId);
     }
@@ -1139,8 +1117,7 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout)
     bool foundActiveMaximized{false};
     bool foundMaximized{false};
 
-    //! the notification window is not sending a remove signal and creates windows of geometry (0x0 0,0),
-    //! maybe a garbage collector here is a good idea!!!
+    // Some notification windows leave invalid entries without a removal signal.
     bool existsFaultyWindow{false};
 
     WindowId activeWinId;
@@ -1182,25 +1159,12 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout)
         cleanupFaultyWindows();
     }
 
-    //! HACK: KWin Effects such as ShowDesktop have no way to be identified and as such
-    //! create issues with identifying properly touching and maximized windows. BUT when
-    //! they are enabled then NO ACTIVE window is found. This is a way to identify these
-    //! effects triggering and disable the touch flags.
-    //! BUG: 404483
-    //! Disabled because it has fault identifications, e.g. when a window is maximized and
-    //! Latte or Plasma are showing their View settings
-    //foundMaximizedInCurScreen = foundMaximizedInCurScreen && foundActive;
-    //foundTouchInCurScreen = foundTouchInCurScreen && foundActive;
-
-    //! assign flags
     setExistsWindowActive(layout, foundActive);
     setActiveWindowMaximized(layout, foundActiveMaximized);
     setExistsWindowMaximized(layout, foundActiveMaximized || foundMaximized);
 
-    //! update color schemes for active and touching windows
     setActiveWindowScheme(layout, (foundActive ? m_wm->schemesTracker()->schemeForWindow(activeWinId) : nullptr));
 
-    //! update LastActiveWindow
     if (foundActive) {
         m_layouts[layout]->setActiveWindow(activeWinId);
     } else {

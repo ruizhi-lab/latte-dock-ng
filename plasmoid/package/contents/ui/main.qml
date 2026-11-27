@@ -182,10 +182,8 @@ PlasmoidItem {
         return "";
     }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
-    // Keep the preview scene unloaded while Wayland popup sizing and capture
-    // responsiveness are unverified. The saved hover choice alone must not
-    // reactivate the experimental path; title tooltips and highlighting remain
-    // independent. Re-enable only after a runtime responsiveness retest.
+    // Keep the legacy in-process preview scene unloaded so window capture
+    // cannot stall the dock. Preview hover actions use isolatedPreviewProcess.
     readonly property bool showPreviews: false
     readonly property alias isolatedPreview: isolatedPreviewProcess
     // TaskItem is a local delegate component rather than a named type in this

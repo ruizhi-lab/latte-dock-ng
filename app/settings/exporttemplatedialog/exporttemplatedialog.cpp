@@ -83,7 +83,6 @@ Ui::ExportTemplateDialog *ExportTemplateDialog::ui() const
 void ExportTemplateDialog::init()
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
-    //! first we need to setup the ui
     m_ui->setupUi(this);
     initButtons();
 

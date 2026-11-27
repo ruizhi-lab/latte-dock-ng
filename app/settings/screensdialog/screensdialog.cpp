@@ -53,7 +53,6 @@ Controller::Layouts *ScreensDialog::layoutsController() const
 
 void ScreensDialog::init()
 {
-    //! first we need to setup the ui
     m_ui->setupUi(this);
     initButtons();
 }

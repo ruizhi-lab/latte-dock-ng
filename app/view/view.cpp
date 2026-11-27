@@ -1987,7 +1987,6 @@ void View::releaseConfigView()
     m_primaryConfigView = nullptr;
 }
 
-//! release grab and restore mouse state
 void View::unblockMouse(int x, int y)
 {
     setMouseGrabEnabled(false);
@@ -1999,16 +1998,12 @@ void View::unblockMouse(int x, int y)
 
 void View::releaseGrab()
 {
-    //! ungrab mouse
+    // Releasing the grab directly also works outside mouse event delivery.
     if (mouseGrabberItem()) {
         mouseGrabberItem()->ungrabMouse();
     }
 
-    // In Qt 6, mouseGrabberItem()->ungrabMouse() above handles release.
-    // The setMouseGrabEnabled toggle was a Qt 5 workaround; removing it
-    // avoids "cannot grab mouse: no event is currently being delivered".
-
-    //! Send a fake QEvent::Leave to inform applets for mouse leaving the view
+    // Reset applet hover state with a leave event after releasing the grab.
     const QPointF scenePos(-5, -5);
     const QPointF globalPos = mapToGlobal(scenePos.toPoint());
     const QPointF oldPos(m_releaseGrab_x, m_releaseGrab_y);

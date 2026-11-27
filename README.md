@@ -83,7 +83,7 @@ Source build requirements:
  KF6WindowSystem >= 6.10.0
  KF6Svg >= 6.10.0
 
- PlasmaWaylandProtocols >= 1.6
+ PlasmaWaylandProtocols >= 1.10.0
  Wayland::Client
  LayerShellQt >= 6.3.0
 ```

@@ -23,15 +23,12 @@ namespace Latte {
 
 namespace {
 
-//! Plasma 6 resolves applet items through AppletQuickItem::itemForApplet()
-//! and no longer publishes the Plasma 5 "_plasma_graphicObject" property
-//! (verified on libplasma 6.8); keep the property only as a fallback, like
-//! launcherApiItemForApplet() in lattecorona.cpp.
 PlasmaQuick::AppletQuickItem *itemFor(Plasma::Applet *applet)
 {
     PlasmaQuick::AppletQuickItem *item = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
 
     if (!item) {
+        // Some hosts expose the item through the legacy property.
         item = applet->property("_plasma_graphicObject").value<PlasmaQuick::AppletQuickItem *>();
     }
 
@@ -90,9 +87,6 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
         return;
     }
 
-    //! Plasma 6's ContainmentItem::createApplet() takes a QRectF geometry hint;
-    //! with the Plasma 5 QPoint call the old applet was destroyed without a
-    //! replacement.
     PlasmaQuick::AppletQuickItem *appletItem = itemFor(m_applet);
     PlasmaQuick::AppletQuickItem *contItem = itemFor(cont);
 
@@ -108,9 +102,8 @@ void AlternativesHelper::loadAlternative(const QString &plugin)
 
     m_applet->destroy();
 
-    //! The containment item receives the replacement, so it is the context.
-    //! This helper is not: the alternatives dialog can delete it before the
-    //! old applet finishes its deferred destruction.
+    // The dialog can delete this helper before deferred applet destruction.
+    // Use the containment item as context and pass QRectF to match createApplet().
     connect(m_applet, &QObject::destroyed, contItem, [=]() {
         Plasma::Applet *newApplet = nullptr;
         QMetaObject::invokeMethod(contItem, "createApplet", Q_RETURN_ARG(Plasma::Applet *, newApplet), Q_ARG(QString, plugin), Q_ARG(QVariantList, QVariantList()), Q_ARG(QRectF, QRectF(newPos, QSizeF())));

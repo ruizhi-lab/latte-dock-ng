@@ -25,8 +25,9 @@ PipeWire / Plasma screencasting (asynchronous, per-window)
 
 ## Protocol
 
-One JSON object per line. The dock rejects malformed/oversized frames; the
-helper ignores them and lets the dock watchdog decide.
+Each message is a single line containing a JSON object. Both processes ignore
+malformed messages. The dock fails the current preview if its receive buffer
+exceeds 64 KiB. The helper closes if its receive buffer exceeds that limit.
 
 Dock to helper:
 
@@ -42,18 +43,20 @@ Helper to dock:
 - `close`: `serial`, `uuid`.
 - `closed`: `serial` (announced on clean shutdown).
 
-Bounds: 64 KiB frames, at most nine windows, UUIDs validated with `QUuid`,
-geometry numbers bounded, `edge` restricted to Plasma dock locations. Stale
-generations are ignored; activation is re-checked against the last window set.
+A show request accepts one to nine windows with valid UUIDs. The helper checks
+geometry bounds and the dock edge. The dock discards replies with a mismatched
+serial, and the helper rejects move requests for other serials. The dock checks
+activation and close requests against the current window set.
 
 ## Lifecycle / fail-closed
 
 - Helper starts lazily on the first hover; startup and heartbeats share a
   2.5 s watchdog.
-- A single failure hides the preview for the current hover only. Three
-  consecutive failures close the session gate to avoid a restart loop.
-- An idle-lease exit (30 s) is a normal shutdown; the next hover starts a
-  fresh helper.
+- A failure hides the preview for the current hover. A valid heartbeat resets
+  the failure counter. Three consecutive failures disable previews for that
+  task applet until its preview controller is recreated.
+- The helper arms a 5 s lease on show and a 30 s lease on hide. Lease expiry
+  announces a normal shutdown. The next eligible hover can start a fresh helper.
 - Fail-closed sequence: `failure/timeout -> hide -> title tooltip`.
 
 ## Runtime debug log (chronological)
