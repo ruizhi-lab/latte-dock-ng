@@ -34,7 +34,7 @@ way to verify convergence.
 
 ## Validation
 
-- CodeGraph was queried first for edge-change, layout, force-layout and geometry-publication paths; it did not index the task `main.qml` by those names. After that, `rg` confirmed the refresh timer and signal connections in `plasmoid/package/contents/ui/main.qml`, and the publisher in `plasmoid/package/contents/ui/task/TaskItem.qml`.
+- `rg` confirmed the refresh timer and signal connections in `plasmoid/package/contents/ui/main.qml`, and the publisher in `plasmoid/package/contents/ui/task/TaskItem.qml`.
 - `sed -n '360,420p' plasmoid/package/contents/ui/main.qml` — confirmed location/form-factor changes start the 500 ms geometry publisher and immediate-plus-repeated layout refresh.
 - `sed -n '1400,1465p' plasmoid/package/contents/ui/main.qml` — confirmed the immediate pass and eight delayed 120 ms passes, each forcing layout and publishing geometry.
 - `sed -n '895,970p' plasmoid/package/contents/ui/task/TaskItem.qml` — confirmed readiness, layout-membership, viewport-clamping and hidden-view conditions in production geometry publication.
@@ -66,7 +66,6 @@ reduce passes.
 Evidence commands:
 
 ```bash
-codegraph explore "root.locationChanged formFactorChanged refresh timer layoutPass publishTasksGeometries TaskItem.slotPublishGeometries generation ready signal ListView delegates"
 rg -n "onLocationChanged|onFormFactorChanged|refresh|forceLayout|publishTasksGeometries|slotPublishGeometries|viewport|isCurrent" plasmoid/package/contents/ui/main.qml plasmoid/package/contents/ui/task/TaskItem.qml
 sed -n '1390,1475p' plasmoid/package/contents/ui/main.qml
 sed -n '880,985p' plasmoid/package/contents/ui/task/TaskItem.qml
