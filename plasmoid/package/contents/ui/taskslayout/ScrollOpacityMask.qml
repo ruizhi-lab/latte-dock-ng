@@ -8,6 +8,8 @@ import QtQuick
 import org.kde.plasma.core as PlasmaCore
 
 Item {
+    id: scrollOpacityMask
+
     // MultiEffect samples maskSource directly as a texture. Without a layer,
     // this composite of rectangles has no texture and overflowing tasks vanish
     // as soon as hover zoom enables the scroll mask.
@@ -29,7 +31,7 @@ Item {
 
         gradient: Gradient {
             orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
-            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, edgeAlpha(scrollableList.currentPos - scrollableList.scrollFirstPos)) }
+            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, scrollOpacityMask.edgeAlpha(scrollableList.currentPos - scrollableList.scrollFirstPos)) }
             GradientStop { position: 1.0; color: "white" }
         }
     }
@@ -55,7 +57,7 @@ Item {
         gradient: Gradient {
             orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: "white" }
-            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, edgeAlpha(scrollableList.scrollLastPos - scrollableList.currentPos)) }
+            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, scrollOpacityMask.edgeAlpha(scrollableList.scrollLastPos - scrollableList.currentPos)) }
         }
     }
 
