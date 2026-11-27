@@ -48,7 +48,9 @@ Item{
         }
 
         if (appletItem.isAutoFillApplet) {
-            if (appletItem.layouter.maxMetricsInHigherPriority) {
+            var scrollableTasks = root.singleRowLayoutEnabled && appletItem.indexerIsSupported
+                    && appletItem.applet && appletItem.applet.scrollingEnabled;
+            if (appletItem.layouter.maxMetricsInHigherPriority && !scrollableTasks) {
                 return isInternalViewSplitter ? appletItem.maxAutoFillLength + 1 : appletItem.maxAutoFillLength;
             }
 

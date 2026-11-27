@@ -5,6 +5,7 @@
 
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Window
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.latte.compat.taskmanager as TaskManagerApplet
@@ -109,7 +110,9 @@ Item {
             readonly property real maxLength: Math.ceil(baseLength * Math.max(1, taskIconContainer.zoom, taskIconContainer.maxZoom))
             readonly property bool isZoomed: currentLength > baseLength + 0.5 && maxLength > baseLength
 
-            anchors.centerIn: parent
+            // Keep the raster centered as the animated slot crosses odd and even sizes.
+            x: (taskIconItem.width - width) / 2
+            y: (taskIconItem.height - height) / 2
             width: isZoomed ? maxLength : taskIconItem.width
             height: isZoomed ? maxLength : taskIconItem.height
             scale: isZoomed ? currentLength / maxLength : 1
@@ -397,19 +400,26 @@ Item {
         saturation: -1.0
     }
 
+    ShaderEffectSource {
+        id: hoverTexture
+        anchors.fill: parent
+        visible: false
+        smooth: true
+        sourceItem: hoveredImage.visible ? (badgesLoader.active ? badgesLoader : taskIconItem) : null
+
+        // The source's geometry changes on every wave frame. Keep the
+        // offscreen texture at the maximum zoom size so the hover highlight
+        // does not drop a frame when Qt would otherwise resize the texture.
+        readonly property int pixelSize: Math.max(1, Math.ceil(taskIconRaster.maxLength * Screen.devicePixelRatio))
+        textureSize: Qt.size(pixelSize, pixelSize)
+    }
+
     MultiEffect{
         id:hoveredImage
         z: 11
         anchors.fill: parent
 
-        //! HACK TO AVOID PIXELIZATION
-        //! WORKAROUND: When Effects are enabled e.g. BrightnessContrast, Colorize etc.
-        //! the icon appears pixelated. It is even most notable when parabolic.factor.zoom === 1
-        //! I don't know enabling cached=true helps, but it does.
-        //! In Question?
-        //cached: true
-
-        source: badgesLoader.active ? badgesLoader : taskIconItem
+        source: hoverTexture
 
         opacity: taskItem.visualContainsMouse
                  && !clickedAnimation.running

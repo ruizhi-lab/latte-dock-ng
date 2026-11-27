@@ -15,6 +15,13 @@ Item {
 
     readonly property int gradientLength: appletAbilities.metrics.iconSize / 3
 
+    // Zoom changes the remaining scroll distance each frame. Fade only as
+    // much as that distance warrants so a one-pixel overflow cannot flash
+    // a full-strength shadow over the last task.
+    function edgeAlpha(hiddenLength: real): real {
+        return 1 - Math.min(1, Math.max(0, hiddenLength) / Math.max(1, gradientLength));
+    }
+
     Rectangle {
         id: firstGradient
         width: !root.vertical ? gradientLength : scrollableList.thickness
@@ -22,7 +29,7 @@ Item {
 
         gradient: Gradient {
             orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
-            GradientStop { position: 0.0; color: scrollableList.currentPos <= scrollableList.scrollFirstPos ? "white" : "transparent" }
+            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, edgeAlpha(scrollableList.currentPos - scrollableList.scrollFirstPos)) }
             GradientStop { position: 1.0; color: "white" }
         }
     }
@@ -48,7 +55,7 @@ Item {
         gradient: Gradient {
             orientation: !root.vertical ? Gradient.Horizontal : Gradient.Vertical
             GradientStop { position: 0.0; color: "white" }
-            GradientStop { position: 1.0; color: (scrollableList.currentPos >= scrollableList.scrollLastPos ? "white" : "transparent") }
+            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, edgeAlpha(scrollableList.scrollLastPos - scrollableList.currentPos)) }
         }
     }
 

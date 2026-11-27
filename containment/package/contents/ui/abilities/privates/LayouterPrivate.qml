@@ -486,8 +486,11 @@ Item {
             var minimum = Math.max(metricsReference.iconSize, entry.item.appletMinimumLength);
             var share = Math.max(0, remainingLength) / (scrollableTasks.length - taskIndex);
             var taskLength = Math.max(minimum, Math.min(entry.preferred, share));
-            entry.item.maxAutoFillLength = taskLength;
-            entry.item.minAutoFillLength = taskLength;
+            // The last list can grow into all remaining space. Publish that
+            // capacity so its wrapper can follow the wave between fill passes.
+            entry.item.maxAutoFillLength = taskIndex === scrollableTasks.length - 1
+                    ? Math.max(minimum, Math.floor(share)) : taskLength;
+            entry.item.minAutoFillLength = minimum;
             entry.item.inFillCalculations = false;
             remainingLength -= taskLength;
         }
