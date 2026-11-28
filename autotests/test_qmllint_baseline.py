@@ -179,6 +179,14 @@ class QmllintBaselineTest(unittest.TestCase):
         with self.assertRaisesRegex(qmllint_baseline.BaselineError, "unsupported qmllint JSON revision"):
             self.build_json_report(changed)
 
+    def test_json_revision_change_requires_a_new_comparable_baseline(self) -> None:
+        changed = copy.deepcopy(self.json_fixture)
+        changed["revision"] = 6
+        current = self.build_json_report(changed)
+        self.assertEqual(current["tool"]["jsonRevision"], 6)
+        with self.assertRaisesRegex(qmllint_baseline.BaselineError, "tool fingerprint changed"):
+            qmllint_baseline.compare_reports(self.build_json_report(), current)
+
     def test_capture_and_compare_cli_return_status_for_regressions(self) -> None:
         with tempfile.TemporaryDirectory() as output_dir:
             directory = Path(output_dir)
@@ -228,10 +236,9 @@ class QmllintBaselineTest(unittest.TestCase):
             fake_qmllint = directory / "fake-qmllint"
             fake_qmllint.write_text(
                 f"#!{sys.executable}\n"
-                "import json, pathlib, sys\n"
-                "if '--version' in sys.argv: print('qmllint 6.11.2'); raise SystemExit(0)\n"
+                "import json, sys\n"
                 "files = [arg for arg in sys.argv if arg.endswith('.qml')]\n"
-                "print(json.dumps({'revision': 4, 'files': ["
+                "print(json.dumps({'revision': 6, 'files': ["
                 "{'filename': file, 'success': True, 'warnings': []} for file in files]}))\n",
                 encoding="utf-8",
             )
@@ -244,13 +251,14 @@ class QmllintBaselineTest(unittest.TestCase):
                 "--expected-files", str(expected_path), "--build-qml", str(directory / "qml"),
                 "--staged-qml", str(directory / "stage"), "--chunk-size", "1",
                 "--manifest", str(manifest), "--raw-dir", str(raw_dir),
-                "--tool-version", "qmllint 6.11.2", "--import-root", "<build-qml>",
+                "--tool-version", "qmllint 6.12.0", "--import-root", "<build-qml>",
                 "--environment", "qt=6.11.2", "--output", str(output),
             ])
             self.assertEqual(result, 0)
             report = json.loads(output.read_text(encoding="utf-8"))
             run_manifest = json.loads(manifest.read_text(encoding="utf-8"))
             self.assertEqual(report["manifest"]["attemptedFiles"], self.expected)
+            self.assertEqual(report["tool"]["jsonRevision"], 6)
             self.assertEqual(run_manifest["processExitCodes"], [0, 0])
             self.assertEqual(sorted(Path(raw_dir).glob("chunk-*.json")).__len__(), 2)
 

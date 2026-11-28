@@ -144,6 +144,17 @@ lint cannot validate `org.kde.latte.private.app`, whose plugin resolves symbols
 from the Latte application host; its metadata and build artifacts are checked
 separately, and host behavior requires an application-level smoke/retest.
 
+For QML and dead-code cleanup, run deep lint against freshly built QML modules
+before committing. Use the baseline's Ubuntu 24.04/KDE Neon toolchain for the
+comparison. A syntax-only pass or a local run with a different fingerprint
+cannot validate the CI baseline. When CI fails, download the
+`qmllint-baseline-<preset>` artifact and check `qmllint-deep.log`,
+`qmllint-version.txt`, and the raw JSON revision before attributing the failure
+to the source change. KDE Neon can upgrade qmllint between unrelated pushes.
+For a revision change, validate parser support, collect a complete new report
+with the CI toolchain, and review the diagnostic delta before refreshing the
+baseline. [Example CI failure](https://github.com/ruizhi-lab/latte-dock-ng/actions/runs/46008572414).
+
 ```bash
 cmake -S . -B build-autotests-gcc -DBUILD_TESTING=ON
 cmake --build build-autotests-gcc --target latte-autotests --parallel 8

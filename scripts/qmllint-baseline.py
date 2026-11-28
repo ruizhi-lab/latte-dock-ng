@@ -18,7 +18,9 @@ from typing import Any
 
 REPORT_SCHEMA_VERSION = 1
 MANIFEST_SCHEMA_VERSION = 1
-JSON_REVISION = 4
+# Qt 6.11 and 6.12 share the fields used below. Keep the actual revision
+# in the fingerprint because different releases can emit different findings.
+JSON_REVISIONS = (4, 6)
 
 
 class BaselineError(ValueError):
@@ -148,13 +150,18 @@ def _aggregate_diagnostics(diagnostics: list[dict[str, str]]) -> list[dict[str, 
     ]
 
 
-def _validate_qmllint_json(data: Any, expected_files: list[str], source_root: Path,
-                           ) -> tuple[list[dict[str, str]], int]:
+def _qmllint_json_revision(data: Any) -> int:
     if not isinstance(data, dict) or type(data.get("revision")) is not int:
         raise BaselineError("qmllint JSON has no integer revision")
     revision = data["revision"]
-    if revision != JSON_REVISION:
-        raise BaselineError(f"unsupported qmllint JSON revision {revision}; expected {JSON_REVISION}")
+    if revision not in JSON_REVISIONS:
+        raise BaselineError(f"unsupported qmllint JSON revision {revision}; supported revisions: {JSON_REVISIONS}")
+    return revision
+
+
+def _validate_qmllint_json(data: Any, expected_files: list[str], source_root: Path,
+                           ) -> tuple[list[dict[str, str]], int]:
+    revision = _qmllint_json_revision(data)
     files = data.get("files")
     if not isinstance(files, list):
         raise BaselineError("qmllint JSON has no files array")
@@ -276,7 +283,7 @@ def _validate_report(report: Any, label: str) -> None:
     ):
         raise BaselineError(f"{label} report has an invalid tool fingerprint")
     revision = tool.get("jsonRevision")
-    if (tool["format"] == "json" and (type(revision) is not int or revision != JSON_REVISION)) or (
+    if (tool["format"] == "json" and (type(revision) is not int or revision not in JSON_REVISIONS)) or (
         tool["format"] == "text" and revision is not None
     ) or tool["format"] not in ("json", "text"):
         raise BaselineError(f"{label} report has an invalid diagnostic format fingerprint")
@@ -432,6 +439,7 @@ def _run(args: argparse.Namespace) -> int:
         for name in ("QML_IMPORT_PATH", "QML2_IMPORT_PATH", "QML2_IMPORTS"):
             clean_environment.pop(name, None)
 
+        json_revision = None
         for chunk_index, start in enumerate(range(0, len(expected), args.chunk_size)):
             chunk = expected[start:start + args.chunk_size]
             command = [args.qmllint, "--ignore-settings", "--max-warnings", "-1", "--json", "-",
@@ -452,9 +460,15 @@ def _run(args: argparse.Namespace) -> int:
                     file_codes[file] = completed.returncode
                 try:
                     chunk_report = json.loads(completed.stdout)
-                    if not isinstance(chunk_report, dict) or chunk_report.get("revision") != JSON_REVISION or not isinstance(chunk_report.get("files"), list):
-                        raise BaselineError(f"qmllint chunk {chunk_index} returned an unsupported JSON report")
+                    chunk_revision = _qmllint_json_revision(chunk_report)
+                    if json_revision is not None and chunk_revision != json_revision:
+                        raise BaselineError(f"qmllint JSON revision changed in chunk {chunk_index}")
+                    json_revision = chunk_revision
+                    if not isinstance(chunk_report.get("files"), list):
+                        raise BaselineError(f"qmllint chunk {chunk_index} has no files array")
                     combined_files.extend(chunk_report["files"])
+                except BaselineError as error:
+                    command_error = str(error)
                 except (json.JSONDecodeError, UnicodeError) as error:
                     command_error = f"qmllint chunk {chunk_index} returned malformed or truncated JSON: {error}"
             except OSError as error:
@@ -474,7 +488,7 @@ def _run(args: argparse.Namespace) -> int:
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         raw_path = raw_dir / "qmllint.json"
-        raw_path.write_text(json.dumps({"revision": JSON_REVISION, "files": combined_files},
+        raw_path.write_text(json.dumps({"revision": json_revision, "files": combined_files},
                                        indent=2, sort_keys=True) + "\n", encoding="utf-8")
         if command_error:
             raise BaselineError(command_error)

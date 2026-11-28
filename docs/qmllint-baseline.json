@@ -1,6 +1,13 @@
 {
   "diagnostics": [
     {
+      "category": "block-scope-var-declaration",
+      "count": 2,
+      "file": "compat/qml/org/kde/latte/compat/taskmanager/Backend.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "compat/qml/org/kde/latte/compat/taskmanager/Backend.qml",
@@ -22,10 +29,52 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 3,
+      "file": "containment/package/contents/ui/BindingsExternal.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 250,
       "file": "containment/package/contents/ui/BindingsExternal.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 7,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"computationsAreValid\" not found on type DragDropArea::dragInfo with type QQuickItem",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"isLatteTasks\" not found on type DragDropArea::dragInfo with type QQuickItem",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"isPlasmoid\" not found on type DragDropArea::dragInfo with type QQuickItem",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"isSeparator\" not found on type DragDropArea::dragInfo with type QQuickItem",
       "severity": "warning"
     },
     {
@@ -37,9 +86,23 @@
     },
     {
       "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"isTask\" not found on type DragDropArea::dragInfo with type QQuickItem",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 3,
       "file": "containment/package/contents/ui/DragDropArea.qml",
       "message": "Member \"onlyLaunchers\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/DragDropArea.qml",
+      "message": "Member \"onlyLaunchers\" not found on type DragDropArea::dragInfo with type QQuickItem",
       "severity": "warning"
     },
     {
@@ -54,6 +117,13 @@
       "count": 69,
       "file": "containment/package/contents/ui/Upgrader.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "containment/package/contents/ui/VisibilityManager.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -90,6 +160,13 @@
       "file": "containment/package/contents/ui/abilities/Animations.qml",
       "message": "Unused import",
       "severity": "info"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 17,
+      "file": "containment/package/contents/ui/abilities/AutoSize.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
     },
     {
       "category": "missing-property",
@@ -159,6 +236,13 @@
       "count": 28,
       "file": "containment/package/contents/ui/abilities/AutoSize.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 7,
+      "file": "containment/package/contents/ui/abilities/Indexer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -327,6 +411,13 @@
       "count": 1,
       "file": "containment/package/contents/ui/abilities/Launchers.qml",
       "message": "Member \"addDroppedLaunchers\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/abilities/Launchers.qml",
+      "message": "Member \"isShowingAddLaunchersMessage\" not found on type Launchers::appletStealingDroppedLaunchers with type QQuickItem",
       "severity": "warning"
     },
     {
@@ -540,10 +631,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "containment/package/contents/ui/abilities/privates/AnimationsPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 4,
       "file": "containment/package/contents/ui/abilities/privates/AnimationsPrivate.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 32,
+      "file": "containment/package/contents/ui/abilities/privates/IndexerPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -582,10 +687,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 12,
+      "file": "containment/package/contents/ui/abilities/privates/LaunchersPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 8,
       "file": "containment/package/contents/ui/abilities/privates/LaunchersPrivate.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 43,
+      "file": "containment/package/contents/ui/abilities/privates/LayouterPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -680,6 +799,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 4,
+      "file": "containment/package/contents/ui/abilities/privates/MyViewPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 2,
       "file": "containment/package/contents/ui/abilities/privates/MyViewPrivate.qml",
@@ -691,6 +817,13 @@
       "count": 16,
       "file": "containment/package/contents/ui/abilities/privates/MyViewPrivate.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 3,
+      "file": "containment/package/contents/ui/abilities/privates/ParabolicEffectPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -722,10 +855,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "containment/package/contents/ui/abilities/privates/PositionShortcutsPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 8,
       "file": "containment/package/contents/ui/abilities/privates/PositionShortcutsPrivate.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 3,
+      "file": "containment/package/contents/ui/abilities/privates/ThinTooltipPrivate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -736,10 +883,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 10,
+      "file": "containment/package/contents/ui/abilities/privates/layouter/AppletsContainer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 78,
       "file": "containment/package/contents/ui/abilities/privates/layouter/AppletsContainer.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 57,
+      "file": "containment/package/contents/ui/applet/AppletItem.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -1226,6 +1387,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 5,
+      "file": "containment/package/contents/ui/applet/ItemWrapper.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 164,
       "file": "containment/package/contents/ui/applet/ItemWrapper.qml",
@@ -1233,10 +1401,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 10,
+      "file": "containment/package/contents/ui/applet/ParabolicArea.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 126,
       "file": "containment/package/contents/ui/applet/ParabolicArea.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "containment/package/contents/ui/applet/ShortcutBadge.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -1387,6 +1569,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 32,
+      "file": "containment/package/contents/ui/background/MultiLayered.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 8,
       "file": "containment/package/contents/ui/background/MultiLayered.qml",
@@ -1503,6 +1692,13 @@
       "count": 6,
       "file": "containment/package/contents/ui/colorizer/KirigamiShadowedRectangle.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 2,
+      "file": "containment/package/contents/ui/colorizer/Manager.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -1674,6 +1870,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "containment/package/contents/ui/layouts/LayoutsContainer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/layouts/LayoutsContainer.qml",
@@ -1685,6 +1888,13 @@
       "count": 123,
       "file": "containment/package/contents/ui/layouts/LayoutsContainer.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "containment/package/contents/ui/layouts/ParabolicEdgeSpacer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -1702,10 +1912,52 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "containment/package/contents/ui/layouts/loaders/Tasks.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/layouts/loaders/Tasks.qml",
+      "message": "Member \"column\" not found on type \"QModelIndex\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/layouts/loaders/Tasks.qml",
+      "message": "Member \"row\" not found on type \"QModelIndex\"",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 8,
       "file": "containment/package/contents/ui/layouts/loaders/Tasks.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 76,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Id for object LatteContainment.LayoutManager shadows property \"fastLayoutManager\". Rename one or the other.",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Note: Id defined here",
       "severity": "warning"
     },
     {
@@ -1724,6 +1976,20 @@
     },
     {
       "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"activeWindowFilter\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"adaptiveItemSpacing\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 2,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"adjustVolumeForAudioBadge\" not found on type \"QObject\"",
@@ -1731,9 +1997,44 @@
     },
     {
       "category": "missing-property",
+      "count": 7,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"alignment\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 3,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"alignment\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 6,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"alignment\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"alignment\" not found on type main::latteView with type QObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"alignmentUpgraded\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"alignmentUpgraded\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
       "severity": "warning"
     },
     {
@@ -1747,7 +2048,70 @@
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"automaticFloatingGap\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"backgroundOnlyOnMaximized\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"blurEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"closeActiveWindowEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"compactIndicators\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"containsDrag\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"customBackgroundColorEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"disablePanelShadowForMaximized\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"dockStyle\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"dragActiveWindowEnabled\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -1782,7 +2146,35 @@
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"floatingGapIsMirrored\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"floatingInternalGapIsForced\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"height\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"interfacesGraphicObj\" not found on type (component in <absolute-path>::view with type QObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"internalSplitterId\" not found on type call to method createObject, returning QObject",
       "severity": "warning"
     },
     {
@@ -1845,7 +2237,70 @@
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"maxLength\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"maximizeWhenMaximized\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"minLength\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"mouseWheelActions\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"offset\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"onlyLaunchers\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"panelOutline\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"panelPosition\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 5,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"panelShadows\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"plasmaBackgroundForPopups\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -1857,9 +2312,58 @@
     },
     {
       "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"roundedBackground\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"screenEdgeMargin\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 2,
       "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"screenGeometry\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"scrollAction\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"singleRowLayout\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"solidBackgroundForMaximized\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"themeColors\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"useThemePanel\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -1873,7 +2377,21 @@
       "category": "missing-property",
       "count": 1,
       "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"visible\" not found on type call to method createObject, returning QObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
       "message": "Member \"width\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "containment/package/contents/ui/main.qml",
+      "message": "Member \"windowColors\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -2154,6 +2672,13 @@
       "count": 3,
       "file": "declarativeimports/abilities/client/Environment.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 16,
+      "file": "declarativeimports/abilities/client/Indexer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -2514,6 +3039,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 2,
+      "file": "declarativeimports/abilities/client/ParabolicEffect.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "declarativeimports/abilities/client/ParabolicEffect.qml",
@@ -2759,6 +3291,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 3,
+      "file": "declarativeimports/abilities/definition/ParabolicEffect.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "declarativeimports/abilities/definition/ParabolicEffect.qml",
@@ -2861,6 +3400,13 @@
       "count": 6,
       "file": "declarativeimports/abilities/host/ThinTooltip.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "declarativeimports/abilities/items/BasicItem.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -3151,6 +3697,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 13,
+      "file": "declarativeimports/abilities/items/basicitem/ParabolicEventsArea.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 77,
       "file": "declarativeimports/abilities/items/basicitem/ParabolicEventsArea.qml",
@@ -3239,6 +3792,13 @@
       "count": 1,
       "file": "declarativeimports/components/Button.qml",
       "message": "Member \"viewTextColor\" not found on type \"Kirigami::Platform::PlatformTheme\"",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "declarativeimports/components/ComboBox.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -3340,6 +3900,13 @@
       "severity": "warning"
     },
     {
+      "category": "renamed-type",
+      "count": 1,
+      "file": "declarativeimports/components/ItemDelegate.qml",
+      "message": "\"Label\" is explicitly renamed to \"LatteComponents.Label\" via a qmldir entry or QT_QML_SOURCE_TYPENAME CMake property, use \"LatteComponents.Label\" instead.",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 15,
       "file": "declarativeimports/components/ItemDelegate.qml",
@@ -3438,6 +4005,13 @@
       "severity": "warning"
     },
     {
+      "category": "import",
+      "count": 1,
+      "file": "declarativeimports/components/private/MobileTextActionsToolBar.qml",
+      "message": "Type MobileTextActionsToolBar not declared as singleton in qmldir but using pragma Singleton",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "declarativeimports/components/private/MobileTextActionsToolBar.qml",
@@ -3498,6 +4072,13 @@
       "count": 67,
       "file": "indicators/default/package/config/config.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "indicators/default/package/ui/main.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -3760,6 +4341,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 24,
+      "file": "plasmoid/package/contents/ui/ContextMenu.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 3,
       "file": "plasmoid/package/contents/ui/ContextMenu.qml",
@@ -3942,6 +4530,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 8,
+      "file": "plasmoid/package/contents/ui/PulseAudio.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "incompatible-type",
       "count": 1,
       "file": "plasmoid/package/contents/ui/PulseAudio.qml",
@@ -3991,10 +4586,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 14,
+      "file": "plasmoid/package/contents/ui/TasksExtendedManager.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 16,
       "file": "plasmoid/package/contents/ui/TasksExtendedManager.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 18,
+      "file": "plasmoid/package/contents/ui/abilities/Launchers.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4030,6 +4639,13 @@
       "count": 3,
       "file": "plasmoid/package/contents/ui/abilities/Launchers.qml",
       "message": "Member \"launcherList\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/abilities/Launchers.qml",
+      "message": "Member \"launcherList\" not found on type Launchers::tasksModel with type QObject",
       "severity": "warning"
     },
     {
@@ -4096,6 +4712,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 9,
+      "file": "plasmoid/package/contents/ui/abilities/launchers/Validator.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 1,
       "file": "plasmoid/package/contents/ui/abilities/launchers/Validator.qml",
@@ -4138,6 +4761,34 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 25,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Id for object TaskManager.TasksModel shadows property \"tasksModel\". Rename one or the other.",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Note: Id defined here",
+      "severity": "warning"
+    },
+    {
+      "category": "incompatible-type",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Cannot assign binding of type KConfigPropertyMap to QObject",
+      "severity": "warning"
+    },
+    {
       "category": "incompatible-type",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
@@ -4149,6 +4800,55 @@
       "count": 2,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"action\" not found on type \"Plasma::Applet\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"animationLauncherBouncing\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"animationNewWindowSliding\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"animationWindowAddedInGroup\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"animationWindowInAttention\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"animationWindowRemovedFromGroup\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"audioBadgeActionsEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"autoScrollTasksEnabled\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -4167,9 +4867,65 @@
     },
     {
       "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"durationTime\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 4,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"errorString\" not found on type \"QObject\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"groupTasksByDefault\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"groupingAppIdBlacklist\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"groupingAppIdBlacklist\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"groupingLauncherUrlBlacklist\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"groupingLauncherUrlBlacklist\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"hideAllTasks\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"hoverAction\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -4183,7 +4939,77 @@
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"infoBadgeProminentColorEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"isInLatteDock\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"isInLatteDock\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"isPreferredForDroppedLaunchers\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"isPreferredForPositionShortcuts\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"launchers59\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"launchersGroup\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"layoutDirection\" not found on type \"QQmlApplication\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"leftClickAction\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"manualScrollTasksType\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"middleClickAction\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -4195,6 +5021,111 @@
     },
     {
       "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"modifier\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"modifierClick\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"modifierClickAction\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"panelSize\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"previewWindowAsPopup\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"scrollTasksEnabled\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showAudioBadge\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showBarLine\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showInfoBadge\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showOnlyCurrentActivity\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showOnlyCurrentDesktop\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showOnlyCurrentScreen\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showProgressBadge\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showWindowActions\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"showWindowsOnlyFromLaunchers\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 4,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"status\" not found on type \"QObject\"",
@@ -4202,9 +5133,58 @@
     },
     {
       "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"taskModel\" not found on type (component in <absolute-path>::item with type QObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"taskScrollAction\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"taskScrollAction\" not found on type Plasma::Applet::configuration with type KConfigPropertyMap",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 2,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"transparentPanel\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"useThemePanel\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
       "count": 2,
       "file": "plasmoid/package/contents/ui/main.qml",
       "message": "Member \"windowId\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"zoomHelper\" not found on type \"KConfigPropertyMap\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/main.qml",
+      "message": "Member \"zoomLevel\" not found on type \"KConfigPropertyMap\"",
       "severity": "warning"
     },
     {
@@ -4250,6 +5230,13 @@
       "severity": "info"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 5,
+      "file": "plasmoid/package/contents/ui/previews/ToolTipDelegate2.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/previews/ToolTipDelegate2.qml",
@@ -4261,6 +5248,13 @@
       "count": 17,
       "file": "plasmoid/package/contents/ui/previews/ToolTipDelegate2.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 5,
+      "file": "plasmoid/package/contents/ui/previews/ToolTipInstance.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4334,10 +5328,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/ProgressOverlay.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 46,
       "file": "plasmoid/package/contents/ui/task/ProgressOverlay.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 47,
+      "file": "plasmoid/package/contents/ui/task/SubWindows.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4404,6 +5412,20 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 19,
+      "file": "plasmoid/package/contents/ui/task/TaskItem.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "plasmoid/package/contents/ui/task/TaskMouseArea.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "plasmoid/package/contents/ui/task/TaskMouseArea.qml",
@@ -4429,6 +5451,13 @@
       "count": 8,
       "file": "plasmoid/package/contents/ui/task/animations/ClickedAnimation.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/animations/LauncherAnimation.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4502,6 +5531,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/animations/RealRemovalAnimation.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 41,
       "file": "plasmoid/package/contents/ui/task/animations/RealRemovalAnimation.qml",
@@ -4537,10 +5573,31 @@
       "severity": "warning"
     },
     {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/animations/RemoveWindowFromGroupAnimation.qml",
+      "message": "Member \"x\" not found on type call to method createObject, returning QObject",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 1,
+      "file": "plasmoid/package/contents/ui/task/animations/RemoveWindowFromGroupAnimation.qml",
+      "message": "Member \"y\" not found on type call to method createObject, returning QObject",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 37,
       "file": "plasmoid/package/contents/ui/task/animations/RemoveWindowFromGroupAnimation.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 3,
+      "file": "plasmoid/package/contents/ui/task/animations/ShowWindowAnimation.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4562,6 +5619,13 @@
       "count": 18,
       "file": "plasmoid/package/contents/ui/task/animations/newwindow/BounceAnimation.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 19,
+      "file": "plasmoid/package/contents/ui/taskslayout/MouseHandler.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4670,10 +5734,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 5,
+      "file": "shell/package/contents/applet/CompactApplet.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 2,
       "file": "shell/package/contents/applet/CompactApplet.qml",
       "message": "Member \"action\" not found on type \"Plasma::Applet\"",
+      "severity": "warning"
+    },
+    {
+      "category": "missing-property",
+      "count": 3,
+      "file": "shell/package/contents/applet/CompactApplet.qml",
+      "message": "Member \"expanded\" not found on type Plasma::Applet",
       "severity": "warning"
     },
     {
@@ -4705,10 +5783,10 @@
       "severity": "warning"
     },
     {
-      "category": "unresolved-type",
+      "category": "block-scope-var-declaration",
       "count": 1,
-      "file": "shell/package/contents/configuration/AboutPlugin.qml",
-      "message": "Type \"KPluginMetaData\" of property \"metaData\" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.",
+      "file": "shell/package/contents/configuration/CanvasConfiguration.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4730,6 +5808,27 @@
       "count": 2,
       "file": "shell/package/contents/configuration/ConfigurationShortcuts.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 4,
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 3,
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "Id for object FocusScope shadows property \"dialog\". Rename one or the other.",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 3,
+      "file": "shell/package/contents/configuration/LatteDockConfiguration.qml",
+      "message": "Note: Id defined here",
       "severity": "warning"
     },
     {
@@ -4789,10 +5888,38 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 7,
+      "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
+      "message": "Id for object LatteComponents.Button shadows property \"panelShadows\". Rename one or the other.",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
+      "message": "Note: Id defined here",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 237,
       "file": "shell/package/contents/configuration/pages/AppearanceConfig.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 5,
+      "file": "shell/package/contents/configuration/pages/BehaviorConfig.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4831,6 +5958,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 14,
+      "file": "shell/package/contents/controls/CustomIndicatorButton.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 2,
       "file": "shell/package/contents/controls/CustomIndicatorButton.qml",
@@ -4845,6 +5979,13 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 7,
+      "file": "shell/package/contents/controls/CustomVisibilityModeButton.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "shell/package/contents/controls/CustomVisibilityModeButton.qml",
@@ -4852,10 +5993,24 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 10,
+      "file": "shell/package/contents/controls/DragCorner.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 45,
       "file": "shell/package/contents/controls/DragCorner.qml",
       "message": "Unqualified access",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 8,
+      "file": "shell/package/contents/controls/IndicatorConfigUiManager.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
       "severity": "warning"
     },
     {
@@ -4908,6 +6063,27 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "shell/package/contents/views/AppletDelegate.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "shell/package/contents/views/AppletDelegate.qml",
+      "message": "Id for object Item shadows property \"delegate\". Rename one or the other.",
+      "severity": "warning"
+    },
+    {
+      "category": "id-shadows-member",
+      "count": 1,
+      "file": "shell/package/contents/views/AppletDelegate.qml",
+      "message": "Note: Id defined here",
+      "severity": "warning"
+    },
+    {
       "category": "unqualified",
       "count": 39,
       "file": "shell/package/contents/views/AppletDelegate.qml",
@@ -4915,10 +6091,31 @@
       "severity": "warning"
     },
     {
+      "category": "block-scope-var-declaration",
+      "count": 1,
+      "file": "shell/package/contents/views/Panel.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
       "category": "missing-property",
       "count": 1,
       "file": "shell/package/contents/views/Panel.qml",
       "message": "Member \"appletContainsPos\" not found on type \"QQuickItem\"",
+      "severity": "warning"
+    },
+    {
+      "category": "block-scope-var-declaration",
+      "count": 6,
+      "file": "shell/package/contents/views/WidgetExplorer.qml",
+      "message": "var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning",
+      "severity": "warning"
+    },
+    {
+      "category": "confusing-expression-statement",
+      "count": 1,
+      "file": "shell/package/contents/views/WidgetExplorer.qml",
+      "message": "Expression statement has no obvious effect.",
       "severity": "warning"
     },
     {
@@ -5466,8 +6663,8 @@
   "schemaVersion": 1,
   "tool": {
     "format": "json",
-    "jsonRevision": 4,
+    "jsonRevision": 6,
     "name": "qmllint",
-    "version": "qmllint 6.11.1"
+    "version": "qmllint 6.12.0"
   }
 }

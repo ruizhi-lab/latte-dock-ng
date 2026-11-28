@@ -61,6 +61,7 @@ echo "qmllint-deep: linting ${#files[@]} QML files with import resolution ($qmll
 echo "qmllint-deep: import roots: build QML modules, staged Latte modules, system QML"
 version=$("$qmllint" --version 2>&1)
 printf '%s\n' "$version" > "$evidence/qmllint-version.txt"
+echo "qmllint-deep: tool version: $version"
 python3 - "$root" "$evidence/expected-files.json" "${files[@]}" <<'PY'
 import json
 import sys
@@ -81,7 +82,11 @@ for category in "${PROMOTED_ERROR_CATEGORIES[@]}"; do
     run_args+=(--error-category "$category")
 done
 failed=0
-python3 "$root/scripts/qmllint-baseline.py" "${run_args[@]}" --output "$evidence/current.json" >"$log" 2>&1 || failed=1
+if ! python3 "$root/scripts/qmllint-baseline.py" "${run_args[@]}" --output "$evidence/current.json" >"$log" 2>&1; then
+    cat "$log" >&2
+    echo "qmllint-deep: FAILED (see $log and $evidence)" >&2
+    exit 1
+fi
 
 python3 "$root/scripts/qmllint-baseline.py" check-modules --build-qml "$build_dir/qml" || failed=1
 if [[ -f "$evidence/current.json" ]]; then
